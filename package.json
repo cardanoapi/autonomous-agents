@@ -93,6 +93,7 @@
     "@types/canvas-confetti": "^1.6.4",
     "@types/js-cookie": "^3.0.6",
     "@types/katex": "^0.16.7",
+    "@types/lodash": "^4.14.202",
     "@types/node": "^20.11.5",
     "@types/nprogress": "^0.2.3",
     "@types/overlayscrollbars": "^1.12.5",
