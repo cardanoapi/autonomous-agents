@@ -10,8 +10,7 @@ const environments = {
 
     // run-time configg
     GA_MEASUREMENT_ID: process.env.GA_MEASUREMENT_ID,
-    MICROSOFT_CLARITY_TRACKING_CODE:
-        process.env.MICROSOFT_CLARITY_TRACKING_CODE,
+    MICROSOFT_CLARITY_TRACKING_CODE: process.env.MICROSOFT_CLARITY_TRACKING_CODE,
     SENTRY_DSN: process.env.SENTRY_DSN,
     SENTRY_URL: process.env.SENTRY_URL,
     SENTRY_ORG: process.env.SENTRY_ORG,
@@ -40,6 +39,5 @@ const environments = {
     ELASTIC_APM_SERVICE_NAME: process.env.ELASTIC_APM_SERVICE_NAME,
     ELASTIC_APM_ENVIRONMENT: process.env.ELASTIC_APM_ENVIRONMENT,
     APM_ENABLED:
-        process.env.ELASTIC_APM_SERVER_URL &&
-        process.env.ELASTIC_APM_SERVICE_NAME
+        process.env.ELASTIC_APM_SERVER_URL && process.env.ELASTIC_APM_SERVICE_NAME
 };
