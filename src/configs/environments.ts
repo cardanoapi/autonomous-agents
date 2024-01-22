@@ -8,9 +8,14 @@ const environments = {
     // api host configs
     API_ENDPOINT_HOST: process.env.API_ENDPOINT_HOST,
 
+    FORM_PRIVACY_POLICY_URL:
+        process.env.FORM_PRIVACY_POLICY_URL ??
+        'https://bettercollected.com/privacy-policy',
+
     // run-time configg
     GA_MEASUREMENT_ID: process.env.GA_MEASUREMENT_ID,
-    MICROSOFT_CLARITY_TRACKING_CODE: process.env.MICROSOFT_CLARITY_TRACKING_CODE,
+    MICROSOFT_CLARITY_TRACKING_CODE:
+        process.env.MICROSOFT_CLARITY_TRACKING_CODE,
     SENTRY_DSN: process.env.SENTRY_DSN,
     SENTRY_URL: process.env.SENTRY_URL,
     SENTRY_ORG: process.env.SENTRY_ORG,
@@ -34,10 +39,13 @@ const environments = {
 
     // internal configs
     IS_IN_PRODUCTION_MODE,
-    NEXT_PUBLIC_NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV || 'development',
+    NEXT_PUBLIC_NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV ?? 'development',
     ELASTIC_APM_SERVER_URL: process.env.ELASTIC_APM_SERVER_URL,
     ELASTIC_APM_SERVICE_NAME: process.env.ELASTIC_APM_SERVICE_NAME,
     ELASTIC_APM_ENVIRONMENT: process.env.ELASTIC_APM_ENVIRONMENT,
     APM_ENABLED:
-        process.env.ELASTIC_APM_SERVER_URL && process.env.ELASTIC_APM_SERVICE_NAME
+        process.env.ELASTIC_APM_SERVER_URL &&
+        process.env.ELASTIC_APM_SERVICE_NAME
 };
+
+export default environments;
