@@ -3,7 +3,7 @@ import type { Config } from 'tailwindcss';
 export default {
     content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
     presets: [],
-    darkMode: 'media', // 'media' or 'class'
+    darkMode: 'class', // 'media' or 'class'
     variants: {
         extends: {
             scrollbar: ['rounded']
@@ -20,6 +20,42 @@ export default {
                 'banner-mobile': '3 / 1',
                 'editable-banner-desktop': '3.9886363636 / 1',
                 'editable-banner-mobile': '2 / 1'
+            },
+            colors: {
+                dark: '#1c1917',
+                'light-dark': '#171e2e',
+                brand: {
+                    100: '#F2F7FF',
+                    200: '#B8E8FF',
+                    300: '#A8C6F0',
+                    400: '#82A2CF',
+                    500: '#0764EB',
+                    600: '#0C50B4',
+                    700: '#2C2C60',
+                    800: '#11114C',
+                    900: '#111134',
+
+                    DEFAULT: '#0764EB'
+                },
+                'brand-accent': {
+                    500: '#F8B940',
+                    600: '#E79B0B',
+
+                    DEFAULT: '#F8B940'
+                },
+                black: {
+                    100: '#F8F9FA',
+                    200: '#E9ECEF',
+                    300: '#DEE2E6',
+                    400: '#CED4DA',
+                    500: '#ADB5BD',
+                    600: '#6C757D',
+                    700: '#495057',
+                    800: '#343A40',
+                    900: '#212529',
+
+                    DEFAULT: '#ADB5BD'
+                }
             }
         },
 
