@@ -9,8 +9,7 @@ export default function useIsOverflow(
     useEffect(() => {
         const checkOverflow = () => {
             if (ref.current) {
-                const hasOverflow =
-                    ref.current.scrollHeight > ref.current.clientHeight;
+                const hasOverflow = ref.current.scrollHeight > ref.current.clientHeight;
                 setIsOverflow(hasOverflow);
                 callback?.(hasOverflow);
             }

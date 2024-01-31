@@ -108,22 +108,16 @@ export default {
         backgroundColor: ({ theme }) => theme('colors'),
         backgroundImage: {
             none: 'none',
-            'gradient-to-t':
-                'linear-gradient(to top, var(--tw-gradient-stops))',
-            'gradient-to-tr':
-                'linear-gradient(to top right, var(--tw-gradient-stops))',
-            'gradient-to-r':
-                'linear-gradient(to right, var(--tw-gradient-stops))',
+            'gradient-to-t': 'linear-gradient(to top, var(--tw-gradient-stops))',
+            'gradient-to-tr': 'linear-gradient(to top right, var(--tw-gradient-stops))',
+            'gradient-to-r': 'linear-gradient(to right, var(--tw-gradient-stops))',
             'gradient-to-br':
                 'linear-gradient(to bottom right, var(--tw-gradient-stops))',
-            'gradient-to-b':
-                'linear-gradient(to bottom, var(--tw-gradient-stops))',
+            'gradient-to-b': 'linear-gradient(to bottom, var(--tw-gradient-stops))',
             'gradient-to-bl':
                 'linear-gradient(to bottom left, var(--tw-gradient-stops))',
-            'gradient-to-l':
-                'linear-gradient(to left, var(--tw-gradient-stops))',
-            'gradient-to-tl':
-                'linear-gradient(to top left, var(--tw-gradient-stops))'
+            'gradient-to-l': 'linear-gradient(to left, var(--tw-gradient-stops))',
+            'gradient-to-tl': 'linear-gradient(to top left, var(--tw-gradient-stops))'
         },
         backgroundOpacity: ({ theme }) => theme('opacity'),
         backgroundPosition: {
@@ -181,8 +175,7 @@ export default {
         },
         boxShadow: {
             sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-            DEFAULT:
-                '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+            DEFAULT: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
             md: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
             lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
             xl: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
@@ -318,16 +311,10 @@ export default {
         divideWidth: ({ theme }) => theme('borderWidth'),
         dropShadow: {
             sm: '0 1px 1px rgb(0 0 0 / 0.05)',
-            DEFAULT: [
-                '0 1px 2px rgb(0 0 0 / 0.1)',
-                '0 1px 1px rgb(0 0 0 / 0.06)'
-            ],
+            DEFAULT: ['0 1px 2px rgb(0 0 0 / 0.1)', '0 1px 1px rgb(0 0 0 / 0.06)'],
             md: ['0 4px 3px rgb(0 0 0 / 0.07)', '0 2px 2px rgb(0 0 0 / 0.06)'],
             lg: ['0 10px 8px rgb(0 0 0 / 0.04)', '0 4px 3px rgb(0 0 0 / 0.1)'],
-            xl: [
-                '0 20px 13px rgb(0 0 0 / 0.03)',
-                '0 8px 5px rgb(0 0 0 / 0.08)'
-            ],
+            xl: ['0 20px 13px rgb(0 0 0 / 0.03)', '0 8px 5px rgb(0 0 0 / 0.08)'],
             '2xl': '0 25px 25px rgb(0 0 0 / 0.15)',
             none: '0 0 #0000'
         },

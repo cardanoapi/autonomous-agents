@@ -15,10 +15,7 @@ export default function useUndoRedo() {
     };
 
     useLayoutEffect(() => {
-        eventBus.on(
-            EventBusEventType.History.UndoRedoStart,
-            startUndoRedoAction
-        );
+        eventBus.on(EventBusEventType.History.UndoRedoStart, startUndoRedoAction);
         eventBus.on(
             EventBusEventType.History.UndoRedoCompleted,
             completeUndoRedoAction

@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-function useAsyncState<T>(
-    initialState: T
-): [T, (newState: T) => Promise<void>] {
+function useAsyncState<T>(initialState: T): [T, (newState: T) => Promise<void>] {
     const [state, setState] = useState<T>(initialState);
     const resolveState = useRef<
         ((value: T | PromiseLike<T>) => void) | null | undefined

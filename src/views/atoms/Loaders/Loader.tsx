@@ -26,10 +26,7 @@ function handleLoaderPosition(size: LoaderSizeTypes) {
     return size === 'small' ? 'relative top-1.5' : 'relative top-3';
 }
 
-function handleVariantClasses(
-    variant: LoaderVariantTypes,
-    size: LoaderSizeTypes
-) {
+function handleVariantClasses(variant: LoaderVariantTypes, size: LoaderSizeTypes) {
     return variant === 'moveUp' && size === 'small'
         ? 'animate-move-up-small'
         : variants[variant];
@@ -53,21 +50,21 @@ export default function Loader({
         >
             <span
                 className={cn(
-                    'bg-black-900 rounded-full dark:bg-white',
+                    'rounded-full bg-black-900 dark:bg-white',
                     handleVariantClasses(variant, size),
                     sizes[size]
                 )}
             />
             <span
                 className={cn(
-                    'animation-delay-200 bg-black-900 rounded-full dark:bg-white',
+                    'animation-delay-200 rounded-full bg-black-900 dark:bg-white',
                     handleVariantClasses(variant, size),
                     sizes[size]
                 )}
             />
             <span
                 className={cn(
-                    'animation-delay-500 bg-black-900 rounded-full dark:bg-white',
+                    'animation-delay-500 rounded-full bg-black-900 dark:bg-white',
                     handleVariantClasses(variant, size),
                     sizes[size]
                 )}
@@ -75,7 +72,7 @@ export default function Loader({
             {variant === 'moveUp' && !showOnlyThreeDots ? (
                 <span
                     className={cn(
-                        'animation-delay-700 bg-black-900 rounded-full dark:bg-white',
+                        'animation-delay-700 rounded-full bg-black-900 dark:bg-white',
                         handleVariantClasses(variant, size),
                         sizes[size]
                     )}

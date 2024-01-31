@@ -31,10 +31,7 @@ const joyrideSlice = createSlice({
             );
             state.isAnyJoyrideRunning = isAnyRunning;
         },
-        setJoyrideState: (
-            state,
-            action: PayloadAction<JoyrideStateWithoutSteps>
-        ) => {
+        setJoyrideState: (state, action: PayloadAction<JoyrideStateWithoutSteps>) => {
             const { id, ...joyrideState } = action.payload;
             // @ts-ignore
             state.joyrides[id] = joyrideState;
@@ -55,8 +52,7 @@ const joyrideStateReducer = persistReducer(
     joyrideSlice.reducer
 );
 
-export const { startJoyride, finishJoyride, setJoyrideState } =
-    joyrideSlice.actions;
+export const { startJoyride, finishJoyride, setJoyrideState } = joyrideSlice.actions;
 
 const reducerObj = {
     reducerPath: joyrideSlice.name,

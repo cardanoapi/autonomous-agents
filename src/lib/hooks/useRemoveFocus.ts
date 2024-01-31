@@ -8,15 +8,11 @@ function useRemoveFocus(size: number) {
             if (e.keyCode === 40) {
                 // Down arrow
                 e.preventDefault();
-                setCurrentFocus(
-                    currentFocus === size - 1 ? 0 : currentFocus + 1
-                );
+                setCurrentFocus(currentFocus === size - 1 ? 0 : currentFocus + 1);
             } else if (e.keyCode === 38) {
                 // Up arrow
                 e.preventDefault();
-                setCurrentFocus(
-                    currentFocus === 0 ? size - 1 : currentFocus - 1
-                );
+                setCurrentFocus(currentFocus === 0 ? size - 1 : currentFocus - 1);
             }
         },
         [size, currentFocus, setCurrentFocus]
