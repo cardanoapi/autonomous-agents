@@ -13,7 +13,8 @@ import joyrideSlice from '@app/store/tours/slice';
 const loggerMiddleware = createLogger({ collapsed: true });
 const middlewares: any = [loggerMiddleware];
 
-if (environments.IS_IN_PRODUCTION_MODE) middlewares.splice(0, 1);
+if (environments.IS_IN_PRODUCTION_MODE || environments.IS_REDUX_LOGGER_DISABLED)
+    middlewares.splice(0, 1);
 
 const reducers = {
     [mutationStatusSlice.reducerPath]: mutationStatusSlice.reducer,
@@ -35,26 +36,16 @@ export const store = configureStore({
         getDefaultMiddleware({
             serializableCheck: false
         }).concat(middlewares),
-    preloadedState: {
-        [mutationStatusSlice.reducerPath]: {
-            ...mutationStatusSlice.initialState,
-            _persist: {
-                version: 0,
-                rehydrated: false
-            }
-        },
-        [joyrideSlice.reducerPath]: {
-            ...joyrideSlice.initialState,
-            _persist: {
-                version: 0,
-                rehydrated: false
-            }
-        }
-    },
+    // preloadedState: {
+    // [mutationStatusSlice.reducerPath.toString()]: mutationStatusSlice.initialState,
+    // [joyrideSlice.reducerPath.toString()]: joyrideSlice.initialState
+    // },
     devTools: !environments.IS_IN_PRODUCTION_MODE,
     enhancers: (getDefaultEnhancers) =>
         getDefaultEnhancers().concat(
-            environments.IS_IN_PRODUCTION_MODE ? [] : [monitorReducerEnhancer]
+            environments.IS_IN_PRODUCTION_MODE || environments.IS_REDUX_LOGGER_DISABLED
+                ? []
+                : [monitorReducerEnhancer]
         )
 });
 

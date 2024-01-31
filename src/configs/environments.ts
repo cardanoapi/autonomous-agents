@@ -1,4 +1,5 @@
 const IS_IN_PRODUCTION_MODE = process.env.NEXT_PUBLIC_NODE_ENV === 'production';
+const IS_REDUX_LOGGER_DISABLED = process.env.IS_REDUX_LOGGER_DISABLED === 'true';
 const BASE_DEPLOY_PATH = process.env.BASE_DEPLOY_PATH ?? '';
 
 const environments = {
@@ -38,6 +39,7 @@ const environments = {
 
     // internal configs
     IS_IN_PRODUCTION_MODE,
+    IS_REDUX_LOGGER_DISABLED,
     NEXT_PUBLIC_NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV ?? 'development',
     ELASTIC_APM_SERVER_URL: process.env.ELASTIC_APM_SERVER_URL,
     ELASTIC_APM_SERVICE_NAME: process.env.ELASTIC_APM_SERVICE_NAME,

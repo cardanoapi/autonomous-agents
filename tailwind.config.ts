@@ -1200,10 +1200,8 @@ export default {
         }
     },
     plugins: [
-        require('@tailwindcss/line-clamp'),
         require('@tailwindcss/typography'),
         require('@tailwindcss/forms'),
-        require('@tailwindcss/line-clamp'),
         require('tailwind-scrollbar')({ nocompatible: true }),
         ({ addComponents }: any) => {
             addComponents({
