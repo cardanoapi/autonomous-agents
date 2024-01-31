@@ -10,7 +10,8 @@
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\"",
     "dev": "cross-env NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "jest"
   },
   "dependencies": {
     "@elastic/apm-rum": "^5.16.0",
@@ -87,8 +88,8 @@
     "@redux-devtools/core": "^4.0.0",
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/typography": "^0.5.10",
-    "@testing-library/jest-dom": "^6.2.1",
-    "@testing-library/react": "^14.1.2",
+    "@testing-library/jest-dom": "^6.4.0",
+    "@testing-library/react": "^14.2.0",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/canvas-confetti": "^1.6.4",
     "@types/js-cookie": "^3.0.6",
@@ -122,6 +123,7 @@
     "tailwind-scrollbar": "^3.0.5",
     "tailwindcss": "^3.3.0",
     "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
     "typescript": "^5",
     "whatwg-fetch": "^3.6.20"
   },
