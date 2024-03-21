@@ -1,0 +1,22 @@
+# Changes here will be overwritten by Copier
+_commit: 0.6.1
+_src_path: https://github.com/fastapi-mvc/copier-project.git
+aiohttp: true
+author: Joseph Rana
+chart_name: backend
+container_image_name: backend
+email: josephranamgr7@gmail.com
+fastapi_mvc_version: 0.28.1
+fastapi_mvc_version : 
+github_actions: true
+helm: true
+license: 'no'
+nix: true
+package_name : backend
+project_description: Backend for Autonomous Agent Testing .This project was generated
+    with fastapi-mvc.
+project_name: backend
+redis: true
+repo_url: ''
+script_name: backend
+version: 0.1.0
