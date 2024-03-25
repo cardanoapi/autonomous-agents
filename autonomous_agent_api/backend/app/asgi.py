@@ -5,11 +5,13 @@ from fastapi import FastAPI
 from backend.config import settings
 from backend.app.router import root_api_router
 from backend.app.utils import RedisClient, AiohttpClient
+
 from backend.app.exceptions import (
     HTTPException,
     http_exception_handler,
 )
 
+from backend.config.database import prisma_connection
 
 log = logging.getLogger(__name__)
 
@@ -27,6 +29,10 @@ async def on_startup() -> None:
 
     AiohttpClient.get_aiohttp_client()
 
+    print("Starting Server")
+
+    await prisma_connection.connect()
+
 
 async def on_shutdown() -> None:
     """Define FastAPI shutdown event handler.
@@ -41,6 +47,8 @@ async def on_shutdown() -> None:
         await RedisClient.close_redis_client()
 
     await AiohttpClient.close_aiohttp_client()
+
+    await prisma_connection.disconnect()
 
 
 def get_application() -> FastAPI:

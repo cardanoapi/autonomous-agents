@@ -7,7 +7,6 @@ chart_name: backend
 container_image_name: backend
 email: josephranamgr7@gmail.com
 fastapi_mvc_version: 0.28.1
-fastapi_mvc_version : 
 github_actions: true
 helm: true
 license: 'no'

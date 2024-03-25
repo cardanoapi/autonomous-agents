@@ -39,3 +39,6 @@ site/
 
 # Nix build result
 result
+
+#environment variables
+.env 
