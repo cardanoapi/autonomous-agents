@@ -1,11 +1,16 @@
 version: '3.8'
 
+networks:
+  postgres:
+    external: true
+
 services:
-  
   backend:
     image: josephrana11/cardano_autonomous_agent_testing:backend
     container_name: backend
-    env_file:
-      - .env
+    environment:
+      - DATABASE_URL=postgresql://root:root@postgres:5432/cardano_autonomous_agent_testing_db
     ports:
       - "8000:8000"
+    networks:
+      - postgres

@@ -1,5 +1,6 @@
 from prisma import Prisma
 import logging
+from backend.config.logger import logger
 
 class PrismaConnection:
 
@@ -9,7 +10,7 @@ class PrismaConnection:
     async def connect(self):
         try :
          await self.prisma.connect()
-         logging.info('Database connected')
+         logger.info('Database connected Successfully')
         except:
          logging.critical('Error Connecting to Databse')
     
