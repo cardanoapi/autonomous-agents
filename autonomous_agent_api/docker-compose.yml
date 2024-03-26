@@ -7,7 +7,6 @@ networks:
 services:
   backend:
     image: josephrana11/cardano_autonomous_agent_testing:backend
-    container_name: backend
     environment:
       - DATABASE_URL=postgresql://root:root@postgres:5432/cardano_autonomous_agent_testing_db
     ports:

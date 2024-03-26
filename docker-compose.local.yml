@@ -8,7 +8,6 @@ networks:
 services:
   postgres:
     image: postgres:16.2
-    container_name: postgres
     environment:
      POSTGRES_DB: cardano_autonomous_agent_testing_db
      POSTGRES_USER: root
@@ -22,7 +21,6 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:8.2
-    container_name: pg-admin
     networks:
       - postgres
     environment:
