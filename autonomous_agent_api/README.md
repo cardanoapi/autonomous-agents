@@ -38,6 +38,11 @@ Run this command inside autonomous_agent_api folder to install necessary python 
 Inside **autonomous_agent_api** make a new **.env** file by copying the existing **.env.example.** file . This contains env variable for prsima client orm to connect to the postgres database.
 
 
+Run this command for generating the database client and creating the required table mentioned in schema
+
+```bash
+   prisma generate
+```
 
 
 ## Running the Server

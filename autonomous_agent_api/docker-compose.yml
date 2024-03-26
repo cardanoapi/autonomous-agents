@@ -3,7 +3,7 @@ version: '3.8'
 services:
   
   backend:
-    image: josephrana11/cardano_autonomous_agent_testing:backend
+    image: cardano_autonomous_agent_testing:backend
     container_name: backend
     env_file:
       - .env
