@@ -621,6 +621,3 @@ $RECYCLE.BIN/
 
 # cypress
 cypress/videos/
-
-#yarn lock
-yarn.lock
