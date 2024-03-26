@@ -72,3 +72,8 @@ Run the following command inside **autonomous_agent_api** folder to build and st
 ```
 
 This will start the server at http://localhost:8000/. Make sure that the Postgres Database container is running as well.
+
+You can compose your own current backend image as well by running the following command inside autonomous_agnet_api folder.
+```bash
+  docker build -t backend:0.3 .
+```
