@@ -1,7 +1,7 @@
 
 # Backend Setup Guide
 
-This project is currently under development. Follow this guide for Local Backend setup.
+This project is currently under development. Follow this guide for Local Backend setup. Update any changes you make to the CHANGELOG.
 
 
 
