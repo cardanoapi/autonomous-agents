@@ -7,6 +7,8 @@ Cardano Autonomous Agent Monorepo
 Python version : 3.12.2 
 
 
- - docker-compose.local - ( Docker Container for Postgres database and pgadmin ) 
+ - docker-compose.local - ( Docker Container for Postgres database and pgadmin4 ) 
 
  - For Backend setup refer to autonomous_agent_api/readme guide.
+
+ - For Devlopement , update any changes you make to CHANGELOG.md.
