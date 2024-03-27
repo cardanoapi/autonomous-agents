@@ -1,0 +1,20 @@
+generator client {
+    provider = "prisma-client-py"
+    interface = "asyncio"
+    recursive_type_depth = 5
+}
+
+datasource db {
+    provider = "postgresql"
+    url = env("DATABASE_URL")
+}
+
+model Test_Post {
+    id Int @id @default(autoincrement())
+    text String
+}
+
+model Test_User{
+    id Int @id @default(autoincrement())
+    text String
+}
