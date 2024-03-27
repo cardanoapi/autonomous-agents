@@ -1,4 +1,5 @@
 """Aiohttp client class utility."""
+
 from typing import Dict, AnyStr, Any
 import logging
 import asyncio

@@ -16,9 +16,9 @@ class TestHttpException:
             (400, "test msg", None),
             (403, "test msg", [{"key": 123, "key2": 123.123, "foo": "bar"}]),
             (
-                    404,
-                    {"key": 123, "key2": 123.123, "foo": "bar"},
-                    {"key": {"foo": "bar"}, "key2": [1, 2, 3]},
+                404,
+                {"key": 123, "key2": 123.123, "foo": "bar"},
+                {"key": {"foo": "bar"}, "key2": [1, 2, 3]},
             ),
         ],
     )

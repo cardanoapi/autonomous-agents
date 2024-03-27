@@ -7,7 +7,8 @@ from backend import ApplicationLoader
 from backend.cli.serve import serve
 
 fake_pid_file = os.path.join(
-    os.path.dirname(__file__), "test.pid",
+    os.path.dirname(__file__),
+    "test.pid",
 )
 
 
@@ -17,10 +18,12 @@ class TestCliServeCommand:
     def patched_serve(self, asgi_app):
         cmd = copy.deepcopy(serve)
         wsgi_patch = mock.patch(
-            "example.cli.serve.ApplicationLoader", spec=ApplicationLoader,
+            "example.cli.serve.ApplicationLoader",
+            spec=ApplicationLoader,
         )
         get_app_patch = mock.patch(
-            "example.cli.serve.get_application", return_value=asgi_app,
+            "example.cli.serve.get_application",
+            return_value=asgi_app,
         )
         cmd.wsgi_mock = wsgi_patch.start()
         cmd.get_app_mock = get_app_patch.start()

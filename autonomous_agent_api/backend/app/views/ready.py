@@ -1,4 +1,5 @@
 """Application implementation - ready response."""
+
 from typing import Any, Dict
 
 from pydantic import BaseModel

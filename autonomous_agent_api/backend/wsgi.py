@@ -1,4 +1,5 @@
 """Application Web Server Gateway Interface - gunicorn."""
+
 from typing import Any, Optional, Dict
 import logging
 
