@@ -1,0 +1,29 @@
+name: Basic Workflow test / Docker Image Builder
+
+on:
+  push:
+    branches: ["master", "github_action_setup"]
+  pull_request:
+    branches: ["master", "github_action_setup"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.12.2
+
+      - name: Install Poetry
+        working-directory: ./autonomous_agent_api
+        run: pip install poetry==1.8.2
+
+      - name: Install Dependencies
+        working-directory: ./autonomous_agent_api
+        run: poetry install
+
+      - name: Run test cases
+        working-directory: ./autonomous_agent_api
+        run: poetry run pytest -m ping
