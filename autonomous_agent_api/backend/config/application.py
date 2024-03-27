@@ -1,4 +1,5 @@
 """Application configuration - FastAPI."""
+
 from pydantic import BaseSettings
 from backend.version import __version__
 

@@ -16,6 +16,9 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
 ]
 
+[tool.black]
+line-length = 120
+
 [tool.poetry.dependencies]
 python = "^3.8"
 fastapi = "~0.98.0"

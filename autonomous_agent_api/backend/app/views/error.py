@@ -1,4 +1,5 @@
 """Application implementation - error response."""
+
 from typing import Dict, Any, Optional, List, Union
 from http import HTTPStatus
 
@@ -64,9 +65,7 @@ class ErrorModel(BaseModel):
             # Override schema description, by default is taken from docstring.
             schema["description"] = "Error model."
             # Add status to schema properties.
-            schema["properties"].update(
-                {"status": {"title": "Status", "type": "string"}}
-            )
+            schema["properties"].update({"status": {"title": "Status", "type": "string"}})
             schema["required"].append("status")
 
 

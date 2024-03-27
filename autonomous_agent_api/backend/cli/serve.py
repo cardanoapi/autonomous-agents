@@ -1,4 +1,5 @@
 """Command-line interface - serve command."""
+
 from typing import Dict, Any
 from multiprocessing import cpu_count
 

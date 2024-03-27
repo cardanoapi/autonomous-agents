@@ -28,8 +28,8 @@ class TestApplicationLoader:
                 "bind": "0.0.0.0:3000",
                 "workers": 3,
                 "daemon": True,
-                "pidfile": "/tmp/api.pid"
-            }
+                "pidfile": "/tmp/api.pid",
+            },
         )
 
         # then

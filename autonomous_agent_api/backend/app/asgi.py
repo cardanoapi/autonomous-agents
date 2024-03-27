@@ -1,4 +1,5 @@
 """Application implementation - ASGI."""
+
 import logging
 
 from fastapi import FastAPI
@@ -17,6 +18,7 @@ log = logging.getLogger(__name__)
 
 from backend.config.logger import logger
 
+
 async def on_startup() -> None:
     """Define FastAPI startup event handler.
 
@@ -29,9 +31,9 @@ async def on_startup() -> None:
         await RedisClient.open_redis_client()
 
     AiohttpClient.get_aiohttp_client()
-    
-    logger.info('Starting Server')
-     
+
+    logger.info("Starting Server")
+
     await prisma_connection.connect()
 
 

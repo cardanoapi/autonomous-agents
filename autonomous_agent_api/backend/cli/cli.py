@@ -1,4 +1,5 @@
 """Command-line interface - root."""
+
 from typing import Dict, Any
 import logging
 

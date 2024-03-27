@@ -14,6 +14,7 @@ Resources:
     https://pydantic-docs.helpmanual.io/
 
 """
+
 from backend.app.asgi import get_application
 
 

@@ -5,8 +5,8 @@ import pytest
 
 client = TestClient(get_application())
 
+
 @pytest.mark.ping
 def test_ping():
-    response = client.get('/api/ping')
+    response = client.get("/api/ping")
     assert response.status_code == status.HTTP_200_OK
-
