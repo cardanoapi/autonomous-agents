@@ -1,5 +1,3 @@
-# agent_repository.py
-
 import uuid
 from backend.app.models.agent_dto import AgentCreateDTO
 from prisma import Prisma
