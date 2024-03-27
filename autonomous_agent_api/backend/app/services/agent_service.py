@@ -1,6 +1,8 @@
 # agent_service.py
+from typing import List
 
 from backend.app.models.agent_dto import AgentCreateDTO
+from backend.app.models.response_dto import AgentResponse
 from backend.app.repositories.agent_repository import AgentRepository
 
 class AgentService:
@@ -8,8 +10,22 @@ class AgentService:
         self.agent_repository = agent_repository
 
     async def create_agent(self, agent_data: AgentCreateDTO):
-        agent_repository = AgentRepository()
-        return await agent_repository.save_agent(agent_data)
 
+        return await self.agent_repository.save_agent(agent_data)
+
+    async def list_agents(self) -> List[AgentResponse]:
+        return await self.agent_repository.list_agents()
+
+
+    async def get_agent(self, agent_id: str) -> AgentResponse:
+        return await self.agent_repository.get_agent(agent_id)
+
+
+    async def update_agent(self, agent_id: str, agent_data: AgentCreateDTO) -> AgentResponse:
+        return await self.agent_repository.update_agent(agent_id, agent_data)
+
+
+    async def delete_agent(self, agent_id: str) -> None:
+        await self.agent_repository.delete_agent(agent_id)
 
 
