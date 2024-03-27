@@ -1,5 +1,6 @@
 """Application implementation - ASGI."""
 import logging
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from backend.config import settings
@@ -16,7 +17,7 @@ from backend.config.database import prisma_connection
 log = logging.getLogger(__name__)
 
 
-
+# updated startup and shutdown event with lifespan event due to deprecation issue
 @asynccontextmanager
 async def lifespan(app: FastAPI):
 
@@ -39,40 +40,7 @@ async def lifespan(app: FastAPI):
 
     await prisma_connection.disconnect()
 
-# async def on_startup() -> None:
-#     """Define FastAPI startup event handler.
-#
-#     Resources:
-#         1. https://fastapi.tiangolo.com/advanced/events/#startup-event
-#
-#     """
-#     log.debug("Execute FastAPI startup event handler.")
-#     if settings.USE_REDIS:
-#         await RedisClient.open_redis_client()
-#
-#     AiohttpClient.get_aiohttp_client()
-#
-#
-#     print("Starting Server")
-#
-#     await prisma_connection.connect()
 
-
-# async def on_shutdown() -> None:
-#     """Define FastAPI shutdown event handler.
-#
-#     Resources:
-#         1. https://fastapi.tiangolo.com/advanced/events/#shutdown-event
-#
-#     """
-#     log.debug("Execute FastAPI shutdown event handler.")
-#     # Gracefully close utilities.
-#     if settings.USE_REDIS:
-#         await RedisClient.close_redis_client()
-#
-#     await AiohttpClient.close_aiohttp_client()
-#
-#     await prisma_connection.disconnect()
 
 
 def get_application() -> FastAPI:
