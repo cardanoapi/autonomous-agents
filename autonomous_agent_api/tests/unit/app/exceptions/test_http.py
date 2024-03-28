@@ -9,7 +9,6 @@ from backend.app.exceptions import (
 
 
 class TestHttpException:
-
     @pytest.mark.parametrize(
         "status_code, content, headers",
         [
@@ -55,7 +54,6 @@ class TestHttpException:
 
 
 class TestHttpExceptionHandler:
-
     @pytest.fixture
     def fastapi_request(self):
         yield mock.Mock(spec=Request)

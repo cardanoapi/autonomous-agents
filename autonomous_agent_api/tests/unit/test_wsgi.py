@@ -3,7 +3,6 @@ from backend import ApplicationLoader
 
 
 class TestApplicationLoader:
-
     def test_should_create_wsgi_and_populate_defaults(self, asgi_app):
         # given / when
         wsgi = ApplicationLoader(asgi_app)

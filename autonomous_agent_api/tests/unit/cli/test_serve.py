@@ -13,7 +13,6 @@ fake_pid_file = os.path.join(
 
 
 class TestCliServeCommand:
-
     @pytest.fixture
     def patched_serve(self, asgi_app):
         cmd = copy.deepcopy(serve)

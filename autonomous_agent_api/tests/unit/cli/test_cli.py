@@ -3,7 +3,6 @@ from backend.cli import cli
 
 
 class TestCliRoot:
-
     def test_should_exit_zero_when_invoked_empty(self, cli_runner):
         # given / when
         result = cli_runner.invoke(cli)

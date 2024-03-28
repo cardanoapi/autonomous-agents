@@ -7,7 +7,6 @@ from backend.cli.utils import validate_directory
 
 
 class TestValidateDirectory:
-
     def test_should_return_original_value(self):
         # given / when
         path = os.path.dirname(__file__)
