@@ -15,4 +15,4 @@ root_api_router.include_router(ready.router, tags=["ready"])
 
 root_api_router.include_router(demo.router , tags=['test'])
 
-root_api_router.include_router(agent_router.router , tags=['agent'])
+root_api_router.include_router(agent_router.AgentRouter().router , tags=['agent'])

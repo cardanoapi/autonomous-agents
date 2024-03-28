@@ -364,6 +364,21 @@ files = [
 ]
 
 [[package]]
+name = "classy-fastapi"
+version = "0.6.1"
+description = "Class based routing for FastAPI"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "classy-fastapi-0.6.1.tar.gz", hash = "sha256:5dfc33bab8e01e07c56855b78ce9a8152c871ab544a565d0d3d05a5c1ca4ed68"},
+    {file = "classy_fastapi-0.6.1-py3-none-any.whl", hash = "sha256:196e5c2890269627d52851f3f86001a0dfda0070053d38f8a7bd896ac2f67737"},
+]
+
+[package.dependencies]
+fastapi = ">=0.73.0,<1.0.0"
+pydantic = ">=1.10.2,<3.0.0"
+
+[[package]]
 name = "click"
 version = "8.1.7"
 description = "Composable command line interface toolkit"
@@ -2457,4 +2472,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "13c7ed6dafe89d8b6001ae013446c19e7c4127f614d81c3ee4be1bab94a3e9e9"
+content-hash = "a97d468307d264141204de750e21ce7a7c88be33d8257508a7ac1b31d33419c4"
