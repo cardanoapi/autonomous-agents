@@ -9,6 +9,7 @@ from backend.app.services.agent_service import AgentService
 from backend.app.models.response_dto import AgentResponse
 from backend.dependency import get_agent_service
 
+
 class AgentRouter(Routable):
     def __init__(self, agent_service: AgentService = get_agent_service(), *args, **kwargs):
         super().__init__(*args, **kwargs)

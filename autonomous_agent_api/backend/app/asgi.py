@@ -21,7 +21,6 @@ log = logging.getLogger(__name__)
 # updated startup and shutdown event with lifespan event due to deprecation issue
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-
     log.debug("Execute FastAPI startup event handler.")
     if settings.USE_REDIS:
         await RedisClient.open_redis_client()
@@ -43,8 +42,6 @@ async def lifespan(app: FastAPI):
     logger.info("Stopping Server")
 
 
-
-
 def get_application() -> FastAPI:
     """Initialize FastAPI application.
 
@@ -60,7 +57,7 @@ def get_application() -> FastAPI:
         docs_url=settings.DOCS_URL,
         # on_startup=[on_startup],
         # on_shutdown=[on_shutdown],
-        lifespan = lifespan
+        lifespan=lifespan,
     )
     log.debug("Add application routes.")
     app.include_router(root_api_router)

@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime,UTC
+from datetime import datetime, UTC
 
 
 from typing import List
@@ -9,6 +9,7 @@ from fastapi import HTTPException
 from backend.app.models.agent_dto import AgentCreateDTO
 from backend.app.models.response_dto import AgentResponse
 from backend.config.database import prisma_connection
+
 
 class AgentRepository:
     async def save_agent(self, agent_data: AgentCreateDTO):
@@ -45,8 +46,7 @@ class AgentRepository:
 
             agent_data.updated_at = datetime.utcnow()
             updated_agent = await prisma_connection.prisma.agent.update(
-                where={"id": agent_id},
-                data=agent_data.dict(exclude_unset=True)
+                where={"id": agent_id}, data=agent_data.dict(exclude_unset=True)
             )
             return updated_agent
 
@@ -58,7 +58,4 @@ class AgentRepository:
             elif agent.deleted_at is not None:
                 raise HTTPException(status_code=404, detail="Agent has already been deleted")
 
-            await prisma_connection.prisma.agent.update(
-                where={"id": agent_id},
-                data={"deleted_at": datetime.now(UTC)}
-            )
+            await prisma_connection.prisma.agent.update(where={"id": agent_id}, data={"deleted_at": datetime.now(UTC)})
