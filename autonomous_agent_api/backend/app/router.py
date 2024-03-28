@@ -4,7 +4,6 @@ Defines all FastAPI application endpoints.
 
 Resources:
     1. https://fastapi.tiangolo.com/tutorial/bigger-applications
-
 """
 from fastapi import APIRouter
 from backend.app.controllers import ready, demo, agent_router

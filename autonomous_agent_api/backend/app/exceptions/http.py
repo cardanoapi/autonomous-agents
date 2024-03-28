@@ -1,4 +1,5 @@
 """Application implementation - custom FastAPI HTTP exception with handler."""
+
 from typing import Any, Optional, Dict
 
 from fastapi import Request

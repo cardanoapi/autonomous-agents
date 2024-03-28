@@ -14,6 +14,7 @@ Resources:
     https://docs.gunicorn.org/en/20.1.0/
 
 """
+
 from backend.config.application import settings
 from backend.config.redis import redis
 

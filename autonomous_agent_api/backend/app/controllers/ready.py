@@ -1,4 +1,5 @@
 """Application implementation - Ready controller."""
+
 import logging
 
 from fastapi import APIRouter

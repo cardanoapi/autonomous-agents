@@ -1,4 +1,5 @@
 """Application implementation - error response."""
+
 from typing import Dict, Any, Optional, List, Union
 from http import HTTPStatus
 
