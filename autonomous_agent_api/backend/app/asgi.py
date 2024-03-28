@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from backend.config import settings
 from backend.app.router import root_api_router
+from backend.config.logger import logger
 from backend.app.utils import RedisClient, AiohttpClient
 
 from backend.app.exceptions import (
@@ -27,7 +28,7 @@ async def lifespan(app: FastAPI):
 
     AiohttpClient.get_aiohttp_client()
 
-    print("Starting Server")
+    logger.info("Starting Server")
 
     await prisma_connection.connect()
     yield
@@ -39,6 +40,7 @@ async def lifespan(app: FastAPI):
     await AiohttpClient.close_aiohttp_client()
 
     await prisma_connection.disconnect()
+    logger.info("Stopping Server")
 
 
 
