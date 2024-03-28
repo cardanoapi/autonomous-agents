@@ -4,6 +4,7 @@
 This project is currently under development. Follow this guide for Local Backend setup.
 
 
+Please update CHANGELOG MD if any changes has been made in project
 
 ## Requirments
 
@@ -75,8 +76,6 @@ Run the following command inside **autonomous_agent_api** folder to build and st
 ```bash
   docker compose up
 ```
-
-This will start the server at http://localhost:8000/. Make sure that the Postgres Database container is running as well.
 
 
 This will start the server at http://localhost:8000/. Make sure that the Postgres Database container is running as well.
