@@ -1,20 +1,21 @@
 generator client {
-    provider = "prisma-client-py"
-    interface = "asyncio"
-    recursive_type_depth = 5
+  provider             = "prisma-client-py"
+  interface            = "asyncio"
+  recursive_type_depth = 5
 }
 
 datasource db {
-    provider = "postgresql"
-    url = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-model Test_Post {
-    id Int @id @default(autoincrement())
-    text String
-}
-
-model Test_User{
-    id Int @id @default(autoincrement())
-    text String
+// Agent table model
+model Agent {
+  id         String    @id // UUID
+  name       String
+  action     String[]  @default([])
+  triggers   String[]  @default([])
+  created_at DateTime?
+  updated_at DateTime?
+  deleted_at DateTime? // Soft deletion field
 }

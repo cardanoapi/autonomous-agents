@@ -1,31 +1,23 @@
 """Application implementation - ASGI."""
 
 import logging
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+
 from backend.config import settings
 from backend.app.router import root_api_router
+from backend.config.logger import logger
 from backend.app.utils import RedisClient, AiohttpClient
-
-from backend.app.exceptions import (
-    HTTPException,
-    http_exception_handler,
-)
-
+from backend.app.exceptions import HTTPException, http_exception_handler
 from backend.config.database import prisma_connection
 
 log = logging.getLogger(__name__)
 
-from backend.config.logger import logger
 
-
-async def on_startup() -> None:
-    """Define FastAPI startup event handler.
-
-    Resources:
-        1. https://fastapi.tiangolo.com/advanced/events/#startup-event
-
-    """
+# updated startup and shutdown event with lifespan event due to deprecation issue
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     log.debug("Execute FastAPI startup event handler.")
     if settings.USE_REDIS:
         await RedisClient.open_redis_client()
@@ -35,15 +27,7 @@ async def on_startup() -> None:
     logger.info("Starting Server")
 
     await prisma_connection.connect()
-
-
-async def on_shutdown() -> None:
-    """Define FastAPI shutdown event handler.
-
-    Resources:
-        1. https://fastapi.tiangolo.com/advanced/events/#shutdown-event
-
-    """
+    yield
     log.debug("Execute FastAPI shutdown event handler.")
     # Gracefully close utilities.
     if settings.USE_REDIS:
@@ -52,6 +36,7 @@ async def on_shutdown() -> None:
     await AiohttpClient.close_aiohttp_client()
 
     await prisma_connection.disconnect()
+    logger.info("Stopping Server")
 
 
 def get_application() -> FastAPI:
@@ -67,8 +52,7 @@ def get_application() -> FastAPI:
         debug=settings.DEBUG,
         version=settings.VERSION,
         docs_url=settings.DOCS_URL,
-        on_startup=[on_startup],
-        on_shutdown=[on_shutdown],
+        lifespan=lifespan,
     )
     log.debug("Add application routes.")
     app.include_router(root_api_router)

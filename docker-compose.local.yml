@@ -1,33 +1,33 @@
 version: '3.8'
 
-networks:
-  postgres:
-    name: postgres
-    attachable: true
-
 services:
   postgres:
     image: postgres:16.2
+    container_name: postgres_container
     environment:
      POSTGRES_DB: cardano_autonomous_agent_testing_db
      POSTGRES_USER: root
      POSTGRES_PASSWORD: root
-    networks:
-      - postgres
     ports:
       - "5432:5432"
+    networks:
+      - pg-network
     volumes:
       - pg-data:/var/lib/postgresql/data
 
   pgadmin:
     image: dpage/pgadmin4:8.2
-    networks:
-      - postgres
+    container_name: pg-admin
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@pgadmin.com
       PGADMIN_DEFAULT_PASSWORD: password
     ports:
       - "5050:80"
+    networks:
+      - pg-network
+
+networks:
+  pg-network:
 
 volumes:
   pg-data:

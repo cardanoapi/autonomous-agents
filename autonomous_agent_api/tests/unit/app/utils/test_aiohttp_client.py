@@ -5,7 +5,6 @@ from backend.app.utils import AiohttpClient
 
 
 class TestAiohttpClient:
-
     @pytest.fixture
     def fake_web(self):
         with aioresponses() as mock:

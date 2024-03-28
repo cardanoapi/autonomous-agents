@@ -7,7 +7,6 @@ from backend.config import redis as redis_conf
 
 
 class TestRedisClient:
-
     @pytest.fixture
     def async_mock(self):
         yield mock.AsyncMock()

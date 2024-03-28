@@ -1406,13 +1406,13 @@ ssh = ["paramiko"]
 
 [[package]]
 name = "prisma"
-version = "0.13.0"
+version = "0.13.1"
 description = "Prisma Client Python is an auto-generated and fully type-safe database client"
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "prisma-0.13.0-py3-none-any.whl", hash = "sha256:9544f1d54c4a8ffda3d434b2185658572c67a3edd9e3829523040488b7d0252a"},
-    {file = "prisma-0.13.0.tar.gz", hash = "sha256:cfac7a46a4b307ea24d7484fb869d613a5b9dfa90176c555dec8179ef9fe6a8e"},
+    {file = "prisma-0.13.1-py3-none-any.whl", hash = "sha256:b79ad69bdf09b217431904c1250c36421233ea394a230f1665f5699fd842ea20"},
+    {file = "prisma-0.13.1.tar.gz", hash = "sha256:f0f86a67c38e6f08b53cce9272dd9c736f69f4fcbb94dbdfa87bf44f983e925d"},
 ]
 
 [package.dependencies]
@@ -1733,13 +1733,13 @@ files = [
 
 [[package]]
 name = "pyyaml-include"
-version = "1.3.2"
+version = "1.4.1"
 description = "Extending PyYAML with a custom constructor for including YAML files within YAML files"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.6"
 files = [
-    {file = "pyyaml-include-1.3.2.tar.gz", hash = "sha256:a516d5172092ec110a427dafe171da9341fe488eb6d1c78fb52f1f0414dec26d"},
-    {file = "pyyaml_include-1.3.2-py3-none-any.whl", hash = "sha256:cc0c0a1e4c2a91e4f0b1aea83634fe8b622fe90fc3be8e8293f1e47c5ed6001b"},
+    {file = "pyyaml-include-1.4.1.tar.gz", hash = "sha256:1a96e33a99a3e56235f5221273832464025f02ff3d8539309a3bf00dec624471"},
+    {file = "pyyaml_include-1.4.1-py3-none-any.whl", hash = "sha256:323c7f3a19c82fbc4d73abbaab7ef4f793e146a13383866831631b26ccc7fb00"},
 ]
 
 [package.dependencies]

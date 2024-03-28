@@ -1,9 +1,10 @@
 
 # Backend Setup Guide
 
-This project is currently under development. Follow this guide for Local Backend setup. Update any changes you make to the CHANGELOG.
+This project is currently under development. Follow this guide for Local Backend setup.
 
 
+Please update CHANGELOG MD if any changes has been made in project
 
 ## Requirments
 
@@ -38,6 +39,11 @@ Run this command inside autonomous_agent_api folder to install necessary python 
 Inside **autonomous_agent_api** make a new **.env** file by copying the existing **.env.example.** file . This contains env variable for prsima client orm to connect to the postgres database.
 
 
+Run this command for generating the database client and creating the required table mentioned in schema
+
+```bash
+   prisma generate
+```
 
 
 ## Running the Server
@@ -71,9 +77,11 @@ Run the following command inside **autonomous_agent_api** folder to build and st
   docker compose up
 ```
 
+
 This will start the server at http://localhost:8000/. Make sure that the Postgres Database container is running as well.
 
 You can compose your own current backend image as well by running the following command inside autonomous_agnet_api folder.
 ```bash
   docker build -t backend:0.3 .
 ```
+
