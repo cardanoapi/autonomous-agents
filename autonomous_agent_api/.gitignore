@@ -41,4 +41,6 @@ site/
 result
 
 #environment variables
-.env 
+.env
+
+app.log

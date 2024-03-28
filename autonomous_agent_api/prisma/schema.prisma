@@ -15,5 +15,7 @@ model Agent {
   name       String
   action     String[]  @default([])
   triggers   String[]  @default([])
+  created_at DateTime?
+  updated_at DateTime?
   deleted_at DateTime? // Soft deletion field
 }

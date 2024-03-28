@@ -1,15 +1,11 @@
-# container.py
-
-from dependency_injector import containers, providers
-from backend.app.repositories.agent_repository import AgentRepository
-from backend.app.services.agent_service import AgentService
-
-class Container(containers.DeclarativeContainer):
-    config = providers.Configuration()
-
-    agent_repository = providers.Singleton(AgentRepository)
-    agent_service = providers.Singleton(AgentService, agent_repository=agent_repository)
-
-container = Container()
-
-container.agent_service()
+# from dependency_injector import containers, providers
+# from prisma import Client
+# from backend.app.repositories.agent_repository import AgentRepository
+# from backend.app.services.agent_service import AgentService
+# import os
+#
+#
+# class Container(containers.DeclarativeContainer):
+#     # Define a provider for PrismaClient
+#     prisma_client = providers.Singleton(Client, dsn=os.getenv("DATABASE_URL"))
+#

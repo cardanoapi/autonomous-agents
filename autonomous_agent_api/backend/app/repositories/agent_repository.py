@@ -16,6 +16,7 @@ class AgentRepository:
         agent_id = str(uuid.uuid4())
         agent_data_dict = agent_data.dict()
         agent_data_dict["id"] = agent_id
+        agent_data_dict["created_at"] = datetime.now(UTC)
 
         async with prisma_connection:
             agent = await prisma_connection.prisma.agent.create(data=agent_data_dict)
@@ -29,10 +30,8 @@ class AgentRepository:
     async def retrieve_agent(self, agent_id: str) -> AgentResponse:
         async with prisma_connection:
             agent = await prisma_connection.prisma.agent.find_first(where={"id": agent_id})
-            if agent is None:
+            if agent is None or agent.deleted_at is not None:
                 raise HTTPException(status_code=404, detail="Agent not found")
-            elif agent.deleted_at is not None:
-                raise HTTPException(status_code=404, detail="Agent has been deleted")
             else:
                 return agent
 
@@ -44,6 +43,7 @@ class AgentRepository:
             elif agent.deleted_at is not None:
                 raise HTTPException(status_code=404, detail="Agent has been deleted")
 
+            agent_data.updated_at = datetime.utcnow()
             updated_agent = await prisma_connection.prisma.agent.update(
                 where={"id": agent_id},
                 data=agent_data.dict(exclude_unset=True)
