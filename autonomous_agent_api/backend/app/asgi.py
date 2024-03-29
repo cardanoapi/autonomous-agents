@@ -1,5 +1,6 @@
 """Application implementation - ASGI."""
 
+import os
 import logging
 from contextlib import asynccontextmanager
 
@@ -26,8 +27,9 @@ async def lifespan(app: FastAPI):
 
     logger.info("Starting Server")
 
-    if type(app , get_application):
-     await prisma_connection.connect()
+    if not os.environ.get('TESTING'): #check if its a testing enironment , if not then connect to databse
+        await prisma_connection.connect()
+
     yield
     log.debug("Execute FastAPI shutdown event handler.")
      # Gracefully close utilities.
@@ -36,7 +38,10 @@ async def lifespan(app: FastAPI):
 
     await AiohttpClient.close_aiohttp_client()
 
-    await prisma_connection.disconnect()
+
+    if not os.environ.get('TESTING'): #check if it's not a testing env , if not close databse connection
+     await prisma_connection.disconnect()   
+
     logger.info("Stopping Server")
 
 
@@ -66,7 +71,13 @@ def get_application() -> FastAPI:
 def get_test_application() -> FastAPI:
     """
      Initialize FastApi application for testing
+
+     Returns:
+      FastAPI : Application object instance
+
     """
+    os.environ.__setattr__('TESTING' , True)
+
     logging.info("Setting up Test Environment")
     app = FastAPI(
         title=settings.PROJECT_NAME,
