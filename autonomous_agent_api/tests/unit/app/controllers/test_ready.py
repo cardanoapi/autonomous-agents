@@ -1,4 +1,5 @@
 from backend.config import settings
+from tests.unit.app.conftest import app_runner
 
 
 class TestReadyController:
