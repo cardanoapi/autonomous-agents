@@ -26,10 +26,11 @@ async def lifespan(app: FastAPI):
 
     logger.info("Starting Server")
 
-    await prisma_connection.connect()
+    if type(app , get_application):
+     await prisma_connection.connect()
     yield
     log.debug("Execute FastAPI shutdown event handler.")
-    # Gracefully close utilities.
+     # Gracefully close utilities.
     if settings.USE_REDIS:
         await RedisClient.close_redis_client()
 
@@ -59,4 +60,23 @@ def get_application() -> FastAPI:
     log.debug("Register global exception handler for custom HTTPException.")
     app.add_exception_handler(HTTPException, http_exception_handler)
 
+    return app
+
+
+def get_test_application() -> FastAPI:
+    """
+     Initialize FastApi application for testing
+    """
+    logging.info("Setting up Test Environment")
+    app = FastAPI(
+        title=settings.PROJECT_NAME,
+        debug=settings.DEBUG,
+        version=settings.VERSION,
+        docs_url=settings.DOCS_URL,
+        lifespan=lifespan,
+    )
+    log.debug("Add application routes.")
+    app.include_router(root_api_router)
+    log.debug("Register global exception handler for custom HTTPException.")
+    app.add_exception_handler(HTTPException, http_exception_handler)
     return app
