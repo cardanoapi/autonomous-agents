@@ -27,9 +27,7 @@ async def lifespan(app: FastAPI):
 
     logger.info("Starting Server")
 
-    if not os.environ.get(
-        "TESTING"
-    ):  # check if its a testing enironment , if not then connect to databse
+    if not os.environ.get("TESTING"):  # check if its a testing enironment , if not then connect to databse
         await prisma_connection.connect()
 
     yield
@@ -40,9 +38,7 @@ async def lifespan(app: FastAPI):
 
     await AiohttpClient.close_aiohttp_client()
 
-    if not os.environ.get(
-        "TESTING"
-    ):  # check if it's not a testing env , if not close databse connection
+    if not os.environ.get("TESTING"):  # check if it's not a testing env , if not close databse connection
         await prisma_connection.disconnect()
 
     logger.info("Stopping Server")

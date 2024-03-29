@@ -11,9 +11,7 @@ from backend.dependency import get_agent_service
 
 
 class AgentRouter(Routable):
-    def __init__(
-        self, agent_service: AgentService = get_agent_service(), *args, **kwargs
-    ):
+    def __init__(self, agent_service: AgentService = get_agent_service(), *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.agent_service = agent_service
 
@@ -23,9 +21,7 @@ class AgentRouter(Routable):
             agent = await self.agent_service.create_agent(agent_data)
             return agent
         except Exception as e:
-            raise HTTPException(
-                status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail=str(e)
-            )
+            raise HTTPException(status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail=str(e))
 
     @get("/agents/", response_model=List[AgentResponse])
     async def list_agents(self):
