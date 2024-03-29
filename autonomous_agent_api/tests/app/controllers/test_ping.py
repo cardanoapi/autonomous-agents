@@ -3,10 +3,10 @@ from fastapi.testclient import TestClient
 from fastapi import status
 import pytest
 
-client = TestClient(get_test_application)
+client = TestClient(get_test_application())
 
 
-@pytest.mark.ping
+@pytest.mark.github_actions
 def test_ping():
     response = client.get("/api/ping")
     assert response.status_code == status.HTTP_200_OK
