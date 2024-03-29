@@ -36,7 +36,7 @@ jobs:
         working-directory: autonomous_agent_api
         env:
           DATABASE_URL : ""
-        run: poetry run pytest -m ping
+        run: poetry run pytest -m github_actions
 
   build_on_pr:
     if: github.event_name == 'pull_request'
