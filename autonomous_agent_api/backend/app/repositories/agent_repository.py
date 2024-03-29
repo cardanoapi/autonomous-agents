@@ -25,35 +25,51 @@ class AgentRepository:
 
     async def retrieve_agents(self) -> List[AgentResponse]:
         async with prisma_connection:
-            agents = await prisma_connection.prisma.agent.find_many(where={"deleted_at": None})
+            agents = await prisma_connection.prisma.agent.find_many(
+                where={"deleted_at": None}
+            )
             return agents
 
     async def retrieve_agent(self, agent_id: str) -> AgentResponse:
         async with prisma_connection:
-            agent = await prisma_connection.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})
+            agent = await prisma_connection.prisma.agent.find_first(
+                where={"id": agent_id, "deleted_at": None}
+            )
             if agent is None:
                 raise HTTPException(status_code=404, detail="Agent not found")
             else:
                 return agent
 
-    async def modify_agent(self, agent_id: str, agent_data: AgentCreateDTO) -> AgentResponse:
+    async def modify_agent(
+        self, agent_id: str, agent_data: AgentCreateDTO
+    ) -> AgentResponse:
         async with prisma_connection:
-            agent = await prisma_connection.prisma.agent.find_first(where={"id": agent_id})
+            agent = await prisma_connection.prisma.agent.find_first(
+                where={"id": agent_id}
+            )
             if agent is None or agent.deleted_at is not None:
                 raise HTTPException(status_code=404, detail="Agent not found")
 
             updated_data = agent_data.dict(exclude_unset=True)
             updated_data["updated_at"] = datetime.utcnow()
 
-            updated_agent = await prisma_connection.prisma.agent.update(where={"id": agent_id}, data=updated_data)
+            updated_agent = await prisma_connection.prisma.agent.update(
+                where={"id": agent_id}, data=updated_data
+            )
             return updated_agent
 
     async def remove_agent(self, agent_id: str) -> None:
         async with prisma_connection:
-            agent = await prisma_connection.prisma.agent.find_first(where={"id": agent_id})
+            agent = await prisma_connection.prisma.agent.find_first(
+                where={"id": agent_id}
+            )
             if agent is None:
                 raise HTTPException(status_code=404, detail="Agent not found")
             elif agent.deleted_at is not None:
-                raise HTTPException(status_code=404, detail="Agent has already been deleted")
+                raise HTTPException(
+                    status_code=404, detail="Agent has already been deleted"
+                )
 
-            await prisma_connection.prisma.agent.update(where={"id": agent_id}, data={"deleted_at": datetime.now(UTC)})
+            await prisma_connection.prisma.agent.update(
+                where={"id": agent_id}, data={"deleted_at": datetime.now(UTC)}
+            )

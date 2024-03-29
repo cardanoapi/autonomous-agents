@@ -1,0 +1,21 @@
+2024-03-29 12:45:59 - INFO - Setting up Test Environment
+2024-03-29 12:46:00 - ERROR - Invalid value for workers: None
+2024-03-29 12:46:00 - INFO - Starting Server
+2024-03-29 12:46:10 - CRITICAL - Error Connecting to Database: Could not connect to the query engine
+2024-03-29 12:46:10 - INFO - Starting Server
+2024-03-29 12:46:24 - INFO - Setting up Test Environment
+2024-03-29 12:46:24 - ERROR - Invalid value for workers: None
+2024-03-29 12:46:24 - INFO - Starting Server
+2024-03-29 12:46:43 - INFO - Setting up Test Environment
+2024-03-29 12:54:00 - INFO - Setting up Test Environment
+2024-03-29 12:54:00 - ERROR - Invalid value for workers: None
+2024-03-29 12:54:00 - INFO - Starting Server
+2024-03-29 12:54:07 - INFO - Setting up Test Environment
+2024-03-29 12:54:25 - INFO - Setting up Test Environment
+2024-03-29 12:54:25 - ERROR - Invalid value for workers: None
+2024-03-29 12:54:25 - INFO - Starting Server
+2024-03-29 12:54:32 - INFO - Setting up Test Environment
+2024-03-29 12:59:42 - INFO - Setting up Test Environment
+2024-03-29 12:59:42 - ERROR - Invalid value for workers: None
+2024-03-29 12:59:42 - INFO - Starting Server
+2024-03-29 12:59:52 - INFO - Setting up Test Environment

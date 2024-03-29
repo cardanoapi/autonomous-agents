@@ -19,7 +19,9 @@ class AgentService:
     async def get_agent(self, agent_id: str) -> AgentResponse:
         return await self.agent_repository.retrieve_agent(agent_id)
 
-    async def update_agent(self, agent_id: str, agent_data: AgentCreateDTO) -> AgentResponse:
+    async def update_agent(
+        self, agent_id: str, agent_data: AgentCreateDTO
+    ) -> AgentResponse:
         return await self.agent_repository.modify_agent(agent_id, agent_data)
 
     async def delete_agent(self, agent_id: str) -> None:
