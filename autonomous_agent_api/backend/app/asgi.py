@@ -27,8 +27,7 @@ async def lifespan(app: FastAPI):
 
     logger.info("Starting Server")
 
-    if not os.environ.get("TESTING"):  # check if its a testing enironment , if not then connect to databse
-        await prisma_connection.connect()
+    await prisma_connection.connect()
 
     yield
     log.debug("Execute FastAPI shutdown event handler.")
@@ -38,10 +37,27 @@ async def lifespan(app: FastAPI):
 
     await AiohttpClient.close_aiohttp_client()
 
-    if not os.environ.get("TESTING"):  # check if it's not a testing env , if not close databse connection
-        await prisma_connection.disconnect()
+    await prisma_connection.disconnect()
 
     logger.info("Stopping Server")
+
+
+# Lifespan used for Test Environmnet : Configurations such as Live Database and Redis is Disabled.
+# todo : Mock Database setup required for testing
+@asynccontextmanager
+async def test_lifespan(app: FastAPI):
+    log.debug("Execute FastAPI startup event handler.")
+    if settings.USE_REDIS:
+        await RedisClient.open_redis_client()
+
+    AiohttpClient.get_aiohttp_client()
+
+    logger.info("Starting Test Server")
+
+    yield
+    log.debug("Execute FastAPI shutdown event handler.")
+
+    logger.info("Stopping Test Server")
 
 
 def get_application() -> FastAPI:
@@ -52,6 +68,7 @@ def get_application() -> FastAPI:
 
     """
     log.debug("Initialize FastAPI application node.")
+
     app = FastAPI(
         title=settings.PROJECT_NAME,
         debug=settings.DEBUG,
@@ -69,7 +86,7 @@ def get_application() -> FastAPI:
 
 def get_test_application() -> FastAPI:
     """
-    Initialize FastApi application for testing
+    Initialize FastApi application for testing environment
 
     Returns:
      FastAPI : Application object instance
@@ -83,7 +100,7 @@ def get_test_application() -> FastAPI:
         debug=settings.DEBUG,
         version=settings.VERSION,
         docs_url=settings.DOCS_URL,
-        lifespan=lifespan,
+        lifespan=test_lifespan,
     )
     log.debug("Add application routes.")
     app.include_router(root_api_router)
