@@ -47,8 +47,6 @@ async def lifespan(app: FastAPI):
 @asynccontextmanager
 async def test_lifespan(app: FastAPI):
     log.debug("Execute FastAPI startup event handler.")
-    if settings.USE_REDIS:
-        await RedisClient.open_redis_client()
 
     AiohttpClient.get_aiohttp_client()
 
