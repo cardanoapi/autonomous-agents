@@ -1,6 +1,7 @@
 from fastapi import WebSocket, APIRouter, WebSocketDisconnect , WebSocketException
 from backend.config.database import prisma_connection
 from fastapi import status
+from datetime import datetime
 
 router = APIRouter()
 
@@ -49,6 +50,7 @@ async def agent_websocket_endpoint(websocket: WebSocket):
             while True:
                 data = await websocket.receive_text()
                 print(f"Received Data: {data}")
+                await websocket.send_text(f"Ping recieved from {websocket_agent_id} at {datetime.now()}")
         except WebSocketDisconnect:
             await manager.disconnect_websocket(websocket_agent_id)
     else:
