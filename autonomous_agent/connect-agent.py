@@ -6,7 +6,7 @@ default_ping_timeout = 10  # Sends a ping every 10 second
 
 async def connect_to_server(agent_id):
     
-    uri = "ws://127.0.0.1:8000/api/ws"
+    uri = "ws://127.0.0.1:8000/api/agent/ws"
     headers = {"agent_id": agent_id}
 
     async with websockets.connect(uri, extra_headers=headers) as websocket:

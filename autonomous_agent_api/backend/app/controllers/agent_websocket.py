@@ -30,7 +30,7 @@ class WebSocket_Connection_Manager:
 manager = WebSocket_Connection_Manager()
 
 
-@router.websocket('/ws')
+@router.websocket('/agent/ws')
 async def agent_websocket_endpoint(websocket: WebSocket):
     # todo: Cookies Authentication
     
