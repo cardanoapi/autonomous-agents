@@ -15,13 +15,10 @@ class AgentRouter(Routable):
         super().__init__(*args, **kwargs)
         self.agent_service = agent_service
 
-    @post("/create_agents/", status_code=HTTPStatus.CREATED)
+    @post("/agents/", status_code=HTTPStatus.CREATED)
     async def create_agent(self, agent_data: AgentCreateDTO):
-        try:
-            agent = await self.agent_service.create_agent(agent_data)
-            return agent
-        except Exception as e:
-            raise HTTPException(status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail=str(e))
+        agent = await self.agent_service.create_agent(agent_data)
+        return agent
 
     @get("/agents/", response_model=List[AgentResponse])
     async def list_agents(self):
