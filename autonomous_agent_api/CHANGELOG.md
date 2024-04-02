@@ -19,3 +19,5 @@
      DELETE api for soft deletion of agent.
  -created dtos model for request and response inside model directory
 
+# TITLE - AGENT Websocket , DATE- 2024-04-02
+ - Added websocket endpoint for agent websocket connection
