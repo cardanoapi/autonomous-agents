@@ -2,8 +2,8 @@ import uuid
 from datetime import datetime, timezone
 from typing import List, Optional
 from fastapi import HTTPException
-from backend.app.models.agent_dto import AgentCreateDTO
-from backend.app.models.response_dto import AgentResponse
+from backend.app.models.AgentDto.agent_dto import AgentCreateDTO
+from backend.app.models.AgentDto.response_dto import AgentResponse
 from backend.config.database import prisma_connection
 
 
@@ -20,7 +20,9 @@ class AgentRepository:
 
         async with self.db:
             agent = await self.db.prisma.agent.create(data=agent_data_dict)
-        return agent
+        agent_response = AgentResponse(id=agent_id, name=agent_data.name, action=agent_data.action)
+
+        return agent_response
 
     async def retrieve_agents(self) -> List[AgentResponse]:
         async with self.db:
@@ -55,5 +57,7 @@ class AgentRepository:
             elif agent.deleted_at is not None:
                 return True
 
-            await self.db.prisma.agent.update(where={"id": agent_id}, data={"deleted_at": datetime.now(timezone.utc)})
+            await self.db.prisma.agstringent.update(
+                where={"id": agent_id}, data={"deleted_at": datetime.now(timezone.utc)}
+            )
             return True

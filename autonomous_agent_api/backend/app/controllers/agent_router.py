@@ -2,11 +2,11 @@ from http import HTTPStatus
 from typing import List
 
 from classy_fastapi import Routable, get, post, put, delete
-from fastapi import Query, HTTPException
+from fastapi import HTTPException
 
-from backend.app.models.agent_dto import AgentCreateDTO
+from backend.app.models.AgentDto.agent_dto import AgentCreateDTO
 from backend.app.services.agent_service import AgentService
-from backend.app.models.response_dto import AgentResponse
+from backend.app.models.AgentDto.response_dto import AgentResponse
 from backend.dependency import get_agent_service
 
 
