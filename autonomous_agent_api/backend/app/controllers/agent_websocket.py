@@ -20,7 +20,7 @@ class WebSocket_Connection_Manager:
         await self.active_connections[websocket_agent_id].send_json(message)
     
     async def check_if_agent_exists_in_active_connection(self , websocket_agent_id : str):
-        # Checks if agent is already active , if active removes the connection.
+        # Checks if agent is already active in the connections list, if present remove it.
         if websocket_agent_id in self.active_connections:
             self.active_connections.pop(websocket_agent_id)
 
@@ -33,14 +33,14 @@ manager = WebSocket_Connection_Manager()
 async def agent_websocket_endpoint(websocket: WebSocket):
     # todo: Cookies Authentication
     
-    # Get agent id from the websocket header
+    # Get agent id from the websocket header.
     websocket_agent_id = websocket.headers.get('agent_id')
     print(websocket_agent_id)
     if websocket_agent_id == None:
         raise WebSocketException(code= status.WS_1008_POLICY_VIOLATION)
 
     
-    # If agent exists in the database, keep the connection; otherwise, deny the connection
+    # Check if agent with the id exists.
     agent_exists = await check_if_agent_exists(websocket_agent_id)
     if agent_exists:
         await manager.check_if_agent_exists_in_active_connection(websocket_agent_id)
@@ -57,7 +57,7 @@ async def agent_websocket_endpoint(websocket: WebSocket):
 
 async def check_if_agent_exists(agent_id: str):
     
-    # Check if agent exists in the database using the agent id
+    # Query agent with the agent id -> reurns a boolean
     async with prisma_connection:
         agent_exists = await prisma_connection.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})
     return bool(agent_exists)
