@@ -29,12 +29,11 @@ Install dependencies via poetry.
 ```
 ## Creating a new Agent.
 
-To create a new agent you need to send a post request to **api/create_agent** endpoint.
+To create a new agent you need to send a post request to **api/create_agent** endpoint. Make sure that **autonomous_agent_api** backend service and **database** are running correctly.
 
 Copy the id from the post response . The id looks something similar to **c2d4c358-5171-4be8-b273-0147cc57c204.**
 
 ## Running the service
-To run the service make sure that **autonomous_agent_api** backend service and **database** are running correctly.
 
 Activate the poetry virtual env inside **autonomous_agent** folder by running the following command.
 
