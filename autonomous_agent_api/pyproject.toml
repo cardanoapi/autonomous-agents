@@ -98,3 +98,9 @@ module = [
     "redis.*",
 ]
 ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+markers = [
+    "ping: run demo test",
+    "github_actions: Tests for Github actions",
+]

@@ -1,0 +1,41 @@
+
+name: Backend Service Testing ( Pytest )
+
+on:
+  push:
+    branches: ["master", "dev"]
+  pull_request:
+    branches: ["dev"]
+
+jobs:
+  run_backend_tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Enable Access for Branch for Workflow
+        uses: actions/checkout@v2
+        with:
+            submodules: "recursive"
+
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.12.2
+
+      - name: Install Poetry
+        working-directory: autonomous_agent_api
+        run: pip install poetry==1.8.2
+
+      - name: Install Dependencies
+        working-directory: autonomous_agent_api
+        run: |
+           poetry install
+           poetry run prisma generate
+
+      - name: Run test cases
+        working-directory: autonomous_agent_api
+        env:
+          DATABASE_URL : ""
+        run: poetry run pytest -m github_actions
+
+ 
