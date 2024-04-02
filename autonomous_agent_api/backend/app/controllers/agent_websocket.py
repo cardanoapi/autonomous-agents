@@ -36,7 +36,6 @@ async def agent_websocket_endpoint(websocket: WebSocket):
     
     # Get agent id from the websocket header.
     websocket_agent_id = websocket.headers.get('agent_id')
-    print(websocket_agent_id)
     if websocket_agent_id == None:
         raise WebSocketException(code= status.WS_1008_POLICY_VIOLATION)
 
@@ -49,7 +48,7 @@ async def agent_websocket_endpoint(websocket: WebSocket):
         try:
             while True:
                 data = await websocket.receive_text()
-                print(f"Received Data: {data}")
+                print(f"Received Data: {data} from {websocket_agent_id}")
                 await websocket.send_text(f"Ping recieved from {websocket_agent_id} at {datetime.now()}")
         except WebSocketDisconnect:
             await manager.disconnect_websocket(websocket_agent_id)
