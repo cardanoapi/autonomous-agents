@@ -1,7 +1,10 @@
+from unittest.mock import MagicMock
+
 import pytest
 from fastapi.testclient import TestClient
 from backend.app import get_application
 from backend.config import settings
+from backend.config.database import PrismaConnection
 
 
 @pytest.fixture
