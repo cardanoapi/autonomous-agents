@@ -2,6 +2,7 @@ from fastapi import WebSocket, APIRouter, WebSocketDisconnect, WebSocketExceptio
 from backend.config.database import prisma_connection
 from fastapi import status
 from datetime import datetime
+from backend.config.logger import logger
 
 router = APIRouter()
 
@@ -19,11 +20,26 @@ class WebSocket_Connection_Manager:
         self.active_connections.pop(websocket_agent_id)
 
     async def send_message_to_websocket(self, websocket_agent_id: str, message: dict):
-        await self.active_connections[websocket_agent_id].send_json(message)
+        # Checks if agent is active , first then sends message
+        agent_active = await self.check_if_agent_exists_in_active_list(websocket_agent_id)
+        if agent_active:
+            await self.active_connections[websocket_agent_id].send_json(message)
+        else:
+            logger.critical(
+                "Agent with the id {websocket_agent_id} does not exist in the active Connection list. Sending Message Failed!"
+            )
 
-    async def check_if_agent_exists_in_active_connection(self, websocket_agent_id: str):
-        # Checks if agent is already active in the connections list, if present remove it.
-        if websocket_agent_id in self.active_connections:
+    async def check_if_agent_active(self, websocket_agent_id: str):
+        # Checks if agent is present in active connection list.
+        return websocket_agent_id in self.active_connections
+
+    async def remove_previous_agent_connection_if_exists(self, websocket_agent_id: str):
+        """
+        Removes the old agent connection and creates a new one
+        If client requests websocket connection for an already active conenction.
+        """
+        agent_exists = await self.check_if_agent_active(websocket_agent_id)
+        if agent_exists:
             self.active_connections.pop(websocket_agent_id)
 
 
@@ -42,7 +58,7 @@ async def agent_websocket_endpoint(websocket: WebSocket):
     # Check if agent with the id exists.
     agent_exists = await check_if_agent_exists(websocket_agent_id)
     if agent_exists:
-        await manager.check_if_agent_exists_in_active_connection(websocket_agent_id)
+        await manager.remove_previous_agent_connection_if_exists(websocket_agent_id)
         await manager.connect_websocket(websocket_agent_id, websocket)
         try:
             while True:
@@ -56,8 +72,7 @@ async def agent_websocket_endpoint(websocket: WebSocket):
 
 
 async def check_if_agent_exists(agent_id: str):
-
-    # Query agent with the agent id -> reurns a boolean
+    # Query agent with the agent id from the database -> reurns a boolean
     async with prisma_connection:
         agent_exists = await prisma_connection.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})
     return bool(agent_exists)
