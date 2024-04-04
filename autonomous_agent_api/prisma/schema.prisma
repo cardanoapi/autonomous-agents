@@ -14,8 +14,8 @@ model Agent {
   id         String    @id // UUID
   name       String
   action     String[]  @default([])
-  created_at DateTime?
-  updated_at DateTime?
+  created_at DateTime
+  updated_at DateTime
   deleted_at DateTime? // Soft deletion field
 }
 
@@ -24,8 +24,8 @@ model Trigger {
   agent_id   String
   type       TriggerType
   data       Json
-  created_at DateTime?
-  updated_at DateTime?
+  created_at DateTime
+  updated_at DateTime
   deleted_at DateTime?
 }
 

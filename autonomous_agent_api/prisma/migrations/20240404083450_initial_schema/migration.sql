@@ -6,8 +6,8 @@ CREATE TABLE "Agent" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "action" TEXT[] DEFAULT ARRAY[]::TEXT[],
-    "created_at" TIMESTAMP(3),
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
     "deleted_at" TIMESTAMP(3),
 
     CONSTRAINT "Agent_pkey" PRIMARY KEY ("id")
@@ -19,8 +19,8 @@ CREATE TABLE "Trigger" (
     "agent_id" TEXT NOT NULL,
     "type" "TriggerType" NOT NULL,
     "data" JSONB NOT NULL,
-    "created_at" TIMESTAMP(3),
-    "updated_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL,
+    "updated_at" TIMESTAMP(3) NOT NULL,
     "deleted_at" TIMESTAMP(3),
 
     CONSTRAINT "Trigger_pkey" PRIMARY KEY ("id")

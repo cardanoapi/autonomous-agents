@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock, AsyncMock
 
 from backend.app.controllers.agent_router import AgentRouter
-from backend.app.models.AgentDto.response_dto import AgentResponse
+from backend.app.models.agent.response_dto import AgentResponse
 from backend.app.services.agent_service import AgentService
 
 import pytest

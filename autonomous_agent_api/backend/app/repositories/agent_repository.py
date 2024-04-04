@@ -2,8 +2,8 @@ import uuid
 from datetime import datetime, timezone
 from typing import List, Optional
 from fastapi import HTTPException
-from backend.app.models.AgentDto.agent_dto import AgentCreateDTO
-from backend.app.models.AgentDto.response_dto import AgentResponse
+from backend.app.models.agent.agent_dto import AgentCreateDTO
+from backend.app.models.agent.response_dto import AgentResponse
 from backend.config.database import prisma_connection
 
 

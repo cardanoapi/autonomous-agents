@@ -4,8 +4,8 @@ from datetime import datetime, timezone
 from typing import List, Optional, Union
 from fastapi import HTTPException
 
-from backend.app.models.TriggerDto.resposne_dto import TriggerResponse
-from backend.app.models.TriggerDto.trigger_dto import (
+from backend.app.models.trigger.resposne_dto import TriggerResponse
+from backend.app.models.trigger.trigger_dto import (
     TriggerCreateDTO,
     CronTriggerDTO,
     TopicTriggerDTO,
@@ -69,7 +69,7 @@ class TriggerRepository:
             )
             return True
 
-    async def retreive_trigger_by_trigger_id(self, trigger_id: str) -> Optional[TriggerResponse]:
+    async def retreive_trigger_by_id(self, trigger_id: str) -> Optional[TriggerResponse]:
         async with self.db:
             trigger = await self.db.prisma.trigger.find_first(where={"id": trigger_id, "deleted_at": None})
             if trigger is None:
@@ -77,9 +77,7 @@ class TriggerRepository:
             else:
                 return trigger
 
-    async def modify_trigger_by_trigger_id(
-        self, trigger_id: str, trigger_data: TriggerCreateDTO
-    ) -> Optional[TriggerResponse]:
+    async def modify_trigger_by_id(self, trigger_id: str, trigger_data: TriggerCreateDTO) -> Optional[TriggerResponse]:
         async with self.db:
             trigger = await self.db.prisma.trigger.find_first(where={"id": trigger_id})
             if trigger is None or trigger.deleted_at is not None:

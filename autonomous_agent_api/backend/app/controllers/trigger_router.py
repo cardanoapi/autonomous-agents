@@ -4,8 +4,8 @@ from typing import List
 from classy_fastapi import Routable, get, post, put, delete
 from fastapi import HTTPException
 
-from backend.app.models.TriggerDto.resposne_dto import TriggerResponse
-from backend.app.models.TriggerDto.trigger_dto import TriggerCreateDTO, TriggerCreateDTO
+from backend.app.models import TriggerResponse
+from backend.app.models import TriggerCreateDTO
 from backend.app.services.trigger_service import TriggerService
 from backend.dependency import get_trigger_service
 
@@ -27,16 +27,16 @@ class TriggerRouter(Routable):
 
     @get("/triggers/{trigger_id}", response_model=TriggerResponse)
     async def list_trigger_by_trigger_id(self, trigger_id: str):
-        trigger = await self.trigger_service.list_trigger_by_trigger_id(trigger_id)
+        trigger = await self.trigger_service.list_trigger_by_id(trigger_id)
         return trigger
 
     @put("/triggers/{trigger_id}", response_model=TriggerResponse)
-    async def update_trigger_by_agent_id_and_trigger_id(self, trigger_id: str, trigger_data: TriggerCreateDTO):
-        trigger = await self.trigger_service.update_trigger_by_trigger_id(trigger_id, trigger_data)
+    async def update_trigger_by_trigger_id(self, trigger_id: str, trigger_data: TriggerCreateDTO):
+        trigger = await self.trigger_service.update_trigger_by_id(trigger_id, trigger_data)
         return trigger
 
     @delete("/triggers/{trigger_id}", status_code=HTTPStatus.NO_CONTENT)
     async def delete_trigger_by_trigger_id(self, trigger_id: str):
-        success = await self.trigger_service.delete_trigger_by_trigger_id(trigger_id)
+        success = await self.trigger_service.delete_by_id(trigger_id)
         if not success:
             raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Trigger not found")

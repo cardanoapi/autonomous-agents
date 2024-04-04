@@ -1,46 +1,49 @@
-from unittest.mock import MagicMock, AsyncMock
+from pydantic import ValidationError
 
 from backend.app.controllers.agent_router import AgentRouter
-from backend.app.models.AgentDto.response_dto import AgentResponse
+from backend.app.models.agent.agent_dto import AgentCreateDTO
+from backend.app.models.agent.response_dto import AgentResponse
 from backend.app.services.agent_service import AgentService
-
+from unittest.mock import MagicMock, AsyncMock
 import pytest
 
 
-@pytest.fixture
-def agent_service():
-    mock_service = MagicMock(spec=AgentService)
-    return mock_service
-
-
-@pytest.fixture
-def agent_router(agent_service):
-    return AgentRouter(agent_service)
-
-
-# test for listing the agents
 @pytest.mark.asyncio
-async def test_list_agents_with_two_agents(agent_service, agent_router):
-    # Mocking the list_agents method to return a list of mock agents
-    mock_agents = [
-        AgentResponse(
-            id="018e8908-5dc9-78c9-b71a-37ebd2149394",
-            name="Agent 1",
-            action=["Description 1"],
-        ),
-        AgentResponse(
-            id="018e8908-7563-7e8a-b87c-b33ac6e6c872",
-            name="Agent 2",
-            action=["Description 2"],
-        ),
-    ]
-    agent_service.list_agents = AsyncMock(return_value=mock_agents)
+class TestAgentEditRouter:
+    @pytest.fixture
+    def agent_service(self):
+        return MagicMock(spec=AgentService)
 
-    # Call the list_agents method
-    agents = await agent_router.list_agents()
+    @pytest.fixture
+    def agent_router(self, agent_service):
+        return AgentRouter(agent_service)
 
-    # calling method
-    agent_service.list_agents.assert_called_once()
+    @pytest.mark.asyncio
+    async def test_create_agent_with_valid_details(self, agent_service, agent_router):
+        agent_id = "018e8909-549b-7b9f-8fab-5499f53a8244"
+        agent_data = AgentCreateDTO(name="Agent", action=["Test Description"])
+        created_agent = AgentResponse(id=agent_id, name="Agent", action=["Test Description"])
 
-    # Assert that the returned agents match the mock_agents
-    assert agents == mock_agents
+        agent_service.update_agent = AsyncMock(return_value=created_agent)
+
+        result = await agent_router.create_agent(agent_id, agent_data)
+
+        agent_service.update_agent.assert_called_once_with(agent_id, agent_data)
+
+        assert result == created_agent
+
+    @pytest.mark.asyncio
+    async def test_create_agent_should_fail_with_invalid_details(self, agent_service, agent_router):
+        with pytest.raises(ValidationError):
+            # Mock data
+            agent_id = "018e8909-549b-7b9f-8fab-5499f53a8244"
+            agent_data = AgentCreateDTO(name="", action=["Test Description"])
+            created_agent = AgentResponse(id=agent_id, name="Agent", action=["Test Description"])
+
+            agent_service.update_agent = AsyncMock(return_value=created_agent)
+
+            result = await agent_router.update_agent(agent_id, agent_data)
+
+            agent_service.update_agent.assert_called_once_with(agent_id, agent_data)
+
+            assert result == created_agent

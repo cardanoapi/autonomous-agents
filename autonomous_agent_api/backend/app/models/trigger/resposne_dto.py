@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Union
 
-from backend.app.models.TriggerDto.trigger_dto import CronTriggerDTO, TopicTriggerDTO
+from backend.app.models.trigger.trigger_dto import CronTriggerDTO, TopicTriggerDTO
 
 
 class TriggerResponse(BaseModel):
