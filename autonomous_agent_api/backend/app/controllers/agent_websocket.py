@@ -17,11 +17,13 @@ class WebSocket_Connection_Manager:
         self.active_connections[websocket_agent_id] = websocket
 
     async def disconnect_websocket(self, websocket_agent_id):
+        """Critical : Dont use .close() here as this will close the new connection when dealing with multiple web socket request for the same bot.
+        This is due to the nature of try/except code that gets called by the previous connection."""
         self.active_connections.pop(websocket_agent_id)
 
     async def send_message_to_websocket(self, websocket_agent_id: str, message: dict):
         # Checks if agent is active , first then sends message
-        agent_active = await self.check_if_agent_exists_in_active_list(websocket_agent_id)
+        agent_active = await self.check_if_agent_active(websocket_agent_id)
         if agent_active:
             await self.active_connections[websocket_agent_id].send_json(message)
         else:
@@ -35,12 +37,12 @@ class WebSocket_Connection_Manager:
 
     async def remove_previous_agent_connection_if_exists(self, websocket_agent_id: str):
         """
-        Removes the old agent connection and creates a new one
-        If client requests websocket connection for an already active conenction.
+        If client requests websocket connection for an already active bot.
+        Removes the old connection and establishes a new one.
         """
-        agent_exists = await self.check_if_agent_active(websocket_agent_id)
-        if agent_exists:
-            self.active_connections.pop(websocket_agent_id)
+        if await self.check_if_agent_active(websocket_agent_id):
+            existing_websocket = self.active_connections.pop(websocket_agent_id)
+            await existing_websocket.close(code=1000, reason="establishing a new connection")
 
 
 manager = WebSocket_Connection_Manager()
@@ -56,7 +58,7 @@ async def agent_websocket_endpoint(websocket: WebSocket):
         raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
 
     # Check if agent with the id exists.
-    agent_exists = await check_if_agent_exists(websocket_agent_id)
+    agent_exists = await check_if_agent_exists_in_db(websocket_agent_id)
     if agent_exists:
         await manager.remove_previous_agent_connection_if_exists(websocket_agent_id)
         await manager.connect_websocket(websocket_agent_id, websocket)
@@ -67,11 +69,12 @@ async def agent_websocket_endpoint(websocket: WebSocket):
                 await websocket.send_text(f"Ping recieved from {websocket_agent_id} at {datetime.now()}")
         except WebSocketDisconnect:
             await manager.disconnect_websocket(websocket_agent_id)
+            pass
     else:
         raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
 
 
-async def check_if_agent_exists(agent_id: str):
+async def check_if_agent_exists_in_db(agent_id: str):
     # Query agent with the agent id from the database -> reurns a boolean
     async with prisma_connection:
         agent_exists = await prisma_connection.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})

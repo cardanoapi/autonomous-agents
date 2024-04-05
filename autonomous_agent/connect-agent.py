@@ -1,21 +1,28 @@
 import asyncio
 import websockets
 import argparse
+from websockets.exceptions import ConnectionClosed
 
-default_ping_timeout = 10  # Sends a ping every 10 second
+default_ping_timeout = 10  # Sends a ping every 10 seconds
 
 
 async def connect_to_server(agent_id):
-
     uri = "ws://127.0.0.1:8000/api/agent/ws"
     headers = {"agent_id": agent_id}
 
-    async with websockets.connect(uri, extra_headers=headers) as websocket:
-        while True:
-            await websocket.send("PING")
-            response = await websocket.recv()
-            print("Received:", response)
-            await asyncio.sleep(default_ping_timeout)
+    try:
+        async with websockets.connect(uri, extra_headers=headers) as websocket:
+            while True:
+                try:
+                    await websocket.send("PING")
+                    response = await websocket.recv()
+                    print("Received:", response)
+                    await asyncio.sleep(default_ping_timeout)
+                except ConnectionClosed:
+                    print("Connection closed by server")
+                    break
+    except ConnectionError:
+        print("Failed to connect to the server")
 
 
 async def main(agent_id):
