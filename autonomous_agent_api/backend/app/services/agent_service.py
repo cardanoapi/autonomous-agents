@@ -1,8 +1,8 @@
 # agent_service.py
 from typing import List
 
-from backend.app.models.agent_dto import AgentCreateDTO
-from backend.app.models.response_dto import AgentResponse
+from backend.app.models.agent.agent_dto import AgentCreateDTO
+from backend.app.models.agent.response_dto import AgentResponse
 from backend.app.repositories.agent_repository import AgentRepository
 
 

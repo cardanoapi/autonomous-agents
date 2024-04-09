@@ -2,11 +2,11 @@ from http import HTTPStatus
 from typing import List
 
 from classy_fastapi import Routable, get, post, put, delete
-from fastapi import Query, HTTPException
+from fastapi import HTTPException
 
-from backend.app.models.agent_dto import AgentCreateDTO
+from backend.app.models.agent.agent_dto import AgentCreateDTO
 from backend.app.services.agent_service import AgentService
-from backend.app.models.response_dto import AgentResponse
+from backend.app.models.agent.response_dto import AgentResponse
 from backend.dependency import get_agent_service
 
 
@@ -15,13 +15,10 @@ class AgentRouter(Routable):
         super().__init__(*args, **kwargs)
         self.agent_service = agent_service
 
-    @post("/create_agents/", status_code=HTTPStatus.CREATED)
+    @post("/agents/", status_code=HTTPStatus.CREATED)
     async def create_agent(self, agent_data: AgentCreateDTO):
-        try:
-            agent = await self.agent_service.create_agent(agent_data)
-            return agent
-        except Exception as e:
-            raise HTTPException(status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail=str(e))
+        agent = await self.agent_service.create_agent(agent_data)
+        return agent
 
     @get("/agents/", response_model=List[AgentResponse])
     async def list_agents(self):
