@@ -8,7 +8,7 @@ Resources:
 
 from fastapi import APIRouter
 
-from backend.app.controllers import ready, demo, agent_router, trigger_router , agent_websocket
+from backend.app.controllers import ready, demo, agent_router, trigger_router, agent_websocket
 
 root_api_router = APIRouter(prefix="/api")
 
@@ -24,5 +24,5 @@ root_api_router.include_router(agent_router.AgentRouter().router, tags=["agent"]
 # For Agent Websocket connection
 root_api_router.include_router(agent_websocket.router)
 
-#For Agent Trigger 
+# For Agent Trigger
 root_api_router.include_router(trigger_router.TriggerRouter().router, tags=["trigger"])
