@@ -27,3 +27,6 @@
   - Made table for Triggers 
   - Created router,service,repository for trigger CRUD Action
   - Created the validation function for cron expression and kafka topic while creating the trigger by agent
+
+# TITLE - AGENT Websocket , DATE- 2024-04-09
+ - Added websocket endpoint for agent websocket connection
