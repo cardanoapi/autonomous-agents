@@ -30,6 +30,7 @@ aiohttp = "~3.9.3"
 prisma = "^0.13.0"
 pytest-dotenv = "^0.5.2"
 classy-fastapi = "^0.6.1"
+croniter = "^2.0.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "~7.4.0"
@@ -98,3 +99,9 @@ module = [
     "redis.*",
 ]
 ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+markers = [
+    "ping: run demo test",
+    "github_actions: Tests for Github actions",
+]

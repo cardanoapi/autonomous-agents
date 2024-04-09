@@ -1,5 +1,6 @@
 """Application implementation - ASGI."""
 
+import os
 import logging
 from contextlib import asynccontextmanager
 
@@ -27,6 +28,7 @@ async def lifespan(app: FastAPI):
     logger.info("Starting Server")
 
     await prisma_connection.connect()
+
     yield
     log.debug("Execute FastAPI shutdown event handler.")
     # Gracefully close utilities.
@@ -36,7 +38,24 @@ async def lifespan(app: FastAPI):
     await AiohttpClient.close_aiohttp_client()
 
     await prisma_connection.disconnect()
+
     logger.info("Stopping Server")
+
+
+# Lifespan used for Test Environmnet : Configurations such as Live Database and Redis is Disabled.
+# todo : Mock Database setup required for testing
+@asynccontextmanager
+async def test_lifespan(app: FastAPI):
+    log.debug("Execute FastAPI startup event handler.")
+
+    AiohttpClient.get_aiohttp_client()
+
+    logger.info("Starting Test Server")
+
+    yield
+    log.debug("Execute FastAPI shutdown event handler.")
+
+    logger.info("Stopping Test Server")
 
 
 def get_application() -> FastAPI:
@@ -47,6 +66,7 @@ def get_application() -> FastAPI:
 
     """
     log.debug("Initialize FastAPI application node.")
+
     app = FastAPI(
         title=settings.PROJECT_NAME,
         debug=settings.DEBUG,
@@ -59,4 +79,29 @@ def get_application() -> FastAPI:
     log.debug("Register global exception handler for custom HTTPException.")
     app.add_exception_handler(HTTPException, http_exception_handler)
 
+    return app
+
+
+def get_test_application() -> FastAPI:
+    """
+    Initialize FastApi application for testing environment
+
+    Returns:
+     FastAPI : Application object instance
+
+    """
+    os.environ.__setattr__("TESTING", True)
+
+    logging.info("Setting up Test Environment")
+    app = FastAPI(
+        title=settings.PROJECT_NAME,
+        debug=settings.DEBUG,
+        version=settings.VERSION,
+        docs_url=settings.DOCS_URL,
+        lifespan=test_lifespan,
+    )
+    log.debug("Add application routes.")
+    app.include_router(root_api_router)
+    log.debug("Register global exception handler for custom HTTPException.")
+    app.add_exception_handler(HTTPException, http_exception_handler)
     return app

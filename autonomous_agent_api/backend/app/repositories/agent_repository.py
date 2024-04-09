@@ -1,59 +1,63 @@
 import uuid
-from datetime import datetime, UTC
-
-
-from typing import List
-
+from datetime import datetime, timezone
+from typing import List, Optional
 from fastapi import HTTPException
-
-from backend.app.models.agent_dto import AgentCreateDTO
-from backend.app.models.response_dto import AgentResponse
+from backend.app.models.agent.agent_dto import AgentCreateDTO
+from backend.app.models.agent.response_dto import AgentResponse
 from backend.config.database import prisma_connection
 
 
 class AgentRepository:
+    def __init__(self, db_connection=None):
+        self.db = db_connection or prisma_connection
+
     async def save_agent(self, agent_data: AgentCreateDTO):
         # Generate a random UUID for the agent ID
         agent_id = str(uuid.uuid4())
         agent_data_dict = agent_data.dict()
         agent_data_dict["id"] = agent_id
-        agent_data_dict["created_at"] = datetime.now(UTC)
+        agent_data_dict["created_at"] = datetime.now(timezone.utc)
 
-        async with prisma_connection:
-            agent = await prisma_connection.prisma.agent.create(data=agent_data_dict)
-        return agent
+        async with self.db:
+            agent = await self.db.prisma.agent.create(data=agent_data_dict)
+        agent_response = AgentResponse(id=agent_id, name=agent_data.name, action=agent_data.action)
+
+        return agent_response
 
     async def retrieve_agents(self) -> List[AgentResponse]:
-        async with prisma_connection:
-            agents = await prisma_connection.prisma.agent.find_many(where={"deleted_at": None})
+        async with self.db:
+            agents = await self.db.prisma.agent.find_many(where={"deleted_at": None})
             return agents
 
-    async def retrieve_agent(self, agent_id: str) -> AgentResponse:
-        async with prisma_connection:
-            agent = await prisma_connection.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})
+    async def retrieve_agent(self, agent_id: str) -> Optional[AgentResponse]:
+        async with self.db:
+            agent = await self.db.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})
             if agent is None:
                 raise HTTPException(status_code=404, detail="Agent not found")
             else:
                 return agent
 
-    async def modify_agent(self, agent_id: str, agent_data: AgentCreateDTO) -> AgentResponse:
-        async with prisma_connection:
-            agent = await prisma_connection.prisma.agent.find_first(where={"id": agent_id})
+    async def modify_agent(self, agent_id: str, agent_data: AgentCreateDTO) -> Optional[AgentResponse]:
+        async with self.db:
+            agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
             if agent is None or agent.deleted_at is not None:
                 raise HTTPException(status_code=404, detail="Agent not found")
 
             updated_data = agent_data.dict(exclude_unset=True)
-            updated_data["updated_at"] = datetime.utcnow()
+            updated_data["updated_at"] = datetime.now(timezone.utc)
 
-            updated_agent = await prisma_connection.prisma.agent.update(where={"id": agent_id}, data=updated_data)
+            updated_agent = await self.db.prisma.agent.update(where={"id": agent_id}, data=updated_data)
             return updated_agent
 
-    async def remove_agent(self, agent_id: str) -> None:
-        async with prisma_connection:
-            agent = await prisma_connection.prisma.agent.find_first(where={"id": agent_id})
+    async def remove_agent(self, agent_id: str) -> bool:
+        async with self.db:
+            agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
             if agent is None:
-                raise HTTPException(status_code=404, detail="Agent not found")
+                return False
             elif agent.deleted_at is not None:
-                raise HTTPException(status_code=404, detail="Agent has already been deleted")
+                return True
 
-            await prisma_connection.prisma.agent.update(where={"id": agent_id}, data={"deleted_at": datetime.now(UTC)})
+            await self.db.prisma.agstringent.update(
+                where={"id": agent_id}, data={"deleted_at": datetime.now(timezone.utc)}
+            )
+            return True
