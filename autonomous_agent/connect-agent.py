@@ -1,10 +1,15 @@
 import asyncio
+import json
+
 import websockets
 import argparse
 from websockets.exceptions import ConnectionClosed
 
 default_ping_interval = 10  # Sends a ping every 10 seconds
-config_receive_interval = 60  # Receives config every 60 seconds
+config_receive_interval = 20  # Receives config every 60 seconds
+
+# Global dictionary to store configuration data
+config_data = {}
 
 
 async def send_ping(websocket):
@@ -18,29 +23,28 @@ async def send_ping(websocket):
 
 
 async def receive_config(websocket):
+    global config_data  # Use the global configuration dictionary
     while True:
         try:
-            # Use wait_for to set a timeout for receiving messages
-            response = await asyncio.wait_for(
-                websocket.recv(), timeout=config_receive_interval
-            )
+            # Receive a message from the websocket
+            response = await websocket.recv()
 
-            # Check if the received message is an update message
-            if response == {"message": "config_updated"}:
-                print("Received config update message:", response)
-                # Handle the config update message here
-
-            # Print other messages received
+            # Check if the received message contains the expected JSON format
+            if '"instance_count"' in response and '"configurations"' in response:
+                config_data = response
+                print("Received  configuration:", config_data)
             else:
-                print("Received message:", response)
-
-        except asyncio.TimeoutError:
-            # Timeout occurred, continue waiting
-            pass
+                print("Received:", response)
 
         except ConnectionClosed:
             print("Connection closed by server")
             break
+
+
+async def print_config_periodically():
+    while True:
+        await asyncio.sleep(config_receive_interval)  # Wait for 60 seconds
+        print("Current configuration data:", config_data)
 
 
 async def connect_to_server(agent_id):
@@ -51,7 +55,8 @@ async def connect_to_server(agent_id):
         async with websockets.connect(uri, extra_headers=headers) as websocket:
             ping_task = asyncio.create_task(send_ping(websocket))
             config_task = asyncio.create_task(receive_config(websocket))
-            await asyncio.gather(ping_task, config_task)
+            print_task = asyncio.create_task(print_config_periodically())
+            await asyncio.gather(ping_task, config_task, print_task)
     except ConnectionError:
         print("Failed to connect to the server")
 
