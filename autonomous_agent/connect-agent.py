@@ -4,7 +4,7 @@ import argparse
 from websockets.exceptions import ConnectionClosed
 
 default_ping_interval = 10  # Sends a ping every 10 seconds
-config_receive_interval = 60  # Receives config every 60 seconds
+config_receive_interval = 60 # Receives config every 60 seconds
 
 
 async def send_ping(websocket):
@@ -20,12 +20,26 @@ async def send_ping(websocket):
 async def receive_config(websocket):
     while True:
         try:
-            response = await websocket.recv()
-            print("Received message:", response)
-            await asyncio.sleep(config_receive_interval)
+            # Use wait_for to set a timeout for receiving messages
+            response = await asyncio.wait_for(websocket.recv(), timeout=config_receive_interval)
+
+            # Check if the received message is an update message
+            if response == {"message": "config_updated"}:
+                print("Received config update message:", response)
+                # Handle the config update message here
+
+            # Print other messages received
+            else:
+                print("Received message:", response)
+
+        except asyncio.TimeoutError:
+            # Timeout occurred, continue waiting
+            pass
+
         except ConnectionClosed:
             print("Connection closed by server")
             break
+
 
 async def connect_to_server(agent_id):
     uri = "ws://127.0.0.1:8000/api/agent/ws"
