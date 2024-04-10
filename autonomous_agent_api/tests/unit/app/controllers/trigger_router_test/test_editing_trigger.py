@@ -22,9 +22,7 @@ class TestCreateTrigger:
         # Define test data
         id = "trigger_id"
         agent_id = "agent_id"
-        valid_cron_trigger_data = TriggerCreateDTO(
-            type="CRON", data={"frequency": "* * * * *", "probability": 0.5}
-        )
+        valid_cron_trigger_data = TriggerCreateDTO(type="CRON", data={"frequency": "* * * * *", "probability": 0.5})
         updated_data = TriggerResponse(
             id=id,
             agent_id=agent_id,
@@ -34,27 +32,19 @@ class TestCreateTrigger:
 
         trigger_service.update_trigger_by_id = AsyncMock(return_value=updated_data)
 
-        result = await trigger_router.update_trigger_by_trigger_id(
-            id, valid_cron_trigger_data
-        )
+        result = await trigger_router.update_trigger_by_trigger_id(id, valid_cron_trigger_data)
 
-        trigger_service.update_trigger_by_id.assert_called_once_with(
-            id, valid_cron_trigger_data
-        )
+        trigger_service.update_trigger_by_id.assert_called_once_with(id, valid_cron_trigger_data)
 
         assert result == updated_data
 
     @pytest.mark.asyncio
-    async def test_edit_trigger_with_invalid_data(
-        self, trigger_router, trigger_service
-    ):
+    async def test_edit_trigger_with_invalid_data(self, trigger_router, trigger_service):
         with pytest.raises(ValidationError):
             # Define test data
             id = "trigger_id"
             agent_id = "agent_id"
-            valid_cron_trigger_data = TriggerCreateDTO(
-                data={"frequency": "* * * * *", "probability": 0.5}
-            )
+            valid_cron_trigger_data = TriggerCreateDTO(data={"frequency": "* * * * *", "probability": 0.5})
             updated_data = TriggerResponse(
                 id=id,
                 agent_id=agent_id,
@@ -64,12 +54,8 @@ class TestCreateTrigger:
 
             trigger_service.update_trigger_by_id = AsyncMock(return_value=updated_data)
 
-            result = await trigger_router.update_trigger_by_trigger_id(
-                id, valid_cron_trigger_data
-            )
+            result = await trigger_router.update_trigger_by_trigger_id(id, valid_cron_trigger_data)
 
-            trigger_service.update_trigger_by_id.assert_called_once_with(
-                id, valid_cron_trigger_data
-            )
+            trigger_service.update_trigger_by_id.assert_called_once_with(id, valid_cron_trigger_data)
 
             assert result == updated_data

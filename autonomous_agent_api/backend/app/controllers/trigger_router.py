@@ -11,9 +11,7 @@ from backend.dependency import get_trigger_service
 
 
 class TriggerRouter(Routable):
-    def __init__(
-        self, trigger_service: TriggerService = get_trigger_service(), *args, **kwargs
-    ):
+    def __init__(self, trigger_service: TriggerService = get_trigger_service(), *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.trigger_service = trigger_service
 
@@ -33,18 +31,12 @@ class TriggerRouter(Routable):
         return trigger
 
     @put("/triggers/{trigger_id}", response_model=TriggerResponse)
-    async def update_trigger_by_trigger_id(
-        self, trigger_id: str, trigger_data: TriggerCreateDTO
-    ):
-        trigger = await self.trigger_service.update_trigger_by_id(
-            trigger_id, trigger_data
-        )
+    async def update_trigger_by_trigger_id(self, trigger_id: str, trigger_data: TriggerCreateDTO):
+        trigger = await self.trigger_service.update_trigger_by_id(trigger_id, trigger_data)
         return trigger
 
     @delete("/triggers/{trigger_id}", status_code=HTTPStatus.NO_CONTENT)
     async def delete_trigger_by_trigger_id(self, trigger_id: str):
         success = await self.trigger_service.delete_by_id(trigger_id)
         if not success:
-            raise HTTPException(
-                status_code=HTTPStatus.NOT_FOUND, detail="Trigger not found"
-            )
+            raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Trigger not found")
