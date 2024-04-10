@@ -6,7 +6,7 @@ import argparse
 from websockets.exceptions import ConnectionClosed
 
 default_ping_interval = 10  # Sends a ping every 10 seconds
-config_receive_interval = 20  # Receives config every 60 seconds
+config_receive_interval = 60  # Receives config every 60 seconds
 
 # Global dictionary to store configuration data
 config_data = {}
