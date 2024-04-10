@@ -9,7 +9,9 @@ class TriggerService:
     def __init__(self, trigger_repository: TriggerRepository):
         self.trigger_repository = trigger_repository
 
-    async def create_trigger(self, agent_id: str, trigger_data: TriggerCreateDTO) -> TriggerResponse:
+    async def create_trigger(
+        self, agent_id: str, trigger_data: TriggerCreateDTO
+    ) -> TriggerResponse:
         return await self.trigger_repository.save_trigger(agent_id, trigger_data)
 
     async def list_triggers(self) -> List[TriggerResponse]:
@@ -24,5 +26,9 @@ class TriggerService:
     async def list_trigger_by_id(self, trigger_id: str) -> TriggerResponse:
         return await self.trigger_repository.retreive_trigger_by_id(trigger_id)
 
-    async def update_trigger_by_id(self, trigger_id: str, trigger_data: TriggerCreateDTO) -> TriggerResponse:
-        return await self.trigger_repository.modify_trigger_by_id(trigger_id, trigger_data)
+    async def update_trigger_by_id(
+        self, trigger_id: str, trigger_data: TriggerCreateDTO
+    ) -> TriggerResponse:
+        return await self.trigger_repository.modify_trigger_by_id(
+            trigger_id, trigger_data
+        )

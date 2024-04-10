@@ -21,7 +21,8 @@ class WebSocket_Connection_Manager:
 
     async def disconnect_websocket(self, websocket_agent_id):
         """Critical : Dont use .close() here as this will close the new connection when dealing with multiple web socket request for the same bot.
-        This is due to the nature of try/except code that gets called by the previous connection."""
+        This is due to the nature of try/except code that gets called by the previous connection.
+        """
         self.active_connections.pop(websocket_agent_id)
 
     async def send_message_to_websocket(self, websocket_agent_id: str, message: dict):
@@ -38,8 +39,6 @@ class WebSocket_Connection_Manager:
         # Checks if agent is present in active connection list.
         return websocket_agent_id in self.active_connections
 
-
-
     async def remove_previous_agent_connection_if_exists(self, websocket_agent_id: str):
         """
         If client requests websocket connection for an already active bot.
@@ -47,18 +46,26 @@ class WebSocket_Connection_Manager:
         """
         if await self.check_if_agent_active(websocket_agent_id):
             existing_websocket = self.active_connections.pop(websocket_agent_id)
-            await existing_websocket.close(code=1000, reason="establishing a new connection")
+            await existing_websocket.close(
+                code=1000, reason="establishing a new connection"
+            )
 
     async def update_last_active_timestamp(self, agent_id: str):
         try:
             async with prisma_connection:
                 # Update last active timestamp in the agent table
                 await prisma_connection.prisma.agent.update(
-                    where={"id": agent_id},  # Provide the 'where' clause as a keyword argument
-                    data={"last_active": datetime.utcnow()}  # Update 'last_active' field
+                    where={
+                        "id": agent_id
+                    },  # Provide the 'where' clause as a keyword argument
+                    data={
+                        "last_active": datetime.utcnow()
+                    },  # Update 'last_active' field
                 )
         except Exception as e:
-            logger.error(f"Error updating last active timestamp for agent {agent_id}: {e}")
+            logger.error(
+                f"Error updating last active timestamp for agent {agent_id}: {e}"
+            )
 
 
 manager = WebSocket_Connection_Manager()
@@ -82,8 +89,12 @@ async def agent_websocket_endpoint(websocket: WebSocket):
             while True:
                 data = await websocket.receive_text()
                 print(f"Received Data: {data} from {websocket_agent_id}")
-                instance_count, configurations = await fetch_agent_configuration(websocket_agent_id)
-                await websocket.send_json({"instance_count": instance_count, "configurations": configurations})
+                instance_count, configurations = await fetch_agent_configuration(
+                    websocket_agent_id
+                )
+                await websocket.send_json(
+                    {"instance_count": instance_count, "configurations": configurations}
+                )
                 await manager.update_last_active_timestamp(websocket_agent_id)
 
         except WebSocketDisconnect:
@@ -96,7 +107,9 @@ async def agent_websocket_endpoint(websocket: WebSocket):
 async def check_if_agent_exists_in_db(agent_id: str):
     # Query agent with the agent id from the database -> returns a boolean
     async with prisma_connection:
-        agent_exists = await prisma_connection.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})
+        agent_exists = await prisma_connection.prisma.agent.find_first(
+            where={"id": agent_id, "deleted_at": None}
+        )
     return bool(agent_exists)
 
 
@@ -123,7 +136,7 @@ async def fetch_agent_configuration(agent_id):
                 configuration = {
                     "id": config.id,
                     "type": config.type,
-                    "data": config.data  # Assuming config.data is a JSON string
+                    "data": config.data,  # Assuming config.data is a JSON string
                 }
             except json.JSONDecodeError:
                 print(f"Error decoding JSON for config id {config.id}: {config.data}")

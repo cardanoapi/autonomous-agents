@@ -8,7 +8,13 @@ Resources:
 
 from fastapi import APIRouter
 
-from backend.app.controllers import ready, demo, agent_router, trigger_router, agent_websocket
+from backend.app.controllers import (
+    ready,
+    demo,
+    agent_router,
+    trigger_router,
+    agent_websocket,
+)
 
 root_api_router = APIRouter(prefix="/api")
 
