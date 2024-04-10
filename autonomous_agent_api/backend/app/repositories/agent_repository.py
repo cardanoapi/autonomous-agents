@@ -17,10 +17,11 @@ class AgentRepository:
         agent_data_dict = agent_data.dict()
         agent_data_dict["id"] = agent_id
         agent_data_dict["created_at"] = datetime.now(timezone.utc)
+        agent_data_dict["updated_at"] = datetime.now(timezone.utc)
 
         async with self.db:
             agent = await self.db.prisma.agent.create(data=agent_data_dict)
-        agent_response = AgentResponse(id=agent_id, name=agent_data.name, action=agent_data.action)
+        agent_response = AgentResponse(id=agent_id, name=agent_data.name, instance=agent_data.instance, action=agent_data.action)
 
         return agent_response
 

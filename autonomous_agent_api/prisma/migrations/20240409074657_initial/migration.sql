@@ -6,6 +6,8 @@ CREATE TABLE "Agent" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "action" TEXT[] DEFAULT ARRAY[]::TEXT[],
+    "instance" BIGINT NOT NULL,
+    "last_active" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "deleted_at" TIMESTAMP(3),

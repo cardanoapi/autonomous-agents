@@ -30,3 +30,10 @@
 
 # TITLE - AGENT Websocket , DATE- 2024-04-09
  - Added websocket endpoint for agent websocket connection
+
+# TITLE -  Agent registration and config fetch , DATE - 2024-04-09/10
+  -added instance and last_active field in Agent Field
+  -updated Agent Model and refactored repository 
+  -added features for fetching the configuration on the basis of agent_id
+  -Added functionality for periodically updating last_active for agent in agent table
+  -Added test case for the trigger repository

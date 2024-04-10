@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from typing import List, Optional, Union
 from fastapi import HTTPException
 
+from backend.app.controllers.agent_websocket import manager
 from backend.app.models.trigger.resposne_dto import TriggerResponse
 from backend.app.models.trigger.trigger_dto import (
     TriggerCreateDTO,
@@ -37,6 +38,7 @@ class TriggerRepository:
         trigger_data_dict["data"] = data_json
 
         trigger_data_dict["created_at"] = datetime.now(timezone.utc)
+        trigger_data_dict["updated_at"] = datetime.now(timezone.utc)
 
         async with self.db:
             await self.db.prisma.trigger.create(data=trigger_data_dict)
@@ -95,6 +97,7 @@ class TriggerRepository:
             trigger_response = TriggerResponse(
                 id=trigger_id, agent_id=trigger.agent_id, type=trigger_data.type, data=trigger_data.data
             )
+            await notify_trigger_config_updated(trigger.agent_id)
             return trigger_response
 
     def _convert_data_to_dto(self, trigger_type: str, data_dict: dict) -> Union[CronTriggerDTO, TopicTriggerDTO]:
@@ -104,3 +107,7 @@ class TriggerRepository:
             return TopicTriggerDTO(**data_dict)
         else:
             raise ValueError("Invalid trigger type")
+
+async def notify_trigger_config_updated(agent_id: str):
+    if await manager.check_if_agent_active(agent_id):
+        await manager.send_message_to_websocket(agent_id, {"message": "config_updated"})

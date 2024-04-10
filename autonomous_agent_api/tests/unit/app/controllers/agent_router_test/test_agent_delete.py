@@ -1,33 +1,33 @@
 import pytest
 from unittest.mock import MagicMock, AsyncMock
-from http import HTTPStatus
-from backend.app.controllers.agent_router import AgentRouter
-from fastapi import HTTPException
-from fastapi import status
+from backend.app.controllers.trigger_router import TriggerRouter
+
+from backend.app.services.trigger_service import TriggerService
 
 
-class TestAgentDelete:
+@pytest.mark.asyncio
+class TestDeleteTrigger:
     @pytest.fixture
-    def agent_service(self):
-        return AsyncMock()
+    def trigger_service(self):
+        return MagicMock(spec=TriggerService)
 
     @pytest.fixture
-    def agent_router(self, agent_service):
-        return AgentRouter(agent_service)
+    def trigger_router(self, trigger_service):
+        return TriggerRouter(trigger_service)
 
     @pytest.mark.asyncio
-    async def test_delete_agent_with_valid_id(self, agent_service, agent_router):
+    async def test_delete_trigger_with_valid_id(self, trigger_service, trigger_router):
         # Mock data
-        agent_id = "018e8909-549b-7b9f-8fab-5499f53a8244"
+        trigger_id = "018e8909-549b-7b9f-8fab-5499f53a8244"
 
-        await agent_router.delete_agent(agent_id)
+        await trigger_router.delete_trigger_by_trigger_id(trigger_id)
 
-        agent_service.delete_agent.assert_called_once_with(agent_id)
+        trigger_service.delete_by_id.assert_called_once_with(trigger_id)
 
     @pytest.mark.asyncio
-    async def test_delete_agent_should_fail_with_no_id(self, agent_service, agent_router):
+    async def test_delete_trigger_should_fail_with_no_id(self, trigger_service, trigger_router):
         # Mock data
         with pytest.raises(TypeError):
-            await agent_router.delete_agent()
+            await trigger_router.delete_trigger_by_trigger_id()
 
-            agent_service.delete_agent.assert_called_once_with()
+            trigger_service.delete_by_id.assert_called_once_with()
