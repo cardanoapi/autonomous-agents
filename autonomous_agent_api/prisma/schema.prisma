@@ -13,7 +13,6 @@ datasource db {
 model Agent {
   id          String    @id // UUID
   name        String
-  action      String[]  @default([])
   instance    BigInt
   last_active DateTime?
   created_at  DateTime
@@ -25,6 +24,7 @@ model Trigger {
   id         String      @id
   agent_id   String
   type       TriggerType
+  action     Json
   data       Json
   created_at DateTime
   updated_at DateTime

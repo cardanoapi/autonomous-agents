@@ -25,7 +25,6 @@ class AgentRepository:
             id=agent_id,
             name=agent_data.name,
             instance=agent_data.instance,
-            action=agent_data.action,
         )
 
         return agent_response

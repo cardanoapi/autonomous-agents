@@ -30,13 +30,18 @@ class TriggerRepository:
         if trigger_data.type == "TOPIC":
             await validate_type_TOPIC(trigger_data.data.topic)
 
+        # for config data
         data_dict = trigger_data_dict.pop("data")
         data_json = json.dumps(data_dict)
+
+        # for Action Config
+        action_dict = trigger_data_dict.pop("action")
+        action_json = json.dumps(action_dict)
 
         trigger_data_dict["id"] = trigger_id
         trigger_data_dict["agent_id"] = agent_id
         trigger_data_dict["data"] = data_json
-
+        trigger_data_dict["action"] = action_json
         trigger_data_dict["created_at"] = datetime.now(timezone.utc)
         trigger_data_dict["updated_at"] = datetime.now(timezone.utc)
 
@@ -45,7 +50,7 @@ class TriggerRepository:
 
         data_object = self._convert_data_to_dto(trigger_data.type, data_dict)
 
-        trigger_response = TriggerResponse(id=trigger_id, agent_id=agent_id, type=trigger_data.type, data=data_object)
+        trigger_response = TriggerResponse(id=trigger_id, agent_id=agent_id, type=trigger_data.type, data=data_object, action=trigger_data.action)
         return trigger_response
 
     async def retreive_triggers(self) -> List[TriggerResponse]:
@@ -86,10 +91,18 @@ class TriggerRepository:
             if trigger is None or trigger.deleted_at is not None:
                 raise HTTPException(status_code=404, detail="Trigger not found")
             updated_data_dict = trigger_data.dict()
+
+            # for config data
             data_dict = updated_data_dict.pop("data")
             data_json = json.dumps(data_dict)
 
+            # for action config
+            action_dict = updated_data_dict.pop("action")
+            action_json = json.dumps(action_dict)
+
             updated_data_dict["data"] = data_json
+            updated_data_dict["action"] = action_json
+
             updated_data_dict["updated_at"] = datetime.now(timezone.utc)
 
             await self.db.prisma.trigger.update(where={"id": trigger_id}, data=updated_data_dict)
@@ -99,7 +112,9 @@ class TriggerRepository:
                 id=trigger_id,
                 agent_id=trigger.agent_id,
                 type=trigger_data.type,
+                action=trigger_data.action,
                 data=trigger_data.data,
+
             )
             await notify_trigger_config_updated(trigger.agent_id)
             return trigger_response

@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from typing import Union
-from pydantic import BaseModel
+from pydantic import BaseModel, json
 from croniter import croniter
 
 
@@ -12,9 +12,13 @@ class CronTriggerDTO(BaseModel):
 class TopicTriggerDTO(BaseModel):
     topic: str
 
+class Action(BaseModel):
+    function_name: str
+    parameter: str
 
 class TriggerCreateDTO(BaseModel):
     type: str
+    action: Action
     data: Union[CronTriggerDTO, TopicTriggerDTO]
 
 
