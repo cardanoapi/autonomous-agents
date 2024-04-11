@@ -33,6 +33,7 @@ class WebSocket_Connection_Manager:
                 # Fetch updated configuration
                 instance_count, configurations = await fetch_agent_configuration(websocket_agent_id)
                 updated_message = {
+                    "message": "config_updated",
                     "instance_count": instance_count,
                     "configurations": configurations,
                 }

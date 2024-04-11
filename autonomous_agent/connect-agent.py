@@ -24,15 +24,30 @@ async def send_ping(websocket):
 
 async def receive_config(websocket):
     global config_data  # Use the global configuration dictionary
+
     while True:
         try:
             # Receive a message from the websocket
             response = await websocket.recv()
 
-            # Check if the received message contains the expected JSON format
-            if '"instance_count"' in response and '"configurations"' in response:
-                config_data = response
-                print("Received  configuration:", config_data)
+            # Check if the response contains a "message" key
+            if "message" in response:
+                try:
+                    response_dict = json.loads(response)
+                except json.JSONDecodeError:
+                    # Handle failed JSON decoding
+                    print("Failed to decode JSON response:", response)
+                    continue  # Skip this iteration and wait for the next message
+
+                # Check if the message is a configuration update
+                if response_dict["message"] == "config_updated":
+                    # Handle the configuration update
+                    config_data["instance_count"] = response_dict.get("instance_count")
+                    config_data["configurations"] = response_dict.get("configurations")
+                    print("Received updated configuration:", response_dict["message"])
+                    print("Updated Config:", config_data)
+                else:
+                    print("Received unexpected message:", response_dict)
             else:
                 print("Received:", response)
 
