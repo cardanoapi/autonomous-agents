@@ -91,11 +91,9 @@ class TriggerRepository:
             if trigger is None or trigger.deleted_at is not None:
                 raise HTTPException(status_code=404, detail="Trigger not found")
             updated_data_dict = trigger_data.dict()
-
             # for config data
             data_dict = updated_data_dict.pop("data")
             data_json = json.dumps(data_dict)
-
             # for action config
             action_dict = updated_data_dict.pop("action")
             action_json = json.dumps(action_dict)
