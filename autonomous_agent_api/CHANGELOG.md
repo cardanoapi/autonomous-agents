@@ -44,4 +44,8 @@
     - contains function_name and parameter as a details for action in dto model
   - updated the trigger dto model and updated trigger respository class
 
+# TITLE -  Trigger Table update and define action in trigger config , DATE - 2024-04-11
+  - refactored the agent_websocket.py router class to websocket_router.py
+  - modularized the agent_websocket code into seprate service , repository , and controller class
+
 
