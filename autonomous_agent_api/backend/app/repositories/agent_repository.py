@@ -32,7 +32,10 @@ class AgentRepository:
     async def retrieve_agents(self) -> List[AgentResponse]:
         async with self.db:
             agents = await self.db.prisma.agent.find_many(where={"deleted_at": None})
-            return agents
+            if agents is None:
+                raise HTTPException(status_code=404, detail="No Agents not found")
+            else:
+                return agents
 
     async def retrieve_agent(self, agent_id: str) -> Optional[AgentResponse]:
         async with self.db:

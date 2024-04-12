@@ -3,8 +3,6 @@ import uuid
 from datetime import datetime, timezone
 from typing import List, Optional, Union
 from fastapi import HTTPException
-
-from backend.app.controllers.agent_websocket import manager
 from backend.app.models.trigger.resposne_dto import TriggerResponse
 from backend.app.models.trigger.trigger_dto import (
     TriggerCreateDTO,
@@ -50,7 +48,9 @@ class TriggerRepository:
 
         data_object = self._convert_data_to_dto(trigger_data.type, data_dict)
 
-        trigger_response = TriggerResponse(id=trigger_id, agent_id=agent_id, type=trigger_data.type, data=data_object, action=trigger_data.action)
+        trigger_response = TriggerResponse(
+            id=trigger_id, agent_id=agent_id, type=trigger_data.type, data=data_object, action=trigger_data.action
+        )
         return trigger_response
 
     async def retreive_triggers(self) -> List[TriggerResponse]:
@@ -112,9 +112,7 @@ class TriggerRepository:
                 type=trigger_data.type,
                 action=trigger_data.action,
                 data=trigger_data.data,
-
             )
-            await notify_trigger_config_updated(trigger.agent_id)
             return trigger_response
 
     def _convert_data_to_dto(self, trigger_type: str, data_dict: dict) -> Union[CronTriggerDTO, TopicTriggerDTO]:
@@ -124,8 +122,3 @@ class TriggerRepository:
             return TopicTriggerDTO(**data_dict)
         else:
             raise ValueError("Invalid trigger type")
-
-
-async def notify_trigger_config_updated(agent_id: str):
-    if await manager.check_if_agent_active(agent_id):
-        await manager.send_message_to_websocket(agent_id, {"message": "config_updated"})
