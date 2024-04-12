@@ -133,7 +133,9 @@ async def fetch_agent_configuration(agent_id):
                 configuration = {
                     "id": config.id,
                     "type": config.type,
-                    "data": config.data,  # Assuming config.data is a JSON string
+                    "data": config.data,
+                    "action": config.action
+                    # Assuming config.data is a JSON string
                 }
             except json.JSONDecodeError:
                 print(f"Error decoding JSON for config id {config.id}: {config.data}")
