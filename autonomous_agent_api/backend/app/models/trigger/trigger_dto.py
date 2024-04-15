@@ -15,7 +15,7 @@ class TopicTriggerDTO(BaseModel):
 
 class Action(BaseModel):
     function_name: str
-    parameter: str
+    parameter: list
 
 
 class TriggerCreateDTO(BaseModel):
@@ -32,7 +32,7 @@ async def validate_type_CRON(cron_expression: str, probability: float):
         raise HTTPException(400, f"Invalid CRON expression")
         # Validate probability
     if probability < 0 or probability > 1:
-        raise HTTPException(400, "Probability must be between 0 and 1 (can include 1 or 0)")
+        raise HTTPException(400, "Probability must be between 0 and 1 (inclusive)")
 
 
 # validation for Topic

@@ -38,7 +38,7 @@ def schedule_actions(config_data):
 
         # Retrieve the cron expression and parameters for the action function
         cron_expression = data.get("frequency")
-        parameters = action_data.get("parameter", "").split(",")  # Convert parameters to a list of arguments
+        parameters = action_data.get("parameter", [])   # Convert parameters to a list of arguments
 
         # Schedule the action function using a CronTrigger and probabilistic for triggering the function
         wrapper_function = probabilistic_wrapper(action_func, parameters, probability)
