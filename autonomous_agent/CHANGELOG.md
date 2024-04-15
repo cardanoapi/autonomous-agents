@@ -2,7 +2,7 @@
 
   - Setup websocket client for autonomous agent service 
 
-# TITLE -  Modularized Code , DATE - 2024-04-12
+# Modularized Code , DATE - 2024-04-12
  - previously the whole code was written in single file called connect-agent.py
  - Now, Created seprate files for 
    - connection handler, which contains the function for connecting the server and send ping to server
