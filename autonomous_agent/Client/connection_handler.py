@@ -4,6 +4,7 @@ from websockets.exceptions import ConnectionClosed
 
 default_ping_interval = 10
 
+
 async def send_ping(websocket):
     while True:
         try:

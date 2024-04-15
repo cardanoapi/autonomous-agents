@@ -12,9 +12,11 @@ class CronTriggerDTO(BaseModel):
 class TopicTriggerDTO(BaseModel):
     topic: str
 
+
 class Action(BaseModel):
     function_name: str
     parameter: str
+
 
 class TriggerCreateDTO(BaseModel):
     type: str

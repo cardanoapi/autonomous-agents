@@ -6,6 +6,7 @@ from actions import Add, Sub
 # Create an instance of AsyncIOScheduler
 scheduler = AsyncIOScheduler()
 
+
 def schedule_actions(config_data):
     # Remove existing jobs from the scheduler
     scheduler.remove_all_jobs()
@@ -35,7 +36,7 @@ def schedule_actions(config_data):
             scheduler.add_job(
                 action_func,
                 trigger=CronTrigger.from_crontab(cron_expression),
-                args=parameters.split(",")  # Convert parameters to a list of arguments
+                args=parameters.split(","),  # Convert parameters to a list of arguments
             )
 
     # Start the scheduler if not already running
