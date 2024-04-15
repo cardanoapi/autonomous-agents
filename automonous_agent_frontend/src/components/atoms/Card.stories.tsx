@@ -1,11 +1,13 @@
+import { Children } from 'react';
+
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 
-import { Label } from './label';
+import { Card, CardContent, CardDescription, CardHeader } from './Card';
 
 const meta = {
-    title: 'Label',
-    component: Label,
+    title: 'Card',
+    component: Card,
     parameters: {
         layout: 'centered'
     },
@@ -13,13 +15,16 @@ const meta = {
     tags: ['autodocs'],
 
     argTypes: {}
-} satisfies Meta<typeof Label>;
+} satisfies Meta<typeof Card>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
     args: {
-        children: 'Agent Name',
-        size: 'large'
+        children: (
+            <>
+                <CardHeader>Agent Discription</CardHeader>
+            </>
+        )
     }
 };
