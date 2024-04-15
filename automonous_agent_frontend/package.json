@@ -66,6 +66,7 @@
     "nprogress": "^0.2.0",
     "overlayscrollbars": "^2.4.6",
     "overlayscrollbars-react": "^0.5.3",
+    "radix-ui": "^1.0.1",
     "rc-slider": "^10.5.0",
     "react": "^18",
     "react-avatar-editor": "^13.0.2",
