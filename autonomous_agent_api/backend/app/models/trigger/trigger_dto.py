@@ -25,11 +25,14 @@ class TriggerCreateDTO(BaseModel):
 
 
 # validation for cron expression
-async def validate_type_CRON(cron_expression: str):
+async def validate_type_CRON(cron_expression: str, probability: float):
     try:
         croniter(cron_expression)
     except ValueError as e:
         raise HTTPException(400, f"Invalid CRON expression")
+        # Validate probability
+    if probability < 0 or probability > 1:
+        raise HTTPException(400, "Probability must be between 0 and 1 (can include 1 or 0)")
 
 
 # validation for Topic

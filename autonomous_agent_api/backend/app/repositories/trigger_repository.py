@@ -23,7 +23,7 @@ class TriggerRepository:
         trigger_data_dict = trigger_data.dict()
 
         if trigger_data.type == "CRON":
-            await validate_type_CRON(trigger_data.data.frequency)
+            await validate_type_CRON(trigger_data.data.frequency, trigger_data.data.probability)
 
         if trigger_data.type == "TOPIC":
             await validate_type_TOPIC(trigger_data.data.topic)
@@ -94,7 +94,7 @@ class TriggerRepository:
 
             # validation for CRON nad TOPIC
             if trigger_data.type == "CRON":
-                await validate_type_CRON(trigger_data.data.frequency)
+                await validate_type_CRON(trigger_data.data.frequency, trigger_data.data.probability)
 
             if trigger_data.type == "TOPIC":
                 await validate_type_TOPIC(trigger_data.data.topic)
