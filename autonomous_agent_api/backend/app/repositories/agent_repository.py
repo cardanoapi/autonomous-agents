@@ -65,7 +65,5 @@ class AgentRepository:
             elif agent.deleted_at is not None:
                 return True
 
-            await self.db.prisma.agstringent.update(
-                where={"id": agent_id}, data={"deleted_at": datetime.now(timezone.utc)}
-            )
+            await self.db.prisma.agent.update(where={"id": agent_id}, data={"deleted_at": datetime.now(timezone.utc)})
             return True
