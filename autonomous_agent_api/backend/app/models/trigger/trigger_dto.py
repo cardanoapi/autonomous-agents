@@ -29,7 +29,7 @@ async def validate_type_CRON(cron_expression: str):
     try:
         croniter(cron_expression)
     except ValueError as e:
-        raise HTTPException(400, f"Invalid CRON expression: {str(e)}")
+        raise HTTPException(400, f"Invalid CRON expression")
 
 
 # validation for Topic

@@ -91,6 +91,14 @@ class TriggerRepository:
             if trigger is None or trigger.deleted_at is not None:
                 raise HTTPException(status_code=404, detail="Trigger not found")
             updated_data_dict = trigger_data.dict()
+
+            # validation for CRON nad TOPIC
+            if trigger_data.type == "CRON":
+                await validate_type_CRON(trigger_data.data.frequency)
+
+            if trigger_data.type == "TOPIC":
+                await validate_type_TOPIC(trigger_data.data.topic)
+
             # for config data
             data_dict = updated_data_dict.pop("data")
             data_json = json.dumps(data_dict)
