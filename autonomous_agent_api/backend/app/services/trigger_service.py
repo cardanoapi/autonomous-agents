@@ -11,7 +11,11 @@ class TriggerService:
         self.trigger_repository = trigger_repository
 
     async def create_trigger(self, agent_id: str, trigger_data: TriggerCreateDTO) -> TriggerResponse:
-        return await self.trigger_repository.save_trigger(agent_id, trigger_data)
+        trigger_response = await self.trigger_repository.save_trigger(agent_id, trigger_data)
+
+        await self.notify_trigger_config_updated(trigger_response.agent_id)
+
+        return trigger_response
 
     async def list_triggers(self) -> List[TriggerResponse]:
         return await self.trigger_repository.retreive_triggers()
