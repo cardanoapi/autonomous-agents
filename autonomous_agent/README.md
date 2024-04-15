@@ -43,6 +43,6 @@ Activate the poetry virtual env inside **autonomous_agent** folder by running th
 Now run the following command along with your agent id.
 
 ```
-python Client/main.py --agent_id  < Your id here > 
+python client/main.py --agent_id  < Your id here > 
 ```
 After a successfull connection , you should see the periodic ping request and response in your terminal.
