@@ -1,4 +1,5 @@
 import Head from "next/head";
+import TemplateForm from "./TemplateForm";
 
 export default function TemplatesPage(){
     return(
@@ -6,6 +7,7 @@ export default function TemplatesPage(){
             <Head>
                 <title>Template Form</title>
             </Head>
+            <TemplateForm/>
         </div>
     )
 }
