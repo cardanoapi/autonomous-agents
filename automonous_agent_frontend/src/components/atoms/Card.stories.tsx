@@ -23,7 +23,9 @@ export const Primary: Story = {
     args: {
         children: (
             <>
-                <CardHeader>Agent Discription</CardHeader>
+                <CardHeader>
+                    Demo Card
+                </CardHeader>
             </>
         )
     }

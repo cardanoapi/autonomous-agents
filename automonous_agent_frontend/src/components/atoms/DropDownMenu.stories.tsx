@@ -29,13 +29,12 @@ export const Primary: Story = {
   args: {
     children : 
     <>
-      <DropdownMenuTrigger>Today</DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuItem>Today</DropdownMenuItem>
-        <DropdownMenuItem>Yesterday</DropdownMenuItem>
-        <DropdownMenuItem>Last 7 Days</DropdownMenuItem>
-        <DropdownMenuItem>Custom Date</DropdownMenuItem>
-      </DropdownMenuContent>
+      <DropdownMenuTrigger>Admin</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem>Settings</DropdownMenuItem>
+          <DropdownMenuItem>PrivacyPolicy</DropdownMenuItem>
+          <DropdownMenuItem>Logout</DropdownMenuItem>
+        </DropdownMenuContent>
     </>
   },
 };
