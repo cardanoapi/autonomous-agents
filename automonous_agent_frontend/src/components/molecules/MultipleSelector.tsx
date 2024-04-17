@@ -4,11 +4,12 @@ import * as React from 'react';
 import { forwardRef, useEffect } from 'react';
 
 import { Command as CommandPrimitive, useCommandState } from 'cmdk';
-import { X } from 'lucide-react';
+import { SearchIcon, X } from 'lucide-react';
 
 import { Badge } from '../atoms/Badge';
 import { Command, CommandGroup, CommandItem, CommandList } from '../atoms/Command';
 import { cn } from '../lib/utils';
+import PolygonIcon from '../icons/Polygon';
 
 export interface Option {
     value: string;
@@ -355,11 +356,11 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
             >
                 <div
                     className={cn(
-                        'border-input group rounded-md border px-3 py-2 text-sm',
+                        'border-input group rounded-md border px-3 py-2 text-sm focus-within:border-2 focus-within:border-[#657B69] flex items-center',
                         className
                     )}
                 >
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-1 w-[92%]">
                         {selected.map((option) => {
                             return (
                                 <Badge
@@ -419,18 +420,19 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                                     : placeholder
                             }
                             className={cn(
-                                'placeholder:text-muted-foreground ml-2 flex-1 bg-white outline-none',
+                                'placeholder:text-muted-foreground ml-2 flex-1 bg-white w-[90%] outline-none ',
                                 inputProps?.className
                             )}
                         />
                     </div>
+                    <SearchIcon className='text-gray-400'/>
                 </div>
                 <div className="relative mt-2">
                     {open && (
                         /** DropDown appearOnTop  */
                         <CommandList
                             className={cn(
-                                'bg-popover text-popover-foreground z-10 w-full rounded-md border shadow-md outline-none animate-in' ,{
+                                'bg-popover text-popover-foreground z-10 w-full rounded-none border shadow-md outline-none animate-in' ,{
                                   "absolute top-0 " : appearOnTop
                                 }
                             )}
@@ -487,7 +489,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                                                                     );
                                                                 }}
                                                                 className={cn(
-                                                                    'cursor-pointer',
+                                                                    'cursor-pointer py-2',
                                                                     option.disable &&
                                                                         'text-muted-foreground cursor-default'
                                                                 )}
