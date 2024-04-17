@@ -19,7 +19,9 @@ async def agent_websocket_endpoint(websocket: WebSocket):
         await manager.connect_websocket(websocket_agent_id, websocket)
 
         instance_count, configurations = await fetch_agent_configuration(websocket_agent_id)
-        await websocket.send_json({"instance_count": instance_count, "configurations": configurations})
+        await websocket.send_json(
+            {"message": "initial", "instance_count": instance_count, "configurations": configurations}
+        )
         try:
             while True:
                 data = await websocket.receive_text()
