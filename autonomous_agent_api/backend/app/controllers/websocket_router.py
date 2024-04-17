@@ -26,7 +26,9 @@ async def agent_websocket_endpoint(websocket: WebSocket):
             while True:
                 data = await websocket.receive_text()
                 print(f"Received Data: {data} from {websocket_agent_id}")
-                await websocket.send_text(f"Pong received from Server  at {datetime.now()}")
+                await websocket.send_json(
+                    {"message": "Pong received from Server", "timestamp": datetime.now().isoformat()}
+                )
                 await manager.update_last_active_timestamp(websocket_agent_id)
 
         except WebSocketDisconnect:
