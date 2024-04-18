@@ -19,7 +19,7 @@ Clone the project
 Go to the Autonomous Agent Directory
 
 ```bash
-  cd autonomous_agent
+  cd autonomous_agent_py
 ```
 
 Install dependencies via poetry.
