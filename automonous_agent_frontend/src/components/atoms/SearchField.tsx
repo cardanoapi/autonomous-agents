@@ -7,13 +7,17 @@ import { buttonVariants } from './Button';
 import { Search } from 'lucide-react';
 
 const SearchFieldVariants = cva(
-    'inline-flex rounded-[8px] w-[240px] h-[40px] text-[14px] gap-x-2 pl-2 leading-[21px] items-center placeholder:ext-[#AAAAAA]',
+    'inline-flex rounded-[8px] text-[14px] gap-x-2 pl-2 leading-[21px] items-center placeholder:ext-[#AAAAAA]',
     {   
         variants: {
             variant: {
-                primary : 'bg-[#F6F6F6] hover:shadow-md hover:shadow-sky-100 transisition duration-150 active:outline-[1px] active:shadow-md active:shadow-sky-200'
+                primary : 'bg-[#F6F6F6] hover:shadow-md hover:shadow-sky-100 transisition duration-150 active:outline-[1px] active:shadow-md active:shadow-sky-200',
+                secondary : 'bg-white rounded-[4px] hover:shadow-md hover:shadow-sky-100 transisition duration-150 active:outline-[1px] active:shadow-md active:shadow-sky-200 border-[1px] border-[#DBDBDB]'
             },
         },
+        defaultVariants : {
+            variant : 'primary'
+        }
 })
 
 export interface SearchFieldProps
@@ -27,9 +31,9 @@ export const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
         const Comp = asChild ? Slot : 'input';
         return (
             <div className={cn(SearchFieldVariants({ variant, className }))}>
-                <Search size={16} />
+                <Search size={16}/>
                 <Comp
-                    className='bg-transparent outline-none'
+                    className='bg-transparent outline-none w-[90%]'
                     ref={ref}
                     {...props}
                 />

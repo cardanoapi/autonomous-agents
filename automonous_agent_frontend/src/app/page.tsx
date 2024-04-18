@@ -42,8 +42,8 @@ export default function Home() {
 
             {/* Dashboard Chart*/}
             <Card className="mt-8 flex h-[446px] w-[1110px] flex-row gap-x-4 gap-y-0 pt-0">
-                <span className="h-[100%]  max-w-6 text-center [writing-mode:vertical-lr]">
-                    No of Transactions
+                <span className="h-[100%] max-w-6 text-center [writing-mode:vertical-lr] rotate-180 leading-[21px]">
+                    No of transaction
                 </span>
                 <div className="mr-4 w-[100%] pt-6">
                     <div className="flex justify-between">
@@ -52,7 +52,7 @@ export default function Home() {
                         </Label>
 
                         <DropdownMenu>
-                            <DropdownMenuTrigger>Today</DropdownMenuTrigger>
+                            <DropdownMenuTrigger border={true} >Today</DropdownMenuTrigger>
                         </DropdownMenu>
                     </div>
                 </div>

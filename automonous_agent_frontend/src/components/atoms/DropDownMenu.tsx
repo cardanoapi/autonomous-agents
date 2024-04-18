@@ -18,8 +18,8 @@ const DropdownMenuSub = DropdownMenuPrimitive.Sub
 const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup
 
 
-const DropdownMenuTrigger = ({ children, ...props } : {children:React.ReactNode}) => (
-  <DropdownMenuPrimitive.Trigger {...props} className="flex items-center gap-x-2 focus:outline-none">
+const DropdownMenuTrigger = ({ children, border=false , ...props } : {children:React.ReactNode , border? : Boolean}) => (
+  <DropdownMenuPrimitive.Trigger {...props} className={cn("flex items-center gap-x-2 focus:outline-none" , {"border-[1px] border-[#ECE9F1] px-4 py-1 rounded-[4px]" : border})}>
     {children}
    <PolygonIcon/>
   </DropdownMenuPrimitive.Trigger>
