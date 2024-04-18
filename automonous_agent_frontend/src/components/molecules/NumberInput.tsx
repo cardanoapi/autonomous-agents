@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { useState } from 'react';
 
@@ -30,15 +32,17 @@ const NumberInput = React.forwardRef<HTMLInputElement, InputProps>(
         }
 
         return (
-            <Card className="flex h-[38px] w-[138px] flex-row items-center gap-y-0 border-[2px] p-0 text-[16px]">
+            <Card
+                className={cn( 'flex h-[38px] w-[138px] flex-row items-center gap-y-0 border-[2px] p-0 text-[16px] focus-within:border-[#657B69]',(className))}
+            >
                 <Input
                     className="m-0 border-none p-0 text-center focus:outline-none active:border-none"
                     value={value}
                     onChange={handleChange}
                 />
-                <div className="absolute right-4 top-4 flex-col">
+                <div className="pr-1 top-4 flex-col">
                     <div onClick={handleIncrement}>
-                        <PolygonIcon className="rotate-180"/>
+                        <PolygonIcon className="rotate-180" />
                     </div>
                     <div onClick={handleDecrement}>
                         <PolygonIcon />
