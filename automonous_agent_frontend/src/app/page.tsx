@@ -41,13 +41,13 @@ export default function Home() {
             </div>
 
             {/* Dashboard Chart*/}
-            <Card className="mt-8 flex h-[446px] w-[1110px] flex-row gap-y-0 pr-20">
-                    <span className="h-[100%]  max-w-6 text-center [writing-mode:vertical-lr]">
-                        No of Transactions
-                    </span>
-                <div className='w-[100%] ml-4'>
+            <Card className="mt-8 flex h-[446px] w-[1110px] flex-row gap-x-4 gap-y-0 pt-0">
+                <span className="h-[100%]  max-w-6 text-center [writing-mode:vertical-lr]">
+                    No of Transactions
+                </span>
+                <div className="mr-4 w-[100%] pt-6">
                     <div className="flex justify-between">
-                        <Label size={'large'} className="text-[18px]">
+                        <Label size={'large'} className="text-[18px] leading-[28px]">
                             Transactions
                         </Label>
 
