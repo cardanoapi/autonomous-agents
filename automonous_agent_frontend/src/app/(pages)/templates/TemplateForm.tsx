@@ -16,7 +16,7 @@ export default function TemplateForm() {
       ];
 
     return (
-        <Card className="w-[790px] p-8 mt-12 flex-col gap-y-10">
+        <Card className="w-[790px]">
             <Label>Template Name</Label>
             <Input placeholder="Enter Template Name" className="w-[297px] mt-3" />
 

@@ -93,7 +93,7 @@ export default function RootLayout({
                         <SideNav SideNavItems={SideNavItems} />
                         <div className='w-[1098px] flex-col mt-10 ml-6 mr-7'>
                             <TopNav />
-                            <div>{children}</div>
+                            <div className='mt-12'>{children}</div>
                         </div>
                     </div>
                 </ThemeProvider>

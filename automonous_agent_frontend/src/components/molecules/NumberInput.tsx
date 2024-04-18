@@ -1,8 +1,6 @@
-'use client';
-
 import * as React from 'react';
+import { useState } from 'react';
 
-import { Car } from 'lucide-react';
 import { Card } from '../atoms/Card';
 import { Input } from '../atoms/Input';
 import PolygonIcon from '../icons/Polygon';
@@ -11,16 +9,42 @@ import { cn } from '../lib/utils';
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
 const NumberInput = React.forwardRef<HTMLInputElement, InputProps>(
-    ({ className, type, ...props }, ref) => {
+    ({ className }, ref) => {
+        const [value, setValue] = useState(1);
+
+        function handleIncrement() {
+            setValue((prevValue) => prevValue + 1);
+        }
+
+        function handleDecrement() {
+            setValue((prevValue) => (prevValue > 1 ? prevValue - 1 : 1));
+        }
+
+        function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+            const inputValue = event.target.value;
+            const newValue = parseInt(inputValue);
+
+            if (!isNaN(newValue)) {
+                setValue(newValue);
+            }
+        }
+
         return (
-          <Card className='w-[138px] h-[38px] border-[2px] text-[16px] flex '>
-              <Input className='w-[80% border-none active:border-none focus:outline-none text-center' defaultValue={0}>
-              </Input>
-              <>
-              <PolygonIcon/>
-              <PolygonIcon/>
-              </>
-          </Card>
+            <Card className="flex h-[38px] w-[138px] flex-row items-center gap-y-0 border-[2px] p-0 text-[16px]">
+                <Input
+                    className="m-0 border-none p-0 text-center focus:outline-none active:border-none"
+                    value={value}
+                    onChange={handleChange}
+                />
+                <div className="absolute right-4 top-4 flex-col">
+                    <div onClick={handleIncrement}>
+                        <PolygonIcon className="rotate-180"/>
+                    </div>
+                    <div onClick={handleDecrement}>
+                        <PolygonIcon />
+                    </div>
+                </div>
+            </Card>
         );
     }
 );
