@@ -29,13 +29,6 @@ async def receive_config(websocket):
                 print("Updated Config:", config_data)
 
             elif response_dict.get("message") == "initial":
-                # Store the configuration data
-                try:
-                    response_dict = json.loads(response)
-                except json.JSONDecodeError:
-                    # Handle failed JSON decoding
-                    print("Failed to decode JSON response:", response)
-                    continue  # Skip this iteration and wait for the next message
                 config_data["instance_count"] = response_dict.get("instance_count")
                 config_data["configurations"] = response_dict.get("configurations")
                 schedule_actions(config_data)
