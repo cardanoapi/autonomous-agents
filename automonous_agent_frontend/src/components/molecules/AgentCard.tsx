@@ -5,7 +5,7 @@ export interface IAgentCard {
     agentName: string;
     agentRole: string;
     template: string;
-    funcionCount: number;
+    functionCount: number;
     lastActive: string;
     totalTrigger: number;
 }
@@ -14,7 +14,7 @@ export default function AgentCard({
     agentName,
     agentRole,
     template,
-    funcionCount,
+    functionCount,
     lastActive,
     totalTrigger
 }: IAgentCard) {
@@ -29,7 +29,7 @@ export default function AgentCard({
                 <CardContent>
                     Template : <span className=' ml-1 px-2 py-1 bg-gray-100 text-black rounded-lg'>{template}</span>
                 </CardContent>
-                <CardContent>Function :<span className='text-[#252323]'>{funcionCount}</span></CardContent>
+                <CardContent>Function :<span className='text-[#252323]'>{functionCount}</span></CardContent>
                 <CardContent>Last Active :<span className='text-[#252323]'>{lastActive}</span></CardContent>
                 <CardContent>Total Triggers 24hrs : <span className='##252323'>{totalTrigger}</span></CardContent>
             </div>

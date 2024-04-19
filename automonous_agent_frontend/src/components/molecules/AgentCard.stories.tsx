@@ -22,7 +22,7 @@ export const Primary: Story = {
         agentName : "Agent#1",
         agentRole : "Drep",
         template : "SendAda Template",
-        funcionCount : 3 ,
+        functionCount : 3 ,
         lastActive : "2024-4-19",
         totalTrigger : 65
     }
