@@ -49,11 +49,6 @@ const SideNavItems: ISideNavItem[] = [
         icon: AgentsIcon
     },
     {
-        title: 'Create Agent',
-        href: '/create-agent',
-        icon: CreateAgentIcon
-    },
-    {
         title: 'Templates',
         href: '/templates',
         icon: TemplateIcon
@@ -91,7 +86,7 @@ export default function RootLayout({
                     />
                     <div className="flex">
                         <SideNav SideNavItems={SideNavItems} />
-                        <div className='w-[1098px] flex-col mt-10 ml-6 mr-7'>
+                        <div className='w-[1098px] flex-col mt-10 ml-6 mr-4'>
                             <TopNav />
                             <div className='mt-12'>{children}</div>
                         </div>

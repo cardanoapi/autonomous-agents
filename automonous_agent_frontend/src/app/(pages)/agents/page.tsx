@@ -1,7 +1,9 @@
+import { Button } from "@app/components/atoms/Button"
 import { DropdownMenu, DropdownMenuTrigger } from "@app/components/atoms/DropDownMenu"
 import { Label } from "@app/components/atoms/label"
 import { SearchField } from "@app/components/atoms/SearchField"
 import AgentCard, { IAgentCard } from "@app/components/molecules/AgentCard"
+import Link from "next/link"
 
 
 const DemoAgentList : IAgentCard[] = [
@@ -55,12 +57,17 @@ const DemoAgentList : IAgentCard[] = [
 export default function AgentsPage(){
     return(
         <>
-        <div className="flex gap-x-4 items-center">
+        <div className="flex justify-between">
+            <div className="flex gap-x-4 items-center">
             <Label size={"large"} className="text-[18px]">Agents(8)</Label>
             <SearchField placeholder="Search agents" variant={"secondary"} className="w-[240px] h-[40px]"></SearchField>
             <DropdownMenu>
                 <DropdownMenuTrigger border={true} className="h-[40px]">Template</DropdownMenuTrigger>
             </DropdownMenu>
+            </div>
+            <Link href="/agents/create-agent">
+            <Button variant="primary" size="md" className="w-[145px]">Create Agent</Button>
+            </Link>
         </div>
         <div className="grid grid-cols-4 mt-8 gap-x-8 gap-y-6">
             {DemoAgentList.map((item , index) => (
