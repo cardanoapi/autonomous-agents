@@ -8,6 +8,9 @@ export default function AgentsPage(){
         <div className="flex gap-x-4 items-center">
             <Label size={"large"} className="text-[18px]">Agents(8)</Label>
             <SearchField placeholder="Search agents" variant={"secondary"} className="w-[240px] h-[40px]"></SearchField>
+            <DropdownMenu>
+                <DropdownMenuTrigger border={true} className="h-[40px]">Template</DropdownMenuTrigger>
+            </DropdownMenu>
         </div>
         </>
     )
