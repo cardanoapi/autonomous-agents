@@ -17,7 +17,8 @@ export default function TopNav() {
         '/': 'Dashboard',
         '/agents': 'Agents',
         '/agents/create-agent': 'Agent Form',
-        '/templates' : 'Template Form'
+        '/templates' : 'Template page',
+        '/templates/create-template' : 'Template Form'
     };
 
     return (

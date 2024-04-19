@@ -1,4 +1,4 @@
-export default function AgentsIcon() {
+export default function UsersIcon() {
     return (
         <svg
             width="24"

@@ -1,5 +1,5 @@
 import { Button } from "@app/components/atoms/Button"
-import { DropdownMenu, DropdownMenuTrigger } from "@app/components/atoms/DropDownMenu"
+import { DropdownMenu, DropdownMenuTrigger , DropdownMenuContent , DropdownMenuItem } from "@app/components/atoms/DropDownMenu"
 import { Label } from "@app/components/atoms/label"
 import { SearchField } from "@app/components/atoms/SearchField"
 import AgentCard, { IAgentCard } from "@app/components/molecules/AgentCard"
@@ -63,6 +63,11 @@ export default function AgentsPage(){
             <SearchField placeholder="Search agents" variant={"secondary"} className="w-[240px] h-[40px]"></SearchField>
             <DropdownMenu>
                 <DropdownMenuTrigger border={true} className="h-[40px]">Template</DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuItem>Oldest</DropdownMenuItem>
+                    <DropdownMenuItem>Newest</DropdownMenuItem>
+                    <DropdownMenuItem>Most Active</DropdownMenuItem>
+                </DropdownMenuContent>
             </DropdownMenu>
             </div>
             <Link href="/agents/create-agent">

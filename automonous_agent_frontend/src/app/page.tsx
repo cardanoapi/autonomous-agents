@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { Card } from '@app/components/atoms/Card';
-import { DropdownMenu, DropdownMenuTrigger } from '@app/components/atoms/DropDownMenu';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent , DropdownMenuItem } from '@app/components/atoms/DropDownMenu';
 import { Label } from '@app/components/atoms/label';
 import OverViewCard, { IOverViewCard } from '@app/components/molecules/OverViewCard';
 
@@ -42,7 +42,7 @@ export default function Home() {
 
             {/* Dashboard Chart*/}
             <Card className="mt-8 flex h-[446px] w-[1110px] flex-row gap-x-4 gap-y-0 pt-0">
-                <span className="h-[100%] max-w-6 text-center [writing-mode:vertical-lr] rotate-180 leading-[21px]">
+                <span className="h-[100%] max-w-6 rotate-180 text-center leading-[21px] [writing-mode:vertical-lr]">
                     No of transaction
                 </span>
                 <div className="mr-4 w-[100%] pt-6">
@@ -52,7 +52,14 @@ export default function Home() {
                         </Label>
 
                         <DropdownMenu>
-                            <DropdownMenuTrigger border={true} >Today</DropdownMenuTrigger>
+                            <DropdownMenuTrigger border={true}>
+                                Today
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuItem>Last 3 Days</DropdownMenuItem>
+                                <DropdownMenuItem>Last 7 Days</DropdownMenuItem>
+                                <DropdownMenuItem>Last Month</DropdownMenuItem>
+                            </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
                 </div>
