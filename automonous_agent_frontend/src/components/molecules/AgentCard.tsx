@@ -19,19 +19,29 @@ export default function AgentCard({
     totalTrigger
 }: IAgentCard) {
     return (
-        <Card className="h-[257px] w-[271px] p-6 rounded-[12px]">
-            <div className="flex w-full items-center justify-between">
-                <CardTitle className="text-base">{agentName}</CardTitle>
+        <Card className="h-[257px] rounded-xl p-6">
+            <div className="flex items-center justify-between">
+                <div className="card-h2">{agentName}</div>
                 <Switch />
             </div>
-            <CardDescription className="text-gray-400">{agentRole}</CardDescription>
-            <div className="mt-5 flex flex-col gap-y-2 text-[#4A4A4A]">
-                <CardContent>
-                    Template : <span className=' ml-1 px-2 py-1 bg-gray-100 text-black rounded-lg'>{template}</span>
+            <CardTitle className="card-h3">{agentRole}</CardTitle>
+            <div className="mt-5 flex flex-col gap-y-2 text-brand-Gray-200">
+                <CardContent className="flex flex-col gap-y-2">
+                    <span className="card-h4">
+                        Template :{' '}
+                        <span className=" gray-background ml-1">{template}</span>
+                    </span>
+                    <span>
+                        Function : <span className="tex-active"> {functionCount}</span>
+                    </span>
+                    <span>
+                        Last Active :<span className="text-active"> {lastActive}</span>
+                    </span>
+                    <span>
+                        Total Triggers :
+                        <span className="text-active"> {totalTrigger}</span>
+                    </span>
                 </CardContent>
-                <CardContent>Function :<span className='text-[#252323]'>{functionCount}</span></CardContent>
-                <CardContent>Last Active :<span className='text-[#252323]'>{lastActive}</span></CardContent>
-                <CardContent>Total Triggers 24hrs : <span className='##252323'>{totalTrigger}</span></CardContent>
             </div>
         </Card>
     );

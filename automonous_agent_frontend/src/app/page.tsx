@@ -3,8 +3,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { Card } from '@app/components/atoms/Card';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent , DropdownMenuItem } from '@app/components/atoms/DropDownMenu';
-import { Label } from '@app/components/atoms/label';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@app/components/atoms/DropDownMenu';
 import OverViewCard, { IOverViewCard } from '@app/components/molecules/OverViewCard';
 
 const OverViewItems: IOverViewCard[] = [
@@ -34,23 +38,22 @@ export default function Home() {
             </Head>
 
             {/* Over cards that appearw on top*/}
-            <div className="flex w-[1112px] justify-between">
+            <div className="flex w-full justify-between">
                 {OverViewItems.map((item, index) => (
                     <OverViewCard title={item.title} value={item.value} key={index} />
                 ))}
             </div>
 
             {/* Dashboard Chart*/}
-            <Card className="mt-8 flex h-[446px] w-[1110px] flex-row gap-x-4 gap-y-0 pt-0">
-                <span className="h-[100%] max-w-6 rotate-180 text-center leading-[21px] [writing-mode:vertical-lr]">
+            <Card className="mt-8 flex flex-row h-[450px] pt-0">
+                <span className="h4 rotate-180 text-center [writing-mode:vertical-lr]">
                     No of transaction
                 </span>
-                <div className="mr-4 w-[100%] pt-6">
+                <div className="w-full mt-6 pr-6">
                     <div className="flex justify-between">
-                        <Label size={'large'} className="text-[18px] leading-[28px]">
+                        <span className='title-1'>
                             Transactions
-                        </Label>
-
+                        </span>
                         <DropdownMenu>
                             <DropdownMenuTrigger border={true}>
                                 Today

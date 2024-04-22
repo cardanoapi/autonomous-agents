@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+  
+
+
+.h1{
+    @apply text-xl font-semibold text-brand-Black-300
+}
+
+.h1-new{
+    @apply text-lg font-semibold text-brand-Black-200
+}
+
+.h2{
+    @apply text-base font-medium text-brand-Black-200
+}
+
+.h3{
+    @apply text-sm font-medium
+}
+.h4 {
+    @apply text-sm font-normal
+}
+
+.h5{
+    @apply font-semibold text-base 
+}
+
+.h6{
+    @apply font-bold text-base
+}
+
+.card-h1{
+    @apply text-lg font-bold text-[#464F60]
+}
+
+.card-h2{
+    @apply text-base font-semibold
+}
+
+.card-h3{
+    @apply text-sm text-brand-Gray-100 font-normal
+}
+
+.card-h4{
+    @apply text-xs leading-[18px]
+}
+
+.card-description1{
+    @apply text-xs text-gray-500 leading-[18px]
+}
+
+.title-1{
+    @apply text-lg font-bold leading-7
+}
+
+
+.text-active{
+    @apply text-brand-Black-200
+}
+
+.hover-transition-blue{
+    @apply hover:bg-brand-Blue-100 hover:text-brand-Blue-200 hover:transition-all
+}
+
+
+.gray-background {
+    @apply bg-gray-100 text-black rounded-lg px-2 py-1
+}
+

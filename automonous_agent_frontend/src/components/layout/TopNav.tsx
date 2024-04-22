@@ -15,7 +15,7 @@ export default function TopNav() {
 
     const PageTitles : {[key:string] : string} = {
         '/': 'Dashboard',
-        '/agents': 'Agents',
+        '/agents': 'Agents Page',
         '/agents/create-agent': 'Agent Form',
         '/templates' : 'Template page',
         '/templates/create-template' : 'Template Form'
@@ -23,7 +23,7 @@ export default function TopNav() {
 
     return (
         <div className="flex w-[full] items-center justify-between text-sm">
-            <Label className='text-[20px] font-[600]'>{PageTitles[path]}</Label>
+            <span className='h1'>{PageTitles[path]}</span>
             <DropdownMenu>
                 <DropdownMenuTrigger>Admin</DropdownMenuTrigger>
                 <DropdownMenuContent>

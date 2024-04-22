@@ -59,10 +59,10 @@ export default function AgentsPage(){
         <>
         <div className="flex justify-between">
             <div className="flex gap-x-4 items-center">
-            <Label size={"large"} className="text-[18px]">Agents(8)</Label>
-            <SearchField placeholder="Search agents" variant={"secondary"} className="w-[240px] h-[40px]"></SearchField>
+            <span className="h1-new">Agents(8)</span>
+            <SearchField placeholder="Search agents" variant={"secondary"} className="w-[45%] h-10"></SearchField>
             <DropdownMenu>
-                <DropdownMenuTrigger border={true} className="h-[40px]">Template</DropdownMenuTrigger>
+                <DropdownMenuTrigger border={true} className="h-10">Template</DropdownMenuTrigger>
                 <DropdownMenuContent>
                     <DropdownMenuItem>Oldest</DropdownMenuItem>
                     <DropdownMenuItem>Newest</DropdownMenuItem>
@@ -71,10 +71,10 @@ export default function AgentsPage(){
             </DropdownMenu>
             </div>
             <Link href="/agents/create-agent">
-            <Button variant="primary" size="md" className="w-[145px]">Create Agent</Button>
+            <Button variant="primary" size="md">Create Agent</Button>
             </Link>
         </div>
-        <div className="grid grid-cols-4 mt-8 gap-x-8 gap-y-6">
+        <div className="grid grid-cols-4 mt-8 gap-4">
             {DemoAgentList.map((item , index) => (
                 <AgentCard agentName={item.agentName} agentRole={item.agentRole} template={item.template} totalTrigger={item.totalTrigger} lastActive={item.lastActive} functionCount={item.functionCount}/>
             ))}

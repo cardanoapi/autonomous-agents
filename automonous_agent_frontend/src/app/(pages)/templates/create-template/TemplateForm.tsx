@@ -25,7 +25,7 @@ export default function TemplateForm() {
 
             <div className="w-[297px]">
             <Label className="inline-block mt-6">Agent Behaviour</Label>
-            <MultipleSelector options={AgentFunctionOptions} placeholder="Add Agent Function" className="w-[297px] mt-3" appearOnTop={false}/>
+            <MultipleSelector options={AgentFunctionOptions} placeholder="Add Agent Function" className="w-[297px] mt-3" appearOnTop={true}/>
             </div>
 
             <Button variant="primary" size="md" className="mt-6">Create Template</Button>

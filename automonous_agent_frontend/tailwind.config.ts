@@ -23,7 +23,25 @@ const config = {
     extend: {
         colors: {
             brand: {
-                100:""
+                100:"",
+                Blue : {
+                  100 : "#E3F2FD",
+                  200 : "#2196F3",
+                  300 : "#0C50B4",
+                },
+                Black : {
+                  100 : "#252323",
+                  200 : "#292929",
+                  300 : "#2E2E2E"
+                } ,
+                Gray : {
+                  100 : "#AAAAAA", 
+                  200 : "#2E2E2E",
+                  300 : "4A4A4A",
+                },
+                inactive : {
+                  100 : "#8C8C8C",
+                }
             }
         },
       keyframes: {

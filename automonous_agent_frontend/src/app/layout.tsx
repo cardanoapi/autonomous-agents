@@ -14,7 +14,7 @@ import 'swiper/css/navigation';
 import 'vanilla-cookieconsent/dist/cookieconsent.css';
 
 import '@app/assets/css/globals.css';
-import { Button } from '@app/components/atoms/Button';
+import '@app/assets/css/tailwind.css';
 import AgentsIcon from '@app/components/icons/AgentsIcon';
 import DashBoardIcon from '@app/components/icons/DashboardIcon';
 import TemplateIcon from '@app/components/icons/TemplatesIcon';
@@ -83,9 +83,9 @@ export default function RootLayout({
                         pauseOnHover={false}
                         theme="dark"
                     />
-                    <div className="flex">
+                    <div className="flex w-full">
                         <SideNav SideNavItems={SideNavItems} />
-                        <div className='w-[1098px] flex-col mt-10 ml-6 mr-4'>
+                        <div className='w-[78%] flex-col mt-10 ml-6 mr-2'>
                             <TopNav />
                             <div className='mt-12'>{children}</div>
                         </div>
