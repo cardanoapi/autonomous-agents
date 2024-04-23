@@ -3,7 +3,6 @@ import uuid
 from datetime import datetime, timezone
 from typing import List, Optional, Union
 from fastapi import HTTPException
-
 from backend.app.models.trigger.resposne_dto import TriggerResponse
 from backend.app.models.trigger.trigger_dto import (
     TriggerCreateDTO,
@@ -24,26 +23,34 @@ class TriggerRepository:
         trigger_data_dict = trigger_data.dict()
 
         if trigger_data.type == "CRON":
-            await validate_type_CRON(trigger_data.data.frequency)
+            await validate_type_CRON(trigger_data.data.frequency, trigger_data.data.probability)
 
         if trigger_data.type == "TOPIC":
             await validate_type_TOPIC(trigger_data.data.topic)
 
+        # for config data
         data_dict = trigger_data_dict.pop("data")
         data_json = json.dumps(data_dict)
+
+        # for Action Config
+        action_dict = trigger_data_dict.pop("action")
+        action_json = json.dumps(action_dict)
 
         trigger_data_dict["id"] = trigger_id
         trigger_data_dict["agent_id"] = agent_id
         trigger_data_dict["data"] = data_json
-
+        trigger_data_dict["action"] = action_json
         trigger_data_dict["created_at"] = datetime.now(timezone.utc)
+        trigger_data_dict["updated_at"] = datetime.now(timezone.utc)
 
         async with self.db:
             await self.db.prisma.trigger.create(data=trigger_data_dict)
 
         data_object = self._convert_data_to_dto(trigger_data.type, data_dict)
 
-        trigger_response = TriggerResponse(id=trigger_id, agent_id=agent_id, type=trigger_data.type, data=data_object)
+        trigger_response = TriggerResponse(
+            id=trigger_id, agent_id=agent_id, type=trigger_data.type, data=data_object, action=trigger_data.action
+        )
         return trigger_response
 
     async def retreive_triggers(self) -> List[TriggerResponse]:
@@ -65,7 +72,8 @@ class TriggerRepository:
                 return True
 
             await self.db.prisma.trigger.update(
-                where={"agent_id": trigger.agent_id, "id": trigger_id}, data={"deleted_at": datetime.now(timezone.utc)}
+                where={"agent_id": trigger.agent_id, "id": trigger_id},
+                data={"deleted_at": datetime.now(timezone.utc)},
             )
             return True
 
@@ -83,17 +91,35 @@ class TriggerRepository:
             if trigger is None or trigger.deleted_at is not None:
                 raise HTTPException(status_code=404, detail="Trigger not found")
             updated_data_dict = trigger_data.dict()
+
+            # validation for CRON nad TOPIC
+            if trigger_data.type == "CRON":
+                await validate_type_CRON(trigger_data.data.frequency, trigger_data.data.probability)
+
+            if trigger_data.type == "TOPIC":
+                await validate_type_TOPIC(trigger_data.data.topic)
+
+            # for config data
             data_dict = updated_data_dict.pop("data")
             data_json = json.dumps(data_dict)
+            # for action config
+            action_dict = updated_data_dict.pop("action")
+            action_json = json.dumps(action_dict)
 
             updated_data_dict["data"] = data_json
+            updated_data_dict["action"] = action_json
+
             updated_data_dict["updated_at"] = datetime.now(timezone.utc)
 
             await self.db.prisma.trigger.update(where={"id": trigger_id}, data=updated_data_dict)
 
             # Create a TriggerResponse object with the converted data
             trigger_response = TriggerResponse(
-                id=trigger_id, agent_id=trigger.agent_id, type=trigger_data.type, data=trigger_data.data
+                id=trigger_id,
+                agent_id=trigger.agent_id,
+                type=trigger_data.type,
+                action=trigger_data.action,
+                data=trigger_data.data,
             )
             return trigger_response
 

@@ -11,18 +11,20 @@ datasource db {
 
 // Agent table model
 model Agent {
-  id         String    @id // UUID
-  name       String
-  action     String[]  @default([])
-  created_at DateTime
-  updated_at DateTime
-  deleted_at DateTime? // Soft deletion field
+  id          String    @id // UUID
+  name        String
+  instance    BigInt
+  last_active DateTime?
+  created_at  DateTime
+  updated_at  DateTime
+  deleted_at  DateTime? // Soft deletion field
 }
 
 model Trigger {
   id         String      @id
   agent_id   String
   type       TriggerType
+  action     Json
   data       Json
   created_at DateTime
   updated_at DateTime
