@@ -39,9 +39,13 @@ const config = {
                   200 : "#2E2E2E",
                   300 : "4A4A4A",
                 },
-                inactive : {
+                Inactive : {
                   100 : "#8C8C8C",
+                },
+                Azure : {
+                  100 : "#F1F4F8"
                 }
+
             }
         },
       keyframes: {

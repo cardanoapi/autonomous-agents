@@ -28,7 +28,11 @@
 }
 
 .h6{
-    @apply font-bold text-base
+    @apply font-normal text-base
+}
+
+.h7{
+    @apply font-normal text-xs
 }
 
 .card-h1{
@@ -44,7 +48,7 @@
 }
 
 .card-h4{
-    @apply text-xs leading-[18px]
+    @apply text-xs leading-[18px] text-[#4A4A4A]
 }
 
 .card-description1{
@@ -64,6 +68,9 @@
     @apply hover:bg-brand-Blue-100 hover:text-brand-Blue-200 hover:transition-all
 }
 
+.hover-transition-gray{
+    @apply hover:bg-brand-Gray-100 bg-emerald-200 !important
+}
 
 .gray-background {
     @apply bg-gray-100 text-black rounded-lg px-2 py-1

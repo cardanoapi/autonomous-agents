@@ -489,7 +489,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                                                                     );
                                                                 }}
                                                                 className={cn(
-                                                                    'cursor-pointer py-2',
+                                                                    'cursor-pointer py-2 hover-transition-gray',
                                                                     option.disable &&
                                                                         'text-muted-foreground cursor-default'
                                                                 )}

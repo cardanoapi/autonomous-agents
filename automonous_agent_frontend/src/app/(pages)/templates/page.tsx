@@ -51,9 +51,11 @@ const DemoTemplateCards: ITemplateCard[] = [
 export default function TemplatesPage() {
     return (
         <div>
+
             <Head>
                 <title>Template Form</title>
             </Head>
+
             <div className="flex justify-between">
                 <div className="flex gap-x-4">
                     <SearchField
@@ -74,7 +76,7 @@ export default function TemplatesPage() {
                 </Link>
             </div>
 
-            <div className="flex flex-col gap-y-14 pb-10 pt-10">
+            <div className="flex flex-col gap-y-10 pb-10 pt-10">
                 <div className='gap-y-5 flex flex-col'>
                     <span className='h5 inline-block'>My Templates</span>
                     <TemplatesContainer TemplateCards={DemoTemplateCards.slice(0, 3)} />

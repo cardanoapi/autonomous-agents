@@ -24,7 +24,7 @@ export default function TemplateCard({
                 {templateDescription}
             </CardDescription>
             <CardContent className="mt-3 flex flex-col gap-y-1">
-                <span className="card-h4">Functions : {functionCount}</span>
+                <span className="card-h4 ">Functions : {functionCount}</span>
                 <span className="card-h4">Trigger : {templateTrigger}</span>
             </CardContent>
         </Card>
