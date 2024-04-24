@@ -6,6 +6,7 @@ CREATE TABLE "Agent" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "instance" BIGINT NOT NULL,
+    "index" BIGSERIAL NOT NULL,
     "last_active" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
