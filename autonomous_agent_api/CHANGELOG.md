@@ -48,4 +48,6 @@
   - refactored the agent_websocket.py router class to websocket_router.py
   - modularized the agent_websocket code into seprate service , repository , and controller class
 
-
+# Agent Key Generation, DATE - 2024-04-19
+  -  Update agent table to include the index field.
+  -  Create Api endpoint to fetch agent's wallet details and it's wallet address.
