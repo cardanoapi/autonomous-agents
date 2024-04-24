@@ -1,4 +1,4 @@
-'use client';
+"use client"
 
 import * as React from 'react';
 import { forwardRef, useEffect } from 'react';
@@ -10,6 +10,7 @@ import { Badge } from '../atoms/Badge';
 import { Command, CommandGroup, CommandItem, CommandList } from '../atoms/Command';
 import { cn } from '../lib/utils';
 import PolygonIcon from '../icons/Polygon';
+import { any } from 'zod';
 
 export interface Option {
     value: string;
@@ -19,6 +20,7 @@ export interface Option {
     fixed?: boolean;
     /** Group the options by providing key. */
     [key: string]: string | boolean | undefined;
+
 }
 interface GroupOption {
     [key: string]: Option[];
@@ -176,7 +178,8 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
             triggerSearchOnFocus = false,
             commandProps,
             inputProps,
-            appearOnTop = false
+            appearOnTop = false,
+            ...props
         }: MultipleSelectorProps,
         ref: React.Ref<MultipleSelectorRef>
     ) => {
@@ -353,6 +356,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                         : !onSearch
                 } // When onSearch is provided, we don't want to filter the options. You can still override it.
                 filter={commandFilter()}
+                {...props}
             >
                 <div
                     className={cn(
@@ -465,6 +469,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                                                                 onMouseDown={(e) => {
                                                                     e.preventDefault();
                                                                     e.stopPropagation();
+                                                                    
                                                                 }}
                                                                 onSelect={() => {
                                                                     if (

@@ -28,12 +28,18 @@ const NumberInput = React.forwardRef<HTMLInputElement, InputProps>(
 
             if (!isNaN(newValue)) {
                 setValue(newValue);
+            } else if (inputValue === '') {
+                // If the input value is empty, treat it as backspace
+                setValue((prevValue) => Math.floor(prevValue / 10));
             }
         }
 
         return (
             <Card
-                className={cn( 'flex h-[38px] w-[138px] flex-row items-center gap-y-0 border-[2px] p-0 text-[16px] focus-within:border-[#657B69]',(className))}
+                className={cn(
+                    'flex h-[38px] w-[138px] flex-row items-center gap-y-0 border-[2px] p-0 text-[16px] focus-within:border-[#657B69]',
+                    className
+                )}
             >
                 <Input
                     className="m-0 border-none p-0 text-center focus:outline-none active:border-none bg-transparent"
@@ -45,7 +51,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, InputProps>(
                         <PolygonIcon className="rotate-180 h-full w-full" />
                     </div>
                     <div onClick={handleDecrement}>
-                        <PolygonIcon  className='h-full w-full'/>
+                        <PolygonIcon className="h-full w-full" />
                     </div>
                 </div>
             </Card>

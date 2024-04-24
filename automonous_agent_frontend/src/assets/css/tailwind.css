@@ -69,7 +69,7 @@
 }
 
 .hover-transition-gray{
-    @apply hover:bg-brand-Gray-100 bg-emerald-200 !important
+    @apply hover:bg-brand-Gray-100 !important
 }
 
 .gray-background {
