@@ -82,7 +82,7 @@ class AgentRepository:
 
         # Derive the agent's child private key based on the agent_id
 
-        agentPath = f"m/{agent_index}"
+        agentPath = f"m/{agent_index}'"
         agent_key = masterKey.derive_from_path(agentPath)
 
         # Generate the address using the derived agent key
@@ -101,7 +101,7 @@ class AgentRepository:
         address = pycardano.Address(
             payment_part=paymentVerificationKey.hash(),
             staking_part=stakingVerificationKey.hash(),
-            network=pycardano.Network.MAINNET,
+            network=pycardano.Network.TESTNET,
         )
 
         # Create and return the AgentResponse with the agent's key and address
