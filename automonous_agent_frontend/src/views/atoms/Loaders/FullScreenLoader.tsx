@@ -1,4 +1,4 @@
-import React from 'react';
+nimport React from 'react';
 
 import Loader from './Loader';
 

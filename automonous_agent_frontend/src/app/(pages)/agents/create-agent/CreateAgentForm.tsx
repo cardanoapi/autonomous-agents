@@ -93,7 +93,7 @@ export default function CreateAgentForm() {
                                     Number of Agents
                                 </Label>
                                 <FormControl>
-                                    <NumberInput className="mt-3" {...field} type='number' onChange={(e) => field.onChange(parseInt(e.target.value))}/>
+                                    <NumberInput className="mt-3 w-28 h-9" {...field} type='number' onChange={(e) => field.onChange(parseInt(e.target.value))}/>
                                 </FormControl>
                             </FormItem>
                         )}
