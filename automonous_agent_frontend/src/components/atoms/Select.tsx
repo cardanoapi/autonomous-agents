@@ -20,12 +20,15 @@ const SelectGroup = React.forwardRef<
     />
 ));
 
+SelectGroup.displayName = SelectPrimitive.SelectGroup.displayName
+
 const SelectValue = React.forwardRef<
     React.ElementRef<typeof SelectPrimitive.Value>,
     React.ComponentPropsWithoutRef<typeof SelectPrimitive.Value>
 >(({ className, ...props }, ref) => (
     <SelectPrimitive.Value ref={ref} className={cn('', className )} {...props} />
 ));
+SelectValue.displayName = SelectPrimitive.Value.displayName
 
 const SelectTrigger = React.forwardRef<
     React.ElementRef<typeof SelectPrimitive.Trigger>,
@@ -137,12 +140,6 @@ const SelectItem = React.forwardRef<
         )}
         {...props}
     >
-        <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center pl-[6px]">
-            <SelectPrimitive.ItemIndicator>
-                <Check className="h-4 w-4" />
-            </SelectPrimitive.ItemIndicator>
-        </span>
-
         <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
     </SelectPrimitive.Item>
 ));

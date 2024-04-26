@@ -3,11 +3,10 @@ import { Slot } from '@radix-ui/react-slot';
 import { cva, VariantProps } from 'class-variance-authority';
 
 import { cn } from '../lib/utils';
-import { buttonVariants } from './Button';
 import { Search } from 'lucide-react';
 
 const SearchFieldVariants = cva(
-    'inline-flex rounded-[8px] text-[14px] gap-x-2 pl-2 leading-[21px] items-center placeholder:ext-[#AAAAAA]',
+    'inline-flex rounded-[8px] text-[14px] gap-x-2 pl-2 leading-[21px] items-center placeholder:text-[#AAAAAA] py-2',
     {   
         variants: {
             variant: {
@@ -41,3 +40,5 @@ export const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
         );
     }
 );
+
+SearchField.displayName = 'SearchField'

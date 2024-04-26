@@ -17,7 +17,7 @@ import {
 } from '@app/components/atoms/Form';
 import { Input } from '@app/components/atoms/Input';
 import { Label } from '@app/components/atoms/label';
-import MultipleSelector, { Option } from '@app/components/molecules/MultipleSelector';
+import MultipleSelector, { Option } from '@app/components/molecules/TemplateSearchSelect';
 import { NumberInput } from '@app/components/molecules/NumberInput';
 
 const agentFormSchema = z.object({
@@ -77,6 +77,7 @@ export default function CreateAgentForm() {
                                             placeholder="Add Agent Template"
                                             options={AgentTemplateOptions}
                                             appearOnTop={true}
+                                            maxSelected={1}
                                             {...field}
                                         />
                                     </div>

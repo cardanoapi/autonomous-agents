@@ -13,7 +13,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <Input
         className={cn(
-          "h-38 w-138 border-2 focus-within:border-brand-Gray-100 active:border-none p-0 text-center",
+          "h-8 w-24 border-2 focus-within:border-brand-Gray-100 active:border-none p-0 text-center",
           className
         )}
         type="number"

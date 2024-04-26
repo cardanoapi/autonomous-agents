@@ -76,7 +76,7 @@ export default function AgentsPage(){
         </div>
         <div className="grid grid-cols-4 mt-8 gap-4">
             {DemoAgentList.map((item , index) => (
-                <AgentCard agentName={item.agentName} agentRole={item.agentRole} template={item.template} totalTrigger={item.totalTrigger} lastActive={item.lastActive} functionCount={item.functionCount}/>
+                <AgentCard agentName={item.agentName} agentRole={item.agentRole} template={item.template} totalTrigger={item.totalTrigger} lastActive={item.lastActive} functionCount={item.functionCount} key={index}/>
             ))}
         </div>
         </>

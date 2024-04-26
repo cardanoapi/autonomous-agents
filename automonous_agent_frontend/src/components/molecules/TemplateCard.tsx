@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardTitle } from '../atoms/Card';
 import TemplateIcon from '../icons/TemplatesIcon';
 
+
 export interface ITemplateCard {
     templateName: string;
     templateDescription: string;

@@ -5,25 +5,3 @@
 
 
 
-.remove-arrow::-webkit-inner-spin-button,
-.remove-arrow::-webkit-outer-spin-button {
-   -webkit-appearance: none;
-   margin: 0;
-}
-
-.remove-arrow::-webkit-inner-spin-button {
-  -webkit-appearance: none !important;
-  opacity: 1 !important;
-  background: transparent !important;
-  border-width: 0px;
-  margin: 0;
-  border-left: 1px solid #d8d8d8;
-  height: 34px;
-  width: 23px;
-  cursor: pointer;
-}
-
-.remove-arrow::-webkit-inner-spin-button{
-  -webkit-appearance: none !important;
-  background-color: black !important;
-}

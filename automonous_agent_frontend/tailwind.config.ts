@@ -44,6 +44,10 @@ const config = {
                 },
                 Azure : {
                   100 : "#F1F4F8"
+                },
+                White : {
+                  100 : "#FFF",
+                  200 : "#F5F5F5"
                 }
 
             }
