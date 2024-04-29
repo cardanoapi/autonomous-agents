@@ -424,10 +424,10 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                                                 className="h-full overflow-auto"
                                             >
                                                 <>
-                                                    {dropdowns.map((option) => {
+                                                    {dropdowns.map((option , index) => {
                                                         return (
                                                             <CommandItem
-                                                                key={option.value}
+                                                                key={index}
                                                                 value={option.value}
                                                                 disabled={
                                                                     option.disable
@@ -435,7 +435,6 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                                                                 onMouseDown={(e) => {
                                                                     e.preventDefault();
                                                                     e.stopPropagation();
-                                                                    
                                                                 }}
                                                                 onSelect={() => {
                                                                     if (
