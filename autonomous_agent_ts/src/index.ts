@@ -26,7 +26,7 @@ ws.on('open', () => {
     // Send a "Ping" message to the server every 10 seconds
     setInterval(() => {
         ws.send('Ping');
-    }, 10000);zz
+    }, 10000);
 });
 
 // Event listener for incoming messages
