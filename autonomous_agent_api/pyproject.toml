@@ -2,7 +2,7 @@
 name = "backend"
 version = "0.1.0"
 description = "Backend for Autonomous Agent Testing .This project was generated with fastapi-mvc."
-authors = ["Joseph Rana <josephranamgr7@gmail.com>"]
+authors = ["Roshan Gyawali <gyawalirprogrammer@gmail.com,Joseph Rana <josephranamgr7@gmail.com>"]
 license = "no"
 readme = "README.md"
 repository = "https://github.com/sireto/cardano-autonomous-agent"
@@ -31,6 +31,7 @@ prisma = "^0.13.0"
 pytest-dotenv = "^0.5.2"
 classy-fastapi = "^0.6.1"
 croniter = "^2.0.3"
+confluent-kafka = "^2.3.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "~7.4.0"
