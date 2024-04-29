@@ -1,5 +1,6 @@
 import {WebSocket} from "ws";
 import {fetchAgentConfiguration} from "../repository/agent_manager_repository";
+const helper = require ("libcardano/helper.js")
 
 
 class WebSocketConnectionManager {
@@ -33,7 +34,22 @@ class WebSocketConnectionManager {
                             configurations,
                         };
                         await websocket.send(JSON.stringify(updatedMessage));
-                    } else {
+                    }else if(message.message === 'cardano-node-blocks') {
+                        const blockchain=helper.createInMemoryClientWithPeer("95.217.224.100:3006",4,false)
+
+                        await blockchain.pipeline("extendBlock",(block,cb)=>{
+                            setImmediate(cb)
+                            // console.log("New Block hash:",block.headerHash.toString('hex'),"blockNo:",block.blockNo,"slotNo:",block.slotNo)
+                            const cardanoBlockMsg ={
+                                New_Block_Hash : block.headerHash.toString('hex'),
+                                Block_No : block.blockNo,
+                                Slot_No : block.slotNo
+                            }
+                             websocket.send(JSON.stringify(cardanoBlockMsg));
+                        })
+
+                    }
+                    else {
                         await websocket.send(JSON.stringify(message));
                     }
                 } catch (error) {
@@ -60,7 +76,11 @@ class WebSocketConnectionManager {
     }
 
 
+
+
 }
+
+
 
 const manager = new WebSocketConnectionManager();
 export default manager;

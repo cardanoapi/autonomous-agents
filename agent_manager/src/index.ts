@@ -5,6 +5,7 @@ import {
 } from "./repository/agent_manager_repository";
 import manager from "./service/agent_manager_service";
 
+
 import {WebSocket} from "ws";
 import {kafka_event} from "./service/kafka_message_consumer";
 
@@ -33,6 +34,7 @@ wss.on('connection', async function connection(ws, req) {
         ws.on('message', async function incoming(message) {
 
             console.log(`Received message from agent ${agentId}: ${message}`);
+            manager.sendToWebSocket(agentId, { message: 'cardano-node-blocks' });
             ws.send(JSON.stringify({
                 message: "Pong received from Server",
                 timestamp: new Date().toISOString()
@@ -50,3 +52,7 @@ wss.on('connection', async function connection(ws, req) {
         ws.close(1008, 'Policy Violation');
     }
 });
+
+
+
+
