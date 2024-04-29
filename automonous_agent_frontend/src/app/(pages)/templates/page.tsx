@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 
 import { Button } from '@app/components/atoms/Button';
-import { DropdownMenu, DropdownMenuTrigger } from '@app/components/atoms/DropDownMenu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
 import TemplateCard, { ITemplateCard } from '@app/components/molecules/TemplateCard';
 
@@ -67,6 +67,11 @@ export default function TemplatesPage() {
                         <DropdownMenuTrigger border={true}>
                             Function
                         </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuItem>Send Ada</DropdownMenuItem>
+                            <DropdownMenuItem>Vote Proposal</DropdownMenuItem>
+                            <DropdownMenuItem>Others</DropdownMenuItem>
+                        </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
                 <Link href="/templates/create-template">

@@ -11,6 +11,7 @@ import { Command, CommandGroup, CommandItem, CommandList } from '../atoms/Comman
 import { cn } from '../lib/utils';
 import { any } from 'zod';
 import SelectedTemplateCard from './SelectedTemplateCard';
+import { set } from 'lodash';
 
 export interface Option {
     value: string;
@@ -169,7 +170,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
             maxSelected = Number.MAX_SAFE_INTEGER,
             onMaxSelected,
             hidePlaceholderWhenSelected,
-            disabled,
+            disabled= false,
             groupBy,
             className,
             badgeClassName,
@@ -193,6 +194,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
         );
         const [inputValue, setInputValue] = React.useState('');
         const debouncedSearchTerm = useDebounce(inputValue, delay || 500);
+        const [disabledValue , setDisabledValue] = React.useState(disabled)
 
         React.useImperativeHandle(
             ref,
@@ -208,6 +210,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                 const newOptions = selected.filter((s) => s.value !== option.value);
                 setSelected(newOptions);
                 onChange?.(newOptions);
+                setDisabledValue(false)
             },
             [onChange, selected]
         );
@@ -286,12 +289,12 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                             onMaxSelected?.(selected.length);
                             return;
                         }
-                        setInputValue('');
                         const newOptions = [...selected, { value, label: value }];
                         setSelected(newOptions);
                         onChange?.(newOptions);
+                        setInputValue("")
                     }}
-                >{`Create "${inputValue}"`}</CommandItem>
+                ></CommandItem>
             );
 
             // For normal creatable
@@ -346,6 +349,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
             <Command
                 {...commandProps}
                 onKeyDown={(e) => {
+                    setOpen(true)
                     handleKeyDown(e);
                     commandProps?.onKeyDown?.(e);
                 }}
@@ -360,7 +364,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
             >
                 <div
                     className={cn(
-                        'border-input group rounded-md border px-3 py-2 text-sm focus-within:border-2 focus-within:border-[#657B69] flex items-center',
+                        'border-input group rounded-md border px-3 py-2 text-sm  flex items-center',
                         className
                     )}
                 >
@@ -370,7 +374,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                             {...inputProps}
                             ref={inputRef}
                             value={inputValue}
-                            disabled={disabled}
+                            disabled={disabledValue}
                             onValueChange={(value) => {
                                 setInputValue(value);
                                 inputProps?.onValueChange?.(value);
@@ -391,7 +395,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                             }
                             className={cn(
                                 'placeholder:text-muted-foreground ml-2 flex-1 bg-white w-[90%] outline-none ',
-                                inputProps?.className
+                                inputProps?.className ,
                             )}
                         />
                     </div>
@@ -402,7 +406,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                         /** DropDown appearOnTop  */
                         <CommandList
                             className={cn(
-                                'bg-white text-popover-foreground z-10 w-full rounded-none border shadow-md outline-none animate-in' ,{
+                                'bg-white text-popover-foreground w-full rounded-md border shadow-md outline-none animate-in' ,{
                                   "absolute top-0 " : appearOnTop
                                 }
                             )}
@@ -446,7 +450,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                                                                         );
                                                                         return;
                                                                     }
-                                                                    setInputValue('');
+                                                    
                                                                     const newOptions = [
                                                                         ...selected,
                                                                         option
@@ -456,10 +460,15 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                                                                     );
                                                                     onChange?.(
                                                                         newOptions
-                                                                    );
+                                                                    )
+                                                                    setOpen(false)
+                                                                    setInputValue("")
+                                                                    if (selected.length+1 === maxSelected){
+                                                                        setDisabledValue(true)
+                                                                    }
                                                                 }}
                                                                 className={cn(
-                                                                    'cursor-pointer py-2 hover-transition-gray',
+                                                                    'cursor-pointer py-2 my-1 rounded-md hover:bg-brand-Blue-100 hover:text-brand-Blue-200',
                                                                     option.disable &&
                                                                         'text-muted-foreground cursor-default'
                                                                 )}

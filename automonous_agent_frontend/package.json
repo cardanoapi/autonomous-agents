@@ -42,7 +42,7 @@
     "class-variance-authority": "^0.7.0",
     "classnames": "^2.5.1",
     "clsx": "^2.1.0",
-    "cmdk": "^1.0.0",
+    "cmdk": "^0.2.0",
     "date-fns": "^3.3.1",
     "dayjs": "^1.11.10",
     "elastic-apm-node": "^4.4.0",
