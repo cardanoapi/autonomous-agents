@@ -25,7 +25,9 @@ class TestAgentDelete:
         agent_service.delete_agent.assert_called_once_with(agent_id)
 
     @pytest.mark.asyncio
-    async def test_delete_agent_should_fail_with_no_id(self, agent_service, agent_router):
+    async def test_delete_agent_should_fail_with_no_id(
+        self, agent_service, agent_router
+    ):
         # Mock data
         with pytest.raises(TypeError):
             await agent_router.delete_agent()

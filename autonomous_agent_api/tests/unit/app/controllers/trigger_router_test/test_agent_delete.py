@@ -25,7 +25,9 @@ class TestDeleteTrigger:
         trigger_service.delete_by_id.assert_called_once_with(trigger_id)
 
     @pytest.mark.asyncio
-    async def test_delete_trigger_should_fail_with_no_id(self, trigger_service, trigger_router):
+    async def test_delete_trigger_should_fail_with_no_id(
+        self, trigger_service, trigger_router
+    ):
         # Mock data
         with pytest.raises(TypeError):
             await trigger_router.delete_trigger_by_trigger_id()

@@ -11,8 +11,12 @@ class TriggerService:
         self.trigger_repository = trigger_repository
         self.kafka_producer = Producer({"bootstrap.servers": "localhost:9092"})
 
-    async def create_trigger(self, agent_id: str, trigger_data: TriggerCreateDTO) -> TriggerResponse:
-        trigger_response = await self.trigger_repository.save_trigger(agent_id, trigger_data)
+    async def create_trigger(
+        self, agent_id: str, trigger_data: TriggerCreateDTO
+    ) -> TriggerResponse:
+        trigger_response = await self.trigger_repository.save_trigger(
+            agent_id, trigger_data
+        )
 
         self.publish_trigger_event(trigger_response.agent_id)
 
@@ -30,9 +34,13 @@ class TriggerService:
     async def list_trigger_by_id(self, trigger_id: str) -> TriggerResponse:
         return await self.trigger_repository.retreive_trigger_by_id(trigger_id)
 
-    async def update_trigger_by_id(self, trigger_id: str, trigger_data: TriggerCreateDTO) -> TriggerResponse:
+    async def update_trigger_by_id(
+        self, trigger_id: str, trigger_data: TriggerCreateDTO
+    ) -> TriggerResponse:
         # Call the repository method to modify the trigger data
-        trigger_response = await self.trigger_repository.modify_trigger_by_id(trigger_id, trigger_data)
+        trigger_response = await self.trigger_repository.modify_trigger_by_id(
+            trigger_id, trigger_data
+        )
 
         # Notify the change if necessary
         # Publish message to Kafka topic
@@ -42,5 +50,9 @@ class TriggerService:
 
     def publish_trigger_event(self, agent_id: str):
         # Publish message to Kafka topic
-        self.kafka_producer.produce("trigger_config_updates", key=agent_id.encode("utf-8"), value=b"config_updated")
+        self.kafka_producer.produce(
+            "trigger_config_updates",
+            key=agent_id.encode("utf-8"),
+            value=b"config_updated",
+        )
         self.kafka_producer.flush()

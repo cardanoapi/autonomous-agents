@@ -2,7 +2,11 @@ from pydantic import BaseModel
 from typing import Union
 
 
-from backend.app.models.trigger.trigger_dto import Action, CronTriggerDTO, TopicTriggerDTO
+from backend.app.models.trigger.trigger_dto import (
+    Action,
+    CronTriggerDTO,
+    TopicTriggerDTO,
+)
 
 
 class TriggerResponse(BaseModel):
