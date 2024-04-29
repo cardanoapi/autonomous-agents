@@ -18,7 +18,7 @@ import {
 import { Input } from '@app/components/atoms/Input';
 import { Textarea } from '@app/components/atoms/Textarea';
 import { Label } from '@app/components/atoms/label';
-import MultipleSelector, { Option } from '@app/components/molecules/MultipleSelector';
+import MultipleSelector, { Option } from '@app/components/molecules/SearchSelect';
 
 const templateFormSchema = z.object({
     templateName: z.string(),

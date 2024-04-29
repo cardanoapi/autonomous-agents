@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -17,8 +17,8 @@ import {
 } from '@app/components/atoms/Form';
 import { Input } from '@app/components/atoms/Input';
 import { Label } from '@app/components/atoms/label';
-import MultipleSelector, { Option } from '@app/components/molecules/TemplateSearchSelect';
 import { NumberInput } from '@app/components/molecules/NumberInput';
+import MultipleSelector, { Option } from '@app/components/molecules/SearchSelect';
 
 const agentFormSchema = z.object({
     agentName: z.string(),
@@ -35,13 +35,13 @@ export default function CreateAgentForm() {
 
     const form = useForm<z.infer<typeof agentFormSchema>>({
         resolver: zodResolver(agentFormSchema),
-        defaultValues : {
-            numberOfAgents : 1
+        defaultValues: {
+            numberOfAgents: 1
         }
     });
 
     function onSubmit(formData: z.infer<typeof agentFormSchema>) {
-        console.log("Logging Form Data")
+        console.log('Logging Form Data');
         console.log(formData);
     }
 
@@ -97,12 +97,25 @@ export default function CreateAgentForm() {
                                     Number of Agents
                                 </Label>
                                 <FormControl>
-                                    <NumberInput className="mt-3 w-28 h-9" {...field} type='number' onChange={(e) => field.onChange(parseInt(e.target.value))} min={1}/>
+                                    <NumberInput
+                                        className="mt-3 h-9 w-28"
+                                        {...field}
+                                        type="number"
+                                        onChange={(e) =>
+                                            field.onChange(parseInt(e.target.value))
+                                        }
+                                        min={1}
+                                    />
                                 </FormControl>
                             </FormItem>
                         )}
                     />
-                    <Button type='submit' variant="primary" size="md" className="mt-6 w-[145px]">
+                    <Button
+                        type="submit"
+                        variant="primary"
+                        size="md"
+                        className="mt-6 w-[145px]"
+                    >
                         Create
                     </Button>
                 </Card>
