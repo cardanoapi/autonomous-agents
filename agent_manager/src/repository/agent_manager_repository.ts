@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import {JsonValue} from "@prisma/client/runtime/library";
 
 
 const prisma = new PrismaClient();
@@ -33,17 +34,23 @@ export async function fetchAgentConfiguration(agentId: string): Promise<{ instan
                 deleted_at: null
             }
         });
-
-        const instanceCount = agentInstance ? agentInstance.instance : null;
-
-        const configurationsData = agentConfigurations.map((config: { id: string, type: string, data: string, action: string })=> ({
+        if (agentInstance != null)
+        {
+             const instanceCount = Number(agentInstance.instance);
+              const configurationsData = agentConfigurations.map((config: { id: string, type: string, data: JsonValue, action: JsonValue })=> ({
             id: config.id,
             type: config.type,
             data: config.data,
-            action: config.action
+            action: config.action,
+
         }));
 
         return { instanceCount, configurations: configurationsData };
+        }
+        else{
+            return { instanceCount : null, configurations: [] };
+        }
+
     } catch (error) {
         console.log(`Error fetching agent configuration: ${error}`);
         return { instanceCount: null, configurations: [] };
