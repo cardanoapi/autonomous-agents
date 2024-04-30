@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -18,7 +20,9 @@ import {
 import { Input } from '@app/components/atoms/Input';
 import { Textarea } from '@app/components/atoms/Textarea';
 import { Label } from '@app/components/atoms/label';
-import MultipleSelector, { Option } from '@app/components/molecules/SearchSelect';
+import MultipleSelector, {
+    Option
+} from '@app/components/molecules/AgentFunctionSearchSelect';
 
 const templateFormSchema = z.object({
     templateName: z.string(),
@@ -41,6 +45,12 @@ export default function TemplateForm() {
         { label: 'Vote Propsal', value: 'VotePropsal' },
         { label: 'Burn Token', value: 'BurnToken' }
     ];
+
+    const multiSelectRef = useRef<{ selected: Option[] } | null>(null);
+
+        // useEffect(() => {
+        //     console.log(multiSelectRef?.currentRef?.selected);
+        // }, [multiSelectRef.current?.selected]);
 
     return (
         <Form {...form}>
