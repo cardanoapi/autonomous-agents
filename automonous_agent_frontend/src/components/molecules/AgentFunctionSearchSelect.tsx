@@ -9,7 +9,7 @@ import { Command as CommandPrimitive, useCommandState } from 'cmdk';
 import { SearchIcon, X } from 'lucide-react';
 import { any } from 'zod';
 
-import CronTriggerForm from '@app/app/(pages)/templates/create-template/Cron/CronTriggerForm';
+import TriggerForm from '@app/app/(pages)/templates/create-template/function-triggers/TriggerForm';
 
 import { Badge } from '../atoms/Badge';
 import { Command, CommandGroup, CommandItem, CommandList } from '../atoms/Command';
@@ -524,7 +524,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                 </div>
                 <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
                     <DialogContent className='p-12'>
-                        <CronTriggerForm functionName={'Send Ada Function'} setClose={()=>{setDialogOpen(false)}}/>
+                        <TriggerForm functionName={'Send Ada Function'} setClose={()=>{setDialogOpen(false)}}/>
                     <DialogClose>close</DialogClose>
                     </DialogContent>
                 </Dialog>

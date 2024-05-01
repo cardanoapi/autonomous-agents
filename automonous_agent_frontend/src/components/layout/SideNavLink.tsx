@@ -16,7 +16,7 @@ export default function SideNavLink({ Prop }: { Prop: ISideNavItem }) {
             <div
                 className={cn(
                     'hover-transition-blue mb-4 flex h-10 items-center rounded px-3 ',
-                    { 'bg-brand-Blue-100 transition-all duration-300': isActive }
+                    { 'bg-brand-Blue-100': isActive }
                 )}
             >
                 <Prop.icon fill={isActive ? "#2196F3" : "#8C8C8C"} />

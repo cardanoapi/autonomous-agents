@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 
-import CronTriggerForm from './CronTriggerForm';
+import TriggerForm from './TriggerForm';
 
 const meta = {
-    title: 'CronTriggerForm',
-    component: CronTriggerForm,
+    title: 'Trigger Form',
+    component: TriggerForm,
     parameters: {
         layout: 'centered'
     },
@@ -13,7 +13,7 @@ const meta = {
     tags: ['autodocs'],
 
     argTypes: {}
-} satisfies Meta<typeof CronTriggerForm>;
+} satisfies Meta<typeof TriggerForm>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

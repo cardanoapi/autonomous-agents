@@ -9,14 +9,14 @@ import { Card } from '@app/components/atoms/Card';
 import { Input } from '@app/components/atoms/Input';
 import { Label } from '@app/components/atoms/label';
 
-import CronTrigger from './CronTrigger';
+import CronTrigger from './Trigger';
 
 interface ICronTriggerForm {
     functionName : string
     setClose : any
 }
 
-export default function CronTriggerForm({functionName , setClose} : ICronTriggerForm) {
+export default function TriggerForm({functionName , setClose} : ICronTriggerForm) {
     return (
         <Card className="flex w-[50vw] flex-col gap-y-3 bg-brand-Azure-200 p-4 px-8">
             <div className="mb-2 flex justify-center">
