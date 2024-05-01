@@ -18,7 +18,7 @@ import {
 import { Input } from '@app/components/atoms/Input';
 import { Label } from '@app/components/atoms/label';
 import { NumberInput } from '@app/components/molecules/NumberInput';
-import MultipleSelector, { Option } from '@app/components/molecules/SearchSelect';
+import MultipleSelector, { Option } from '@app/components/molecules/MultiSearchSelect';
 
 const agentFormSchema = z.object({
     agentName: z.string(),

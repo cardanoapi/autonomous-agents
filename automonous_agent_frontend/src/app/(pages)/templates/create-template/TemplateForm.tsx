@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { Dialog , DialogTrigger , DialogContent , DialogClose} from '@app/components/atoms/Dialog';
+import TriggerForm from './function-triggers/TriggerForm';
 
 import { Button } from '@app/components/atoms/Button';
 import { Card } from '@app/components/atoms/Card';
@@ -22,12 +24,16 @@ import { Textarea } from '@app/components/atoms/Textarea';
 import { Label } from '@app/components/atoms/label';
 import MultipleSelector, {
     Option
-} from '@app/components/molecules/AgentFunctionSearchSelect';
+} from '@app/components/molecules/MultiSearchSelect'
 
 const templateFormSchema = z.object({
     templateName: z.string(),
     templateDescription: z.string().optional(),
-    agentRole: z.any()
+    agentRole: z.any(),
+    triggers : z.object({
+        address : z.string(),
+        amount : z.string()
+    }).optional()
 });
 
 export default function TemplateForm() {
@@ -46,11 +52,13 @@ export default function TemplateForm() {
         { label: 'Burn Token', value: 'BurnToken' }
     ];
 
+    const [dialogOpen, setDialogOpen] = useState(false);
+
     const multiSelectRef = useRef<{ selected: Option[] } | null>(null);
 
-        // useEffect(() => {
-        //     console.log(multiSelectRef?.currentRef?.selected);
-        // }, [multiSelectRef.current?.selected]);
+    // useEffect(() => {
+    //     console.log(multiSelectRef?.currentRef?.selected);
+    // }, [multiSelectRef.current?.selected]);
 
     return (
         <Form {...form}>
@@ -106,6 +114,7 @@ export default function TemplateForm() {
                                             placeholder="Add Agent Function"
                                             className="mt-3 w-[297px]"
                                             appearOnTop={true}
+                                            setDialogOpen={setDialogOpen}
                                             {...field}
                                         />
                                     </div>
@@ -113,6 +122,17 @@ export default function TemplateForm() {
                             </FormItem>
                         )}
                     />
+                    <Dialog  open={dialogOpen}>
+                        <DialogContent className="p-12">
+                                    <TriggerForm
+                                        functionName={'Send Ada Function'}
+                                        setClose={() => {
+                                            setDialogOpen(false);
+                                        }}
+                                        formControl = {form.control}
+                                    />
+                        </DialogContent>
+                    </Dialog>
 
                     <Button variant="primary" size="md" className="mt-6" type="submit">
                         Create Template

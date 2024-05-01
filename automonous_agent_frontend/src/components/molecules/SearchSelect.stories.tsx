@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 
-import MultipleSelector, { Option } from './SearchSelect';
+import MultipleSelector, { Option } from './MultiSearchSelect';
 
 const meta = {
     title: 'SearchSelect',
