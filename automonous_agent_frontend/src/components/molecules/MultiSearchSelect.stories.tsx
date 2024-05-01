@@ -4,7 +4,7 @@ import { fn } from '@storybook/test';
 import MultipleSelector, { Option } from './MultiSearchSelect';
 
 const meta = {
-    title: 'SearchSelect',
+    title: 'MultiSearchSelect',
     component: MultipleSelector,
     parameters: {
         layout: 'centered'
@@ -29,6 +29,6 @@ export const Primary: Story = {
         options: OPTIONS,
         placeholder: 'Select Template Template',
         emptyIndicator: 'No result FOund',
-        maxSelected: 1
+        maxSelected: 4
     }
 };
