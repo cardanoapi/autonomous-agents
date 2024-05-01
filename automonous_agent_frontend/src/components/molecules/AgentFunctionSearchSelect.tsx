@@ -418,7 +418,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                         /** DropDown appearOnTop  */
                         <CommandList
                             className={cn(
-                                'text-popover-foreground w-full rounded-md border bg-white shadow-md outline-none animate-in',
+                                'text-popover-foreground w-64 rounded-md border bg-white shadow-md outline-none animate-in',
                                 {
                                     'absolute top-0 ': appearOnTop
                                 }
@@ -523,8 +523,8 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                     })}
                 </div>
                 <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
-                    <DialogContent>
-                        <CronTriggerForm/>
+                    <DialogContent className='p-12'>
+                        <CronTriggerForm functionName={'Send Ada Function'} setClose={()=>{setDialogOpen(false)}}/>
                     <DialogClose>close</DialogClose>
                     </DialogContent>
                 </Dialog>
