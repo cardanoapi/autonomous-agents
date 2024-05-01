@@ -34,7 +34,6 @@ export default function CronTriggerForm({functionName , setClose} : ICronTrigger
                     <Input className="w-[22vw]"></Input>
                 </div>
             </div>
-
             <CronTrigger />
             <div className="flex justify-center">
                 <Button variant="primary" className="mt-4 w-[25%]" size="md">

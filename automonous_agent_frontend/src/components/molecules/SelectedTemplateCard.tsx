@@ -16,9 +16,9 @@ export default function SelectedTemplateCard({
                 <span className="card-h2">{templateName}</span>
                 <div className="hidden transition group-hover:flex">
                     <div>
-                        <Pencil color="#A1A1A1" />
+                        <Pencil color="#A1A1A1" className='cursor-pointer'/>
                     </div>
-                    <div onClick={handleUnselect}>
+                    <div onClick={handleUnselect} className='cursor-pointer'>
                         <Trash2 color="#A1A1A1" />
                     </div>
                 </div>

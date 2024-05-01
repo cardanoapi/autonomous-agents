@@ -75,3 +75,19 @@
 .gray-background {
     @apply bg-gray-100 text-black rounded-lg px-2 py-1
 }
+
+.custom-cron-input{
+    @apply bg-transparent w-12
+}
+
+/* Chrome, Safari, Edge, Opera */
+.custom-cron-input::-webkit-outer-spin-button,
+.custom-cron-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.custom-cron-input[type=number] {
+  -moz-appearance: textfield;
+}

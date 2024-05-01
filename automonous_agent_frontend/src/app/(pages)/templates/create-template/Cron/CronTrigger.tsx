@@ -9,11 +9,12 @@ import {
 } from '@app/components/molecules/Tabs';
 
 import DefaultCron from './DefaultCron';
+import CustomCron from './CustomCron';
 
 export default function CronTrigger() {
     return (
         <Tabs defaultValue='Cron'>
-                <TabsList className='w-full justify-start rounded-none border-b-[1px] pl-0 mb-4 gap-4'>
+                <TabsList className='w-full justify-start rounded-none border-b-[1px] pl-0 mb-4 gap-6'>
                     <TabsTrigger value="Cron">Cron Trigger</TabsTrigger>
                     <TabsTrigger value="Events">Event Trigger</TabsTrigger>
                 </TabsList>
@@ -41,7 +42,7 @@ export default function CronTrigger() {
                                 <DefaultCron placeholder="Year" />
                             </TabsContent>
                             <TabsContent value="Custom">
-                                <span>Custom configuration</span>
+                                <CustomCron/>
                             </TabsContent>
                         </div>
                     </Tabs>
