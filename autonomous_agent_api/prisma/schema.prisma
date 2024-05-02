@@ -14,6 +14,7 @@ model Agent {
   id          String    @id // UUID
   name        String
   instance    BigInt
+  template_id String
   last_active DateTime?
   created_at  DateTime
   updated_at  DateTime
@@ -29,6 +30,26 @@ model Trigger {
   created_at DateTime
   updated_at DateTime
   deleted_at DateTime?
+}
+
+model Template_Trigger {
+  id          String      @id
+  template_id String
+  type        TriggerType
+  action      Json
+  data        Json
+  created_at  DateTime
+  updated_at  DateTime
+  deleted_at  DateTime?
+}
+
+model Template {
+  id          String    @id
+  name        String
+  description String
+  created_at  DateTime
+  updated_at  DateTime
+  deleted_at  DateTime?
 }
 
 enum TriggerType {
