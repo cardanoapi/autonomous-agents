@@ -5,11 +5,15 @@ import { useEffect, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Dialog , DialogTrigger , DialogContent , DialogClose} from '@app/components/atoms/Dialog';
-import TriggerForm from './function-triggers/TriggerForm';
 
 import { Button } from '@app/components/atoms/Button';
 import { Card } from '@app/components/atoms/Card';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogTrigger
+} from '@app/components/atoms/Dialog';
 import {
     Form,
     FormControl,
@@ -23,29 +27,41 @@ import { Input } from '@app/components/atoms/Input';
 import { Textarea } from '@app/components/atoms/Textarea';
 import { Label } from '@app/components/atoms/label';
 import MultipleSelector, {
-    Option
-} from '@app/components/molecules/MultiSearchSelect'
+    IMultipleSelectorRef,
+    IOption
+} from '@app/components/molecules/MultiSearchSelect';
+import SelectedTemplateCard from '@app/components/molecules/SelectedTemplateCard';
+import { SelectorAtom } from '@app/components/molecules/MultiSearchSelect';
+import TriggerForm from './function-triggers/TriggerForm';
+import { useAtom } from 'jotai';
 
 const templateFormSchema = z.object({
     templateName: z.string(),
     templateDescription: z.string().optional(),
     agentRole: z.any(),
-    triggers : z.object({
-        address : z.string(),
-        amount : z.string()
-    }).optional()
+    triggers: z
+        .object({
+            address: z.string().optional(),
+            amount: z.string().optional()
+        })
+        .optional()
 });
 
 export default function TemplateForm() {
+    const [selected, setSelected] = useAtom(SelectorAtom)
+
+    const functionRef = useRef<any>(null);
+
     const form = useForm<z.infer<typeof templateFormSchema>>({
         resolver: zodResolver(templateFormSchema)
     });
 
     function onSubmit(formData: z.infer<typeof templateFormSchema>) {
+        console.log(functionRef.current?.selectedValue);
         console.log(formData);
     }
 
-    const AgentFunctionOptions: Option[] = [
+    const AgentFunctionOptions: IOption[] = [
         { label: 'Send Ada', value: 'SendAda' },
         { label: 'Create Proposal', value: 'CreatePropsal' },
         { label: 'Vote Propsal', value: 'VotePropsal' },
@@ -53,12 +69,15 @@ export default function TemplateForm() {
     ];
 
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [triggers, setTriggers] = useState('');
+    const [formValues, setFormValues] = useState([]);
 
-    const multiSelectRef = useRef<{ selected: Option[] } | null>(null);
+    const multiSelectRef = useRef<{ selected: IOption[] } | null>(null);
 
-    // useEffect(() => {
-    //     console.log(multiSelectRef?.currentRef?.selected);
-    // }, [multiSelectRef.current?.selected]);
+    useEffect(() => {
+        console.log('Selected value changed');
+        console.log(functionRef?.current?.selectedValue);
+    }, [functionRef]);
 
     return (
         <Form {...form}>
@@ -115,22 +134,37 @@ export default function TemplateForm() {
                                             className="mt-3 w-[297px]"
                                             appearOnTop={true}
                                             setDialogOpen={setDialogOpen}
+                                            // onSelect = {setSelected}
                                             {...field}
+                                            ref={functionRef}
                                         />
                                     </div>
                                 </FormControl>
                             </FormItem>
                         )}
                     />
-                    <Dialog  open={dialogOpen}>
+                    <div className="grid w-[40vw] grid-cols-2 gap">
+                        {selected.map((option: IOption) => {
+                            return (
+                                <SelectedTemplateCard
+                                    templateName={option.value}
+                                    handleUnselect={() => {
+                                        functionRef.current.handleUnselect(option);
+                                    }}
+                                />
+                            );
+                        })}
+                    </div>
+                    <Dialog open={dialogOpen}>
                         <DialogContent className="p-12">
-                                    <TriggerForm
-                                        functionName={'Send Ada Function'}
-                                        setClose={() => {
-                                            setDialogOpen(false);
-                                        }}
-                                        formControl = {form.control}
-                                    />
+                            <TriggerForm
+                                functionName={'Send Ada Function'}
+                                // TODO: onFormSubmit = setFormValues
+                                setClose={() => {
+                                    setDialogOpen(false);
+                                }}
+                                formControl={form.control}
+                            />
                         </DialogContent>
                     </Dialog>
 

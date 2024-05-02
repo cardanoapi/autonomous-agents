@@ -18,7 +18,12 @@ import {
 import { Input } from '@app/components/atoms/Input';
 import { Label } from '@app/components/atoms/label';
 import { NumberInput } from '@app/components/molecules/NumberInput';
-import MultipleSelector, { Option } from '@app/components/molecules/MultiSearchSelect';
+import MultipleSelector, { IOption } from '@app/components/molecules/MultiSearchSelect';
+import SelectedTemplateCard from '@app/components/molecules/SelectedTemplateCard';
+import { useRef } from 'react';
+import { useAtom, useAtomValue } from 'jotai';
+import { getDefaultStore } from 'jotai';
+import { SelectorAtom } from '@app/components/molecules/MultiSearchSelect';
 
 const agentFormSchema = z.object({
     agentName: z.string(),
@@ -27,7 +32,14 @@ const agentFormSchema = z.object({
 });
 
 export default function CreateAgentForm() {
-    const AgentTemplateOptions: Option[] = [
+
+    const [selected , setSelected] = useAtom(SelectorAtom)
+
+    const multiSelectorRef = useRef<any>(null)
+
+    const defaultStore = getDefaultStore()
+
+    const AgentTemplateOptions: IOption[] = [
         { label: 'Default Template', value: 'Default Template' },
         { label: 'Template01', value: 'Template1' },
         { label: 'Test Template', value: 'Test Template' }
@@ -82,12 +94,25 @@ export default function CreateAgentForm() {
                                             appearOnTop={true}
                                             maxSelected={1}
                                             {...field}
+                                            ref={multiSelectorRef}
                                         />
                                     </div>
                                 </FormControl>
                             </FormItem>
                         )}
                     />
+                     <div className="grid w-[40vw] grid-cols-2 gap-2">
+                        {selected.map((option : IOption) => {
+                            return (
+                                <SelectedTemplateCard
+                                    templateName={option.value}
+                                    handleUnselect={() => {
+                                        multiSelectorRef.current.handleUnselect?.(option)
+                                    }}
+                                />
+                            );
+                        })}
+                    </div>
                     <FormField
                         control={form.control}
                         name="numberOfAgents"

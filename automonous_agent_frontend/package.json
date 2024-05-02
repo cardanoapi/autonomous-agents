@@ -51,7 +51,7 @@
     "framer-motion": "^10.18.0",
     "html2canvas": "^1.4.1",
     "init": "^0.1.2",
-    "jotai": "^2.6.2",
+    "jotai": "^2.8.0",
     "js-cookie": "^3.0.5",
     "katex": "^0.16.9",
     "libphonenumber-js": "^1.10.54",

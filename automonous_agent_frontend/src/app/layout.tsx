@@ -20,6 +20,7 @@ import TopNav from '@app/components/layout/TopNav';
 import ThemeProvider from '@app/shared/hocs/ThemeProvider';
 import CookieConsent from '@app/views/atoms/CookieConsent';
 import NextNProgress from '@app/views/atoms/NextNProgress';
+import { Provider } from 'jotai';
 
 
 
@@ -65,6 +66,7 @@ export default function RootLayout({
                         pauseOnHover={false}
                         theme="dark"
                     />
+                    <Provider>
                     <div className="flex w-full">
                         <SideNav />
                         <div className='w-[78%] flex-col mt-10 ml-6 mr-2'>
@@ -72,6 +74,7 @@ export default function RootLayout({
                             <div className='mt-12'>{children}</div>
                         </div>
                     </div>
+                    </Provider>
                 </ThemeProvider>
             </body>
         </html>

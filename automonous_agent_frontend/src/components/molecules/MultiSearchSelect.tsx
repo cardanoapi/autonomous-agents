@@ -22,8 +22,9 @@ import {
 } from '../atoms/Dialog';
 import { cn } from '../lib/utils';
 import SelectedTemplateCard from './SelectedTemplateCard';
+import { atom, useAtom } from 'jotai';
 
-export interface Option {
+export interface IOption {
     value: string;
     label: string;
     disable?: boolean;
@@ -33,14 +34,15 @@ export interface Option {
     [key: string]: string | boolean | undefined;
 }
 interface GroupOption {
-    [key: string]: Option[];
+    [key: string]: IOption[];
 }
 
+
 interface MultipleSelectorProps {
-    value?: Option[];
-    defaultOptions?: Option[];
+    value?: IOption[];
+    defaultOptions?: IOption[];
     /** manually controlled options */
-    options?: Option[];
+    options?: IOption[];
     placeholder?: string;
     setDialogOpen?: Function;
     /** Loading component. */
@@ -52,61 +54,63 @@ interface MultipleSelectorProps {
     /**
      * Only work with `onSearch` prop. Trigger search when `onFocus`.
      * For example, when user click on the input, it will trigger the search to get initial options.
-     **/
-    triggerSearchOnFocus?: boolean;
-    /** async search */
-    onSearch?: (value: string) => Promise<Option[]>;
-    onChange?: (options: Option[]) => void;
-    /** Limit the maximum number of selected options. */
-    maxSelected?: number;
-    /** When the number of selected options exceeds the limit, the onMaxSelected will be called. */
-    onMaxSelected?: (maxLimit: number) => void;
-    /** Hide the placeholder when there are options selected. */
-    hidePlaceholderWhenSelected?: boolean;
-    disabled?: boolean;
-    /** Group the options base on provided key. */
-    groupBy?: string;
-    className?: string;
-    badgeClassName?: string;
-    appearOnTop?: Boolean;
-    /**
-     * First item selected is a default behavior by cmdk. That is why the default is true.
-     * This is a workaround solution by add a dummy item.
-     *
-     * @reference: https://github.com/pacocoursey/cmdk/issues/171
-     */
-    selectFirstItem?: boolean;
-    /** Allow user to create option when there is no option matched. */
-    creatable?: boolean;
-    /** Props of `Command` */
-    commandProps?: React.ComponentPropsWithoutRef<typeof Command>;
-    /** Props of `CommandInput` */
-    inputProps?: Omit<
-        React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>,
-        'value' | 'placeholder' | 'disabled'
-    >;
+    **/
+   triggerSearchOnFocus?: boolean;
+   /** async search */
+   onSearch?: (value: string) => Promise<IOption[]>;
+   onChange?: (options: IOption[]) => void;
+   /** Limit the maximum number of selected options. */
+   maxSelected?: number;
+   /** When the number of selected options exceeds the limit, the onMaxSelected will be called. */
+   onMaxSelected?: (maxLimit: number) => void;
+   /** Hide the placeholder when there are options selected. */
+   hidePlaceholderWhenSelected?: boolean;
+   disabled?: boolean;
+   /** Group the options base on provided key. */
+   groupBy?: string;
+   className?: string;
+   badgeClassName?: string;
+   appearOnTop?: Boolean;
+   /**
+    * First item selected is a default behavior by cmdk. That is why the default is true.
+    * This is a workaround solution by add a dummy item.
+   *
+   * @reference: https://github.com/pacocoursey/cmdk/issues/171
+   */
+  selectFirstItem?: boolean;
+  /** Allow user to create option when there is no option matched. */
+  creatable?: boolean;
+  /** Props of `Command` */
+  commandProps?: React.ComponentPropsWithoutRef<typeof Command>;
+  /** Props of `CommandInput` */
+  inputProps?: Omit<
+  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>,
+  'value' | 'placeholder' | 'disabled'
+  >;
 }
 
-export interface MultipleSelectorRef {
-    selectedValue: Option[];
+export interface IMultipleSelectorRef {
+    selectedValue: IOption[];
     input: HTMLInputElement;
 }
 
 export function useDebounce<T>(value: T, delay?: number): T {
     const [debouncedValue, setDebouncedValue] = React.useState<T>(value);
-
+    
     useEffect(() => {
         const timer = setTimeout(() => setDebouncedValue(value), delay || 500);
-
+        
         return () => {
             clearTimeout(timer);
         };
     }, [value, delay]);
-
+    
     return debouncedValue;
 }
 
-function transToGroupOption(options: Option[], groupBy?: string) {
+export const SelectorAtom = atom<IOption[]>([])
+
+function transToGroupOption(options: IOption[], groupBy?: string) {
     if (options.length === 0) {
         return {};
     }
@@ -127,7 +131,7 @@ function transToGroupOption(options: Option[], groupBy?: string) {
     return groupOption;
 }
 
-function removePickedOption(groupOption: GroupOption, picked: Option[]) {
+function removePickedOption(groupOption: GroupOption, picked: IOption[]) {
     const cloneOption = JSON.parse(JSON.stringify(groupOption)) as GroupOption;
 
     for (const [key, value] of Object.entries(cloneOption)) {
@@ -165,7 +169,7 @@ const CommandEmpty = forwardRef<
 
 CommandEmpty.displayName = 'CommandEmpty';
 
-const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorProps>(
+const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelectorProps>(
     (
         {
             value,
@@ -193,13 +197,15 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
             appearOnTop = false,
             ...props
         }: MultipleSelectorProps,
-        ref: React.Ref<MultipleSelectorRef>
+        ref: React.Ref<IMultipleSelectorRef>
     ) => {
         const inputRef = React.useRef<HTMLInputElement>(null);
         const [open, setOpen] = React.useState(false);
         const [isLoading, setIsLoading] = React.useState(false);
 
-        const [selected, setSelected] = React.useState<Option[]>(value || []);
+        const [selected , setSelected] = useAtom(SelectorAtom)
+        {/*const [selected, setSelected] = React.useState<IOption[]>(value || []);*/}
+
         const [options, setOptions] = React.useState<GroupOption>(
             transToGroupOption(arrayDefaultOptions, groupBy)
         );
@@ -209,19 +215,25 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
 
         React.useImperativeHandle(
             ref,
-            () => ({
-                selectedValue: [...selected],
-                input: inputRef.current as HTMLInputElement
-            }),
+            () => {
+                return {
+                    selectedValue: [...selected],
+                    input: inputRef.current as HTMLInputElement,
+                    handleUnselect: handleUnselect
+                };
+            },
             [selected]
         );
 
         const handleUnselect = React.useCallback(
-            (option: Option) => {
+            (option: IOption) => {
+                console.log(selected);
+                console.log(option);
                 const newOptions = selected.filter((s) => s.value !== option.value);
                 setSelected(newOptions);
                 onChange?.(newOptions);
                 setDisabledValue(false);
+                console.log(selected);
             },
             [onChange, selected]
         );
@@ -297,7 +309,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                         e.preventDefault();
                         e.stopPropagation();
                     }}
-                    onSelect={(value: string, e: Event) => {
+                    onSelect={(value: string) => {
                         if (selected.length >= maxSelected) {
                             onMaxSelected?.(selected.length);
                             return;
@@ -432,102 +444,91 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                                 <>{loadingIndicator}</>
                             ) : (
                                 <>
-                                    <Dialog>
-                                        {EmptyItem()}
-                                        {CreatableItem()}
-                                        {!selectFirstItem && (
-                                            <CommandItem value="-" className="hidden" />
-                                        )}
-                                        {Object.entries(selectables).map(
-                                            ([key, dropdowns]) => (
-                                                <CommandGroup
-                                                    key={key}
-                                                    heading={key}
-                                                    className="h-full overflow-auto"
-                                                >
-                                                    {dropdowns.map((option, index) => {
-                                                        return (
-                                                            <>
-                                                                <CommandItem
-                                                                    key={index}
-                                                                    value={option.value}
-                                                                    disabled={
-                                                                        option.disable
+                                    {EmptyItem()}
+                                    {CreatableItem()}
+                                    {!selectFirstItem && (
+                                        <CommandItem value="-" className="hidden" />
+                                    )}
+                                    {Object.entries(selectables).map(
+                                        ([key, dropdowns]) => (
+                                            <CommandGroup
+                                                key={key}
+                                                heading={key}
+                                                className="h-full overflow-auto"
+                                            >
+                                                {dropdowns.map((option, index) => {
+                                                    return (
+                                                        <>
+                                                            <CommandItem
+                                                                key={index}
+                                                                value={option.value}
+                                                                disabled={
+                                                                    option.disable
+                                                                }
+                                                                onMouseDown={(e) => {
+                                                                    e.preventDefault();
+                                                                    e.stopPropagation();
+                                                                }}
+                                                                onSelect={(value) => {
+                                                                    if (
+                                                                        selected.length >=
+                                                                        maxSelected
+                                                                    ) {
+                                                                        onMaxSelected?.(
+                                                                            selected.length
+                                                                        );
+                                                                        return;
                                                                     }
-                                                                    onMouseDown={(
-                                                                        e
-                                                                    ) => {
-                                                                        e.preventDefault();
-                                                                        e.stopPropagation();
-                                                                    }}
-                                                                    onSelect={(
-                                                                        value,
-                                                                        e
-                                                                    ) => {
 
-                                                                        if (
-                                                                            selected.length >=
-                                                                            maxSelected
-                                                                        ) {
-                                                                            onMaxSelected?.(
-                                                                                selected.length
-                                                                            );
-                                                                            return;
-                                                                        }
-
-                                                                        const newOptions =
-                                                                            [
-                                                                                ...selected,
-                                                                                option
-                                                                            ];
-                                                                        setSelected(
-                                                                            newOptions
+                                                                    const newOptions = [
+                                                                        ...selected,
+                                                                        option
+                                                                    ];
+                                                                    setSelected(
+                                                                        newOptions
+                                                                    );
+                                                                    onChange?.(
+                                                                        newOptions
+                                                                    );
+                                                                    setOpen(false);
+                                                                    setInputValue('');
+                                                                    if (
+                                                                        selected.length +
+                                                                            1 ===
+                                                                        maxSelected
+                                                                    ) {
+                                                                        setDisabledValue(
+                                                                            true
                                                                         );
-                                                                        onChange?.(
-                                                                            newOptions
+                                                                    }
+                                                                    if (setDialogOpen) {
+                                                                        setDialogOpen(
+                                                                            true
                                                                         );
-                                                                        setOpen(false);
-                                                                        setInputValue(
-                                                                            ''
-                                                                        );
-                                                                        if (
-                                                                            selected.length +
-                                                                                1 ===
-                                                                            maxSelected
-                                                                        ) {
-                                                                            setDisabledValue(
-                                                                                true
-                                                                            );
-                                                                        }
-                                                                        if (
-                                                                            setDialogOpen
-                                                                        ) {
-                                                                            setDialogOpen(
-                                                                                true
-                                                                            );
-                                                                        }
-                                                                    }}
-                                                                    className={cn(
-                                                                        'my-1 cursor-pointer rounded-md py-2 hover:bg-brand-Blue-100 hover:text-brand-Blue-200',
-                                                                        option.disable &&
-                                                                            'text-muted-foreground cursor-default'
-                                                                    )}
-                                                                >
-                                                                    {option.label}
-                                                                </CommandItem>
-                                                            </>
-                                                        );
-                                                    })}
-                                                </CommandGroup>
-                                            )
-                                        )}
-                                    </Dialog>
+                                                                    }
+                                                                    console.log('loglog')
+                                                                    console.log(selected)
+                                                                }}
+                                                                className={cn(
+                                                                    'my-1 cursor-pointer rounded-md py-2 hover:bg-brand-Blue-100 hover:text-brand-Blue-200',
+                                                                    option.disable &&
+                                                                        'text-muted-foreground cursor-default'
+                                                                )}
+                                                            >
+                                                                {option.label}
+                                                            </CommandItem>
+                                                        </>
+                                                    );
+                                                })}
+                                            </CommandGroup>
+                                        )
+                                    )}
                                 </>
                             )}
                         </CommandList>
                     )}
                 </div>
-                <div className="grid w-[40vw] grid-cols-2 gap-2">
+                {/* <div className="grid w-[40vw] grid-cols-2 gap-2 bg-red-500">
                     {selected.map((option) => {
                         return (
                             <SelectedTemplateCard
@@ -538,7 +539,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                             />
                         );
                     })}
-                </div>
+                </div> */}
             </Command>
         );
     }
