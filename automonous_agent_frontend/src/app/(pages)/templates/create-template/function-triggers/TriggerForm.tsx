@@ -1,72 +1,105 @@
 'use client';
 
-import { TabsContent } from '@radix-ui/react-tabs';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
-import { Control } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
+import { Form ,FormControl , FormDescription , FormField , FormItem } from '@app/components/atoms/Form';
+import { z } from 'zod';
 
 import { Button } from '@app/components/atoms/Button';
 import { CardTitle } from '@app/components/atoms/Card';
 import { Card } from '@app/components/atoms/Card';
-import { FormControl, FormField, FormItem } from '@app/components/atoms/Form';
 import { Input } from '@app/components/atoms/Input';
 import { Label } from '@app/components/atoms/label';
 
 import CronTrigger from './Trigger';
+import { IOption } from '@app/components/molecules/MultiSearchSelect';
+import { Dispatch, SetStateAction } from 'react';
 
 interface ICronTriggerForm {
-    functionName: string;
+    functionName: any;
     setClose: any;
-    formControl: any;
+    onSave?: Dispatch<SetStateAction<IOption | null>>
 }
+
+export const triggerFormSchema = z.object({
+    address: z.string(),
+    amount: z.string().optional()
+});
 
 export default function TriggerForm({
     functionName,
     setClose,
-    formControl
+    onSave,
 }: ICronTriggerForm) {
+
+    const form = useForm<z.infer<typeof triggerFormSchema>>({
+        resolver: zodResolver(triggerFormSchema)
+    });
+
+    function onSubmit(formData: z.infer<typeof triggerFormSchema>) {
+        console.log(formData);
+    }
+
+
     return (
         <Card className="flex w-[50vw] flex-col gap-y-4  bg-brand-Azure-200 p-4 px-8">
-            <div className="flex justify-center">
-                <CardTitle className="h1 mx-auto">SendAda Function</CardTitle>
-                <X onClick={setClose} className="cursor-pointer" />
-            </div>
+            <Form {...form}>
+                <form
+                    className="flex flex-col gap-y-4"
+                    onSubmit={form.handleSubmit(onSubmit)}
+                >
+                    <div className="flex justify-center">
+                        <CardTitle className="h1 mx-auto">{functionName}</CardTitle>
+                        <X onClick={setClose} className="cursor-pointer" />
+                    </div>
 
-            <div className="grid-col col-2 flex gap-4">
-                <div className="flex flex-col gap-y-2">
-                    <Label size="medium">Address(Optional)</Label>
-                    <FormField
-                        control={formControl}
-                        name="triggers.address"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                <Input {...field} className="w-[22vw]"></Input>
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-                </div>
-                <div className="flex flex-col gap-y-2">
-                    <Label size="medium">Amount(Optional)</Label>
-                    <FormField
-                        control={formControl}
-                        name="triggers.amount"
-                        render={({ field }) => (
-                            <FormItem>  
-                                <FormControl>
-                                <Input className="w-[22vw]" {...field}></Input>
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-                </div>
-            </div>
-            <CronTrigger />
-            <div className="flex justify-center">
-                <Button variant="primary" className="mt-6 w-[25%]" size="md">
-                    Save
-                </Button>
-            </div>
+                    <div className="grid-col col-2 flex gap-4">
+                        <div className="flex flex-col gap-y-2">
+                            <FormField
+                                control={form.control}
+                                name="address"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <Label size="medium">Address(Optional)</Label>
+                                        <FormControl>
+                                            <Input
+                                                className="w-[22vw]"
+                                                {...field}
+                                            ></Input>
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        <div className="flex flex-col gap-y-2">
+                            <FormField
+                                control={form.control}
+                                name="amount"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <Label size="medium">Amount(Optional)</Label>
+                                        <FormControl>
+                                            <Input className="w-[22vw]" {...field}></Input>
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    </div>
+                    <CronTrigger />
+                    <div className="flex justify-center">
+                        <Button
+                            variant="primary"
+                            className="mt-6 w-[25%]"
+                            size="md"
+                            type="submit"
+                        >
+                            Save
+                        </Button>
+                    </div>
+                </form>
+            </Form>
         </Card>
     );
 }

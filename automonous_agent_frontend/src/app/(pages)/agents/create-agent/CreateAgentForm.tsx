@@ -1,5 +1,7 @@
 'use client';
 
+import { useRef, useState } from 'react';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -17,13 +19,10 @@ import {
 } from '@app/components/atoms/Form';
 import { Input } from '@app/components/atoms/Input';
 import { Label } from '@app/components/atoms/label';
-import { NumberInput } from '@app/components/molecules/NumberInput';
 import MultipleSelector, { IOption } from '@app/components/molecules/MultiSearchSelect';
-import SelectedTemplateCard from '@app/components/molecules/SelectedTemplateCard';
-import { useRef } from 'react';
-import { useAtom, useAtomValue } from 'jotai';
-import { getDefaultStore } from 'jotai';
 import { SelectorAtom } from '@app/components/molecules/MultiSearchSelect';
+import { NumberInput } from '@app/components/molecules/NumberInput';
+import SelectedTemplateCard from '@app/components/molecules/SelectedTemplateCard';
 
 const agentFormSchema = z.object({
     agentName: z.string(),
@@ -32,12 +31,9 @@ const agentFormSchema = z.object({
 });
 
 export default function CreateAgentForm() {
+    const [selected, setSelected] = useState<IOption[]>([]);
 
-    const [selected , setSelected] = useAtom(SelectorAtom)
-
-    const multiSelectorRef = useRef<any>(null)
-
-    const defaultStore = getDefaultStore()
+    const multiSelectorRef = useRef<any>(null);
 
     const AgentTemplateOptions: IOption[] = [
         { label: 'Default Template', value: 'Default Template' },
@@ -95,19 +91,20 @@ export default function CreateAgentForm() {
                                             maxSelected={1}
                                             {...field}
                                             ref={multiSelectorRef}
+                                            onChange={setSelected}
                                         />
                                     </div>
                                 </FormControl>
                             </FormItem>
                         )}
                     />
-                     <div className="grid w-[40vw] grid-cols-2 gap-2">
-                        {selected.map((option : IOption) => {
+                    <div className="mt-2 grid w-[80%] grid-cols-2 gap-4">
+                        {selected.map((option: IOption, index) => {
                             return (
                                 <SelectedTemplateCard
                                     templateName={option.value}
                                     handleUnselect={() => {
-                                        multiSelectorRef.current.handleUnselect?.(option)
+                                        multiSelectorRef?.current.handleUnselect(option);
                                     }}
                                 />
                             );

@@ -28,10 +28,11 @@ export interface IOption {
     value: string;
     label: string;
     disable?: boolean;
+    extraValues? : object;
     /** fixed option that can't be removed. */
     fixed?: boolean;
     /** Group the options by providing key. */
-    [key: string]: string | boolean | undefined;
+    [key: string]: string | boolean | undefined | object;
 }
 interface GroupOption {
     [key: string]: IOption[];
@@ -55,6 +56,7 @@ interface MultipleSelectorProps {
      * Only work with `onSearch` prop. Trigger search when `onFocus`.
      * For example, when user click on the input, it will trigger the search to get initial options.
     **/
+   openSelectedOption? : Function;
    triggerSearchOnFocus?: boolean;
    /** async search */
    onSearch?: (value: string) => Promise<IOption[]>;
@@ -193,7 +195,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
             triggerSearchOnFocus = false,
             commandProps,
             inputProps,
-            setDialogOpen,
+            openSelectedOption,
             appearOnTop = false,
             ...props
         }: MultipleSelectorProps,
@@ -203,8 +205,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
         const [open, setOpen] = React.useState(false);
         const [isLoading, setIsLoading] = React.useState(false);
 
-        const [selected , setSelected] = useAtom(SelectorAtom)
-        {/*const [selected, setSelected] = React.useState<IOption[]>(value || []);*/}
+        const [selected, setSelected] = React.useState<IOption[]>(value || [])
 
         const [options, setOptions] = React.useState<GroupOption>(
             transToGroupOption(arrayDefaultOptions, groupBy)
@@ -227,13 +228,10 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
 
         const handleUnselect = React.useCallback(
             (option: IOption) => {
-                console.log(selected);
-                console.log(option);
                 const newOptions = selected.filter((s) => s.value !== option.value);
                 setSelected(newOptions);
                 onChange?.(newOptions);
                 setDisabledValue(false);
-                console.log(selected);
             },
             [onChange, selected]
         );
@@ -315,8 +313,8 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                             return;
                         }
                         const newOptions = [...selected, { value, label: value }];
-                        setSelected(newOptions);
                         onChange?.(newOptions);
+                        setSelected(newOptions);
                         setInputValue('');
                     }}
                 ></CommandItem>
@@ -484,30 +482,24 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                                                                         ...selected,
                                                                         option
                                                                     ];
-                                                                    setSelected(
+                                                                      
+                                                                  setSelected(
                                                                         newOptions
                                                                     );
-                                                                    onChange?.(
-                                                                        newOptions
-                                                                    );
+                                                                    onChange?.(newOptions)
                                                                     setOpen(false);
                                                                     setInputValue('');
                                                                     if (
                                                                         selected.length +
-                                                                            1 ===
+                                                                        1 ===
                                                                         maxSelected
                                                                     ) {
                                                                         setDisabledValue(
                                                                             true
                                                                         );
                                                                     }
-                                                                    if (setDialogOpen) {
-                                                                        setDialogOpen(
-                                                                            true
-                                                                        );
-                                                                    }
-                                                                    console.log('loglog')
-                                                                    console.log(selected)
+                                                                    openSelectedOption?.(option)
+                                                                    
                                                                 }}
                                                                 className={cn(
                                                                     'my-1 cursor-pointer rounded-md py-2 hover:bg-brand-Blue-100 hover:text-brand-Blue-200',
