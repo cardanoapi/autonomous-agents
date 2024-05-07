@@ -37,7 +37,7 @@ class WebSocketConnectionManager {
                     }else if(message.message === 'cardano-node-blocks') {
                         const blockchain=helper.createInMemoryClientWithPeer("95.217.224.100:3006",4,false)
 
-                        await blockchain.pipeline("extendBlock",(block,cb)=>{
+                        await blockchain.pipeline("extendBlock",(block: { headerHash: { toString: (arg0: string) => any; }; blockNo: any; slotNo: any; }, cb: () => void)=>{
                             setImmediate(cb)
                             // console.log("New Block hash:",block.headerHash.toString('hex'),"blockNo:",block.blockNo,"slotNo:",block.slotNo)
                             const cardanoBlockMsg ={
