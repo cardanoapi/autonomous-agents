@@ -19,7 +19,7 @@ const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup
 
 
 const DropdownMenuTrigger = ({className , children, border=false , ...props } : {children:React.ReactNode , border? : Boolean , className ?: string}) => (
-  <DropdownMenuPrimitive.Trigger {...props} className={cn("flex items-center gap-x-2 focus:outline-none" , {"border-[1px] border-[#ECE9F1] px-4 py-1 rounded-[4px]" : border} , className)}>
+  <DropdownMenuPrimitive.Trigger {...props} className={cn("flex items-center gap-x-2 focus:outline-none" , {"border-[1px] border-brand-border-300 px-4 py-1 rounded-[4px]" : border} , className)}>
     {children}
    <PolygonIcon/>
   </DropdownMenuPrimitive.Trigger>
@@ -72,7 +72,7 @@ const DropdownMenuContent = React.forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        "z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+        " z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
         className
       )}
       {...props}

@@ -6,7 +6,7 @@ import { cn } from '../lib/utils';
 import { Search } from 'lucide-react';
 
 const SearchFieldVariants = cva(
-    'inline-flex rounded-[8px] text-[14px] gap-x-2 pl-2 leading-[21px] items-center placeholder:text-[#AAAAAA] py-2',
+    'inline-flex rounded-[8px] text-[14px] gap-x-2 pl-2 leading-[21px] items-center placeholder:text-brand-Gray-200 py-2',
     {   
         variants: {
             variant: {

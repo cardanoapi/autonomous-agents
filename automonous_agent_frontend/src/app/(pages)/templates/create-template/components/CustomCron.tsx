@@ -1,4 +1,3 @@
-import { Input } from "@app/components/atoms/Input";
 import { NumberInput } from "@app/components/molecules/NumberInput";
 
 export default function CustomCron(){

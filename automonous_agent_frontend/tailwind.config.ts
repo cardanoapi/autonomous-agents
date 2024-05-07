@@ -49,6 +49,19 @@ const config = {
                 White : {
                   100 : "#FFF",
                   200 : "#F5F5F5"
+                },
+                border : {
+                  100 : "#EDECED",
+                  200 : "#C4C4C4",
+                  300 : "#ECE9F1",
+                  400 : "#EAEAEA"
+                },
+                active : {
+                  100 : "#000000DE",
+                },
+                switch : {
+                  inactive : "#8C8C8C",
+                  active : "#2196F3"
                 }
 
             }

@@ -7,10 +7,6 @@ import { set } from 'lodash';
 
 import { Command as CommandPrimitive, useCommandState } from 'cmdk';
 import { SearchIcon, X } from 'lucide-react';
-import { any } from 'zod';
-
-import TriggerForm from '@app/app/(pages)/templates/create-template/function-triggers/TriggerForm';
-
 import { Badge } from '../atoms/Badge';
 import { Command, CommandGroup, CommandItem, CommandList } from '../atoms/Command';
 import {
@@ -390,7 +386,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
             >
                 <div
                     className={cn(
-                        'border-input group flex items-center rounded-md border px-3  py-2 text-sm',
+                        'border-input group flex items-center rounded-md border px-3  py-2 text-sm focus-within:outline focus-within:outline-offset-0 focus-within:outline-2 ',
                         className
                     )}
                 >
@@ -420,7 +416,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                                     : placeholder
                             }
                             className={cn(
-                                'placeholder:text-muted-foreground ml-2 w-[90%] flex-1 bg-white outline-none ',
+                                'placeholder:text-muted-foreground ml-2 w-[90%] flex-1 bg-white outline-none',
                                 inputProps?.className
                             )}
                         />

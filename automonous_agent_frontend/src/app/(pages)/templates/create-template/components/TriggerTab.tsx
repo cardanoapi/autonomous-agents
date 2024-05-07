@@ -1,5 +1,3 @@
-import { Tab } from '@mui/material';
-
 import { Card } from '@app/components/atoms/Card';
 import {
     Tabs,
@@ -7,11 +5,10 @@ import {
     TabsList,
     TabsTrigger
 } from '@app/components/molecules/Tabs';
-
 import DefaultCron from './DefaultCron';
 import CustomCron from './CustomCron';
 
-export default function CronTrigger() {
+export default function TriggerTab() {
     return (
         <Tabs defaultValue='Cron'>
                 <TabsList className='w-full justify-start rounded-none border-b-[1px] pl-0 mb-4 gap-6'>

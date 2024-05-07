@@ -5,16 +5,13 @@ import { X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { Form ,FormControl , FormDescription , FormField , FormItem } from '@app/components/atoms/Form';
 import { z } from 'zod';
-
 import { Button } from '@app/components/atoms/Button';
 import { CardTitle } from '@app/components/atoms/Card';
 import { Card } from '@app/components/atoms/Card';
 import { Input } from '@app/components/atoms/Input';
 import { Label } from '@app/components/atoms/label';
-
-import CronTrigger from './Trigger';
+import TriggerTab from './TriggerTab';
 import { IOption } from '@app/components/molecules/MultiSearchSelect';
-import { Dispatch, SetStateAction } from 'react';
 
 interface ICronTriggerForm {
     formValues? : IOption | null;
@@ -86,7 +83,7 @@ export default function TriggerForm({
                             />
                         </div>
                     </div>
-                    <CronTrigger />
+                    <TriggerTab />
                     <div className="flex justify-center">
                         <Button
                             variant="primary"

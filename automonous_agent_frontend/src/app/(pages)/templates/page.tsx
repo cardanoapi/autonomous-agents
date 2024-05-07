@@ -6,7 +6,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { SearchField } from '@app/components/atoms/SearchField';
 import TemplateCard, { ITemplateCard } from '@app/components/molecules/TemplateCard';
 
-import MyTemplates from './TemplatesContainer';
 import TemplatesContainer from './TemplatesContainer';
 
 const DemoTemplateCards: ITemplateCard[] = [
@@ -51,11 +50,6 @@ const DemoTemplateCards: ITemplateCard[] = [
 export default function TemplatesPage() {
     return (
         <div>
-
-            <Head>
-                <title>Template Form</title>
-            </Head>
-
             <div className="flex justify-between">
                 <div className="flex gap-x-4">
                     <SearchField

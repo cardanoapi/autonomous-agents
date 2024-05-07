@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
-
+import { AgentFunctionOptions } from '../page';
 import TriggerForm from './TriggerForm';
 
 const meta = {
@@ -19,7 +18,8 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
     args: {
-        functionName : "Send Ada Function",
-        setClose : null
+        formValues : AgentFunctionOptions[0],
+        onSubmit: (()=>{console.log("running test : onSubmit")}),
+        setClose : (()=>{console.log("running test : onClose")})
     }
 };

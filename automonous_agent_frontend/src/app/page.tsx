@@ -1,7 +1,4 @@
 import Head from 'next/head';
-import Image from 'next/image';
-import Link from 'next/link';
-
 import { Card } from '@app/components/atoms/Card';
 import {
     DropdownMenu,
@@ -37,7 +34,7 @@ export default function Home() {
                 <title>Dashboard</title>
             </Head>
 
-            {/* Over cards that appearw on top*/}
+            {/* Agents Overview Card */}
             <div className="flex w-full justify-between">
                 {OverViewItems.map((item, index) => (
                     <OverViewCard title={item.title} value={item.value} key={index} />

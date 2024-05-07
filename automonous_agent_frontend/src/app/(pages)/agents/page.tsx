@@ -1,6 +1,5 @@
 import { Button } from "@app/components/atoms/Button"
 import { DropdownMenu, DropdownMenuTrigger , DropdownMenuContent , DropdownMenuItem } from "@app/components/atoms/DropDownMenu"
-import { Label } from "@app/components/atoms/label"
 import { SearchField } from "@app/components/atoms/SearchField"
 import AgentCard, { IAgentCard } from "@app/components/molecules/AgentCard"
 import Link from "next/link"
