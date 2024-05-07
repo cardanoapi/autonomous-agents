@@ -1,6 +1,8 @@
 from datetime import datetime
 from fastapi import WebSocket
-from backend.app.repositories.websocket_manager_repository import fetch_agent_configuration
+from backend.app.repositories.websocket_manager_repository import (
+    fetch_agent_configuration,
+)
 from backend.config.logger import logger
 from backend.config.database import prisma_connection
 

@@ -23,7 +23,12 @@ async def fetch_agent_configuration(agent_id):
         configurations_data = []
         for config in agent_configurations:
             try:
-                configuration = {"id": config.id, "type": config.type, "data": config.data, "action": config.action}
+                configuration = {
+                    "id": config.id,
+                    "type": config.type,
+                    "data": config.data,
+                    "action": config.action,
+                }
             except json.JSONDecodeError:
                 print(f"Error decoding JSON for config id {config.id}: {config.data}")
                 continue

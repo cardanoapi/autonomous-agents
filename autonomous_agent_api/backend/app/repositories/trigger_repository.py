@@ -49,7 +49,11 @@ class TriggerRepository:
         data_object = self._convert_data_to_dto(trigger_data.type, data_dict)
 
         trigger_response = TriggerResponse(
-            id=trigger_id, agent_id=agent_id, type=trigger_data.type, data=data_object, action=trigger_data.action
+            id=trigger_id,
+            agent_id=agent_id,
+            type=trigger_data.type,
+            data=data_object,
+            action=trigger_data.action,
         )
         return trigger_response
 

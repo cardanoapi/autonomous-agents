@@ -1,0 +1,18 @@
+
+.env
+
+
+# Node.js and npm
+node_modules/
+
+# TypeScript
+dist/
+
+# Logs
+logs/
+*.log
+
+
+# IDE-specific files
+.vscode/
+.idea/

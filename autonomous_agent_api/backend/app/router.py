@@ -28,7 +28,7 @@ root_api_router.include_router(demo.router, tags=["test"])
 root_api_router.include_router(agent_router.AgentRouter().router, tags=["agent"])
 
 # For Agent Websocket connection
-root_api_router.include_router(websocket_router.router)
+# root_api_router.include_router(websocket_router.router)
 
 # For Agent Trigger
 root_api_router.include_router(trigger_router.TriggerRouter().router, tags=["trigger"])
