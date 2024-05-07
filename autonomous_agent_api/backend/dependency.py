@@ -1,6 +1,8 @@
 from backend.app.repositories.agent_repository import AgentRepository
 from backend.app.repositories.template_repository import TemplateRepository
-from backend.app.repositories.template_trigger_repository import TemplateTriggerRepository
+from backend.app.repositories.template_trigger_repository import (
+    TemplateTriggerRepository,
+)
 from backend.app.repositories.trigger_repository import TriggerRepository
 from backend.app.services.agent_service import AgentService
 from backend.app.services.template_service import TemplateService
@@ -12,7 +14,9 @@ def get_agent_service() -> AgentService:
     agent_repository = AgentRepository()
     template_trigger_service = get_template_trigger_service()
     trigger_service = get_trigger_service()
-    agent_service = AgentService(agent_repository, template_trigger_service, trigger_service)
+    agent_service = AgentService(
+        agent_repository, template_trigger_service, trigger_service
+    )
     return agent_service
 
 

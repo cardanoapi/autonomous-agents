@@ -26,7 +26,10 @@ class AgentRepository:
         async with self.db:
             agent = await self.db.prisma.agent.create(data=agent_data_dict)
         agent_response = AgentResponse(
-            id=agent_id, name=agent_data.name, template_id=agent_data.template_id, instance=agent_data.instance
+            id=agent_id,
+            name=agent_data.name,
+            template_id=agent_data.template_id,
+            instance=agent_data.instance,
         )
 
         return agent_response
@@ -122,6 +125,7 @@ class AgentRepository:
             agent_address=str(address),
         )
         return agent_response
+
     async def retreive_agent_key(self, agent_id: str):
         # Fetch the agent from the database or other data source based on the agent_id
         agent = await self.retrieve_agent(agent_id)
@@ -147,8 +151,12 @@ class AgentRepository:
         stakingKeyPath = agent_key.derive_from_path(stakingPath)
         stakingPublicKey = stakingKeyPath.public_key
 
-        paymentVerificationKey = pycardano.key.PaymentExtendedVerificationKey(paymentPublicKey)
-        stakingVerificationKey = pycardano.key.StakeExtendedVerificationKey(stakingPublicKey)
+        paymentVerificationKey = pycardano.key.PaymentExtendedVerificationKey(
+            paymentPublicKey
+        )
+        stakingVerificationKey = pycardano.key.StakeExtendedVerificationKey(
+            stakingPublicKey
+        )
 
         address = pycardano.Address(
             payment_part=paymentVerificationKey.hash(),
@@ -158,6 +166,7 @@ class AgentRepository:
 
         # Create and return the AgentResponse with the agent's key and address
         agent_response = AgentKeyResponse(
-            agent_private_key=str(agent_key.xprivate_key.hex()), agent_address=str(address)
+            agent_private_key=str(agent_key.xprivate_key.hex()),
+            agent_address=str(address),
         )
         return agent_response

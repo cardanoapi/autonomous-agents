@@ -11,7 +11,9 @@ from backend.dependency import get_agent_service
 
 
 class AgentRouter(Routable):
-    def __init__(self, agent_service: AgentService = get_agent_service(), *args, **kwargs):
+    def __init__(
+        self, agent_service: AgentService = get_agent_service(), *args, **kwargs
+    ):
         super().__init__(*args, **kwargs)
         self.agent_service = agent_service
 
