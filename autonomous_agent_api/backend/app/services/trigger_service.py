@@ -1,19 +1,28 @@
-from typing import List
-
+from typing import List, Union
+from confluent_kafka import Producer
 from backend.app.models.trigger.resposne_dto import TriggerResponse
-from backend.app.models.trigger.trigger_dto import TriggerCreateDTO
+from backend.app.models.trigger.trigger_dto import (
+    TriggerCreateDTO,
+    TriggerCreate_id_Dto,
+)
 from backend.app.repositories.trigger_repository import TriggerRepository
 from backend.app.services.websocket_manager_service import manager
+from backend.config.logger import logger
 
 
 class TriggerService:
     def __init__(self, trigger_repository: TriggerRepository):
         self.trigger_repository = trigger_repository
+        self.kafka_producer = Producer({"bootstrap.servers": "localhost:9092"})
 
-    async def create_trigger(self, agent_id: str, trigger_data: TriggerCreateDTO) -> TriggerResponse:
-        trigger_response = await self.trigger_repository.save_trigger(agent_id, trigger_data)
+    async def create_trigger(
+        self, agent_id: str, trigger_data: Union[TriggerCreateDTO, TriggerCreate_id_Dto]
+    ) -> TriggerResponse:
+        trigger_response = await self.trigger_repository.save_trigger(
+            agent_id, trigger_data
+        )
 
-        await self.notify_trigger_config_updated(trigger_response.agent_id)
+        self.publish_trigger_event(trigger_response.agent_id)
 
         return trigger_response
 
@@ -29,16 +38,36 @@ class TriggerService:
     async def list_trigger_by_id(self, trigger_id: str) -> TriggerResponse:
         return await self.trigger_repository.retreive_trigger_by_id(trigger_id)
 
-    async def update_trigger_by_id(self, trigger_id: str, trigger_data: TriggerCreateDTO) -> TriggerResponse:
+    async def update_trigger_by_id(
+        self, trigger_id: str, trigger_data: TriggerCreateDTO
+    ) -> TriggerResponse:
         # Call the repository method to modify the trigger data
-        trigger_response = await self.trigger_repository.modify_trigger_by_id(trigger_id, trigger_data)
+        trigger_response = await self.trigger_repository.modify_trigger_by_id(
+            trigger_id, trigger_data
+        )
 
         # Notify the change if necessary
-        await self.notify_trigger_config_updated(trigger_response.agent_id)
+        # Publish message to Kafka topic
+        self.publish_trigger_event(trigger_response.agent_id)
 
         return trigger_response
 
-    async def notify_trigger_config_updated(self, agent_id: str):
-        # Here, notify the WebSocket manager to send a message about the config update
-        if await manager.check_if_agent_active(agent_id):
-            await manager.send_message_to_websocket(agent_id, {"message": "config_updated"})
+    def publish_trigger_event(self, agent_id: str):
+        def delivery_report(err, msg):
+            """Called once for each message produced to indicate delivery result.
+            Triggered by poll() or flush()."""
+            if err is not None:
+                logger.info("Message delivery failed: {}".format(err))
+            else:
+                logger.info(
+                    "Message delivered to {} [{}]".format(msg.topic(), msg.partition())
+                )
+
+        # Publish message to Kafka topic
+        self.kafka_producer.produce(
+            "trigger_config_updates",
+            key=agent_id.encode("utf-8"),
+            value=b"config_updated",
+            callback=delivery_report,
+        )
+        self.kafka_producer.flush()

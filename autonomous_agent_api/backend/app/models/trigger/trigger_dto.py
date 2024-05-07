@@ -18,6 +18,13 @@ class Action(BaseModel):
     parameter: list
 
 
+class TriggerCreate_id_Dto(BaseModel):
+    id: str
+    type: str
+    action: Action
+    data: Union[CronTriggerDTO, TopicTriggerDTO]
+
+
 class TriggerCreateDTO(BaseModel):
     type: str
     action: Action

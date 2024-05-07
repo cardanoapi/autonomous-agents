@@ -13,7 +13,7 @@ from backend.app.controllers import (
     demo,
     agent_router,
     trigger_router,
-    websocket_router,
+    websocket_router, template_router, template_trigger_router, function_router,
 )
 
 root_api_router = APIRouter(prefix="/api")
@@ -32,3 +32,12 @@ root_api_router.include_router(websocket_router.router)
 
 # For Agent Trigger
 root_api_router.include_router(trigger_router.TriggerRouter().router, tags=["trigger"])
+
+
+# For Template
+root_api_router.include_router(template_router.TemplateRouter().router, tags=["template"])
+# For Template Trigger
+root_api_router.include_router(template_trigger_router.TemplateTriggerRouter().router, tags=["template trigger"])
+# For Function
+
+root_api_router.include_router(function_router.router, tags=["function"])
