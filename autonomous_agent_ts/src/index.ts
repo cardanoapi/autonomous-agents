@@ -3,7 +3,7 @@ import { setInterval } from 'timers';
 import { handleIncomingMessage } from './client';
 
 // Define the WebSocket URL and agent ID
-const wsUrl = 'ws://localhost:8000/api/agent/ws'; // Update the URL as needed
+const wsUrl = 'ws://localhost:3030'; // Update the URL as needed
 const agentId = process.argv[2]; // Provide the agent ID as a command-line argument
 
 // Check if agent ID is provided

@@ -2,7 +2,7 @@
 name = "autonomous-agent"
 version = "0.1.0"
 description = ""
-authors = ["Joseph Rana <josephranamgr7@gmail.com>"]
+authors = ["Roshan Gyawali,Joseph Rana <josephranamgr7@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]

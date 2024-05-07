@@ -1,0 +1,42 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Agent table model
+model Agent {
+  id          String    @id // UUID
+  name        String
+  instance    BigInt
+  index       BigInt    @default(autoincrement())
+  last_active DateTime?
+  created_at  DateTime
+  updated_at  DateTime
+  deleted_at  DateTime? // Soft deletion field
+}
+
+model Trigger {
+  id         String      @id
+  agent_id   String
+  type       TriggerType
+  action     Json
+  data       Json
+  created_at DateTime
+  updated_at DateTime
+  deleted_at DateTime?
+}
+
+enum TriggerType {
+  CRON
+  TOPIC
+}
