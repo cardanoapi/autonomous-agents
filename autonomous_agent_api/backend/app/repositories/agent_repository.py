@@ -1,9 +1,13 @@
+import os
 import uuid
 from datetime import datetime, timezone
 from typing import List, Optional
+
+import pycardano
 from fastapi import HTTPException
-from backend.app.models.agent.agent_dto import AgentCreateDTO
-from backend.app.models.agent.response_dto import AgentResponse
+from pycardano import HDWallet
+
+from backend.app.models import AgentResponse, AgentCreateDTO, AgentKeyResponse
 from backend.config.database import prisma_connection
 
 
@@ -22,9 +26,7 @@ class AgentRepository:
         async with self.db:
             agent = await self.db.prisma.agent.create(data=agent_data_dict)
         agent_response = AgentResponse(
-            id=agent_id,
-            name=agent_data.name,
-            instance=agent_data.instance,
+            id=agent_id, name=agent_data.name, instance=agent_data.instance, index=agent.index
         )
 
         return agent_response
@@ -67,3 +69,43 @@ class AgentRepository:
 
             await self.db.prisma.agent.update(where={"id": agent_id}, data={"deleted_at": datetime.now(timezone.utc)})
             return True
+
+    async def retreive_agent_key(self, agent_id: str):
+        # Fetch the agent from the database or other data source based on the agent_id
+        agent = await self.retrieve_agent(agent_id)
+        agent_index = agent.index
+        # Assuming you have the mnemonic stored securely
+        mnemonic = os.getenv("AGENT_MNEMONIC")
+
+        # Derive the root private key
+        masterKey = HDWallet.from_mnemonic(mnemonic)
+
+        # Derive the agent's child private key based on the agent_id
+
+        agentPath = f"m/{agent_index}'"
+        agent_key = masterKey.derive_from_path(agentPath)
+
+        # Generate the address using the derived agent key
+        paymentPath = "m/1852'/1815'/0'/0/0"
+        stakingPath = "m/1852'/1815'/0'/2/0"
+
+        paymentKeyPath = agent_key.derive_from_path(paymentPath)
+        paymentPublicKey = paymentKeyPath.public_key
+
+        stakingKeyPath = agent_key.derive_from_path(stakingPath)
+        stakingPublicKey = stakingKeyPath.public_key
+
+        paymentVerificationKey = pycardano.key.PaymentExtendedVerificationKey(paymentPublicKey)
+        stakingVerificationKey = pycardano.key.StakeExtendedVerificationKey(stakingPublicKey)
+
+        address = pycardano.Address(
+            payment_part=paymentVerificationKey.hash(),
+            staking_part=stakingVerificationKey.hash(),
+            network=pycardano.Network.TESTNET,
+        )
+
+        # Create and return the AgentResponse with the agent's key and address
+        agent_response = AgentKeyResponse(
+            agent_private_key=str(agent_key.xprivate_key.hex()), agent_address=str(address)
+        )
+        return agent_response
