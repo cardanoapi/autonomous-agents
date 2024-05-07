@@ -51,3 +51,11 @@
 # Agent Key Generation, DATE - 2024-04-19
   -  Update agent table to include the index field.
   -  Create Api endpoint to fetch agent's wallet details and it's wallet address.
+
+# Agent Handler Service(Agent Manager) , DATE - 2024 -05 - 07
+  - Created Agent Manager seprate service project to handle the incoming request from the Agents
+  - integration of Kafka in Api and agent manager to handle update configuration
+
+# Template , Date - 2024 - 05 - 07
+  - Created template Service to support creation of template
+  - Created static api service to fetch the function/behaviour details.
