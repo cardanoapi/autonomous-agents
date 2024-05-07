@@ -67,11 +67,13 @@ export default function RootLayout({
                         theme="dark"
                     />
                     <Provider>
-                    <div className="flex w-full">
+                    <div className="flex w-full h-full ">
+                        <div className="min-h-screen">
                         <SideNav />
-                        <div className='w-[78%] flex-col mt-10 ml-6 mr-2'>
+                        </div>
+                        <div className='w-full min-h-full flex-col mt-10 ml-6 pr-10'>
                             <TopNav />
-                            <div className='mt-12'>{children}</div>
+                            <div className='mt-12 h-screen'>{children}</div>
                         </div>
                     </div>
                     </Provider>

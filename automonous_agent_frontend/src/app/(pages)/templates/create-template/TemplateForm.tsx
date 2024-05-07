@@ -45,7 +45,7 @@ export default function TemplateForm() {
     const functionRef = useRef<any>(null);
     
     const form = useForm<z.infer<typeof templateFormSchema>>({
-        resolver: zodResolver(templateFormSchema)
+        resolver: zodResolver(templateFormSchema),
     });
     
     function onSubmit(formData: z.infer<typeof templateFormSchema>) {
@@ -62,52 +62,45 @@ export default function TemplateForm() {
     
     const [selected, setSelected] = useState<IOption[]>([]);
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [currentDialogForm , setCurrentDialogForm] = useState<IOption|null>(null)
+    const [currentDialogForm , setCurrentDialogForm] = useState<string|null>(null)
 
     function openSelectedOption(option: IOption){
         console.log(option)
-        setCurrentDialogForm(option)
+        setCurrentDialogForm(option.value)
         setDialogOpen(true)
     }
 
-    function updateFormData(formData: z.infer<typeof triggerFormSchema>, option: IOption) {
-        const newoption : IOption = {...option , extraValues : { 'address' : formData.address , 'amount' : formData.amount}}
-        const updatedSelection = {
-            ...selected,
-            option: {
-                ...option,
-                newoption
-            }
-        };
-        console.log(selected)
-    }    
-
-    {
-        /* useEffect(
-        ()=> {
-            if (selected.length != 0){
-                setDialogOpen(true)
-            }
-        }
-    , [selected,]) */
+    function unselectOption(option : IOption){
+        const filteredSelected = selected.filter((s) => (s.value) !== option.value)
+        setSelected(filteredSelected)
     }
-
-    { /*{useEffect(()=>{
-        console.log('useeffect')
-        console.log(selected)
-    },[selected,])}*/ }
 
     return (
         <>
             <Dialog open={dialogOpen}>
                 <DialogContent className="p-12">
                     <TriggerForm
-                        functionName={currentDialogForm?.label}
+                        formValues = {selected.find(elem => elem.value === currentDialogForm)}
                         // TODO: onFormSubmit = setFormValues
                         setClose={() => {
                             setDialogOpen(false);
                         }}
-                        onSave={setCurrentDialogForm}
+                        onSubmit={(formData: z.infer<typeof triggerFormSchema>) => {
+                            console.log(formData)
+                            const selectedOption = selected.find(elem => elem.value === currentDialogForm);
+                            if (selectedOption){
+                                const updatedSelectedOption: IOption = {
+                                    ...selectedOption,
+                                    extraValues: {
+                                        ...selectedOption?.extraValues,
+                                        address: formData.address,
+                                        amount: formData.amount
+                                    }
+                                };
+                                setSelected([...selected.filter(elem => elem.value !== currentDialogForm), updatedSelectedOption]);
+                            }
+                            setDialogOpen(false)
+                        }}                        
                     />
                 </DialogContent>
             </Dialog>
@@ -166,8 +159,9 @@ export default function TemplateForm() {
                                                 appearOnTop={true}
                                                 {...field}
                                                 ref={functionRef}
-                                                onChange={setSelected}
+                                                onChange={(option : IOption) => {setSelected([...selected , option])}}
                                                 openSelectedOption={openSelectedOption}
+                                                onUnselect={unselectOption}
                                             />
                                         </div>
                                     </FormControl>
@@ -184,9 +178,7 @@ export default function TemplateForm() {
                                     handleEdit={()=>{
                                         openSelectedOption(option)
                                     }}
-                                    handleUnselect={() => {
-                                        functionRef.current.handleUnselect(option);
-                                    }}
+                                    handleUnselect={()=>{functionRef.current.handleUnselect(option)}}
                                     />
                     );
                 })}

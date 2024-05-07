@@ -17,9 +17,9 @@ import { IOption } from '@app/components/molecules/MultiSearchSelect';
 import { Dispatch, SetStateAction } from 'react';
 
 interface ICronTriggerForm {
-    functionName: any;
+    formValues? : IOption | null;
     setClose: any;
-    onSave?: Dispatch<SetStateAction<IOption | null>>
+    onSubmit : any;
 }
 
 export const triggerFormSchema = z.object({
@@ -28,19 +28,18 @@ export const triggerFormSchema = z.object({
 });
 
 export default function TriggerForm({
-    functionName,
+    formValues,
     setClose,
-    onSave,
+    onSubmit,
 }: ICronTriggerForm) {
 
     const form = useForm<z.infer<typeof triggerFormSchema>>({
-        resolver: zodResolver(triggerFormSchema)
+        resolver: zodResolver(triggerFormSchema),
+        defaultValues : {
+            address : formValues?.extraValues?.address,
+            amount : formValues?.extraValues?.amount
+        }
     });
-
-    function onSubmit(formData: z.infer<typeof triggerFormSchema>) {
-        console.log(formData);
-    }
-
 
     return (
         <Card className="flex w-[50vw] flex-col gap-y-4  bg-brand-Azure-200 p-4 px-8">
@@ -50,7 +49,7 @@ export default function TriggerForm({
                     onSubmit={form.handleSubmit(onSubmit)}
                 >
                     <div className="flex justify-center">
-                        <CardTitle className="h1 mx-auto">{functionName}</CardTitle>
+                        <CardTitle className="h1 mx-auto">{formValues?.label}</CardTitle>
                         <X onClick={setClose} className="cursor-pointer" />
                     </div>
 

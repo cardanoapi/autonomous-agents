@@ -19,7 +19,7 @@ export default function AgentCard({
     totalTrigger
 }: IAgentCard) {
     return (
-        <Card className="h-[257px] rounded-xl p-6">
+        <Card className="h-64 rounded-xl p-6">
             <div className="flex items-center justify-between">
                 <div className="card-h2">{agentName}</div>
                 <Switch />
@@ -32,7 +32,7 @@ export default function AgentCard({
                         <span className=" gray-background ml-1">{template}</span>
                     </span>
                     <span>
-                        Function : <span className="tex-active"> {functionCount}</span>
+                        Function : <span className="text-active"> {functionCount}</span>
                     </span>
                     <span>
                         Last Active :<span className="text-active"> {lastActive}</span>

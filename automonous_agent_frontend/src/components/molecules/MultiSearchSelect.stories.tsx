@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 
-import MultipleSelector, { Option } from './MultiSearchSelect';
+import MultipleSelector, { IOption } from './MultiSearchSelect';
 
 const meta = {
     title: 'MultiSearchSelect',
@@ -15,7 +15,7 @@ const meta = {
     argTypes: {}
 } satisfies Meta<typeof MultipleSelector>;
 
-const OPTIONS: Option[] = [
+const OPTIONS: IOption[] = [
     { label: 'Send Ada', value: 'SendAda' },
     { label: 'Create Proposal', value: 'CreatePropsal' },
     { label: 'Vote Propsal', value: 'VotePropsal' },

@@ -42,13 +42,13 @@ const SideNavItems: ISideNavItem[] = [
 
 export default function SideNav() {
     return (
-        <nav className="min-h-screen w-64 border-r-2 bg-white">
+        <nav className="min-h-full w-64 border-r-2 bg-white">
             <Link
                 href="/"
                 className="flex flex-row items-center gap-x-2 border-b-2 py-5 pb-6 pl-4 pt-6"
             >
                 <Logo />
-                <div className="text-[13px] font-semibold leading-[17px] text-brand-Blue-200">
+                <div className="h3 text-brand-Blue-200">
                     Autonomous
                     <br />
                     Agent
@@ -56,7 +56,7 @@ export default function SideNav() {
                     Testing
                 </div>
             </Link>
-            <div className="ml-1 mt-6 flex-col px-[6px]">
+            <div className="ml-1 mt-6 flex-col px-2">
                 {SideNavItems.map((Prop, index) => (
                     <SideNavLink key={index} Prop={Prop} />
                 ))}

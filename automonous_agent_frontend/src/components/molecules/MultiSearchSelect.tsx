@@ -22,13 +22,13 @@ import {
 } from '../atoms/Dialog';
 import { cn } from '../lib/utils';
 import SelectedTemplateCard from './SelectedTemplateCard';
-import { atom, useAtom } from 'jotai';
+
 
 export interface IOption {
     value: string;
     label: string;
     disable?: boolean;
-    extraValues? : object;
+    extraValues? : any;
     /** fixed option that can't be removed. */
     fixed?: boolean;
     /** Group the options by providing key. */
@@ -60,7 +60,8 @@ interface MultipleSelectorProps {
    triggerSearchOnFocus?: boolean;
    /** async search */
    onSearch?: (value: string) => Promise<IOption[]>;
-   onChange?: (options: IOption[]) => void;
+   onChange?: Function 
+   onUnselect? : Function
    /** Limit the maximum number of selected options. */
    maxSelected?: number;
    /** When the number of selected options exceeds the limit, the onMaxSelected will be called. */
@@ -109,8 +110,6 @@ export function useDebounce<T>(value: T, delay?: number): T {
     
     return debouncedValue;
 }
-
-export const SelectorAtom = atom<IOption[]>([])
 
 function transToGroupOption(options: IOption[], groupBy?: string) {
     if (options.length === 0) {
@@ -197,6 +196,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
             inputProps,
             openSelectedOption,
             appearOnTop = false,
+            onUnselect,
             ...props
         }: MultipleSelectorProps,
         ref: React.Ref<IMultipleSelectorRef>
@@ -230,7 +230,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
             (option: IOption) => {
                 const newOptions = selected.filter((s) => s.value !== option.value);
                 setSelected(newOptions);
-                onChange?.(newOptions);
+                onUnselect?.(option)
                 setDisabledValue(false);
             },
             [onChange, selected]
@@ -313,7 +313,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                             return;
                         }
                         const newOptions = [...selected, { value, label: value }];
-                        onChange?.(newOptions);
+                        onChange?.({value , label:value});
                         setSelected(newOptions);
                         setInputValue('');
                     }}
@@ -486,7 +486,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                                                                   setSelected(
                                                                         newOptions
                                                                     );
-                                                                    onChange?.(newOptions)
+                                                                    onChange?.(option)
                                                                     setOpen(false);
                                                                     setInputValue('');
                                                                     if (

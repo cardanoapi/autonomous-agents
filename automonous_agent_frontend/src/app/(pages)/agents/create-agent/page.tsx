@@ -2,8 +2,8 @@ import CreateAgentForm from "./CreateAgentForm";
 
 export default function CreateAgent(){
     return (
-        <>
-         <CreateAgentForm/>
-        </>
+        <div className="w-full h-full">
+            <CreateAgentForm/>
+        </div>
     )
 }

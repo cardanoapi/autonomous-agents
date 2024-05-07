@@ -20,7 +20,6 @@ import {
 import { Input } from '@app/components/atoms/Input';
 import { Label } from '@app/components/atoms/label';
 import MultipleSelector, { IOption } from '@app/components/molecules/MultiSearchSelect';
-import { SelectorAtom } from '@app/components/molecules/MultiSearchSelect';
 import { NumberInput } from '@app/components/molecules/NumberInput';
 import SelectedTemplateCard from '@app/components/molecules/SelectedTemplateCard';
 
@@ -53,10 +52,15 @@ export default function CreateAgentForm() {
         console.log(formData);
     }
 
+    function unselectOption(option: IOption) {
+        const filteredSelected = selected.filter((s) => s.value !== option.value);
+        setSelected(filteredSelected);
+    }
+
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-                <Card className="min-h-[493px] w-[790px]">
+            <form onSubmit={form.handleSubmit(onSubmit)} className='h-full'>
+                <Card className="w-[70%] h-[60%]">
                     <FormField
                         control={form.control}
                         name="agentName"
@@ -66,7 +70,7 @@ export default function CreateAgentForm() {
                                 <FormControl>
                                     <Input
                                         placeholder="Enter Agent Name"
-                                        className="mt-3 w-[297px]"
+                                        className="mt-3 w-72"
                                         {...field}
                                     />
                                 </FormControl>
@@ -83,7 +87,7 @@ export default function CreateAgentForm() {
                                     Agent Template
                                 </Label>
                                 <FormControl>
-                                    <div className="mt-3 w-[297px]">
+                                    <div className="mt-3 w-72">
                                         <MultipleSelector
                                             placeholder="Add Agent Template"
                                             options={AgentTemplateOptions}
@@ -91,7 +95,8 @@ export default function CreateAgentForm() {
                                             maxSelected={1}
                                             {...field}
                                             ref={multiSelectorRef}
-                                            onChange={setSelected}
+                                            onChange={(option : IOption) => {setSelected([option])}}
+                                            onUnselect={unselectOption}
                                         />
                                     </div>
                                 </FormControl>
@@ -103,8 +108,11 @@ export default function CreateAgentForm() {
                             return (
                                 <SelectedTemplateCard
                                     templateName={option.value}
+                                    handleEdit={() => {
+                                        console.log('Handle Template edit');
+                                    }}
                                     handleUnselect={() => {
-                                        multiSelectorRef?.current.handleUnselect(option);
+                                        multiSelectorRef.current.handleUnselect(option);
                                     }}
                                 />
                             );
@@ -115,7 +123,7 @@ export default function CreateAgentForm() {
                         name="numberOfAgents"
                         render={({ field }) => (
                             <FormItem>
-                                <Label className="mt-6 inline-flex">
+                                <Label className="mt-4 inline-flex">
                                     Number of Agents
                                 </Label>
                                 <FormControl>
@@ -136,7 +144,7 @@ export default function CreateAgentForm() {
                         type="submit"
                         variant="primary"
                         size="md"
-                        className="mt-6 w-[145px]"
+                        className="mt-12 w-36"
                     >
                         Create
                     </Button>
