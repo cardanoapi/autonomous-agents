@@ -38,9 +38,7 @@ class TestAiohttpClient:
             (500, {"API": "KEY"}, False),
         ],
     )
-    async def test_should_execute_get_and_return_response(
-        self, fake_web, status, headers, raise_for_status
-    ):
+    async def test_should_execute_get_and_return_response(self, fake_web, status, headers, raise_for_status):
         # given
         fake_web.get(
             "http://example.com/api",
@@ -90,9 +88,7 @@ class TestAiohttpClient:
             (500, None, {"API": "KEY"}, False),
         ],
     )
-    async def test_should_execute_post_and_return_response(
-        self, fake_web, status, data, headers, raise_for_status
-    ):
+    async def test_should_execute_post_and_return_response(self, fake_web, status, data, headers, raise_for_status):
         # given
         fake_web.post(
             "http://example.com/api",
@@ -142,9 +138,7 @@ class TestAiohttpClient:
             (500, None, {"API": "KEY"}, False),
         ],
     )
-    async def test_should_execute_put_and_return_response(
-        self, fake_web, status, data, headers, raise_for_status
-    ):
+    async def test_should_execute_put_and_return_response(self, fake_web, status, data, headers, raise_for_status):
         # given
         fake_web.put(
             "http://example.com/api",
@@ -194,9 +188,7 @@ class TestAiohttpClient:
             (500, None, {"API": "KEY"}, False),
         ],
     )
-    async def test_should_execute_patch_and_return_response(
-        self, fake_web, status, data, headers, raise_for_status
-    ):
+    async def test_should_execute_patch_and_return_response(self, fake_web, status, data, headers, raise_for_status):
         # given
         fake_web.patch(
             "http://example.com/api",
@@ -246,9 +238,7 @@ class TestAiohttpClient:
             (500, {"API": "KEY"}, False),
         ],
     )
-    async def test_should_execute_delete_and_return_response(
-        self, fake_web, status, headers, raise_for_status
-    ):
+    async def test_should_execute_delete_and_return_response(self, fake_web, status, headers, raise_for_status):
         # given
         fake_web.delete(
             "http://example.com/api",

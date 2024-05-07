@@ -39,17 +39,13 @@ class AgentRepository:
 
     async def retrieve_agent(self, agent_id: str) -> Optional[AgentResponse]:
         async with self.db:
-            agent = await self.db.prisma.agent.find_first(
-                where={"id": agent_id, "deleted_at": None}
-            )
+            agent = await self.db.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})
             if agent is None:
                 raise HTTPException(status_code=404, detail="Agent not found")
             else:
                 return agent
 
-    async def modify_agent(
-        self, agent_id: str, agent_data: AgentCreateDTO
-    ) -> Optional[AgentResponse]:
+    async def modify_agent(self, agent_id: str, agent_data: AgentCreateDTO) -> Optional[AgentResponse]:
         async with self.db:
             agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
             if agent is None or agent.deleted_at is not None:
@@ -58,9 +54,7 @@ class AgentRepository:
             updated_data = agent_data.dict(exclude_unset=True)
             updated_data["updated_at"] = datetime.now(timezone.utc)
 
-            updated_agent = await self.db.prisma.agent.update(
-                where={"id": agent_id}, data=updated_data
-            )
+            updated_agent = await self.db.prisma.agent.update(where={"id": agent_id}, data=updated_data)
             return updated_agent
 
     async def remove_agent(self, agent_id: str) -> bool:
@@ -71,7 +65,5 @@ class AgentRepository:
             elif agent.deleted_at is not None:
                 return True
 
-            await self.db.prisma.agent.update(
-                where={"id": agent_id}, data={"deleted_at": datetime.now(timezone.utc)}
-            )
+            await self.db.prisma.agent.update(where={"id": agent_id}, data={"deleted_at": datetime.now(timezone.utc)})
             return True
