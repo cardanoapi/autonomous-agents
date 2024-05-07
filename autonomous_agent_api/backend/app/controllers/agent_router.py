@@ -20,12 +20,17 @@ class AgentRouter(Routable):
         agent = await self.agent_service.create_agent(agent_data)
         return agent
 
+    @get("/agent/{agent_id}/keys", status_code=HTTPStatus.OK)
+    async def get_agent_keys(self, agent_id: str):
+        agent = await self.agent_service.get_agent_key(agent_id)
+        return agent
+
     @get("/agents/", response_model=List[AgentResponse])
     async def list_agents(self):
         agents = await self.agent_service.list_agents()
         return agents
 
-    @get("/agents/{agent_id}", response_model=AgentResponse)
+    @get("/agent/{agent_id}", response_model=AgentResponse)
     async def get_agent(self, agent_id: str):
         agent = await self.agent_service.get_agent(agent_id)
         return agent
