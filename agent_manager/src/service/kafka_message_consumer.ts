@@ -3,7 +3,7 @@ import manager from "./agent_manager_service";
 
 const kafka = new Kafka({
   clientId: process.env["CLIENT_ID"],
-  brokers: ['process.env["BROKER_URL"]'] // Update with your Kafka broker address
+  brokers: [process.env["BROKER_URL"]] // Update with your Kafka broker address
 });
 
 const consumer = kafka.consumer({ groupId: 'trigger_consumer_group' });
