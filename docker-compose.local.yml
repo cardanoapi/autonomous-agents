@@ -11,7 +11,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - pg-network
+      - cardano-autonomous-backend
     volumes:
       - pg-data:/var/lib/postgresql/data
 
@@ -24,7 +24,7 @@ services:
     ports:
       - "5050:80"
     networks:
-      - pg-network
+      - cardano-autonomous-backend
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
@@ -36,7 +36,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
       ZOOKEEPER_SYNC_LIMIT: 2
     networks:
-      - pg-network
+      - cardano-autonomous-backend
 
   kafka:
     image: confluentinc/cp-kafka:7.0.1
@@ -49,8 +49,9 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: DOCKER_NET:PLAINTEXT,HOST_NET:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS:  DOCKER_NET://kafka:9093,HOST_NET://localhost:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER_NET
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
@@ -58,7 +59,7 @@ services:
       KAFKA_JMX_PORT: 9999
       KAFKA_CREATE_TOPICS: "trigger_config_updates:1:1"
     networks:
-      - pg-network
+      - cardano-autonomous-backend
 
   kafka-ui:
     image: provectuslabs/kafka-ui
@@ -68,12 +69,14 @@ services:
     restart: always
     environment:
       - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:29092
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9093
     networks:
-      - pg-network
+      - cardano-autonomous-backend
 
 networks:
-  pg-network:
+  cardano-autonomous-backend:
+    name: backend
+    driver: bridge
 
 volumes:
   pg-data:
