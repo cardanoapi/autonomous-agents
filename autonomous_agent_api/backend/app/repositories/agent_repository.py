@@ -1,6 +1,6 @@
 import os
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import List, Optional
 
 import pycardano
@@ -62,6 +62,20 @@ class AgentRepository:
 
             updated_agent = await self.db.prisma.agent.update(where={"id": agent_id}, data=updated_data)
             return updated_agent
+
+    async def get_online_agents_count(self):
+        try:
+            async with self.db:
+                # Calculate the threshold for last active time (e.g., 10 seconds ago)
+                threshold_time = datetime.utcnow() - timedelta(seconds=10)
+
+                # Query the database for online agents
+                online_agents_count = await self.db.prisma.agent.count(where={"last_active": {"gte": threshold_time}})
+
+                return {"online_agents_count": online_agents_count}
+
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to retrieve online agents count: {str(e)}")
 
     async def remove_agent(self, agent_id: str) -> bool:
         async with self.db:

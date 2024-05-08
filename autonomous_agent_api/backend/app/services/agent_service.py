@@ -43,5 +43,8 @@ class AgentService:
     async def update_agent(self, agent_id: str, agent_data: AgentCreateDTO) -> AgentResponse:
         return await self.agent_repository.modify_agent(agent_id, agent_data)
 
+    async def get_active_agents_count(self):
+        return await self.agent_repository.get_online_agents_count()
+
     async def delete_agent(self, agent_id: str) -> None:
         await self.agent_repository.remove_agent(agent_id)

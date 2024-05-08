@@ -40,6 +40,11 @@ class AgentRouter(Routable):
         updated_agent = await self.agent_service.update_agent(agent_id, agent_data)
         return updated_agent
 
+    @get("/agents/online", status_code=HTTPStatus.OK)
+    async def get_agent_online(self):
+        agents = await self.agent_service.get_active_agents_count()
+        return agents
+
     @delete("/agents/{agent_id}", status_code=HTTPStatus.NO_CONTENT)
     async def delete_agent(self, agent_id: str):
         await self.agent_service.delete_agent(agent_id)
