@@ -34,7 +34,7 @@ wss.on('connection', async function connection(ws, req) {
         ws.on('message', async function incoming(message) {
 
             console.log(`Received message from agent ${agentId}: ${message}`);
-            // manager.sendToWebSocket(agentId, { message: 'cardano-node-blocks' });
+            manager.sendToWebSocket(agentId, { message: 'cardano-node-blocks' });
             ws.send(JSON.stringify({
                 message: "Pong received from Server",
                 timestamp: new Date().toISOString()
