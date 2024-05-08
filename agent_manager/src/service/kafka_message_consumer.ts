@@ -2,8 +2,8 @@ import { Kafka, logLevel } from 'kafkajs';
 import manager from "./agent_manager_service";
 
 const kafka = new Kafka({
-  clientId: 'my-app',
-  brokers: ['localhost:9092'] // Update with your Kafka broker address
+  clientId: process.env["CLIENT_ID"],
+  brokers: ['process.env["BROKER_URL"]'] // Update with your Kafka broker address
 });
 
 const consumer = kafka.consumer({ groupId: 'trigger_consumer_group' });
