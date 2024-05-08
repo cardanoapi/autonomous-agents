@@ -41,4 +41,3 @@ HEALTHCHECK CMD curl http://localhost:8000
 
 CMD ["uvicorn", "backend.app:get_application", "--host", "0.0.0.0", "--port", "8000"]
 
-

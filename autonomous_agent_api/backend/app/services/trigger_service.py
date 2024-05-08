@@ -1,3 +1,4 @@
+import os
 from typing import List, Union
 from confluent_kafka import Producer
 from backend.app.models.trigger.resposne_dto import TriggerResponse
@@ -5,16 +6,16 @@ from backend.app.models.trigger.trigger_dto import (
     TriggerCreateDTO,
 )
 from backend.app.repositories.trigger_repository import TriggerRepository
-from backend.app.services.websocket_manager_service import manager
 from backend.config.logger import logger
 
 
 class TriggerService:
     def __init__(self, trigger_repository: TriggerRepository):
         self.trigger_repository = trigger_repository
-        self.kafka_producer = Producer({"bootstrap.servers": "localhost:9092"})
+        self.kafka_producer = Producer({"bootstrap.servers": os.environ.get("KAFKA_BROKERS")})
 
     async def create_trigger(self, agent_id: str, trigger_data: TriggerCreateDTO) -> TriggerResponse:
+        logger.info(self.kafka_producer)
         trigger_response = await self.trigger_repository.save_trigger(agent_id, trigger_data)
 
         self.publish_trigger_event(trigger_response.agent_id)

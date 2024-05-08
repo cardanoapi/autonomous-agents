@@ -10,4 +10,3 @@ class TemplateResponse(BaseModel):
     id: str
     name: str
     description: str
-    template_triggers: list[TemplateTriggerResponse]
