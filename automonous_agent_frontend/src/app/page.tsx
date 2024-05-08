@@ -1,4 +1,5 @@
 import Head from 'next/head';
+
 import { Card } from '@app/components/atoms/Card';
 import {
     DropdownMenu,
@@ -7,6 +8,7 @@ import {
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
 import OverViewCard, { IOverViewCard } from '@app/components/molecules/OverViewCard';
+import CustomLineChart from '@app/components/molecules/chart/CustomLineChart';
 
 const OverViewItems: IOverViewCard[] = [
     {
@@ -42,15 +44,13 @@ export default function Home() {
             </div>
 
             {/* Dashboard Chart*/}
-            <Card className="mt-8 flex flex-row h-[450px] pt-0">
+            <Card className="mt-8 flex h-[55%] flex-row pt-0">
                 <span className="h4 rotate-180 text-center [writing-mode:vertical-lr]">
                     No of transaction
                 </span>
-                <div className="w-full mt-6 pr-6">
+                <div className="mt-6 w-full pr-6">
                     <div className="flex justify-between">
-                        <span className='title-1'>
-                            Transactions
-                        </span>
+                        <span className="title-1">Live Transactions</span>
                         <DropdownMenu>
                             <DropdownMenuTrigger border={true}>
                                 Today
@@ -61,6 +61,9 @@ export default function Home() {
                                 <DropdownMenuItem>Last Month</DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
+                    </div>
+                    <div className="w-full h-full py-10 pr-0">
+                    <CustomLineChart />
                     </div>
                 </div>
             </Card>

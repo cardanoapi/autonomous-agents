@@ -88,6 +88,7 @@
     "react-share": "^5.0.3",
     "react-toastify": "^10.0.4",
     "react-use": "^17.5.0",
+    "recharts": "^2.12.6",
     "redux-logger": "^3.0.6",
     "redux-persist": "^6.0.0",
     "redux-undo": "^1.1.0",
