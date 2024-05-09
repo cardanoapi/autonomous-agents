@@ -1,4 +1,20 @@
-FROM python:3.12.2 as builder
+# Stage 1: Generate requirements.txt (builder)
+FROM python:3.12.2-slim AS builder
+
+# Set working directory
+WORKDIR /tmp
+
+# Install Poetry
+RUN pip install poetry==1.8.2
+
+#
+COPY ./pyproject.toml ./poetry.lock* /tmp/
+
+# Generate requirements.txt
+RUN poetry export -f requirements.txt --without-hashes -o requirements.txt
+
+# Stage 2: Final image (slim)
+FROM python:3.12.2-slim
 
 # Configure environment variables
 ENV PYTHONUNBUFFERED=1 \
@@ -19,25 +35,20 @@ ENV PYTHONUNBUFFERED=1 \
 
 ENV PATH="${POETRY_HOME}/bin:${VENV_PATH}/bin:${PATH}"
 
-# Install project without root package, then build and install from wheel.
-# This is needed because Poetry doesn't support installing root package without
-# editable mode: https://github.com/python-poetry/poetry/issues/1382
-# Otherwise venv with source code would need to be copied to final image.
-
-RUN pip install poetry==${POETRY_VERSION}
-
+# Set working directory
 WORKDIR /api
 COPY . ./backend
 
-
 WORKDIR $PYSETUP_PATH
-RUN poetry install --only main --no-interaction
+
+# Copy requirements.txt from builder stage
+COPY --from=builder /tmp/requirements.txt $PYSETUP_PATH
+
+# Install dependencies from requirements.txt
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
+
 
 RUN prisma generate
-
 EXPOSE 8000/tcp
-
 HEALTHCHECK CMD curl http://localhost:8000
-
 CMD ["uvicorn", "backend.app:get_application", "--host", "0.0.0.0", "--port", "8000"]
-
