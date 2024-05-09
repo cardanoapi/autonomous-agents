@@ -29,14 +29,14 @@ async def test_list_agents_with_two_agents(agent_service, agent_router):
             name="fwe",
             template_id="template123",
             instance=1,
-            index=1
+            index=1,
         ),
         AgentResponse(
             id="018e8908-7563-7e8a-b87c-b33ac6e6c872",
             name="fewfe",
             template_id="template123",
             instance=1,
-            index=2
+            index=2,
         ),
     ]
     agent_service.list_agents = AsyncMock(return_value=mock_agents)

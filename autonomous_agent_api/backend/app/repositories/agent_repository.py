@@ -45,13 +45,17 @@ class AgentRepository:
 
     async def retrieve_agent(self, agent_id: str) -> Optional[AgentResponse]:
         async with self.db:
-            agent = await self.db.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})
+            agent = await self.db.prisma.agent.find_first(
+                where={"id": agent_id, "deleted_at": None}
+            )
             if agent is None:
                 raise HTTPException(status_code=404, detail="Agent not found")
             else:
                 return agent
 
-    async def modify_agent(self, agent_id: str, agent_data: AgentCreateDTO) -> Optional[AgentResponse]:
+    async def modify_agent(
+        self, agent_id: str, agent_data: AgentCreateDTO
+    ) -> Optional[AgentResponse]:
         async with self.db:
             agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
             if agent is None or agent.deleted_at is not None:
@@ -60,7 +64,9 @@ class AgentRepository:
             updated_data = agent_data.dict(exclude_unset=True)
             updated_data["updated_at"] = datetime.now(timezone.utc)
 
-            updated_agent = await self.db.prisma.agent.update(where={"id": agent_id}, data=updated_data)
+            updated_agent = await self.db.prisma.agent.update(
+                where={"id": agent_id}, data=updated_data
+            )
             return updated_agent
 
     async def get_online_agents_count(self):
@@ -70,12 +76,17 @@ class AgentRepository:
                 threshold_time = datetime.utcnow() - timedelta(seconds=10)
 
                 # Query the database for online agents
-                online_agents_count = await self.db.prisma.agent.count(where={"last_active": {"gte": threshold_time}})
+                online_agents_count = await self.db.prisma.agent.count(
+                    where={"last_active": {"gte": threshold_time}}
+                )
 
                 return {"online_agents_count": online_agents_count}
 
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Failed to retrieve online agents count: {str(e)}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to retrieve online agents count: {str(e)}",
+            )
 
     async def remove_agent(self, agent_id: str) -> bool:
         async with self.db:
@@ -85,7 +96,9 @@ class AgentRepository:
             elif agent.deleted_at is not None:
                 return True
 
-            await self.db.prisma.agent.update(where={"id": agent_id}, data={"deleted_at": datetime.now(timezone.utc)})
+            await self.db.prisma.agent.update(
+                where={"id": agent_id}, data={"deleted_at": datetime.now(timezone.utc)}
+            )
             return True
 
     async def retreive_agent_key(self, agent_id: str):
@@ -113,8 +126,12 @@ class AgentRepository:
         stakingKeyPath = agent_key.derive_from_path(stakingPath)
         stakingPublicKey = stakingKeyPath.public_key
 
-        paymentVerificationKey = pycardano.key.PaymentExtendedVerificationKey(paymentPublicKey)
-        stakingVerificationKey = pycardano.key.StakeExtendedVerificationKey(stakingPublicKey)
+        paymentVerificationKey = pycardano.key.PaymentExtendedVerificationKey(
+            paymentPublicKey
+        )
+        stakingVerificationKey = pycardano.key.StakeExtendedVerificationKey(
+            stakingPublicKey
+        )
 
         address = pycardano.Address(
             payment_part=paymentVerificationKey.hash(),
@@ -154,8 +171,12 @@ class AgentRepository:
         stakingKeyPath = agent_key.derive_from_path(stakingPath)
         stakingPublicKey = stakingKeyPath.public_key
 
-        paymentVerificationKey = pycardano.key.PaymentExtendedVerificationKey(paymentPublicKey)
-        stakingVerificationKey = pycardano.key.StakeExtendedVerificationKey(stakingPublicKey)
+        paymentVerificationKey = pycardano.key.PaymentExtendedVerificationKey(
+            paymentPublicKey
+        )
+        stakingVerificationKey = pycardano.key.StakeExtendedVerificationKey(
+            stakingPublicKey
+        )
 
         address = pycardano.Address(
             payment_part=paymentVerificationKey.hash(),
