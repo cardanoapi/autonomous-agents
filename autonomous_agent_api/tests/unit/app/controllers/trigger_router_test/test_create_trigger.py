@@ -8,6 +8,7 @@ import pytest
 
 
 @pytest.mark.asyncio
+@pytest.mark.github_actions
 class TestCreateTrigger:
     @pytest.fixture
     def trigger_service(self):
@@ -17,16 +18,17 @@ class TestCreateTrigger:
     def trigger_router(self, trigger_service):
         return TriggerRouter(trigger_service)
 
-    @pytest.mark.asyncio
+
     async def test_create_trigger_with_valid_data(self, trigger_router, trigger_service):
         # Define test data
         id = "trigger_id"
         agent_id = "agent_id"
-        valid_cron_trigger_data = TriggerCreateDTO(type="CRON", data={"frequency": "* * * * *", "probability": 0.5})
+        valid_cron_trigger_data = TriggerCreateDTO(type="CRON",   action= {"function_name": "string","parameter": ["string"]}, data={"frequency": "* * * * *", "probability": 0.5})
         created_trigger = TriggerResponse(
             id=id,
             agent_id=agent_id,
             type="CRON",
+            action= {"function_name": "string","parameter": ["string"]},
             data={"frequency": "* * * * *", "probability": 0.5},
         )
 
@@ -38,7 +40,7 @@ class TestCreateTrigger:
 
         assert result == created_trigger
 
-    @pytest.mark.asyncio
+
     async def test_create_trigger_with_Invalid_data_fail(self, trigger_router, trigger_service):
         with pytest.raises(ValidationError):
             id = "trigger_id"

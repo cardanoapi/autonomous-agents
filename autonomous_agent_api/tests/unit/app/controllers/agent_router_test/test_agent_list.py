@@ -19,19 +19,24 @@ def agent_router(agent_service):
 
 
 # test for listing the agents
+@pytest.mark.github_actions
 @pytest.mark.asyncio
 async def test_list_agents_with_two_agents(agent_service, agent_router):
     # Mocking the list_agents method to return a list of mock agents
     mock_agents = [
         AgentResponse(
             id="018e8908-5dc9-78c9-b71a-37ebd2149394",
-            name="Agent 1",
-            action=["Description 1"],
+            name="fwe",
+            template_id="template123",
+            instance=1,
+            index=1
         ),
         AgentResponse(
             id="018e8908-7563-7e8a-b87c-b33ac6e6c872",
-            name="Agent 2",
-            action=["Description 2"],
+            name="fewfe",
+            template_id="template123",
+            instance=1,
+            index=2
         ),
     ]
     agent_service.list_agents = AsyncMock(return_value=mock_agents)
