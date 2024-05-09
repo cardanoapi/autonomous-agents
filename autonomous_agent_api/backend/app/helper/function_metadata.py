@@ -22,16 +22,16 @@ functions_metadata = [
         "name": "subtract",
         "num_parameters": 2,
         "parameters": [
-            {"name": "a", "description": "First number", "optional": False},
-            {"name": "b", "description": "Second number", "optional": False},
+            {"name": "a", "description": "First number", "optional": False,"data-type": "int","default-value": 0},
+            {"name": "b", "description": "Second number", "optional": False,"data-type": "int","default-value": 0},
         ],
     },
     {
         "name": "add",
         "num_parameters": 2,
         "parameters": [
-            {"name": "a", "description": "First number", "optional": False},
-            {"name": "b", "description": "Second number", "optional": False},
+            {"name": "a", "description": "First number", "optional": False,"data-type": "int","default-value": 0},
+            {"name": "b", "description": "Second number", "optional": False,"data-type": "int","default-value": 0},
         ],
     },
 ]
