@@ -245,9 +245,7 @@ class RedisClient(object):
 
         """
         redis_client = cls.redis_client
-        cls.log.debug(
-            f"Execute Redis LRANGE command, key: {key}, start: {start}, end: {end}"
-        )
+        cls.log.debug(f"Execute Redis LRANGE command, key: {key}, start: {start}, end: {end}")
         try:
             return await redis_client.lrange(key, start, end)
         except aioredis.RedisError as ex:

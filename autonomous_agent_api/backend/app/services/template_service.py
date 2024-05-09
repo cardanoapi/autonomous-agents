@@ -26,10 +26,8 @@ class TemplateService:
 
         if template_triggers:
             for trigger_data in template_triggers:
-                template_trigger_response = (
-                    await self.template_trigger_service.create_template_trigger(
-                        template_id, trigger_data
-                    )
+                template_trigger_response = await self.template_trigger_service.create_template_trigger(
+                    template_id, trigger_data
                 )
                 template_trigger_responses.append(template_trigger_response)
 
@@ -37,9 +35,7 @@ class TemplateService:
             id=template["id"],
             name=template_data.name,
             description=template_data.description,
-            template_triggers=template_trigger_responses
-            if template_trigger_responses
-            else [],
+            template_triggers=template_trigger_responses if template_trigger_responses else [],
         )
 
         return template_response
@@ -50,12 +46,8 @@ class TemplateService:
     async def get_template(self, template_id: str) -> TemplateResponse:
         return await self.template_repository.retrieve_template(template_id)
 
-    async def update_template(
-        self, template_id: str, template_data: TemplateCreateDto
-    ) -> TemplateResponse:
-        return await self.template_repository.modify_template(
-            template_id, template_data
-        )
+    async def update_template(self, template_id: str, template_data: TemplateCreateDto) -> TemplateResponse:
+        return await self.template_repository.modify_template(template_id, template_data)
 
     async def delete_template(self, template_id: str) -> None:
         await self.template_repository.remove_template(template_id)

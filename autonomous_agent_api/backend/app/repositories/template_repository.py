@@ -39,9 +39,7 @@ class TemplateRepository:
 
     async def retrieve_templates(self) -> List[TemplateResponse]:
         async with self.db:
-            templates = await self.db.prisma.template.find_many(
-                where={"deleted_at": None}
-            )
+            templates = await self.db.prisma.template.find_many(where={"deleted_at": None})
             if templates is None:
                 raise HTTPException(status_code=404, detail="No templates not found")
             else:
@@ -49,37 +47,27 @@ class TemplateRepository:
 
     async def retrieve_template(self, template_id: str) -> Optional[TemplateResponse]:
         async with self.db:
-            template = await self.db.prisma.template.find_first(
-                where={"id": template_id, "deleted_at": None}
-            )
+            template = await self.db.prisma.template.find_first(where={"id": template_id, "deleted_at": None})
             if template is None:
                 raise HTTPException(status_code=404, detail="template not found")
             else:
                 return template
 
-    async def modify_template(
-        self, template_id: str, template_data: TemplateCreateDto
-    ) -> Optional[TemplateResponse]:
+    async def modify_template(self, template_id: str, template_data: TemplateCreateDto) -> Optional[TemplateResponse]:
         async with self.db:
-            template = await self.db.prisma.template.find_first(
-                where={"id": template_id}
-            )
+            template = await self.db.prisma.template.find_first(where={"id": template_id})
             if template is None or template.deleted_at is not None:
                 raise HTTPException(status_code=404, detail="template not found")
 
             updated_data = template_data.dict(exclude_unset=True)
             updated_data["updated_at"] = datetime.now(timezone.utc)
 
-            updated_template = await self.db.prisma.template.update(
-                where={"id": template_id}, data=updated_data
-            )
+            updated_template = await self.db.prisma.template.update(where={"id": template_id}, data=updated_data)
             return updated_template
 
     async def remove_template(self, template_id: str) -> bool:
         async with self.db:
-            template = await self.db.prisma.template.find_first(
-                where={"id": template_id}
-            )
+            template = await self.db.prisma.template.find_first(where={"id": template_id})
             if template is None:
                 return False
             elif template.deleted_at is not None:
