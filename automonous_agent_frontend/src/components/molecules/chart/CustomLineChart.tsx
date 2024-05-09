@@ -25,9 +25,9 @@ export interface ILineChartData {
 
 const demoData: ILineChartData[] = [
     { name: 'A', amt: 10 },
-    { name: 'B', amt: 20 },
+    { name: 'B', amt: 30 },
     { name: 'C', amt: 24 },
-    { name: 'D', amt: 8 },
+    { name: 'D', amt: 10 },
     { name: 'E', amt: 12 },
     { name: 'F', amt: 32 },
 ];
@@ -50,17 +50,16 @@ export default function CustomLineChart() {
         });
     };
 
-    useEffect(() => {
-        const interval = setInterval(updateChartData, 3000);
+     useEffect(() => {
+        const interval = setInterval(updateChartData, 30000);
         return () => clearInterval(interval);
-    }, []);
+    }, []); 
 
     return (
             <ResponsiveContainer width="100%" height="100%" >
                 <AreaChart
                     data={data}
-                    margin={{ top: 5, right: 0, left: 0, bottom: 0 }}
-                    stackOffset='wiggle'
+                    margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
                 >
                     <defs>
                         <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
@@ -70,9 +69,6 @@ export default function CustomLineChart() {
                     </defs>
                     <Tooltip />
                     <CartesianGrid strokeDasharray="0" vertical={false} fillOpacity={0.4}/> 
-                    <XAxis tickLine={false} dy={10}>
-                    <Label position="insideBottom" value="Hour"/>
-                    </XAxis>
                     <YAxis dx={-10} tickCount={4} axisLine={false} tickLine={false}/>
                     <Area
                         type="monotone"
@@ -81,11 +77,14 @@ export default function CustomLineChart() {
                         strokeWidth={"6"}
                         fillOpacity={1}
                         fill="url(#colorUv)"
-                        animationEasing='ease-in-out'
+                        animationEasing='linear'
                         className='bg-black'
                         animationDuration={speed}
                         strokeLinecap='round'
                     />
+                    <XAxis tickLine={false} dy={10}>
+                    <Label position="insideBottom" value="Hour"/>
+                    </XAxis>
                 </AreaChart>
             </ResponsiveContainer>
     );
