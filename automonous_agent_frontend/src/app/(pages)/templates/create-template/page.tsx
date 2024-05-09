@@ -30,8 +30,7 @@ import MultipleSelector, {
     IMultipleSelectorRef,
     IOption
 } from '@app/components/molecules/MultiSearchSelect';
-import SelectedTemplateCard from '@app/components/molecules/SelectedTemplateCard';
-
+import SelectedCard from '@app/components/molecules/SelectedCard';
 import TriggerForm, { triggerFormSchema } from './components/TriggerForm';
 
 const templateFormSchema = z.object({
@@ -182,8 +181,9 @@ export default function TemplateForm() {
                 <div className="mt-2 grid w-[80%] grid-cols-2 gap-4">
                     {selected.map((option: IOption, index) => {
                         return (
-                            <SelectedTemplateCard
+                            <SelectedCard
                                 templateName={option.value}
+                                key={index}
                                 handleEdit={() => {
                                     openSelectedOption(option);
                                 }}

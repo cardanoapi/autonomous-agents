@@ -7,6 +7,7 @@ import { set } from 'lodash';
 
 import { Command as CommandPrimitive, useCommandState } from 'cmdk';
 import { SearchIcon, X } from 'lucide-react';
+
 import { Badge } from '../atoms/Badge';
 import { Command, CommandGroup, CommandItem, CommandList } from '../atoms/Command';
 import {
@@ -17,14 +18,13 @@ import {
     DialogTrigger
 } from '../atoms/Dialog';
 import { cn } from '../lib/utils';
-import SelectedTemplateCard from './SelectedTemplateCard';
-
+import SelectedTemplateCard from './SelectedCard';
 
 export interface IOption {
     value: string;
     label: string;
     disable?: boolean;
-    extraValues? : any;
+    extraValues?: any;
     /** fixed option that can't be removed. */
     fixed?: boolean;
     /** Group the options by providing key. */
@@ -33,7 +33,6 @@ export interface IOption {
 interface GroupOption {
     [key: string]: IOption[];
 }
-
 
 interface MultipleSelectorProps {
     value?: IOption[];
@@ -51,41 +50,41 @@ interface MultipleSelectorProps {
     /**
      * Only work with `onSearch` prop. Trigger search when `onFocus`.
      * For example, when user click on the input, it will trigger the search to get initial options.
-    **/
-   openSelectedOption? : Function;
-   triggerSearchOnFocus?: boolean;
-   /** async search */
-   onSearch?: (value: string) => Promise<IOption[]>;
-   onChange?: Function 
-   onUnselect? : Function
-   /** Limit the maximum number of selected options. */
-   maxSelected?: number;
-   /** When the number of selected options exceeds the limit, the onMaxSelected will be called. */
-   onMaxSelected?: (maxLimit: number) => void;
-   /** Hide the placeholder when there are options selected. */
-   hidePlaceholderWhenSelected?: boolean;
-   disabled?: boolean;
-   /** Group the options base on provided key. */
-   groupBy?: string;
-   className?: string;
-   badgeClassName?: string;
-   appearOnTop?: Boolean;
-   /**
-    * First item selected is a default behavior by cmdk. That is why the default is true.
-    * This is a workaround solution by add a dummy item.
-   *
-   * @reference: https://github.com/pacocoursey/cmdk/issues/171
-   */
-  selectFirstItem?: boolean;
-  /** Allow user to create option when there is no option matched. */
-  creatable?: boolean;
-  /** Props of `Command` */
-  commandProps?: React.ComponentPropsWithoutRef<typeof Command>;
-  /** Props of `CommandInput` */
-  inputProps?: Omit<
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>,
-  'value' | 'placeholder' | 'disabled'
-  >;
+     **/
+    openSelectedOption?: Function;
+    triggerSearchOnFocus?: boolean;
+    /** async search */
+    onSearch?: (value: string) => Promise<IOption[]>;
+    onChange?: Function;
+    onUnselect?: Function;
+    /** Limit the maximum number of selected options. */
+    maxSelected?: number;
+    /** When the number of selected options exceeds the limit, the onMaxSelected will be called. */
+    onMaxSelected?: (maxLimit: number) => void;
+    /** Hide the placeholder when there are options selected. */
+    hidePlaceholderWhenSelected?: boolean;
+    disabled?: boolean;
+    /** Group the options base on provided key. */
+    groupBy?: string;
+    className?: string;
+    badgeClassName?: string;
+    appearOnTop?: Boolean;
+    /**
+     * First item selected is a default behavior by cmdk. That is why the default is true.
+     * This is a workaround solution by add a dummy item.
+     *
+     * @reference: https://github.com/pacocoursey/cmdk/issues/171
+     */
+    selectFirstItem?: boolean;
+    /** Allow user to create option when there is no option matched. */
+    creatable?: boolean;
+    /** Props of `Command` */
+    commandProps?: React.ComponentPropsWithoutRef<typeof Command>;
+    /** Props of `CommandInput` */
+    inputProps?: Omit<
+        React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>,
+        'value' | 'placeholder' | 'disabled'
+    >;
 }
 
 export interface IMultipleSelectorRef {
@@ -95,15 +94,15 @@ export interface IMultipleSelectorRef {
 
 export function useDebounce<T>(value: T, delay?: number): T {
     const [debouncedValue, setDebouncedValue] = React.useState<T>(value);
-    
+
     useEffect(() => {
         const timer = setTimeout(() => setDebouncedValue(value), delay || 500);
-        
+
         return () => {
             clearTimeout(timer);
         };
     }, [value, delay]);
-    
+
     return debouncedValue;
 }
 
@@ -201,7 +200,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
         const [open, setOpen] = React.useState(false);
         const [isLoading, setIsLoading] = React.useState(false);
 
-        const [selected, setSelected] = React.useState<IOption[]>(value || [])
+        const [selected, setSelected] = React.useState<IOption[]>(value || []);
 
         const [options, setOptions] = React.useState<GroupOption>(
             transToGroupOption(arrayDefaultOptions, groupBy)
@@ -216,7 +215,11 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                 return {
                     selectedValue: [...selected],
                     input: inputRef.current as HTMLInputElement,
-                    handleUnselect: handleUnselect
+                    handleUnselect:
+                        handleUnselect ||
+                        (() => {
+                            console.log('No handle unselect provided');
+                        })
                 };
             },
             [selected]
@@ -226,7 +229,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
             (option: IOption) => {
                 const newOptions = selected.filter((s) => s.value !== option.value);
                 setSelected(newOptions);
-                onUnselect?.(option)
+                onUnselect?.(option);
                 setDisabledValue(false);
             },
             [onChange, selected]
@@ -309,7 +312,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                             return;
                         }
                         const newOptions = [...selected, { value, label: value }];
-                        onChange?.({value , label:value});
+                        onChange?.({ value, label: value });
                         setSelected(newOptions);
                         setInputValue('');
                     }}
@@ -386,7 +389,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
             >
                 <div
                     className={cn(
-                        'border-input group flex items-center rounded-md border px-3  py-2 text-sm focus-within:outline focus-within:outline-offset-0 focus-within:outline-2 ',
+                        'border-input group flex items-center rounded-md border px-3  py-2 text-sm focus-within:outline focus-within:outline-2 focus-within:outline-offset-0 ',
                         className
                     )}
                 >
@@ -478,24 +481,25 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                                                                         ...selected,
                                                                         option
                                                                     ];
-                                                                      
-                                                                  setSelected(
+
+                                                                    setSelected(
                                                                         newOptions
                                                                     );
-                                                                    onChange?.(option)
+                                                                    onChange?.(option);
                                                                     setOpen(false);
                                                                     setInputValue('');
                                                                     if (
                                                                         selected.length +
-                                                                        1 ===
+                                                                            1 ===
                                                                         maxSelected
                                                                     ) {
                                                                         setDisabledValue(
                                                                             true
                                                                         );
                                                                     }
-                                                                    openSelectedOption?.(option)
-                                                                    
+                                                                    openSelectedOption?.(
+                                                                        option
+                                                                    );
                                                                 }}
                                                                 className={cn(
                                                                     'my-1 cursor-pointer rounded-md py-2 hover:bg-brand-Blue-100 hover:text-brand-Blue-200',

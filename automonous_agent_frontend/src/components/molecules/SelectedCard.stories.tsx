@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 
-import  SelectedTemplateCard  from './SelectedTemplateCard';
+import SelectedCard from './SelectedCard';
 
 const meta = {
-    title: 'SelectedTemplateCard',
-    component: SelectedTemplateCard,
+    title: 'SelectedCard',
+    component: SelectedCard,
     parameters: {
         layout: 'centered'
     },
@@ -13,13 +13,13 @@ const meta = {
     tags: ['autodocs'],
 
     argTypes: {}
-} satisfies Meta<typeof SelectedTemplateCard>;
+} satisfies Meta<typeof SelectedCard>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
-    args : {
-        templateName : "SendAda",
-        handleUnselect : ()=>{}
+    args: {
+        templateName: 'SendAda',
+        handleUnselect: () => {}
     }
 };

@@ -3,14 +3,14 @@ import { Trash2 } from 'lucide-react';
 
 import { Card, CardTitle } from '../atoms/Card';
 
-export default function SelectedTemplateCard({
+export default function SelectedCard({
     templateName,
-    handleUnselect,
-    handleEdit,
+    handleUnselect = ()=>{console.log("Handle unselect")},
+    handleEdit = ()=> (console.log("Handle Edit")),
 }: {
     templateName: String;
-    handleUnselect: any;
-    handleEdit : any;
+    handleUnselect: Function;
+    handleEdit? : Function;
     className? : string
 }) {
     return (
@@ -18,10 +18,10 @@ export default function SelectedTemplateCard({
             <div className="flex justify-between">
                 <span className="card-h2">{templateName}</span>
                 <div className="hidden transition group-hover:flex">
-                    <div onClick={handleEdit}>
+                    <div onClick={() => {handleEdit()}}>
                         <Pencil color="#A1A1A1" className='cursor-pointer'/>
                     </div>
-                    <div onClick={handleUnselect} className='cursor-pointer'>
+                    <div onClick={()=>{handleUnselect()}} className='cursor-pointer'>
                         <Trash2 color="#A1A1A1" />
                     </div>
                 </div>

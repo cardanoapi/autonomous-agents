@@ -19,7 +19,7 @@ import { Input } from '@app/components/atoms/Input';
 import { Label } from '@app/components/atoms/label';
 import MultipleSelector, { IOption } from '@app/components/molecules/MultiSearchSelect';
 import { NumberInput } from '@app/components/molecules/NumberInput';
-import SelectedTemplateCard from '@app/components/molecules/SelectedTemplateCard';
+import SelectedCard from '@app/components/molecules/SelectedCard';
 
 const agentFormSchema = z.object({
     agentName: z.string(),
@@ -103,8 +103,9 @@ export default function CreateAgentForm() {
                     <div className="mt-2 grid w-[80%] grid-cols-2 gap-4">
                         {selected.map((option: IOption, index) => {
                             return (
-                                <SelectedTemplateCard
+                                <SelectedCard
                                     templateName={option.value}
+                                    key={index}
                                     handleEdit={() => {
                                         console.log('Handle Template edit');
                                     }}
