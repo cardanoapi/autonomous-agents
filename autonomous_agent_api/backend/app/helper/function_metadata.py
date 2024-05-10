@@ -3,11 +3,12 @@ from typing import List
 from pydantic import BaseModel
 
 
-# Define models using Pydantic for parameter descriptions
 class Parameter(BaseModel):
     name: str
     description: str
     optional: bool = False
+    data_type: str
+    value: int = 0
 
 
 class FunctionInfo(BaseModel):
@@ -26,15 +27,13 @@ functions_metadata = [
                 "name": "a",
                 "description": "First number",
                 "optional": False,
-                "data-type": "int",
-                "default-value": 0,
+                "data_type": "int",
             },
             {
                 "name": "b",
                 "description": "Second number",
                 "optional": False,
-                "data-type": "int",
-                "default-value": 0,
+                "data_type": "int",
             },
         ],
     },
@@ -46,15 +45,13 @@ functions_metadata = [
                 "name": "a",
                 "description": "First number",
                 "optional": False,
-                "data-type": "int",
-                "default-value": 0,
+                "data_type": "int",
             },
             {
                 "name": "b",
                 "description": "Second number",
                 "optional": False,
-                "data-type": "int",
-                "default-value": 0,
+                "data_type": "int",
             },
         ],
     },
