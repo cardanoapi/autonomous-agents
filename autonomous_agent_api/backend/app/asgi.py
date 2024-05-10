@@ -5,6 +5,7 @@ import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 
 from backend.config import settings
 from backend.app.router import root_api_router
@@ -73,6 +74,14 @@ def get_application() -> FastAPI:
         version=settings.VERSION,
         docs_url=settings.DOCS_URL,
         lifespan=lifespan,
+    )
+    origins = ["https://agents.cardanoapi.io"]
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
     log.debug("Add application routes.")
     app.include_router(root_api_router)
