@@ -39,10 +39,10 @@ export default function TriggerForm({
     });
 
     return (
-        <Card className="flex w-[50vw] flex-col gap-y-4  bg-brand-Azure-200 p-4 px-8">
+        <Card className="flex flex-col gap-y-4 h-full bg-brand-Azure-200 p-4 px-8">
             <Form {...form}>
                 <form
-                    className="flex flex-col gap-y-4"
+                    className="flex flex-col gap-y-4 2xl:gap-y-6 w-[50vw] 2xl:w-[35vw] 2xl:h-[36vh]"
                     onSubmit={form.handleSubmit(onSubmit)}
                 >
                     <div className="flex justify-center">
@@ -51,7 +51,7 @@ export default function TriggerForm({
                     </div>
 
                     <div className="grid-col col-2 flex gap-4">
-                        <div className="flex flex-col gap-y-2">
+                        <div className="flex flex-col gap-y-2 w-full">
                             <FormField
                                 control={form.control}
                                 name="address"
@@ -60,7 +60,7 @@ export default function TriggerForm({
                                         <Label size="medium">Address(Optional)</Label>
                                         <FormControl>
                                             <Input
-                                                className="w-[22vw]"
+                                                className="w-[100%]"
                                                 {...field}
                                             ></Input>
                                         </FormControl>
@@ -68,7 +68,7 @@ export default function TriggerForm({
                                 )}
                             />
                         </div>
-                        <div className="flex flex-col gap-y-2">
+                        <div className="flex flex-col gap-y-2 w-full">
                             <FormField
                                 control={form.control}
                                 name="amount"
@@ -76,7 +76,7 @@ export default function TriggerForm({
                                     <FormItem>
                                         <Label size="medium">Amount(Optional)</Label>
                                         <FormControl>
-                                            <Input className="w-[22vw]" {...field}></Input>
+                                            <Input className="w-[100%]" {...field}></Input>
                                         </FormControl>
                                     </FormItem>
                                 )}

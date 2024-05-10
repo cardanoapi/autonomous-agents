@@ -37,7 +37,7 @@ export default function Home() {
             </Head>
 
             {/* Agents Overview Card */}
-            <div className="flex w-full justify-between">
+            <div className="flex w-full justify-between h-[16%] 2xl:h-[12%]">
                 {OverViewItems.map((item, index) => (
                     <OverViewCard title={item.title} value={item.value} key={index} />
                 ))}

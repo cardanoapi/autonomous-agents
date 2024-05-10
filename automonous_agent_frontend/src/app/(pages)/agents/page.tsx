@@ -50,6 +50,62 @@ const DemoAgentList : IAgentCard[] = [
         functionCount : 2 ,
         lastActive : '2024-04-19',
         totalTrigger : 542,
+    },
+    {
+        agentName : 'Agent#7',
+        agentRole : "Drep",
+        template : "Burn Ada Template",
+        functionCount : 2 ,
+        lastActive : '2024-04-19',
+        totalTrigger : 542,
+    },
+    {
+        agentName : 'Agent#8',
+        agentRole : "Drep",
+        template : "Burn Ada Template",
+        functionCount : 2 ,
+        lastActive : '2024-04-19',
+        totalTrigger : 542,
+    },
+    {
+        agentName : 'Agent#9',
+        agentRole : "Drep",
+        template : "Burn Ada Template",
+        functionCount : 2 ,
+        lastActive : '2024-04-19',
+        totalTrigger : 542,
+    },
+    {
+        agentName : 'Agent#10',
+        agentRole : "Drep",
+        template : "Burn Ada Template",
+        functionCount : 2 ,
+        lastActive : '2024-04-19',
+        totalTrigger : 542,
+    },
+    {
+        agentName : 'Agent#11',
+        agentRole : "Drep",
+        template : "Burn Ada Template",
+        functionCount : 2 ,
+        lastActive : '2024-04-19',
+        totalTrigger : 542,
+    },
+    {
+        agentName : 'Agent#12',
+        agentRole : "Drep",
+        template : "Burn Ada Template",
+        functionCount : 2 ,
+        lastActive : '2024-04-19',
+        totalTrigger : 542,
+    },
+    {
+        agentName : 'Agent#13',
+        agentRole : "Drep",
+        template : "Burn Ada Template",
+        functionCount : 2 ,
+        lastActive : '2024-04-19',
+        totalTrigger : 542,
     }
 ]
 
@@ -59,7 +115,7 @@ export default function AgentsPage(){
         <div className="flex justify-between">
             <div className="flex gap-x-4 items-center">
             <span className="h1-new">Agents(8)</span>
-            <SearchField placeholder="Search agents" variant={"secondary"} className="w-[45%] h-10"></SearchField>
+            <SearchField placeholder="Search agents" variant={"secondary"} className="w-[45%] 2xl:w-[80%] h-10"></SearchField>
             <DropdownMenu>
                 <DropdownMenuTrigger border={true} className="h-10">Template</DropdownMenuTrigger>
                 <DropdownMenuContent>
@@ -73,7 +129,7 @@ export default function AgentsPage(){
             <Button variant="primary" size="md">Create Agent</Button>
             </Link>
         </div>
-        <div className="grid grid-cols-4 mt-8 gap-4">
+        <div className="grid grid-cols-4 mt-8 gap-4 2xl:grid-cols-6 2xl:mt-12 ">
             {DemoAgentList.map((item , index) => (
                 <AgentCard agentName={item.agentName} agentRole={item.agentRole} template={item.template} totalTrigger={item.totalTrigger} lastActive={item.lastActive} functionCount={item.functionCount} key={index}/>
             ))}

@@ -42,10 +42,10 @@ const SideNavItems: ISideNavItem[] = [
 
 export default function SideNav() {
     return (
-        <nav className="min-h-full w-64 border-r-2 bg-white">
+        <nav className="min-h-full w-full border-r-2 bg-white">
             <Link
                 href="/"
-                className="flex flex-row items-center gap-x-2 border-b-2 py-5 pb-6 pl-4 pt-6"
+                className="flex flex-row items-center gap-x-2 border-b-2 py-5 pb-6 pl-4 pt-6 "
             >
                 <Logo />
                 <div className="h3 text-brand-Blue-200">

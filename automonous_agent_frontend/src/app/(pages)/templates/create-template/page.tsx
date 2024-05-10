@@ -76,7 +76,7 @@ export default function TemplateForm() {
     return (
         <>
             <Dialog open={dialogOpen}>
-                <DialogContent className="p-12">
+                <DialogContent>
                     <TriggerForm
                         formValues={selected.find(
                             (elem) => elem.value === currentDialogForm

@@ -34,7 +34,7 @@ const demoData: ILineChartData[] = [
 
 export default function CustomLineChart() {
     const [data, setData] = useState<ILineChartData[]>(demoData);
-    const [speed , setSpeed] = useState(1500)
+    const [speed , setSpeed] = useState(0)
     
 
 
@@ -64,7 +64,7 @@ export default function CustomLineChart() {
                     <defs>
                         <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="5%" stopColor="#0093FD1A" stopOpacity={0.7} />
-                            <stop offset="95%" stopColor="#FFFFFF00" stopOpacity={0} />
+                            <stop offset="95%" stopColor="#0093FD1A" stopOpacity={0} />
                         </linearGradient>
                     </defs>
                     <Tooltip />
@@ -74,11 +74,10 @@ export default function CustomLineChart() {
                         type="monotone"
                         dataKey="amt"
                         stroke="#2196F3"
-                        strokeWidth={"6"}
+                        strokeWidth={"3"}
                         fillOpacity={1}
                         fill="url(#colorUv)"
-                        animationEasing='linear'
-                        className='bg-black'
+                        animationEasing='ease-in-out'
                         animationDuration={speed}
                         strokeLinecap='round'
                     />

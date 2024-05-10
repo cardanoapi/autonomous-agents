@@ -54,7 +54,7 @@ export default function TemplatesPage() {
                 <div className="flex gap-x-4">
                     <SearchField
                         variant="secondary"
-                        className="h-[40px] w-[240px]"
+                        className="h-10 w-[60%] 2xl:w-[80%]"
                         placeholder="Search Templates"
                     ></SearchField>
                     <DropdownMenu>
