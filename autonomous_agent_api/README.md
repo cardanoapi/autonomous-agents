@@ -1,10 +1,8 @@
 
 # Backend Setup Guide
 
-This project is currently under development. Follow this guide for Local Backend setup.
+Cardano Autonomous Agent Backend API
 
-
-Please update CHANGELOG MD if any changes has been made in project
 
 ## Requirments
 
@@ -12,7 +10,7 @@ Python version : 3.12.2
 
 Poetry version : 1.8.2
 
-Docker 
+## Docker 
 ## Setup Guide
 
 Clone the project
@@ -26,11 +24,16 @@ Change directory
   cd cardano-autonomous-agent
 ```
 
-Run Docker-Compose . This will setup up the **postgres Database** and the **pgadmin4** via Docker.
+Run Docker-Compose . This will setup up the **postgres Database**, **pgadmin4** , **kafka** and **backend** via Docker.
 
 ```bash
- docker compose -f "docker-compose.local.yml" up --build -d
+ docker compose -f "docker-compose.deployment.yml" up --build -d
 ```
+After successfully run ,Go to http://0.0.0.0:8000/ , to see the list of api services 
+
+## Locally
+## Setup Guide
+
 Run this command inside autonomous_agent_api folder to install necessary python dependencies.
 
 ```bash
@@ -46,6 +49,9 @@ Run this command for generating the database client and creating the required ta
 ```
 
 
+```bash
+   prisma migrate dev
+```
 ## Running the Server
 
 Activate Poetry venv inside autonomous_agent_api folder by running the following command.
@@ -57,31 +63,13 @@ Start the server with env variables.
 ```bash
   uvicorn backend.app:get_application --port 8000 --reload --env-file .env
 ```
-Go to http://localhost:8000/api/ping . You should see a **success** response message. **Note : Make sure that Postgres Docker Container is running .**
+Go to http://localhost:8000 
 
-You can also connect to the database via pgadmin4 at http://localhost:5050/ . Login credentials are defined at **docker-compose.local.yml** at the root folder.
+You would see the list of API services
 
-## Running Tests
-
-To run Demo Ping Test, run the following command inside **autonomous_agent_api** folder with poetry venv activated.
-
-```bash
-pytest -m ping
-```
+Before that make sure to run the postgres , kafka and other services first , either with docker or locally setup.
+for local development to start the services you can run the docker-compose.local.yml
 
 
-## Running the backend via Docker
-Run the following command inside **autonomous_agent_api** folder to build and start the backend container.
 
-```bash
-  docker compose up
-```
-
-
-This will start the server at http://localhost:8000/. Make sure that the Postgres Database container is running as well.
-
-You can compose your own current backend image as well by running the following command inside autonomous_agnet_api folder.
-```bash
-  docker build -t backend:0.3 .
-```
 
