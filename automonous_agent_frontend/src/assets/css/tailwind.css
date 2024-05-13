@@ -95,3 +95,7 @@
 .focus-outline-primary {
     @apply focus:outline-none focus:outline-brand-active-100/[.80] focus:outline-offset-0 
 }
+
+.card-mt-1{
+    @apply mt-[12%]
+}

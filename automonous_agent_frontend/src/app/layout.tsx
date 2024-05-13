@@ -71,7 +71,7 @@ export default function RootLayout({
                         <div className="min-h-screen w-[23%] 2xl:w-[20%]">
                         <SideNav />
                         </div>
-                        <div className='w-full min-h-full flex-col mt-10 mx-6'>
+                        <div className='w-full min-h-full flex-col mt-[2%] mx-[2%]'>
                             <TopNav />
                             <div className='mt-12 h-screen'>{children}</div>
                         </div>

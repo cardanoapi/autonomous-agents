@@ -9,25 +9,8 @@ import {
 } from '@app/components/atoms/DropDownMenu';
 import OverViewCard, { IOverViewCard } from '@app/components/molecules/OverViewCard';
 import CustomLineChart from '@app/components/molecules/chart/CustomLineChart';
-
-const OverViewItems: IOverViewCard[] = [
-    {
-        title: 'No of agents',
-        value: 210
-    },
-    {
-        title: 'No of templates',
-        value: 15
-    },
-    {
-        title: 'No of proposals',
-        value: 6
-    },
-    {
-        title: 'No of voters',
-        value: 5321
-    }
-];
+import OverViewAgentsCard from './components/OverViewAgentsCard';
+import OverViewTemplatesCard from './components/OverViewTemplatesCard';
 
 export default function Home() {
     return (
@@ -37,10 +20,12 @@ export default function Home() {
             </Head>
 
             {/* Agents Overview Card */}
-            <div className="flex w-full justify-between h-[16%] 2xl:h-[12%]">
-                {OverViewItems.map((item, index) => (
-                    <OverViewCard title={item.title} value={item.value} key={index} />
-                ))}
+            <div className="grid-cols-4 flex 2xl:gap-[2%] gap-[1%] justify-between">
+                <OverViewAgentsCard title='Number of Agents' totalAgents={200} activeAgents={172} inactiveAgents={28}/>
+                <OverViewTemplatesCard title='Number of Templates' totalTemplates={15} defaultTemplates={13} customTemplates={2}/>
+                {/* To do Overview cards */}
+                <OverViewAgentsCard title='Active Templates' totalAgents={100} activeAgents={48} inactiveAgents={52}/>
+                <OverViewTemplatesCard title='Agent Functions' totalTemplates={8} defaultTemplates={5} customTemplates={3}/>
             </div>
 
             {/* Dashboard Chart*/}

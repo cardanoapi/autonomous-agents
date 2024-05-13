@@ -8,7 +8,7 @@ export interface IOverViewCard{
 
 export default function OverViewCard({title , value , footer} : IOverViewCard){
     return (
-        <Card className="w-[24%] h-full p-4 gap-y-0">
+        <Card className="w-full h-full p-4 gap-y-0">
             <div className="h4">{title}</div>
             <div className="card-h1 mt-2 pl-[1px]">{value}</div>
         </Card>

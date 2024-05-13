@@ -63,7 +63,7 @@ export default function CustomLineChart() {
                 >
                     <defs>
                         <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#0093FD1A" stopOpacity={0.7} />
+                            <stop offset="5%" stopColor="#0093FD1A" stopOpacity={1} />
                             <stop offset="95%" stopColor="#0093FD1A" stopOpacity={0} />
                         </linearGradient>
                     </defs>
@@ -74,12 +74,13 @@ export default function CustomLineChart() {
                         type="monotone"
                         dataKey="amt"
                         stroke="#2196F3"
-                        strokeWidth={"3"}
-                        fillOpacity={1}
+                        strokeWidth={"4"}
+                        fillOpacity={0.8}
                         fill="url(#colorUv)"
                         animationEasing='ease-in-out'
                         animationDuration={speed}
                         strokeLinecap='round'
+                        dot={true}
                     />
                     <XAxis tickLine={false} dy={10}>
                     <Label position="insideBottom" value="Hour"/>

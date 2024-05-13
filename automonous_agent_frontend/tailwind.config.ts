@@ -50,6 +50,10 @@ const config = {
                   100 : "#FFF",
                   200 : "#F5F5F5"
                 },
+                Green : {
+                  100 : "#C3FCBB",
+                  200: "#008000"
+                },
                 border : {
                   100 : "#EDECED",
                   200 : "#C4C4C4",
