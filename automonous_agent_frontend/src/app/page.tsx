@@ -9,6 +9,7 @@ import {
 } from '@app/components/atoms/DropDownMenu';
 import OverViewCard, { IOverViewCard } from '@app/components/molecules/OverViewCard';
 import CustomLineChart from '@app/components/molecules/chart/CustomLineChart';
+
 import OverViewAgentsCard from './components/OverViewAgentsCard';
 import OverViewTemplatesCard from './components/OverViewTemplatesCard';
 
@@ -20,16 +21,36 @@ export default function Home() {
             </Head>
 
             {/* Agents Overview Card */}
-            <div className="grid-cols-4 flex 2xl:gap-[2%] gap-[1%] justify-between">
-                <OverViewAgentsCard title='Number of Agents' totalAgents={200} activeAgents={172} inactiveAgents={28}/>
-                <OverViewTemplatesCard title='Number of Templates' totalTemplates={15} defaultTemplates={13} customTemplates={2}/>
+            <div className="flex grid-cols-4 justify-between gap-[1%] 2xl:gap-[2%]">
+                <OverViewAgentsCard
+                    title="Number of Agents"
+                    totalAgents={200}
+                    activeAgents={172}
+                    inactiveAgents={28}
+                />
+                <OverViewTemplatesCard
+                    title="Number of Templates"
+                    totalTemplates={15}
+                    defaultTemplates={13}
+                    customTemplates={2}
+                />
                 {/* To do Overview cards */}
-                <OverViewAgentsCard title='Active Templates' totalAgents={100} activeAgents={48} inactiveAgents={52}/>
-                <OverViewTemplatesCard title='Agent Functions' totalTemplates={8} defaultTemplates={5} customTemplates={3}/>
+                <OverViewAgentsCard
+                    title="Active Templates"
+                    totalAgents={100}
+                    activeAgents={48}
+                    inactiveAgents={52}
+                />
+                <OverViewTemplatesCard
+                    title="Agent Functions"
+                    totalTemplates={8}
+                    defaultTemplates={5}
+                    customTemplates={3}
+                />
             </div>
 
             {/* Dashboard Chart*/}
-            <Card className="mt-8 flex h-[55%] flex-row pt-0">
+            <Card className="mt-8 flex max-h-[60vh]  flex-row gap-y-8 py-4 pr-12  pb-16">
                 <span className="h4 rotate-180 text-center [writing-mode:vertical-lr]">
                     No of transaction
                 </span>
@@ -47,8 +68,8 @@ export default function Home() {
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
-                    <div className="w-full h-full py-10 pr-0">
-                    <CustomLineChart />
+                    <div className='h-[95%] '>
+                        <CustomLineChart />
                     </div>
                 </div>
             </Card>
