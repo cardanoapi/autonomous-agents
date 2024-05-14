@@ -50,11 +50,11 @@ export default function Home() {
             </div>
 
             {/* Dashboard Chart*/}
-            <Card className="mt-8 flex max-h-[60vh]  flex-row gap-y-8 py-4 pr-12  pb-16">
+            <Card className="mt-8 flex flex-row gap-y-8 py-4 pr-12  pb-16 pt-2">
                 <span className="h4 rotate-180 text-center [writing-mode:vertical-lr]">
                     No of transaction
                 </span>
-                <div className="mt-6 w-full pr-6">
+                <div className="mt-5 w-full pr-6">
                     <div className="flex justify-between">
                         <span className="title-1">Live Transactions</span>
                         <DropdownMenu>
@@ -68,7 +68,7 @@ export default function Home() {
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
-                    <div className='h-[95%]'>
+                    <div className='h-80 mt-2 2xl:h-[500px]'>
                         <CustomLineChart />
                     </div>
                 </div>
