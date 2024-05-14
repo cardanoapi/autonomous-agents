@@ -68,7 +68,7 @@ export default function Home() {
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
-                    <div className='h-[400px] 2xl:h-[500px]'>
+                    <div className='h-[95%]'>
                         <CustomLineChart />
                     </div>
                 </div>
