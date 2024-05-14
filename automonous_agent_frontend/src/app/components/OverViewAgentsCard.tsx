@@ -23,7 +23,7 @@ export default function OverViewAgentsCard({
                     <div className="bg-brand-Green-100 flex h-4 w-4  items-center justify-center rounded-full">
                         <div className="bg-brand-Green-200  h-1 w-1 animate-ping rounded-full"></div>
                     </div>
-                    <div className="card-h4">{activeAgents} Running</div>
+                    <div className="card-h4 ">{activeAgents} Running</div>
                 </div>
                 <div className="flex items-center gap-x-1">
                     <div className="flex h-4 w-4 items-center justify-center rounded-full bg-brand-Inactive-100 opacity-50">

@@ -56,8 +56,8 @@ export default function CreateAgentForm() {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='h-full'>
-                <Card className="w-[70%] h-[60%] 2xl:w-[40%] 2xl:h-[40%]">
+            <form onSubmit={form.handleSubmit(onSubmit)} className='w-[60%] 2xl:w-[40%] '>
+                <Card className="w-full h-full">
                     <FormField
                         control={form.control}
                         name="agentName"

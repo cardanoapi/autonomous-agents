@@ -17,6 +17,7 @@ import {
     YAxis,
     Label
 } from 'recharts';
+import CustomTooltip from './CustomTooltip';
 
 export interface ILineChartData {
     name: string;
@@ -25,16 +26,19 @@ export interface ILineChartData {
 
 const demoData: ILineChartData[] = [
     { name: 'A', amt: 10 },
-    { name: 'B', amt: 30 },
+    { name: 'B', amt: 15 },
     { name: 'C', amt: 24 },
-    { name: 'D', amt: 10 },
+    { name: 'D', amt: 18 },
     { name: 'E', amt: 12 },
-    { name: 'F', amt: 32 },
+    { name: 'F', amt: 20 },
+    { name :'G', amt: 28},
+    { name :'H', amt: 26},
+    { name:'I' , amt : 32},
+    { name:'J' , amt : 34},
 ];
 
 export default function CustomLineChart() {
     const [data, setData] = useState<ILineChartData[]>(demoData);
-    const [speed , setSpeed] = useState(0)
     
 
 
@@ -60,6 +64,7 @@ export default function CustomLineChart() {
                 <AreaChart
                     data={data}
                     margin={{ top: 40, right: 0, left: 0, bottom: 0 }}
+                    
                 >
                     <defs>
                         <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
@@ -67,23 +72,22 @@ export default function CustomLineChart() {
                             <stop offset="95%" stopColor="#0093FD1A" stopOpacity={0} />
                         </linearGradient>
                     </defs>
-                    <Tooltip />
-                    <CartesianGrid strokeDasharray="0" vertical={false} fillOpacity={0.4}/> 
-                    <YAxis dx={-10} tickCount={4} axisLine={false} tickLine={false}/>
+                    <CartesianGrid strokeDasharray="0" vertical={false} stroke='#A2A3A5' strokeOpacity={0.4}/> 
+                    <YAxis dx={-10} tickCount={4} axisLine={false} tickLine={false} stroke='#A2A3A5'/>
+                    <Tooltip content={<CustomTooltip/>} cursor={{strokeDasharray:5 , stroke:"#2196F3"}}/>
                     <Area
                         type="monotone"
                         dataKey="amt"
                         stroke="#2196F3"
-                        strokeWidth={"4"}
-                        fillOpacity={0.8}
+                        strokeWidth={"5"}
+                        fillOpacity={1}
                         fill="url(#colorUv)"
                         isAnimationActive={false}
                         strokeLinecap='round'
-                        dot={true}
-                        animationDuration={0}
+                        dot={false}
+                        activeDot={{r : 8}}
                     />
-                    <XAxis tickLine={false} dy={5}>
-                    <Label position="insideBottom" value="Hour"/>
+                    <XAxis tickLine={false} dy={5} fill='#2196F3' stroke='#A2A3A5'>
                     </XAxis>
                 </AreaChart>
             </ResponsiveContainer>

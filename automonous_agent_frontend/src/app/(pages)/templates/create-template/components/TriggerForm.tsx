@@ -42,11 +42,11 @@ export default function TriggerForm({
         <Card className="flex flex-col gap-y-4 h-full bg-brand-Azure-200 p-4 px-8">
             <Form {...form}>
                 <form
-                    className="flex flex-col gap-y-4 2xl:gap-y-6 w-[50vw] 2xl:w-[35vw] 2xl:h-[36vh]"
+                    className="flex flex-col gap-y-4 2xl:gap-y-6 w-[50vw] 2xl:w-[35vw] 2xl:min-h-[36vh]"
                     onSubmit={form.handleSubmit(onSubmit)}
                 >
                     <div className="flex justify-center">
-                        <CardTitle className="h1 mx-auto">{formValues?.label}</CardTitle>
+                        <CardTitle className="!h1 !mx-auto">{formValues?.label}</CardTitle>
                         <X onClick={setClose} className="cursor-pointer" />
                     </div>
 

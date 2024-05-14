@@ -24,7 +24,7 @@ export default function AgentCard({
                 <div className="card-h2">{agentName}</div>
                 <Switch />
             </div>
-            <CardTitle className="card-h3">{agentRole}</CardTitle>
+            <CardTitle className="!card-h3">{agentRole}</CardTitle>
             <div className="mt-5 flex flex-col gap-y-2 text-brand-Gray-200">
                 <CardContent className="flex flex-col gap-y-2">
                     <span className="card-h4">

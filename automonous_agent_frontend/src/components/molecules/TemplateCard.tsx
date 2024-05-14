@@ -1,7 +1,6 @@
 import { Card, CardContent, CardDescription, CardTitle } from '../atoms/Card';
 import TemplateIcon from '../icons/TemplatesIcon';
 
-
 export interface ITemplateCard {
     templateName: string;
     templateDescription: string;
@@ -19,7 +18,7 @@ export default function TemplateCard({
         <Card className="h-[157px] p-4 pr-8">
             <div className="flex items-center gap-x-2">
                 <TemplateIcon fill="#2196F3" />
-                <CardTitle className="h2">{templateName}</CardTitle>
+                <CardTitle className="!h2">{templateName}</CardTitle>
             </div>
             <CardDescription className="card-description1 mt-1">
                 {templateDescription}

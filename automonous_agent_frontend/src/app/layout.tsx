@@ -26,7 +26,8 @@ const inter = Inter({ subsets: ['latin'] });
 
 const poppins = Poppins({
     subsets: ['latin'],
-    weight: ['100', '200', '400', '500', '600', '700', '800']
+    weight: ['100', '200', '400', '500', '600', '700', '800'],
+    display: "swap"
 });
 
 export const metadata: Metadata = {
@@ -65,10 +66,10 @@ export default function RootLayout({
                     />
                     <Provider>
                         <div className="flex h-full w-full ">
-                            <div className="h-full w-[19%] 2xl:w-[15%] fixed">
+                            <div className="h-full w-[19%] 2xl:w-[16%] fixed">
                                 <SideNav />
                             </div>
-                            <div className="mx-[2%] mt-[2%] min-h-full w-full flex-col ml-[20%] 2xl:ml-[16%]">
+                            <div className="mx-[2%] mt-[2%] min-h-full w-full flex-col ml-[20%] 2xl:ml-[17%]">
                                 <TopNav />
                                 <div className="mt-12 h-full">{children}</div>
                             </div>
