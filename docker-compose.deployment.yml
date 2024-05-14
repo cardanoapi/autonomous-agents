@@ -1,0 +1,120 @@
+version: '3.8'
+
+services:
+  # FastAPI application (build the image)
+  cardano-autonomous:
+    build: ./autonomous_agent_api  # Path to your FastAPI project directory
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://root:root@postgres:5432/cardano_autonomous_agent_testing_db
+      - KAFKA_BROKERS=kafka:9093
+    depends_on:
+      - postgres
+      - kafka
+      - pgadmin
+
+  # Agent Manager application (build image)
+  agent_manager:
+    build:
+      context: ./agent_manager
+      dockerfile: Dockerfile
+    ports:
+      - "3030:3030"
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL="postgresql://root:root@postgres:5432/cardano_autonomous_agent_testing_db"
+      - BROKER_URL="kafka:9093"
+      - CLIENT_ID="my-app"
+      - CARDANO_NODE_URL="95.217.224.100:3006"
+
+  #Agent (build image)
+  agent:
+    build:
+      context: ./autonomous_agent_ts
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    depends_on:
+      - agent_manager
+    environment:
+      - WS_URL=ws://agent_manager:3001  # Use service name as hostname within Docker network
+      - AGENT_ID=${AGENT_ID} # Provide the agent ID as needed
+
+  #Database
+  postgres:
+    image: postgres:16.2
+    container_name: postgres_container
+    environment:
+     POSTGRES_DB: cardano_autonomous_agent_testing_db
+     POSTGRES_USER: root
+     POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+
+  #Pgadmin
+  pgadmin:
+    image: dpage/pgadmin4:8.2
+    container_name: pg-admin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@pgadmin.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - "5050:80"
+
+#Zookeper
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    container_name: zookeeper_agent_autonomous
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_SYNC_LIMIT: 2
+
+ #Kafka
+  kafka:
+    image: confluentinc/cp-kafka:7.0.1
+    hostname: kafka
+    container_name: kafka_agent_autonomous
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: DOCKER_NET:PLAINTEXT,HOST_NET:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS:  DOCKER_NET://kafka:9093,HOST_NET://localhost:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER_NET
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_JMX_PORT: 9999
+      KAFKA_CREATE_TOPICS: "trigger_config_updates:1:1"
+
+#Kafka UI
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui-agent-autonomous
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9093
+    networks:
+      - cardano-autonomous-backend
+
+networks:
+  cardano-autonomous-backend:
+    name: backend
+    driver: bridge
+
+volumes:
+  pg-data:

@@ -51,4 +51,4 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 RUN prisma generate
 EXPOSE 8000/tcp
 HEALTHCHECK CMD curl http://localhost:8000
-CMD ["uvicorn", "backend.app:get_application", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c" ,"prisma migrate deploy && exec uvicorn backend.app:get_application --host 0.0.0.0 --port 8000"]
