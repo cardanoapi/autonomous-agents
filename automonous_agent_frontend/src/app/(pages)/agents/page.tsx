@@ -88,10 +88,10 @@ export default function AgentsPage(){
             <Button variant="primary" size="md">Create Agent</Button>
             </Link>
         </div>
-        <div className="grid grid-cols-4 mt-8 gap-4 2xl:grid-cols-6 2xl:mt-12 ">
+        <div className="grid grid-cols-4 mt-8 gap-4 2xl:grid-cols-6 2xl:mt-12 gap-y-6">
             {/*{DemoAgentList.map((item , index) => (
-                <AgentCard agentName={item.agentName} agentRole={item.agentRole} template={item.template} totalTrigger={item.totalTrigger} lastActive={item.lastActive} functionCount={item.functionCount} key={index}/>
-            ))} */}
+                <AgentCard agentName={item.agentName} agentRole={item.agentRole} templateName={item.templateName} totalTrigger={item.totalTrigger} lastActive={item.lastActive} functionCount={item.functionCount} key={index}/>
+            ))} */ }
             {agents?.map((item : IAgent, index)=>(
                 <AgentCard agentName={item?.name || 'NA'} agentRole={'null'} templateName={item?.template_id || 'NA'} totalTrigger={0} lastActive={item?.last_active || 'NA'} functionCount={0} key={index}/>
             ))}

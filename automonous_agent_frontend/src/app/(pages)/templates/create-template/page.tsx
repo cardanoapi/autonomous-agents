@@ -33,6 +33,7 @@ import MultipleSelector, {
 import SelectedCard from '@app/components/molecules/SelectedCard';
 import TriggerForm, { triggerFormSchema } from './components/TriggerForm';
 import { useQuery } from '@tanstack/react-query';
+import { fetchFunctions , IFunction } from '@app/app/api/functions';
 
 const templateFormSchema = z.object({
     templateName: z.string(),
@@ -40,7 +41,7 @@ const templateFormSchema = z.object({
     agentRole: z.any()
 });
 
-export const AgentFunctionOptions: IOption[] = [
+export const DemoAgentFunctionOptions: IOption[] = [
     { label: 'Send Ada', value: 'SendAda' },
     { label: 'Create Proposal', value: 'CreatePropsal' },
     { label: 'Vote Propsal', value: 'VotePropsal' },
@@ -49,6 +50,20 @@ export const AgentFunctionOptions: IOption[] = [
 
 export default function TemplateForm() {
     const functionRef = useRef<any>(null);
+    
+    const {data : functions} = useQuery({queryKey:['functions'] , queryFn:fetchFunctions})
+
+    const [functionOptions , setFunctionOptions] = useState<IOption[]|[]>([])
+
+     
+    useEffect(() => {
+        if (functions) {
+          setFunctionOptions(functions.map((item: IFunction) : IOption => ({
+            label: item.name,
+            value: item.name
+          })));
+        }
+      }, [functions]);
 
     const form = useForm<z.infer<typeof templateFormSchema>>({
         resolver: zodResolver(templateFormSchema)
@@ -160,7 +175,7 @@ export default function TemplateForm() {
                                     <FormControl>
                                         <div className="w-[207px]">
                                             <MultipleSelector
-                                                options={AgentFunctionOptions}
+                                                options={functionOptions}
                                                 placeholder="Add Agent Function"
                                                 className="mt-3 w-[297px]"
                                                 appearOnTop={true}
