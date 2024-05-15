@@ -6,11 +6,11 @@ export default function TemplatesContainer({TemplateCards } : { TemplateCards : 
             <div className='grid grid-cols-4 2xl:grid-cols-5 gap-x-4 gap-y-4'>
                 {TemplateCards.map((item, index) => (
                     <TemplateCard
-                        templateName={item.templateName}
-                        templateDescription={item.templateDescription}
-                        templateTrigger={item.templateTrigger}
+                        name={item.name}
+                        description={item.description}
+                        templateTrigger={item.templateTrigger || 'null'}
                         key={index}
-                        functionCount={item.functionCount}
+                        functionCount={item.functionCount || 0}
                     />
                 ))}
             </div>

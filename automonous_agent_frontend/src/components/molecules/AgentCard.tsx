@@ -19,7 +19,7 @@ export default function AgentCard({
     totalTrigger
 }: IAgentCard) {
     return (
-        <Card className="h-64 rounded-xl p-6">
+        <Card className="h-64 rounded-xl p-6 transition-all">
             <div className="flex items-center justify-between">
                 <div className="card-h2">{agentName}</div>
                 <Switch />

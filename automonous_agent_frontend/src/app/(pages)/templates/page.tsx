@@ -1,3 +1,4 @@
+'use client'
 import Head from 'next/head';
 import Link from 'next/link';
 
@@ -7,47 +8,53 @@ import { SearchField } from '@app/components/atoms/SearchField';
 import TemplateCard, { ITemplateCard } from '@app/components/molecules/TemplateCard';
 
 import TemplatesContainer from './TemplatesContainer';
+import { useQuery } from '@tanstack/react-query';
+import { fetchTemplates } from '@app/app/api/templates';
 
 const DemoTemplateCards: ITemplateCard[] = [
     {
-        templateName: 'Send Template Name',
-        templateDescription: 'Sends Ada to eco charity every 3 days',
+        name: 'Send Template Name',
+        description: 'Sends Ada to eco charity every 3 days',
         functionCount: 3,
         templateTrigger: 'Cron Trigger'
     },
     {
-        templateName: 'Send Template Name',
-        templateDescription: 'Sends Ada to eco charity every 3 days',
+        name: 'Send Template Name',
+        description: 'Sends Ada to eco charity every 3 days',
         functionCount: 7,
         templateTrigger: 'Cron Trigger'
     },
     {
-        templateName: 'Send Template Name',
-        templateDescription: 'Sends Ada to eco charity every 1 days',
+        name: 'Send Template Name',
+        description: 'Sends Ada to eco charity every 1 days',
         functionCount: 12,
         templateTrigger: 'Cron Trigger'
     },
     {
-        templateName: 'Send Template Name',
-        templateDescription: 'Sends Ada to eco charity every 56 days',
+        name: 'Send Template Name',
+        description: 'Sends Ada to eco charity every 56 days',
         functionCount: 56,
         templateTrigger: 'Cron Trigger'
     },
     {
-        templateName: 'Send Template Name',
-        templateDescription: 'Sends Ada to eco charity every 12 days',
+        name: 'Send Template Name',
+        description: 'Sends Ada to eco charity every 12 days',
         functionCount: 76,
         templateTrigger: 'Cron Trigger'
     },
     {
-        templateName: 'Send Template Name',
-        templateDescription: 'Sends Ada to eco charity every 3 days',
+        name: 'Send Template Name',
+        description: 'Sends Ada to eco charity every 3 days',
         functionCount: 3,
         templateTrigger: 'Cron Trigger'
     }
 ];
 
+
 export default function TemplatesPage() {
+
+    const Templates = useQuery({queryKey:['templates'] , queryFn:fetchTemplates})
+
     return (
         <div>
             <div className="flex justify-between">
@@ -75,14 +82,14 @@ export default function TemplatesPage() {
                 </Link>
             </div>
 
-            <div className="flex flex-col gap-y-10 pb-10 pt-10">
+            <div className="flex flex-col pb-10 pt-10 gap-y-[80px]">
                 <div className='gap-y-5 flex flex-col mt-2'>
                     <span className='h5 inline-block'>My Templates</span>
-                    <TemplatesContainer TemplateCards={DemoTemplateCards.slice(0, 3)} />
-                </div>
-                <div className='gap-y-5 flex flex-col mt-8'>
-                   <span className='h5 inline-block'>Existing Templates</span>
                    <TemplatesContainer TemplateCards={DemoTemplateCards} />
+                </div>
+                <div className='gap-y-5 flex flex-col'>
+                   <span className='h5 inline-block'>Existing Templates</span>
+                    <TemplatesContainer TemplateCards={Templates?.data||[]}/>
                 </div>
 
             </div>

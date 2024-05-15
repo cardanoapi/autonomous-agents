@@ -59,54 +59,6 @@ const DemoAgentList : IAgentCard[] = [
         lastActive : '2024-04-19',
         totalTrigger : 542,
     },
-    {
-        agentName : 'Agent#8',
-        agentRole : "Drep",
-        template : "Burn Ada Template",
-        functionCount : 2 ,
-        lastActive : '2024-04-19',
-        totalTrigger : 542,
-    },
-    {
-        agentName : 'Agent#9',
-        agentRole : "Drep",
-        template : "Burn Ada Template",
-        functionCount : 2 ,
-        lastActive : '2024-04-19',
-        totalTrigger : 542,
-    },
-    {
-        agentName : 'Agent#10',
-        agentRole : "Drep",
-        template : "Burn Ada Template",
-        functionCount : 2 ,
-        lastActive : '2024-04-19',
-        totalTrigger : 542,
-    },
-    {
-        agentName : 'Agent#11',
-        agentRole : "Drep",
-        template : "Burn Ada Template",
-        functionCount : 2 ,
-        lastActive : '2024-04-19',
-        totalTrigger : 542,
-    },
-    {
-        agentName : 'Agent#12',
-        agentRole : "Drep",
-        template : "Burn Ada Template",
-        functionCount : 2 ,
-        lastActive : '2024-04-19',
-        totalTrigger : 542,
-    },
-    {
-        agentName : 'Agent#13',
-        agentRole : "Drep",
-        template : "Burn Ada Template",
-        functionCount : 2 ,
-        lastActive : '2024-04-19',
-        totalTrigger : 542,
-    }
 ]
 
 export default function AgentsPage(){

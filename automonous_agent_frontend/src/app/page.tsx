@@ -13,10 +13,8 @@ import CustomLineChart from '@app/components/molecules/chart/CustomLineChart';
 import OverViewAgentsCard from './components/OverViewAgentsCard';
 import OverViewTemplatesCard from './components/OverViewTemplatesCard';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
-import { queryClient } from './api/config';
-import { fetchAgentsList } from './api/agents';
-import { Agent } from 'http';
-import { useEffect } from 'react';
+import { fetchActiveAgentsCount, fetchAgents } from './api/agents';
+import { fetchTemplates } from './api/templates';
 
 export interface IAgentsCardData{
     totalAgents : number
@@ -25,14 +23,13 @@ export interface IAgentsCardData{
 }
 
 export default function Home() {
-    const agents = useQuery({queryKey:['AgentsList'] , queryFn: fetchAgentsList})
+    const agents = useQuery({queryKey:['agents'] , queryFn: fetchAgents})
+    const activeAgentsCount = useQuery({queryKey:['activeAgentsCount'] , queryFn:fetchActiveAgentsCount})
 
-    useEffect(()=>{
-        console.log(agents?.data)
-    },[agents])
+    const templates = useQuery({queryKey:['templates'] , queryFn: fetchTemplates})
     
     return (
-        <QueryClientProvider client={queryClient}>
+        <>
             <Head>
                 <title>Dashboard</title>
             </Head>
@@ -41,13 +38,13 @@ export default function Home() {
             <div className="flex grid-cols-4 justify-between gap-[1%] 2xl:gap-[2%] h-36">
                 <OverViewAgentsCard
                     title="No of Agents"
-                    totalAgents={200}
-                    activeAgents={172}
+                    totalAgents={agents?.data?.length}
+                    activeAgents={activeAgentsCount?.data?.online_agents_count}
                     inactiveAgents={28}
                 />
                 <OverViewTemplatesCard
                     title="No of Templates"
-                    totalTemplates={15}
+                    totalTemplates={templates?.data?.length}
                     defaultTemplates={13}
                     customTemplates={2}
                 />
@@ -90,6 +87,6 @@ export default function Home() {
                     </div>
                 </div>
             </Card>
-        </QueryClientProvider>
+        </>
     );
 }

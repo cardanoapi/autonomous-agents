@@ -56,7 +56,7 @@ export default function CreateAgentForm() {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='w-[60%] 2xl:w-[40%] '>
+            <form onSubmit={form.handleSubmit(onSubmit)} className='w-[70%] 2xl:w-[50%] min-h-[50%]'>
                 <Card className="w-full h-full">
                     <FormField
                         control={form.control}
@@ -80,11 +80,11 @@ export default function CreateAgentForm() {
                         name="agentTemplate"
                         render={({ field }) => (
                             <FormItem>
-                                <Label className="mt-6 inline-flex">
+                                <Label className="mt-10 inline-flex">
                                     Agent Template
                                 </Label>
                                 <FormControl>
-                                    <div className="mt-3 w-72">
+                                    <div className="mt-5 w-72">
                                         <MultipleSelector
                                             placeholder="Add Agent Template"
                                             options={AgentTemplateOptions}
@@ -121,12 +121,12 @@ export default function CreateAgentForm() {
                         name="numberOfAgents"
                         render={({ field }) => (
                             <FormItem>
-                                <Label className="mt-4 inline-flex">
+                                <Label className="mt-10 inline-flex">
                                     Number of Agents
                                 </Label>
                                 <FormControl>
                                     <NumberInput
-                                        className="mt-3 h-9 w-28"
+                                        className="mt-5 h-9 w-28"
                                         {...field}
                                         type="number"
                                         onChange={(e) =>
