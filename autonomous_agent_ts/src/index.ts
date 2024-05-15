@@ -3,22 +3,17 @@ import { setInterval } from 'timers';
 import { handleIncomingMessage } from './client';
 
 // Define the WebSocket URL and agent ID
-const wsUrl = 'ws://agent_manager:3030'; // Update the URL as needed
-const agentId = process.argv[2]; // Provide the agent ID as a command-line argument
+const wsUrl = process.env.WS_URL || ''; // Use WS_URL if provided, otherwise use default
+const agentId = process.argv[2]; // Retrieve agent ID from environment variable
 
 // Check if agent ID is provided
 if (!agentId) {
-    console.error('Agent ID is required as a command-line argument.');
+    console.error('Agent ID is required as an argument');
     process.exit(1);
 }
 
 // Create a new WebSocket client connection
-const ws = new WebSocket(wsUrl, {
-    headers: {
-        'agent_id': agentId,
-    },
-});
-
+const ws = new WebSocket(`${wsUrl}/${agentId}`);
 // Event listener for the connection opening
 ws.on('open', () => {
     console.log('Connected to the server.');
@@ -40,6 +35,6 @@ ws.on('close', (code, reason) => {
 });
 
 // Event listener for any errors
-ws.on('error', (error) => {
+ws.on('error', (er) => {
     console.error('WebSocket error');
 });

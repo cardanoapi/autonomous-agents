@@ -10,11 +10,16 @@ import {WebSocket} from "ws";
 import {kafka_event} from "./service/kafka_message_consumer";
 
 
-const wss = new WebSocket.Server({ port: 3030 });
+const wss = new WebSocket.Server({ port: 3001 });
 wss.on('connection', async function connection(ws, req) {
-    const agentId = req.headers['agent_id'];
-    if (typeof agentId === 'string') {
-        console.log(`Agent connected: ${agentId}`);
+    const agentId = req.url?.slice(1)
+    if (!agentId) {
+        console.log('Agent ID is not provided in the request headers as expected.',agentId);
+        ws.close(1008, `Agent ID: ${agentId} is not provided in the request headers as expected. `);
+      }
+   if (typeof agentId === 'string') {
+    // Handle agentId as a valid string
+           console.log(`Agent connected: ${agentId}`);
 
         const agentExists = await checkIfAgentExistsInDB(agentId);
         if (agentExists) {
@@ -28,7 +33,8 @@ wss.on('connection', async function connection(ws, req) {
                 configurations
             }));
         } else {
-            ws.close(1008, 'Policy Violation');
+             console.log(`Agent: ${agentId} doesnot exist `);
+              ws.close(1008, `Agent: ${agentId} doesnot exist `);
         }
 
         ws.on('message', async function incoming(message) {
@@ -47,9 +53,10 @@ wss.on('connection', async function connection(ws, req) {
             manager.disconnectWebSocket(agentId);
         });
     } else {
-        // Handle the case when agentId is undefined
-        console.error('Agent ID is not provided in the request headers.');
-        ws.close(1008, 'Policy Violation');
+        // Handle case when agentId is not provided or not a string
+        console.log('Agent id not valid',agentId);
+        ws.close(1008, `Agent: ${agentId} doesnot exist`);
+        return; // Exit early to prevent further execution
     }
 });
 

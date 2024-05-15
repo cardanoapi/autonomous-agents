@@ -10,7 +10,8 @@ export async function handleIncomingMessage(data: WebSocket.Data): Promise<void>
         const message = JSON.parse(data.toString());
 
         // Check if the message contains configurations
-       if (message.message === 'initial' && message.instance_count && message.configurations) {
+       if (message.message == 'initial') {
+
             console.log('Received initial configurations:', JSON.stringify(message));
             globalConfig = {
                 instance_count: message.instance_count,
@@ -18,7 +19,7 @@ export async function handleIncomingMessage(data: WebSocket.Data): Promise<void>
             };
               // Schedule functions based on the received configurations
             await scheduleFunctions(message.configurations);
-        } else if (message.message == 'config_updated' && message.instance_count && message.configurations) {
+        } else if (message.message === 'config_updated') {
             // Update global configuration if received config_updated message
             console.log('Received updated configurations:',JSON.stringify(message));
              globalConfig = {

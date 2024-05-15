@@ -46,10 +46,25 @@ class AgentRepository:
     async def retrieve_agent(self, agent_id: str) -> Optional[AgentResponse]:
         async with self.db:
             agent = await self.db.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})
+            threshold_time = datetime.utcnow() - timedelta(seconds=10)
+            online_agent = await self.db.prisma.agent.find_first(where={"last_active": {"gte": threshold_time}})
+            if online_agent:
+                status = True
+            else:
+                status = False
+
             if agent is None:
                 raise HTTPException(status_code=404, detail="Agent not found")
             else:
-                return agent
+                agent_response = AgentResponse(
+                    id=agent.id,
+                    name=agent.name,
+                    template_id=agent.template_id,
+                    instance=agent.instance,
+                    index=agent.index,
+                    status=status,
+                )
+                return agent_response
 
     async def modify_agent(self, agent_id: str, agent_data: AgentCreateDTO) -> Optional[AgentResponse]:
         async with self.db:

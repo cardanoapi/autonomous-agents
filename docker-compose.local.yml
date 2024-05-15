@@ -1,6 +1,8 @@
 version: '3.8'
 
 services:
+
+  #Database
   postgres:
     image: postgres:16.2
     container_name: postgres_container
@@ -10,11 +12,10 @@ services:
      POSTGRES_PASSWORD: root
     ports:
       - "5432:5432"
-    networks:
-      - cardano-autonomous-backend
     volumes:
       - pg-data:/var/lib/postgresql/data
 
+  #Pgadmin
   pgadmin:
     image: dpage/pgadmin4:8.2
     container_name: pg-admin
@@ -23,9 +24,8 @@ services:
       PGADMIN_DEFAULT_PASSWORD: password
     ports:
       - "5050:80"
-    networks:
-      - cardano-autonomous-backend
 
+#Zookeper
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
     container_name: zookeeper_agent_autonomous
@@ -35,9 +35,8 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
       ZOOKEEPER_SYNC_LIMIT: 2
-    networks:
-      - cardano-autonomous-backend
 
+ #Kafka
   kafka:
     image: confluentinc/cp-kafka:7.0.1
     hostname: kafka
@@ -58,9 +57,8 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_JMX_PORT: 9999
       KAFKA_CREATE_TOPICS: "trigger_config_updates:1:1"
-    networks:
-      - cardano-autonomous-backend
 
+#Kafka UI
   kafka-ui:
     image: provectuslabs/kafka-ui
     container_name: kafka-ui-agent-autonomous
@@ -69,7 +67,7 @@ services:
     restart: always
     environment:
       - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9093
+      - KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS=kafka:9093
     networks:
       - cardano-autonomous-backend
 
@@ -77,6 +75,7 @@ networks:
   cardano-autonomous-backend:
     name: backend
     driver: bridge
+    external: true
 
 volumes:
   pg-data:

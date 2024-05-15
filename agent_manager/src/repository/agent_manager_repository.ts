@@ -5,6 +5,8 @@ import {JsonValue} from "@prisma/client/runtime/library";
 const prisma = new PrismaClient();
 
 export async function checkIfAgentExistsInDB(agentId: string): Promise<boolean> {
+    console.log('here')
+    console.log(agentId)
     return prisma.agent.findFirst({
         where: {
             id: agentId,

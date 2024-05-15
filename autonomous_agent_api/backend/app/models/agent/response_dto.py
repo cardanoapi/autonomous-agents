@@ -1,5 +1,7 @@
+from datetime import datetime
+
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 
 class AgentResponse(BaseModel):
@@ -8,6 +10,8 @@ class AgentResponse(BaseModel):
     template_id: str
     instance: int
     index: int
+    last_active: Optional[datetime]
+    status: Optional[bool]
 
 
 class AgentKeyResponse(BaseModel):

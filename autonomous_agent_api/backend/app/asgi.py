@@ -75,7 +75,7 @@ def get_application() -> FastAPI:
         docs_url=settings.DOCS_URL,
         lifespan=lifespan,
     )
-    origins = ["https://agents.cardanoapi.io", "http://localhost:8080", "http://localhost:3000"]
+    origins = ["http://agents.cardanoapi.io", "http://localhost:8080", "http://localhost:3000", "*"]
     app.add_middleware(
         CORSMiddleware,
         allow_origins=origins,

@@ -20,14 +20,16 @@ services:
       context: ./agent_manager
       dockerfile: Dockerfile
     ports:
-      - "3030:3030"
+      - "3001:3001"
     depends_on:
       - postgres
+      - kafka
+      - cardano-autonomous
     environment:
-      - DATABASE_URL="postgresql://root:root@postgres:5432/cardano_autonomous_agent_testing_db"
-      - BROKER_URL="kafka:9093"
-      - CLIENT_ID="my-app"
-      - CARDANO_NODE_URL="95.217.224.100:3006"
+      - DATABASE_URL=postgresql://root:root@postgres:5432/cardano_autonomous_agent_testing_db
+      - BROKER_URL=kafka:9093
+      - CLIENT_ID=my-app
+      - CARDANO_NODE_URL=95.217.224.100:3006
 
   #Agent (build image)
   agent:
@@ -39,8 +41,8 @@ services:
     depends_on:
       - agent_manager
     environment:
-      - WS_URL=ws://agent_manager:3001  # Use service name as hostname within Docker network
-      - AGENT_ID=${AGENT_ID} # Provide the agent ID as needed
+      - WS_URL=  # Use service name as hostname within Docker network
+      - AGENT_ID= # Provide the agent ID as needed
 
   #Database
   postgres:
@@ -107,7 +109,7 @@ services:
     restart: always
     environment:
       - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9093
+      - KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS=kafka:9093
     networks:
       - cardano-autonomous-backend
 
@@ -115,6 +117,7 @@ networks:
   cardano-autonomous-backend:
     name: backend
     driver: bridge
+    external: true
 
 volumes:
   pg-data:
