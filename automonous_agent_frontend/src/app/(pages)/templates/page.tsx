@@ -10,6 +10,7 @@ import TemplateCard, { ITemplateCard } from '@app/components/molecules/TemplateC
 import TemplatesContainer from './TemplatesContainer';
 import { useQuery } from '@tanstack/react-query';
 import { fetchTemplates } from '@app/app/api/templates';
+import { template } from 'lodash';
 
 const DemoTemplateCards: ITemplateCard[] = [
     {
@@ -53,7 +54,7 @@ const DemoTemplateCards: ITemplateCard[] = [
 
 export default function TemplatesPage() {
 
-    const Templates = useQuery({queryKey:['templates'] , queryFn:fetchTemplates})
+    const {data : templates , isError : errorTemplates , isLoading : loadingTemplates} = useQuery({queryKey:['templates'] , queryFn:fetchTemplates})
 
     return (
         <div>
@@ -85,11 +86,11 @@ export default function TemplatesPage() {
             <div className="flex flex-col pb-10 pt-10 gap-y-[80px]">
                 <div className='gap-y-5 flex flex-col mt-2'>
                     <span className='h5 inline-block'>My Templates</span>
-                   <TemplatesContainer TemplateCards={DemoTemplateCards} />
+                   <TemplatesContainer TemplateCards={templates||[]} />
                 </div>
                 <div className='gap-y-5 flex flex-col'>
                    <span className='h5 inline-block'>Existing Templates</span>
-                    <TemplatesContainer TemplateCards={Templates?.data||[]}/>
+                    <TemplatesContainer TemplateCards={templates||[]}/>
                 </div>
 
             </div>

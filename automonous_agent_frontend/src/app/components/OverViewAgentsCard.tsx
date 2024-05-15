@@ -6,7 +6,7 @@ export interface IOverViewAgentsCard {
     title: string;
     totalAgents: number | string;
     activeAgents: number;
-    inactiveAgents: number;
+    inactiveAgents: number | string;
 }
 
 export default function OverViewAgentsCard({

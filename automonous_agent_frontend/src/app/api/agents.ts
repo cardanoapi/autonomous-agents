@@ -9,7 +9,7 @@ export interface IAgent {
   templateID : string
   instance : number
   index : number
-  lastactive : string
+  last_active : string
   active : boolean | null
 }
 

@@ -23,8 +23,8 @@ export interface IAgentsCardData{
 }
 
 export default function Home() {
-    const agents = useQuery({queryKey:['agents'] , queryFn: fetchAgents})
-    const activeAgentsCount = useQuery({queryKey:['activeAgentsCount'] , queryFn:fetchActiveAgentsCount})
+    const {data: agents = []} = useQuery({queryKey:['agents'] , queryFn: fetchAgents})
+    const {data : activeAgents} = useQuery({queryKey:['activeAgentsCount'] , queryFn:fetchActiveAgentsCount})
 
     const templates = useQuery({queryKey:['templates'] , queryFn: fetchTemplates})
     
@@ -38,9 +38,9 @@ export default function Home() {
             <div className="flex grid-cols-4 justify-between gap-[1%] 2xl:gap-[2%] h-36">
                 <OverViewAgentsCard
                     title="No of Agents"
-                    totalAgents={agents?.data?.length || 'NA'}
-                    activeAgents={activeAgentsCount?.data?.online_agents_count}
-                    inactiveAgents={28}
+                    totalAgents={agents?.length || 'NA'}
+                    activeAgents={activeAgents?.online_agents_count}
+                    inactiveAgents={agents?.length - activeAgents?.online_agents_count}
                 />
                 <OverViewTemplatesCard
                     title="No of Templates"

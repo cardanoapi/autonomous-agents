@@ -67,7 +67,7 @@ const DemoAgentList : IAgentCard[] = [
 
 export default function AgentsPage(){
     
-    const agents = useQuery({queryKey:['agents'] , queryFn:fetchAgents})
+    const {data:agents , isLoading:loadingAgents , isError: errorAgents} = useQuery({queryKey:['agents'] , queryFn:fetchAgents})
 
     return(
         <>
@@ -92,8 +92,8 @@ export default function AgentsPage(){
             {/*{DemoAgentList.map((item , index) => (
                 <AgentCard agentName={item.agentName} agentRole={item.agentRole} template={item.template} totalTrigger={item.totalTrigger} lastActive={item.lastActive} functionCount={item.functionCount} key={index}/>
             ))} */}
-            {agents?.data?.map((item , index)=>(
-                <AgentCard agentName={item?.name || 'NA'} agentRole={'null'} template={item?.templateID || 'NA'} totalTrigger={0} lastActive={item?.lastactive} functionCount={0} key={index}/>
+            {agents?.map((item , index)=>(
+                <AgentCard agentName={item?.name || 'NA'} agentRole={'null'} template={item?.templateID || 'NA'} totalTrigger={0} lastActive={item?.last_active || 'NA'} functionCount={0} key={index}/>
             ))}
         </div>
         </>
