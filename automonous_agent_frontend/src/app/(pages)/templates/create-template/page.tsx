@@ -32,6 +32,7 @@ import MultipleSelector, {
 } from '@app/components/molecules/MultiSearchSelect';
 import SelectedCard from '@app/components/molecules/SelectedCard';
 import TriggerForm, { triggerFormSchema } from './components/TriggerForm';
+import { useQuery } from '@tanstack/react-query';
 
 const templateFormSchema = z.object({
     templateName: z.string(),

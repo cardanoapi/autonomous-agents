@@ -1,16 +1,22 @@
-'use client'
+'use client';
+
 import Head from 'next/head';
 import Link from 'next/link';
 
+import { template } from 'lodash';
+
+import { useQuery } from '@tanstack/react-query';
+
+import { fetchTemplates } from '@app/app/api/templates';
 import { Button } from '@app/components/atoms/Button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@app/components/atoms/DropDownMenu';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
 import TemplateCard, { ITemplateCard } from '@app/components/molecules/TemplateCard';
-
-import TemplatesContainer from './TemplatesContainer';
-import { useQuery } from '@tanstack/react-query';
-import { fetchTemplates } from '@app/app/api/templates';
-import { template } from 'lodash';
 
 const DemoTemplateCards: ITemplateCard[] = [
     {
@@ -51,10 +57,12 @@ const DemoTemplateCards: ITemplateCard[] = [
     }
 ];
 
-
 export default function TemplatesPage() {
-
-    const {data : templates , isError : errorTemplates , isLoading : loadingTemplates} = useQuery({queryKey:['templates'] , queryFn:fetchTemplates})
+    const {
+        data: templates,
+        isError: errorTemplates,
+        isLoading: loadingTemplates
+    } = useQuery({ queryKey: ['templates'], queryFn: fetchTemplates });
 
     return (
         <div>
@@ -83,16 +91,35 @@ export default function TemplatesPage() {
                 </Link>
             </div>
 
-            <div className="flex flex-col pb-10 pt-10 gap-y-[80px]">
-                <div className='gap-y-5 flex flex-col mt-2'>
-                    <span className='h5 inline-block'>My Templates</span>
-                   <TemplatesContainer TemplateCards={templates||[]} />
+            <div className="flex flex-col gap-y-[80px] pb-10 pt-10">
+                <div className="mt-2 flex flex-col gap-y-5">
+                    <span className="h5 inline-block">My Templates</span>
+                    <div className="grid grid-cols-4 gap-x-4 gap-y-4 2xl:grid-cols-5">
+                        {templates?.map((item, index) => (
+                            <TemplateCard
+                                name={item.name}
+                                description={item.description}
+                                templateTrigger={'null'}
+                                key={index}
+                                functionCount={0}
+                            />
+                        ))}
+                    </div>
                 </div>
-                <div className='gap-y-5 flex flex-col'>
-                   <span className='h5 inline-block'>Existing Templates</span>
-                    <TemplatesContainer TemplateCards={templates||[]}/>
+                <div className="flex flex-col gap-y-5">
+                    <span className="h5 inline-block">Existing Templates</span>
+                    <div className="grid grid-cols-4 gap-x-4 gap-y-4 2xl:grid-cols-5">
+                        {templates?.map((item, index) => (
+                            <TemplateCard
+                                name={item.name}
+                                description={item.description}
+                                templateTrigger={'null'}
+                                key={index}
+                                functionCount={0}
+                            />
+                        ))}
+                    </div>
                 </div>
-
             </div>
         </div>
     );

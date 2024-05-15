@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -20,6 +20,8 @@ import { Label } from '@app/components/atoms/label';
 import MultipleSelector, { IOption } from '@app/components/molecules/MultiSearchSelect';
 import { NumberInput } from '@app/components/molecules/NumberInput';
 import SelectedCard from '@app/components/molecules/SelectedCard';
+import { useQuery } from '@tanstack/react-query';
+import { fetchTemplates } from '@app/app/api/templates';
 
 const agentFormSchema = z.object({
     agentName: z.string(),
@@ -27,14 +29,21 @@ const agentFormSchema = z.object({
     numberOfAgents: z.number().min(1)
 });
 
-const AgentTemplateOptions: IOption[] = [
+/*const AgentTemplateOptions: IOption[] = [
     { label: 'Default Template', value: 'Default Template' },
     { label: 'Template01', value: 'Template1' },
     { label: 'Test Template', value: 'Test Template' }
-];
+];*/
+
 
 export default function CreateAgentForm() {
     const [selected, setSelected] = useState<IOption[]>([]);
+
+    const [agentTemplateOptions , setAgentTemplateOptions]  = useState<IOption[]|[]>([])
+    const {data : templates } = useQuery({queryKey:["templates"] , queryFn:fetchTemplates})
+    useEffect(()=>{
+      console.log('qwerq')
+    },[templates])
 
     const form = useForm<z.infer<typeof agentFormSchema>>({
         resolver: zodResolver(agentFormSchema),
@@ -87,7 +96,7 @@ export default function CreateAgentForm() {
                                     <div className="mt-5 w-72">
                                         <MultipleSelector
                                             placeholder="Add Agent Template"
-                                            options={AgentTemplateOptions}
+                                            options={agentTemplateOptions}
                                             appearOnTop={true}
                                             maxSelected={1}
                                             {...field}

@@ -26,7 +26,7 @@ export default function Home() {
     const {data: agents = []} = useQuery({queryKey:['agents'] , queryFn: fetchAgents})
     const {data : activeAgents} = useQuery({queryKey:['activeAgentsCount'] , queryFn:fetchActiveAgentsCount})
 
-    const templates = useQuery({queryKey:['templates'] , queryFn: fetchTemplates})
+    const {data : templates=[]} = useQuery({queryKey:['templates'] , queryFn: fetchTemplates})
     
     return (
         <>
@@ -44,7 +44,7 @@ export default function Home() {
                 />
                 <OverViewTemplatesCard
                     title="No of Templates"
-                    totalTemplates={templates?.data?.length}
+                    totalTemplates={templates?.length}
                     defaultTemplates={13}
                     customTemplates={2}
                 />
