@@ -4,7 +4,7 @@ import OverViewCardTitle from './OverViewCardTitle';
 
 export interface IOverViewAgentsCard {
     title: string;
-    totalAgents: number;
+    totalAgents: number | string;
     activeAgents: number;
     inactiveAgents: number;
 }

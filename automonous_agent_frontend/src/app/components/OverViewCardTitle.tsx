@@ -1,6 +1,6 @@
 export interface IOverViewCardTitle{
     title : string 
-    value : number
+    value : number | string
 }
 
 export default function OverViewCardTitle({title , value} : IOverViewCardTitle) {

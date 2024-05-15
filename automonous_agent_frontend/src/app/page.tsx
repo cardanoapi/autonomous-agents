@@ -38,7 +38,7 @@ export default function Home() {
             <div className="flex grid-cols-4 justify-between gap-[1%] 2xl:gap-[2%] h-36">
                 <OverViewAgentsCard
                     title="No of Agents"
-                    totalAgents={agents?.data?.length}
+                    totalAgents={agents?.data?.length || 'NA'}
                     activeAgents={activeAgentsCount?.data?.online_agents_count}
                     inactiveAgents={28}
                 />

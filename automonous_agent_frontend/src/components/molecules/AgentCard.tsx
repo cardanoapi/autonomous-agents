@@ -6,7 +6,7 @@ export interface IAgentCard {
     agentRole: string;
     template: string;
     functionCount: number;
-    lastActive: string;
+    lastActive: string | null;
     totalTrigger: number;
 }
 

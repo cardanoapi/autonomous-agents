@@ -1,7 +1,11 @@
+"use client"
+
+import { fetchAgents } from "@app/app/api/agents"
 import { Button } from "@app/components/atoms/Button"
 import { DropdownMenu, DropdownMenuTrigger , DropdownMenuContent , DropdownMenuItem } from "@app/components/atoms/DropDownMenu"
 import { SearchField } from "@app/components/atoms/SearchField"
 import AgentCard, { IAgentCard } from "@app/components/molecules/AgentCard"
+import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 
 
@@ -62,6 +66,9 @@ const DemoAgentList : IAgentCard[] = [
 ]
 
 export default function AgentsPage(){
+    
+    const agents = useQuery({queryKey:['agents'] , queryFn:fetchAgents})
+
     return(
         <>
         <div className="flex justify-between">
@@ -82,8 +89,11 @@ export default function AgentsPage(){
             </Link>
         </div>
         <div className="grid grid-cols-4 mt-8 gap-4 2xl:grid-cols-6 2xl:mt-12 ">
-            {DemoAgentList.map((item , index) => (
+            {/*{DemoAgentList.map((item , index) => (
                 <AgentCard agentName={item.agentName} agentRole={item.agentRole} template={item.template} totalTrigger={item.totalTrigger} lastActive={item.lastActive} functionCount={item.functionCount} key={index}/>
+            ))} */}
+            {agents?.data?.map((item , index)=>(
+                <AgentCard agentName={item?.name || 'NA'} agentRole={'null'} template={item?.templateID || 'NA'} totalTrigger={0} lastActive={item?.lastactive} functionCount={0} key={index}/>
             ))}
         </div>
         </>

@@ -2,7 +2,18 @@
 
 import { baseAPIurl } from './config';
 
-export const fetchAgents = async () => {
+
+export interface IAgent {
+  id : string,
+  name : string,
+  templateID : string
+  instance : number
+  index : number
+  lastactive : string
+  active : boolean | null
+}
+
+export const fetchAgents = async () : Promise<IAgent[]> => {
   const res = await fetch(`${baseAPIurl}/agents/`)
   if (!res.ok) {
     throw new Error('Agents Fetch Operation failed: Network Error');
