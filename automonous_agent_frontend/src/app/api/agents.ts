@@ -6,7 +6,7 @@ import { baseAPIurl } from './config';
 export interface IAgent {
   id : string,
   name : string,
-  templateID : string
+  template_id : string
   instance : number
   index : number
   last_active : string

@@ -21,7 +21,7 @@ import MultipleSelector, { IOption } from '@app/components/molecules/MultiSearch
 import { NumberInput } from '@app/components/molecules/NumberInput';
 import SelectedCard from '@app/components/molecules/SelectedCard';
 import { useQuery } from '@tanstack/react-query';
-import { fetchTemplates } from '@app/app/api/templates';
+import { fetchTemplates, ITemplate } from '@app/app/api/templates';
 
 const agentFormSchema = z.object({
     agentName: z.string(),
@@ -41,9 +41,15 @@ export default function CreateAgentForm() {
 
     const [agentTemplateOptions , setAgentTemplateOptions]  = useState<IOption[]|[]>([])
     const {data : templates } = useQuery({queryKey:["templates"] , queryFn:fetchTemplates})
-    useEffect(()=>{
-      console.log('qwerq')
-    },[templates])
+    
+    useEffect(() => {
+        if (templates) {
+          setAgentTemplateOptions(templates.map((item: ITemplate) : IOption => ({
+            label: item.name,
+            value: item.id
+          })));
+        }
+      }, [templates]);
 
     const form = useForm<z.infer<typeof agentFormSchema>>({
         resolver: zodResolver(agentFormSchema),
@@ -113,7 +119,8 @@ export default function CreateAgentForm() {
                         {selected.map((option: IOption, index) => {
                             return (
                                 <SelectedCard
-                                    templateName={option.value}
+                                    templateName={option.label}
+                                    templateDescription={option.value}
                                     key={index}
                                     handleEdit={() => {
                                         console.log('Handle Template edit');

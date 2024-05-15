@@ -4,7 +4,7 @@ import { Switch } from '../atoms/Switch';
 export interface IAgentCard {
     agentName: string;
     agentRole: string;
-    template: string;
+    templateName: string;
     functionCount: number;
     lastActive: string | null;
     totalTrigger: number;
@@ -13,7 +13,7 @@ export interface IAgentCard {
 export default function AgentCard({
     agentName,
     agentRole,
-    template,
+    templateName,
     functionCount,
     lastActive,
     totalTrigger
@@ -29,7 +29,7 @@ export default function AgentCard({
                 <CardContent className="flex flex-col gap-y-2">
                     <span className="card-h4">
                         Template :{' '}
-                        <span className=" gray-background ml-1">{template}</span>
+                        <span className=" gray-background ml-1">{templateName}</span>
                     </span>
                     <span>
                         Function : <span className="text-active"> {functionCount}</span>

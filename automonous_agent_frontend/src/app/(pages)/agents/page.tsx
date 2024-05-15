@@ -1,6 +1,6 @@
 "use client"
 
-import { fetchAgents } from "@app/app/api/agents"
+import { fetchAgents, IAgent } from "@app/app/api/agents"
 import { Button } from "@app/components/atoms/Button"
 import { DropdownMenu, DropdownMenuTrigger , DropdownMenuContent , DropdownMenuItem } from "@app/components/atoms/DropDownMenu"
 import { SearchField } from "@app/components/atoms/SearchField"
@@ -13,7 +13,7 @@ const DemoAgentList : IAgentCard[] = [
     {
         agentName : 'Agent#1',
         agentRole : "Drep",
-        template : "Send Ada Template",
+        templateName : "Send Ada Template",
         functionCount : 3 ,
         lastActive : '2024-04-19',
         totalTrigger : 54,
@@ -21,7 +21,7 @@ const DemoAgentList : IAgentCard[] = [
     {
         agentName : 'Agent#2',
         agentRole : "Drep",
-        template : "Voting Template",
+        templateName : "Voting Template",
         functionCount : 3 ,
         lastActive : '2024-04-19',
         totalTrigger : 102,
@@ -29,28 +29,28 @@ const DemoAgentList : IAgentCard[] = [
     {
         agentName : 'Agent#3',
         agentRole : "Drep",
-        template : "Burn Ada Template",
+        templateName : "Burn Ada Template",
         functionCount : 1 ,
         lastActive : '2024-04-19',
         totalTrigger : 645,
     }, {
         agentName : 'Agent#4',
         agentRole : "Drep",
-        template : "Create Proposal",
+        templateName : "Create Proposal",
         functionCount : 5 ,
         lastActive : '2024-04-19',
         totalTrigger : 192,
     }, {
         agentName : 'Agent#5',
         agentRole : "Drep",
-        template : "Send Ada Template",
+        templateName : "Send Ada Template",
         functionCount : 8 ,
         lastActive : '2024-04-19',
         totalTrigger : 32,
     }, {
         agentName : 'Agent#6',
         agentRole : "Drep",
-        template : "Burn Ada Template",
+        templateName : "Burn Ada Template",
         functionCount : 2 ,
         lastActive : '2024-04-19',
         totalTrigger : 542,
@@ -58,7 +58,7 @@ const DemoAgentList : IAgentCard[] = [
     {
         agentName : 'Agent#7',
         agentRole : "Drep",
-        template : "Burn Ada Template",
+        templateName : "Burn Ada Template",
         functionCount : 2 ,
         lastActive : '2024-04-19',
         totalTrigger : 542,
@@ -92,8 +92,8 @@ export default function AgentsPage(){
             {/*{DemoAgentList.map((item , index) => (
                 <AgentCard agentName={item.agentName} agentRole={item.agentRole} template={item.template} totalTrigger={item.totalTrigger} lastActive={item.lastActive} functionCount={item.functionCount} key={index}/>
             ))} */}
-            {agents?.map((item , index)=>(
-                <AgentCard agentName={item?.name || 'NA'} agentRole={'null'} template={item?.templateID || 'NA'} totalTrigger={0} lastActive={item?.last_active || 'NA'} functionCount={0} key={index}/>
+            {agents?.map((item : IAgent, index)=>(
+                <AgentCard agentName={item?.name || 'NA'} agentRole={'null'} templateName={item?.template_id || 'NA'} totalTrigger={0} lastActive={item?.last_active || 'NA'} functionCount={0} key={index}/>
             ))}
         </div>
         </>

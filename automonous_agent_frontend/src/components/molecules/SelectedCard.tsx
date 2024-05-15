@@ -7,8 +7,10 @@ export default function SelectedCard({
     templateName,
     handleUnselect = ()=>{console.log("Handle unselect")},
     handleEdit = ()=> (console.log("Handle Edit")),
+    templateDescription = 'NA'
 }: {
     templateName: String;
+    templateDescription? : String
     handleUnselect: Function;
     handleEdit? : Function;
     className? : string
@@ -27,7 +29,7 @@ export default function SelectedCard({
                 </div>
             </div>
             <span className="h4 text-start">
-                Sends Ada to eco charity every 2 days
+                {templateDescription}
             </span>
         </Card>
     );
