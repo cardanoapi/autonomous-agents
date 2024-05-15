@@ -21,8 +21,12 @@ import TopNav from '@app/components/layout/TopNav';
 import ThemeProvider from '@app/shared/hocs/ThemeProvider';
 import CookieConsent from '@app/views/atoms/CookieConsent';
 import NextNProgress from '@app/views/atoms/NextNProgress';
+import {QueryClient , QueryClientProvider} from '@tanstack/react-query'
+import { lazy } from 'react';
+import ReactQueryProvider from '@app/utils/providers/ReactQueryProvider'
 
 const inter = Inter({ subsets: ['latin'] });
+const queryClient = new QueryClient()
 
 const poppins = Poppins({
     subsets: ['latin'],
@@ -65,6 +69,7 @@ export default function RootLayout({
                         theme="dark"
                     />
                     <Provider>
+                        <ReactQueryProvider>
                         <div className="flex h-full w-full ">
                             <div className="h-full w-[19%] 2xl:w-[16%] fixed">
                                 <SideNav />
@@ -74,6 +79,7 @@ export default function RootLayout({
                                 <div className="mt-12 h-full">{children}</div>
                             </div>
                         </div>
+                        </ReactQueryProvider>
                     </Provider>
                 </ThemeProvider>
             </body>

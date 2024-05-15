@@ -1,5 +1,5 @@
+'use client'
 import Head from 'next/head';
-
 import { Card } from '@app/components/atoms/Card';
 import {
     DropdownMenu,
@@ -12,24 +12,41 @@ import CustomLineChart from '@app/components/molecules/chart/CustomLineChart';
 
 import OverViewAgentsCard from './components/OverViewAgentsCard';
 import OverViewTemplatesCard from './components/OverViewTemplatesCard';
+import { QueryClientProvider, useQuery } from '@tanstack/react-query';
+import { queryClient } from './api/config';
+import { fetchAgentsList } from './api/agents';
+import { Agent } from 'http';
+import { useEffect } from 'react';
+
+export interface IAgentsCardData{
+    totalAgents : number
+    activeAgents : number
+    inactiveAgents : number
+}
 
 export default function Home() {
+    const agents = useQuery({queryKey:['AgentsList'] , queryFn: fetchAgentsList})
+
+    useEffect(()=>{
+        console.log(agents?.data)
+    },[agents])
+    
     return (
-        <>
+        <QueryClientProvider client={queryClient}>
             <Head>
                 <title>Dashboard</title>
             </Head>
 
             {/* Agents Overview Card */}
-            <div className="flex grid-cols-4 justify-between gap-[1%] 2xl:gap-[2%]">
+            <div className="flex grid-cols-4 justify-between gap-[1%] 2xl:gap-[2%] h-36">
                 <OverViewAgentsCard
-                    title="Number of Agents"
+                    title="No of Agents"
                     totalAgents={200}
                     activeAgents={172}
                     inactiveAgents={28}
                 />
                 <OverViewTemplatesCard
-                    title="Number of Templates"
+                    title="No of Templates"
                     totalTemplates={15}
                     defaultTemplates={13}
                     customTemplates={2}
@@ -68,11 +85,11 @@ export default function Home() {
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
-                    <div className='h-80 mt-2 2xl:h-[500px]'>
+                    <div className='h-[360px] mt-2 2xl:h-[500px]'>
                         <CustomLineChart />
                     </div>
                 </div>
             </Card>
-        </>
+        </QueryClientProvider>
     );
 }

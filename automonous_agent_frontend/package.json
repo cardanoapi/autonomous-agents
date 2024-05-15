@@ -35,6 +35,7 @@
     "@reduxjs/toolkit": "^2.0.1",
     "@sentry/nextjs": "^7.94.1",
     "@tailwindcss/line-clamp": "^0.4.4",
+    "@tanstack/react-query": "^5.36.0",
     "@types/uuid": "^9.0.7",
     "@uiw/react-md-editor": "^4.0.3",
     "async-mutex": "^0.4.1",

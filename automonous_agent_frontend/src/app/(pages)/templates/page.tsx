@@ -76,11 +76,11 @@ export default function TemplatesPage() {
             </div>
 
             <div className="flex flex-col gap-y-10 pb-10 pt-10">
-                <div className='gap-y-5 flex flex-col'>
+                <div className='gap-y-5 flex flex-col mt-2'>
                     <span className='h5 inline-block'>My Templates</span>
                     <TemplatesContainer TemplateCards={DemoTemplateCards.slice(0, 3)} />
                 </div>
-                <div className='gap-y-5 flex flex-col'>
+                <div className='gap-y-5 flex flex-col mt-8'>
                    <span className='h5 inline-block'>Existing Templates</span>
                    <TemplatesContainer TemplateCards={DemoTemplateCards} />
                 </div>
