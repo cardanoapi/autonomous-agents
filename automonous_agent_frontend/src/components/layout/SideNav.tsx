@@ -47,13 +47,16 @@ export default function SideNav() {
                 href="/"
                 className="flex flex-row items-center gap-x-2 border-b-2 py-5 pb-6 pl-4 pt-6 "
             >
-                <Logo />
-                <div className="h3 text-brand-Blue-200">
+                <Logo/>
+                <div className="background: linear-gradient(180deg, rgba(0, 0, 0, 0.87) 16.5%, rgba(51, 51, 51, 0.87) 58.25%, rgba(102, 102, 102, 0.87) 100%);
+">
+                 <span className='h2 !font-medium !bg-gradient-to-t from-zinc-400 to-zinc-900 !bg-clip-text !text-transparent'>
                     Autonomous
+                 </span>
                     <br />
-                    Agent
-                    <br />
-                    Testing
+                    <span className='h1 !bg-gradient-to-t from-zinc-400 to-zinc-900 !bg-clip-text !text-transparent'>
+                    Agent Testing
+                    </span>
                 </div>
             </Link>
             <div className="ml-1 mt-6 flex-col px-2">
