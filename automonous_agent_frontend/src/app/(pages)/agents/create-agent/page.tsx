@@ -32,12 +32,6 @@ const agentFormSchema = z.object({
     numberOfAgents: z.number().min(1)
 });
 
-/*const AgentTemplateOptions: IOption[] = [
-    { label: 'Default Template', value: 'Default Template' },
-    { label: 'Template01', value: 'Template1' },
-    { label: 'Test Template', value: 'Test Template' }
-];*/
-
 export default function CreateAgentForm() {
     const [selected, setSelected] = useState<IOption[]>([]);
 

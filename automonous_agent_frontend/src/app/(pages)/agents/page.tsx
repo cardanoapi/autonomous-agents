@@ -8,63 +8,6 @@ import AgentCard, { IAgentCard } from "@app/components/molecules/AgentCard"
 import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 
-
-const DemoAgentList : IAgentCard[] = [
-    {
-        agentName : 'Agent#1',
-        agentRole : "Drep",
-        functionCount : 3 ,
-        templateID : 'null',
-        lastActive : '2024-04-19',
-        totalTrigger : 54,
-    },
-    {
-        agentName : 'Agent#2',
-        agentRole : "Drep",
-        functionCount : 3 ,
-        templateID : 'null',
-        lastActive : '2024-04-19',
-        totalTrigger : 102,
-    },
-    {
-        agentName : 'Agent#3',
-        agentRole : "Drep",
-        templateID : 'null',
-        functionCount : 1 ,
-        lastActive : '2024-04-19',
-        totalTrigger : 645,
-    }, {
-        agentName : 'Agent#4',
-        agentRole : "Drep",
-        templateID : 'null',
-        functionCount : 5 ,
-        lastActive : '2024-04-19',
-        totalTrigger : 192,
-    }, {
-        agentName : 'Agent#5',
-        agentRole : "Drep",
-        functionCount : 8 ,
-        templateID : 'null',
-        lastActive : '2024-04-19',
-        totalTrigger : 32,
-    }, {
-        agentName : 'Agent#6',
-        agentRole : "Drep",
-        functionCount : 2 ,
-        templateID : 'null',
-        lastActive : '2024-04-19',
-        totalTrigger : 542,
-    },
-    {
-        agentName : 'Agent#7',
-        agentRole : "Drep",
-        templateID : 'null',
-        functionCount : 2 ,
-        lastActive : '2024-04-19',
-        totalTrigger : 542,
-    },
-]
-
 export default function AgentsPage(){
     
     const {data:agents , isLoading:loadingAgents , isError: errorAgents} = useQuery<IAgent[]>({queryKey:['agents'] , queryFn:fetchAgents})

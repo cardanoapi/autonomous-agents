@@ -41,13 +41,6 @@ const templateFormSchema = z.object({
     agentRole: z.any()
 });
 
-export const DemoAgentFunctionOptions: IOption[] = [
-    { label: 'Send Ada', value: 'SendAda' },
-    { label: 'Create Proposal', value: 'CreatePropsal' },
-    { label: 'Vote Propsal', value: 'VotePropsal' },
-    { label: 'Burn Token', value: 'BurnToken' }
-];
-
 export default function TemplateForm() {
     const functionRef = useRef<any>(null);
     

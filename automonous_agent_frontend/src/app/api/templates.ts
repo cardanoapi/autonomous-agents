@@ -23,6 +23,5 @@ export const fetchTemplatebyID = async (templateID: string)  : Promise<ITemplate
         throw new Error('Templates Fetch Operation failed: Network Error');
     }
     const data = await res.json();
-    console.log(data)
     return data;
 };

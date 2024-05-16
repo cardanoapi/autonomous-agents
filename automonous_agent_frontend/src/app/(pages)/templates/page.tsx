@@ -18,45 +18,6 @@ import {
 import { SearchField } from '@app/components/atoms/SearchField';
 import TemplateCard, { ITemplateCard } from '@app/components/molecules/TemplateCard';
 
-const DemoTemplateCards: ITemplateCard[] = [
-    {
-        name: 'Send Template Name',
-        description: 'Sends Ada to eco charity every 3 days',
-        functionCount: 3,
-        templateTrigger: 'Cron Trigger'
-    },
-    {
-        name: 'Send Template Name',
-        description: 'Sends Ada to eco charity every 3 days',
-        functionCount: 7,
-        templateTrigger: 'Cron Trigger'
-    },
-    {
-        name: 'Send Template Name',
-        description: 'Sends Ada to eco charity every 1 days',
-        functionCount: 12,
-        templateTrigger: 'Cron Trigger'
-    },
-    {
-        name: 'Send Template Name',
-        description: 'Sends Ada to eco charity every 56 days',
-        functionCount: 56,
-        templateTrigger: 'Cron Trigger'
-    },
-    {
-        name: 'Send Template Name',
-        description: 'Sends Ada to eco charity every 12 days',
-        functionCount: 76,
-        templateTrigger: 'Cron Trigger'
-    },
-    {
-        name: 'Send Template Name',
-        description: 'Sends Ada to eco charity every 3 days',
-        functionCount: 3,
-        templateTrigger: 'Cron Trigger'
-    }
-];
-
 export default function TemplatesPage() {
     const {
         data: templates,
