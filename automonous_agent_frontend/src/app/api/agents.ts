@@ -35,20 +35,32 @@ export const fetchActiveAgentsCount = async () => {
 };
 
 export const postAgentData = async (formData: z.infer<typeof agentFormSchema>) => {
-    const data = {};
     const response = await fetch(`${baseAPIurl}/agents/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            name: formData.agentName,
-            template_id: formData.agentTemplate,
-            instance: formData.numberOfAgents
+            'name' : formData.agentName,
+            'template_id' : formData.agentTemplate,
+            'instance' : formData.numberOfAgents,
         })
     });
+    console.log(response)
     if (!response.ok) {
         throw new Error('Failed to create new Agent');
     }
     return await response.json()
 };
+
+export const deleteAgentbyID = async (agentID : string ) => {
+    const response = await fetch(`${baseAPIurl}/agents/${agentID}` , {
+        method : 'DELETE',
+    })
+    if (!response.ok) {
+        throw new Error(`Failed to Delet Agent with the ID ${agentID}`);
+    }
+    if (response.status === 204){
+        return true
+    }
+}

@@ -1,47 +1,74 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery , useMutation } from '@tanstack/react-query';
+import { Trash2 } from 'lucide-react';
+
+import { ITemplate, fetchTemplatebyID, fetchTemplates } from '@app/app/api/templates';
+
 import { Card, CardContent, CardDescription, CardTitle } from '../atoms/Card';
 import { Switch } from '../atoms/Switch';
-import { fetchTemplatebyID, fetchTemplates, ITemplate } from '@app/app/api/templates';
-import { useEffect } from 'react';
+import { deleteAgentbyID } from '@app/app/api/agents';
 
 export interface IAgentCard {
     agentName: string;
+    agentID : string
     agentRole: string;
-    templateID : string;
+    templateID: string;
     functionCount: number;
     lastActive: string | null;
     totalTrigger: number;
+    handleRemove? : any
 }
 
 export default function AgentCard({
     agentName,
+    agentID,
     agentRole,
     templateID,
     functionCount,
     lastActive,
-    totalTrigger
+    totalTrigger,
+    handleRemove = ()=> {}
 }: IAgentCard) {
-    
-    const {data :template } = useQuery<ITemplate>({queryKey:['template'] , queryFn:()=>fetchTemplatebyID(templateID)})
+    const { data: template } = useQuery<ITemplate>({
+        queryKey: [`template${templateID}`],
+        queryFn: () => fetchTemplatebyID(templateID)
+    });
 
+
+ 
     return (
-        <Card className="h-64 rounded-xl p-6 transition-all hover-transition-primary">
+        <Card className="hover-transition-primary h-64 rounded-xl p-6 transition-all">
             <div className="flex items-center justify-between">
                 <div className="card-h2">{agentName}</div>
-                <Switch />
+                <div className="flex gap-x-2">
+                    <div
+                        onClick={() => {
+                            handleRemove()
+                        }}
+                        className="cursor-pointer"
+                    >
+                        <Trash2 color="#A1A1A1" />
+                    </div>
+                    <Switch />
+                </div>
             </div>
             <CardTitle className="!card-h3">{agentRole}</CardTitle>
             <div className="mt-5 flex flex-col gap-y-2 text-brand-Gray-200">
                 <CardContent className="flex flex-col gap-y-2">
                     <span className="card-h4">
                         Template :
-                        <span className=" gray-background ml-1">{template?.name  || 'Nan'}</span>
+                        <span className=" gray-background ml-1">
+                            {template?.name || 'Nan'}
+                        </span>
                     </span>
                     <span>
                         Function : <span className="text-active"> {functionCount}</span>
                     </span>
                     <span>
-                        Last Active :<span className="text-active"> {lastActive?.split('T')[0]}</span>
+                        Last Active :
+                        <span className="text-active">
+                            {' '}
+                            {lastActive?.split('T')[0]}
+                        </span>
                     </span>
                     <span>
                         Total Triggers :

@@ -5,12 +5,21 @@ import { Button } from "@app/components/atoms/Button"
 import { DropdownMenu, DropdownMenuTrigger , DropdownMenuContent , DropdownMenuItem } from "@app/components/atoms/DropDownMenu"
 import { SearchField } from "@app/components/atoms/SearchField"
 import AgentCard, { IAgentCard } from "@app/components/molecules/AgentCard"
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import Link from "next/link"
+import { deleteAgentbyID } from "@app/app/api/agents"
+import { queryClient } from "@app/utils/providers/ReactQueryProvider"
 
 export default function AgentsPage(){
     
     const {data:agents , isLoading:loadingAgents , isError: errorAgents} = useQuery<IAgent[]>({queryKey:['agents'] , queryFn:fetchAgents})
+
+    const deleteAgent = useMutation({
+        mutationFn : (agentID : string) => deleteAgentbyID(agentID),
+        onSuccess : ()=> {
+            queryClient.invalidateQueries({queryKey : ['agents']})}
+    })
+
 
     return(
         <>
@@ -32,11 +41,8 @@ export default function AgentsPage(){
             </Link>
         </div>
         <div className="grid grid-cols-4 mt-8 gap-4 2xl:grid-cols-6 2xl:mt-12 gap-y-6">
-            {/*{DemoAgentList.map((item , index) => (
-                <AgentCard agentName={item.agentName} agentRole={item.agentRole} templateName={item.templateName} totalTrigger={item.totalTrigger} lastActive={item.lastActive} functionCount={item.functionCount} key={index}/>
-            ))} */ }
-            {agents?.map((item : IAgent, index)=>(
-                <AgentCard agentName={item?.name || 'NA'} agentRole={'null'} templateID={item?.template_id}  totalTrigger={0} lastActive={item?.last_active || 'NA'} functionCount={0} key={index}/>
+            {agents?.map((agent : IAgent, index)=>(
+                <AgentCard agentName={agent?.name || 'NA'}  agentID={agent?.id} agentRole={'null'} templateID={agent?.template_id}  totalTrigger={0} lastActive={agent?.last_active || 'NA'} functionCount={0} key={index} handleRemove={()=>{deleteAgent.mutateAsync(agent?.id)}}/>
             ))}
         </div>
         </>

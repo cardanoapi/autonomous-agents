@@ -30,6 +30,8 @@ import { cn } from '@app/components/lib/utils';
 import MultipleSelector, { IOption } from '@app/components/molecules/MultiSearchSelect';
 import { NumberInput } from '@app/components/molecules/NumberInput';
 import SelectedCard from '@app/components/molecules/SelectedCard';
+import { QueryClient } from '@tanstack/react-query';
+import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 export const agentFormSchema = z.object({
     agentName: z.string(),
@@ -73,12 +75,23 @@ export default function CreateAgentForm() {
 
     const agentMutation = useMutation({
         mutationFn: (data: z.infer<typeof agentFormSchema>) => postAgentData(data),
-        onSuccess: () => {router.push('/agents')}
+        onSuccess: () => {
+            queryClient.refetchQueries({queryKey:['agents']})
+            router.push('/agents')
+        },
+        onError: () => {
+            setLoader(false)
+        }
     });
+    
+    const [loader , setLoader] = useState(false)
 
     async function onSubmit(formData: z.infer<typeof agentFormSchema>) {
+        console.log(formData)
+        setLoader(true)
         await agentMutation.mutateAsync(formData);
     }
+
 
     function unselectOption(option: IOption) {
         const filteredSelected = selected.filter((s) => s.value !== option.value);
@@ -194,7 +207,7 @@ export default function CreateAgentForm() {
                         className="flex w-36 items-center justify-between "
                         disabled={agentMutation.isPending ? true : false}
                     >
-                        <div className={cn("flex items-center fixed" , agentMutation.isPending ? "flex" : "hidden")}>
+                        <div className={cn("flex items-center fixed" , loader ? "flex" : "hidden")}>
                             <LoaderCircle
                                 className="mr-2 animate-spin stroke-white"
                                 strokeWidth={3}
