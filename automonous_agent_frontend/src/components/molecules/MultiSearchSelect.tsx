@@ -293,8 +293,6 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
             void exec();
         }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus]);
 
-        useEffect(() => {}, selected);
-
         const CreatableItem = () => {
             if (!creatable) return undefined;
 

@@ -42,7 +42,7 @@ const SideNavItems: ISideNavItem[] = [
 
 export default function SideNav() {
     return (
-        <nav className="min-h-screen w-full border-r-2 bg-white">
+        <nav className="h-full w-full border-r-[0.5px] bg-white">
             <Link
                 href="/"
                 className="flex flex-row items-center gap-x-2  pb-6 pl-4 py-8  "
