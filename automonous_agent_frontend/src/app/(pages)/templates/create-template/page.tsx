@@ -126,7 +126,7 @@ export default function TemplateForm() {
                     />
                 </DialogContent>
             </Dialog>
-            <Card className="w-[790px] min-h-[472px]">
+            <Card className="w-[790px] min-h-[493px]">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <FormField
