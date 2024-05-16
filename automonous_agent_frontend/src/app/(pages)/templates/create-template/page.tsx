@@ -173,11 +173,10 @@ export default function TemplateForm() {
                                     </Label>
 
                                     <FormControl>
-                                        <div className="w-[207px]">
+                                        <div className="w-[297px]">
                                             <MultipleSelector
                                                 options={functionOptions}
                                                 placeholder="Add Agent Function"
-                                                className="mt-3 w-[297px]"
                                                 appearOnTop={true}
                                                 {...field}
                                                 ref={functionRef}
