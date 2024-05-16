@@ -44,7 +44,7 @@ export default function CreateAgentForm() {
     const [agentTemplateOptions, setAgentTemplateOptions] = useState<IOption[] | []>(
         []
     );
-    const { data: templates } = useQuery<ITemplate>({
+    const { data: templates } = useQuery<ITemplate[]>({
         queryKey: ['templates'],
         queryFn: fetchTemplates
     });

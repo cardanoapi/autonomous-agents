@@ -45,7 +45,7 @@ export default function AgentCard({
                         Function : <span className="text-active"> {functionCount}</span>
                     </span>
                     <span>
-                        Last Active :<span className="text-active"> {lastActive}</span>
+                        Last Active :<span className="text-active"> {lastActive?.split('T')[0]}</span>
                     </span>
                     <span>
                         Total Triggers :
