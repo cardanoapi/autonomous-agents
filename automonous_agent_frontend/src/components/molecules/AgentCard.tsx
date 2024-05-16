@@ -25,7 +25,7 @@ export default function AgentCard({
     const {data :template } = useQuery<ITemplate>({queryKey:['template'] , queryFn:()=>fetchTemplatebyID(templateID)})
 
     return (
-        <Card className="h-64 rounded-xl p-6 transition-all hover:shadow-[0_20px_50px_rgba(8,_112,_184,_0.1)] hover:transition-all">
+        <Card className="h-64 rounded-xl p-6 transition-all hover-transition-primary">
             <div className="flex items-center justify-between">
                 <div className="card-h2">{agentName}</div>
                 <Switch />

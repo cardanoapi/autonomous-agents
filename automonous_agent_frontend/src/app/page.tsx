@@ -45,8 +45,8 @@ export default function Home() {
                 <OverViewTemplatesCard
                     title="No of Templates"
                     totalTemplates={templates?.length}
-                    defaultTemplates={13}
-                    customTemplates={2}
+                    defaultTemplates={templates?.length}
+                    customTemplates={0}
                 />
                 {/* To do Overview cards */}
                 <OverViewAgentsCard

@@ -15,7 +15,7 @@ export default function TemplateCard({
     templateTrigger
 }: ITemplateCard) {
     return (
-        <Card className="w-[257px] h-[157px] p-4 pr-8 flex flex-col gap-y-0 justify-between pb-6">
+        <Card className="w-[257px] h-[157px] p-4 pr-8 flex flex-col gap-y-0 justify-between pb-6 hover-transition-primary">
             <div>
                 <div className="flex items-center gap-x-2">
                     <TemplateIcon fill="#2196F3" />

@@ -95,3 +95,7 @@
 .focus-outline-primary {
     @apply focus:outline-none focus:outline-brand-active-100/[.80] focus:outline-offset-0 
 }
+
+.hover-transition-primary {
+    @apply hover:shadow-[0_20px_50px_rgba(8,_112,_184,_0.1)] hover:transition-all
+}
