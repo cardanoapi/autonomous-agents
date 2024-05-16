@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
-import Logo from './Logo';
+import Logo from '../icons/Logo';
 import SideNavLink from './SideNavLink';
 
 export interface ISideNavItem {
@@ -45,16 +45,15 @@ export default function SideNav() {
         <nav className="min-h-screen w-full border-r-2 bg-white">
             <Link
                 href="/"
-                className="flex flex-row items-center gap-x-2 py-5 pb-6 pl-4 pt-6 "
+                className="flex flex-row items-center gap-x-2  pb-6 pl-4 py-8  "
             >
-                <Logo/>
-                <div className="background: linear-gradient(180deg, rgba(0, 0, 0, 0.87) 16.5%, rgba(51, 51, 51, 0.87) 58.25%, rgba(102, 102, 102, 0.87) 100%);
-">
-                 <span className='h2 !font-medium !bg-gradient-to-t from-zinc-400 to-zinc-900 !bg-clip-text !text-transparent'>
+                <Logo height={48} width={48}/>
+                <div>
+                 <span className='h3 !font-medium !bg-gradient-to-t from-zinc-500 to-zinc-900 !bg-clip-text !text-transparent'>
                     Autonomous
                  </span>
                     <br />
-                    <span className='h1 !bg-gradient-to-t from-zinc-400 to-zinc-900 !bg-clip-text !text-transparent'>
+                    <span className='h2 !font-semibold !bg-gradient-to-t from-zinc-500 to-zinc-900 !bg-clip-text !text-transparent'>
                     Agent Testing
                     </span>
                 </div>

@@ -70,13 +70,13 @@ export default function RootLayout({
                     />
                     <Provider>
                         <ReactQueryProvider>
-                        <div className="flex h-full w-full ">
-                            <div className="h-screen w-[20%] ">
+                        <div className="flex h-full w-full bg-brand-Azure-300">
+                            <div className="h-screen min-w-[264px] 2xl:w-[400px]">
                                 <SideNav />
                             </div>
-                            <div className="mx-[2%] mt-[3%] min-h-full flex-col w-[80%] overflow-y-auto no-scrollbar">
+                            <div className="mx-[40px] mt-[3%] min-h-full flex-col w-full overflow-y-auto no-scrollbar">
                                 <TopNav />
-                                <div className="mt-12 h-full">{children}</div>
+                                <div className="mt-10 h-full">{children}</div>
                             </div>
                         </div>
                         </ReactQueryProvider>

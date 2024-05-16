@@ -15,7 +15,7 @@ export default function TemplateCard({
     templateTrigger
 }: ITemplateCard) {
     return (
-        <Card className="h-[157px] p-4 pr-8 flex flex-col gap-y-0 justify-between pb-6">
+        <Card className="w-[257px] h-[157px] p-4 pr-8 flex flex-col gap-y-0 justify-between pb-6">
             <div>
                 <div className="flex items-center gap-x-2">
                     <TemplateIcon fill="#2196F3" />
@@ -25,7 +25,7 @@ export default function TemplateCard({
                     {description}
                 </CardDescription>
             </div>
-            <CardContent className="flex flex-col gap-y-1 ">
+            <CardContent className="flex flex-col gap-y-2 ">
                 <span className="card-h4 ">Functions : {functionCount}</span>
                 <span className="card-h4">Trigger : {templateTrigger}</span>
             </CardContent>

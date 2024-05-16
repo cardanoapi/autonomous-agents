@@ -35,7 +35,7 @@ export default function Home() {
             </Head>
 
             {/* Agents Overview Card */}
-            <div className="flex grid-cols-4 justify-between gap-[1%] 2xl:gap-[2%] h-36">
+            <div className="flex grid-cols-4 justify-between gap-[12px] 2xl:gap-[2%] h-36">
                 <OverViewAgentsCard
                     title="No of Agents"
                     totalAgents={agents?.length || 'NA'}
@@ -82,7 +82,7 @@ export default function Home() {
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
-                    <div className='h-[360px] mt-2 2xl:h-[500px]'>
+                    <div className='h-[355px] mt-2 2xl:h-[500px]'>
                         <CustomLineChart />
                     </div>
                 </div>
