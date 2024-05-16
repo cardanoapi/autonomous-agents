@@ -45,7 +45,7 @@ export default function SideNav() {
         <nav className="min-h-screen w-full border-r-2 bg-white">
             <Link
                 href="/"
-                className="flex flex-row items-center gap-x-2 border-b-2 py-5 pb-6 pl-4 pt-6 "
+                className="flex flex-row items-center gap-x-2 py-5 pb-6 pl-4 pt-6 "
             >
                 <Logo/>
                 <div className="background: linear-gradient(180deg, rgba(0, 0, 0, 0.87) 16.5%, rgba(51, 51, 51, 0.87) 58.25%, rgba(102, 102, 102, 0.87) 100%);

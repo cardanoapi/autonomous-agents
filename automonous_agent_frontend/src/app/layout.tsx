@@ -71,10 +71,10 @@ export default function RootLayout({
                     <Provider>
                         <ReactQueryProvider>
                         <div className="flex h-full w-full ">
-                            <div className="h-full w-[19%] 2xl:w-[16%] fixed">
+                            <div className="h-screen w-[20%] ">
                                 <SideNav />
                             </div>
-                            <div className="mx-[2%] mt-[2%] min-h-full w-full flex-col ml-[20%] 2xl:ml-[17%]">
+                            <div className="mx-[2%] mt-[3%] min-h-full flex-col w-[80%] overflow-y-auto no-scrollbar">
                                 <TopNav />
                                 <div className="mt-12 h-full">{children}</div>
                             </div>

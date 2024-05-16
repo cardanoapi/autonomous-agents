@@ -1,6 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { AgentFunctionOptions } from '../page';
 import TriggerForm from './TriggerForm';
+import { IOption } from '@app/components/molecules/MultiSearchSelect';
+
+export const DemoAgentFunctionOptions: IOption[] = [
+    { label: 'Send Ada', value: 'SendAda' },
+    { label: 'Create Proposal', value: 'CreatePropsal' },
+    { label: 'Vote Propsal', value: 'VotePropsal' },
+    { label: 'Burn Token', value: 'BurnToken' }
+];
 
 const meta = {
     title: 'Trigger Form',
@@ -18,7 +25,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
     args: {
-        formValues : AgentFunctionOptions[0],
+        formValues : DemoAgentFunctionOptions[0],
         onSubmit: (()=>{console.log("running test : onSubmit")}),
         setClose : (()=>{console.log("running test : onClose")})
     }
