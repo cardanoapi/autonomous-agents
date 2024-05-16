@@ -13,52 +13,52 @@ const DemoAgentList : IAgentCard[] = [
     {
         agentName : 'Agent#1',
         agentRole : "Drep",
-        templateName : "Send Ada Template",
         functionCount : 3 ,
+        templateID : 'null',
         lastActive : '2024-04-19',
         totalTrigger : 54,
     },
     {
         agentName : 'Agent#2',
         agentRole : "Drep",
-        templateName : "Voting Template",
         functionCount : 3 ,
+        templateID : 'null',
         lastActive : '2024-04-19',
         totalTrigger : 102,
     },
     {
         agentName : 'Agent#3',
         agentRole : "Drep",
-        templateName : "Burn Ada Template",
+        templateID : 'null',
         functionCount : 1 ,
         lastActive : '2024-04-19',
         totalTrigger : 645,
     }, {
         agentName : 'Agent#4',
         agentRole : "Drep",
-        templateName : "Create Proposal",
+        templateID : 'null',
         functionCount : 5 ,
         lastActive : '2024-04-19',
         totalTrigger : 192,
     }, {
         agentName : 'Agent#5',
         agentRole : "Drep",
-        templateName : "Send Ada Template",
         functionCount : 8 ,
+        templateID : 'null',
         lastActive : '2024-04-19',
         totalTrigger : 32,
     }, {
         agentName : 'Agent#6',
         agentRole : "Drep",
-        templateName : "Burn Ada Template",
         functionCount : 2 ,
+        templateID : 'null',
         lastActive : '2024-04-19',
         totalTrigger : 542,
     },
     {
         agentName : 'Agent#7',
         agentRole : "Drep",
-        templateName : "Burn Ada Template",
+        templateID : 'null',
         functionCount : 2 ,
         lastActive : '2024-04-19',
         totalTrigger : 542,
@@ -67,7 +67,7 @@ const DemoAgentList : IAgentCard[] = [
 
 export default function AgentsPage(){
     
-    const {data:agents , isLoading:loadingAgents , isError: errorAgents} = useQuery({queryKey:['agents'] , queryFn:fetchAgents})
+    const {data:agents , isLoading:loadingAgents , isError: errorAgents} = useQuery<IAgent[]>({queryKey:['agents'] , queryFn:fetchAgents})
 
     return(
         <>
@@ -93,7 +93,7 @@ export default function AgentsPage(){
                 <AgentCard agentName={item.agentName} agentRole={item.agentRole} templateName={item.templateName} totalTrigger={item.totalTrigger} lastActive={item.lastActive} functionCount={item.functionCount} key={index}/>
             ))} */ }
             {agents?.map((item : IAgent, index)=>(
-                <AgentCard agentName={item?.name || 'NA'} agentRole={'null'} templateName={item?.template_id || 'NA'} totalTrigger={0} lastActive={item?.last_active || 'NA'} functionCount={0} key={index}/>
+                <AgentCard agentName={item?.name || 'NA'} agentRole={'null'} templateID={item?.template_id}  totalTrigger={0} lastActive={item?.last_active || 'NA'} functionCount={0} key={index}/>
             ))}
         </div>
         </>

@@ -7,7 +7,7 @@ import { template } from 'lodash';
 
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchTemplates } from '@app/app/api/templates';
+import { fetchTemplates, ITemplate } from '@app/app/api/templates';
 import { Button } from '@app/components/atoms/Button';
 import {
     DropdownMenu,
@@ -62,7 +62,7 @@ export default function TemplatesPage() {
         data: templates,
         isError: errorTemplates,
         isLoading: loadingTemplates
-    } = useQuery({ queryKey: ['templates'], queryFn: fetchTemplates });
+    } = useQuery<ITemplate[]>({ queryKey: ['templates'], queryFn: fetchTemplates });
 
     return (
         <div>

@@ -21,7 +21,7 @@ export const Primary: Story = {
     args: {
         agentName : "Agent#1",
         agentRole : "Drep",
-        templateName : "SendAda Template",
+        templateID : 'null',
         functionCount : 3 ,
         lastActive : "2024-4-19",
         totalTrigger : 65

@@ -74,7 +74,7 @@ export default function RootLayout({
                             <div className="h-screen min-w-[264px] 2xl:w-[400px]">
                                 <SideNav />
                             </div>
-                            <div className="mx-[40px] mt-[3%] min-h-full flex-col w-full overflow-y-auto no-scrollbar">
+                            <div className="px-[40px] mt-[3%] min-h-full flex-col w-full overflow-y-auto no-scrollbar">
                                 <TopNav />
                                 <div className="mt-10 h-full">{children}</div>
                             </div>

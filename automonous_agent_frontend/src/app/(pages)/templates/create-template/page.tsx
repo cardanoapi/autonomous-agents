@@ -51,7 +51,7 @@ export const DemoAgentFunctionOptions: IOption[] = [
 export default function TemplateForm() {
     const functionRef = useRef<any>(null);
     
-    const {data : functions} = useQuery({queryKey:['functions'] , queryFn:fetchFunctions})
+    const {data : functions} = useQuery<IFunction[]>({queryKey:['functions'] , queryFn:fetchFunctions})
 
     const [functionOptions , setFunctionOptions] = useState<IOption[]|[]>([])
 
