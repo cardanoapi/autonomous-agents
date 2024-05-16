@@ -3,20 +3,28 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { Form ,FormControl , FormDescription , FormField , FormItem } from '@app/components/atoms/Form';
 import { z } from 'zod';
+
 import { Button } from '@app/components/atoms/Button';
 import { CardTitle } from '@app/components/atoms/Card';
 import { Card } from '@app/components/atoms/Card';
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem
+} from '@app/components/atoms/Form';
 import { Input } from '@app/components/atoms/Input';
 import { Label } from '@app/components/atoms/label';
-import TriggerTab from './TriggerTab';
 import { IOption } from '@app/components/molecules/MultiSearchSelect';
 
+import TriggerTab from './TriggerTab';
+
 interface ICronTriggerForm {
-    formValues? : IOption | null;
+    formValues?: IOption;
     setClose: any;
-    onSubmit : any;
+    onSubmit: any;
 }
 
 export const triggerFormSchema = z.object({
@@ -27,31 +35,36 @@ export const triggerFormSchema = z.object({
 export default function TriggerForm({
     formValues,
     setClose,
-    onSubmit,
+    onSubmit
 }: ICronTriggerForm) {
-
     const form = useForm<z.infer<typeof triggerFormSchema>>({
         resolver: zodResolver(triggerFormSchema),
-        defaultValues : {
-            address : formValues?.extraValues?.address,
-            amount : formValues?.extraValues?.amount
+        defaultValues: {
+            address: formValues?.extraValues?.address,
+            amount: formValues?.extraValues?.amount
         }
     });
 
+    const label = formValues?.label
+        ? formValues.label[0].toUpperCase() + formValues.label.slice(1)
+        : 'Default';
+
     return (
-        <Card className="flex flex-col gap-y-4 h-full bg-brand-Azure-200 p-4 px-8">
+        <Card className="flex h-full min-h-[449px] min-w-[696px] flex-col gap-y-4 bg-brand-Azure-200 p-4 px-8">
             <Form {...form}>
                 <form
-                    className="flex flex-col gap-y-4 2xl:gap-y-6 w-[50vw] 2xl:w-[35vw] 2xl:min-h-[36vh]"
+                    className="flex w-full flex-col gap-y-4 2xl:gap-y-6"
                     onSubmit={form.handleSubmit(onSubmit)}
                 >
-                    <div className="flex justify-center">
-                        <CardTitle className="!h1 !mx-auto">{formValues?.label}</CardTitle>
-                        <X onClick={setClose} className="cursor-pointer" />
+                    <div className="flex flex-row-reverse ">
+                        <CardTitle className="!h1 !mx-auto text-center">
+                            {label} Function
+                        </CardTitle>
+                        <X onClick={setClose} className="cursor-pointer self-end fixed" />
                     </div>
 
                     <div className="grid-col col-2 flex gap-4">
-                        <div className="flex flex-col gap-y-2 w-full">
+                        <div className="flex w-full flex-col gap-y-2">
                             <FormField
                                 control={form.control}
                                 name="address"
@@ -68,7 +81,7 @@ export default function TriggerForm({
                                 )}
                             />
                         </div>
-                        <div className="flex flex-col gap-y-2 w-full">
+                        <div className="flex w-full flex-col gap-y-2">
                             <FormField
                                 control={form.control}
                                 name="amount"
@@ -76,7 +89,10 @@ export default function TriggerForm({
                                     <FormItem>
                                         <Label size="medium">Amount(Optional)</Label>
                                         <FormControl>
-                                            <Input className="w-[100%]" {...field}></Input>
+                                            <Input
+                                                className="w-[100%]"
+                                                {...field}
+                                            ></Input>
                                         </FormControl>
                                     </FormItem>
                                 )}

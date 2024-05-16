@@ -128,7 +128,7 @@ export default function TemplateForm() {
             </Dialog>
             <Card className="w-[790px] min-h-[493px]">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className='gap-y-4 flex flex-col'>
                         <FormField
                             control={form.control}
                             name="templateName"
@@ -138,7 +138,7 @@ export default function TemplateForm() {
                                     <FormControl>
                                         <Input
                                             placeholder="Enter Template Name"
-                                            className="mt-3 w-[297px]"
+                                            className="w-[297px] h-[38px]"
                                             {...field}
                                         />
                                     </FormControl>
@@ -150,7 +150,7 @@ export default function TemplateForm() {
                             name="templateDescription"
                             render={({ field }) => (
                                 <FormItem>
-                                    <Label className="mt-6 inline-block">
+                                    <Label className="inline-block">
                                         Template Description
                                     </Label>
                                     <FormControl>
@@ -168,7 +168,7 @@ export default function TemplateForm() {
                             name="agentRole"
                             render={({ field }) => (
                                 <FormItem>
-                                    <Label className="mt-6 inline-block">
+                                    <Label className=" inline-block">
                                         Agent Behaviour
                                     </Label>
 

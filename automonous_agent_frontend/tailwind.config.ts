@@ -38,6 +38,7 @@ const config = {
                   100 : "#AAAAAA", 
                   200 : "#2E2E2E",
                   300 : "4A4A4A",
+                  400 : "#EBEBEB",
                 },
                 Inactive : {
                   100 : "#8C8C8C",
