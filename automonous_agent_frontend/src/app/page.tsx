@@ -15,6 +15,7 @@ import OverViewTemplatesCard from './components/OverViewTemplatesCard';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { fetchActiveAgentsCount, fetchAgents } from './api/agents';
 import { fetchTemplates } from './api/templates';
+import { fetchFunctions } from './api/functions';
 
 export interface IAgentsCardData{
     totalAgents : number
@@ -25,8 +26,9 @@ export interface IAgentsCardData{
 export default function Home() {
     const {data: agents = []} = useQuery({queryKey:['agents'] , queryFn: fetchAgents})
     const {data : activeAgents} = useQuery({queryKey:['activeAgentsCount'] , queryFn:fetchActiveAgentsCount})
-
     const {data : templates=[]} = useQuery({queryKey:['templates'] , queryFn: fetchTemplates})
+    const {data : functions=[]} = useQuery({queryKey:['functions'] , queryFn: fetchFunctions})
+    const {data : templateTriggers=[]} = useQuery({queryKey:['templateTriggers'] , queryFn:fetchTemplates})
     
     return (
         <>
@@ -50,16 +52,16 @@ export default function Home() {
                 />
                 {/* To do Overview cards */}
                 <OverViewAgentsCard
-                    title="Active Templates"
-                    totalAgents={100}
-                    activeAgents={48}
-                    inactiveAgents={52}
+                    title="Agent Functions"
+                    totalAgents={functions?.length}
+                    activeAgents={0}
+                    inactiveAgents={functions?.length}
                 />
                 <OverViewTemplatesCard
-                    title="Agent Functions"
-                    totalTemplates={8}
-                    defaultTemplates={5}
-                    customTemplates={3}
+                    title="TemplateTriggers"
+                    totalTemplates={templateTriggers.length}
+                    defaultTemplates={templateTriggers.length}
+                    customTemplates={0}
                 />
             </div>
 

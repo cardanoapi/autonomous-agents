@@ -21,6 +21,7 @@ export const Primary: Story = {
     args: {
         agentName : "Agent#1",
         agentRole : "Drep",
+        agentID : '0',
         templateID : 'null',
         functionCount : 3 ,
         lastActive : "2024-4-19",

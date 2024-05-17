@@ -34,24 +34,27 @@ export const fetchActiveAgentsCount = async () => {
     return data;
 };
 
+
 export const postAgentData = async (formData: z.infer<typeof agentFormSchema>) => {
-    const response = await fetch(`${baseAPIurl}/agents/`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            'name' : formData.agentName,
-            'template_id' : formData.agentTemplate,
-            'instance' : formData.numberOfAgents,
-        })
-    });
-    console.log(response)
-    if (!response.ok) {
-        throw new Error('Failed to create new Agent');
+    try {
+        const response = await axios.post(`${baseAPIurl}/agents`, {
+            name: formData.agentName,
+            template_id: formData.agentTemplate,
+            instance: formData.numberOfAgents,
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log(response)
+        return response.data;
+    } catch (error) {
+        console.error('Error posting agent data:', error);
+        throw error; 
     }
-    return await response.json()
 };
+
+
 
 export const deleteAgentbyID = async (agentID : string ) => {
     const response = await fetch(`${baseAPIurl}/agents/${agentID}` , {

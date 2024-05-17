@@ -52,8 +52,8 @@ export default function TemplateForm() {
     useEffect(() => {
         if (functions) {
           setFunctionOptions(functions.map((item: IFunction) : IOption => ({
-            label: item.name,
-            value: item.name
+            label: item.function_name,
+            value: item.function_name
           })));
         }
       }, [functions]);

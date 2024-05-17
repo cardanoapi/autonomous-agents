@@ -3,10 +3,17 @@
 import { baseAPIurl } from './config';
 
 
-export interface IFunction {
+export interface IParameter {
   name : string
-  num_parameters : number
-  parameters : IFunctionParameter[]
+  description : string
+  optional : boolean
+  data_type : string
+}
+
+export interface IFunction {
+  function_name : string
+  num_parameters? : number
+  parameters : IParameter[]
 }
 
 export interface IFunctionParameter{
