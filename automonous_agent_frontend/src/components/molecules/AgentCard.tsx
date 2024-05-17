@@ -1,21 +1,23 @@
-import { useQuery , useMutation } from '@tanstack/react-query';
+import { useEffect } from 'react';
+
+import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
 import { Trash2 } from 'lucide-react';
 
+import { IAgent, deleteAgentbyID, fetchAgentbyID } from '@app/app/api/agents';
 import { ITemplate, fetchTemplatebyID, fetchTemplates } from '@app/app/api/templates';
 
 import { Card, CardContent, CardDescription, CardTitle } from '../atoms/Card';
 import { Switch } from '../atoms/Switch';
-import { deleteAgentbyID } from '@app/app/api/agents';
 
 export interface IAgentCard {
     agentName: string;
-    agentID : string
+    agentID: string;
     agentRole: string;
     templateID: string;
     functionCount: number;
     lastActive: string | null;
     totalTrigger: number;
-    handleRemove? : any
+    handleRemove?: any;
 }
 
 export default function AgentCard({
@@ -26,15 +28,22 @@ export default function AgentCard({
     functionCount,
     lastActive,
     totalTrigger,
-    handleRemove = ()=> {}
+    handleRemove = () => {},
 }: IAgentCard) {
     const { data: template } = useQuery<ITemplate>({
         queryKey: [`template${templateID}`],
         queryFn: () => fetchTemplatebyID(templateID)
     });
 
+    const { data: currentagent } = useQuery<IAgent>({
+        queryKey: [`agent${agentID}`],
+        queryFn: () => fetchAgentbyID(agentID)
+    });
 
- 
+    useEffect(() => {
+        console.log(currentagent?.status);
+    }, [currentagent]);
+
     return (
         <Card className="hover-transition-primary h-64 rounded-xl p-6 transition-all">
             <div className="flex items-center justify-between">
@@ -42,13 +51,13 @@ export default function AgentCard({
                 <div className="flex gap-x-2">
                     <div
                         onClick={() => {
-                            handleRemove()
+                            handleRemove();
                         }}
                         className="cursor-pointer"
                     >
                         <Trash2 color="#A1A1A1" />
                     </div>
-                    <Switch />
+                    <Switch checked={currentagent?.status} />
                 </div>
             </div>
             <CardTitle className="!card-h3">{agentRole}</CardTitle>

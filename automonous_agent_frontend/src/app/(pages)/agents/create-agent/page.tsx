@@ -88,7 +88,6 @@ export default function CreateAgentForm() {
     const [loader , setLoader] = useState(false)
 
     async function onSubmit(formData: z.infer<typeof agentFormSchema>) {
-        console.log(formData)
         setLoader(true)
         await agentMutation.mutateAsync(formData);
     }
