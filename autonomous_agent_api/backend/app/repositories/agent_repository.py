@@ -47,7 +47,7 @@ class AgentRepository:
         async with self.db:
             agent = await self.db.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})
             threshold_time = datetime.utcnow() - timedelta(seconds=10)
-            online_agent = await self.db.prisma.agent.find_first(where={"last_active": {"gte": threshold_time}})
+            online_agent = await self.db.prisma.agent.find_first(where={"id": agent_id,"last_active": {"gte": threshold_time}})
             if online_agent:
                 status = True
             else:

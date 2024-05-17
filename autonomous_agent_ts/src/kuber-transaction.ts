@@ -2,7 +2,7 @@
 // Function to handle proposal new constitution
 import {sendParamsToWebSocket} from "./index";
 
-export function proposalNewConstitution(action:any) {
+export function TransactionKuber(action:any) {
     // Log message for debugging
     console.log('Executing Proposal New Constitution function.');
 

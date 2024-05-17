@@ -58,10 +58,7 @@ wss.on('connection', async function connection(ws, req) {
         // Handle case when agentId is not provided or not a string
         console.log('Agent id not valid',agentId);
         ws.close(1008, `Agent: ${agentId} doesnot exist`);
-        return; // Exit early to prevent further execution
+        return;
     }
 });
-
-
-
 

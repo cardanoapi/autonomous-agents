@@ -38,7 +38,7 @@ ws.on('close', (code, reason) => {
 
 // Event listener for any errors
 ws.on('error', (er) => {
-    console.error('WebSocket error');
+    console.error('WebSocket error',er);
 });
 
  export function sendParamsToWebSocket(action:any) {

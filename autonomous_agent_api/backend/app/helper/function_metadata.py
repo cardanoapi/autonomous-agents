@@ -23,17 +23,11 @@ functions_metadata = [
         "function_name": "SendAda Token",
         "parameters": [
             {
-                "name": "Sender Address",
-                "description": "Ada holder Sender Address",
-                "optional": False,
-                "data_type": "string",
-            },
-            {
                 "name": "Receiver Address",
                 "description": "Ada holder Receiver Address",
                 "optional": False,
                 "data_type": "string",
-            },
+            }
         ],
     },
     {
