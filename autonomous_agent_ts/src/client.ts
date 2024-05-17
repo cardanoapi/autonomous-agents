@@ -9,6 +9,7 @@ export async function handleIncomingMessage(data: WebSocket.Data): Promise<void>
         // Parse the incoming JSON data
         const message = JSON.parse(data.toString());
 
+
         // Check if the message contains configurations
        if (message.message == 'initial') {
 

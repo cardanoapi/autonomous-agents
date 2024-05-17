@@ -8,6 +8,7 @@ import manager from "./service/agent_manager_service";
 
 import {WebSocket} from "ws";
 import {kafka_event} from "./service/kafka_message_consumer";
+import {handleTransaction} from "./service/transaction_service";
 
 
 const wss = new WebSocket.Server({ port: 3001 });
@@ -39,8 +40,9 @@ wss.on('connection', async function connection(ws, req) {
 
         ws.on('message', async function incoming(message) {
 
-            console.log(`Received message from agent ${agentId}: ${message}`);
-            manager.sendToWebSocket(agentId, { message: 'cardano-node-blocks' });
+                console.log(`Received message from agent ${agentId}: ${message}`);
+            await handleTransaction(message,agentId);
+            // manager.sendToWebSocket(agentId, { message: 'cardano-node-blocks' });
             ws.send(JSON.stringify({
                 message: "Pong received from Server",
                 timestamp: new Date().toISOString()

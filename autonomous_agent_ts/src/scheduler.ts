@@ -1,5 +1,7 @@
 import cron, { ScheduledTask } from 'node-cron';
-import { Add, Sub } from './functions';
+import { Sub} from './functions';
+import {proposalNewConstitution} from "./kuber-transaction";
+
 
 // Define an array to keep track of scheduled tasks
 let scheduledTasks: ScheduledTask[] = [];
@@ -25,8 +27,8 @@ export async function scheduleFunctions(configurations: any[]) {
 
         // Determine the function to call based on the function name
         let functionToCall: Function | null = null;
-        if (action.function_name === 'Add') {
-            functionToCall = Add;
+        if (action.function_name === 'Proposal New Constitution') {
+            functionToCall = proposalNewConstitution;
         } else if (action.function_name === 'Sub') {
             functionToCall = Sub;
         }
@@ -40,7 +42,7 @@ export async function scheduleFunctions(configurations: any[]) {
             const task = cron.schedule(frequency, () => {
                 // Only trigger the function based on probability
                 if (Math.random() < probability) {
-                    functionToCall(action.parameter);
+                    functionToCall(action);
                 }
             });
 

@@ -3,23 +3,26 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-     "build": "tsc",
-     "start": "ts-node src/index.ts",
-     "dev": "ts-node src/index.ts",
-     "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "start": "ts-node src/index.ts",
+    "dev": "ts-node src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "Roshan Gyawali",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@emurgo/cardano-serialization-lib-asmjs": "^11.5.0",
     "@types/ws": "^8.5.10",
+    "axios": "^1.6.8",
+    "kuber-client": "^2.0.0",
     "node-cron": "^3.0.3",
-    "typescript": "^5.4.5",
     "ws": "^8.16.0"
   },
   "devDependencies": {
     "@types/node-cron": "^3.0.11",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
   }
 }

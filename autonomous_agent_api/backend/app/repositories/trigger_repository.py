@@ -12,6 +12,7 @@ from backend.app.models.trigger.trigger_dto import (
     validate_type_TOPIC,
 )
 from backend.config.database import prisma_connection
+from backend.config.logger import logger
 
 
 class TriggerRepository:
@@ -62,6 +63,7 @@ class TriggerRepository:
     async def retreive_triggers_by_agent_id(self, agent_id: str) -> List[TriggerResponse]:
         async with self.db:
             triggers = await self.db.prisma.trigger.find_many(where={"agent_id": agent_id, "deleted_at": None})
+            logger.info(triggers)
             return triggers
 
     async def remove_trigger_by_trigger_id(self, trigger_id: str) -> bool:

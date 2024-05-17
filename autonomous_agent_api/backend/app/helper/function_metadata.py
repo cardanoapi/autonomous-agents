@@ -3,56 +3,67 @@ from typing import List
 from pydantic import BaseModel
 
 
-class Parameter(BaseModel):
-    name: str
-    description: str
-    optional: bool = False
-    data_type: str
-    value: int = 0
-
-
-class FunctionInfo(BaseModel):
-    name: str
-    num_parameters: int
-    parameters: List[Parameter]
+# class Parameter(BaseModel):
+#     name: str
+#     description: str
+#     optional: bool = False
+#     data_type: str
+#     value: int = 0
+#
+#
+# class FunctionInfo(BaseModel):
+#     name: str
+#     num_parameters: int
+#     parameters: List[Parameter]
 
 
 # Mock data for function metadata
 functions_metadata = [
     {
-        "name": "subtract",
-        "num_parameters": 2,
+        "function_name": "SendAda Token",
         "parameters": [
             {
-                "name": "a",
-                "description": "First number",
+                "name": "Sender Address",
+                "description": "Ada holder Sender Address",
                 "optional": False,
-                "data_type": "int",
+                "data_type": "string",
             },
             {
-                "name": "b",
-                "description": "Second number",
+                "name": "Receiver Address",
+                "description": "Ada holder Receiver Address",
                 "optional": False,
-                "data_type": "int",
+                "data_type": "string",
             },
         ],
     },
     {
-        "name": "add",
-        "num_parameters": 2,
+        "function_name": "Proposal New Constituion",
+        "num_parameters": 4,
         "parameters": [
             {
-                "name": "a",
-                "description": "First number",
+                "name": "anchor_url",
+                "description": "Anchor Url",
                 "optional": False,
-                "data_type": "int",
+                "data_type": "",
             },
             {
-                "name": "b",
-                "description": "Second number",
+                "name": "anchor_dataHash",
+                "description": "Anchor Data Hash",
                 "optional": False,
-                "data_type": "int",
+                "data_type": "",
             },
-        ],
-    },
+            {
+                "name": "newConstitution_url",
+                "description": "Anchor Url",
+                "optional": False,
+                "data_type": "",
+            },
+            {
+                "name": "newConstitution_dataHash",
+                "description": "Anchor Data Hash",
+                "optional": False,
+                "data_type": "",
+            },
+        ]
+    }
 ]

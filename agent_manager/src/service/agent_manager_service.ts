@@ -74,6 +74,7 @@ class WebSocketConnectionManager {
             await existingWebSocket.close(1000, 'Establishing a new connection');
         }
     }
+
 }
 
 
