@@ -19,10 +19,12 @@ import { Input } from '@app/components/atoms/Input';
 import { Label } from '@app/components/atoms/label';
 import { IOption } from '@app/components/molecules/MultiSearchSelect';
 
+import { IParameter } from '../page';
 import TriggerTab from './TriggerTab';
 
 interface ICronTriggerForm {
     formValues?: IOption;
+    parameters?: IParameter[];
     setClose: any;
     onSubmit: any;
 }
@@ -35,6 +37,7 @@ export const triggerFormSchema = z.object({
 export default function TriggerForm({
     formValues,
     setClose,
+    parameters,
     onSubmit
 }: ICronTriggerForm) {
     const form = useForm<z.infer<typeof triggerFormSchema>>({
@@ -50,7 +53,7 @@ export default function TriggerForm({
         : 'Default';
 
     return (
-        <Card className="flex h-full min-h-[449px] min-w-[696px] flex-col gap-y-4 bg-brand-Azure-200 p-4 px-8">
+        <Card className="flex h-full min-h-[449px] min-w-[696px] flex-col gap-y-4 bg-brand-Azure-400 p-4 px-8">
             <Form {...form}>
                 <form
                     className="flex w-full flex-col gap-y-4 2xl:gap-y-6"
@@ -60,45 +63,19 @@ export default function TriggerForm({
                         <CardTitle className="!h1 !mx-auto text-center">
                             {label} Function
                         </CardTitle>
-                        <X onClick={setClose} className="cursor-pointer self-end fixed" />
+                        <X
+                            onClick={setClose}
+                            className="fixed cursor-pointer self-end"
+                        />
                     </div>
-
-                    <div className="grid-col col-2 flex gap-4">
-                        <div className="flex w-full flex-col gap-y-2">
-                            <FormField
-                                control={form.control}
-                                name="address"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <Label size="medium">Address(Optional)</Label>
-                                        <FormControl>
-                                            <Input
-                                                className="w-[100%]"
-                                                {...field}
-                                            ></Input>
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
+                        <div className="grid grid-cols-2 w-full gap-y-4 gap-x-6 mt-4">
+                            {parameters?.map((parameter, index) => (
+                                <div key={index} className='flex flex-col gap-y-2'>
+                                    <label className='h3'>{parameter.description}</label>
+                                    <Input />
+                                </div>
+                            ))}
                         </div>
-                        <div className="flex w-full flex-col gap-y-2">
-                            <FormField
-                                control={form.control}
-                                name="amount"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <Label size="medium">Amount(Optional)</Label>
-                                        <FormControl>
-                                            <Input
-                                                className="w-[100%]"
-                                                {...field}
-                                            ></Input>
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-                    </div>
                     <TriggerTab />
                     <div className="flex justify-center">
                         <Button

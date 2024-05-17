@@ -28,7 +28,6 @@ import { Textarea } from '@app/components/atoms/Textarea';
 import { Label } from '@app/components/atoms/label';
 import MultipleSelector, {
     IMultipleSelectorRef,
-    IOption
 } from '@app/components/molecules/MultiSearchSelect';
 import SelectedCard from '@app/components/molecules/SelectedCard';
 import TriggerForm, { triggerFormSchema } from './components/TriggerForm';
@@ -41,19 +40,36 @@ const templateFormSchema = z.object({
     agentRole: z.any()
 });
 
+
+export interface ITemplateOption {
+    value: string;
+    label: string;
+    disable?: boolean;
+    extraValues?: any;
+    fixed?: boolean;
+    parameters : IParameter[]
+    [key: string]: string | boolean | undefined | object;
+}
+
+export interface IParameter { 
+    name : string
+    description : string
+}
+
 export default function TemplateForm() {
     const functionRef = useRef<any>(null);
     
     const {data : functions} = useQuery<IFunction[]>({queryKey:['functions'] , queryFn:fetchFunctions})
 
-    const [functionOptions , setFunctionOptions] = useState<IOption[]|[]>([])
+    const [functionOptions , setFunctionOptions] = useState<ITemplateOption[]|[]>([])
 
      
     useEffect(() => {
         if (functions) {
-          setFunctionOptions(functions.map((item: IFunction) : IOption => ({
+          setFunctionOptions(functions.map((item: IFunction) : ITemplateOption => ({
             label: item.function_name,
-            value: item.function_name
+            value: item.function_name,
+            parameters : item.parameters,
           })));
         }
       }, [functions]);
@@ -67,17 +83,17 @@ export default function TemplateForm() {
         console.log(formData);
     }
 
-    const [selected, setSelected] = useState<IOption[]>([]);
+    const [selected, setSelected] = useState<ITemplateOption[]>([]);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [currentDialogForm, setCurrentDialogForm] = useState<string | null>(null);
 
-    function openSelectedOption(option: IOption) {
+    function openSelectedOption(option: ITemplateOption) {
         console.log(option);
         setCurrentDialogForm(option.value);
         setDialogOpen(true);
     }
 
-    function unselectOption(option: IOption) {
+    function unselectOption(option: ITemplateOption) {
         const filteredSelected = selected.filter((s) => s.value !== option.value);
         setSelected(filteredSelected);
     }
@@ -93,13 +109,16 @@ export default function TemplateForm() {
                         setClose={() => {
                             setDialogOpen(false);
                         }}
+                        parameters={selected.find(
+                            (elem) => elem.value === currentDialogForm
+                        )?.parameters}
                         onSubmit={(formData: z.infer<typeof triggerFormSchema>) => {
                             console.log(formData);
                             const selectedOption = selected.find(
                                 (elem) => elem.value === currentDialogForm
                             );
                             if (selectedOption) {
-                                const updatedSelectedOption: IOption = {
+                                const updatedSelectedOption: ITemplateOption = {
                                     ...selectedOption,
                                     extraValues: {
                                         ...selectedOption?.extraValues,
@@ -173,7 +192,7 @@ export default function TemplateForm() {
                                                 appearOnTop={true}
                                                 {...field}
                                                 ref={functionRef}
-                                                onChange={(option: IOption) => {
+                                                onChange={(option: ITemplateOption) => {
                                                     setSelected([...selected, option]);
                                                 }}
                                                 openSelectedOption={openSelectedOption}
@@ -187,7 +206,7 @@ export default function TemplateForm() {
                     </form>
                 </Form>
                 <div className="mt-2 grid w-[80%] grid-cols-2 gap-4">
-                    {selected.map((option: IOption, index) => {
+                    {selected.map((option: ITemplateOption, index) => {
                         return (
                             <SelectedCard
                                 templateName={option.value}

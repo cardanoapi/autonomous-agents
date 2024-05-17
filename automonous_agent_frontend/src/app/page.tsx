@@ -9,7 +9,6 @@ import {
 } from '@app/components/atoms/DropDownMenu';
 import OverViewCard, { IOverViewCard } from '@app/components/molecules/OverViewCard';
 import CustomLineChart from '@app/components/molecules/chart/CustomLineChart';
-
 import OverViewAgentsCard from './components/OverViewAgentsCard';
 import OverViewTemplatesCard from './components/OverViewTemplatesCard';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
@@ -42,7 +41,7 @@ export default function Home() {
                     title="No of Agents"
                     totalAgents={agents?.length || 'NA'}
                     activeAgents={activeAgents?.online_agents_count}
-                    inactiveAgents={agents?.length - activeAgents?.online_agents_count}
+                    inactiveAgents={Math.max(0,agents?.length - activeAgents?.online_agents_count)}
                 />
                 <OverViewTemplatesCard
                     title="No of Templates"

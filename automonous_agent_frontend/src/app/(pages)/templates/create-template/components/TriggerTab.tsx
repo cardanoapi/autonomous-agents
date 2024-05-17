@@ -15,7 +15,7 @@ export default function TriggerTab() {
                     <TabsTrigger value="Cron">Cron Trigger</TabsTrigger>
                     <TabsTrigger value="Events">Event Trigger</TabsTrigger>
                 </TabsList>
-                <Card className="bg-transparent border-brand-gray-100 w-full border-[1px] p-0 pb-5">
+                <Card className="bg-transparent border-brand-gray-100 w-full border-[1px] p-0 pb-5 min-h-[160px]">
                 <TabsContent value="Cron">
                     <Tabs defaultValue="Minute">
                         <TabsList className="w-full justify-start gap-6 rounded-none border-b-[1px] pl-4">
