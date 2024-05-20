@@ -92,6 +92,10 @@
   -moz-appearance: textfield;
 }
 
+.custom-cron-text {
+    @apply text-center flex justify-center
+}
+
 .focus-outline-primary {
     @apply focus:outline-none focus:outline-brand-active-100/[.80] focus:outline-offset-0 
 }
