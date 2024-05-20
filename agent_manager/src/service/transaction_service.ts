@@ -1,8 +1,10 @@
 import axios from 'axios';
+import {saveTriggerHistory} from "../repository/trigger_history_repository";
+import {createOrUpdateFunctionDetail} from "../repository/fucntion_details_repository";
 
 const kuberBaseUrl = 'https://sanchonet.kuber.cardanoapi.io';
 const kuberApiKey = 'bS6Nm7dJTnCtk0wqwJChwZ7Wot2RTvDS7dETmYYHJ8htqrMs3xYI5njFeGUbno';
-
+const ApiUrl = 'http://manager.agents.cardanoapi.io/'
 interface Parameter {
     name: string;
     value: string;
@@ -40,21 +42,26 @@ interface RequestBody {
     }[];
 }
 
+const agentFunctionMap: { [agentId: string]: Set<string> } = {};
+
 export const handleTransaction = async (message: any, agentId: string): Promise<void> => {
     if (message != 'Ping') {
         // Parse the JSON string into a JavaScript object
         const data: FunctionData = JSON.parse(message);
-
         // Function to get the value of a parameter by its name
         function getParameterValue(name: string): string | undefined {
             const param = data.parameter.find(param => param.name === name);
             return param ? param.value : undefined;
         }
 
+        if (!agentFunctionMap[agentId]) {
+          agentFunctionMap[agentId] = new Set();
+        }
+        agentFunctionMap[agentId].add(data.function_name);
 
-
-        if (data.function_name === 'Proposal New Constitution') {
-              const addressApiUrl = `http://api.agents.cardanoapi.io/api/agent/${agentId}/keys`;
+        if (data.function_name == 'Proposal New Constitution') {
+        await createOrUpdateFunctionDetail("Proposal New Constitution", true);
+        const addressApiUrl = `${ApiUrl}/api/agent/${agentId}/keys`;
         const addressResponse = await axios.get(addressApiUrl);
         const agentAddress = addressResponse.data.agent_address;
             const kuberUrl = `${kuberBaseUrl}/api/v1/tx?submit=false`;
@@ -97,15 +104,17 @@ export const handleTransaction = async (message: any, agentId: string): Promise<
                     const responseBody = await response.text(); // Get the response body as text
                     throw new Error(`Proposal New Constitution Transaction failed : ${response.status}. ${responseBody}`);
                 }
-
                 const kuberData = await response.json();
                 console.log('Kuber Response:', kuberData);
+                 await saveTriggerHistory(agentId, data.function_name, true, true, "Successful Creation of transaction of New Constitution Proposal");
             } catch (error: any) {
                 console.error('Error submitting transaction:', error.message);
+                await saveTriggerHistory(agentId, data.function_name, true, false,error.message);
             }
 
-        } else if (data.function_name === 'SendAda Token') {
-            const addressApiUrl = `http://api.agents.cardanoapi.io/api/agent/${agentId}/keys`;
+        } else if (data.function_name == 'SendAda Token') {
+            await createOrUpdateFunctionDetail("SendAda Token", true);
+            const addressApiUrl = `${ApiUrl}/api/agent/${agentId}/keys`;
             const addressResponse = await axios.get(addressApiUrl);
             const agentAddress = addressResponse.data.agent_address;
             const requestBody: RequestBody = {
@@ -134,12 +143,23 @@ export const handleTransaction = async (message: any, agentId: string): Promise<
                     const responseBody = await response.text(); // Get the response body as text
                     throw new Error(`SendAda Token Transaction failed ${response.status}. ${responseBody}`);
                 }
-
                 const kuberData = await response.json();
                 console.log('Kuber Response:', kuberData);
+                   await saveTriggerHistory(agentId, data.function_name, true, true,"Successful Creation of transaction of Send Ada Transaction");
             } catch (error: any) {
                 console.error('Error submitting transaction:', error.message);
+                   await saveTriggerHistory(agentId, data.function_name, true, false,error.message);
             }
         }
     }
+};
+
+export const stopFunctionsWhenAgentDisconnects = async (agentId: string) => {
+  const functions = agentFunctionMap[agentId];
+  if (functions) {
+    for (const functionName of functions) {
+      await createOrUpdateFunctionDetail(functionName, false);
+    }
+    delete agentFunctionMap[agentId];
+  }
 };

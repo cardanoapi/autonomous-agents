@@ -4,14 +4,50 @@ import {
     updateLastActiveTimestamp
 } from "./repository/agent_manager_repository";
 import manager from "./service/agent_manager_service";
+import cors from 'cors';
 
 
 import {WebSocket} from "ws";
 import {kafka_event} from "./service/kafka_message_consumer";
-import {handleTransaction} from "./service/transaction_service";
+import {
+    handleTransaction,
+    stopFunctionsWhenAgentDisconnects
+} from "./service/transaction_service";
+import express from "express";
+import setupSwagger from "./swagger";
+import router from "./routes";
 
 
-const wss = new WebSocket.Server({ port: 3001 });
+const app = express();
+const port = 3001;
+
+app.use(express.json());
+
+// Setup Swagger
+setupSwagger(app);
+
+//cors
+// CORS configuration allowing multiple origins
+const allowedOrigins = ['http://localhost:3000', 'http://agents.cardanoapi.io/', '*'];
+
+app.use(cors({
+  origin: allowedOrigins, // Allow requests from this origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow specific HTTP methods// Allow only specified HTTP methods
+  allowedHeaders: 'Content-Type,Authorization', // Allow only specified headers
+}));
+// Setup routes
+app.use(router);
+
+
+const server = app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Swagger docs available at http://localhost:${port}/api-docs`);
+});
+
+
+
+
+const wss = new WebSocket.Server({ server });
 wss.on('connection', async function connection(ws, req) {
     const agentId = req.url?.slice(1)
     if (!agentId) {
@@ -52,6 +88,7 @@ wss.on('connection', async function connection(ws, req) {
 
         ws.on('close', function close() {
             console.log(`Agent disconnected: ${agentId}`);
+            stopFunctionsWhenAgentDisconnects(agentId)
             manager.disconnectWebSocket(agentId);
         });
     } else {
@@ -61,4 +98,3 @@ wss.on('connection', async function connection(ws, req) {
         return;
     }
 });
-

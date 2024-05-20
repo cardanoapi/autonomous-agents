@@ -39,10 +39,10 @@ export async function scheduleFunctions(configurations: any[]) {
             const { frequency, probability } = data;
 
             // Schedule the function using node-cron
-            const task = cron.schedule(frequency, () => {
+            const task = cron.schedule(frequency, async () => {
                 // Only trigger the function based on probability
                 if (Math.random() < probability) {
-                    functionToCall(action);
+                    await functionToCall(action);
                 }
             });
 

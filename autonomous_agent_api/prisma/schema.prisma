@@ -53,6 +53,24 @@ model Template {
   deleted_at  DateTime?
 }
 
+// schema.prisma
+model TriggerHistory {
+  id           String    @id
+  agentId      String
+  functionName String
+  status       Boolean
+  success      Boolean
+  message      String
+  timestamp    DateTime?
+}
+
+model FunctionDetail {
+  id                String  @id
+  name              String  @unique
+  running           Boolean
+  totalTransactions Int     @default(0)
+}
+
 enum TriggerType {
   CRON
   TOPIC

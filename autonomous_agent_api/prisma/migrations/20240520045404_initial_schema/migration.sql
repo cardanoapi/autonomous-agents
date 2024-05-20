@@ -55,3 +55,28 @@ CREATE TABLE "Template" (
 
     CONSTRAINT "Template_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateTable
+CREATE TABLE "TriggerHistory" (
+    "id" TEXT NOT NULL,
+    "agentId" TEXT NOT NULL,
+    "functionName" TEXT NOT NULL,
+    "status" BOOLEAN NOT NULL,
+    "success" BOOLEAN NOT NULL,
+    "timestamp" TIMESTAMP(3),
+
+    CONSTRAINT "TriggerHistory_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "FunctionDetail" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "running" BOOLEAN NOT NULL,
+    "totalTransactions" INTEGER NOT NULL DEFAULT 0,
+
+    CONSTRAINT "FunctionDetail_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "FunctionDetail_name_key" ON "FunctionDetail"("name");
