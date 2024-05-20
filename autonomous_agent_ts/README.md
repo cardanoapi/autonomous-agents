@@ -46,17 +46,22 @@ To run the client application, follow these steps:
 
     This will compile the TypeScript files into JavaScript and place the output in the `dist` directory.
 
-2. Run the application with an agent ID as a command-line argument:
+2. Run the application with exporting  agent ID  and WS_URL as a environment variable
 
     ```shell
-    npm run start -- <agent_id>
+    export AGENT_ID=50641eb5-6254-4066-9260-5469598a9e95  WS_URL=ws://localhost:3001
+
     ```
 
-    Replace `<agent_id>` with the actual agent ID you want to use.
+    Replace `AGENT_ID` value with actual id  you want to use.
 
-## Development
+## Docker Usage
 
-For development purposes, you can use the following command to run the application directly from the source TypeScript files:
+For Running through Docker , and use deployed server and ws server purposes, you can use the following command to run the application directly:
 
 ```shell
-npm run dev -- <agent_id>
+docker run -e WS_URL=ws://manager.agents.cardanoapi.io -e AGENT_ID=d3abcc95-bb8f-40d5-9ba6-38ac6dbcfe8d  cardano-autonomous-agent-agent
+
+```
+cardano-autonomous-agent-agent   is a docker image of Agent
+Replace the AGENT_ID with the actual agent_id in server.

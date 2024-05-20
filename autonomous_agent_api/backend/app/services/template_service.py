@@ -1,6 +1,7 @@
 from typing import List
 
 from backend.app.models import TemplateResponse, TemplateCreateDto
+from backend.app.models.template.template_dto import TemplateEditDto
 from backend.app.repositories.template_repository import TemplateRepository
 from backend.app.repositories.template_trigger_repository import (
     TemplateTriggerRepository,
@@ -46,7 +47,7 @@ class TemplateService:
     async def get_template(self, template_id: str) -> TemplateResponse:
         return await self.template_repository.retrieve_template(template_id)
 
-    async def update_template(self, template_id: str, template_data: TemplateCreateDto) -> TemplateResponse:
+    async def update_template(self, template_id: str, template_data: TemplateEditDto) -> TemplateResponse:
         return await self.template_repository.modify_template(template_id, template_data)
 
     async def delete_template(self, template_id: str) -> None:

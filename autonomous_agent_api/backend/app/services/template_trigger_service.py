@@ -1,6 +1,7 @@
 from typing import List
 
 from backend.app.models import TemplateTriggerCreateDto, TemplateTriggerResponse
+from backend.app.models.template_trigger.response_dto import TemplateTriggerResponse
 from backend.app.repositories.template_trigger_repository import (
     TemplateTriggerRepository,
 )
@@ -16,7 +17,7 @@ class TemplateTriggerService:
     async def list_templates_trigger(self) -> List[TemplateTriggerResponse]:
         return await self.template_trigger_repository.retrieve_templates_trigger()
 
-    async def get_template_trigger(self, template_id: str) -> TemplateTriggerResponse:
+    async def get_template_trigger(self, template_id: str) -> List[TemplateTriggerResponse]:
         return await self.template_trigger_repository.retrieve_template_trigger(template_id)
 
     async def update_template_trigger(

@@ -22,72 +22,65 @@ class AgentRepository:
         agent_data_dict["id"] = agent_id
         agent_data_dict["created_at"] = datetime.now(timezone.utc)
         agent_data_dict["updated_at"] = datetime.now(timezone.utc)
-
-        async with self.db:
-            agent = await self.db.prisma.agent.create(data=agent_data_dict)
+        agent = await self.db.prisma.agent.create(data=agent_data_dict)
         agent_response = AgentResponse(
             id=agent_id,
             name=agent_data.name,
             template_id=agent_data.template_id,
-            instance=agent_data.instance,
+            instance=agent.instance,
             index=agent.index,
         )
 
         return agent_response
 
     async def retrieve_agents(self) -> List[AgentResponse]:
-        async with self.db:
-            agents = await self.db.prisma.agent.find_many(where={"deleted_at": None})
-            if agents is None:
-                raise HTTPException(status_code=404, detail="No Agents not found")
-            else:
-                return agents
+        agents = await self.db.prisma.agent.find_many(where={"deleted_at": None})
+        if agents is None:
+            raise HTTPException(status_code=404, detail="No Agents not found")
+        else:
+            return agents
 
     async def retrieve_agent(self, agent_id: str) -> Optional[AgentResponse]:
-        async with self.db:
-            agent = await self.db.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})
-            threshold_time = datetime.utcnow() - timedelta(seconds=10)
-            online_agent = await self.db.prisma.agent.find_first(where={"id": agent_id,"last_active": {"gte": threshold_time}})
-            if online_agent:
-                status = True
-            else:
-                status = False
+        agent = await self.db.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})
+        # threshold_time = datetime.utcnow() - timedelta(seconds=10)
+        # online_agent = await self.db.prisma.agent.find_first(where={"id": agent_id,"last_active": {"gte": threshold_time}})
+        # if online_agent:
+        #     status = True
+        # else:
+        #     status = False
 
-            if agent is None:
-                raise HTTPException(status_code=404, detail="Agent not found")
-            else:
-                agent_response = AgentResponse(
-                    id=agent.id,
-                    name=agent.name,
-                    template_id=agent.template_id,
-                    instance=agent.instance,
-                    index=agent.index,
-                    status=status,
-                )
-                return agent_response
+        if agent is None:
+            raise HTTPException(status_code=404, detail="Agent not found")
+        else:
+            agent_response = AgentResponse(
+                id=agent.id,
+                name=agent.name,
+                template_id=agent.template_id,
+                instance=agent.instance,
+                index=agent.index,
+            )
+            return agent_response
 
     async def modify_agent(self, agent_id: str, agent_data: AgentCreateDTO) -> Optional[AgentResponse]:
-        async with self.db:
-            agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
-            if agent is None or agent.deleted_at is not None:
-                raise HTTPException(status_code=404, detail="Agent not found")
+        agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
+        if agent is None or agent.deleted_at is not None:
+            raise HTTPException(status_code=404, detail="Agent not found")
 
-            updated_data = agent_data.dict(exclude_unset=True)
-            updated_data["updated_at"] = datetime.now(timezone.utc)
+        updated_data = agent_data.dict(exclude_unset=True)
+        updated_data["updated_at"] = datetime.now(timezone.utc)
 
-            updated_agent = await self.db.prisma.agent.update(where={"id": agent_id}, data=updated_data)
-            return updated_agent
+        updated_agent = await self.db.prisma.agent.update(where={"id": agent_id}, data=updated_data)
+        return updated_agent
 
     async def get_online_agents_count(self):
         try:
-            async with self.db:
-                # Calculate the threshold for last active time (e.g., 10 seconds ago)
-                threshold_time = datetime.utcnow() - timedelta(seconds=10)
+            # Calculate the threshold for last active time (e.g., 10 seconds ago)
+            threshold_time = datetime.utcnow() - timedelta(seconds=10)
 
-                # Query the database for online agents
-                online_agents_count = await self.db.prisma.agent.count(where={"last_active": {"gte": threshold_time}})
+            # Query the database for online agents
+            online_agents_count = await self.db.prisma.agent.count(where={"last_active": {"gte": threshold_time}})
 
-                return {"online_agents_count": online_agents_count}
+            return {"online_agents_count": online_agents_count}
 
         except Exception as e:
             raise HTTPException(
@@ -96,15 +89,14 @@ class AgentRepository:
             )
 
     async def remove_agent(self, agent_id: str) -> bool:
-        async with self.db:
-            agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
-            if agent is None:
-                return False
-            elif agent.deleted_at is not None:
-                return True
-
-            await self.db.prisma.agent.update(where={"id": agent_id}, data={"deleted_at": datetime.now(timezone.utc)})
+        agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
+        if agent is None:
+            return False
+        elif agent.deleted_at is not None:
             return True
+
+        await self.db.prisma.agent.update(where={"id": agent_id}, data={"deleted_at": datetime.now(timezone.utc)})
+        return True
 
     async def retreive_agent_key(self, agent_id: str):
         # Fetch the agent from the database or other data source based on the agent_id

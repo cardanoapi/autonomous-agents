@@ -21,14 +21,16 @@ class AgentService:
 
     async def create_agent(self, agent_data: AgentCreateDTO):
         agent = await self.agent_repository.save_agent(agent_data)
-        template_trigger_data = await self.template_trigger_service.get_template_trigger(agent.template_id)
+        template_triggers = await self.template_trigger_service.get_template_trigger(agent.template_id)
 
-        trigger_data = TriggerCreateDTO(
-            type=template_trigger_data.type,
-            data=template_trigger_data.data,
-            action=template_trigger_data.action,
-        )
-        trigger = await self.trigger_service.create_trigger(agent.id, trigger_data)
+        # Iterate over each template trigger and create a trigger for the agent
+        for template_trigger_data in template_triggers:
+            trigger_data = TriggerCreateDTO(
+                type=template_trigger_data.type,
+                data=template_trigger_data.data,
+                action=template_trigger_data.action,
+            )
+            await self.trigger_service.create_trigger(agent.id, trigger_data)
         return agent
 
     async def get_agent_key(self, agent_id: str) -> AgentKeyResponse:

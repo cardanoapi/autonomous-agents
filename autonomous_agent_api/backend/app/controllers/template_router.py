@@ -4,6 +4,7 @@ from typing import List
 from classy_fastapi import Routable, post, get, put, delete
 
 from backend.app.models import TemplateCreateDto, TemplateResponse
+from backend.app.models.template.template_dto import TemplateEditDto
 from backend.app.services.template_service import TemplateService
 from backend.dependency import get_template_service
 
@@ -29,7 +30,7 @@ class TemplateRouter(Routable):
         return template
 
     @put("/templates/{template_id}/", status_code=HTTPStatus.OK)
-    async def update_template(self, template_id: str, template_data: TemplateCreateDto):
+    async def update_template(self, template_id: str, template_data: TemplateEditDto):
         update_template = await self.template_service.update_template(template_id, template_data)
         return update_template
 

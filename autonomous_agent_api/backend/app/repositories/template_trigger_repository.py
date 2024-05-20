@@ -48,8 +48,7 @@ class TemplateTriggerRepository:
         template_data_dict["created_at"] = datetime.now(timezone.utc)
         template_data_dict["updated_at"] = datetime.now(timezone.utc)
 
-        async with self.db:
-            await self.db.prisma.template_trigger.create(data=template_data_dict)
+        await self.db.prisma.template_trigger.create(data=template_data_dict)
 
         data_object = self._convert_data_to_dto(template_data.type, data_dict)
 
@@ -63,59 +62,54 @@ class TemplateTriggerRepository:
         return template_response
 
     async def retrieve_templates_trigger(self) -> List[TemplateTriggerResponse]:
-        async with self.db:
-            templates = await self.db.prisma.template_trigger.find_many()
-            return templates
 
-    async def retrieve_template_trigger(self, template_id: str) -> Optional[TemplateTriggerResponse]:
-        async with self.db:
-            template = await self.db.prisma.template_trigger.find_first(
-                where={"template_id": template_id, "deleted_at": None}
-            )
-            return template
+        templates = await self.db.prisma.template_trigger.find_many(where={"deleted_at": None})
+        return templates
+
+    async def retrieve_template_trigger(self, template_id: str) -> List[TemplateTriggerResponse]:
+        template = await self.db.prisma.template_trigger.find_many(where={"template_id": template_id, "deleted_at": None})
+        return template
 
     async def modify_template_trigger(
         self, template_trigger_id: str, template_data: TemplateTriggerCreateDto
     ) -> Optional[TemplateTriggerResponse]:
-        async with self.db:
-            template = await self.db.prisma.template.find_first(where={"id": template_trigger_id})
-            if template is None or template.deleted_at is not None:
-                raise HTTPException(status_code=404, detail="Template not found")
-            updated_data_dict = template_data.dict()
+        template = await self.db.prisma.template_trigger.find_first(where={"id": template_trigger_id})
+        if template is None or template.deleted_at is not None:
+            raise HTTPException(status_code=404, detail="Template not found")
+        updated_data_dict = template_data.dict()
 
-            # validation for CRON nad TOPIC
-            if template_data.type == "CRON":
-                await validate_type_CRON(template_data.data.frequency, template_data.data.probability)
+        # validation for CRON nad TOPIC
+        if template_data.type == "CRON":
+            await validate_type_CRON(template_data.data.frequency, template_data.data.probability)
 
-            if template_data.type == "TOPIC":
-                await validate_type_TOPIC(template_data.data.topic)
+        if template_data.type == "TOPIC":
+            await validate_type_TOPIC(template_data.data.topic)
 
-            # for config data
-            data_dict = updated_data_dict.pop("data")
-            data_json = json.dumps(data_dict)
-            # for action config
-            action_dict = updated_data_dict.pop("action")
-            action_json = json.dumps(action_dict)
+        # for config data
+        data_dict = updated_data_dict.pop("data")
+        data_json = json.dumps(data_dict)
+        # for action config
+        action_dict = updated_data_dict.pop("action")
+        action_json = json.dumps(action_dict)
 
-            updated_data_dict["data"] = data_json
-            updated_data_dict["action"] = action_json
+        updated_data_dict["data"] = data_json
+        updated_data_dict["action"] = action_json
 
-            updated_data_dict["updated_at"] = datetime.now(timezone.utc)
+        updated_data_dict["updated_at"] = datetime.now(timezone.utc)
 
-            await self.db.prisma.template_trigger.update(where={"id": template_trigger_id}, data=updated_data_dict)
+        await self.db.prisma.template_trigger.update(where={"id": template_trigger_id}, data=updated_data_dict)
 
-            # Create a TriggerResponse object with the converted data
-            template_response = TemplateTriggerResponse(
-                id=template_trigger_id,
-                template_id=template.template_id,
-                type=template_data.type,
-                action=template_data.action,
-                data=template_data.data,
-            )
-            return template_response
+        # Create a TriggerResponse object with the converted data
+        template_response = TemplateTriggerResponse(
+            id=template_trigger_id,
+            template_id=template.template_id,
+            type=template_data.type,
+            action=template_data.action,
+            data=template_data.data,
+        )
+        return template_response
 
     async def remove_template_trigger(self, template_trigger_id: str) -> bool:
-        async with self.db:
             template = await self.db.prisma.template_trigger.find_first(where={"id": template_trigger_id})
             if template is None:
                 return False

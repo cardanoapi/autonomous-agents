@@ -11,7 +11,6 @@ class AgentResponse(BaseModel):
     instance: int
     index: int
     last_active: Optional[datetime]
-    status: Optional[bool]
 
 
 class AgentKeyResponse(BaseModel):

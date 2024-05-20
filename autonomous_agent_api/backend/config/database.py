@@ -21,14 +21,6 @@ class PrismaConnection:
         self.connected = False
         logging.info("Database Disconnected")
 
-    async def __aenter__(self):
-        if not self.connected:
-            await self.connect()
-        return self
-
-    async def __aexit__(self, exc_type, exc, tb):
-        await self.disconnect()
-
 
 # Create a singleton instance of the PrismaConnection class
 prisma_connection = PrismaConnection()

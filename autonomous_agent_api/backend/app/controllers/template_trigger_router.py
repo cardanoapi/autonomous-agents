@@ -25,7 +25,7 @@ class TemplateTriggerRouter(Routable):
         template = await self.template_trigger_service.list_templates_trigger()
         return template
 
-    @get("/templates/{template_id}/trigger", response_model=TemplateTriggerResponse)
+    @get("/templates/{template_id}/trigger", response_model=List[TemplateTriggerResponse])
     async def get_template_trigger_by_template_id(self, template_id: str):
         template = await self.template_trigger_service.get_template_trigger(template_id)
         return template

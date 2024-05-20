@@ -53,7 +53,7 @@ To run the Agent Manager application, follow these steps:
     ```
 
 
-## Development
+## Docker 
 
 For development purposes, you can use the following command to run the application directly from the source TypeScript files:
 
