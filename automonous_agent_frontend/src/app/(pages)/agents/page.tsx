@@ -25,7 +25,7 @@ export default function AgentsPage(){
         <>
         <div className="flex justify-between">
             <div className="flex gap-x-4 items-center">
-            <span className="h1-new">Agents(8)</span>
+            <span className="h1-new">Agents({agents?.length})</span>
             <SearchField placeholder="Search agents" variant={"secondary"} className="w-[45%] 2xl:w-[80%] h-10"></SearchField>
             <DropdownMenu>
                 <DropdownMenuTrigger border={true} className="h-10">Template</DropdownMenuTrigger>

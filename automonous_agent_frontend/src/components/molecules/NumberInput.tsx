@@ -9,7 +9,7 @@ import PolygonIcon from '../icons/Polygon'; // Correct import path
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
 const NumberInput = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, defaultValue , ...props  }, ref) => {
+  ({ className, defaultValue ,onChange , ...props  }, ref) => {
     return (
       <Input
         className={cn(
@@ -19,6 +19,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, InputProps>(
         type="number"
         defaultValue={defaultValue}
         ref={ref}
+        onChange={onChange}
         {...props}
       />
     );

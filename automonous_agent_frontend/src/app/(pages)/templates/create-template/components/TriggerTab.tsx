@@ -1,3 +1,5 @@
+'use client'
+
 import { Card } from '@app/components/atoms/Card';
 import {
     Tabs,
@@ -6,9 +8,47 @@ import {
     TabsTrigger
 } from '@app/components/molecules/Tabs';
 import DefaultCron from './DefaultCron';
-import CustomCron from './CustomCron';
+import { useEffect, useState } from 'react';
+
+export interface ICronSetting {
+    placeholder : string 
+    default : string[]
+    index : number
+}
+
+const defaultCronSetting : ICronSetting[] = [
+    {
+        placeholder : 'Minute',
+        default : ['*' , '*' , '*', '*' , '*'],
+        index : 0
+    },
+    {
+        placeholder : 'Hour',
+        default : ['0' , '*' , '*', '*' , '*'],
+        index : 1
+    },
+    {
+        placeholder : 'Day',
+        default : ['1' , '0' , '*', '*' , '*'],
+        index : 2
+
+    },
+    {
+        placeholder : 'Year',
+        default : ['0' ,'0' , '1', '1' ,'*'],
+        index : 4
+    }
+]
 
 export default function TriggerTab() {
+
+    const [cron , setCron] = useState('')
+    const [defaultSelected , setDefaultSelected] = useState('')
+
+    useEffect(()=>{
+        console.log(cron)
+    },[cron])
+
     return (
         <Tabs defaultValue='Cron'>
                 <TabsList className='w-full justify-start rounded-none border-b-[1px] pl-0 mb-4 gap-6'>
@@ -26,21 +66,13 @@ export default function TriggerTab() {
                             <TabsTrigger value="Custom">Custom</TabsTrigger>
                         </TabsList>
                         <div className="mt-2 flex flex-col pl-3 pt-2">
-                            <TabsContent value="Minute">
-                                <DefaultCron placeholder="Minute" />
-                            </TabsContent>
-                            <TabsContent value="Hour">
-                                <DefaultCron placeholder="Hour" />
-                            </TabsContent>
-                            <TabsContent value="Day">
-                                <DefaultCron placeholder="Day" />
-                            </TabsContent>
-                            <TabsContent value="Year">
-                                <DefaultCron placeholder="Year" />
-                            </TabsContent>
-                            <TabsContent value="Custom">
-                                <CustomCron/>
-                            </TabsContent>
+                            { defaultCronSetting.map((item : ICronSetting) =>
+                              
+                               <TabsContent value={item.placeholder}>
+                                <DefaultCron cronSetting={item} onChange={setCron} defaultSelected={defaultSelected} setDefaultSelected={setDefaultSelected}/>
+                               </TabsContent>    
+                        )
+                            }
                         </div>
                     </Tabs>
                 </TabsContent>

@@ -76,7 +76,7 @@ export default function RootLayout({
                             </div>
                             <div className="px-[40px] mt-[3%] min-h-full flex-col w-full overflow-y-auto no-scrollbar">
                                 <TopNav />
-                                <div className="mt-10 h-full">{children}</div>
+                                <div className="mt-10">{children}</div>
                             </div>
                         </div>
                         </ReactQueryProvider>
