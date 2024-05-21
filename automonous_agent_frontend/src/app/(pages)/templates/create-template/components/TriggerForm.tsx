@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { X } from 'lucide-react';
 
@@ -62,6 +62,10 @@ export default function TriggerForm({
         setCronExpression(value)
     }
 
+    useEffect(()=>{
+        console.log(cronExpression , cronParameters)
+    },[cronExpression , cronParameters])
+
     return (
         <Card className="flex h-full min-h-[449px] min-w-[696px] flex-col gap-y-4 bg-brand-Azure-400 p-4 px-8">
             <form
@@ -82,7 +86,7 @@ export default function TriggerForm({
                         </div>
                     ))}
                 </div>
-                <TriggerTab />
+                <TriggerTab onChange={updateCronExpression}/>
                 <div className="flex justify-center">
                     <Button
                         variant="primary"

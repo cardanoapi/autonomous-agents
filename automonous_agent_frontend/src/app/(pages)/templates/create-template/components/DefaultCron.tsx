@@ -6,23 +6,28 @@ import { cn } from '@app/components/lib/utils';
 import { NumberInput } from '@app/components/molecules/NumberInput';
 
 import { ICronSetting } from './TriggerTab';
+import { IInputSetting } from './TriggerTab';
 
 export default function DefaultCron({
     cronSetting,
     onChange,
     defaultSelected = '',
-    setDefaultSelected
+    setDefaultSelected,
+    saveConfiguration,
+    configuredSettings ,
 }: {
     cronSetting: ICronSetting;
     defaultSelected?: string;
     setDefaultSelected?: any;
     onChange?: any;
+    saveConfiguration? : any,
+    configuredSettings? : IInputSetting[]
 }) {
-    const [cron, setCron] = useState<string[]>([]);
+    const [cron, setCron] = useState<string[]>(cronSetting.default);
     const [optionTwo, setOptionTwo] = useState('1');
     const [optionThreeStart, setOptionThreeStart] = useState('1');
     const [optionThreeEnd, setOptionThreeEnd] = useState('1');
-    const [selected, setSelected] = useState<string>('');
+    const [selected, setSelected] = useState<string>(defaultSelected || '');
 
     return (
         <RadioGroup defaultValue={defaultSelected}>
@@ -70,13 +75,14 @@ export default function DefaultCron({
                                 if (index !== cronSetting.index) {
                                     return item;
                                 } else {
-                                    return `*/${optionTwo}`;
+                                    return `*/${e.target.value}`;
                                 }
                             });
-                            setCron(newExpression)
+                            setCron(newExpression);
                             onChange?.(newExpression);
+                            saveConfiguration({ value : e.target.value , name : `${cronSetting.placeholder}-option-two`})
                         }}
-                        defaultValue={1}
+                        defaultValue={configuredSettings?.find((item) => item.name === `${cronSetting.placeholder}-option-two`)?.value || '1'}
                         disabled={selected !== `${cronSetting.placeholder}-option-two`}
                     />{' '}
                     {cronSetting.placeholder}
@@ -96,7 +102,7 @@ export default function DefaultCron({
                                 return `${optionThreeStart}-${optionThreeEnd}`;
                             }
                         });
-                        setCron(newExpression)
+                        setCron(newExpression);
                         onChange?.(newExpression);
                     }}
                 />
@@ -110,14 +116,15 @@ export default function DefaultCron({
                                 if (index !== cronSetting.index) {
                                     return item;
                                 } else {
-                                    return `${optionThreeStart}-${optionThreeEnd}`;
+                                    return `${e.target.value}-${optionThreeEnd}`;
                                 }
                             });
                             setCron(newExpression);
                             onChange?.(newExpression);
+                            saveConfiguration({ value : e.target.value , name : `${cronSetting.placeholder}-option-three-start`})
                         }}
-                        defaultValue={1}
-                        disabled={selected !== 'option-three'}
+                        defaultValue={configuredSettings?.find((item) => item.name === `${cronSetting.placeholder}-option-three-start`)?.value || '1'}
+                        disabled={selected !== `${cronSetting.placeholder}-option-three`}
                     />
                     {cronSetting.placeholder} and
                     <NumberInput
@@ -128,16 +135,19 @@ export default function DefaultCron({
                                 if (index !== cronSetting.index) {
                                     return item;
                                 } else {
-                                    return `${optionThreeStart}-${optionThreeEnd}`;
+                                    return `${optionThreeStart}-${e.target.value}`;
                                 }
                             });
                             setCron(newExpression);
                             onChange?.(newExpression);
+                            saveConfiguration({ value : e.target.value , name :`${cronSetting.placeholder}-option-three-end`})
                         }}
-                        defaultValue={1}
-                        disabled={selected !== `${cronSetting.placeholder}-option-three`}
+                        defaultValue={configuredSettings?.find((item) => item.name === `${cronSetting.placeholder}-option-three-end`)?.value || '1'}
+                        disabled={
+                            selected !== `${cronSetting.placeholder}-option-three`
+                        }
                     />
-                    Min.
+                    {cronSetting.placeholder}
                 </Label>
             </div>
         </RadioGroup>

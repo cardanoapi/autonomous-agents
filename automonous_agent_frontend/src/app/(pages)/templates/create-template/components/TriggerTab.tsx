@@ -18,6 +18,10 @@ export interface ICronSetting {
     default: string[];
     index: number;
 }
+export interface IInputSetting {
+    name : string,
+    value : string | number
+}
 
 const defaultCronSetting: ICronSetting[] = [
     {
@@ -42,12 +46,62 @@ const defaultCronSetting: ICronSetting[] = [
     }
 ];
 
-export default function TriggerTab() {
-    const [cron, setCron] = useState('');
-    const [defaultSelected, setDefaultSelected] = useState('');
+
+export default function TriggerTab({onChange} : {
+    onChange? : any 
+}) {
+    const [cron, setCron] = useState<string[]>(['*','*','*','*','*']);
+
+    /* State for persisiting custom cron settings when switching tabs*/
+    const [customCron , setCustomCron] = useState<string[]>(['*','*','*','*','*']);
+    
+
+    /* state for persisiting user cron settings when switching tabs*/
+
+    const [defaultSelected, setDefaultSelected] = useState('Minute-option-one');
+
+    const initialSettings: IInputSetting[] = [
+        { name: 'Minute-option-two', value: 1 },
+        { name: 'Minute-option-three-start', value: 0 },
+        { name: 'Minute-option-three-end', value: 1 },
+        { name: 'Hour-option-two', value: 1 },
+        { name: 'Hour-option-three-start', value: 0 },
+        { name: 'Hour-option-three-end', value: 1 },
+        { name: 'Day-option-two', value: 1 },
+        { name: 'Day-option-three-start', value: 0 },
+        { name: 'Day-option-three-end', value: 1 },
+        { name: 'Year-option-two', value: 1 },
+        { name: 'Year-option-three-start', value: 0 },
+        { name: 'Year-option-three-end', value: 1 },
+    ];
+    
+    const [configuredSettings , setConfiguredSettings] = useState<IInputSetting[]>(initialSettings)
+
+    function saveCronConfiguration(setting : IInputSetting){
+        const newSettings : IInputSetting[] = configuredSettings.map((item , index) => {
+            if (item.name === setting.name){
+                return {
+                    name : setting.name,
+                    value : setting.value
+                }
+            }
+            else {
+                return item
+            }
+
+        })
+        setConfiguredSettings(newSettings)
+    }
+
+    function onChangeCustomCron(customSelectedCron : string[]){
+        setDefaultSelected('')
+        setCustomCron(customSelectedCron)
+        setCron(customSelectedCron)
+    }
 
     useEffect(() => {
-        console.log(cron);
+        const cronExpression = cron.map((item)=>item)
+        onChange?.(cronExpression)
     }, [cron]);
 
     return (
@@ -74,11 +128,13 @@ export default function TriggerTab() {
                                         onChange={setCron}
                                         defaultSelected={defaultSelected}
                                         setDefaultSelected={setDefaultSelected}
+                                        saveConfiguration={saveCronConfiguration}
+                                        configuredSettings={configuredSettings}
                                     />
                                 </TabsContent>
                             ))}
                             <TabsContent value="Custom">
-                                <CustomCron/>
+                                <CustomCron customCron={customCron} onChange={onChangeCustomCron}/>
                             </TabsContent>
                         </div>
                     </Tabs>
