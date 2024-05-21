@@ -22,7 +22,7 @@ interface ICronTriggerForm {
     formValues?: IOption;
     parameters?: IParameter[];
     setClose: any;
-    onSubmit: any;
+    onSave?: any;
 }
 
 interface ICron {
@@ -34,7 +34,7 @@ export default function TriggerForm({
     formValues,
     setClose,
     parameters,
-    onSubmit
+    onSave
 }: ICronTriggerForm) {
     const label = formValues?.label
         ? formValues.label[0].toUpperCase() + formValues.label.slice(1)
@@ -45,7 +45,6 @@ export default function TriggerForm({
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        console.log(cronParameters, cronExpression);
     }
 
     function updateCronParameters(name: string, value: string) {
@@ -61,11 +60,7 @@ export default function TriggerForm({
     function updateCronExpression(value : string){
         setCronExpression(value)
     }
-
-    useEffect(()=>{
-        console.log(cronExpression , cronParameters)
-    },[cronExpression , cronParameters])
-
+    
     return (
         <Card className="flex h-full min-h-[449px] min-w-[696px] flex-col gap-y-4 bg-brand-Azure-400 p-4 px-8">
             <form
@@ -93,6 +88,7 @@ export default function TriggerForm({
                         className="mt-6 min-w-36"
                         size="md"
                         type="submit"
+                        onClick={() => {onSave?.({label : formValues?.label , cronParameters : cronParameters , cronExpression : cronExpression})}}
                     >
                         Save
                     </Button>

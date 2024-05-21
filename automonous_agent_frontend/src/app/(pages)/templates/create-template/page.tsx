@@ -28,13 +28,15 @@ export interface ITemplateOption {
     extraValues?: any;
     fixed?: boolean;
     parameters: IParameter[];
+    cronParameters? : {[key: string]: string}[]; 
+    cronExpression? : string;
     [key: string]: string | boolean | undefined | object;
 }
 
 const templateFormSchema = z.object({
     name: z.string(),
     description: z.string().optional(),
-    triggers : z.any()
+    triggers: z.any()
 });
 
 export default function TemplateForm() {
@@ -58,7 +60,7 @@ export default function TemplateForm() {
     const [selected, setSelected] = useState<ITemplateOption[]>([]);
     function onSubmit(formData: z.infer<typeof templateFormSchema>) {
         console.log(formData);
-        console.log(selected)
+        console.log(selected);
     }
     function openSelectedOption(option: ITemplateOption) {
         console.log(option);
@@ -70,7 +72,7 @@ export default function TemplateForm() {
         setSelected(filteredSelected);
     }
 
-     /* Sets fetched functions as options for the dropdown */
+    /* Sets fetched functions as options for the dropdown */
     useEffect(() => {
         if (functions) {
             setFunctionOptions(
@@ -84,6 +86,30 @@ export default function TemplateForm() {
             );
         }
     }, [functions]);
+
+    /* Related to saving parameter fromt the dialog popup*/
+    function updateSelected({label,cronParameters,cronExpression }: {
+        label: string;
+        cronParameters: { [key: string]: string }[]
+        cronExpression: string;
+    }){
+        console.log('saving saving')
+        const newSelected : ITemplateOption[] = selected.map((item) : ITemplateOption => {
+            if (item.label == label) {
+                return {
+                    label : label,
+                    value : item.value ,
+                    parameters : item.parameters ,
+                    cronParameters : cronParameters,
+                    cronExpression : cronExpression
+                }
+            }
+            else {
+                return item
+            }
+        })
+        console.log(newSelected)
+    }
 
     return (
         <>
@@ -100,9 +126,7 @@ export default function TemplateForm() {
                             selected.find((elem) => elem.value === currentDialogForm)
                                 ?.parameters
                         }
-                        onSubmit={() => {
-                            console.log('test');
-                        }}
+                        onSave={updateSelected}
                     />
                 </DialogContent>
             </Dialog>
@@ -148,7 +172,7 @@ export default function TemplateForm() {
                         />
                         <div>
                             <Label className=" inline-block">Agent Behaviour</Label>
-                            <div className="w-[297px] mt-3">
+                            <div className="mt-3 w-[297px]">
                                 <MultipleSelector
                                     options={functionOptions}
                                     placeholder="Add Agent Function"
@@ -184,7 +208,7 @@ export default function TemplateForm() {
                             className="mt-2 max-w-40"
                             type="submit"
                         >
-                            Create 
+                            Create
                         </Button>
                     </form>
                 </Form>
