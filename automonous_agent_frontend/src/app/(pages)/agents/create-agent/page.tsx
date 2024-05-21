@@ -160,8 +160,8 @@ export default function CreateAgentForm() {
                             {selected.map((option: IOption, index) => {
                                 return (
                                     <SelectedCard
-                                        templateName={option.label}
-                                        templateDescription={option.value}
+                                        name={option.label}
+                                        description={option.value}
                                         key={index}
                                         handleEdit={() => {
                                             console.log('Handle Template edit');

@@ -17,6 +17,9 @@ import {
 } from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
 import TemplateCard, { ITemplateCard } from '@app/components/molecules/TemplateCard';
+import { useMutation } from '@tanstack/react-query';
+import { deleteTemplatebyID } from '@app/app/api/templates';
+import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 export default function TemplatesPage() {
     const {
@@ -24,6 +27,17 @@ export default function TemplatesPage() {
         isError: errorTemplates,
         isLoading: loadingTemplates
     } = useQuery<ITemplate[]>({ queryKey: ['templates'], queryFn: fetchTemplates });
+
+
+    const deleteTemplate = useMutation({
+        mutationFn : (templateID : string) => deleteTemplatebyID(templateID),
+        onSuccess : ()=> {
+            queryClient.refetchQueries({queryKey : ['templates']})}
+    })
+
+    function handleDelete(templateID : string){
+        deleteTemplate.mutateAsync(templateID)
+    }
 
     return (
         <div>
@@ -59,10 +73,12 @@ export default function TemplatesPage() {
                         {templates?.map((item, index) => (
                             <TemplateCard
                                 name={item.name}
+                                id={item.id}
                                 description={item.description}
                                 templateTrigger={'null'}
                                 key={index}
                                 functionCount={0}
+                                ondelete={handleDelete}
                             />
                         ))}
                     </div>
@@ -73,10 +89,12 @@ export default function TemplatesPage() {
                         {templates?.map((item, index) => (
                             <TemplateCard
                                 name={item.name}
+                                id={item.id}
                                 description={item.description}
                                 templateTrigger={'null'}
                                 key={index}
                                 functionCount={0}
+                                ondelete={handleDelete}
                             />
                         ))}
                     </div>

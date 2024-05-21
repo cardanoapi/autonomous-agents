@@ -1,25 +1,36 @@
+import { Trash2 } from 'lucide-react';
+
 import { Card, CardContent, CardDescription, CardTitle } from '../atoms/Card';
 import TemplateIcon from '../icons/TemplatesIcon';
 
 export interface ITemplateCard {
     name: string;
+    id: string;
     description: string;
     functionCount: number;
     templateTrigger: string;
+    ondelete?: any;
 }
 
 export default function TemplateCard({
     name,
+    id,
     description,
     functionCount,
-    templateTrigger
+    templateTrigger,
+    ondelete
 }: ITemplateCard) {
     return (
-        <Card className="w-[257px] h-[157px] p-4 pr-8 flex flex-col gap-y-0 justify-between pb-6 hover-transition-primary">
+        <Card className="hover-transition-primary flex h-[157px] w-[257px] flex-col justify-between gap-y-0 p-4 pb-6 pr-4">
             <div>
-                <div className="flex items-center gap-x-2">
-                    <TemplateIcon fill="#2196F3" />
-                    <CardTitle className="!h2">{name}</CardTitle>
+                <div className='flex justify-between'>
+                    <div className="flex items-center gap-x-2">
+                        <TemplateIcon fill="#2196F3" />
+                        <CardTitle className="!h2">{name}</CardTitle>
+                    </div>
+                    <div onClick={() => {ondelete?.(id)}}>
+                        <Trash2 stroke='#A1A1A1'/>
+                    </div>
                 </div>
                 <CardDescription className="card-description1 mt-1">
                     {description}

@@ -60,7 +60,7 @@ export default function TriggerForm({
     function updateCronExpression(value : string){
         setCronExpression(value)
     }
-    
+
     return (
         <Card className="flex h-full min-h-[449px] min-w-[696px] flex-col gap-y-4 bg-brand-Azure-400 p-4 px-8">
             <form
@@ -88,7 +88,7 @@ export default function TriggerForm({
                         className="mt-6 min-w-36"
                         size="md"
                         type="submit"
-                        onClick={() => {onSave?.({label : formValues?.label , cronParameters : cronParameters , cronExpression : cronExpression})}}
+                        onClick={() => {onSave?.({inputLabel : formValues?.label , inputCronParameters : cronParameters , inputCronExpression : cronExpression})}}
                     >
                         Save
                     </Button>

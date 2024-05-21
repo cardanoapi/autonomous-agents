@@ -1,4 +1,4 @@
-'use client';
+"use client"
 
 import { useEffect, useRef, useState } from 'react';
 
@@ -18,8 +18,11 @@ import { Textarea } from '@app/components/atoms/Textarea';
 import { Label } from '@app/components/atoms/label';
 import MultipleSelector from '@app/components/molecules/MultiSearchSelect';
 import SelectedCard from '@app/components/molecules/SelectedCard';
-
+import { useMutation } from '@tanstack/react-query';
 import TriggerForm from './components/TriggerForm';
+import { postTemplateData } from '@app/app/api/templates';
+import { queryClient } from '@app/utils/providers/ReactQueryProvider';
+import { useRouter } from 'next/navigation';
 
 export interface ITemplateOption {
     value: string;
@@ -29,11 +32,11 @@ export interface ITemplateOption {
     fixed?: boolean;
     parameters: IParameter[];
     cronParameters? : {[key: string]: string}[]; 
-    cronExpression? : string;
+    cronExpression? : string[];
     [key: string]: string | boolean | undefined | object;
 }
 
-const templateFormSchema = z.object({
+export const templateFormSchema = z.object({
     name: z.string(),
     description: z.string().optional(),
     triggers: z.any()
@@ -58,10 +61,6 @@ export default function TemplateForm() {
 
     /*Related to Selected option*/
     const [selected, setSelected] = useState<ITemplateOption[]>([]);
-    function onSubmit(formData: z.infer<typeof templateFormSchema>) {
-        console.log(formData);
-        console.log(selected);
-    }
     function openSelectedOption(option: ITemplateOption) {
         console.log(option);
         setCurrentDialogForm(option.value);
@@ -71,7 +70,7 @@ export default function TemplateForm() {
         const filteredSelected = selected.filter((s) => s.value !== option.value);
         setSelected(filteredSelected);
     }
-
+    
     /* Sets fetched functions as options for the dropdown */
     useEffect(() => {
         if (functions) {
@@ -86,31 +85,52 @@ export default function TemplateForm() {
             );
         }
     }, [functions]);
-
+    
     /* Related to saving parameter fromt the dialog popup*/
-    function updateSelected({label,cronParameters,cronExpression }: {
-        label: string;
-        cronParameters: { [key: string]: string }[]
-        cronExpression: string;
+    function updateSelected({inputLabel,inputCronParameters,inputCronExpression }: {
+        inputLabel: string;
+        inputCronParameters: { [key: string]: string }[]
+        inputCronExpression: string[];
     }){
-        console.log('saving saving')
         const newSelected : ITemplateOption[] = selected.map((item) : ITemplateOption => {
-            if (item.label == label) {
+            if (item.label === inputLabel) {
                 return {
-                    label : label,
+                    label : inputLabel,
                     value : item.value ,
                     parameters : item.parameters ,
-                    cronParameters : cronParameters,
-                    cronExpression : cronExpression
+                    cronParameters : inputCronParameters,
+                    cronExpression : inputCronExpression,
                 }
             }
             else {
                 return item
             }
         })
-        console.log(newSelected)
+        setDialogOpen(false)
+        setSelected(newSelected)
+        form.setValue('triggers' , newSelected)
     }
+    
+    const router = useRouter()
+    
+    //Sending Post request to Template API
+    const TemplateMutation = useMutation({
+        mutationFn: (data: z.infer<typeof templateFormSchema>) => postTemplateData(data),
+        onSuccess: () => {
+            console.log('Agent Posted')
+            queryClient.refetchQueries({queryKey:['agents']})
+            router.push('/agents')
+        },
+        onError: () => {
+            console.log('Error Response')
+        }
+    });
 
+    function onSubmit(formData: z.infer<typeof templateFormSchema>) {
+        console.log(formData);
+        TemplateMutation.mutateAsync(formData)
+    }
+    
     return (
         <>
             <Dialog open={dialogOpen}>
@@ -120,6 +140,16 @@ export default function TemplateForm() {
                             (elem) => elem.value === currentDialogForm
                         )}
                         setClose={() => {
+                            /* Remove selected option if user does not save the dialog form*/
+                            const newSelected = selected.filter((item) => item.label != currentDialogForm)
+                            setSelected(newSelected)
+
+                            /* Call unselect inside the multi selector search component*/
+                            const optionToUnselect = selected.find(option => option.label === currentDialogForm);
+                            if (optionToUnselect) {
+                                functionRef.current.handleUnselect(optionToUnselect);
+                            }
+
                             setDialogOpen(false);
                         }}
                         parameters={
@@ -190,7 +220,8 @@ export default function TemplateForm() {
                             {selected.map((option: ITemplateOption, index) => {
                                 return (
                                     <SelectedCard
-                                        templateName={option.value}
+                                        name={option.value}
+                                        description={'NA'}
                                         key={index}
                                         handleEdit={() => {
                                             openSelectedOption(option);
