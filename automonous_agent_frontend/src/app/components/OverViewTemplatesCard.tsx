@@ -23,11 +23,11 @@ export default function OverViewTemplatesCard({
             <OverViewCardTitle title={title} value={totalTemplates} />
             <div className="flex w-full items-center gap-x-[20%]">
                     <div className="flex items-center">
-                        <FileText fill="#2196F3" stroke="#fff" height={24} width={24}/>
+                        <FileText fill="#1C63E7" stroke="#fff" height={24} width={24}/>
                         <div className="h3">{defaultTemplates}</div>
                     </div>
                     <div className='flex items-center'>
-                        <FileCog fill='#2196F3' stroke='#fff' height={24} width={24}/>
+                        <FileCog fill='#1C63E7' stroke='#fff' height={24} width={24}/>
                         <div className="h3">{customTemplates}</div>
                     </div>
             </div>

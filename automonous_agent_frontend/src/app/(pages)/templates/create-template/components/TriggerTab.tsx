@@ -121,8 +121,8 @@ export default function TriggerTab({onChange} : {
                             <TabsTrigger value="Custom">Custom</TabsTrigger>
                         </TabsList>
                         <div className="mt-2 flex flex-col pl-3 pt-2">
-                            {defaultCronSetting.map((item: ICronSetting) => (
-                                <TabsContent value={item.placeholder}>
+                            {defaultCronSetting.map((item: ICronSetting , index) => (
+                                <TabsContent value={item.placeholder} key={index}>
                                     <DefaultCron
                                         cronSetting={item}
                                         onChange={setCron}

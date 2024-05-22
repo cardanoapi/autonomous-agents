@@ -44,7 +44,6 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
     args: {
         formValues : DemoAgentFunctionOptions[0],
-        onSubmit: (()=>{console.log("running test : onSubmit")}),
         setClose : (()=>{console.log("running test : onClose")}),
         parameters : demoParameter
     }

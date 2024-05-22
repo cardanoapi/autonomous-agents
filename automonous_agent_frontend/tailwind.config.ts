@@ -73,7 +73,7 @@ const config = {
           },
           switch: {
             inactive: "#8C8C8C",
-            active: "#2196F3",
+            active: "#1C63E7",
           },
         },
       },

@@ -37,7 +37,7 @@ export default function TemplateCard({
             <div>
                 <div className='flex justify-between'>
                     <div className="flex items-center gap-x-2">
-                        <TemplateIcon fill="#2196F3" />
+                        <TemplateIcon fill="#1C63E7" />
                         <CardTitle className="!h2">{Truncate(name , 17)}</CardTitle>
                     </div>
                     <div onClick={() => {handleDelete(id)}}>
