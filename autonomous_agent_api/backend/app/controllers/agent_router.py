@@ -2,7 +2,7 @@ from http import HTTPStatus
 from typing import List
 
 from classy_fastapi import Routable, get, post, put, delete
-from fastapi import HTTPException
+from fastapi import HTTPException, Query
 
 from backend.app.models.agent.agent_dto import AgentCreateDTO
 from backend.app.services.agent_service import AgentService
@@ -26,8 +26,9 @@ class AgentRouter(Routable):
         return agent
 
     @get("/agents/", response_model=List[AgentResponse])
-    async def list_agents(self):
-        agents = await self.agent_service.list_agents()
+    async def list_agents(self, page: int = Query(default=1, ge=1),
+                                limit: int = Query(default=10, le=10),):
+        agents = await self.agent_service.list_agents(page, limit)
         return agents
 
     @get("/agent/{agent_id}", response_model=AgentResponse)

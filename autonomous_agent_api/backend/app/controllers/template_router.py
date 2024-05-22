@@ -2,6 +2,7 @@ from http import HTTPStatus
 from typing import List
 
 from classy_fastapi import Routable, post, get, put, delete
+from fastapi import Query
 
 from backend.app.models import TemplateCreateDto, TemplateResponse
 from backend.app.models.template.template_dto import TemplateEditDto
@@ -20,8 +21,9 @@ class TemplateRouter(Routable):
         return template
 
     @get("/templates/", response_model=List[TemplateResponse])
-    async def list_templates(self):
-        template = await self.template_service.list_templates()
+    async def list_templates(self, page: int = Query(default=1, ge=1),
+                             limit: int = Query(default=10, le=10), ):
+        template = await self.template_service.list_templates(page, limit)
         return template
 
     @get("/templates/{template_id}/", response_model=TemplateResponse)

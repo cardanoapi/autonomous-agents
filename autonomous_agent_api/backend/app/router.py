@@ -16,7 +16,7 @@ from backend.app.controllers import (
     websocket_router,
     template_router,
     template_trigger_router,
-    function_router,
+    function_router, trigger_history_router,
 )
 
 root_api_router = APIRouter(prefix="/api")
@@ -44,3 +44,6 @@ root_api_router.include_router(template_trigger_router.TemplateTriggerRouter().r
 # For Function
 
 root_api_router.include_router(function_router.router, tags=["function"])
+
+#for trigger history
+root_api_router.include_router(trigger_history_router.TriggerHistory().router, tags=["trigger history"])

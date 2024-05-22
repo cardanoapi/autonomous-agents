@@ -41,8 +41,8 @@ class TemplateService:
 
         return template_response
 
-    async def list_templates(self) -> List[TemplateResponse]:
-        return await self.template_repository.retrieve_templates()
+    async def list_templates(self, page, limit) -> List[TemplateResponse]:
+        return await self.template_repository.retrieve_templates(page, limit)
 
     async def get_template(self, template_id: str) -> TemplateResponse:
         return await self.template_repository.retrieve_template(template_id)

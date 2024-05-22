@@ -20,7 +20,7 @@ function clearScheduledTasks() {
 export async function scheduleFunctions(configurations: any[]) {
     // Clear previously scheduled tasks
     clearScheduledTasks();
-
+    let trigInfo :string = ""
     // Iterate over configurations and schedule functions
     configurations.forEach((config: any) => {
         const { data, action } = config;
@@ -42,7 +42,13 @@ export async function scheduleFunctions(configurations: any[]) {
             const task = cron.schedule(frequency, async () => {
                 // Only trigger the function based on probability
                 if (Math.random() < probability) {
-                    await functionToCall(action);
+                     const actionWithTrigInfo = { ...action, trigInfo: "true" };
+                    await functionToCall(actionWithTrigInfo);
+                }
+                else
+                {
+                    const actionWithTrigInfo = { ...action, trigInfo: "false" };
+                    await functionToCall(actionWithTrigInfo);
                 }
             });
 

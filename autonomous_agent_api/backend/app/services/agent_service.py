@@ -36,8 +36,8 @@ class AgentService:
     async def get_agent_key(self, agent_id: str) -> AgentKeyResponse:
         return await self.agent_repository.retreive_agent_key(agent_id)
 
-    async def list_agents(self) -> List[AgentResponse]:
-        return await self.agent_repository.retrieve_agents()
+    async def list_agents(self, page: int, limit: int) -> List[AgentResponse]:
+        return await self.agent_repository.retrieve_agents(page, limit)
 
     async def get_agent(self, agent_id: str) -> AgentResponse:
         return await self.agent_repository.retrieve_agent(agent_id)

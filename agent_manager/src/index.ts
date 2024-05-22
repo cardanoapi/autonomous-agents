@@ -14,34 +14,13 @@ import {
     stopFunctionsWhenAgentDisconnects
 } from "./service/transaction_service";
 import express from "express";
-import setupSwagger from "./swagger";
-import router from "./routes";
-
-
 const app = express();
 const port = 3001;
 
-app.use(express.json());
-
-// Setup Swagger
-setupSwagger(app);
-
-//cors
-// CORS configuration allowing multiple origins
-const allowedOrigins = ['http://localhost:3000', 'http://agents.cardanoapi.io/', '*'];
-
-app.use(cors({
-  origin: allowedOrigins, // Allow requests from this origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow specific HTTP methods// Allow only specified HTTP methods
-  allowedHeaders: 'Content-Type,Authorization', // Allow only specified headers
-}));
-// Setup routes
-app.use(router);
 
 
 const server = app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
-  console.log(`Swagger docs available at http://localhost:${port}/api-docs`);
 });
 
 

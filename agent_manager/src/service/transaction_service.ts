@@ -4,7 +4,7 @@ import {createOrUpdateFunctionDetail} from "../repository/fucntion_details_repos
 
 const kuberBaseUrl = 'https://sanchonet.kuber.cardanoapi.io';
 const kuberApiKey = 'bS6Nm7dJTnCtk0wqwJChwZ7Wot2RTvDS7dETmYYHJ8htqrMs3xYI5njFeGUbno';
-const ApiUrl = 'http://manager.agents.cardanoapi.io/'
+const ApiUrl = 'http://api.agents.cardanoapi.io/'
 interface Parameter {
     name: string;
     value: string;
@@ -13,6 +13,7 @@ interface Parameter {
 interface FunctionData {
     parameter: Parameter[];
     function_name: string;
+    trigInfo: string;
 }
 
 interface Selection {
@@ -60,96 +61,110 @@ export const handleTransaction = async (message: any, agentId: string): Promise<
         agentFunctionMap[agentId].add(data.function_name);
 
         if (data.function_name == 'Proposal New Constitution') {
-        await createOrUpdateFunctionDetail("Proposal New Constitution", true);
-        const addressApiUrl = `${ApiUrl}/api/agent/${agentId}/keys`;
-        const addressResponse = await axios.get(addressApiUrl);
-        const agentAddress = addressResponse.data.agent_address;
-            const kuberUrl = `${kuberBaseUrl}/api/v1/tx?submit=false`;
+            if(data.trigInfo != 'true') {
+                await createOrUpdateFunctionDetail("Proposal New Constitution", true);
+                const addressApiUrl = `${ApiUrl}/api/agent/${agentId}/keys`;
+                const addressResponse = await axios.get(addressApiUrl);
+                const agentAddress = addressResponse.data.agent_address;
+                    const kuberUrl = `${kuberBaseUrl}/api/v1/tx?submit=false`;
 
-            const body: RequestBody = {
-                selections: [
-                    agentAddress,
-                    {
-                        type: "PaymentSigningKeyShelley_ed25519",
-                        description: "Payment Signing Key",
-                        cborHex: "5820ab863c2e6c2e0837d1929b872c43dbe485c326a29527bf267da4cde498731f02"
-                    }
-                ],
-                proposals: [
-                    {
-                        refundAccount: "stake_test1urd3hs7rlxwwdzthe6hj026dmyt3y0heuulctscyydh2kgck6nkmz",
-                        anchor: {
-                            url: getParameterValue('anchor_url'),
-                            dataHash: getParameterValue('anchor_dataHash')
-                        },
-                        newconstitution: {
-                            url: getParameterValue('newConstitution_url'),
-                            dataHash: getParameterValue('newConstitution_dataHash')
+                    const body: RequestBody = {
+                        selections: [
+                            agentAddress,
+                            {
+                                type: "PaymentSigningKeyShelley_ed25519",
+                                description: "Payment Signing Key",
+                                cborHex: "5820ab863c2e6c2e0837d1929b872c43dbe485c326a29527bf267da4cde498731f02"
+                            }
+                        ],
+                        proposals: [
+                            {
+                                refundAccount: "stake_test1urd3hs7rlxwwdzthe6hj026dmyt3y0heuulctscyydh2kgck6nkmz",
+                                anchor: {
+                                    url: getParameterValue('anchor_url'),
+                                    dataHash: getParameterValue('anchor_dataHash')
+                                },
+                                newconstitution: {
+                                    url: getParameterValue('newConstitution_url'),
+                                    dataHash: getParameterValue('newConstitution_dataHash')
+                                }
+                            }
+                        ]
+                    };
+
+                    try {
+                        const response = await fetch(kuberUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Api-Key': kuberApiKey
+                            },
+                            body: JSON.stringify(body)
+                        });
+
+                        if (!response.ok) {
+                            const responseBody = await response.text(); // Get the response body as text
+                            throw new Error(`Proposal New Constitution Transaction failed : ${response.status}. ${responseBody}`);
                         }
+                        const kuberData = await response.json();
+                        console.log('Kuber Response:', kuberData);
+                         await saveTriggerHistory(agentId, data.function_name, true, true, "Successful Creation of transaction of New Constitution Proposal");
+                    } catch (error: any) {
+                        console.error('Error submitting transaction:', error.message);
+                        await saveTriggerHistory(agentId, data.function_name, true, false,error.message);
                     }
-                ]
-            };
-
-            try {
-                const response = await fetch(kuberUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Api-Key': kuberApiKey
-                    },
-                    body: JSON.stringify(body)
-                });
-
-                if (!response.ok) {
-                    const responseBody = await response.text(); // Get the response body as text
-                    throw new Error(`Proposal New Constitution Transaction failed : ${response.status}. ${responseBody}`);
                 }
-                const kuberData = await response.json();
-                console.log('Kuber Response:', kuberData);
-                 await saveTriggerHistory(agentId, data.function_name, true, true, "Successful Creation of transaction of New Constitution Proposal");
-            } catch (error: any) {
-                console.error('Error submitting transaction:', error.message);
-                await saveTriggerHistory(agentId, data.function_name, true, false,error.message);
+            else {
+                 await saveTriggerHistory(agentId, data.function_name, false, false,"Failed to Trigger Based on Probability");
             }
+
 
         } else if (data.function_name == 'SendAda Token') {
-            await createOrUpdateFunctionDetail("SendAda Token", true);
-            const addressApiUrl = `${ApiUrl}/api/agent/${agentId}/keys`;
-            const addressResponse = await axios.get(addressApiUrl);
-            const agentAddress = addressResponse.data.agent_address;
-            const requestBody: RequestBody = {
-                selections: [agentAddress],
-                outputs: [
-                    {
-                        address: getParameterValue('Receiver Address')!,
-                        value: "10A"
+            if(data.trigInfo != 'true')
+            {
+                await createOrUpdateFunctionDetail("SendAda Token", true);
+                const addressApiUrl = `${ApiUrl}/api/agent/${agentId}/keys`;
+                const addressResponse = await axios.get(addressApiUrl);
+                const agentAddress = addressResponse.data.agent_address;
+                const requestBody: RequestBody = {
+                    selections: [agentAddress],
+                    outputs: [
+                        {
+                            address: getParameterValue('Receiver Address')!,
+                            value: "10A"
+                        }
+                    ]
+                };
+
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'api-key': kuberApiKey
+                };
+
+                try {
+                    const response = await fetch('https://preprod.kuber.cardanoapi.io/api/v1/tx', {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify(requestBody)
+                    });
+
+                     if (!response.ok) {
+                        const responseBody = await response.text(); // Get the response body as text
+                        throw new Error(`SendAda Token Transaction failed ${response.status}. ${responseBody}`);
                     }
-                ]
-            };
-
-            const headers = {
-                'Content-Type': 'application/json',
-                'api-key': kuberApiKey
-            };
-
-            try {
-                const response = await fetch('https://preprod.kuber.cardanoapi.io/api/v1/tx', {
-                    method: 'POST',
-                    headers: headers,
-                    body: JSON.stringify(requestBody)
-                });
-
-                 if (!response.ok) {
-                    const responseBody = await response.text(); // Get the response body as text
-                    throw new Error(`SendAda Token Transaction failed ${response.status}. ${responseBody}`);
+                    const kuberData = await response.json();
+                    console.log('Kuber Response:', kuberData);
+                       await saveTriggerHistory(agentId, data.function_name, true, true,"Successful Creation of transaction of Send Ada Transaction");
+                } catch (error: any) {
+                    console.error('Error submitting transaction:', error.message);
+                       await saveTriggerHistory(agentId, data.function_name, true, false,error.message);
                 }
-                const kuberData = await response.json();
-                console.log('Kuber Response:', kuberData);
-                   await saveTriggerHistory(agentId, data.function_name, true, true,"Successful Creation of transaction of Send Ada Transaction");
-            } catch (error: any) {
-                console.error('Error submitting transaction:', error.message);
-                   await saveTriggerHistory(agentId, data.function_name, true, false,error.message);
             }
+            else {
+                 await saveTriggerHistory(agentId, data.function_name, false, false,"Failed to Trigger Based on Probability");
+            }
+
+
         }
     }
 };
