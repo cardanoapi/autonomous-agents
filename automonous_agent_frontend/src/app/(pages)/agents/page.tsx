@@ -31,20 +31,11 @@ export default function AgentsPage() {
         isError: errorAgents
     } = useQuery<IAgent[]>({ queryKey: ['agents'], queryFn: fetchAgents });
     
-    const deleteAgent = useMutation({
-        mutationFn: (agentID: string) => deleteAgentbyID(agentID),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['agents'] });
-        }
-    });
-    
-    
-    
+   
     useEffect(()=>{
         if (agentCreated === true){
             SuccessToast('Agent Created Successfully')
             setAgentCreated(false)
-            console.log(`current agent status : ${agentCreated}`)
         }
     },[])
 
@@ -87,9 +78,6 @@ export default function AgentsPage() {
                         lastActive={agent?.last_active || 'NA'}
                         functionCount={0}
                         key={index}
-                        handleRemove={() => {
-                            deleteAgent.mutateAsync(agent?.id);
-                        }}
                     />
                 ))}
                 </div>

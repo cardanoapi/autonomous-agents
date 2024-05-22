@@ -81,7 +81,6 @@ export default function CreateAgentForm() {
     const agentMutation = useMutation({
         mutationFn: (data: z.infer<typeof agentFormSchema>) => postAgentData(data),
         onSuccess: () => {
-            console.log('Agent Posted')
             queryClient.refetchQueries({queryKey:['agents']})
             setAgentCreated(true)
             router.push('/agents')

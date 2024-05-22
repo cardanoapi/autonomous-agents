@@ -5,6 +5,7 @@ import { z } from 'zod';
 
 import { agentFormSchema } from '../(pages)/agents/create-agent/page';
 import { baseAPIurl } from './config';
+import { json } from 'stream/consumers';
 
 export interface IAgent {
     id: string;
@@ -54,17 +55,21 @@ export const postAgentData = async (formData: z.infer<typeof agentFormSchema>) =
 
 
 
-export const deleteAgentbyID = async (agentID : string ) => {
-    const response = await fetch(`${baseAPIurl}/agents/${agentID}` , {
-        method : 'DELETE',
-    })
-    if (!response.ok) {
-        throw new Error(`Failed to Delet Agent with the ID ${agentID}`);
+
+
+export const deleteAgentbyID = async (agentID: string) => {
+    try {
+        const response = await axios.delete(`${baseAPIurl}/agents/${agentID}/`);
+        if (response.status === 204) {
+             return {success : true , agentID}
+        } else {
+            throw new Error('Template deletion failed: Unexpected status code');
+        }
+    } catch (error) {
+        console.error('Error deleting template:', error);
+        throw error;
     }
-    if (response.status === 204){
-        return true
-    }
-}
+};
 
 
 export const fetchAgentbyID = async (agentID: string): Promise<IAgent> => {

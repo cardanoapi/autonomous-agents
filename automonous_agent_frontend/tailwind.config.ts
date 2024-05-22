@@ -75,6 +75,10 @@ const config = {
             inactive: "#8C8C8C",
             active: "#1C63E7",
           },
+          Red : {
+            100 : "#D04D52",
+            200 : "#ba4247"
+          }
         },
       },
       keyframes: {
