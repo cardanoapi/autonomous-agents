@@ -5,6 +5,7 @@ from typing import List, Optional, Union
 from datetime import datetime, timezone
 
 from fastapi import HTTPException
+from prisma import Prisma
 
 from backend.app.models import (
     validate_type_CRON,
@@ -22,7 +23,7 @@ class TemplateTriggerRepository:
     def __init__(self, db_connection=None):
         self.db = db_connection or prisma_connection
 
-    async def save_template_trigger(self, template_id: str, template_data: TriggerCreateDTO):
+    async def save_template_trigger(self, transaction: Prisma, template_id: str, template_data: TriggerCreateDTO):
         template_trigger_id = str(uuid.uuid4())
         template_data_dict = template_data.dict()
 
@@ -48,7 +49,8 @@ class TemplateTriggerRepository:
         template_data_dict["created_at"] = datetime.now(timezone.utc)
         template_data_dict["updated_at"] = datetime.now(timezone.utc)
 
-        await self.db.prisma.template_trigger.create(data=template_data_dict)
+        # Use the transaction object for creating the trigger
+        await transaction.template_trigger.create(data=template_data_dict)
 
         data_object = self._convert_data_to_dto(template_data.type, data_dict)
 

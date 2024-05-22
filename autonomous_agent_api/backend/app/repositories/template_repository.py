@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from typing import List, Optional
 
 from fastapi import HTTPException
+from prisma import Prisma
 
 from backend.app.models import TemplateCreateDto, TemplateResponse
 from backend.app.models.template.template_dto import TemplateEditDto
@@ -15,7 +16,7 @@ class TemplateRepository:
     def __init__(self, db_connection=None):
         self.db = db_connection or prisma_connection
 
-    async def save_template(self, template_data: TemplateCreateDto):
+    async def save_template(self, transaction: Prisma, template_data: TemplateCreateDto):
         # Generate a random UUID for the template ID
         if template_data:
             logger.info(f"Saving template: {template_data}")
@@ -27,7 +28,8 @@ class TemplateRepository:
             "created_at": datetime.now(timezone.utc),
             "updated_at": datetime.now(timezone.utc),
         }
-        template = await self.db.prisma.template.create(data=template_data_dict)
+        # Use the transaction object for creating the template
+        template = await transaction.template.create(data=template_data_dict)
         template_response = {
             "id": template_id,
             "name": template_data.name,
@@ -45,7 +47,7 @@ class TemplateRepository:
             take=limit
         )
         if not templates:
-            raise HTTPException(status_code=404, detail="No templates not found")
+            raise HTTPException(status_code=404, detail="No templates found")
         return templates
 
     async def retrieve_template(self, template_id: str) -> Optional[TemplateResponse]:
