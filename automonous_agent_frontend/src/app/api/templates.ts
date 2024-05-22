@@ -43,7 +43,7 @@ export const postTemplateData = async (formData: z.infer<typeof templateFormSche
         name: formData.name,
         description: formData.description,
         template_triggers: formData.triggers.map((item: ITemplateOption) => ({
-            type: 'Cron',
+            type: 'CRON',
             action: {
                 function_name: item.label,
                 parameter: item?.cronParameters?.map(param => ({

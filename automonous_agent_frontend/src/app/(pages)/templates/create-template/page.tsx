@@ -123,7 +123,7 @@ export default function TemplateForm() {
         onSuccess: () => {
             console.log('Agent Posted')
             queryClient.refetchQueries({queryKey:['agents']})
-            router.push('/agents')
+            router.push('/templates')
         },
         onError: () => {
             setSubmittingForm(false)
