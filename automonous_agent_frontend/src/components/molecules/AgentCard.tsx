@@ -45,7 +45,6 @@ export default function AgentCard({
     const [formatedLastActive , setFormatedLastActive] = useState("")
 
     useEffect(() => {
-        console.log(lastActive)
         if (lastActive === "NA"){
             setFormatedLastActive('Not activated yet')
 
@@ -73,7 +72,7 @@ export default function AgentCard({
 
     return (
 
-        <Card className="hover-transition-primary h-64 rounded-xl p-6 transition-all min-w-[260px] min-h-[257px] max-w-[260px] max-h-[257px]">
+        <Card className="hover-transition-primary rounded-xl p-6 transition-all min-w-[260px] min-h-[260px] max-w-[260px] max-h-[260px]">
             <div className="flex items-center justify-between">
                 <div className="card-h2">{agentName}</div>
                 <div className="flex gap-x-2">

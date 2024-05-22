@@ -16,21 +16,39 @@ import {
 import { SearchField } from '@app/components/atoms/SearchField';
 import AgentCard, { IAgentCard } from '@app/components/molecules/AgentCard';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
+import { useEffect, useState } from 'react';
+import {atom, useAtom} from 'jotai'
+import { agentCreatedAtom } from '@app/store/loaclStore';
+import { SuccessToast } from '@app/components/molecules/CustomToasts';
+
+
 
 export default function AgentsPage() {
+    const [agentCreated , setAgentCreated] = useAtom(agentCreatedAtom)
     const {
         data: agents,
         isLoading: loadingAgents,
         isError: errorAgents
     } = useQuery<IAgent[]>({ queryKey: ['agents'], queryFn: fetchAgents });
-
+    
     const deleteAgent = useMutation({
         mutationFn: (agentID: string) => deleteAgentbyID(agentID),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['agents'] });
         }
     });
+    
+    
+    
+    useEffect(()=>{
+        if (agentCreated === true){
+            SuccessToast('Agent Created Successfully')
+            setAgentCreated(false)
+            console.log(`current agent status : ${agentCreated}`)
+        }
+    },[])
 
+    
     return (
         <>
             <div className="flex justify-between">
@@ -39,7 +57,7 @@ export default function AgentsPage() {
                     <SearchField
                         placeholder="Search agents"
                         variant={'secondary'}
-                        className="h-10 w-[45%] 2xl:w-[80%]"
+                        className="h-10 w-[45%] 2xl:w-[80%] 4xl:w-[100%]"
                     ></SearchField>
                     <DropdownMenu>
                         <DropdownMenuTrigger border={true} className="h-10">
@@ -74,7 +92,7 @@ export default function AgentsPage() {
                         }}
                     />
                 ))}
-            </div>
+                </div>
         </>
     );
 }

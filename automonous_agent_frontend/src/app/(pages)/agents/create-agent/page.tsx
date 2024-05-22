@@ -30,9 +30,12 @@ import { cn } from '@app/components/lib/utils';
 import MultipleSelector, { IOption } from '@app/components/molecules/MultiSearchSelect';
 import { NumberInput } from '@app/components/molecules/NumberInput';
 import SelectedCard from '@app/components/molecules/SelectedCard';
-import { QueryClient } from '@tanstack/react-query';
+import toast , {Toaster} from 'react-hot-toast'
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 import { SubmitButton } from '@app/components/molecules/SubmitButton';
+import { useAtom } from 'jotai'
+import { agentCreatedAtom } from '@app/store/loaclStore';
+import { ErrorToast } from '@app/components/molecules/CustomToasts';
 
 export const agentFormSchema = z.object({
     agentName: z.string(),
@@ -42,6 +45,7 @@ export const agentFormSchema = z.object({
 
 export default function CreateAgentForm() {
     const [selected, setSelected] = useState<IOption[]>([]);
+    const [agentCreated , setAgentCreated] = useAtom(agentCreatedAtom)
 
     const [agentTemplateOptions, setAgentTemplateOptions] = useState<IOption[] | []>(
         []
@@ -79,10 +83,12 @@ export default function CreateAgentForm() {
         onSuccess: () => {
             console.log('Agent Posted')
             queryClient.refetchQueries({queryKey:['agents']})
+            setAgentCreated(true)
             router.push('/agents')
         },
         onError: () => {
             console.log('Error Response')
+            ErrorToast('Error while creating Agent. Try Again!')
         }
     });
     

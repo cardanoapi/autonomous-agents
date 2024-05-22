@@ -5,6 +5,7 @@ interface TemplatesContainerProps {
   templates: ITemplate[];
 }
 
+
 export default function TemplatesContainer({ templates }: TemplatesContainerProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6 3xl:gap-12 5xl:gap-6 gap-x-4 gap-y-4">

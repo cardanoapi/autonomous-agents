@@ -103,3 +103,4 @@
 .hover-transition-primary {
     @apply hover:shadow-md hover:transition-all
 }
+

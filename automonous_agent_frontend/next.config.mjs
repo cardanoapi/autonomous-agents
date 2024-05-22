@@ -34,7 +34,7 @@ const nextConfig = {
     productionBrowserSourceMaps: true,
     compress: true,
     distDir: process.env.NODE_ENV === 'production' ? '.next' : '.next-dev',
-    reactStrictMode: true,
+    reactStrictMode: false,
     optimizeFonts: true,
     i18n,
     devIndicators: {

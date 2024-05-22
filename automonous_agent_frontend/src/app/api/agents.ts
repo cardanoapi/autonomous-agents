@@ -45,7 +45,6 @@ export const postAgentData = async (formData: z.infer<typeof agentFormSchema>) =
                 'Content-Type': 'application/json'
             }
         });
-        console.log(response)
         return response.data;
     } catch (error) {
         console.error('Error posting agent data:', error);

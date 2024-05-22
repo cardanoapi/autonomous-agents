@@ -1,9 +1,6 @@
 'use client';
 
-import Head from 'next/head';
 import Link from 'next/link';
-
-import { template } from 'lodash';
 
 import { useQuery } from '@tanstack/react-query';
 
@@ -16,11 +13,11 @@ import {
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
-import TemplateCard, { ITemplateCard } from '@app/components/molecules/TemplateCard';
-import { useMutation } from '@tanstack/react-query';
-import { deleteTemplatebyID } from '@app/app/api/templates';
-import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 import TemplatesContainer from './TemplatesContainer';
+import { templateCreatedAtom } from '@app/store/loaclStore';
+import { useAtom } from 'jotai';
+import { useEffect } from 'react';
+import { SuccessToast } from '@app/components/molecules/CustomToasts';
 
 export default function TemplatesPage() {
     const {
@@ -28,6 +25,15 @@ export default function TemplatesPage() {
         isError: errorTemplates,
         isLoading: loadingTemplates
     } = useQuery<ITemplate[]>({ queryKey: ['templates'], queryFn: fetchTemplates });
+
+    const [templateCreated , setTemplateCreated] = useAtom(templateCreatedAtom)
+
+    useEffect(()=>{
+        if (templateCreated === true){
+            SuccessToast('Template Created Successfully')
+            setTemplateCreated(false)
+        }
+    })
 
     return (
         <div>

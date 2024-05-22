@@ -5,12 +5,12 @@ import axios from 'axios';
 import { z } from 'zod';
 
 axios.interceptors.request.use(request => {
-    console.log('Request data:', request);
+    //console.log('Request data:', request);
     return request;
 });
 
 axios.interceptors.response.use(response => {
-    console.log('Response data:', response);
+    //console.log('Response data:', response);
     return response;
 });
 
