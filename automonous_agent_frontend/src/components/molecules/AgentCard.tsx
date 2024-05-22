@@ -8,6 +8,7 @@ import { ITemplate, fetchTemplatebyID, fetchTemplates } from '@app/app/api/templ
 
 import { Card, CardContent, CardDescription, CardTitle } from '../atoms/Card';
 import { Switch } from '../atoms/Switch';
+import { useState } from 'react';
 
 export interface IAgentCard {
     agentName: string;
@@ -15,7 +16,7 @@ export interface IAgentCard {
     agentRole: string;
     templateID: string;
     functionCount: number;
-    lastActive: string | null;
+    lastActive: string;
     totalTrigger: number;
     handleRemove?: any;
 }
@@ -26,7 +27,7 @@ export default function AgentCard({
     agentRole,
     templateID,
     functionCount,
-    lastActive,
+    lastActive = "",
     totalTrigger,
     handleRemove = () => {}
 }: IAgentCard) {
@@ -39,12 +40,39 @@ export default function AgentCard({
         queryKey: [`agent${agentID}`],
         queryFn: () => fetchAgentbyID(agentID)
     });
+    
+    const [isActiveWithinLast33Seconds, setIsActiveWithinLast33Seconds] = useState(false);
+    const [formatedLastActive , setFormatedLastActive] = useState("")
 
     useEffect(() => {
-        console.log(currentagent?.status);
+        console.log(lastActive)
+        if (lastActive === "NA"){
+            setFormatedLastActive('Not activated yet')
+
+        }
+        else{
+            const lastActiveDate = new Date(lastActive);
+            const currentTime = Date.now();
+            const timeDifference = currentTime - lastActiveDate.getTime(); 
+            const timeDifferenceInSeconds = timeDifference / 1000;
+            setIsActiveWithinLast33Seconds(timeDifferenceInSeconds <= 33);
+            const day = lastActiveDate.getDate();
+            const month = lastActiveDate.toLocaleString('default', { month: 'short' });
+            const seconds = lastActiveDate.getSeconds(); 
+            if(seconds === 1){
+                setFormatedLastActive(`${seconds} second ago`)
+            }
+            else{
+    
+                setFormatedLastActive(`${seconds} seconds ago`)
+            }
+        }
     }, [currentagent]);
 
+ 
+
     return (
+
         <Card className="hover-transition-primary h-64 rounded-xl p-6 transition-all min-w-[260px] min-h-[257px] max-w-[260px] max-h-[257px]">
             <div className="flex items-center justify-between">
                 <div className="card-h2">{agentName}</div>
@@ -57,7 +85,7 @@ export default function AgentCard({
                     >
                         <Trash2 color="#A1A1A1" />
                     </div>
-                    <Switch checked={currentagent?.status} />
+                    <Switch checked={isActiveWithinLast33Seconds} />
                 </div>
             </div>
             <CardTitle className="!card-h3">{agentRole}</CardTitle>
@@ -76,7 +104,7 @@ export default function AgentCard({
                         Last Active :
                         <span className="text-active">
                             {' '}
-                            {lastActive?.split('T')[0]}
+                            {formatedLastActive}
                         </span>
                     </span>
                     <span>
