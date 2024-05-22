@@ -73,7 +73,7 @@ export default function AgentCard({
                         Function : <span className="text-active"> {functionCount}</span>
                     </span>
                     <span>
-                        Last Active :4
+                        Last Active :
                         <span className="text-active">
                             {' '}
                             {lastActive?.split('T')[0]}

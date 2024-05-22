@@ -23,6 +23,7 @@ import TriggerForm from './components/TriggerForm';
 import { postTemplateData } from '@app/app/api/templates';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 import { useRouter } from 'next/navigation';
+import { SubmitButton } from '@app/components/molecules/SubmitButton';
 
 export interface ITemplateOption {
     value: string;
@@ -114,6 +115,9 @@ export default function TemplateForm() {
     const router = useRouter()
     
     //Sending Post request to Template API
+    
+   const [submittingForm , setSubmittingForm] = useState(false)
+
     const TemplateMutation = useMutation({
         mutationFn: (data: z.infer<typeof templateFormSchema>) => postTemplateData(data),
         onSuccess: () => {
@@ -122,12 +126,14 @@ export default function TemplateForm() {
             router.push('/agents')
         },
         onError: () => {
+            setSubmittingForm(false)
             console.log('Error Response')
         }
     });
 
     function onSubmit(formData: z.infer<typeof templateFormSchema>) {
         console.log(formData);
+        setSubmittingForm(true)
         TemplateMutation.mutateAsync(formData)
     }
     
@@ -233,14 +239,7 @@ export default function TemplateForm() {
                                 );
                             })}
                         </div>
-                        <Button
-                            variant="primary"
-                            size="md"
-                            className="mt-2 max-w-40"
-                            type="submit"
-                        >
-                            Create
-                        </Button>
+                        <SubmitButton disabled={submittingForm}/>
                     </form>
                 </Form>
             </Card>

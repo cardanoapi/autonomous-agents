@@ -74,7 +74,7 @@ export default function CustomLineChart() {
                     </defs>
                     <CartesianGrid strokeDasharray="0" vertical={false} stroke='#A2A3A5' strokeOpacity={0.4}/> 
                     <YAxis dx={-10} tickCount={4} axisLine={false} tickLine={false} stroke='#A2A3A5'/>
-                    <Tooltip content={<CustomTooltip/>} cursor={{strokeDasharray:5 , stroke:"#2196F3"}}/>
+                    <Tooltip content={<CustomTooltip/>} cursor={{strokeDasharray:5 , stroke:"#1C63E7"}}/>
                     <Area
                         type="monotone"
                         dataKey="amt"

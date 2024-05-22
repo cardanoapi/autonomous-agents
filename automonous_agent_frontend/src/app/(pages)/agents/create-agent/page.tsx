@@ -32,6 +32,7 @@ import { NumberInput } from '@app/components/molecules/NumberInput';
 import SelectedCard from '@app/components/molecules/SelectedCard';
 import { QueryClient } from '@tanstack/react-query';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
+import { SubmitButton } from '@app/components/molecules/SubmitButton';
 
 export const agentFormSchema = z.object({
     agentName: z.string(),
@@ -85,10 +86,10 @@ export default function CreateAgentForm() {
         }
     });
     
-    const [loader , setLoader] = useState(false)
+    const [submittingForm , setSubmittingForm] = useState(false)
 
     async function onSubmit(formData: z.infer<typeof agentFormSchema>) {
-        setLoader(true)
+        setSubmittingForm(true)
         await agentMutation.mutateAsync(formData);
     }
 
@@ -200,21 +201,7 @@ export default function CreateAgentForm() {
                             )}
                         />
                     </div>
-                    <Button
-                        type="submit"
-                        variant="primary"
-                        size="md"
-                        className="flex w-36 items-center justify-between "
-                        disabled={agentMutation.isPending ? true : false}
-                    >
-                        <div className={cn("flex items-center fixed" , loader ? "flex" : "hidden")}>
-                            <LoaderCircle
-                                className="mr-2 animate-spin stroke-white"
-                                strokeWidth={3}
-                            />
-                        </div>
-                        <span className="flex-1 text-center">Create</span>
-                    </Button>
+                    <SubmitButton disabled={submittingForm}/>
                 </Card>
             </form>
         </Form>
