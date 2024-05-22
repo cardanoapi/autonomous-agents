@@ -20,24 +20,14 @@ import TemplateCard, { ITemplateCard } from '@app/components/molecules/TemplateC
 import { useMutation } from '@tanstack/react-query';
 import { deleteTemplatebyID } from '@app/app/api/templates';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
+import TemplatesContainer from './TemplatesContainer';
 
 export default function TemplatesPage() {
     const {
-        data: templates,
+        data: templates = [],
         isError: errorTemplates,
         isLoading: loadingTemplates
     } = useQuery<ITemplate[]>({ queryKey: ['templates'], queryFn: fetchTemplates });
-
-
-    const deleteTemplate = useMutation({
-        mutationFn : (templateID : string) => deleteTemplatebyID(templateID),
-        onSuccess : ()=> {
-            queryClient.refetchQueries({queryKey : ['templates']})}
-    })
-
-    function handleDelete(templateID : string){
-        deleteTemplate.mutateAsync(templateID)
-    }
 
     return (
         <div>
@@ -69,35 +59,11 @@ export default function TemplatesPage() {
             <div className="flex flex-col gap-y-[80px] pb-10 pt-10">
                 <div className="mt-2 flex flex-col gap-y-5">
                     <span className="h5 inline-block">My Templates</span>
-                    <div className="grid grid-cols-4 gap-x-4 gap-y-4 2xl:grid-cols-5">
-                        {templates?.map((item, index) => (
-                            <TemplateCard
-                                name={item.name}
-                                id={item.id}
-                                description={item.description}
-                                templateTrigger={'null'}
-                                key={index}
-                                functionCount={0}
-                                ondelete={handleDelete}
-                            />
-                        ))}
-                    </div>
+                    <TemplatesContainer templates={templates}/>
                 </div>
                 <div className="flex flex-col gap-y-5">
                     <span className="h5 inline-block">Existing Templates</span>
-                    <div className="grid grid-cols-4 gap-x-4 gap-y-4 2xl:grid-cols-5">
-                        {templates?.map((item, index) => (
-                            <TemplateCard
-                                name={item.name}
-                                id={item.id}
-                                description={item.description}
-                                templateTrigger={'null'}
-                                key={index}
-                                functionCount={0}
-                                ondelete={handleDelete}
-                            />
-                        ))}
-                    </div>
+                    <TemplatesContainer templates={templates}/>
                 </div>
             </div>
         </div>

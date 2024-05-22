@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
-
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 import  AgentCard  from './AgentCard';
 
 const meta = {
@@ -9,9 +10,12 @@ const meta = {
     parameters: {
         layout: 'centered'
     },
-
+    decorators: [
+        (Story) => (
+          <QueryClientProvider client={queryClient}>{Story()}</QueryClientProvider>
+        )
+    ],
     tags: ['autodocs'],
-
     argTypes: {}
 } satisfies Meta<typeof AgentCard>;
 

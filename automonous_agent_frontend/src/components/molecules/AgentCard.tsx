@@ -28,7 +28,7 @@ export default function AgentCard({
     functionCount,
     lastActive,
     totalTrigger,
-    handleRemove = () => {},
+    handleRemove = () => {}
 }: IAgentCard) {
     const { data: template } = useQuery<ITemplate>({
         queryKey: [`template${templateID}`],
@@ -45,7 +45,7 @@ export default function AgentCard({
     }, [currentagent]);
 
     return (
-        <Card className="hover-transition-primary h-64 rounded-xl p-6 transition-all">
+        <Card className="hover-transition-primary h-64 rounded-xl p-6 transition-all min-w-[260px] min-h-[257px] max-w-[260px] max-h-[257px]">
             <div className="flex items-center justify-between">
                 <div className="card-h2">{agentName}</div>
                 <div className="flex gap-x-2">
@@ -73,7 +73,7 @@ export default function AgentCard({
                         Function : <span className="text-active"> {functionCount}</span>
                     </span>
                     <span>
-                        Last Active :
+                        Last Active :4
                         <span className="text-active">
                             {' '}
                             {lastActive?.split('T')[0]}

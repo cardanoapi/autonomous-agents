@@ -16,7 +16,7 @@ export default function OverViewAgentsCard({
     inactiveAgents
 }: IOverViewAgentsCard) {
     return (
-        <Card className="flex h-full w-full flex-col justify-between gap-y-0 p-4 pb-6">
+        <Card className="flex h-full w-full flex-col justify-between gap-y-0 p-4 pb-6 min-w-[269px]">
             <OverViewCardTitle title={title} value={totalAgents} />
             <div className="flex w-full gap-x-8 items-center">
                 <div className="flex items-center gap-x-2">

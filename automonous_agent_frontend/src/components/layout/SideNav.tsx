@@ -58,7 +58,7 @@ export default function SideNav() {
                     </span>
                 </div>
             </Link>
-            <div className="ml-1 mt-6 flex-col px-2">
+            <div className=" mt-6 flex-col px-2">
                 {SideNavItems.map((Prop, index) => (
                     <SideNavLink key={index} Prop={Prop} />
                 ))}

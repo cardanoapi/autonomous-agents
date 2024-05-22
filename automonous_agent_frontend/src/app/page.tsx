@@ -36,7 +36,7 @@ export default function Home() {
             </Head>
 
             {/* Agents Overview Card */}
-            <div className="flex grid-cols-4 justify-between gap-[12px] 2xl:gap-[2%] h-36">
+            <div className="flex grid-cols-4 gap-[12px] 2xl:gap-[25px] h-36 ">
                 <OverViewAgentsCard
                     title="No of Agents"
                     totalAgents={agents?.length || 'NA'}
@@ -65,7 +65,7 @@ export default function Home() {
             </div>
 
             {/* Dashboard Chart*/}
-            <Card className="mt-8 flex flex-row gap-y-8 py-4 pr-12  pb-16 pt-2">
+            <Card className="mt-8 flex flex-row gap-y-8 py-4 pr-12  pb-16 pt-2 2xl:mt-12 5xl:mt-16">
                 <span className="h4 rotate-180 text-center [writing-mode:vertical-lr]">
                     No of transaction
                 </span>
@@ -83,7 +83,7 @@ export default function Home() {
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
-                    <div className='h-[355px] mt-2 2xl:h-[500px]'>
+                    <div className='h-[355px] mt-2 2xl:h-[500px] 4xl:h-[600px]'>
                         <CustomLineChart />
                     </div>
                 </div>

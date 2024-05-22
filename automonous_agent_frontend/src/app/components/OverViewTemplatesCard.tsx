@@ -19,7 +19,7 @@ export default function OverViewTemplatesCard({
     customTemplates
 }: IOverViewTemplatesCard) {
     return (
-        <Card className="flex h-full w-full flex-col justify-between gap-y-0 p-4">
+        <Card className="flex h-full w-full flex-col justify-between gap-y-0 p-4 min-w-[264px]">
             <OverViewCardTitle title={title} value={totalTemplates} />
             <div className="flex w-full items-center gap-x-[20%]">
                     <div className="flex items-center">
