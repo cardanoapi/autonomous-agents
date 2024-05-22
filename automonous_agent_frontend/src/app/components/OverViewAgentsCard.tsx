@@ -16,9 +16,9 @@ export default function OverViewAgentsCard({
     inactiveAgents
 }: IOverViewAgentsCard) {
     return (
-        <Card className="flex h-full w-full flex-col justify-between gap-y-0 p-4 pb-6 min-w-[269px]">
+        <Card className="flex h-full w-full flex-col justify-between gap-y-0 p-4 pb-6 min-w-[269px] hover-transition-primary">
             <OverViewCardTitle title={title} value={totalAgents} />
-            <div className="flex w-full gap-x-8 items-center">
+            <div className="flex w-full gap-x-8 items-center 4xl:gap-x-12">
                 <div className="flex items-center gap-x-2">
                     <div className="bg-brand-Green-100 flex h-4 w-4  items-center justify-center rounded-full">
                         <div className="bg-brand-Green-200  h-1 w-1 animate-ping rounded-full"></div>

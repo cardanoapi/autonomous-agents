@@ -429,7 +429,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                         /** DropDown appearOnTop  */
                         <CommandList
                             className={cn(
-                                'text-popover-foreground  rounded-md border min-w-full bg-white shadow-md outline-none animate-in',
+                                'text-popover-foreground  rounded-md border min-w-full bg-white shadow-md outline-none animate-in max-h-[200px]',
                                 {
                                     'absolute top-0 ': appearOnTop
                                 }

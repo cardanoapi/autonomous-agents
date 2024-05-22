@@ -69,7 +69,7 @@ export default function CustomLineChart() {
                     <defs>
                         <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="5%" stopColor="#0093FD1A" stopOpacity={1} />
-                            <stop offset="95%" stopColor="#0093FD1A" stopOpacity={0} />
+                            <stop offset="90%" stopColor="#0093FD1A" stopOpacity={0} />
                         </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="0" vertical={false} stroke='#A2A3A5' strokeOpacity={0.4}/> 
@@ -78,7 +78,7 @@ export default function CustomLineChart() {
                     <Area
                         type="monotone"
                         dataKey="amt"
-                        stroke="#2196F3"
+                        stroke="#1C63E7"
                         strokeWidth={"5"}
                         fillOpacity={1}
                         fill="url(#colorUv)"

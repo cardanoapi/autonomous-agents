@@ -44,7 +44,7 @@ export default function TemplateCard({
                         <Trash2 stroke='#A1A1A1'/>
                     </div>
                 </div>
-                <CardDescription className="card-description1 mt-1">
+                <CardDescription className="card-description1 mt-2">
                     {Truncate(description,60)}
                 </CardDescription>
             </div>

@@ -101,5 +101,5 @@
 }
 
 .hover-transition-primary {
-    @apply hover:shadow-[0_20px_50px_rgba(8,_112,_184,_0.1)] hover:transition-all
+    @apply hover:shadow-md hover:transition-all
 }

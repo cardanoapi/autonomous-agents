@@ -71,7 +71,7 @@ export default function RootLayout({
                     <Provider>
                         <ReactQueryProvider>
                         <div className="flex h-full w-full  bg-gradient-to-r from-[#F8F9FC] via-[#F5F5FC] to-[#E9EAF8]">
-                            <div className="min-h-screen md:min-w-[256px] 2xl:min-w-[300px]">
+                            <div className="min-h-screen  min-w-[256px] 5xl:w-[300px] 3xl:w-[278px]">
                                 <SideNav />
                             </div>
                             <div className="px-[34px] 2xl:px-[45px] mt-[3%] min-h-full flex-col flex-grow overflow-y-auto no-scrollbar overflow-x-clip">
