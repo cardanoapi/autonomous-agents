@@ -72,7 +72,6 @@ Run Docker-Compose . This will setup up the **postgres Database**, **pgadmin4** 
  docker compose -f "docker-compose.deployment.yml" up --build -d
 ```
 
-After successfully run ,Agent manager is up and running at http://localhost:3001 and its websocket service is available
+After successfully running the service ,It will be up and running at http://localhost:3001 and its websocket service will be available to use by agents.
 
-check service for more details on its status 
 
