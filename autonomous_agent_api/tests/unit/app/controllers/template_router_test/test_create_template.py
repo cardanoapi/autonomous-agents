@@ -20,9 +20,7 @@ class TestCreateTrigger:
     def template_router(self, template_service):
         return TemplateRouter(template_service)
 
-    async def test_create_template_pass_with_valid_data(
-        self, template_router, template_service
-    ):
+    async def test_create_template_pass_with_valid_data(self, template_router, template_service):
         # Example input data
         template_data = TemplateCreateDto(
             name="Test Template",
@@ -61,9 +59,7 @@ class TestCreateTrigger:
         template_service.create_template.assert_called_once_with(template_data)
         assert result == expected_template_response
 
-    async def test_create_template_fail_with_invalid_data(
-        self, template_router, template_service
-    ):
+    async def test_create_template_fail_with_invalid_data(self, template_router, template_service):
         with pytest.raises(ValidationError):
             # Example input data
             template_data = TemplateCreateDto(

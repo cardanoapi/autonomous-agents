@@ -14,9 +14,7 @@ def get_agent_service() -> AgentService:
     agent_repository = AgentRepository()
     template_trigger_service = get_template_trigger_service()
     trigger_service = get_trigger_service()
-    agent_service = AgentService(
-        agent_repository, template_trigger_service, trigger_service
-    )
+    agent_service = AgentService(agent_repository, template_trigger_service, trigger_service)
     return agent_service
 
 

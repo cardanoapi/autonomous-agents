@@ -26,17 +26,13 @@ class WebSocket_Connection_Manager:
         if agent_active:
             if message.get("message") == "config_updated":
                 # Fetch updated configuration
-                instance_count, configurations = await fetch_agent_configuration(
-                    websocket_agent_id
-                )
+                instance_count, configurations = await fetch_agent_configuration(websocket_agent_id)
                 updated_message = {
                     "message": "config_updated",
                     "instance_count": instance_count,
                     "configurations": configurations,
                 }
-                await self.active_connections[websocket_agent_id].send_json(
-                    updated_message
-                )
+                await self.active_connections[websocket_agent_id].send_json(updated_message)
             else:
                 await self.active_connections[websocket_agent_id].send_json(message)
         else:
@@ -50,9 +46,7 @@ class WebSocket_Connection_Manager:
     async def remove_previous_agent_connection_if_exists(self, websocket_agent_id: str):
         if await self.check_if_agent_active(websocket_agent_id):
             existing_websocket = self.active_connections.pop(websocket_agent_id)
-            await existing_websocket.close(
-                code=1000, reason="establishing a new connection"
-            )
+            await existing_websocket.close(code=1000, reason="establishing a new connection")
 
     async def update_last_active_timestamp(self, agent_id: str):
         try:
@@ -61,9 +55,7 @@ class WebSocket_Connection_Manager:
                     where={"id": agent_id}, data={"last_active": datetime.utcnow()}
                 )
         except Exception as e:
-            logger.error(
-                f"Error updating last active timestamp for agent {agent_id}: {e}"
-            )
+            logger.error(f"Error updating last active timestamp for agent {agent_id}: {e}")
 
 
 manager = WebSocket_Connection_Manager()
