@@ -23,16 +23,12 @@ class TemplateTriggerRepository:
     def __init__(self, db_connection=None):
         self.db = db_connection or prisma_connection
 
-    async def save_template_trigger(
-        self, transaction: Prisma, template_id: str, template_data: TriggerCreateDTO
-    ):
+    async def save_template_trigger(self, transaction: Prisma, template_id: str, template_data: TriggerCreateDTO):
         template_trigger_id = str(uuid.uuid4())
         template_data_dict = template_data.dict()
 
         if template_data.type == "CRON":
-            await validate_type_CRON(
-                template_data.data.frequency, template_data.data.probability
-            )
+            await validate_type_CRON(template_data.data.frequency, template_data.data.probability)
         elif template_data.type == "TOPIC":
             await validate_type_TOPIC(template_data.data.topic)
         else:
@@ -68,14 +64,10 @@ class TemplateTriggerRepository:
         return template_response
 
     async def retrieve_templates_trigger(self) -> List[TemplateTriggerResponse]:
-        templates = await self.db.prisma.template_trigger.find_many(
-            where={"deleted_at": None}
-        )
+        templates = await self.db.prisma.template_trigger.find_many(where={"deleted_at": None})
         return templates
 
-    async def retrieve_template_trigger(
-        self, template_id: str
-    ) -> List[TemplateTriggerResponse]:
+    async def retrieve_template_trigger(self, template_id: str) -> List[TemplateTriggerResponse]:
         template = await self.db.prisma.template_trigger.find_many(
             where={"template_id": template_id, "deleted_at": None}
         )
@@ -84,18 +76,14 @@ class TemplateTriggerRepository:
     async def modify_template_trigger(
         self, template_trigger_id: str, template_data: TemplateTriggerCreateDto
     ) -> Optional[TemplateTriggerResponse]:
-        template = await self.db.prisma.template_trigger.find_first(
-            where={"id": template_trigger_id}
-        )
+        template = await self.db.prisma.template_trigger.find_first(where={"id": template_trigger_id})
         if template is None or template.deleted_at is not None:
             raise HTTPException(status_code=404, detail="Template not found")
         updated_data_dict = template_data.dict()
 
         # validation for CRON nad TOPIC
         if template_data.type == "CRON":
-            await validate_type_CRON(
-                template_data.data.frequency, template_data.data.probability
-            )
+            await validate_type_CRON(template_data.data.frequency, template_data.data.probability)
 
         if template_data.type == "TOPIC":
             await validate_type_TOPIC(template_data.data.topic)
@@ -112,9 +100,7 @@ class TemplateTriggerRepository:
 
         updated_data_dict["updated_at"] = datetime.now(timezone.utc)
 
-        await self.db.prisma.template_trigger.update(
-            where={"id": template_trigger_id}, data=updated_data_dict
-        )
+        await self.db.prisma.template_trigger.update(where={"id": template_trigger_id}, data=updated_data_dict)
 
         # Create a TriggerResponse object with the converted data
         template_response = TemplateTriggerResponse(
@@ -127,9 +113,7 @@ class TemplateTriggerRepository:
         return template_response
 
     async def remove_template_trigger(self, template_trigger_id: str) -> bool:
-        template = await self.db.prisma.template_trigger.find_first(
-            where={"id": template_trigger_id}
-        )
+        template = await self.db.prisma.template_trigger.find_first(where={"id": template_trigger_id})
         if template is None:
             return False
         elif template.deleted_at is not None:
@@ -141,9 +125,7 @@ class TemplateTriggerRepository:
         )
         return True
 
-    def _convert_data_to_dto(
-        self, trigger_type: str, data_dict: dict
-    ) -> Union[CronTriggerDTO, TopicTriggerDTO]:
+    def _convert_data_to_dto(self, trigger_type: str, data_dict: dict) -> Union[CronTriggerDTO, TopicTriggerDTO]:
         if trigger_type == "CRON":
             return CronTriggerDTO(**data_dict)
         elif trigger_type == "TOPIC":
