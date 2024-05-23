@@ -53,11 +53,7 @@ export const postAgentData = async (formData: z.infer<typeof agentFormSchema>) =
     }
 };
 
-
-
-
-
-export const deleteAgentbyID = async (agentID: string) => {
+export const deleteAgentbyID = async (agentID : string) => {
     try {
         const response = await axios.delete(`${baseAPIurl}/agents/${agentID}/`);
         if (response.status === 204) {

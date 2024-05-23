@@ -45,10 +45,15 @@ export default function AgentCard({
 
     const [dialogOpen, setDialogOpen] = useState(false);
 
-    const deleteAgent = useMutation({
+
+    interface DeleteAgentParams {
+        agentID: string;
+        onSuccess?: () => void;
+    }
+
+    const deleteAgentMutation = useMutation({
         mutationFn: (agentID: string) => deleteAgentbyID(agentID),
         onSuccess: () => {
-            console.log('delete success agent')
             queryClient.invalidateQueries({ queryKey: ['agents'] });
             setDialogOpen(false)
             SuccessToast('Agent Deleted Successfully.')
@@ -124,7 +129,7 @@ export default function AgentCard({
                         msg="Are you sure you want to delete this Agent? This process cannot be undone !"
                         onClose={()=>{setDialogOpen(false)}}
                         onDecline={()=>{setDialogOpen(false)}}
-                        onAccept={()=>{deleteAgentbyID(agentID)}}
+                        onAccept={()=>{deleteAgentMutation.mutateAsync(agentID)}}
                     />
                 </DialogContent>
             </Dialog>

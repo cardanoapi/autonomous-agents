@@ -8,6 +8,7 @@ import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 import { Dialog, DialogContent } from '../atoms/Dialog';
 import { useState } from 'react';
 import ConfirmationBox from './ConfirmationBox';
+import { SuccessToast } from './CustomToasts';
 
 export interface ITemplateCard {
     templateName: string;
@@ -25,16 +26,14 @@ export default function TemplateCard({
 
     const [dialogOpen, setDialogOpen] = useState(false);
 
-    const deleteTemplate = useMutation({
+    const deleteTemplateMutation = useMutation({
         mutationFn: (templateID: string) => deleteTemplatebyID(templateID),
         onSuccess: () => {
             queryClient.refetchQueries({ queryKey: ['templates'] });
+            setDialogOpen(false)
+            SuccessToast('Template Deleted Successfully')
         },
     });
-
-    function deleteTemplateByID(templateID: string) {
-        deleteTemplate.mutateAsync(templateID);
-    }
 
     return (
         <>
@@ -63,7 +62,7 @@ export default function TemplateCard({
                         msg="Are you sure you want to delete this Template? This process cannot be undone!"
                         onClose={() => { setDialogOpen(false); }}
                         onDecline={() => { setDialogOpen(false); }}
-                        onAccept={() => { deleteTemplateByID(templateID); }}
+                        onAccept={() => { deleteTemplateMutation.mutateAsync(templateID) }}
                     />
                 </DialogContent>
             </Dialog>
