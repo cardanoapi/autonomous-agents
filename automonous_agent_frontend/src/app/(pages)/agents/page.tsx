@@ -1,45 +1,51 @@
 'use client';
 
 import Link from 'next/link';
-
 import { useMutation, useQuery } from '@tanstack/react-query';
-
-import { IAgent, fetchAgents } from '@app/app/api/agents';
-import { deleteAgentbyID } from '@app/app/api/agents';
+import { IAgent, fetchAgents, deleteAgentbyID } from '@app/app/api/agents';
 import { Button } from '@app/components/atoms/Button';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from '@app/components/atoms/DropDownMenu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
 import AgentCard, { IAgentCard } from '@app/components/molecules/AgentCard';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 import { useEffect, useState } from 'react';
-import {atom, useAtom} from 'jotai'
+import { atom, useAtom } from 'jotai';
 import { agentCreatedAtom } from '@app/store/loaclStore';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 
-
-
 export default function AgentsPage() {
-    const [agentCreated , setAgentCreated] = useAtom(agentCreatedAtom)
+    const [agentCreated, setAgentCreated] = useAtom(agentCreatedAtom);
     const {
         data: agents,
         isLoading: loadingAgents,
-        isError: errorAgents
+        isError: errorAgents,
     } = useQuery<IAgent[]>({ queryKey: ['agents'], queryFn: fetchAgents });
-    
-   
-    useEffect(()=>{
-        if (agentCreated === true){
-            SuccessToast('Agent Created Successfully')
-            setAgentCreated(false)
-        }
-    },[])
 
-    
+    const [filteredAgents, setFilteredAgents] = useState<IAgent[]>([]);
+
+    useEffect(() => {
+        if (agentCreated === true) {
+            SuccessToast('Agent Created Successfully');
+            setAgentCreated(false);
+        }
+        if (agents) {
+            setFilteredAgents(agents);
+        }
+    }, [agentCreated, agents]);
+
+    useEffect(() => {
+        if (agents) {
+            setFilteredAgents(agents);
+        }
+    }, [agents]);
+
+    function handleSearch(agentName: string) {
+        const newAgents = agents?.filter(agent =>
+            agent.name.toLowerCase().includes(agentName.toLowerCase())
+        ) || [];
+        setFilteredAgents(newAgents);
+    }
+
     return (
         <>
             <div className="flex justify-between">
@@ -49,6 +55,7 @@ export default function AgentsPage() {
                         placeholder="Search agents"
                         variant={'secondary'}
                         className="h-10 min-w-[290px]"
+                        onSearch={handleSearch}
                     ></SearchField>
                     <DropdownMenu>
                         <DropdownMenuTrigger border={true} className="h-10">
@@ -68,7 +75,7 @@ export default function AgentsPage() {
                 </Link>
             </div>
             <div className="3xl:grid-cols-4 5xl:grid-cols-6 mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-4 gap-5 4xl:grid-cols-5">
-                {agents?.map((agent: IAgent, index) => (
+                {filteredAgents.map((agent: IAgent, index) => (
                     <AgentCard
                         agentName={agent?.name || 'NA'}
                         agentID={agent?.id}
@@ -80,7 +87,7 @@ export default function AgentsPage() {
                         key={index}
                     />
                 ))}
-                </div>
+            </div>
         </>
     );
 }

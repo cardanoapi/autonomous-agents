@@ -18,23 +18,31 @@ const SearchFieldVariants = cva(
             variant : 'primary'
         }
 })
-
 export interface SearchFieldProps
     extends React.InputHTMLAttributes<HTMLInputElement>,
         VariantProps<typeof SearchFieldVariants> {
     asChild?: boolean;
+    onSearch?: (value: string) => void;
 }
 
 export const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
-    ({ className, variant, size, asChild = false, ...props }, ref) => {
+    ({ className, variant, size, onChange, onSearch, asChild = false, ...props }, ref) => {
         const Comp = asChild ? Slot : 'input';
+
+        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            const value = e.target.value;
+            onChange?.(e);
+            onSearch?.(value);
+        };
+
         return (
             <div className={cn(SearchFieldVariants({ variant, className }))}>
-                <Search size={16}/>
+                <Search size={16} />
                 <Comp
                     className='bg-transparent outline-none w-[90%]'
                     ref={ref}
                     {...props}
+                    onChange={handleChange}
                 />
             </div>
         );
