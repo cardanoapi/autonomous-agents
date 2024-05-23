@@ -13,6 +13,8 @@ import { Dialog, DialogClose, DialogContent, DialogTrigger } from '../atoms/Dial
 import { Switch } from '../atoms/Switch';
 import ConfirmationBox from './ConfirmationBox';
 import { ErrorToast, SuccessToast } from './CustomToasts';
+import { fetchSuccessfullTriggersbyAgentID, fetchtriggersbyTemplateID, fetchUnSuccessfullTriggersbyAgentID, ITrigger } from '@app/app/api/trigger';
+import { Truncate } from '@app/utils/common/extra';
 
 export interface IAgentCard {
     agentName: string;
@@ -42,6 +44,21 @@ export default function AgentCard({
         queryKey: [`agent${agentID}`],
         queryFn: () => fetchAgentbyID(agentID)
     });
+
+    const {data : templateTriggers = []} = useQuery<ITrigger[]>({
+        queryKey: [`triggers${templateID}`],
+        queryFn: () => fetchtriggersbyTemplateID(templateID)
+    })
+
+    const {data : successfullTransactions = []} = useQuery<{string : string}[]>({
+        queryKey: [`sucessfullTransactions${agentID}`],
+        queryFn: () => fetchSuccessfullTriggersbyAgentID(agentID)
+    })
+
+    const {data : unsuccessfullTransactions = {}} =useQuery({
+        queryKey: [`unsucessfullTransactions${agentID}`],
+        queryFn: () => fetchUnSuccessfullTriggersbyAgentID(agentID)
+    })
 
     const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -90,9 +107,9 @@ export default function AgentCard({
 
     return (
         <>
-            <Card className="hover-transition-primary max-h-[260px] min-h-[260px] min-w-[260px] max-w-[260px] rounded-xl p-6 transition-all">
+            <Card className="hover-transition-primary min-w-[260px] min-h-[260px] rounded-xl p-6 transition-all">
                 <div className="flex items-center justify-between">
-                    <div className="card-h2">{agentName}</div>
+                    <div className="card-h2">{Truncate(agentName,11)}</div>
                     <div className="flex gap-x-2">
                         <Trash2 color="#A1A1A1" onClick={()=>{setDialogOpen(true)}} className='hover:cursor-pointer'/>
                         <Switch checked={isActiveWithinLast33Seconds} />
@@ -108,16 +125,20 @@ export default function AgentCard({
                             </span>
                         </span>
                         <span>
-                            Function :{' '}
-                            <span className="text-active"> {functionCount}</span>
+                           Total Functions :
+                            <span className="text-active"> {templateTriggers?.length}</span>
                         </span>
                         <span>
                             Last Active :
                             <span className="text-active"> {formatedLastActive}</span>
                         </span>
                         <span>
-                            Total Triggers :
-                            <span className="text-active"> {totalTrigger}</span>
+                            Successfull Transactions :
+                            <span className="text-active"> {successfullTransactions.length || 0}</span>
+                        </span>
+                        <span>
+                            Unsuccessfull Transactions :
+                            <span className="text-active"> {Object.keys(unsuccessfullTransactions).length}</span>
                         </span>
                     </CardContent>
                 </div>

@@ -23,7 +23,7 @@ const config = {
     extend: {
       screens: {
         "3xl": "1620px",
-        "4xl": "1920px",
+        "4xl": "1800px",
         "5xl": "2000px",
       },
       colors: {
@@ -77,7 +77,7 @@ const config = {
           },
           Red : {
             100 : "#D04D52",
-            200 : "#ba4247"
+            200 : "#a32227"
           }
         },
       },

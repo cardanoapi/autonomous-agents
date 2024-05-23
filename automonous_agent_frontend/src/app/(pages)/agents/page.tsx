@@ -48,7 +48,7 @@ export default function AgentsPage() {
                     <SearchField
                         placeholder="Search agents"
                         variant={'secondary'}
-                        className="h-10 w-[45%] 2xl:w-[80%] 4xl:w-[100%]"
+                        className="h-10 min-w-[290px]"
                     ></SearchField>
                     <DropdownMenu>
                         <DropdownMenuTrigger border={true} className="h-10">
@@ -67,7 +67,7 @@ export default function AgentsPage() {
                     </Button>
                 </Link>
             </div>
-            <div className="3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6 mt-12 grid grid-cols-1 gap-5 gap-y-5 5xl:gap-10 4xl:gap-16 3xl:gap-20 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-4 ">
+            <div className="3xl:grid-cols-4 5xl:grid-cols-6 mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-4 gap-5 4xl:grid-cols-5">
                 {agents?.map((agent: IAgent, index) => (
                     <AgentCard
                         agentName={agent?.name || 'NA'}

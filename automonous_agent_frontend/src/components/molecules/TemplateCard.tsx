@@ -37,7 +37,7 @@ export default function TemplateCard({
 
     return (
         <>
-            <Card className="hover-transition-primary flex h-[157px] w-[271px] max-h-[157px] max-w-[271px] flex-col justify-between gap-y-0 p-4 pb-6 pr-4">
+            <Card className="hover-transition-primary flex min-h-[157px] min-w-[271px] flex-col justify-between gap-y-0 p-4 pb-6 pr-4">
                 <div>
                     <div className='flex justify-between'>
                         <div className="flex items-center gap-x-2">
