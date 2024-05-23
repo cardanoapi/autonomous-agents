@@ -5,7 +5,7 @@ import  CustomLineChart  from './CustomLineChart';
 
 const meta = {
     title: 'CustomLineChart',
-    component: Card,
+    component: CustomLineChart,
     parameters: {
         layout: 'centered'
     },
@@ -19,7 +19,6 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
     args: {
-        children : <CustomLineChart/>,
         className: "w-[800px] h-[400px]"
     }
 };

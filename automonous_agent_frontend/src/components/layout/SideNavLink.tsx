@@ -15,7 +15,7 @@ export default function SideNavLink({ Prop }: { Prop: ISideNavItem }) {
         <Link href={Prop.href}>
             <div
                 className={cn(
-                    'hover-transition-blue mb-4 flex h-10 items-center rounded px-3 ',
+                    'hover-transition-blue flex h-10 items-center rounded px-3 ',
                     { 'bg-brand-Blue-100': isActive }
                 )}
             >

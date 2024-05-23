@@ -1,4 +1,5 @@
-'use client'
+"use client"
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { Card } from '@app/components/atoms/Card';
 import {
@@ -7,28 +8,63 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
-import OverViewCard, { IOverViewCard } from '@app/components/molecules/OverViewCard';
 import CustomLineChart from '@app/components/molecules/chart/CustomLineChart';
 import OverViewAgentsCard from './components/OverViewAgentsCard';
 import OverViewTemplatesCard from './components/OverViewTemplatesCard';
+import OverViewTransactionsCard from './components/OverViewTransactionsCard';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { fetchActiveAgentsCount, fetchAgents } from './api/agents';
 import { fetchTemplates } from './api/templates';
 import { fetchFunctions } from './api/functions';
+import { fetchTransactionsCount, fetchTriggers } from './api/trigger';
+import OverViewTriggerCard from './components/OverViewTriggerCard';
 
-export interface IAgentsCardData{
-    totalAgents : number
-    activeAgents : number
-    inactiveAgents : number
+
+export interface IAgentsCardData {
+    totalAgents: number;
+    activeAgents: number;
+    inactiveAgents: number;
 }
 
 export default function Home() {
-    const {data: agents = []} = useQuery({queryKey:['agents'] , queryFn: fetchAgents})
-    const {data : activeAgents} = useQuery({queryKey:['activeAgentsCount'] , queryFn:fetchActiveAgentsCount})
-    const {data : templates=[]} = useQuery({queryKey:['templates'] , queryFn: fetchTemplates})
-    const {data : functions=[]} = useQuery({queryKey:['functions'] , queryFn: fetchFunctions})
-    const {data : templateTriggers=[]} = useQuery({queryKey:['templateTriggers'] , queryFn:fetchTemplates})
-    
+    const { data: agents = [] } = useQuery({ queryKey: ['agents'], queryFn: fetchAgents });
+    const { data: activeAgents } = useQuery({ queryKey: ['activeAgentsCount'], queryFn: fetchActiveAgentsCount });
+    const { data: templates = [] } = useQuery({ queryKey: ['templates'], queryFn: fetchTemplates });
+    const { data: triggers = []} = useQuery({ queryKey: ['Triggers'], queryFn : fetchTriggers });
+    const { data: successfulltransactionCount = {} } = useQuery({ queryKey: ['totalSuccessfullTransactionCounts'], queryFn: () => fetchTransactionsCount('true') });
+    const { data: unsuccessfulltransactionCount = {} } = useQuery({ queryKey: ['totalUnsuccessfulltransactionCounts'], queryFn: () => fetchTransactionsCount('false') });
+
+    // Calculate the number of successful and unsuccessful transactions
+    const successfullTransactions = Object.keys(successfulltransactionCount).length;
+    const unsuccessfullTransactions = Object.keys(unsuccessfulltransactionCount).length;
+
+    // Calculate the total number of transactions
+    const totalTransactions = successfullTransactions + unsuccessfullTransactions;
+
+    // Calculate the percentages
+    const successPercentage = totalTransactions > 0 ? (successfullTransactions / totalTransactions) * 100 : 0;
+    const unsuccessPercentage = totalTransactions > 0 ? (unsuccessfullTransactions / totalTransactions) * 100 : 0;
+
+    const [transactionStats, setTransactionStats] = useState({
+        totalTransactions: totalTransactions,
+        successfullTransactions: successfullTransactions,
+        unsuccessfullTransactions: unsuccessfullTransactions,
+        successPercentage: successPercentage.toFixed(2),
+        unsuccessPercentage: unsuccessPercentage.toFixed(2)
+    });
+
+    // Update the state when the successful or unsuccessful transactions change
+    useEffect(() => {
+        setTransactionStats({
+            ...transactionStats,
+            totalTransactions: totalTransactions,
+            successfullTransactions: successfullTransactions,
+            unsuccessfullTransactions: unsuccessfullTransactions,
+            successPercentage: successPercentage.toFixed(2),
+            unsuccessPercentage: unsuccessPercentage.toFixed(2)
+        });
+    }, [successfullTransactions, unsuccessfullTransactions]);
+
     return (
         <>
             <Head>
@@ -41,7 +77,7 @@ export default function Home() {
                     title="No of Agents"
                     totalAgents={agents?.length || 'NA'}
                     activeAgents={activeAgents?.online_agents_count}
-                    inactiveAgents={Math.max(0,agents?.length - activeAgents?.online_agents_count)}
+                    inactiveAgents={Math.max(0, agents?.length - activeAgents?.online_agents_count)}
                 />
                 <OverViewTemplatesCard
                     title="No of Templates"
@@ -50,17 +86,17 @@ export default function Home() {
                     customTemplates={0}
                 />
                 {/* To do Overview cards */}
-                <OverViewAgentsCard
-                    title="Agent Functions"
-                    totalAgents={functions?.length}
-                    activeAgents={0}
-                    inactiveAgents={functions?.length}
+                <OverViewTransactionsCard
+                    title='Total Transactions'
+                    totalTransactions={transactionStats.totalTransactions}
+                    successPercentage={transactionStats.successPercentage}
+                    unsucessPercentage={transactionStats.unsuccessPercentage}
                 />
-                <OverViewTemplatesCard
-                    title="TemplateTriggers"
-                    totalTemplates={templateTriggers.length}
-                    defaultTemplates={templateTriggers.length}
-                    customTemplates={0}
+                <OverViewTriggerCard
+                    title="No of Triggers"
+                    total={triggers.length}
+                    active={triggers.length}
+                    inactive={0}
                 />
             </div>
 

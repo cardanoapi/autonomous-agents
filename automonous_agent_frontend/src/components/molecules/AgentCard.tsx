@@ -50,7 +50,7 @@ export default function AgentCard({
         queryFn: () => fetchtriggersbyTemplateID(templateID)
     })
 
-    const {data : successfullTransactions = []} = useQuery<{string : string}[]>({
+    const {data : successfullTransactions = {}} = useQuery<{string : string}[]>({
         queryKey: [`sucessfullTransactions${agentID}`],
         queryFn: () => fetchSuccessfullTriggersbyAgentID(agentID)
     })
@@ -134,11 +134,11 @@ export default function AgentCard({
                         </span>
                         <span>
                             Successfull Transactions :
-                            <span className="text-active"> {successfullTransactions.length || 0}</span>
+                            <span className="text-active !text-green-500"> {Object.keys(successfullTransactions).length}</span>
                         </span>
                         <span>
                             Unsuccessfull Transactions :
-                            <span className="text-active"> {Object.keys(unsuccessfullTransactions).length}</span>
+                            <span className="text-active !text-red-600"> {Object.keys(unsuccessfullTransactions).length}</span>
                         </span>
                     </CardContent>
                 </div>

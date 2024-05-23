@@ -19,17 +19,17 @@ export default function OverViewTemplatesCard({
     customTemplates
 }: IOverViewTemplatesCard) {
     return (
-        <Card className="flex h-full w-full flex-col justify-between gap-y-0 p-4 min-w-[264px] hover-transition-primary">
+        <Card className="flex h-full w-full flex-col justify-between gap-y-0 p-4 pb-6 min-w-[264px] hover-transition-primary">
             <OverViewCardTitle title={title} value={totalTemplates} />
-            <div className="flex w-full items-center gap-x-[20%]">
-                    <div className="flex items-center">
-                        <FileText fill="#1C63E7" stroke="#fff" height={24} width={24}/>
-                        <div className="h3">{defaultTemplates}</div>
-                    </div>
-                    <div className='flex items-center'>
-                        <FileCog fill='#1C63E7' stroke='#fff' height={24} width={24}/>
-                        <div className="h3">{customTemplates}</div>
-                    </div>
+            <div className="flex w-full gap-x-12 items-center 4xl:gap-x-12">
+                <div className="flex items-center gap-x-2">
+                    <FileText stroke='#1C63E7'/>
+                    <div className="card-h4 ">{defaultTemplates}</div>
+                </div>
+                <div className="flex items-center gap-x-1">
+                    <FileCog stroke='#1C63E7'/>
+                    <div className="card-h4"><span className='#ff3100'></span>{customTemplates}</div>
+                </div>
             </div>
         </Card>
     );

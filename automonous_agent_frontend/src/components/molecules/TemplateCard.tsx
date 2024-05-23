@@ -9,6 +9,9 @@ import { Dialog, DialogContent } from '../atoms/Dialog';
 import { useState } from 'react';
 import ConfirmationBox from './ConfirmationBox';
 import { SuccessToast } from './CustomToasts';
+import { useQuery } from '@tanstack/react-query';
+import { fetchtriggersbyTemplateID } from '@app/app/api/trigger';
+import { ITrigger } from '@app/app/api/trigger';
 
 export interface ITemplateCard {
     templateName: string;
@@ -35,6 +38,11 @@ export default function TemplateCard({
         },
     });
 
+    const {data : templateTriggers = []} = useQuery<ITrigger[]>({
+        queryKey: [`triggers${templateID}`],
+        queryFn: () => fetchtriggersbyTemplateID(templateID)
+    })
+
     return (
         <>
             <Card className="hover-transition-primary flex min-h-[157px] min-w-[271px] flex-col justify-between gap-y-0 p-4 pb-6 pr-4">
@@ -50,9 +58,9 @@ export default function TemplateCard({
                         {Truncate(templateDescription, 60)}
                     </CardDescription>
                 </div>
-                <CardContent className="flex flex-col gap-y-2">
-                    <span className="card-h4">Functions: 0</span>
-                    <span className="card-h4">Trigger: {templateTrigger}</span>
+                <CardContent className="flex flex-col gap-y-2 gap">
+                    <span className="card-h4">Total Triggers: {templateTrigger.length}</span>
+                    <span className="card-h4 p-0">{templateID}</span>
                 </CardContent>
             </Card>
             <Dialog open={dialogOpen}>

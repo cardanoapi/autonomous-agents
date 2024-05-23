@@ -39,6 +39,7 @@ export default function TemplatesPage() {
         <div>
             <div className="flex justify-between">
                 <div className="flex gap-x-4">
+                <span className="h1-new">Templates({templates?.length})</span>
                     <SearchField
                         variant="secondary"
                         className="h-10 min-w-[240px]"

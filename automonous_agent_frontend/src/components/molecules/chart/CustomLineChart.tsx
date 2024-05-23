@@ -37,9 +37,8 @@ const demoData: ILineChartData[] = [
     { name:'J' , amt : 34},
 ];
 
-export default function CustomLineChart() {
-    const [data, setData] = useState<ILineChartData[]>(demoData);
-    
+export default function CustomLineChart({chartData , className}:{chartData? : ILineChartData[] , className? : string}) {
+    const [data, setData] = useState<ILineChartData[]>(chartData || demoData);
 
 
     const updateChartData = () => {
