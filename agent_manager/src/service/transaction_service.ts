@@ -4,7 +4,7 @@ import {createOrUpdateFunctionDetail} from "../repository/fucntion_details_repos
 
 const kuberBaseUrl = 'https://sanchonet.kuber.cardanoapi.io';
 const kuberApiKey = 'bS6Nm7dJTnCtk0wqwJChwZ7Wot2RTvDS7dETmYYHJ8htqrMs3xYI5njFeGUbno';
-const ApiUrl = 'http://api.agents.cardanoapi.io/'
+const ApiUrl = 'http://api.agents.cardanoapi.io'
 interface Parameter {
     name: string;
     value: string;
@@ -61,7 +61,7 @@ export const handleTransaction = async (message: any, agentId: string): Promise<
         agentFunctionMap[agentId].add(data.function_name);
 
         if (data.function_name == 'Proposal New Constitution') {
-            if(data.trigInfo != 'true') {
+            if(data.trigInfo == "true") {
                 await createOrUpdateFunctionDetail("Proposal New Constitution", true);
                 const addressApiUrl = `${ApiUrl}/api/agent/${agentId}/keys`;
                 const addressResponse = await axios.get(addressApiUrl);
@@ -115,12 +115,12 @@ export const handleTransaction = async (message: any, agentId: string): Promise<
                     }
                 }
             else {
-                 await saveTriggerHistory(agentId, data.function_name, false, false,"Failed to Trigger Based on Probability");
+                 await saveTriggerHistory(agentId, data.function_name, false, false,"");
             }
 
 
         } else if (data.function_name == 'SendAda Token') {
-            if(data.trigInfo != 'true')
+            if(data.trigInfo == "true")
             {
                 await createOrUpdateFunctionDetail("SendAda Token", true);
                 const addressApiUrl = `${ApiUrl}/api/agent/${agentId}/keys`;
@@ -161,10 +161,8 @@ export const handleTransaction = async (message: any, agentId: string): Promise<
                 }
             }
             else {
-                 await saveTriggerHistory(agentId, data.function_name, false, false,"Failed to Trigger Based on Probability");
+                 await saveTriggerHistory(agentId, data.function_name, false, false,"");
             }
-
-
         }
     }
 };

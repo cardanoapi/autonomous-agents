@@ -58,6 +58,6 @@ functions_metadata = [
                 "optional": False,
                 "data_type": "",
             },
-        ]
-    }
+        ],
+    },
 ]

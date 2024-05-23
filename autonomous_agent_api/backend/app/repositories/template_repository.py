@@ -16,7 +16,9 @@ class TemplateRepository:
     def __init__(self, db_connection=None):
         self.db = db_connection or prisma_connection
 
-    async def save_template(self, transaction: Prisma, template_data: TemplateCreateDto):
+    async def save_template(
+        self, transaction: Prisma, template_data: TemplateCreateDto
+    ):
         # Generate a random UUID for the template ID
         if template_data:
             logger.info(f"Saving template: {template_data}")
@@ -42,16 +44,16 @@ class TemplateRepository:
     async def retrieve_templates(self, page, limit) -> List[TemplateResponse]:
         skip = (page - 1) * limit
         templates = await self.db.prisma.template.find_many(
-            where={"deleted_at": None},
-            skip=skip,
-            take=limit
+            where={"deleted_at": None}, skip=skip, take=limit
         )
         if not templates:
             raise HTTPException(status_code=404, detail="No templates found")
         return templates
 
     async def retrieve_template(self, template_id: str) -> Optional[TemplateResponse]:
-        template = await self.db.prisma.template.find_first(where={"id": template_id, "deleted_at": None})
+        template = await self.db.prisma.template.find_first(
+            where={"id": template_id, "deleted_at": None}
+        )
         if template is None:
             raise HTTPException(status_code=404, detail="template not found")
         else:
@@ -65,11 +67,13 @@ class TemplateRepository:
         updated_data = template_data.dict(exclude_unset=True)
         updated_data["updated_at"] = datetime.now(timezone.utc)
 
-        updated_template = await self.db.prisma.template.update(where={"id": template_id}, data=updated_data)
+        updated_template = await self.db.prisma.template.update(
+            where={"id": template_id}, data=updated_data
+        )
         template_response = {
             "id": template_id,
             "name": template_data.name,
-            "description": template_data.description
+            "description": template_data.description,
         }
         return template_response
 

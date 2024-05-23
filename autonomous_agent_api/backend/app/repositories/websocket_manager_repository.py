@@ -5,14 +5,18 @@ from backend.config.database import prisma_connection
 
 async def check_if_agent_exists_in_db(agent_id: str):
     async with prisma_connection:
-        agent_exists = await prisma_connection.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})
+        agent_exists = await prisma_connection.prisma.agent.find_first(
+            where={"id": agent_id, "deleted_at": None}
+        )
     return bool(agent_exists)
 
 
 async def fetch_agent_configuration(agent_id):
     try:
         async with prisma_connection:
-            agent_instance = await prisma_connection.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})
+            agent_instance = await prisma_connection.prisma.agent.find_first(
+                where={"id": agent_id, "deleted_at": None}
+            )
 
             agent_configurations = await prisma_connection.prisma.trigger.find_many(
                 where={"agent_id": agent_id, "deleted_at": None}

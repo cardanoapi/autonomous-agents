@@ -7,7 +7,7 @@ WORKDIR /tmp
 # Install Poetry
 RUN pip install poetry==1.8.2
 
-#
+# Copy Poetry files
 COPY ./pyproject.toml ./poetry.lock* /tmp/
 
 # Generate requirements.txt
@@ -37,18 +37,24 @@ ENV PATH="${POETRY_HOME}/bin:${VENV_PATH}/bin:${PATH}"
 
 # Set working directory
 WORKDIR /api
+
+# Copy only requirements.txt from the builder stage
+COPY --from=builder /tmp/requirements.txt $PYSETUP_PATH/
+
+# Install dependencies from requirements.txt
+RUN pip install --no-cache-dir --upgrade -r $PYSETUP_PATH/requirements.txt
+
+# Copy the rest of the application code
 COPY . ./backend
 
 WORKDIR $PYSETUP_PATH
 
-# Copy requirements.txt from builder stage
-COPY --from=builder /tmp/requirements.txt $PYSETUP_PATH
-
-# Install dependencies from requirements.txt
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
-
-
+# Generate Prisma client
 RUN prisma generate
+
+# Expose port and set healthcheck
 EXPOSE 8000/tcp
-HEALTHCHECK CMD curl http://localhost:8000
+HEALTHCHECK CMD curl --fail http://localhost:8000 || exit 1
+
+# Command to run the application
 CMD ["sh", "-c" ,"prisma migrate deploy && exec uvicorn backend.app:get_application --host 0.0.0.0 --port 8000"]

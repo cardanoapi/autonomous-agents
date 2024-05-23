@@ -20,7 +20,9 @@ class TestEditTrigger:
     def template_router(self, template_service):
         return TemplateRouter(template_service)
 
-    async def test_edit_template_pass_with_valid_data(self, template_router, template_service):
+    async def test_edit_template_pass_with_valid_data(
+        self, template_router, template_service
+    ):
         # Example input data
         template_id = "uuid"
         template_data = TemplateCreateDto(
@@ -29,8 +31,16 @@ class TestEditTrigger:
             template_triggers=[
                 {
                     "type": "CRON",
-                    "action": {"function_name": "string", "parameter": ["1", "2"]},
-                    "data": {"frequency": "* * * * *", "probability": 1},
+                    "action": {
+                        "function_name": "SendAda Token",
+                        "parameter": [
+                            {
+                                "name": "Receiver Address",
+                                "value": "addr_test1qpxsqwr4lp7zrwcj5mjpzvmrlzry3makw5uve6ddhrzrm9q7epr775ukm23hed7jdy3vhme05dcy78x8suaqd0e73sgq4h298e",
+                            }
+                        ],
+                    },
+                    "data": {"frequency": "* * * * *", "probability": 0.3},
                 }
             ],
         )
@@ -49,10 +59,14 @@ class TestEditTrigger:
         result = await template_router.update_template(template_id, template_data)
 
         # Assertions
-        template_service.update_template.assert_called_once_with(template_id, template_data)
+        template_service.update_template.assert_called_once_with(
+            template_id, template_data
+        )
         assert result == expected_template_response
 
-    async def test_create_template_fail_with_invalid_data(self, template_router, template_service):
+    async def test_create_template_fail_with_invalid_data(
+        self, template_router, template_service
+    ):
         with pytest.raises(ValidationError):
             template_id = "uuid"
             template_data = TemplateCreateDto(
@@ -80,5 +94,7 @@ class TestEditTrigger:
             result = await template_router.update_template(template_id, template_data)
 
             # Assertions
-            template_service.update_template.assert_called_once_with(template_id, template_data)
+            template_service.update_template.assert_called_once_with(
+                template_id, template_data
+            )
             assert result == expected_template_response

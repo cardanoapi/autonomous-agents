@@ -11,7 +11,9 @@ from backend.dependency import get_agent_service
 
 
 class AgentRouter(Routable):
-    def __init__(self, agent_service: AgentService = get_agent_service(), *args, **kwargs):
+    def __init__(
+        self, agent_service: AgentService = get_agent_service(), *args, **kwargs
+    ):
         super().__init__(*args, **kwargs)
         self.agent_service = agent_service
 
@@ -26,8 +28,11 @@ class AgentRouter(Routable):
         return agent
 
     @get("/agents/", response_model=List[AgentResponse])
-    async def list_agents(self, page: int = Query(default=1, ge=1),
-                                limit: int = Query(default=10, le=10),):
+    async def list_agents(
+        self,
+        page: int = Query(default=1, ge=1),
+        limit: int = Query(default=10, le=10),
+    ):
         agents = await self.agent_service.list_agents(page, limit)
         return agents
 

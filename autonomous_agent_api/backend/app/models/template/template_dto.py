@@ -10,6 +10,7 @@ class TemplateCreateDto(BaseModel):
     description: str
     template_triggers: list[TriggerCreateDTO]
 
+
 class TemplateEditDto(BaseModel):
     name: str = Field(..., description="Name of Template", min_length=1)
     description: str

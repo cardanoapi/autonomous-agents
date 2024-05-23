@@ -11,7 +11,12 @@ from backend.dependency import get_template_service
 
 
 class TemplateRouter(Routable):
-    def __init__(self, template_service: TemplateService = get_template_service(), *args, **kwargs):
+    def __init__(
+        self,
+        template_service: TemplateService = get_template_service(),
+        *args,
+        **kwargs
+    ):
         super().__init__(*args, **kwargs)
         self.template_service = template_service
 
@@ -21,8 +26,11 @@ class TemplateRouter(Routable):
         return template
 
     @get("/templates/", response_model=List[TemplateResponse])
-    async def list_templates(self, page: int = Query(default=1, ge=1),
-                             limit: int = Query(default=10, le=10), ):
+    async def list_templates(
+        self,
+        page: int = Query(default=1, ge=1),
+        limit: int = Query(default=10, le=10),
+    ):
         template = await self.template_service.list_templates(page, limit)
         return template
 
@@ -33,7 +41,9 @@ class TemplateRouter(Routable):
 
     @put("/templates/{template_id}/", status_code=HTTPStatus.OK)
     async def update_template(self, template_id: str, template_data: TemplateEditDto):
-        update_template = await self.template_service.update_template(template_id, template_data)
+        update_template = await self.template_service.update_template(
+            template_id, template_data
+        )
         return update_template
 
     @delete("/templates/{template_id}/", status_code=HTTPStatus.NO_CONTENT)

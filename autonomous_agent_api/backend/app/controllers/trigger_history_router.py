@@ -16,25 +16,39 @@ class TriggerHistory(Routable):
         self.db = db_connection or prisma_connection
 
     @get("/trigger-history", response_model=List[dict])
-    async def get_all_trigger_history(self,
-                                      page: int = Query(default=1, ge=1),
-                                      limit: int = Query(default=50, le=50)
-                                      ):
+    async def get_all_trigger_history(
+        self, page: int = Query(default=1, ge=1), limit: int = Query(default=50, le=50)
+    ):
         skip = (page - 1) * limit
         results = await self.db.prisma.triggerhistory.find_many(skip=skip, take=limit)
         return results
 
     @get("/trigger-history/{agent_id}/agent", response_model=List[dict])
-    async def get_trigger_history_by_agent(self, agent_id: str, page: int = Query(default=1, ge=1),
-                                           limit: int = Query(default=50, le=50)
-                                           ):
+    async def get_trigger_history_by_agent(
+        self,
+        agent_id: str,
+        page: int = Query(default=1, ge=1),
+        limit: int = Query(default=50, le=50),
+    ):
         skip = (page - 1) * limit
-        results = await self.db.prisma.triggerhistory.find_many(where={"agentId": agent_id}, skip=skip, take=limit,)
+        results = await self.db.prisma.triggerhistory.find_many(
+            where={"agentId": agent_id},
+            skip=skip,
+            take=limit,
+        )
         return results
 
-    @get("/trigger-history/function/{function_name}", response_model=List[dict])
-    async def get_trigger_history_by_function(self, function_name: str):
-        results = await self.db.prisma.triggerhistory.find_many(where={"functionName": function_name})
+    @get("/trigger-history/{function_name}/function", response_model=List[dict])
+    async def get_trigger_history_by_function(
+        self,
+        function_name: str,
+        page: int = Query(default=1, ge=1),
+        limit: int = Query(default=50, le=50),
+    ):
+        skip = (page - 1) * limit
+        results = await self.db.prisma.triggerhistory.find_many(
+            where={"functionName": function_name}, skip=skip, take=limit
+        )
         return results
 
     @get("/function-details", response_model=List[dict])
@@ -42,8 +56,8 @@ class TriggerHistory(Routable):
         results = await self.db.prisma.functiondetail.find_many()
         return results
 
-    @get("/transaction-counts", response_model=dict)
-    async def get_transaction_counts_success(self):
+    @get("/transaction-counts/", response_model=dict)
+    async def get_transaction_counts_success(self, success: bool = Query(True)):
         # Calculate the start and end timestamps for the last 24 hours
         end_time = datetime.now()
         start_time = end_time - timedelta(days=1)
@@ -54,17 +68,14 @@ class TriggerHistory(Routable):
         # Execute the query and fetch all results
         transactions = await self.db.prisma.triggerhistory.find_many(
             where={
-                "timestamp": {
-                    "gte": start_time,
-                    "lte": end_time
-                },
-                "success": True
+                "timestamp": {"gte": start_time, "lte": end_time},
+                "success": success,
             }
         )
 
         # Count transactions for each minute
         for transaction in transactions:
-            minute_str = transaction.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+            minute_str = transaction.timestamp.strftime("%Y-%m-%d %H:%M:%S")
             if minute_str in transaction_counts:
                 transaction_counts[minute_str] += 1
             else:
@@ -72,8 +83,10 @@ class TriggerHistory(Routable):
 
         return transaction_counts
 
-    @get("/transaction-counts/{agent-id}", response_model=dict)
-    async def get_transaction_counts_success_agent_id(self, agent_id: str):
+    @get("/transaction-counts/{agent-id}/agent", response_model=dict)
+    async def get_transaction_counts_success_agent_id(
+        self, agent_id: str, success: bool = Query(True)
+    ):
         # Calculate the start and end timestamps for the last 24 hours
         end_time = datetime.now()
         start_time = end_time - timedelta(days=1)
@@ -84,18 +97,14 @@ class TriggerHistory(Routable):
         # Execute the query and fetch all results
         transactions = await self.db.prisma.triggerhistory.find_many(
             where={
-                "timestamp": {
-                    "gte": start_time,
-                    "lte": end_time
-                },
+                "timestamp": {"gte": start_time, "lte": end_time},
                 "agentId": agent_id,
-                "success": True
+                "success": success,
             }
         )
-
         # Count transactions for each minute
         for transaction in transactions:
-            minute_str = transaction.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+            minute_str = transaction.timestamp.strftime("%Y-%m-%d %H:%M:%S")
             if minute_str in transaction_counts:
                 transaction_counts[minute_str] += 1
             else:

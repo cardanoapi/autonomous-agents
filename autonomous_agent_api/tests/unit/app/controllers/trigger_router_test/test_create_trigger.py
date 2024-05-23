@@ -18,36 +18,60 @@ class TestCreateTrigger:
     def trigger_router(self, trigger_service):
         return TriggerRouter(trigger_service)
 
-    async def test_create_trigger_with_valid_data(self, trigger_router, trigger_service):
+    async def test_create_trigger_with_valid_data(
+        self, trigger_router, trigger_service
+    ):
         # Define test data
         id = "trigger_id"
         agent_id = "agent_id"
         valid_cron_trigger_data = TriggerCreateDTO(
             type="CRON",
-            action={"function_name": "string", "parameter": ["string"]},
-            data={"frequency": "* * * * *", "probability": 0.5},
+            action={
+                "function_name": "SendAda Token",
+                "parameter": [
+                    {
+                        "name": "Receiver Address",
+                        "value": "addr_test1qpxsqwr4lp7zrwcj5mjpzvmrlzry3makw5uve6ddhrzrm9q7epr775ukm23hed7jdy3vhme05dcy78x8suaqd0e73sgq4h298e",
+                    }
+                ],
+            },
+            data={"frequency": "* * * * *", "probability": 0.3},
         )
         created_trigger = TriggerResponse(
             id=id,
             agent_id=agent_id,
             type="CRON",
-            action={"function_name": "string", "parameter": ["string"]},
-            data={"frequency": "* * * * *", "probability": 0.5},
+            action={
+                "function_name": "SendAda Token",
+                "parameter": [
+                    {
+                        "name": "Receiver Address",
+                        "value": "addr_test1qpxsqwr4lp7zrwcj5mjpzvmrlzry3makw5uve6ddhrzrm9q7epr775ukm23hed7jdy3vhme05dcy78x8suaqd0e73sgq4h298e",
+                    }
+                ],
+            },
+            data={"frequency": "* * * * *", "probability": 0.3},
         )
 
         trigger_service.create_trigger = AsyncMock(return_value=created_trigger)
 
         result = await trigger_router.create_trigger(agent_id, valid_cron_trigger_data)
 
-        trigger_service.create_trigger.assert_called_once_with(agent_id, valid_cron_trigger_data)
+        trigger_service.create_trigger.assert_called_once_with(
+            agent_id, valid_cron_trigger_data
+        )
 
         assert result == created_trigger
 
-    async def test_create_trigger_with_Invalid_data_fail(self, trigger_router, trigger_service):
+    async def test_create_trigger_with_Invalid_data_fail(
+        self, trigger_router, trigger_service
+    ):
         with pytest.raises(ValidationError):
             id = "trigger_id"
             agent_id = "agent_id"
-            valid_cron_trigger_data = TriggerCreateDTO(data={"frequency": "*", "probability": 0.5})
+            valid_cron_trigger_data = TriggerCreateDTO(
+                data={"frequency": "*", "probability": 0.5}
+            )
             created_trigger = TriggerResponse(
                 id=id,
                 agent_id=agent_id,
@@ -57,8 +81,12 @@ class TestCreateTrigger:
 
             trigger_service.create_trigger = AsyncMock(return_value=created_trigger)
 
-            result = await trigger_router.create_trigger(agent_id, valid_cron_trigger_data)
+            result = await trigger_router.create_trigger(
+                agent_id, valid_cron_trigger_data
+            )
 
-            trigger_service.create_trigger.assert_called_once_with(agent_id, valid_cron_trigger_data)
+            trigger_service.create_trigger.assert_called_once_with(
+                agent_id, valid_cron_trigger_data
+            )
 
             assert result == created_trigger
