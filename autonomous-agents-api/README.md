@@ -34,12 +34,12 @@ After successfully run ,Go to http://0.0.0.0:8000/ , to see the list of api serv
 ## Locally
 ## Setup Guide
 
-Run this command inside autonomous_agent_api folder to install necessary python dependencies.
+Run this command inside autonomous-agents-api folder to install necessary python dependencies.
 
 ```bash
   poetry install
 ```
-Inside **autonomous_agent_api** make a new **.env** file by copying the existing **.env.example.** file . This contains env variable for prsima client orm to connect to the postgres database.
+Inside **autonomous-agents-api** make a new **.env** file by copying the existing **.env.example.** file . This contains env variable for prsima client orm to connect to the postgres database.
 
 
 Run this command for generating the database client and creating the required table mentioned in schema
@@ -53,7 +53,7 @@ Run this command for generating the database client and creating the required ta
 ```
 ## Running the Server
 
-Activate Poetry venv inside autonomous_agent_api folder by running the following command.
+Activate Poetry venv inside autonomous-agents-api folder by running the following command.
 
 ```bash
   poetry shell

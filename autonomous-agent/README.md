@@ -19,7 +19,7 @@ This project is a TypeScript client application that connects to a server via We
 
     ```shell
     git clone https://github.com/sireto/cardano-autonomous-agent.git
-    cd  autonomous_agent_ts
+    cd  cardano-autonomous-agent/autonomous-agent
     ```
 
 2. Install dependencies using npm or yarn:

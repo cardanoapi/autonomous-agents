@@ -19,7 +19,7 @@ This project is a TypeScript Agent Manager application where Agents are connecte
 
     ```shell
     git clone https://github.com/sireto/cardano-autonomous-agent.git
-    cd  agent_manager
+    cd  cardano-autonomous-agent/autonomous-agent-manager
     ```
 
 2. Install dependencies using npm or yarn:
