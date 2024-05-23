@@ -56,6 +56,21 @@
   - Created Agent Manager seprate service project to handle the incoming request from the Agents
   - integration of Kafka in Api and agent manager to handle update configuration
 
-# Template , Date - 2024 - 05 - 07
+# Template , Date - 2024 - 05 - 10
   - Created template Service to support creation of template
   - Created static api service to fetch the function/behaviour details.
+
+# Template Trigger , 2024 -05 -12
+  - Created Template Trigger Services 
+   - Created Template trigger table for template's trigger
+
+# Function Api, docker , 2024 - 05 -13/18
+  - Created static api for the function listing and its details
+  - test case updated
+  - updated trigger config and template trigger config models and database according to structure of function metadata
+  - Creation of docker file for the api, agent , and agent manager
+  - created docker compose for building the deployment ready images of all three service
+
+# Trigger History Api ,2024 -05- 20/23
+  - Created API Service for the Trigger History 
+  - Updated test cases 

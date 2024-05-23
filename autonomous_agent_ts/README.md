@@ -56,12 +56,24 @@ To run the client application, follow these steps:
     Replace `AGENT_ID` value with actual id  you want to use.
 
 ## Docker Usage
+Change directory
 
-For Running through Docker , and use deployed server and ws server purposes, you can use the following command to run the application directly:
+```bash
+  cd cardano-autonomous-agent
+```
+
+Run Docker-Compose . This will setup up the **postgres Database**, **pgadmin4** , **kafka** and **backend** via Docker.
+
+```bash
+ docker compose -f "docker-compose.deployment.yml" up --build -d
+ ```
+
+image will be build of agent 
+
+Now before running the below command make sure api and manager service is up and running
 
 ```shell
-docker run -e WS_URL=ws://manager.agents.cardanoapi.io -e AGENT_ID=d3abcc95-bb8f-40d5-9ba6-38ac6dbcfe8d  cardano-autonomous-agent-agent
+docker run -e WS_URL=ws://localhost:3001 -e AGENT_ID=d3abcc95-bb8f-40d5-9ba6-38ac6dbcfe8d  cardano-autonomous-agent-agent
 
 ```
-cardano-autonomous-agent-agent   is a docker image of Agent
-Replace the AGENT_ID with the actual agent_id in server.
+Replace the AGENT_ID with the actual agent id .

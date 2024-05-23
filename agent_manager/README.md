@@ -51,11 +51,28 @@ To run the Agent Manager application, follow these steps:
     ```shell
     npm run start 
     ```
+3. Run this command for generating the database client and creating the required table mentioned in schema
 
+```bash
+   prisma generate
+```
+
+Make sure your API service is up and running .
 
 ## Docker 
+hange directory
 
-For development purposes, you can use the following command to run the application directly from the source TypeScript files:
+```bash
+  cd cardano-autonomous-agent
+```
 
-```shell
-npm run dev
+Run Docker-Compose . This will setup up the **postgres Database**, **pgadmin4** , **kafka** and **backend** via Docker.
+
+```bash
+ docker compose -f "docker-compose.deployment.yml" up --build -d
+```
+
+After successfully run ,Agent manager is up and running at http://localhost:3001 and its websocket service is available
+
+check service for more details on its status 
+

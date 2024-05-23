@@ -4,7 +4,7 @@ import {createOrUpdateFunctionDetail} from "../repository/fucntion_details_repos
 
 const kuberBaseUrl = 'https://sanchonet.kuber.cardanoapi.io';
 const kuberApiKey = 'bS6Nm7dJTnCtk0wqwJChwZ7Wot2RTvDS7dETmYYHJ8htqrMs3xYI5njFeGUbno';
-const ApiUrl = 'http://api.agents.cardanoapi.io'
+const ApiUrl = process.env.API_SERVER
 interface Parameter {
     name: string;
     value: string;

@@ -48,7 +48,6 @@ Run this command for generating the database client and creating the required ta
    prisma generate
 ```
 
-
 ```bash
    prisma migrate dev
 ```
