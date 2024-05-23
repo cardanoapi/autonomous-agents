@@ -23,7 +23,9 @@ class TestAgentCreateRouter:
 
     async def test_create_agent(self, agent_router, agent_service):
         # Example input data
-        agent_data = AgentCreateDTO(name="Test Agent", template_id="template123", instance=1)
+        agent_data = AgentCreateDTO(
+            name="Test Agent", template_id="template123", instance=1
+        )
 
         # Expected agent response
         expected_agent_response = AgentResponse(
@@ -43,7 +45,9 @@ class TestAgentCreateRouter:
         # Assertions
         assert result == expected_agent_response
 
-    async def test_create_agent_should_fail_with_invalid_details(self, agent_service, agent_router):
+    async def test_create_agent_should_fail_with_invalid_details(
+        self, agent_service, agent_router
+    ):
         with pytest.raises(ValidationError):
             # Example input data
             agent_data = AgentCreateDTO(name="", template_id="template123", instance=1)

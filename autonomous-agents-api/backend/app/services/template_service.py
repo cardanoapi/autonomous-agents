@@ -25,7 +25,9 @@ class TemplateService:
         try:
             # creating the instance of prisma transaction for template and template trigger creation
             async with prisma_connection.prisma.tx() as transaction:
-                template = await self.template_repository.save_template(transaction, template_data)
+                template = await self.template_repository.save_template(
+                    transaction, template_data
+                )
                 # Save the template triggers
                 template_id = template["id"]
                 template_triggers = template["template_triggers"]
@@ -33,8 +35,10 @@ class TemplateService:
 
                 if template_triggers:
                     for trigger_data in template_triggers:
-                        template_trigger_response = await self.template_trigger_service.create_template_trigger(
-                            transaction, template_id, trigger_data
+                        template_trigger_response = (
+                            await self.template_trigger_service.create_template_trigger(
+                                transaction, template_id, trigger_data
+                            )
                         )
                         template_trigger_responses.append(template_trigger_response)
 
@@ -54,8 +58,12 @@ class TemplateService:
     async def get_template(self, template_id: str) -> TemplateResponse:
         return await self.template_repository.retrieve_template(template_id)
 
-    async def update_template(self, template_id: str, template_data: TemplateEditDto) -> TemplateResponse:
-        return await self.template_repository.modify_template(template_id, template_data)
+    async def update_template(
+        self, template_id: str, template_data: TemplateEditDto
+    ) -> TemplateResponse:
+        return await self.template_repository.modify_template(
+            template_id, template_data
+        )
 
     async def delete_template(self, template_id: str) -> None:
         await self.template_repository.remove_template(template_id)

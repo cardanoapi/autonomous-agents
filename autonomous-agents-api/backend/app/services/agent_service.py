@@ -21,7 +21,9 @@ class AgentService:
 
     async def create_agent(self, agent_data: AgentCreateDTO):
         agent = await self.agent_repository.save_agent(agent_data)
-        template_triggers = await self.template_trigger_service.get_template_trigger(agent.template_id)
+        template_triggers = await self.template_trigger_service.get_template_trigger(
+            agent.template_id
+        )
 
         # Iterate over each template trigger and create a trigger for the agent
         for template_trigger_data in template_triggers:
@@ -42,7 +44,9 @@ class AgentService:
     async def get_agent(self, agent_id: str) -> AgentResponse:
         return await self.agent_repository.retrieve_agent(agent_id)
 
-    async def update_agent(self, agent_id: str, agent_data: AgentCreateDTO) -> AgentResponse:
+    async def update_agent(
+        self, agent_id: str, agent_data: AgentCreateDTO
+    ) -> AgentResponse:
         return await self.agent_repository.modify_agent(agent_id, agent_data)
 
     async def get_active_agents_count(self):

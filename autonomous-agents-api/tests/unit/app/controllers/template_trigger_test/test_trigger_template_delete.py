@@ -19,13 +19,17 @@ class TestDeleteTemplateTrigger:
     def template_trigger_router(self, trigger_template_service):
         return TemplateTriggerRouter(trigger_template_service)
 
-    async def test_delete_template_trigger_with_valid_id(self, trigger_template_service, template_trigger_router):
+    async def test_delete_template_trigger_with_valid_id(
+        self, trigger_template_service, template_trigger_router
+    ):
         # Mock data
         template_trigger_id = "018e8909-549b-7b9f-8fab-5499f53a8244"
 
         await template_trigger_router.delete_template_trigger(template_trigger_id)
 
-        trigger_template_service.delete_template_trigger.assert_called_once_with(template_trigger_id)
+        trigger_template_service.delete_template_trigger.assert_called_once_with(
+            template_trigger_id
+        )
 
     async def test_delete_template_trigger_should_fail_with_no_id(
         self, trigger_template_service, template_trigger_router

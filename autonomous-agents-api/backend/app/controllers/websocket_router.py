@@ -27,7 +27,9 @@ async def agent_websocket_endpoint(websocket: WebSocket):
         await manager.remove_previous_agent_connection_if_exists(websocket_agent_id)
         await manager.connect_websocket(websocket_agent_id, websocket)
 
-        instance_count, configurations = await fetch_agent_configuration(websocket_agent_id)
+        instance_count, configurations = await fetch_agent_configuration(
+            websocket_agent_id
+        )
         await websocket.send_json(
             {
                 "message": "initial",

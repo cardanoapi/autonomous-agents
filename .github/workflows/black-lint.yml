@@ -16,4 +16,4 @@ jobs:
       - uses: actions/checkout@v4
       - uses: psf/black@stable
         with:
-          src: "./autonomous_agent_api"
+          src: "./autonomous-agents-api"
