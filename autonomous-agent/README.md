@@ -54,6 +54,7 @@ To run the client application, follow these steps:
     ```
 
     Replace `AGENT_ID` value with actual id  you want to use.
+    Before that make sure your Api and Agent Manager is up and Running.
 
 ## Docker Usage
 Change directory
@@ -68,7 +69,6 @@ Run Docker-Compose . This will setup up the **postgres Database**, **pgadmin4** 
  docker compose -f "docker-compose.deployment.yml" up --build -d
  ```
 
-image will be build of agent 
 
 Now before running the below command make sure api and manager service is up and running
 
@@ -77,3 +77,4 @@ docker run -e WS_URL=ws://localhost:3001 -e AGENT_ID=d3abcc95-bb8f-40d5-9ba6-38a
 
 ```
 Replace the AGENT_ID with the actual agent id .
+cardano-autonomous-agent-agent this is the image name of Agent Application.
