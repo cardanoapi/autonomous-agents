@@ -39,7 +39,6 @@ export const fetchUnSuccessfullTriggersbyAgentID = async (agentID : string) => {
     }
     const data = await res.json();
     const count = Object.keys(data).length;
-    console.log(data)
     return data;
 }
 
@@ -50,7 +49,6 @@ export const fetchTransactionsCount = async (transactionState: string ) => {
     }
     const data = await res.json();
     const count = Object.keys(data).length;
-    console.log(data)
     return data;
 }
 

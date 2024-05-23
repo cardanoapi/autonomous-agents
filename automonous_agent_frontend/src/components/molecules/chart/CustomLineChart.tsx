@@ -37,11 +37,9 @@ const demoData: ILineChartData[] = [
     { name:'J' , amt : 34},
 ];
 
-export default function CustomLineChart({chartData , className}:{chartData? : ILineChartData[] , className? : string}) {
-    const [data, setData] = useState<ILineChartData[]>(chartData || demoData);
+export default function CustomLineChart({chartData , className}:{chartData : ILineChartData[] , className? : string}) {
 
-
-    const updateChartData = () => {
+    {/* const updateChartData = () => {
         setData((prevData) => {
             const lastData = prevData[prevData.length - 1];
             const newData: ILineChartData = {
@@ -54,14 +52,20 @@ export default function CustomLineChart({chartData , className}:{chartData? : IL
     };
 
      useEffect(() => {
-        const interval = setInterval(updateChartData, 30000);
-        return () => clearInterval(interval);
-    }, []); 
+        if (data === demoData){
+            const interval = setInterval(updateChartData, 30000);
+            return () => clearInterval(interval);
+        }
+    }, []); */}
+
+    useEffect(()=>{
+        console.log(chartData)
+    },[chartData])
 
     return (
             <ResponsiveContainer width="100%" height="100%" >
                 <AreaChart
-                    data={data}
+                    data={chartData}
                     margin={{ top: 40, right: 0, left: 0, bottom: 0 }}
                     
                 >

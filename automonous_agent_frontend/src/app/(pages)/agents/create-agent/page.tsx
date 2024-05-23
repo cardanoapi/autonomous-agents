@@ -46,6 +46,7 @@ export const agentFormSchema = z.object({
 export default function CreateAgentForm() {
     const [selected, setSelected] = useState<IOption[]>([]);
     const [agentCreated , setAgentCreated] = useAtom(agentCreatedAtom)
+    const [submittingForm , setSubmittingForm] = useState(false)
 
     const [agentTemplateOptions, setAgentTemplateOptions] = useState<IOption[] | []>(
         []
@@ -87,11 +88,12 @@ export default function CreateAgentForm() {
         },
         onError: () => {
             console.log('Error Response')
+            setSubmittingForm(false)
             ErrorToast('Error while creating Agent. Try Again!')
+
         }
     });
     
-    const [submittingForm , setSubmittingForm] = useState(false)
 
     async function onSubmit(formData: z.infer<typeof agentFormSchema>) {
         setSubmittingForm(true)

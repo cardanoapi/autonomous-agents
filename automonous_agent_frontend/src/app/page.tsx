@@ -8,7 +8,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
-import CustomLineChart from '@app/components/molecules/chart/CustomLineChart';
+import CustomLineChart, { ILineChartData } from '@app/components/molecules/chart/CustomLineChart';
 import OverViewAgentsCard from './components/OverViewAgentsCard';
 import OverViewTemplatesCard from './components/OverViewTemplatesCard';
 import OverViewTransactionsCard from './components/OverViewTransactionsCard';
@@ -27,16 +27,18 @@ export interface IAgentsCardData {
 }
 
 export default function Home() {
+    
+    const [transactionChartData , setTransactionChartData] = useState<ILineChartData[]>([])
     const { data: agents = [] } = useQuery({ queryKey: ['agents'], queryFn: fetchAgents });
     const { data: activeAgents } = useQuery({ queryKey: ['activeAgentsCount'], queryFn: fetchActiveAgentsCount });
     const { data: templates = [] } = useQuery({ queryKey: ['templates'], queryFn: fetchTemplates });
     const { data: triggers = []} = useQuery({ queryKey: ['Triggers'], queryFn : fetchTriggers });
-    const { data: successfulltransactionCount = {} } = useQuery({ queryKey: ['totalSuccessfullTransactionCounts'], queryFn: () => fetchTransactionsCount('true') });
-    const { data: unsuccessfulltransactionCount = {} } = useQuery({ queryKey: ['totalUnsuccessfulltransactionCounts'], queryFn: () => fetchTransactionsCount('false') });
+    const { data: successfullTransactionCount = {} } = useQuery({ queryKey: ['totalSuccessfullTransactionCounts'], queryFn: () => fetchTransactionsCount('true') });
+    const { data: unsuccessfullTransactionCount = {} } = useQuery({ queryKey: ['totalUnsuccessfulltransactionCounts'], queryFn: () => fetchTransactionsCount('false') });
 
     // Calculate the number of successful and unsuccessful transactions
-    const successfullTransactions = Object.keys(successfulltransactionCount).length;
-    const unsuccessfullTransactions = Object.keys(unsuccessfulltransactionCount).length;
+    const successfullTransactions = Object.keys(successfullTransactionCount).length;
+    const unsuccessfullTransactions = Object.keys(unsuccessfullTransactionCount).length;
 
     // Calculate the total number of transactions
     const totalTransactions = successfullTransactions + unsuccessfullTransactions;
@@ -64,6 +66,21 @@ export default function Home() {
             unsuccessPercentage: unsuccessPercentage.toFixed(2)
         });
     }, [successfullTransactions, unsuccessfullTransactions]);
+
+
+    
+    useEffect(() => {
+        if (successfullTransactionCount) {
+            const newData: ILineChartData[] = Object.keys(successfullTransactionCount).map((item: string) => {
+                return {
+                    name: item,
+                    amt: parseInt(successfullTransactionCount[item]) || 0
+                };
+            }); 
+            setTransactionChartData(newData);
+        }
+    }, [successfullTransactionCount]);    
+
 
     return (
         <>
@@ -112,15 +129,13 @@ export default function Home() {
                             <DropdownMenuTrigger border={true}>
                                 Today
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                                <DropdownMenuItem>Last 3 Days</DropdownMenuItem>
-                                <DropdownMenuItem>Last 7 Days</DropdownMenuItem>
-                                <DropdownMenuItem>Last Month</DropdownMenuItem>
+                            <DropdownMenuContent className='bg-white'>
+                                <DropdownMenuItem>Last Hour</DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
                     <div className='h-[355px] mt-2 2xl:h-[500px] 4xl:h-[600px]'>
-                        <CustomLineChart />
+                        <CustomLineChart chartData={transactionChartData}/>
                     </div>
                 </div>
             </Card>
