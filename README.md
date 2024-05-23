@@ -1,7 +1,7 @@
 Cardano Autonomous Agent Monorepo
 ============
 
-1. [Backend](./autonomous_agent_api/)
+1. [Backend](autonomous-agents-api/)
 2. [Frontend](./automonous_agent_frontend/)
 
 Python version : 3.12.2 

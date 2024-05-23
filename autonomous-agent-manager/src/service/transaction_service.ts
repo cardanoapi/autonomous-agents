@@ -2,7 +2,7 @@ import axios from 'axios';
 import {saveTriggerHistory} from "../repository/trigger_history_repository";
 import {createOrUpdateFunctionDetail} from "../repository/fucntion_details_repository";
 
-const kuberBaseUrl = 'https://sanchonet.kuber.cardanoapi.io';
+const kuberBaseUrl = 'https://preprod.kuber.cardanoapi.io';
 const kuberApiKey = 'bS6Nm7dJTnCtk0wqwJChwZ7Wot2RTvDS7dETmYYHJ8htqrMs3xYI5njFeGUbno';
 const ApiUrl = process.env.API_SERVER
 interface Parameter {
@@ -140,9 +140,9 @@ export const handleTransaction = async (message: any, agentId: string): Promise<
                     'Content-Type': 'application/json',
                     'api-key': kuberApiKey
                 };
-
+                 const kuberUrlSendAda = `${kuberBaseUrl}/api/v1/tx`;
                 try {
-                    const response = await fetch('https://preprod.kuber.cardanoapi.io/api/v1/tx', {
+                    const response = await fetch(kuberUrlSendAda, {
                         method: 'POST',
                         headers: headers,
                         body: JSON.stringify(requestBody)

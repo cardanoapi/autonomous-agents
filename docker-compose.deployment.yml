@@ -3,7 +3,7 @@ version: '3.8'
 services:
   # FastAPI application (build the image)
   cardano-autonomous:
-    build: ./autonomous_agent_api  # Path to your FastAPI project directory
+    build: ./autonomous-agents-api  # Path to your FastAPI project directory
     ports:
       - "8000:8000"
     environment:
@@ -17,7 +17,7 @@ services:
   # Agent Manager application (build image)
   agent_manager:
     build:
-      context: ./agent_manager
+      context: ./autonomous-agent-manager
       dockerfile: Dockerfile
     ports:
       - "3001:3001"
@@ -34,7 +34,7 @@ services:
   #Agent (build image)
   agent:
     build:
-      context: ./autonomous_agent_ts
+      context: ./autonomous-agent
       dockerfile: Dockerfile
     ports:
       - "3002:3002"

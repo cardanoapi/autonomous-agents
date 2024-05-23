@@ -81,7 +81,7 @@ class TriggerHistory(Routable):
 
         return transaction_counts
 
-    @get("/transaction-counts/{agent-id}/agent", response_model=dict)
+    @get("/transaction-counts/{agent_id}/agent", response_model=dict)
     async def get_transaction_counts_success_agent_id(self, agent_id: str, success: bool = Query(True)):
         # Calculate the start and end timestamps for the last 24 hours
         end_time = datetime.now()
