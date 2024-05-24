@@ -1,24 +1,29 @@
-"use client"
+'use client';
+
 import React from 'react';
 
 interface TemplateIconProps extends React.SVGProps<SVGSVGElement> {
-  fill?: string;
+    fill?: string;
 }
 
-const TemplateIcon: React.FC<TemplateIconProps> = ({ fill = "#8C8C8C", ...props }) => {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
-      <g id="eos-icons:templates-outlined" clipPath="url(#clip0_1353_6627)">
-        <path id="Vector" d="M20 0H4C3.46957 0 2.96086 0.210714 2.58579 0.585786C2.21071 0.960859 2 1.46957 2 2V22C2 22.5304 2.21071 23.0391 2.58579 23.4142C2.96086 23.7893 3.46957 24 4 24H20C20.5304 24 21.0391 23.7893 21.4142 23.4142C21.7893 23.0391 22 22.5304 22 22V2C22 1.46957 21.7893 0.960859 21.4142 0.585786C21.0391 0.210714 20.5304 0 20 0ZM20 22H4V2H20V22Z" fill={fill} />
-        <path id="Vector_2" d="M6 4H18V6H6V4ZM6 8H13V10H6V8ZM8 20H16L12 17L8 20ZM19 19V13L14 16L19 19ZM6 13V19L10 16L6 13ZM16 12H8L12 15L16 12Z " fill={fill} />
-      </g>
-      <defs>
-        <clipPath id="clip0_1353_6627">
-          <rect width="24" height="24" fill="white" />
-        </clipPath>
-      </defs>
-    </svg>
-  );
+const TemplateIcon: React.FC<TemplateIconProps> = ({ fill = '#8C8C8C', ...props }) => {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            {...props}
+        >
+            <g fill="none" fillRule="evenodd">
+                <path d="M24 0v24H0V0zM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022m-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"></path>
+                <path
+                    fill={fill}
+                    d="M12 2v6.5a1.5 1.5 0 0 0 1.5 1.5H20v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm3 13H9a1 1 0 1 0 0 2h6a1 1 0 1 0 0-2m-5-4H9a1 1 0 1 0 0 2h1a1 1 0 1 0 0-2m4-8.957a2 2 0 0 1 1 .543L19.414 7a2 2 0 0 1 .543 1H14Z"
+                ></path>
+            </g>
+        </svg>
+    );
 };
 
 export default TemplateIcon;

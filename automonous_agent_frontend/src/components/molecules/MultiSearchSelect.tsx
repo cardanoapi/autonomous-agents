@@ -373,7 +373,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                     handleKeyDown(e);
                     commandProps?.onKeyDown?.(e);
                 }}
-                className={cn('overflow-visible bg-white', commandProps?.className)}
+                className={cn('overflow-visible bg-white', commandProps?.className ,)}
                 shouldFilter={
                     commandProps?.shouldFilter !== undefined
                         ? commandProps.shouldFilter
@@ -387,11 +387,12 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
             >
                 <div
                     className={cn(
-                        'border-input group flex items-center rounded-md border px-3  py-2 text-sm focus-within:outline focus-within:outline-2 focus-within:outline-offset-0 ',
+                        'border-input group flex items-center rounded-md border px-3  py-2 text-sm focus-within:outline focus-within:outline-2 focus-within:outline-offset-0', 
+                        selected.length >= maxSelected ? "bg-brand-White-200" : "",
                         className
                     )}
                 >
-                    <div className="flex w-[92%] flex-wrap gap-1">
+                    <div className="flex w-full flex-wrap gap-1">
                         {/* Avoid having the "Search" Icon */}
                         <CommandPrimitive.Input
                             {...inputProps}
@@ -418,7 +419,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                             }
                             className={cn(
                                 'placeholder:text-muted-foreground ml-2 w-[90%] flex-1 bg-white outline-none',
-                                inputProps?.className
+                                inputProps?.className, selected.length >= maxSelected ? 'bg-brand-White-200' : ""
                             )}
                         />
                     </div>
