@@ -6,6 +6,13 @@ import { Trash2 } from 'lucide-react';
 
 import { IAgent, deleteAgentbyID, fetchAgentbyID } from '@app/app/api/agents';
 import { ITemplate, fetchTemplatebyID, fetchTemplates } from '@app/app/api/templates';
+import {
+    ITrigger,
+    fetchSuccessfullTriggersbyAgentID,
+    fetchUnSuccessfullTriggersbyAgentID,
+    fetchtriggersbyTemplateID
+} from '@app/app/api/trigger';
+import { Truncate } from '@app/utils/common/extra';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { Card, CardContent, CardDescription, CardTitle } from '../atoms/Card';
@@ -13,8 +20,6 @@ import { Dialog, DialogClose, DialogContent, DialogTrigger } from '../atoms/Dial
 import { Switch } from '../atoms/Switch';
 import ConfirmationBox from './ConfirmationBox';
 import { ErrorToast, SuccessToast } from './CustomToasts';
-import { fetchSuccessfullTriggersbyAgentID, fetchtriggersbyTemplateID, fetchUnSuccessfullTriggersbyAgentID, ITrigger } from '@app/app/api/trigger';
-import { Truncate } from '@app/utils/common/extra';
 
 export interface IAgentCard {
     agentName: string;
@@ -22,7 +27,7 @@ export interface IAgentCard {
     agentRole: string;
     templateID: string;
     functionCount: number;
-    lastActive: string;
+    lastActive: string | number;
     totalTrigger: number;
 }
 
@@ -45,23 +50,22 @@ export default function AgentCard({
         queryFn: () => fetchAgentbyID(agentID)
     });
 
-    const {data : templateTriggers = []} = useQuery<ITrigger[]>({
+    const { data: templateTriggers = [] } = useQuery<ITrigger[]>({
         queryKey: [`triggers${templateID}`],
         queryFn: () => fetchtriggersbyTemplateID(templateID)
-    })
+    });
 
-    const {data : successfullTransactions = {}} = useQuery<{string : string}[]>({
+    const { data: successfullTransactions = {} } = useQuery<{ string: string }[]>({
         queryKey: [`sucessfullTransactions${agentID}`],
         queryFn: () => fetchSuccessfullTriggersbyAgentID(agentID)
-    })
+    });
 
-    const {data : unsuccessfullTransactions = {}} =useQuery({
+    const { data: unsuccessfullTransactions = {} } = useQuery({
         queryKey: [`unsucessfullTransactions${agentID}`],
         queryFn: () => fetchUnSuccessfullTriggersbyAgentID(agentID)
-    })
+    });
 
     const [dialogOpen, setDialogOpen] = useState(false);
-
 
     interface DeleteAgentParams {
         agentID: string;
@@ -72,46 +76,66 @@ export default function AgentCard({
         mutationFn: (agentID: string) => deleteAgentbyID(agentID),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['agents'] });
-            setDialogOpen(false)
-            SuccessToast('Agent Deleted Successfully.')
+            setDialogOpen(false);
+            SuccessToast('Agent Deleted Successfully.');
         },
         onError: () => {
-            setDialogOpen(false)
-            ErrorToast('Agent Delete Failed. Try Again!')
+            setDialogOpen(false);
+            ErrorToast('Agent Delete Failed. Try Again!');
         }
     });
 
     const [isActiveWithinLast33Seconds, setIsActiveWithinLast33Seconds] =
         useState(false);
-    const [formatedLastActive, setFormatedLastActive] = useState('');
-
+    const [formatedLastActive, setFormatedLastActive] = useState<string | number>('');
+    
     useEffect(() => {
         if (lastActive === 'NA') {
             setFormatedLastActive('Not activated yet');
         } else {
             const lastActiveDate = new Date(lastActive);
-            const currentTime = Date.now();
-            const timeDifference = currentTime - lastActiveDate.getTime();
-            const timeDifferenceInSeconds = timeDifference / 1000;
-            setIsActiveWithinLast33Seconds(timeDifferenceInSeconds <= 33);
-            const day = lastActiveDate.getDate();
-            const month = lastActiveDate.toLocaleString('default', { month: 'short' });
-            const seconds = lastActiveDate.getSeconds();
-            if (seconds === 1) {
-                setFormatedLastActive(`${seconds} second ago`);
-            } else {
-                setFormatedLastActive(`${seconds} seconds ago`);
+            const currentDate = new Date();
+
+            const diffInSeconds = Math.floor((Number(currentDate) - Number(lastActiveDate)) / 1000);
+            const diffInMinutes = Math.floor(diffInSeconds / 60);
+            const diffInHours = Math.floor(diffInMinutes / 60);
+            const diffInDays = Math.floor(diffInHours / 24);
+            
+            if (diffInSeconds <= 33) {
+                setIsActiveWithinLast33Seconds(true)
+                setFormatedLastActive(
+                    `${diffInSeconds} second${diffInSeconds > 1 ? 's' : ''} ago`
+                );
+            }
+            else if (diffInDays >= 1) {
+                setFormatedLastActive(
+                    `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`
+                );
+            } else if (diffInHours >= 1) {
+                setFormatedLastActive(
+                    `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`
+                );
+            } else if (diffInMinutes >= 1) {
+                setFormatedLastActive(
+                    `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`
+                );
             }
         }
-    }, [currentagent]);
+    }, [lastActive]);
 
     return (
         <>
-            <Card className="hover-transition-primary min-w-[260px] min-h-[260px] rounded-xl p-6 transition-all">
+            <Card className="hover-transition-primary min-h-[260px] min-w-[260px] rounded-xl p-6 transition-all">
                 <div className="flex items-center justify-between">
-                    <div className="card-h2">{Truncate(agentName,11)}</div>
+                    <div className="card-h2">{Truncate(agentName, 11)}</div>
                     <div className="flex gap-x-2">
-                        <Trash2 color="#A1A1A1" onClick={()=>{setDialogOpen(true)}} className='hover:cursor-pointer'/>
+                        <Trash2
+                            color="#A1A1A1"
+                            onClick={() => {
+                                setDialogOpen(true);
+                            }}
+                            className="hover:cursor-pointer"
+                        />
                         <Switch checked={isActiveWithinLast33Seconds} />
                     </div>
                 </div>
@@ -125,8 +149,11 @@ export default function AgentCard({
                             </span>
                         </span>
                         <span>
-                           Total Functions :
-                            <span className="text-active"> {templateTriggers?.length}</span>
+                            Total Functions :
+                            <span className="text-active">
+                                {' '}
+                                {templateTriggers?.length}
+                            </span>
                         </span>
                         <span>
                             Last Active :
@@ -134,23 +161,35 @@ export default function AgentCard({
                         </span>
                         <span>
                             Successfull Transactions :
-                            <span className="text-active !text-green-500"> {Object.keys(successfullTransactions).length}</span>
+                            <span className="text-active !text-green-500">
+                                {' '}
+                                {Object.keys(successfullTransactions).length}
+                            </span>
                         </span>
                         <span>
                             Unsuccessfull Transactions :
-                            <span className="text-active !text-red-600"> {Object.keys(unsuccessfullTransactions).length}</span>
+                            <span className="text-active !text-red-600">
+                                {' '}
+                                {Object.keys(unsuccessfullTransactions).length}
+                            </span>
                         </span>
                     </CardContent>
                 </div>
             </Card>
             <Dialog open={dialogOpen}>
-                <DialogContent >
+                <DialogContent>
                     <ConfirmationBox
                         title="Confirm Delete"
                         msg="Are you sure you want to delete this Agent? This process cannot be undone !"
-                        onClose={()=>{setDialogOpen(false)}}
-                        onDecline={()=>{setDialogOpen(false)}}
-                        onAccept={()=>{deleteAgentMutation.mutateAsync(agentID)}}
+                        onClose={() => {
+                            setDialogOpen(false);
+                        }}
+                        onDecline={() => {
+                            setDialogOpen(false);
+                        }}
+                        onAccept={() => {
+                            deleteAgentMutation.mutateAsync(agentID);
+                        }}
                     />
                 </DialogContent>
             </Dialog>

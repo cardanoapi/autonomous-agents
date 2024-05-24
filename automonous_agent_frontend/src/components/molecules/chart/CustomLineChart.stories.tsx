@@ -18,7 +18,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
-    args: {
-        className: "w-[800px] h-[400px]"
+    args : {
+        chartData : []
     }
-};
+}
