@@ -125,7 +125,7 @@ export default function CreateAgentForm() {
                                     <FormControl>
                                         <Input
                                             placeholder="Enter Agent Name"
-                                            className="mt-3 h-[38px] w-[297px]"
+                                            className="mt-3 h-[38px] w-full"
                                             {...field}
                                         />
                                     </FormControl>
@@ -141,7 +141,7 @@ export default function CreateAgentForm() {
                                         Agent Template
                                     </Label>
                                     <FormControl>
-                                        <div className="h-[40px] w-[297px]">
+                                        <div className="h-[40px] w-full">
                                             <MultipleSelector
                                                 placeholder="Add Agent Template"
                                                 options={agentTemplateOptions}

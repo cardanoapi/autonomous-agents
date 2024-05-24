@@ -180,7 +180,7 @@ export default function TemplateForm() {
                                     <FormControl>
                                         <Input
                                             placeholder="Enter Template Name"
-                                            className="h-[38px] w-[297px]"
+                                            className="h-[38px] w-full"
                                             {...field}
                                         />
                                     </FormControl>
@@ -199,7 +199,7 @@ export default function TemplateForm() {
                                         <Textarea
                                             {...field}
                                             placeholder="Text..."
-                                            className="mt-3 h-[123px] w-[297px]"
+                                            className="mt-3 h-[123px] w-full"
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -207,7 +207,7 @@ export default function TemplateForm() {
                         />
                         <div>
                             <Label className=" inline-block">Agent Behaviour</Label>
-                            <div className="mt-3 w-[297px]">
+                            <div className="mt-3 w-full">
                                 <MultipleSelector
                                     options={functionOptions}
                                     placeholder="Add Agent Function"
