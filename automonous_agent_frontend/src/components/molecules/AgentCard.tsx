@@ -101,11 +101,13 @@ export default function AgentCard({
             const diffInHours = Math.floor(diffInMinutes / 60);
             const diffInDays = Math.floor(diffInHours / 24);
             
-            if (diffInSeconds <= 33) {
-                setIsActiveWithinLast33Seconds(true)
+            if (diffInSeconds <= 60) {
                 setFormatedLastActive(
                     `${diffInSeconds} second${diffInSeconds > 1 ? 's' : ''} ago`
                 );
+                if (diffInSeconds <= 33){
+                    setIsActiveWithinLast33Seconds(true)
+                }
             }
             else if (diffInDays >= 1) {
                 setFormatedLastActive(
