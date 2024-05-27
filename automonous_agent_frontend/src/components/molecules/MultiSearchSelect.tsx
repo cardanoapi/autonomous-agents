@@ -519,18 +519,6 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                         </CommandList>
                     )}
                 </div>
-                {/* <div className="grid w-[40vw] grid-cols-2 gap-2 bg-red-500">
-                    {selected.map((option) => {
-                        return (
-                            <SelectedTemplateCard
-                                templateName={option.value}
-                                handleUnselect={() => {
-                                    handleUnselect(option);
-                                }}
-                            />
-                        );
-                    })}
-                </div> */}
             </Command>
         );
     }

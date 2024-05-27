@@ -1,6 +1,5 @@
 import { Card } from '@app/components/atoms/Card';
-
-import OverViewCardTitle from './OverViewCardTitle';
+import OverViewCard from './OverViewCard';
 
 export interface IOverViewAgentsCard {
     title: string;
@@ -16,8 +15,7 @@ export default function OverViewAgentsCard({
     inactiveAgents
 }: IOverViewAgentsCard) {
     return (
-        <Card className="flex h-full w-full flex-col justify-between gap-y-0 p-4 pb-6 min-w-[269px] hover-transition-primary">
-            <OverViewCardTitle title={title} value={totalAgents} />
+        <OverViewCard title={title} value={totalAgents}>
             <div className="flex w-full gap-x-8 items-center 4xl:gap-x-12">
                 <div className="flex items-center gap-x-2">
                     <div className="bg-brand-Green-100 flex h-4 w-4  items-center justify-center rounded-full">
@@ -32,6 +30,6 @@ export default function OverViewAgentsCard({
                     <div className="card-h4">{inactiveAgents} Inactive</div>
                 </div>
             </div>
-        </Card>
+        </OverViewCard>
     );
 }

@@ -1,22 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-import { randomInt } from 'crypto';
 import {
     Area,
     AreaChart,
     CartesianGrid,
-    PolarGrid,
-    Legend,
-    Line,
-    LineChart,
     ResponsiveContainer,
     Tooltip,
     XAxis,
-    YAxis,
-    Label
+    YAxis
 } from 'recharts';
+
 import CustomTooltip from './CustomTooltip';
 
 export interface ILineChartData {
@@ -31,68 +26,93 @@ const demoData: ILineChartData[] = [
     { name: 'D', amt: 18 },
     { name: 'E', amt: 12 },
     { name: 'F', amt: 20 },
-    { name :'G', amt: 28},
-    { name :'H', amt: 26},
-    { name:'I' , amt : 32},
-    { name:'J' , amt : 34},
+    { name: 'G', amt: 28 },
+    { name: 'H', amt: 26 },
+    { name: 'I', amt: 32 },
+    { name: 'J', amt: 34 }
 ];
 
-export default function CustomLineChart({chartData , className}:{chartData : ILineChartData[] , className? : string}) {
+export default function CustomLineChart({
+    chartData,
+    className,
+    strokeColor = '#1C63E7',
+    strokeGradiantColor = '#0093FD1A',
+    fillGradiant = true,
+    strokeWidth = '5',
+    renderLines = false,
+    renderDot = false,
+    renderToolTip = true,
+    renderXaxis = true,
+    renderYaxis = true
+}: {
+    chartData: ILineChartData[];
+    className?: string;
+    strokeColor?: string;
+    strokeGradiantColor? : string
+    fillGradiant? : boolean;
+    strokeWidth?: string;
+    renderLines?: boolean;
+    renderDot?: boolean;
+    renderToolTip?: boolean;
+    renderXaxis? : boolean,
+    renderYaxis? : boolean
+}) {
 
-    {/* const updateChartData = () => {
-        setData((prevData) => {
-            const lastData = prevData[prevData.length - 1];
-            const newData: ILineChartData = {
-                name: ``,
-                amt: Math.floor(Math.random() * 30) + 1
-            };
-            const updatedData = prevData.slice(1);
-            return [...updatedData, newData];
-        });
-    };
-
-     useEffect(() => {
-        if (data === demoData){
-            const interval = setInterval(updateChartData, 30000);
-            return () => clearInterval(interval);
-        }
-    }, []); */}
-
-    useEffect(()=>{
-        console.log(chartData)
-    },[chartData])
+    useEffect(() => {
+        console.log(chartData);
+    }, [chartData]);
 
     return (
-            <ResponsiveContainer width="100%" height="100%" >
-                <AreaChart
-                    data={chartData}
-                    margin={{ top: 40, right: 0, left: 0, bottom: 0 }}
-                    
-                >
-                    <defs>
-                        <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#0093FD1A" stopOpacity={1} />
-                            <stop offset="90%" stopColor="#0093FD1A" stopOpacity={0} />
-                        </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="0" vertical={false} stroke='#A2A3A5' strokeOpacity={0.4}/> 
-                    <YAxis dx={-10} tickCount={4} axisLine={false} tickLine={false} stroke='#A2A3A5'/>
-                    <Tooltip content={<CustomTooltip/>} cursor={{strokeDasharray:5 , stroke:"#1C63E7"}}/>
-                    <Area
-                        type="monotone"
-                        dataKey="amt"
-                        stroke="#1C63E7"
-                        strokeWidth={"5"}
-                        fillOpacity={1}
-                        fill="url(#colorUv)"
-                        isAnimationActive={false}
-                        strokeLinecap='round'
-                        dot={false}
-                        activeDot={{r : 8}}
+        <ResponsiveContainer width="100%" height="100%" className={className}>
+            <AreaChart
+                data={demoData}
+                margin={{ top: 40, right: 0, left: 0, bottom: 0 }}
+            >
+                <defs>
+                    <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={strokeGradiantColor} stopOpacity={1} />
+                        <stop offset="90%" stopColor={strokeGradiantColor} stopOpacity={0} />
+                    </linearGradient>
+                </defs>
+                {renderLines && (
+                <CartesianGrid
+                    strokeDasharray="0"
+                    vertical={false}
+                    stroke="#A2A3A5"
+                    strokeOpacity={0.4}
+                />
+                )}
+                {renderYaxis && (
+                <YAxis
+                    dx={-10}
+                    tickCount={4}
+                    axisLine={false}
+                    tickLine={false}
+                    stroke="#A2A3A5"
+                />
+                )}
+                {renderToolTip && (
+                    <Tooltip
+                        content={<CustomTooltip />}
+                        cursor={{ strokeDasharray: 5, stroke: '#1C63E7' }}
                     />
-                    <XAxis tickLine={false} dy={5} fill='#2196F3' stroke='#A2A3A5'>
-                    </XAxis>
-                </AreaChart>
-            </ResponsiveContainer>
+                )}
+                <Area
+                    type="monotone"
+                    dataKey="amt"
+                    stroke={strokeColor}
+                    strokeWidth={strokeWidth}
+                    fillOpacity={1}
+                    fill={fillGradiant ? "url(#colorUv)" : strokeColor}
+                    isAnimationActive={false}
+                    strokeLinecap="round"
+                    dot={renderDot}
+                    activeDot={{ r: 8 }}
+                />
+                {renderXaxis && (
+                <XAxis tickLine={false} dy={5} fill="#2196F3" stroke="#A2A3A5"></XAxis>
+                )}
+            </AreaChart>
+        </ResponsiveContainer>
     );
 }

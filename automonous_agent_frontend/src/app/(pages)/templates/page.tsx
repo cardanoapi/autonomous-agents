@@ -50,7 +50,7 @@ export default function TemplatesPage() {
     return (
         <div>
             <div className="flex justify-between">
-                <div className="flex gap-x-4">
+                <div className="flex gap-x-4 justify-center items-center">
                     <span className="h1-new">Templates({templates?.length})</span>
                     <SearchField
                         variant="secondary"
@@ -62,7 +62,7 @@ export default function TemplatesPage() {
                         <DropdownMenuTrigger border={true}>
                             Function
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent>
+                        <DropdownMenuContent className='bg-white'>
                             <DropdownMenuItem>Send Ada</DropdownMenuItem>
                             <DropdownMenuItem>Vote Proposal</DropdownMenuItem>
                             <DropdownMenuItem>Others</DropdownMenuItem>

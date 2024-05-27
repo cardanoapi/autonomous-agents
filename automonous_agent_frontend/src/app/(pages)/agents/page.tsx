@@ -69,7 +69,7 @@ export default function AgentsPage() {
                     </DropdownMenu>
                 </div>
                 <Link href="/agents/create-agent">
-                    <Button variant="primary" size="md">
+                    <Button variant="primary" className='w-[145px] h-[36px]'>
                         Create Agent
                     </Button>
                 </Link>

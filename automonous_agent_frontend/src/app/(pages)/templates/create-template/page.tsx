@@ -1,19 +1,15 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-
 import { useRouter } from 'next/navigation';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
 import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-
 import { IFunction, fetchFunctions } from '@app/app/api/functions';
 import { IParameter } from '@app/app/api/functions';
 import { postTemplateData } from '@app/app/api/templates';
-import { Button } from '@app/components/atoms/Button';
 import { Card } from '@app/components/atoms/Card';
 import { Dialog, DialogContent } from '@app/components/atoms/Dialog';
 import { Form, FormControl, FormField, FormItem } from '@app/components/atoms/Form';
@@ -25,10 +21,10 @@ import SelectedCard from '@app/components/molecules/SelectedCard';
 import { SubmitButton } from '@app/components/molecules/SubmitButton';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 import { templateCreatedAtom } from '@app/store/loaclStore';
-
 import TriggerForm from './components/TriggerForm';
 import { useAtom } from 'jotai';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
+import ConfirmationBox from '@app/components/molecules/ConfirmationBox';
 
 export interface ITemplateOption {
     value: string;
@@ -51,6 +47,7 @@ export const templateFormSchema = z.object({
 export default function TemplateForm() {
     const [submittingForm, setSubmittingForm] = useState(false);
     const [templateCreated , setTemplateCreated] = useAtom(templateCreatedAtom)
+    const [openDeleteBox , setOpenDeleteBox] = useState(true)
     
     const templateMutation = useMutation({
         mutationFn: (data: z.infer<typeof templateFormSchema>) =>
@@ -255,6 +252,11 @@ export default function TemplateForm() {
                         }
                         onSave={updateSelected}
                     />
+                </DialogContent>
+            </Dialog>
+            <Dialog>
+                <DialogContent>
+                    <ConfirmationBox title='Confirm Remove ?' msg='Are you sure you want to remove this Function. All your changes will be lost.'/>
                 </DialogContent>
             </Dialog>
         </>

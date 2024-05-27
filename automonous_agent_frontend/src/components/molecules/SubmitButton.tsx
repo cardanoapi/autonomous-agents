@@ -8,7 +8,7 @@ interface SubmitButtonProps {
     placeholder? : string
 }
 
-export function SubmitButton({ disabled = false, className = "" , placeholder = "create" }: SubmitButtonProps) {
+export function SubmitButton({ disabled = false, className = "" , placeholder = "Create" }: SubmitButtonProps) {
     return (
         <Button
             type="submit"

@@ -158,21 +158,21 @@ export default function AgentCard({
                             </span>
                         </span>
                         <span>
+                            No of Instance :
+                            <span className="text-active">
+                                {' '}
+                                {currentagent?.instance}
+                            </span>
+                        </span>
+                        <span>
                             Last Active :
                             <span className="text-active"> {formatedLastActive}</span>
                         </span>
                         <span>
-                            Successfull Transactions :
-                            <span className="text-active !text-green-500">
+                            Total Transactions :
+                            <span>
                                 {' '}
-                                {Object.keys(successfullTransactions).length}
-                            </span>
-                        </span>
-                        <span>
-                            Unsuccessfull Transactions :
-                            <span className="text-active !text-red-600">
-                                {' '}
-                                {Object.keys(unsuccessfullTransactions).length}
+                                {Object.keys(successfullTransactions).length + Object.keys(unsuccessfullTransactions).length}
                             </span>
                         </span>
                     </CardContent>
