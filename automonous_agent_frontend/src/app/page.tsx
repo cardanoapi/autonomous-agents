@@ -11,13 +11,11 @@ import {
 import CustomLineChart, { ILineChartData } from '@app/components/molecules/chart/CustomLineChart';
 import OverViewAgentsCard from './components/OverViewAgentsCard';
 import OverViewTemplatesCard from './components/OverViewTemplatesCard';
-import OverViewTransactionsCard from './components/OverViewTransactionsCard';
 import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { fetchActiveAgentsCount, fetchAgents } from './api/agents';
 import { fetchTemplates } from './api/templates';
-import { fetchFunctions } from './api/functions';
 import { fetchTransactionsCount, fetchTriggers } from './api/trigger';
-import OverViewTriggerCard from './components/OverViewTriggerCard';
+import OverViewGraphCard from './components/OverViewGraphCard';
 
 
 export interface IAgentsCardData {
@@ -25,6 +23,53 @@ export interface IAgentsCardData {
     activeAgents: number;
     inactiveAgents: number;
 }
+
+
+export const demoPropsalGraphData : ILineChartData[] = [
+    {
+        name: 'a',
+        amt: 0
+    },
+    {
+        name: 'b',
+        amt: 5
+    },
+    {
+        name : 'c',
+        amt : 12,
+    },
+    {
+        name : 'd',
+        amt : 11,
+    },
+    {
+        name: 'e',
+        amt: 7
+    } 
+]
+
+export const demoVoterGraphData : ILineChartData[] = [
+    {
+        name: 'a',
+        amt: 0
+    },
+    {
+        name: 'b',
+        amt: 4
+    },
+    {
+        name : 'c',
+        amt : 10,
+    },
+    {
+        name : 'd',
+        amt : 12,
+    },
+]
+
+
+
+
 
 export default function Home() {
     
@@ -102,18 +147,18 @@ export default function Home() {
                     defaultTemplates={templates?.length}
                     customTemplates={0}
                 />
-                {/* To do Overview cards */}
-                <OverViewTransactionsCard
-                    title='Total Transactions'
-                    totalTransactions={transactionStats.totalTransactions}
-                    successPercentage={transactionStats.successPercentage}
-                    unsucessPercentage={transactionStats.unsuccessPercentage}
+                <OverViewGraphCard
+                  title='No of Proposals'
+                  totalValue={6}
+                  changeRate={5}
+                  graphData={demoPropsalGraphData}
                 />
-                <OverViewTriggerCard
-                    title="No of Triggers"
-                    total={triggers.length}
-                    active={triggers.length}
-                    inactive={0}
+                <OverViewGraphCard
+                  title='No of Voters'
+                  totalValue={5321}
+                  changeRate={19}
+                  theme="Secondary"
+                  graphData={demoVoterGraphData}
                 />
             </div>
 
@@ -135,7 +180,7 @@ export default function Home() {
                         </DropdownMenu>
                     </div>
                     <div className='h-[355px] mt-2 2xl:h-[500px] 4xl:h-[600px]'>
-                        <CustomLineChart chartData={transactionChartData}/>
+                        <CustomLineChart/>
                     </div>
                 </div>
             </Card>

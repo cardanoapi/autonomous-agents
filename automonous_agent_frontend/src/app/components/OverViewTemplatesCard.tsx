@@ -3,7 +3,6 @@ import { FileCog } from 'lucide-react';
 
 import { Card } from '@app/components/atoms/Card';
 
-import OverViewCardTitle from './OverViewCardTitle';
 import OverViewCard from './OverViewCard';
 
 export interface IOverViewTemplatesCard {

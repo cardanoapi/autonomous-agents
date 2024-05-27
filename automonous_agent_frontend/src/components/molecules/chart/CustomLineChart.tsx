@@ -1,18 +1,18 @@
 'use client';
 
 import { useEffect } from 'react';
-
-import {
-    Area,
-    AreaChart,
-    CartesianGrid,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis
+import { 
+    Area, 
+    AreaChart, 
+    CartesianGrid, 
+    ResponsiveContainer, 
+    Tooltip, 
+    XAxis, 
+    YAxis 
 } from 'recharts';
 
 import CustomTooltip from './CustomTooltip';
+import { v4 as uuidv4 } from 'uuid';  // Import the UUID library
 
 export interface ILineChartData {
     name: string;
@@ -36,42 +36,46 @@ export default function CustomLineChart({
     chartData,
     className,
     strokeColor = '#1C63E7',
-    strokeGradiantColor = '#0093FD1A',
+    strokeCoverColor = '#0093FD1A',
     fillGradiant = true,
     strokeWidth = '5',
-    renderLines = false,
+    renderLines = true,
     renderDot = false,
     renderToolTip = true,
     renderXaxis = true,
-    renderYaxis = true
+    renderYaxis = true,
+    smoothStroke = true
 }: {
-    chartData: ILineChartData[];
+    chartData?: ILineChartData[];
     className?: string;
     strokeColor?: string;
-    strokeGradiantColor? : string
-    fillGradiant? : boolean;
+    strokeCoverColor?: string;
+    fillGradiant?: boolean;
     strokeWidth?: string;
     renderLines?: boolean;
     renderDot?: boolean;
     renderToolTip?: boolean;
-    renderXaxis? : boolean,
-    renderYaxis? : boolean
+    renderXaxis?: boolean;
+    renderYaxis?: boolean;
+    smoothStroke?: boolean;
 }) {
 
     useEffect(() => {
         console.log(chartData);
     }, [chartData]);
 
+    const uniqueId = uuidv4();  // Generate a unique ID for this chart instance
+
     return (
         <ResponsiveContainer width="100%" height="100%" className={className}>
             <AreaChart
-                data={demoData}
+                data={chartData || demoData}
                 margin={{ top: 40, right: 0, left: 0, bottom: 0 }}
             >
                 <defs>
-                    <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor={strokeGradiantColor} stopOpacity={1} />
-                        <stop offset="90%" stopColor={strokeGradiantColor} stopOpacity={0} />
+                    <linearGradient id={`colorUv-${uniqueId}`} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={strokeCoverColor} stopOpacity={1} />
+                        <stop offset="90%" stopColor={strokeCoverColor} stopOpacity={0} />
                     </linearGradient>
                 </defs>
                 {renderLines && (
@@ -98,12 +102,12 @@ export default function CustomLineChart({
                     />
                 )}
                 <Area
-                    type="monotone"
+                    type={smoothStroke ? "monotone" : "linear"}
                     dataKey="amt"
                     stroke={strokeColor}
                     strokeWidth={strokeWidth}
                     fillOpacity={1}
-                    fill={fillGradiant ? "url(#colorUv)" : strokeColor}
+                    fill={fillGradiant ? `url(#colorUv-${uniqueId})` : strokeCoverColor}
                     isAnimationActive={false}
                     strokeLinecap="round"
                     dot={renderDot}
