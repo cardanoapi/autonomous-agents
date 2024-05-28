@@ -15,15 +15,16 @@ import TriggerTab from './TriggerTab';
 
 interface ICronParameter {
     name: string;
+    description?: string;
     value: string;
 }
 
 interface ICronTriggerForm {
-    defaultCron?: string[]
+    defaultCron?: string[];
     formValues?: IOption;
     parameters?: IParameter[];
-    previousSelectedOption : string
-    previousConfiguredSettings : any
+    previousSelectedOption: string;
+    previousConfiguredSettings: any;
     setClose: any;
     onSave?: any;
 }
@@ -46,29 +47,40 @@ export default function TriggerForm({
         ? formValues.label[0].toUpperCase() + formValues.label.slice(1)
         : 'Default';
 
-    const [cronParameters, setCronParameters] = useState<ICronParameter[]|[]>([]);
+    const [cronParameters, setCronParameters] = useState<IParameter[]|[]>([]);
     const [cronExpression, setCronExpression] = useState(defaultCron || '');
-    const [defaultSelected , setDefaultSelected] = useState<string>(previousSelectedOption || 'Minute-option-one')
-    const [configuredSettings , setConfiguredSettings] = useState<any>(previousConfiguredSettings || '')
+    const [defaultSelected, setDefaultSelected] = useState<string>(
+        previousSelectedOption || 'Minute-option-one'
+    );
+    const [configuredSettings, setConfiguredSettings] = useState<any>(
+        previousConfiguredSettings || ''
+    );
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
     }
 
-    function updateCronParameters(name: string, value: string) {
-        if (cronParameters.length <= 0){
-            setCronParameters([{name : name , value : value}])
-            return
+    function updateCronParameters(name: string, value: string , data_type : string , description : string , optional : boolean) {
+        const newParam : IParameter = { name: name, value: value , data_type : data_type , description : description , optional : optional }
+        if (cronParameters.length <= 0) {
+            setCronParameters([newParam]);
+            return;
         }
-        const newParameters : ICronParameter[] = cronParameters.filter((item)=> item.name !== name)
-        newParameters.push({name : name , value : value})
-        setCronParameters(newParameters)
+        const newParameters: IParameter[] = cronParameters.filter(
+            (item) => item.name !== name
+        );
+        newParameters.push(newParam);
+        setCronParameters(newParameters);
     }
 
-    function updateCronExpression(cronExpression : string , selectedOption : string , currentSettings : any){
-        setDefaultSelected(selectedOption)
-        setCronExpression(cronExpression)
-        setConfiguredSettings(currentSettings)
+    function updateCronExpression(
+        cronExpression: string,
+        selectedOption: string,
+        currentSettings: any
+    ) {
+        setDefaultSelected(selectedOption);
+        setCronExpression(cronExpression);
+        setConfiguredSettings(currentSettings);
     }
 
     return (
@@ -84,21 +96,48 @@ export default function TriggerForm({
                     <X onClick={setClose} className="fixed cursor-pointer self-end" />
                 </div>
                 <div className="mt-4 grid w-full grid-cols-2 gap-x-6 gap-y-4">
-                    {parameters?.map((parameter, index) => (
-                        <div key={index} className="flex flex-col gap-y-2">
-                            <label className="h3">{parameter.description}</label>
-                            <Input onChange={(e)=>{updateCronParameters(parameter.name ,e.target.value )}}/>
-                        </div>
-                    ))}
+                    {parameters?.map((parameter, index) => {
+                        console.log(parameter);
+                        return (
+                            <div key={index} className="flex flex-col gap-y-2">
+                                <label className="h3">{parameter.description}</label>
+                                <Input
+                                    onChange={(e) =>
+                                        updateCronParameters(
+                                            parameter.name,
+                                            e.target.value,
+                                            parameter.data_type,
+                                            parameter.description,
+                                            parameter.optional
+                                        )
+                                    }
+                                    defaultValue={parameter.value}
+                                />
+                            </div>
+                        );
+                    })}
                 </div>
-                <TriggerTab onChange={updateCronExpression} defaultCron={cronExpression} previousSelectedOption={defaultSelected} previousConfiguredSettings={previousConfiguredSettings}/>
+                <TriggerTab
+                    onChange={updateCronExpression}
+                    defaultCron={cronExpression}
+                    previousSelectedOption={defaultSelected}
+                    previousConfiguredSettings={previousConfiguredSettings}
+                />
                 <div className="flex justify-center">
                     <Button
                         variant="primary"
                         className="mt-6 min-w-36"
                         size="md"
                         type="submit"
-                        onClick={() => {onSave?.({inputLabel : formValues?.label , inputCronParameters : cronParameters , inputCronExpression : cronExpression , inputDefaultSelected : defaultSelected , inputDefaultSettings : configuredSettings || ''})}}
+                        onClick={() => {
+                            onSave?.({
+                                inputLabel: formValues?.label,
+                                inputCronParameters: cronParameters,
+                                inputCronExpression: cronExpression,
+                                inputDefaultSelected: defaultSelected,
+                                inputDefaultSettings: configuredSettings || ''
+                            });
+                        }}
                     >
                         Save
                     </Button>

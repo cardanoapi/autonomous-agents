@@ -8,6 +8,7 @@ export interface IParameter {
   description : string
   optional : boolean
   data_type : string
+  value : any
 }
 
 export interface IFunction {

@@ -33,7 +33,7 @@ export interface ITemplateOption {
     extraValues?: any;
     fixed?: boolean;
     parameters: IParameter[];
-    cronParameters?: { [key: string]: string }[];
+    cronParameters?: IParameter[];
     cronExpression?: string[];
     defaultSelected? : any
     configuredSettings? : any
@@ -118,7 +118,7 @@ export default function TemplateForm() {
         inputDefaultSettings
     }: {
         inputLabel: string;
-        inputCronParameters: { [key: string]: string }[];
+        inputCronParameters: IParameter[];
         inputCronExpression: string[];
         inputDefaultSelected : string;
         inputDefaultSettings : any
@@ -131,7 +131,8 @@ export default function TemplateForm() {
                           cronParameters: inputCronParameters,
                           cronExpression: inputCronExpression,
                           defaultSelected : inputDefaultSelected,
-                          configuredSettings : inputDefaultSettings
+                          configuredSettings : inputDefaultSettings,
+                          parameters : inputCronParameters,
                       }
                     : item
         );
@@ -256,8 +257,7 @@ export default function TemplateForm() {
                             setDialogOpen(false);
                         }}
                         parameters={
-                            currentDialogForm?.parameters
-                        }
+                            currentDialogForm?.parameters}
                         onSave={updateSelected}
                         defaultCron={currentDialogForm?.cronExpression}
                         previousSelectedOption={currentDialogForm?.defaultSelected?.length == 0 ? ' ' : currentDialogForm?.defaultSelected}
