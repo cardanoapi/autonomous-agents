@@ -16,6 +16,27 @@ import { templateCreatedAtom } from '@app/store/loaclStore';
 import { useAtom } from 'jotai';
 import { useEffect, useState } from 'react';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
+import FilterSelect, { ISelectItem } from '@app/components/molecules/FilterSelect';
+
+const FilterSelectOption : ISelectItem[] = [
+    {
+        label : "Newest",
+        value : "Newest"
+    },
+    {
+        label : "Oldest",
+        value : "Oldest"
+    },
+    {
+        label : "MostUsed",
+        value : "MostUsed"
+    },
+    {
+        label : "LeastUsed",
+        value : "LeastUsed"
+    }
+
+]
 
 export default function TemplatesPage() {
     const {

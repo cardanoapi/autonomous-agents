@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { IFunction, fetchFunctions } from '@app/app/api/functions';
 import { IParameter } from '@app/app/api/functions';
-import { postTemplateData } from '@app/app/api/templates';
+import { ITemplate, postTemplateData } from '@app/app/api/templates';
 import { Card } from '@app/components/atoms/Card';
 import { Dialog, DialogContent } from '@app/components/atoms/Dialog';
 import { Form, FormControl, FormField, FormItem } from '@app/components/atoms/Form';
@@ -35,6 +35,8 @@ export interface ITemplateOption {
     parameters: IParameter[];
     cronParameters?: { [key: string]: string }[];
     cronExpression?: string[];
+    defaultSelected? : any
+    configuredSettings? : any
     [key: string]: string | boolean | undefined | object;
 }
 
@@ -78,13 +80,13 @@ export default function TemplateForm() {
 
     /*Related to Popup dialog */
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [currentDialogForm, setCurrentDialogForm] = useState<string | null>(null);
+    const [currentDialogForm, setCurrentDialogForm] = useState<ITemplateOption | null>(null);
 
     /*Related to Selected option*/
     const [selected, setSelected] = useState<ITemplateOption[]>([]);
     function openSelectedOption(option: ITemplateOption) {
         console.log(option);
-        setCurrentDialogForm(option.value);
+        setCurrentDialogForm(option);
         setDialogOpen(true);
     }
     function unselectOption(option: ITemplateOption) {
@@ -111,11 +113,15 @@ export default function TemplateForm() {
     function updateSelected({
         inputLabel,
         inputCronParameters,
-        inputCronExpression
+        inputCronExpression,
+        inputDefaultSelected,
+        inputDefaultSettings
     }: {
         inputLabel: string;
         inputCronParameters: { [key: string]: string }[];
         inputCronExpression: string[];
+        inputDefaultSelected : string;
+        inputDefaultSettings : any
     }) {
         const newSelected: ITemplateOption[] = selected.map(
             (item): ITemplateOption =>
@@ -123,10 +129,13 @@ export default function TemplateForm() {
                     ? {
                           ...item,
                           cronParameters: inputCronParameters,
-                          cronExpression: inputCronExpression
+                          cronExpression: inputCronExpression,
+                          defaultSelected : inputDefaultSelected,
+                          configuredSettings : inputDefaultSettings
                       }
                     : item
         );
+        console.log(`current selected : ${inputDefaultSelected}`)
         setDialogOpen(false);
         setSelected(newSelected);
         form.setValue('triggers', newSelected);
@@ -146,7 +155,7 @@ export default function TemplateForm() {
             return (
                 <SelectedCard
                     name={option.value}
-                    description={'NA'}
+                    description={option.value}
                     key={index}
                     handleEdit={() => {
                         openSelectedOption(option);
@@ -227,18 +236,18 @@ export default function TemplateForm() {
                 <DialogContent>
                     <TriggerForm
                         formValues={selected.find(
-                            (elem) => elem.value === currentDialogForm
+                            (elem) => elem === currentDialogForm
                         )}
                         setClose={() => {
                             /* Remove selected option if user does not save the dialog form*/
                             const newSelected = selected.filter(
-                                (item) => item.label != currentDialogForm
+                                (item) => item != currentDialogForm
                             );
                             setSelected(newSelected);
 
                             /* Call unselect inside the multi selector search component*/
                             const optionToUnselect = selected.find(
-                                (option) => option.label === currentDialogForm
+                                (option) => option === currentDialogForm
                             );
                             if (optionToUnselect) {
                                 functionRef.current.handleUnselect(optionToUnselect);
@@ -247,10 +256,12 @@ export default function TemplateForm() {
                             setDialogOpen(false);
                         }}
                         parameters={
-                            selected.find((elem) => elem.value === currentDialogForm)
-                                ?.parameters
+                            currentDialogForm?.parameters
                         }
                         onSave={updateSelected}
+                        defaultCron={currentDialogForm?.cronExpression}
+                        previousSelectedOption={currentDialogForm?.defaultSelected?.length == 0 ? ' ' : currentDialogForm?.defaultSelected}
+                        previousConfiguredSettings={currentDialogForm?.configuredSettings}
                     />
                 </DialogContent>
             </Dialog>

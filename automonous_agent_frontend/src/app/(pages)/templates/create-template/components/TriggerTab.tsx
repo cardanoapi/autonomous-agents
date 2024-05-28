@@ -47,10 +47,13 @@ const defaultCronSetting: ICronSetting[] = [
 ];
 
 
-export default function TriggerTab({onChange} : {
-    onChange? : any 
+export default function TriggerTab({onChange , defaultCron , previousSelectedOption , previousConfiguredSettings} : {
+    onChange? : any ,
+    defaultCron? : any,
+    previousSelectedOption? : string,
+    previousConfiguredSettings? : any
 }) {
-    const [cron, setCron] = useState<string[]>(['*','*','*','*','*']);
+    const [cron, setCron] = useState<string[]>(defaultCron || ['*','*','*','*','*']);
 
     /* State for persisiting custom cron settings when switching tabs*/
     const [customCron , setCustomCron] = useState<string[]>(['*','*','*','*','*']);
@@ -58,7 +61,8 @@ export default function TriggerTab({onChange} : {
 
     /* state for persisiting user cron settings when switching tabs*/
 
-    const [defaultSelected, setDefaultSelected] = useState('Minute-option-one');
+    const [defaultSelected, setDefaultSelected] = useState(previousSelectedOption || 'Minute-option-one');
+
 
     const initialSettings: IInputSetting[] = [
         { name: 'Minute-option-two', value: 1 },
@@ -75,7 +79,7 @@ export default function TriggerTab({onChange} : {
         { name: 'Year-option-three-end', value: 1 },
     ];
     
-    const [configuredSettings , setConfiguredSettings] = useState<IInputSetting[]>(initialSettings)
+    const [configuredSettings , setConfiguredSettings] = useState<IInputSetting[]>(previousConfiguredSettings || initialSettings)
 
     function saveCronConfiguration(setting : IInputSetting){
         const newSettings : IInputSetting[] = configuredSettings.map((item , index) => {
@@ -101,7 +105,7 @@ export default function TriggerTab({onChange} : {
 
     useEffect(() => {
         const cronExpression = cron.map((item)=>item)
-        onChange?.(cronExpression)
+        onChange?.(cronExpression , defaultSelected , configuredSettings)
     }, [cron]);
 
     return (
@@ -134,7 +138,7 @@ export default function TriggerTab({onChange} : {
                                 </TabsContent>
                             ))}
                             <TabsContent value="Custom">
-                                <CustomCron customCron={customCron} onChange={onChangeCustomCron}/>
+                                <CustomCron customCron={cron} onChange={onChangeCustomCron}/>
                             </TabsContent>
                         </div>
                     </Tabs>

@@ -19,8 +19,11 @@ interface ICronParameter {
 }
 
 interface ICronTriggerForm {
+    defaultCron?: string[]
     formValues?: IOption;
     parameters?: IParameter[];
+    previousSelectedOption : string
+    previousConfiguredSettings : any
     setClose: any;
     onSave?: any;
 }
@@ -31,9 +34,12 @@ interface ICron {
 }
 
 export default function TriggerForm({
+    defaultCron,
     formValues,
     setClose,
     parameters,
+    previousSelectedOption,
+    previousConfiguredSettings,
     onSave
 }: ICronTriggerForm) {
     const label = formValues?.label
@@ -41,7 +47,9 @@ export default function TriggerForm({
         : 'Default';
 
     const [cronParameters, setCronParameters] = useState<ICronParameter[]|[]>([]);
-    const [cronExpression, setCronExpression] = useState('');
+    const [cronExpression, setCronExpression] = useState(defaultCron || '');
+    const [defaultSelected , setDefaultSelected] = useState<string>(previousSelectedOption || 'Minute-option-one')
+    const [configuredSettings , setConfiguredSettings] = useState<any>(previousConfiguredSettings || '')
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -57,8 +65,10 @@ export default function TriggerForm({
         setCronParameters(newParameters)
     }
 
-    function updateCronExpression(value : string){
-        setCronExpression(value)
+    function updateCronExpression(cronExpression : string , selectedOption : string , currentSettings : any){
+        setDefaultSelected(selectedOption)
+        setCronExpression(cronExpression)
+        setConfiguredSettings(currentSettings)
     }
 
     return (
@@ -81,14 +91,14 @@ export default function TriggerForm({
                         </div>
                     ))}
                 </div>
-                <TriggerTab onChange={updateCronExpression}/>
+                <TriggerTab onChange={updateCronExpression} defaultCron={cronExpression} previousSelectedOption={defaultSelected} previousConfiguredSettings={previousConfiguredSettings}/>
                 <div className="flex justify-center">
                     <Button
                         variant="primary"
                         className="mt-6 min-w-36"
                         size="md"
                         type="submit"
-                        onClick={() => {onSave?.({inputLabel : formValues?.label , inputCronParameters : cronParameters , inputCronExpression : cronExpression})}}
+                        onClick={() => {onSave?.({inputLabel : formValues?.label , inputCronParameters : cronParameters , inputCronExpression : cronExpression , inputDefaultSelected : defaultSelected , inputDefaultSettings : configuredSettings || ''})}}
                     >
                         Save
                     </Button>

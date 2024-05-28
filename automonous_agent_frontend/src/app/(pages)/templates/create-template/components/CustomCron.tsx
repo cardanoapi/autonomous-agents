@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Input } from '@app/components/atoms/Input';
-import { NumberInput } from '@app/components/molecules/NumberInput';
 
 export default function CustomCron({
     customCron,
@@ -23,10 +22,17 @@ export default function CustomCron({
         `${years}`
     ]);
 
+    const isFirstRender = useRef(true);
+
     useEffect(() => {
-        const newCron = [`${seconds}`, `${minutes}`, `${hours}`, `${months}`, `${years}`]
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+
+        const newCron = [`${seconds}`, `${minutes}`, `${hours}`, `${months}`, `${years}`];
         setCron(newCron);
-        onChange?.(newCron)
+        onChange?.(newCron);
     }, [seconds, minutes, hours, months, years]);
 
     return (
@@ -59,10 +65,10 @@ export default function CustomCron({
                 />
             </div>
             <div className="mt-2 flex justify-center gap-3">
-                <span className="h3">Seconds</span>
                 <span className="h3">Minutes</span>
                 <span className="h3">Hours</span>
-                <span className="h3">Months</span>
+                <span className="h3">Days</span>
+                <span className="h3">Weeks</span>
                 <span className="h3">Years</span>
             </div>
         </div>

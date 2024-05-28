@@ -39,5 +39,6 @@ export const Primary: Story = {
     args: {
         options : demoOptions,
         className : "",
+        defaultValue : "Oldest"
     }
 };

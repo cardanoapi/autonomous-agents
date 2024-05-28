@@ -13,29 +13,6 @@ import {
   PopoverTrigger,
 } from "../atoms/Popover"
 
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-]
-
 export interface IComboBoxOption {
   value: string,
   label: string,
@@ -49,7 +26,7 @@ export interface ComboboxProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const Combobox: React.FC<ComboboxProps> = ({
   options,
-  enableSearch = true,
+  enableSearch = false,
   onSelect,
   className,
   ...rest
@@ -68,13 +45,13 @@ const Combobox: React.FC<ComboboxProps> = ({
         >
           {value
             ? options?.find((option) => option.value === value)?.label
-            : "Select framework..."}
+            : "Select Option..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className={cn("w-full h-0", className)} {...rest}>
+      <PopoverContent className={cn("w-full h-full bg-white", className)} {...rest}>
         <Command>
-          <CommandInput placeholder="Search framework..." className={cn(enableSearch ? "" : "hidden")} />
+          {enableSearch && <CommandInput placeholder="Search framework..." className={cn(enableSearch ? "" : "hidden")} />}
           <CommandEmpty>No such option found.</CommandEmpty>
           <CommandGroup>
             {options?.map((option) => (
@@ -85,6 +62,11 @@ const Combobox: React.FC<ComboboxProps> = ({
                   setValue(currentValue === value ? "" : currentValue)
                   setOpen(false)
                 }}
+                onClick={(e) => {
+                  setValue((e.target as HTMLInputElement).value)
+                  setOpen(false)
+                }}
+                className="hover:cursor-pointer"
               >
                 <Check
                   className={cn(
