@@ -162,6 +162,9 @@ export default function TemplateForm() {
                         openSelectedOption(option);
                     }}
                     handleUnselect={() => {
+                        const currentFormTriggers = form.getValues("triggers")
+                        const newTriggers = currentFormTriggers.filter((item : any) => item.value != option.value)
+                        form.setValue("triggers" , newTriggers)
                         functionRef.current.handleUnselect(option);
                     }}
                 />
