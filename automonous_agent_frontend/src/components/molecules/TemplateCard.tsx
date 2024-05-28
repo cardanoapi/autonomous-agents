@@ -45,14 +45,14 @@ export default function TemplateCard({
 
     return (
         <>
-            <Card className="hover-transition-primary flex min-h-[157px] min-w-[271px] flex-col justify-between gap-y-0 p-4 pb-6 pr-4">
+            <Card className="hover-transition-primary flex min-h-[157px] min-w-[271px] flex-col justify-between gap-y-0 p-4 pb-6 pr-4 group">
                 <div>
                     <div className='flex justify-between'>
                         <div className="flex items-center gap-x-2">
                             <TemplateIcon fill="#1C63E7" />
                             <CardTitle className="!h2">{Truncate(templateName, 17)}</CardTitle>
                         </div>
-                            <Trash2 stroke='#A1A1A1' onClick={() => { setDialogOpen(true); }} className='hover:cursor-pointer'/>
+                            <Trash2 stroke='#A1A1A1' onClick={() => { setDialogOpen(true); }} className='hover:cursor-pointer hidden group-hover:flex'/>
                     </div>
                     <CardDescription className="card-description1 mt-2">
                         {Truncate(templateDescription, 60)}

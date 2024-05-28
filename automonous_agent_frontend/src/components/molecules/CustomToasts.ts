@@ -5,5 +5,7 @@ export function SuccessToast(msg:string){
 }
 
 export function ErrorToast(msg:string){
-    return toast.error(msg)
+    return toast.error(msg , {
+        duration : 1000
+    })
 }

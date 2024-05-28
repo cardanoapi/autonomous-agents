@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { redirect } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -172,7 +171,7 @@ export default function CreateAgentForm() {
                                         description={option.value}
                                         key={index}
                                         handleEdit={() => {
-                                            console.log('Handle Template edit');
+                                            toast.error('Template Editing is currently unavailable.')
                                         }}
                                         handleUnselect={() => {
                                             multiSelectorRef.current.handleUnselect(

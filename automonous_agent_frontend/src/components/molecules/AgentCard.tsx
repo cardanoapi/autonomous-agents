@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 
 import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
-import { Trash2 } from 'lucide-react';
+import { Copy, Trash2 } from 'lucide-react';
 
 import { IAgent, deleteAgentbyID, fetchAgentbyID } from '@app/app/api/agents';
 import { ITemplate, fetchTemplatebyID, fetchTemplates } from '@app/app/api/templates';
@@ -88,7 +88,7 @@ export default function AgentCard({
     const [isActiveWithinLast33Seconds, setIsActiveWithinLast33Seconds] =
         useState(false);
     const [formatedLastActive, setFormatedLastActive] = useState<string | number>('');
-    
+
     useEffect(() => {
         if (lastActive === 'NA') {
             setFormatedLastActive('Not activated yet');
@@ -96,20 +96,21 @@ export default function AgentCard({
             const lastActiveDate = new Date(lastActive);
             const currentDate = new Date();
 
-            const diffInSeconds = Math.floor((Number(currentDate) - Number(lastActiveDate)) / 1000);
+            const diffInSeconds = Math.floor(
+                (Number(currentDate) - Number(lastActiveDate)) / 1000
+            );
             const diffInMinutes = Math.floor(diffInSeconds / 60);
             const diffInHours = Math.floor(diffInMinutes / 60);
             const diffInDays = Math.floor(diffInHours / 24);
-            
+
             if (diffInSeconds <= 60) {
                 setFormatedLastActive(
                     `${diffInSeconds} second${diffInSeconds > 1 ? 's' : ''} ago`
                 );
-                if (diffInSeconds <= 33){
-                    setIsActiveWithinLast33Seconds(true)
+                if (diffInSeconds <= 33) {
+                    setIsActiveWithinLast33Seconds(true);
                 }
-            }
-            else if (diffInDays >= 1) {
+            } else if (diffInDays >= 1) {
                 setFormatedLastActive(
                     `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`
                 );
@@ -127,16 +128,24 @@ export default function AgentCard({
 
     return (
         <>
-            <Card className="hover-transition-primary min-h-[260px] min-w-[260px] rounded-xl p-6 transition-all">
+            <Card className="hover-transition-primary group min-h-[260px] min-w-[260px] rounded-xl p-6 transition-all">
                 <div className="flex items-center justify-between">
                     <div className="card-h2">{Truncate(agentName, 11)}</div>
                     <div className="flex gap-x-2">
+                        <Copy
+                            color="#A1A1A1"
+                            className="hidden hover:cursor-pointer group-hover:flex"
+                            onClick={() => {
+                                navigator.clipboard.writeText(agentID);
+                                SuccessToast('Agent ID Copied!')
+                            }}
+                        />
                         <Trash2
                             color="#A1A1A1"
                             onClick={() => {
                                 setDialogOpen(true);
                             }}
-                            className="hover:cursor-pointer"
+                            className="hidden hover:cursor-pointer group-hover:flex"
                         />
                         <Switch checked={isActiveWithinLast33Seconds} />
                     </div>
@@ -172,7 +181,8 @@ export default function AgentCard({
                             Total Transactions :
                             <span>
                                 {' '}
-                                {Object.keys(successfullTransactions).length + Object.keys(unsuccessfullTransactions).length}
+                                {Object.keys(successfullTransactions).length +
+                                    Object.keys(unsuccessfullTransactions).length}
                             </span>
                         </span>
                     </CardContent>
