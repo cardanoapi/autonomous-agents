@@ -49,7 +49,7 @@
     "clsx": "^2.1.0",
     "cmdk": "^0.2.0",
     "command": "^0.0.5",
-    "date-fns": "^3.3.1",
+    "date-fns": "^3.6.0",
     "dayjs": "^1.11.10",
     "elastic-apm-node": "^4.4.0",
     "file-type": "^19.0.0",

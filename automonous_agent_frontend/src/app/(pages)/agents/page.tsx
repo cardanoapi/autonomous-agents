@@ -74,7 +74,7 @@ export default function AgentsPage() {
                     </Button>
                 </Link>
             </div>
-            <div className="3xl:grid-cols-4 5xl:grid-cols-6 mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-4 gap-5 4xl:grid-cols-5">
+            <div className="3xl:grid-cols-4 5xl:grid-cols-6 mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-5 4xl:grid-cols-5">
                 {filteredAgents.map((agent: IAgent, index) => (
                     <AgentCard
                         agentName={agent?.name || 'NA'}

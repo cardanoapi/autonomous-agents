@@ -60,10 +60,6 @@ export default function CustomLineChart({
     smoothStroke?: boolean;
 }) {
 
-    useEffect(() => {
-        console.log(chartData);
-    }, [chartData]);
-
     const uniqueId = uuidv4();  // Generate a unique ID for this chart instance
 
     return (
