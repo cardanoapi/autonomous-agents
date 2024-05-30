@@ -12,17 +12,11 @@ from backend.config.logger import logger
 class TriggerService:
     def __init__(self, trigger_repository: TriggerRepository):
         self.trigger_repository = trigger_repository
-        self.kafka_producer = Producer(
-            {"bootstrap.servers": os.environ.get("KAFKA_BROKERS")}
-        )
+        self.kafka_producer = Producer({"bootstrap.servers": os.environ.get("KAFKA_BROKERS")})
 
-    async def create_trigger(
-        self, agent_id: str, trigger_data: TriggerCreateDTO
-    ) -> TriggerResponse:
+    async def create_trigger(self, agent_id: str, trigger_data: TriggerCreateDTO) -> TriggerResponse:
         logger.info(self.kafka_producer)
-        trigger_response = await self.trigger_repository.save_trigger(
-            agent_id, trigger_data
-        )
+        trigger_response = await self.trigger_repository.save_trigger(agent_id, trigger_data)
 
         self.publish_trigger_event(trigger_response.agent_id)
 
@@ -40,13 +34,9 @@ class TriggerService:
     async def list_trigger_by_id(self, trigger_id: str) -> TriggerResponse:
         return await self.trigger_repository.retreive_trigger_by_id(trigger_id)
 
-    async def update_trigger_by_id(
-        self, trigger_id: str, trigger_data: TriggerCreateDTO
-    ) -> TriggerResponse:
+    async def update_trigger_by_id(self, trigger_id: str, trigger_data: TriggerCreateDTO) -> TriggerResponse:
         # Call the repository method to modify the trigger data
-        trigger_response = await self.trigger_repository.modify_trigger_by_id(
-            trigger_id, trigger_data
-        )
+        trigger_response = await self.trigger_repository.modify_trigger_by_id(trigger_id, trigger_data)
 
         # Notify the change if necessary
         # Publish message to Kafka topic
@@ -61,9 +51,7 @@ class TriggerService:
             if err is not None:
                 logger.info("Message delivery failed: {}".format(err))
             else:
-                logger.info(
-                    "Message delivered to {} [{}]".format(msg.topic(), msg.partition())
-                )
+                logger.info("Message delivered to {} [{}]".format(msg.topic(), msg.partition()))
 
         # Publish message to Kafka topic
         self.kafka_producer.produce(

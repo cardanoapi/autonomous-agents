@@ -24,9 +24,7 @@ class TestCreateTemplateTrigger:
     def template_trigger_router(self, trigger_template_service):
         return TemplateTriggerRouter(trigger_template_service)
 
-    async def test_create_template_trigger_with_valid_data(
-        self, template_trigger_router, trigger_template_service
-    ):
+    async def test_create_template_trigger_with_valid_data(self, template_trigger_router, trigger_template_service):
         # Define test data
         id = "trigger_id"
         template_trigger_id = "trigger_id"
@@ -61,13 +59,9 @@ class TestCreateTemplateTrigger:
             data={"frequency": "* * * * *", "probability": 0.3},
         )
 
-        trigger_template_service.update_template_trigger = AsyncMock(
-            return_value=created_trigger
-        )
+        trigger_template_service.update_template_trigger = AsyncMock(return_value=created_trigger)
 
-        result = await template_trigger_router.update_template_trigger(
-            id, valid_cron_trigger_data
-        )
+        result = await template_trigger_router.update_template_trigger(id, valid_cron_trigger_data)
 
         assert result == created_trigger
 
@@ -92,12 +86,8 @@ class TestCreateTemplateTrigger:
                 data={"frequency": "* * * * *", "probability": 0.5},
             )
 
-            trigger_template_service.update_template_trigger = AsyncMock(
-                return_value=created_trigger
-            )
+            trigger_template_service.update_template_trigger = AsyncMock(return_value=created_trigger)
 
-            result = await template_trigger_router.update_template_trigger(
-                id, valid_cron_trigger_data
-            )
+            result = await template_trigger_router.update_template_trigger(id, valid_cron_trigger_data)
 
             assert result == created_trigger
