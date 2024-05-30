@@ -1,6 +1,5 @@
 from pydantic import BaseModel
-from typing import Union
-
+from typing import Union, Optional
 
 from backend.app.models.trigger.trigger_dto import (
     Action,
@@ -13,8 +12,8 @@ class TriggerResponse(BaseModel):
     id: str
     agent_id: str
     type: str
-    action: Action
-    data: Union[CronTriggerDTO, TopicTriggerDTO]
+    action: Optional[Action] = None
+    data: Optional[Union[CronTriggerDTO, TopicTriggerDTO]] = None
 
 
 # class TriggerResponse_agent_id(BaseModel):

@@ -4,7 +4,7 @@
 Cardano Autonomous Agent Backend API
 
 
-## Requirments
+## Requirements
 
 Python version : 3.12.2
 

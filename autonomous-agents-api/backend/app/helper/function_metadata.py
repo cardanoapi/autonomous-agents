@@ -21,6 +21,7 @@ from pydantic import BaseModel
 functions_metadata = [
     {
         "function_name": "SendAda Token",
+        "num_parameters": 1,
         "parameters": [
             {
                 "name": "Receiver Address",
@@ -38,25 +39,85 @@ functions_metadata = [
                 "name": "anchor_url",
                 "description": "Anchor Url",
                 "optional": False,
-                "data_type": "",
+                "data_type": "url",
             },
             {
                 "name": "anchor_dataHash",
                 "description": "Anchor Data Hash",
                 "optional": False,
-                "data_type": "",
+                "data_type": "hex",
             },
             {
                 "name": "newConstitution_url",
-                "description": "Anchor Url",
+                "description": "New Constitution Url",
                 "optional": False,
-                "data_type": "",
+                "data_type": "url",
             },
             {
                 "name": "newConstitution_dataHash",
+                "description": "New Constitution Data Hash",
+                "optional": False,
+                "data_type": "hex",
+            },
+        ],
+    },
+    {
+        "function_name": "Info Action Proposal",
+        "num_parameters": 2,
+        "parameters": [
+            {
+                "name": "anchor_url",
+                "description": "Anchor Url",
+                "optional": False,
+                "data_type": "url",
+            },
+            {
+                "name": "anchor_dataHash",
                 "description": "Anchor Data Hash",
                 "optional": False,
-                "data_type": "",
+                "data_type": "url",
+            },
+        ],
+    },
+    {
+        "function_name": "Delegation",
+        "num_parameters": 3,
+        "parameters": [
+            {
+                "name": "certificates_type",
+                "description": "Type",
+                "optional": False,
+                "data_type": "CertificatesType",
+            },
+            {
+                "name": "drep",
+                "description": "Drep",
+                "optional": False,
+                "data_type": "Drep Hash",
+            },
+        ],
+    },
+    {
+        "function_name": "Vote",
+        "num_parameters": 3,
+        "parameters": [
+            {
+                "name": "proposal",
+                "description": "Proposal",
+                "optional": False,
+                "data_type": "proposal",
+            },
+            {
+                "name": "anchor_url",
+                "description": "Anchor Url",
+                "optional": False,
+                "data_type": "url",
+            },
+            {
+                "name": "anchor_dataHash",
+                "description": "Anchor Data Hash",
+                "optional": False,
+                "data_type": "hash",
             },
         ],
     },

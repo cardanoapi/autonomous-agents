@@ -18,7 +18,7 @@
     "date-fns": "^3.6.0",
     "express": "^4.19.2",
     "kafkajs": "^2.2.4",
-    "libcardano": "^0.0.1",
+    "libcardano": "^0.0.6",
     "luxon": "^3.4.4",
     "prisma": "^5.13.0",
     "swagger-jsdoc": "^6.2.8",

@@ -1,8 +1,10 @@
 import axios from 'axios';
 import {saveTriggerHistory} from "../repository/trigger_history_repository";
 import {createOrUpdateFunctionDetail} from "../repository/fucntion_details_repository";
+import {checkDrepStatus} from "../helper/delegateRep";
+import {checkStakeReg} from "../helper/stakeReg";
 
-const kuberBaseUrl = 'https://preprod.kuber.cardanoapi.io';
+const kuberBaseUrl = 'https://kuber-govtool.cardanoapi.io';
 const kuberApiKey = 'bS6Nm7dJTnCtk0wqwJChwZ7Wot2RTvDS7dETmYYHJ8htqrMs3xYI5njFeGUbno';
 const ApiUrl = process.env.API_SERVER
 interface Parameter {
@@ -23,12 +25,18 @@ interface Selection {
 }
 
 interface Proposal {
-    refundAccount: string;
-    anchor: {
+    deposit?: any,
+    refundAccount?: {
+        network?: any,
+        credential? : {
+            "key hash"?: any
+        }
+    },
+    anchor?: {
         url: any;
         dataHash: any;
     };
-    newconstitution: {
+    newconstitution?: {
         url: any;
         dataHash: any;
     };
@@ -40,13 +48,32 @@ interface RequestBody {
     outputs?: {
         address: string;
         value: string;
+    }[],
+    certificates?: {
+        type: string;
+        key:string;
+        drep:any;
+    }[],
+    vote?: {
+        voter: string;
+        role: string;
+        proposal: any;
+        "vote": boolean;
+        anchor: {
+            url: any;
+            dataHash: any;
+        }
+
     }[];
+
+
+
 }
 
 const agentFunctionMap: { [agentId: string]: Set<string> } = {};
 
 export const handleTransaction = async (message: any, agentId: string): Promise<void> => {
-    if (message != 'Ping') {
+    if (message != 'Ping' || message == 'proposal') {
         // Parse the JSON string into a JavaScript object
         const data: FunctionData = JSON.parse(message);
         // Function to get the value of a parameter by its name
@@ -59,14 +86,15 @@ export const handleTransaction = async (message: any, agentId: string): Promise<
           agentFunctionMap[agentId] = new Set();
         }
         agentFunctionMap[agentId].add(data.function_name);
-
+        data.function_name =='kuber/api/tx/build'
         if (data.function_name == 'Proposal New Constitution') {
             if(data.trigInfo == "true") {
                 await createOrUpdateFunctionDetail("Proposal New Constitution", true);
                 const addressApiUrl = `${ApiUrl}/api/agent/${agentId}/keys`;
                 const addressResponse = await axios.get(addressApiUrl);
                 const agentAddress = addressResponse.data.agent_address;
-                    const kuberUrl = `${kuberBaseUrl}/api/v1/tx?submit=false`;
+                const agentCborhex = addressResponse.data.payment_signing_key;
+                    const kuberUrl = `${kuberBaseUrl}/api/v1/tx?submit=true`;
 
                     const body: RequestBody = {
                         selections: [
@@ -74,12 +102,11 @@ export const handleTransaction = async (message: any, agentId: string): Promise<
                             {
                                 type: "PaymentSigningKeyShelley_ed25519",
                                 description: "Payment Signing Key",
-                                cborHex: "5820ab863c2e6c2e0837d1929b872c43dbe485c326a29527bf267da4cde498731f02"
+                                cborHex: agentCborhex
                             }
                         ],
                         proposals: [
                             {
-                                refundAccount: "stake_test1urd3hs7rlxwwdzthe6hj026dmyt3y0heuulctscyydh2kgck6nkmz",
                                 anchor: {
                                     url: getParameterValue('anchor_url'),
                                     dataHash: getParameterValue('anchor_dataHash')
@@ -126,8 +153,16 @@ export const handleTransaction = async (message: any, agentId: string): Promise<
                 const addressApiUrl = `${ApiUrl}/api/agent/${agentId}/keys`;
                 const addressResponse = await axios.get(addressApiUrl);
                 const agentAddress = addressResponse.data.agent_address;
+                const agentCborhex = addressResponse.data.payment_signing_key;
                 const requestBody: RequestBody = {
-                    selections: [agentAddress],
+                     selections: [
+                            agentAddress,
+                            {
+                                type: "PaymentSigningKeyShelley_ed25519",
+                                description: "Payment Signing Key",
+                                cborHex: agentCborhex
+                            }
+                        ],
                     outputs: [
                         {
                             address: getParameterValue('Receiver Address')!,
@@ -140,7 +175,7 @@ export const handleTransaction = async (message: any, agentId: string): Promise<
                     'Content-Type': 'application/json',
                     'api-key': kuberApiKey
                 };
-                 const kuberUrlSendAda = `${kuberBaseUrl}/api/v1/tx`;
+                 const kuberUrlSendAda = `${kuberBaseUrl}/api/v1/tx?submit=true`;
                 try {
                     const response = await fetch(kuberUrlSendAda, {
                         method: 'POST',
@@ -153,7 +188,7 @@ export const handleTransaction = async (message: any, agentId: string): Promise<
                         throw new Error(`SendAda Token Transaction failed ${response.status}. ${responseBody}`);
                     }
                     const kuberData = await response.json();
-                    console.log('Kuber Response:', kuberData);
+                    console.log('Kuber Response Send Ada Token:', kuberData);
                        await saveTriggerHistory(agentId, data.function_name, true, true,"Successful Creation of transaction of Send Ada Transaction");
                 } catch (error: any) {
                     console.error('Error submitting transaction:', error.message);
@@ -163,8 +198,215 @@ export const handleTransaction = async (message: any, agentId: string): Promise<
             else {
                  await saveTriggerHistory(agentId, data.function_name, false, false,"");
             }
+        } else if(data.function_name == 'Delegation') {
+
+                const status = await checkStakeReg(kuberBaseUrl, ApiUrl, agentId, kuberApiKey)
+                 if (await status) {
+                     await createOrUpdateFunctionDetail("Delegation", true);
+                     const addressApiUrl = `${ApiUrl}/api/agent/${agentId}/keys`;
+                     const addressResponse = await axios.get(addressApiUrl);
+                     const agentAddress = addressResponse.data.agent_address;
+                     const paymentCborHex = addressResponse.data.payment_signing_key;
+                      const stakeCborHex = addressResponse.data.stake_signing_key;
+                     const ownerKeyHash = addressResponse.data.stake_verification_key_hash;
+                     const requestBody: RequestBody = {
+                         selections: [
+                             agentAddress,
+                             {
+                                 type: "PaymentSigningKeyShelley_ed25519",
+                                 description: "Payment Signing Key",
+                                 cborHex: paymentCborHex
+                             },
+                             {
+                                 type: "PaymentSigningKeyShelley_ed25519",
+                                 description: "Payment Signing Key",
+                                 cborHex: stakeCborHex
+                             }
+                         ],
+                         certificates: [
+                             {
+                                 type: "delegate",
+                                 key: ownerKeyHash,
+                                 drep: getParameterValue('drep')
+                             }
+                         ]
+                     };
+                     const headers = {
+                         'Content-Type': 'application/json',
+                         'api-key': kuberApiKey
+                     };
+                     const kuberUrlDelegation = `${kuberBaseUrl}/api/v1/tx?submit=true`;
+
+                     try {
+                         const response = await fetch(kuberUrlDelegation, {
+                             method: 'POST',
+                             headers: headers,
+                             body: JSON.stringify(requestBody)
+                         });
+
+                         if (!response.ok) {
+                             const responseBody = await response.text(); // Get the response body as text
+                             throw new Error(`Proposal delegation Token Transaction failed ${response.status}. ${responseBody}`);
+                         }
+
+                         const kuberData = await response.json();
+                         console.log('Kuber Response proposal delegation :', kuberData);
+                         await saveTriggerHistory(agentId, data.function_name, true, true, "Successful Creation of Delegation of Proposal");
+                     } catch (error: any) {
+                         console.error('Error submitting transaction:', error.message);
+                         await saveTriggerHistory(agentId, data.function_name, true, false, error.message);
+                     }
+                 }
+
+            else {
+                 await saveTriggerHistory(agentId, data.function_name, false, false,"");
+            }
+
+
+            } else if(data.function_name == 'Vote') {
+            console.log('inside vote function')
+             if(data.trigInfo == "true") {
+                 const status = await checkDrepStatus(kuberBaseUrl, ApiUrl, agentId, kuberApiKey)
+                 if (await status) {
+
+                     await createOrUpdateFunctionDetail("Vote", true);
+                     const addressApiUrl = `${ApiUrl}/api/agent/${agentId}/keys`;
+                     const addressResponse = await axios.get(addressApiUrl);
+                     const agentAddress = addressResponse.data.agent_address;
+                     const paymentCborHex = addressResponse.data.payment_signing_key;
+                     const stakeCborHex = addressResponse.data.stake_signing_key
+                     const ownerKeyHash = addressResponse.data.drep_id;
+                     const requestBody: RequestBody = {
+
+                        selections:[
+                                    agentAddress,
+                            {
+                                type: "PaymentSigningKeyShelley_ed25519",
+                                description: "Payment Signing Key",
+                                cborHex: paymentCborHex
+                            },
+                            {
+                                type: "PaymentSigningKeyShelley_ed25519",
+                                description: "Payment Signing Key",
+                                cborHex: stakeCborHex
+                            }
+
+                        ],
+                        vote: [
+                            {
+                                voter: ownerKeyHash,
+                                role: "drep",
+                                proposal: getParameterValue('proposal'),
+                                vote: true,
+                                anchor:{
+                                    "url": "https://bit.ly/3zCH2HL",
+                                    "dataHash" : "1111111111111111111111111111111111111111111111111111111111111111"
+                                }
+                            }
+                        ]
+                    }
+                     const headers = {
+                         'Content-Type': 'application/json',
+                         'api-key': kuberApiKey
+                     };
+                     const kuberUrlDelegation = `${kuberBaseUrl}/api/v1/tx?submit=true`;
+
+                     try {
+                         const response = await fetch(kuberUrlDelegation, {
+                             method: 'POST',
+                             headers: headers,
+                             body: JSON.stringify(requestBody)
+                         });
+
+                         if (!response.ok) {
+                             const responseBody = await response.text(); // Get the response body as text
+                             throw new Error(`Voting transaction failed ${response.status}. ${responseBody}`);
+                         }
+
+                         const kuberData = await response.json();
+                         console.log('Kuber Vote Response:', kuberData);
+                         await saveTriggerHistory(agentId, data.function_name, true, true, "Successful vote");
+                     } catch (error: any) {
+                         console.error('Error submitting transaction:', error.message);
+                         await saveTriggerHistory(agentId, data.function_name, true, false, error.message);
+                     }
+                 } else {
+                   console.log("waiting.........")
+
+                 }
+             }else {
+                     await saveTriggerHistory(agentId, data.function_name, false, false, "");
+                 }
+             }
+             else if(data.function_name == 'Info Action Proposal') {
+             if(data.trigInfo == "true")
+            {
+                await createOrUpdateFunctionDetail("Info Action Proposal", true);
+                 const addressApiUrl = `${ApiUrl}/api/agent/${agentId}/keys`;
+                 const addressResponse = await axios.get(addressApiUrl);
+                 const agentAddress = addressResponse.data.agent_address;
+                 const agentCborhex = addressResponse.data.agent_private_key;
+                 const ownerKeyHash = addressResponse.data.agent_key_hash;
+                   const requestBody: RequestBody = {
+                       selections: [
+                           agentAddress,
+                           {
+                               type: "PaymentSigningKeyShelley_ed25519",
+                               description: "Payment Signing Key",
+                               cborHex: agentCborhex
+                           }
+                       ],
+                       proposals: [
+                           {
+                               deposit: "100A",
+                               refundAccount: {
+                                   network:"Testnet",
+                                   credential:{
+                                       "key hash": ownerKeyHash
+                                   }
+                               },
+                               anchor: {
+                                   url: getParameterValue('anchor_url'),
+                                   dataHash: getParameterValue('anchor_datahash')
+                               }
+
+                           }
+                       ]
+
+                   }
+
+
+              const headers = {
+                    'Content-Type': 'application/json',
+                    'api-key': kuberApiKey
+                };
+              const kuberUrlDelegation = `${kuberBaseUrl}/api/v1/tx?submit=true`;
+
+               try {
+                    const response = await fetch(kuberUrlDelegation, {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify(requestBody)
+                    });
+
+                     if (!response.ok) {
+                        const responseBody = await response.text(); // Get the response body as text
+                        throw new Error(`Info proposal Transaction failed ${response.status}. ${responseBody}`);
+                    }
+
+                     const kuberData = await response.json();
+                    console.log('Kuber Response:', kuberData);
+                       await saveTriggerHistory(agentId, data.function_name, true, true,"Successful Creation of Info Action Proposal");
+                } catch (error: any) {
+                    console.error('Error submitting transaction:', error.message);
+                       await saveTriggerHistory(agentId, data.function_name, true, false,error.message);
+                }
+            }
+            else {
+                 await saveTriggerHistory(agentId, data.function_name, false, false,"");
+            }
+         }
         }
-    }
 };
 
 export const stopFunctionsWhenAgentDisconnects = async (agentId: string) => {

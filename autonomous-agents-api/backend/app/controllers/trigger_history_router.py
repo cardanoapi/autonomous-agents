@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import datetime, timedelta
 from http import HTTPStatus
 from http.client import HTTPException
@@ -60,10 +61,10 @@ class TriggerHistory(Routable):
         end_time = datetime.now()
         start_time = end_time - timedelta(days=1)
 
-        # Query to group transactions by minute and count them
-        transaction_counts = {}
+        # Initialize a dictionary to store transaction counts for each minute
+        transaction_counts = defaultdict(int)
 
-        # Execute the query and fetch all results
+        # Query transactions within the specified time range
         transactions = await self.db.prisma.triggerhistory.find_many(
             where={
                 "timestamp": {"gte": start_time, "lte": end_time},
@@ -74,12 +75,20 @@ class TriggerHistory(Routable):
         # Count transactions for each minute
         for transaction in transactions:
             minute_str = transaction.timestamp.strftime("%Y-%m-%d %H:%M:%S")
-            if minute_str in transaction_counts:
-                transaction_counts[minute_str] += 1
-            else:
-                transaction_counts[minute_str] = 1
+            transaction_counts[minute_str] += 1
 
-        return transaction_counts
+        # Fill in minutes with zero transactions
+        current_minute = start_time
+        while current_minute <= end_time:
+            minute_str = current_minute.strftime("%Y-%m-%d %H:%M:%S")
+            if minute_str not in transaction_counts:
+                transaction_counts[minute_str] = 0
+            current_minute += timedelta(minutes=1)
+
+        # Sort the dictionary by keys
+        sorted_transaction_counts = dict(sorted(transaction_counts.items()))
+
+        return sorted_transaction_counts
 
     @get("/transaction-counts/{agent_id}/agent", response_model=dict)
     async def get_transaction_counts_success_agent_id(self, agent_id: str, success: bool = Query(True)):
@@ -87,10 +96,17 @@ class TriggerHistory(Routable):
         end_time = datetime.now()
         start_time = end_time - timedelta(days=1)
 
-        # Query to group transactions by minute and count them
-        transaction_counts = {}
+        # extracting agent's details
+        agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
+        print(agent)
 
-        # Execute the query and fetch all results
+        if agent is None or agent.last_active is None:
+            # If agent does not exist or last_active is null, return an empty dictionary
+            return {}
+        # Initialize a dictionary to store transaction counts for each minute
+        transaction_counts = defaultdict(int)
+
+        # Query transactions within the specified time range and agent ID
         transactions = await self.db.prisma.triggerhistory.find_many(
             where={
                 "timestamp": {"gte": start_time, "lte": end_time},
@@ -98,12 +114,21 @@ class TriggerHistory(Routable):
                 "success": success,
             }
         )
+
         # Count transactions for each minute
         for transaction in transactions:
             minute_str = transaction.timestamp.strftime("%Y-%m-%d %H:%M:%S")
-            if minute_str in transaction_counts:
-                transaction_counts[minute_str] += 1
-            else:
-                transaction_counts[minute_str] = 1
+            transaction_counts[minute_str] += 1
 
-        return transaction_counts
+        # Fill in minutes with zero transactions
+        current_minute = start_time
+        while current_minute <= end_time:
+            minute_str = current_minute.strftime("%Y-%m-%d %H:%M:%S")
+            if minute_str not in transaction_counts:
+                transaction_counts[minute_str] = 0
+            current_minute += timedelta(minutes=1)
+
+        # Sort the dictionary by keys
+        sorted_transaction_counts = dict(sorted(transaction_counts.items()))
+
+        return sorted_transaction_counts

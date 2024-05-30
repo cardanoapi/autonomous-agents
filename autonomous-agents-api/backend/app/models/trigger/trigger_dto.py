@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from typing import Union
+from typing import Union, Optional
 from pydantic import BaseModel, json
 from croniter import croniter
 
@@ -9,13 +9,14 @@ class CronTriggerDTO(BaseModel):
     probability: float
 
 
-class TopicTriggerDTO(BaseModel):
-    topic: str
-
-
 class SubParameter(BaseModel):
     name: str
     value: str
+
+
+class TopicTriggerDTO(BaseModel):
+    topic: str
+    parameter: Optional[list[SubParameter]]
 
 
 class Action(BaseModel):
@@ -25,8 +26,8 @@ class Action(BaseModel):
 
 class TriggerCreateDTO(BaseModel):
     type: str
-    action: Action
-    data: Union[CronTriggerDTO, TopicTriggerDTO]
+    action: Optional[Action] = None
+    data: Optional[Union[CronTriggerDTO, TopicTriggerDTO]] = None
 
 
 # validation for cron expression

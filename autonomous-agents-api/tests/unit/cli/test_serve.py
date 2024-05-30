@@ -105,7 +105,9 @@ class TestCliServeCommand:
             ),
         ],
     )
-    def test_should_create_wsgi_app_with_parsed_arguments(self, cli_runner, patched_serve, args, expected):
+    def test_should_create_wsgi_app_with_parsed_arguments(
+        self, cli_runner, patched_serve, args, expected
+    ):
         # given / when
         result = cli_runner.invoke(patched_serve, args)
 

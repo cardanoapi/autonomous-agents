@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 
 from pydantic import BaseModel
 
@@ -9,5 +9,5 @@ class TemplateTriggerResponse(BaseModel):
     id: str
     template_id: str
     type: str
-    action: Action
-    data: Union[CronTriggerDTO, TopicTriggerDTO]
+    action: Optional[Action] = None
+    data: Optional[Union[CronTriggerDTO, TopicTriggerDTO]] = None

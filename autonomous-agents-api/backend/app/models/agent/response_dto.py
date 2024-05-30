@@ -14,5 +14,9 @@ class AgentResponse(BaseModel):
 
 
 class AgentKeyResponse(BaseModel):
-    agent_private_key: str
+    payment_signing_key: str
+    stake_signing_key: str
+    stake_verification_key_hash: str
+    payment_verification_key_hash: str
     agent_address: str
+    drep_id: str

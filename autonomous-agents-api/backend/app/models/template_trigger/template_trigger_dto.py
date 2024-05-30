@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 from pydantic import BaseModel, Field
 
 from backend.app.models import Action, CronTriggerDTO, TopicTriggerDTO
@@ -6,5 +6,5 @@ from backend.app.models import Action, CronTriggerDTO, TopicTriggerDTO
 
 class TemplateTriggerCreateDto(BaseModel):
     type: str
-    action: Action
-    data: Union[CronTriggerDTO, TopicTriggerDTO]
+    action: Optional[Action] = None
+    data: Optional[Union[CronTriggerDTO, TopicTriggerDTO]] = None

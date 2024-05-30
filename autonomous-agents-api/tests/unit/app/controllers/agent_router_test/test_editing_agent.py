@@ -38,7 +38,9 @@ class TestAgentEditRouter:
 
         assert result == updated_agent
 
-    async def test_update_agent_should_fail_with_invalid_details(self, agent_service, agent_router):
+    async def test_update_agent_should_fail_with_invalid_details(
+        self, agent_service, agent_router
+    ):
         with pytest.raises(ValidationError):
             # Mock data
             agent_id = "018e8909-549b-7b9f-8fab-5499f53a8244"

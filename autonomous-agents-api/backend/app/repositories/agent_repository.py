@@ -1,3 +1,6 @@
+import binascii
+import hashlib
+import json
 import os
 import uuid
 from datetime import datetime, timezone, timedelta
@@ -5,11 +8,19 @@ from typing import List, Optional
 
 import pycardano
 from fastapi import HTTPException
-from pycardano import HDWallet
+from pycardano import (
+    HDWallet,
+    PaymentSigningKey,
+    PaymentVerificationKey,
+    StakeSigningKey,
+    StakeVerificationKey,
+    Address,
+    Network,
+)
+from pycardano.crypto.bech32 import bech32_encode, convertbits, Encoding
 
 from backend.app.models import AgentResponse, AgentCreateDTO, AgentKeyResponse
 from backend.config.database import prisma_connection
-from backend.config.logger import logger
 
 
 class AgentRepository:
@@ -100,6 +111,16 @@ class AgentRepository:
         await self.db.prisma.agent.update(where={"id": agent_id}, data={"deleted_at": datetime.now(timezone.utc)})
         return True
 
+    async def remove_agent(self, agent_id: str) -> bool:
+        agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
+        if agent is None:
+            return False
+        elif agent.deleted_at is not None:
+            return True
+
+        await self.db.prisma.agent.update(where={"id": agent_id}, data={"deleted_at": datetime.now(timezone.utc)})
+        return True
+
     async def retreive_agent_key(self, agent_id: str):
         # Fetch the agent from the database or other data source based on the agent_id
         agent = await self.retrieve_agent(agent_id)
@@ -108,46 +129,91 @@ class AgentRepository:
         mnemonic = os.getenv("AGENT_MNEMONIC")
 
         # Derive the root private key
-        masterKey = HDWallet.from_mnemonic(mnemonic)
+        hd_wallet = HDWallet.from_mnemonic(mnemonic)
+
+        derived_wallet = hd_wallet.derive(agent_index, hardened=True)
+        agent_private_key = derived_wallet.xprivate_key
+        agent_public_key = derived_wallet.public_key
+        agent_chain_code = derived_wallet.chain_code
 
         # Derive the agent's child private key based on the agent_id
 
-        agentPath = f"m/{agent_index}'"
-        agent_key = masterKey.derive_from_path(agentPath)
-
+        # agentPath = f"m/{agent_index}'"
+        # agent_key = masterKey.derive_from_path(agentPath)
+        #
         # Generate the address using the derived agent key
         paymentPath = "m/1852'/1815'/0'/0/0"
         stakingPath = "m/1852'/1815'/0'/2/0"
 
-        paymentKeyPath = agent_key.derive_from_path(paymentPath)
-        paymentPublicKey = paymentKeyPath.root_public_key
+        paymentKeys = derived_wallet.derive_from_path(paymentPath)
+        paymentSigningKey = PaymentSigningKey(paymentKeys.xprivate_key[:32])
+        paymentVerificationKey = PaymentVerificationKey.from_signing_key(paymentSigningKey)
 
-        stakingKeyPath = agent_key.derive_from_path(stakingPath)
-        stakingPublicKey = stakingKeyPath.public_key
+        stakingKeys = derived_wallet.derive_from_path(stakingPath)
+        stakeSigningKey = StakeSigningKey(stakingKeys.xprivate_key[:32])
+        stakeVerificationKey = StakeVerificationKey.from_signing_key(stakeSigningKey)
 
-        paymentVerificationKey = pycardano.key.PaymentExtendedVerificationKey(paymentPublicKey)
-        stakingVerificationKey = pycardano.key.StakeExtendedVerificationKey(stakingPublicKey)
+        stake_verification_key_dict = json.loads(str(stakeVerificationKey))
+        drep_id_bech32, drep_id = self.encode_drep_id(stake_verification_key_dict)
+        print(f"dRep ID Bech32 Address: {drep_id_bech32}", "drep_id", drep_id)
 
         print(
-            "payment public key:",
-            paymentPublicKey.hex(),
-            "staking public key: ",
-            stakingPublicKey.hex(),
-            "payment verification key: ",
-            paymentVerificationKey.to_cbor_hex(),
-            "staking verification key:",
-            stakingVerificationKey.to_cbor_hex(),
+            "paymentSigningKey:",
+            paymentSigningKey,
+            "payment verification key:",
+            paymentVerificationKey,
+            "stakeVerificationKey",
+            stakeVerificationKey,
         )
 
         address = pycardano.Address(
             payment_part=paymentVerificationKey.hash(),
-            staking_part=stakingVerificationKey.hash(),
+            staking_part=stakeVerificationKey.hash(),
             network=pycardano.Network.TESTNET,
         )
+        # spk = stakeVerificationKey.to_cbor_hex()
+        # stake_verification_key_bytes = bytes.fromhex(spk[4:])
+        #
+        # # Convert the bytes to a 5-bit array
+        # witprog = convertbits(stake_verification_key_bytes, 8, 5)
+        # if witprog is None:
+        #     raise ValueError("Failed to convert bits")
+        #
+        # drep_key = bech32_encode("drep", witprog, Encoding.BECH32)
+        # print(drep_key)
 
         # Create and return the AgentResponse with the agent's key and address
         agent_response = AgentKeyResponse(
-            agent_private_key=str(agent_key.xprivate_key.hex()),
+            payment_signing_key=str(paymentSigningKey.to_cbor_hex()),
+            stake_signing_key=str(stakeSigningKey.to_cbor_hex()),
+            agent_private_key=str(paymentSigningKey.to_cbor_hex()),
             agent_address=str(address),
+            stake_verification_key_hash=str(stakeVerificationKey.hash()),
+            payment_verification_key_hash=str(paymentVerificationKey.hash()),
+            drep_id=str(drep_id),
         )
         return agent_response
+
+    def blake2b_28(self, data):
+        """Compute the BLAKE2b hash of the given data with a 28-byte output length."""
+        hasher = hashlib.blake2b(digest_size=28)
+        hasher.update(data)
+        return hasher.digest()
+
+    def encode_drep_id(self, stake_verification_key_dict):
+        """Encode the stake verification key into a dRep Bech32 address."""
+        # Extract the cborHex value
+        cbor_hex = stake_verification_key_dict["cborHex"]
+
+        # Convert the hex string to bytes (skip the first 4 characters which indicate the length and type)
+        stake_verification_key_bytes = binascii.unhexlify(cbor_hex[4:])
+
+        # Hash the bytes using BLAKE2b with a 28-byte output
+        drep_id = self.blake2b_28(stake_verification_key_bytes)
+
+        # Convert the hashed bytes to a 5-bit array (Bech32 words)
+        words = convertbits(drep_id, 8, 5)
+
+        # Encode the 5-bit array into a Bech32 address with HRP "drep"
+        drep_id_bech32 = bech32_encode("drep", words, Encoding.BECH32)
+        return drep_id_bech32, drep_id.hex()

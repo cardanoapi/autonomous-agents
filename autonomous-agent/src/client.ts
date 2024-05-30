@@ -12,8 +12,8 @@ export async function handleIncomingMessage(data: WebSocket.Data): Promise<void>
 
         // Check if the message contains configurations
        if (message.message == 'initial') {
-
-            console.log('Received initial configurations:', JSON.stringify(message));
+            const initial_message = JSON.stringify(message)
+            console.log('Received initial configurations:',initial_message);
             globalConfig = {
                 instance_count: message.instance_count,
                 configurations: message.configurations,
