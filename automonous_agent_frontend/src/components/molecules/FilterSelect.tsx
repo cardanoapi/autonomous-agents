@@ -35,8 +35,10 @@ export default function FilterSelect({
                 <SelectValue placeholder="Newest"/>
             </SelectTrigger>
             <SelectContent className="h4 bg-white">
-                {options?.map((item) => (
-                    <SelectItem value={item.value}>{item.label}</SelectItem>
+                {options?.map((item , index) => (
+                    <div key={index}>
+                        <SelectItem value={item.value}>{item.label}</SelectItem>
+                    </div>
                 ))}
             </SelectContent>
         </Select>

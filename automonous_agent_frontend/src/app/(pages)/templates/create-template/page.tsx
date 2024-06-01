@@ -49,7 +49,6 @@ export const templateFormSchema = z.object({
 export default function TemplateForm() {
     const [submittingForm, setSubmittingForm] = useState(false);
     const [templateCreated , setTemplateCreated] = useAtom(templateCreatedAtom)
-    const [openDeleteBox , setOpenDeleteBox] = useState(true)
     
     const templateMutation = useMutation({
         mutationFn: (data: z.infer<typeof templateFormSchema>) =>
@@ -266,11 +265,6 @@ export default function TemplateForm() {
                         previousSelectedOption={currentDialogForm?.defaultSelected?.length == 0 ? ' ' : currentDialogForm?.defaultSelected}
                         previousConfiguredSettings={currentDialogForm?.configuredSettings}
                     />
-                </DialogContent>
-            </Dialog>
-            <Dialog>
-                <DialogContent>
-                    <ConfirmationBox title='Confirm Remove ?' msg='Are you sure you want to remove this Function. All your changes will be lost.'/>
                 </DialogContent>
             </Dialog>
         </>

@@ -55,7 +55,7 @@ export default function Home() {
             const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
             const timestamps = [];
     
-            for (let m = oneHourAgo; m <= now; m.setMinutes(m.getMinutes() + 1)) {
+            for (let m = new Date(oneHourAgo); m <= now; m.setMinutes(m.getMinutes() + 1)) {
                 timestamps.push(new Date(m).toISOString());
             }
     
@@ -63,14 +63,14 @@ export default function Home() {
                 name: timestamp,
                 amt: data[timestamp] ?? 0
             }));
-            setCurrentChartUnit("Mins")
+            setCurrentChartUnit("Mins"); 
         } else if (filter === 'Last 24 Hours') {
             const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
             const hourlyData: Record<string, number> = {};
             const timestamps = [];
     
-            for (let h = twentyFourHoursAgo; h <= now; h.setHours(h.getHours() + 1)) {
-                const hour = h.toISOString().slice(0, 13);
+            for (let h = new Date(twentyFourHoursAgo); h <= now; h.setHours(h.getHours() + 1)) {
+                const hour = h.toISOString().slice(0, 13) + ':00:00';
                 timestamps.push(hour);
                 hourlyData[hour] = 0;
             }
@@ -78,16 +78,17 @@ export default function Home() {
             Object.entries(data)
                 .filter(([key]) => new Date(key) > twentyFourHoursAgo)
                 .forEach(([key, value]) => {
-                    const hour = new Date(key).toISOString().slice(0, 13);
+                    const hour = new Date(key).toISOString().slice(0, 13) + ':00:00';
                     hourlyData[hour] += value;
                 });
     
             filteredData = timestamps.map(timestamp => ({
                 name: timestamp,
-                amt: hourlyData[timestamp]
+                amt: hourlyData[timestamp] ?? 0
             }));
-            setCurrentChartUnit("Hours")
+            setCurrentChartUnit("Hours");
         }
+    
         return filteredData;
     };
     
