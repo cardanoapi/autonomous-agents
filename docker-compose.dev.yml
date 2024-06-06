@@ -1,6 +1,48 @@
 version: '3.8'
 
 services:
+  # FastAPI application (build the image)
+  cardano-autonomous:
+    build: ./autonomous-agents-api  # Path to your FastAPI project directory
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://root:root@postgres:5432/cardano_autonomous_agent_testing_db
+      - KAFKA_BROKERS=kafka:9093
+    depends_on:
+      - postgres
+      - kafka
+      - pgadmin
+
+  # Agent Manager application (build image)
+  agent_manager:
+    build:
+      context: ./autonomous-agent-manager
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+      - kafka
+      - cardano-autonomous
+    environment:
+      - DATABASE_URL=postgresql://root:root@postgres:5432/cardano_autonomous_agent_testing_db
+      - BROKER_URL=kafka:9093
+      - CLIENT_ID=my-app
+      - CARDANO_NODE_URL=95.217.224.100:3006
+
+  #Agent (build image)
+  agent:
+    build:
+      context: ./autonomous-agent
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    depends_on:
+      - agent_manager
+    environment:
+      - WS_URL=  # Use service name as hostname within Docker network
+      - AGENT_ID= # Provide the agent ID as needed
 
   #Database
   postgres:

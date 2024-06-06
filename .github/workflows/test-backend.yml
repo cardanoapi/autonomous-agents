@@ -23,17 +23,17 @@ jobs:
           python-version: 3.12.2
 
       - name: Install Poetry
-        working-directory: autonomous_agent_api
+        working-directory: autonomous-agents-api
         run: pip install poetry==1.8.2
 
       - name: Install Dependencies
-        working-directory: autonomous_agent_api
+        working-directory: autonomous-agents-api
         run: |
            poetry install
            poetry run prisma generate
 
       - name: Run test cases
-        working-directory: autonomous_agent_api
+        working-directory: autonomous-agents-api
         env:
           DATABASE_URL : ""
         run: poetry run pytest -m github_actions

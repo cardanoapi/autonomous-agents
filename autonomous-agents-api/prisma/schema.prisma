@@ -1,0 +1,77 @@
+generator client {
+  provider             = "prisma-client-py"
+  interface            = "asyncio"
+  recursive_type_depth = 5
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Agent table model
+model Agent {
+  id          String    @id // UUID
+  name        String
+  instance    BigInt
+  template_id String
+  index       BigInt    @default(autoincrement())
+  last_active DateTime?
+  created_at  DateTime
+  updated_at  DateTime
+  deleted_at  DateTime? // Soft deletion field
+}
+
+model Trigger {
+  id         String      @id
+  agent_id   String
+  type       TriggerType
+  action     Json
+  data       Json
+  created_at DateTime
+  updated_at DateTime
+  deleted_at DateTime?
+}
+
+model Template_Trigger {
+  id          String      @id
+  template_id String
+  type        TriggerType
+  action      Json
+  data        Json
+  created_at  DateTime
+  updated_at  DateTime
+  deleted_at  DateTime?
+}
+
+model Template {
+  id          String    @id
+  name        String
+  description String
+  created_at  DateTime
+  updated_at  DateTime
+  deleted_at  DateTime?
+}
+
+// schema.prisma
+model TriggerHistory {
+  id           String    @id
+  agentId      String
+  functionName String
+  status       Boolean
+  success      Boolean
+  message      String
+  timestamp    DateTime?
+}
+
+model FunctionDetail {
+  id                String  @id
+  name              String  @unique
+  running           Boolean
+  totalTransactions Int     @default(0)
+}
+
+enum TriggerType {
+  CRON
+  TOPIC
+}
