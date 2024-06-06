@@ -1,117 +1,162 @@
-import Image from 'next/image';
-import Link from 'next/link';
+'use client'
+import { useState, useEffect } from 'react';
+import Head from 'next/head';
+import { Card } from '@app/components/atoms/Card';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@app/components/atoms/DropDownMenu';
+import CustomLineChart, { ILineChartData } from '@app/components/molecules/chart/CustomLineChart';
+import OverViewAgentsCard from './components/OverViewAgentsCard';
+import OverViewTemplatesCard from './components/OverViewTemplatesCard';
+import { useQuery } from '@tanstack/react-query';
+import { fetchActiveAgentsCount, fetchAgents } from './api/agents';
+import { fetchTemplates } from './api/templates';
+import { fetchTransactionsCount } from './api/trigger';
+import OverViewGraphCard from './components/OverViewGraphCard';
+
+export interface IAgentsCardData {
+    totalAgents: number;
+    activeAgents: number;
+    inactiveAgents: number;
+}
+
+export const demoPropsalGraphData: ILineChartData[] = [
+    { name: 'a', amt: 0 },
+    { name: 'b', amt: 5 },
+    { name: 'c', amt: 12 },
+    { name: 'd', amt: 11 },
+    { name: 'e', amt: 7 },
+];
+
+export const demoVoterGraphData: ILineChartData[] = [
+    { name: 'a', amt: 0 },
+    { name: 'b', amt: 4 },
+    { name: 'c', amt: 10 },
+    { name: 'd', amt: 12 },
+];
 
 export default function Home() {
-    return (
-        <main className="flex min-h-screen flex-col items-center justify-between p-24">
-            <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-                <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-                    Get started by editing&nbsp;
-                    <Link href="/">
-                        <code className="font-mono font-bold">src/app/page.tsx</code>
-                    </Link>
-                </p>
-                <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-                    <a
-                        className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-                        href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        By{' '}
-                        <Image
-                            src="/next.svg"
-                            alt="next Logo"
-                            className="dark:invert"
-                            width={100}
-                            height={24}
-                            priority
-                        />
-                    </a>
-                </div>
-            </div>
+    const { data: agents = [] } = useQuery({ queryKey: ['agents'], queryFn: fetchAgents });
+    const { data: activeAgents } = useQuery({ queryKey: ['activeAgentsCount'], queryFn: fetchActiveAgentsCount });
+    const { data: templates = [] } = useQuery({ queryKey: ['templates'], queryFn: fetchTemplates });
+    const { data: transactionCount = {} } = useQuery({ queryKey: ['transactionCounts'], queryFn: () => fetchTransactionsCount('true') });
+    const [filteredChartData , setFilteredChartData] = useState<ILineChartData[]>([])
+    const [currentChartFilter, setCurrentChartFilter] = useState("Last 24 Hours");
+    const [currentChartUnit , setCurrentChartUnit] = useState('Hours')
+    
+    const getFilteredData = (data: Record<string, number>, filter: string): ILineChartData[] => {
+        const now = new Date();
+        let filteredData: ILineChartData[] = [];
+    
+        if (filter === 'Last Hour') {
+            const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+            const timestamps = [];
+    
+            for (let m = new Date(oneHourAgo); m <= now; m.setMinutes(m.getMinutes() + 1)) {
+                timestamps.push(new Date(m).toISOString());
+            }
+    
+            filteredData = timestamps.map(timestamp => ({
+                name: timestamp,
+                amt: data[timestamp] ?? 0
+            }));
+            setCurrentChartUnit("Mins"); 
+        } else if (filter === 'Last 24 Hours') {
+            const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+            const hourlyData: Record<string, number> = {};
+            const timestamps = [];
+    
+            for (let h = new Date(twentyFourHoursAgo); h <= now; h.setHours(h.getHours() + 1)) {
+                const hour = h.toISOString().slice(0, 13) + ':00:00';
+                timestamps.push(hour);
+                hourlyData[hour] = 0;
+            }
+    
+            Object.entries(data)
+                .filter(([key]) => new Date(key) > twentyFourHoursAgo)
+                .forEach(([key, value]) => {
+                    const hour = new Date(key).toISOString().slice(0, 13) + ':00:00';
+                    hourlyData[hour] += value;
+                });
+    
+            filteredData = timestamps.map(timestamp => ({
+                name: timestamp,
+                amt: hourlyData[timestamp] ?? 0
+            }));
+            setCurrentChartUnit("Hours");
+        }
+    
+        return filteredData;
+    };
+    
+    
+    
+    useEffect(() => {
+        const filteredData = getFilteredData(transactionCount, currentChartFilter);
+        setFilteredChartData(filteredData);
+        console.log(filteredData)
+    }, [currentChartFilter, transactionCount]);
 
-            <div className="before:bg-gradient-radial after:bg-gradient-conic relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-                <Image
-                    className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-                    src="/next.svg"
-                    alt="Next.js Logo"
-                    width={180}
-                    height={37}
-                    priority
+    return (
+        <>
+            <Head>
+                <title>Dashboard</title>
+            </Head>
+
+            <div className="flex grid-cols-4 gap-[12px] 2xl:gap-[25px] h-36 ">
+                <OverViewAgentsCard
+                    title="No of Agents"
+                    totalAgents={agents.length || 'NA'}
+                    activeAgents={activeAgents?.online_agents_count}
+                    inactiveAgents={Math.max(0, agents.length - activeAgents?.online_agents_count)}
+                />
+                <OverViewTemplatesCard
+                    title="No of Templates"
+                    totalTemplates={templates.length}
+                    defaultTemplates={templates.length}
+                    customTemplates={0}
+                />
+                <OverViewGraphCard
+                    title='No of Proposals'
+                    totalValue={6}
+                    changeRate={5}
+                    graphData={demoPropsalGraphData}
+                />
+                <OverViewGraphCard
+                    title='No of Voters'
+                    totalValue={5321}
+                    changeRate={19}
+                    theme="Secondary"
+                    graphData={demoVoterGraphData}
                 />
             </div>
 
-            <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-                <a
-                    href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-                    className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <h2 className={`mb-3 text-2xl font-semibold`}>
-                        Docs{' '}
-                        <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-                            -&gt;
-                        </span>
-                    </h2>
-                    <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-                        Find in-depth information about Next.js features and API.
-                    </p>
-                </a>
-
-                <a
-                    href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-                    className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <h2 className={`mb-3 text-2xl font-semibold`}>
-                        Learn{' '}
-                        <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-                            -&gt;
-                        </span>
-                    </h2>
-                    <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-                        Learn about Next.js in an interactive course with&nbsp;quizzes!
-                    </p>
-                </a>
-
-                <a
-                    href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-                    className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <h2 className={`mb-3 text-2xl font-semibold`}>
-                        Templates{' '}
-                        <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-                            -&gt;
-                        </span>
-                    </h2>
-                    <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-                        Explore starter templates for Next.js.
-                    </p>
-                </a>
-
-                <a
-                    href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-                    className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <h2 className={`mb-3 text-2xl font-semibold`}>
-                        Deploy{' '}
-                        <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-                            -&gt;
-                        </span>
-                    </h2>
-                    <p className={`m-0 max-w-[30ch] text-balance text-sm opacity-50`}>
-                        Instantly deploy your Next.js site to a shareable URL with
-                        Vercel.
-                    </p>
-                </a>
-            </div>
-        </main>
+            <Card className="mt-8 flex flex-row gap-y-8 py-4 pr-12 pb-16 pt-2 2xl:mt-12 5xl:mt-16">
+                <span className="h4 rotate-180 text-center [writing-mode:vertical-lr]">
+                    Transaction Volume
+                </span>
+                <div className="mt-5 w-full pr-6">
+                    <div className="flex justify-between">
+                        <span className="title-1">Transactions</span>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger border={true}>
+                                {currentChartFilter}
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className='bg-white'>
+                                <DropdownMenuItem onClick={() => { setCurrentChartFilter("Last Hour") }}>Last Hour</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => { setCurrentChartFilter("Last 24 Hours") }}>Last 24 Hours</DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                    <div className='h-[355px] mt-2 2xl:h-[500px] 4xl:h-[600px]'>
+                        <CustomLineChart chartData={filteredChartData}/>
+                        <div className='text-center mt-2'>Time ({currentChartUnit})</div>
+                    </div>
+                </div>
+            </Card>
+        </>
     );
 }

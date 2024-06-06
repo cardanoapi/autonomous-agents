@@ -21,6 +21,7 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
       "@app/*": [
         "./src/*"
@@ -33,7 +34,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next-dev/types/**/*.ts"
-  ],
+, "src/utils/providers/ReactQueryProvider.tsx"  ],
   "exclude": [
     "node_modules",
     "build",

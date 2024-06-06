@@ -623,3 +623,5 @@ $RECYCLE.BIN/
 cypress/videos/
 
 
+
+*storybook.log
