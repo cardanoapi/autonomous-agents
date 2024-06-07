@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function InfoCircle(props: React.SVGAttributes<{}>) {
+export function InfoCircle(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="18"

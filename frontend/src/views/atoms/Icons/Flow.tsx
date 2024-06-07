@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function Flow(props: React.SVGAttributes<{}>) {
+export function Flow(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"

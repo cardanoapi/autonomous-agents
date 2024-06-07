@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const LongArrowUpIcon: React.FC<React.SVGAttributes<{}>> = (props) => {
+export const LongArrowUpIcon: React.FC<React.SVGAttributes<SVGElement>> = (props) => {
     return (
         <svg
             viewBox="0 0 24 24"

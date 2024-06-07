@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function Close(props: React.SVGAttributes<{}>) {
+export function Close(props: React.SVGAttributes<SVGElement>) {
     const { className, ...otherProps } = props;
     return (
         <svg

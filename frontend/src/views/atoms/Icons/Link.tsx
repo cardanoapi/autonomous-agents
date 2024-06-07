@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const LinkIcon: React.FC<React.SVGAttributes<{}>> = (props) => {
+export const LinkIcon: React.FC<React.SVGAttributes<SVGElement>> = (props) => {
     return (
         <svg
             width="20"

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const GasIcon: React.FC<React.SVGAttributes<{}>> = (props) => {
+export const GasIcon: React.FC<React.SVGAttributes<SVGElement>> = (props) => {
     return (
         <svg
             viewBox="0 0 16 16"

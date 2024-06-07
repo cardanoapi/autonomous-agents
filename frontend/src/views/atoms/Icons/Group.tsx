@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function GroupIcon(props: React.SVGAttributes<{}>) {
+export function GroupIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="24"

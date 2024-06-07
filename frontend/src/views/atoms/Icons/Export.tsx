@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function ExportIcon(props: React.SVGAttributes<{}>) {
+export function ExportIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             viewBox="0 0 10 10"

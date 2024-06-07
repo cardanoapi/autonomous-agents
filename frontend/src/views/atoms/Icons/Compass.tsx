@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function CompassIcon(props: React.SVGAttributes<{}>) {
+export function CompassIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="18"

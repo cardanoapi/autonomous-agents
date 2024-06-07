@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function ChevronDown(props: React.SVGAttributes<{}>) {
+export function ChevronDown(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="11"

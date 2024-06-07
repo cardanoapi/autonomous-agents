@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const QuestionIcon: React.FC<React.SVGAttributes<{}>> = (props) => {
+export const QuestionIcon: React.FC<React.SVGAttributes<SVGElement>> = (props) => {
     return (
         <svg
             viewBox="0 0 24 24"

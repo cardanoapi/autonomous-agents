@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function ExchangeIcon(props: React.SVGAttributes<{}>) {
+export function ExchangeIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="16"

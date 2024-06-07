@@ -1,8 +1,9 @@
 import React from 'react';
 
-interface HintProps extends React.SVGAttributes<{}> {
+interface HintProps extends React.SVGAttributes<SVGElement> {
     fillColor?: string;
 }
+
 export const Hint: React.FC<HintProps> = ({ fillColor = '#FE3678', ...props }) => {
     return (
         <svg

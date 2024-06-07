@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function Facebook(props: React.SVGAttributes<{}>) {
+export function Facebook(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="26"

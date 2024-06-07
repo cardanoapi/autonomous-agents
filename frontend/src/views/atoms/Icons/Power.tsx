@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function PowerIcon(props: React.SVGAttributes<{}>) {
+export function PowerIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="17"

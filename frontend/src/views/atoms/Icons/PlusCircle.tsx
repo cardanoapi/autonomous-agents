@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function PlusCircleIcon(props: React.SVGAttributes<{}>) {
+export function PlusCircleIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="18"

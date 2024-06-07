@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function ProfileIcon(props: React.SVGAttributes<{}>) {
+export function ProfileIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="15"

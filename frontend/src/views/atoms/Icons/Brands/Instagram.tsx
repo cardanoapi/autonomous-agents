@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function Instagram(props: React.SVGAttributes<{}>) {
+export function Instagram(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             viewBox="0 0 24 24"

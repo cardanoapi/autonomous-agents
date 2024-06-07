@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function LogicIcon(props: React.SVGAttributes<{}>) {
+export function LogicIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="22"

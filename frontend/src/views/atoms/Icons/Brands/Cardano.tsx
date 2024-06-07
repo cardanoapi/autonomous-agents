@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function Cardano(props: React.SVGAttributes<{}>) {
+export function Cardano(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function FormIcon(props: React.SVGAttributes<{}>) {
+export function FormIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="24"

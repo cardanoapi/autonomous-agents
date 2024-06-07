@@ -1,6 +1,6 @@
-import React, { SVGAttributes } from 'react';
+import React from 'react';
 
-export default function Preview(props: SVGAttributes<{}>) {
+export default function Preview(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="16"

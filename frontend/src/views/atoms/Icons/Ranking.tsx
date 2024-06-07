@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function Ranking(props: React.SVGAttributes<{}>) {
+export function Ranking(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="24"

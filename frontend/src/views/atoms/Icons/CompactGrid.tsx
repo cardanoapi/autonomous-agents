@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function CompactGridIcon(props: React.SVGAttributes<{}>) {
+export function CompactGridIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="18"

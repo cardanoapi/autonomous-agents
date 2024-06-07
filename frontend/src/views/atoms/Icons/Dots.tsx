@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function DotsIcon(props: React.SVGAttributes<{}>) {
+export function DotsIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             viewBox="0 0 16 3"

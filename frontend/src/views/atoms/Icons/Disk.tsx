@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function DiskIcon(props: React.SVGAttributes<{}>) {
+export function DiskIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="17"

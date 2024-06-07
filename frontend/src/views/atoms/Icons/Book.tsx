@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function BookIcon(props: React.SVGAttributes<{}>) {
+export function BookIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="18"

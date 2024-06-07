@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function LockIcon(props: React.SVGAttributes<{}>) {
+export default function LockIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="16"

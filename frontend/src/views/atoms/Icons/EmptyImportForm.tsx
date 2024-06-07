@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function EmptyImportFormIcon(props: React.SVGAttributes<{}>) {
+export function EmptyImportFormIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="38"

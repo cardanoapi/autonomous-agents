@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function DashboardIcon(props: React.SVGAttributes<{}>) {
+export default function DashboardIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="24"

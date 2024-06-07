@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function RangeIcon(props: React.SVGAttributes<{}>) {
+export function RangeIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="15"

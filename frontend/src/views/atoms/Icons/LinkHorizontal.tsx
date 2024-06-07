@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function LinkHorizontalIcon(props: React.SVGAttributes<{}>) {
+export function LinkHorizontalIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"

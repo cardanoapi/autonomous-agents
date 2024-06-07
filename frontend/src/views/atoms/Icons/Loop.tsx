@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function LoopIcon(props: React.SVGAttributes<{}>) {
+export function LoopIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="34"

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Inbox(props: React.SVGAttributes<{}>) {
+export default function Inbox(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="38"

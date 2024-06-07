@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function NormalGridIcon(props: React.SVGAttributes<{}>) {
+export function NormalGridIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="18"

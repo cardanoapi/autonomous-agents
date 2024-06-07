@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function HistoryIcon(props: React.SVGAttributes<{}>) {
+export function HistoryIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="18"

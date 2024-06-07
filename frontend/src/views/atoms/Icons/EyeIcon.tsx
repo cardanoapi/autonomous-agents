@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function EyeIcon(props: React.SVGAttributes<{}>) {
+export function EyeIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="20"

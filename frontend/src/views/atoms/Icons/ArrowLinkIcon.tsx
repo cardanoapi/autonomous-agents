@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function ArrowLinkIcon(props: React.SVGAttributes<{}>) {
+export function ArrowLinkIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             viewBox="0 0 12 12"

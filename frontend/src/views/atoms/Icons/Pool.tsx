@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function PoolIcon(props: React.SVGAttributes<{}>) {
+export function PoolIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="12"

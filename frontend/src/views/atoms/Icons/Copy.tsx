@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const Copy: React.FC<React.SVGAttributes<{}>> = (props) => {
+export const Copy: React.FC<React.SVGAttributes<SVGElement>> = (props) => {
     return (
         <svg
             data-testid="copy-svg"

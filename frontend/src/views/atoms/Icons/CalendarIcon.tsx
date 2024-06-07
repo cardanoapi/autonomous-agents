@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const CalenderIcon: React.FC<React.SVGAttributes<{}>> = (props) => {
+export const CalenderIcon: React.FC<React.SVGAttributes<SVGElement>> = (props) => {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"

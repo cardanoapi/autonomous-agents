@@ -1,6 +1,6 @@
-import React, { SVGAttributes } from 'react';
+import React from 'react';
 
-const Camera = (props: SVGAttributes<{}>) => {
+const Camera = (props: React.SVGAttributes<SVGElement>) => {
     return (
         <svg
             width="32"

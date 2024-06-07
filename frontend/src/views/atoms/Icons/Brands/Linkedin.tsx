@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function Linkedin(props: React.SVGAttributes<{}>) {
+export function Linkedin(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="26"

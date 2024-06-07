@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Netherlands(props: React.SVGAttributes<{}>) {
+export default function Netherlands(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             version="1.1"
@@ -29,9 +29,10 @@ export default function Netherlands(props: React.SVGAttributes<{}>) {
                         height="1700"
                     ></rect>
                 </g>
-                <g id="Others"> </g>
+                <g id="Others"></g>
                 <g id="Europe">
-                    <g id="Row_5"> </g> <g id="Row_4"> </g>
+                    <g id="Row_5"></g>
+                    <g id="Row_4"></g>
                     <g id="Row_3">
                         <g>
                             <rect y="0" fill="#DC4437" width="130" height="39"></rect>
@@ -39,7 +40,8 @@ export default function Netherlands(props: React.SVGAttributes<{}>) {
                             <rect y="81" fill="#2A66B7" width="130" height="39"></rect>
                         </g>
                     </g>
-                    <g id="Row_2"> </g> <g id="Row_1"> </g>
+                    <g id="Row_2"></g>
+                    <g id="Row_1"></g>
                 </g>
             </g>
         </svg>

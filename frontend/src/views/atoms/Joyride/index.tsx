@@ -141,7 +141,7 @@ export default function Joyride({
     const { run, stepIndex, steps: jrSteps } = state;
 
     /* eslint-disable no-unused-vars */
-    const getFilteredState = ({ steps, ...rest }: JoyrideState) => rest;
+    const getFilteredState = ({ ...rest }: JoyrideState) => rest;
 
     useEffect(() => {
         setState({

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const Google: React.FC<React.SVGAttributes<{}>> = (props) => {
+export const Google: React.FC<React.SVGAttributes<SVGElement>> = () => {
     return (
         <svg
             version="1.1"

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function USA(props: React.SVGAttributes<{}>) {
+export default function USA(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             version="1.1"
@@ -76,8 +76,11 @@ export default function USA(props: React.SVGAttributes<{}>) {
                     </g>
                 </g>
                 <g id="Europe">
-                    <g id="Row_5"> </g> <g id="Row_4"> </g> <g id="Row_3"> </g>
-                    <g id="Row_2"> </g> <g id="Row_1"> </g>
+                    <g id="Row_5"></g>
+                    <g id="Row_4"></g>
+                    <g id="Row_3"></g>
+                    <g id="Row_2"></g>
+                    <g id="Row_1"></g>
                 </g>
             </g>
         </svg>

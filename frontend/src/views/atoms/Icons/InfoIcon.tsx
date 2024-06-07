@@ -1,6 +1,6 @@
-import React, { SVGAttributes } from 'react';
+import React from 'react';
 
-const InfoIcon = (props: SVGAttributes<{}>) => {
+const InfoIcon = (props: React.SVGAttributes<SVGElement>) => {
     return (
         <svg
             width="24"

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function InfoIcon(props: React.SVGAttributes<{}>) {
+export function InfoIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             viewBox="0 0 12 12"

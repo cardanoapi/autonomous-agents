@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function LongArrowLeftIcon(props: React.SVGAttributes<{}>) {
+export function LongArrowLeftIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             viewBox="0 0 18 10"

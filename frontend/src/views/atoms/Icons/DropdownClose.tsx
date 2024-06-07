@@ -1,6 +1,8 @@
 import React from 'react';
 
-export class DropdownCloseIcon extends React.Component<React.SVGAttributes<{}>> {
+export class DropdownCloseIcon extends React.Component<
+    React.SVGAttributes<SVGElement>
+> {
     render() {
         return (
             <svg

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function DragHandleIcon(props: React.SVGAttributes<{}>) {
+export default function DragHandleIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             viewBox="0 0 25 25"

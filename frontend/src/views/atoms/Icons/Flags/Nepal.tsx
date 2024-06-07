@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Nepal(props: React.SVGAttributes<{}>) {
+export default function Nepal(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             viewBox="0 0 36 36"

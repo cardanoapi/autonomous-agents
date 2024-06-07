@@ -1,4 +1,4 @@
-export default function PublishIcon(props: any) {
+export default function PublishIcon() {
     return (
         <svg
             width="24"

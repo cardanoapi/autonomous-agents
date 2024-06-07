@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function TypeformIcon(props: React.SVGAttributes<{}>) {
+export function TypeformIcon(props: React.SVGAttributes<SVGElement>) {
     return (
         <svg
             width="44px"
