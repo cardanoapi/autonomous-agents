@@ -5,7 +5,8 @@
         "outDir": "dist",
         "sourceMap": true,
         "strict": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "rootDir": "./src"
     },
     "include": ["src/**/*.ts"]
 }

@@ -1,28 +1,38 @@
 {
-  "name": "nodejs",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "build": "tsc",
-    "start": "ts-node src/index.ts",
-    "dev": "ts-node src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "Roshan Gyawali",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "@emurgo/cardano-serialization-lib-asmjs": "^11.5.0",
-    "@types/ws": "^8.5.10",
-    "axios": "^1.6.8",
-    "kuber-client": "^2.0.0",
-    "node-cron": "^3.0.3",
-    "ws": "^8.16.0"
-  },
-  "devDependencies": {
-    "@types/node-cron": "^3.0.11",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.4.5"
-  }
+    "name": "nodejs",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "build": "tsc",
+        "start": "ts-node src/index.ts",
+        "dev": "ts-node src/index.ts",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "format:check": "prettier --check .",
+        "lint:check": "eslint .",
+        "format:write": "prettier --write .",
+        "lint:fix": "eslint --fix ."
+    },
+    "keywords": [],
+    "author": "Roshan Gyawali",
+    "license": "ISC",
+    "description": "",
+    "dependencies": {
+        "@emurgo/cardano-serialization-lib-asmjs": "^11.5.0",
+        "@types/ws": "^8.5.10",
+        "axios": "^1.6.8",
+        "kuber-client": "^2.0.0",
+        "node-cron": "^3.0.3",
+        "ws": "^8.16.0"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.4.0",
+        "@types/node-cron": "^3.0.11",
+        "eslint": "9.x",
+        "eslint-config-prettier": "^9.1.0",
+        "globals": "^15.4.0",
+        "prettier": "^3.3.1",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.4.5",
+        "typescript-eslint": "^7.12.0"
+    }
 }
