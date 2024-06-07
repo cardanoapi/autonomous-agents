@@ -42,7 +42,7 @@ jobs:
                     COMMON_TAG="latest"
                   fi
 
-                  IMAGE_NAME="${{ vars.DOCKER_REGISTRY_HOST }}/${{ vars.DOCKER_IMAGE_PREFIX }}/${REPO_NAME}-{SERVICE_NAME}"
+                  IMAGE_NAME="${{ vars.DOCKER_REGISTRY_HOST }}/${{ vars.DOCKER_IMAGE_PREFIX }}/${REPO_NAME}-${SERVICE_NAME}"
 
                   docker build -t "$IMAGE_NAME:${{ github.sha }}" -t "$IMAGE_NAME:$COMMON_TAG" ${SERVICE_NAME}
 
