@@ -28,7 +28,6 @@ if (imageDomains && Array.isArray(imageDomains)) {
     });
 }
 
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     productionBrowserSourceMaps: true,
@@ -80,7 +79,7 @@ const nextConfig = {
         GA_MEASUREMENT_ID: process.env.GA_MEASUREMENT_ID,
         MICROSOFT_CLARITY_TRACKING_CODE: process.env.MICROSOFT_CLARITY_TRACKING_CODE,
         NEXT_PUBLIC_NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV ?? 'production'
-    },
+    }
 };
 
 if (process.env.BASE_DEPLOY_PATH) {

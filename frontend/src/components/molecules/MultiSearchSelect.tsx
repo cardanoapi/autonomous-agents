@@ -68,7 +68,7 @@ interface MultipleSelectorProps {
     groupBy?: string;
     className?: string;
     badgeClassName?: string;
-    appearOnTop?: Boolean;
+    appearOnTop?: boolean;
     /**
      * First item selected is a default behavior by cmdk. That is why the default is true.
      * This is a workaround solution by add a dummy item.
@@ -373,7 +373,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                     handleKeyDown(e);
                     commandProps?.onKeyDown?.(e);
                 }}
-                className={cn('overflow-visible bg-white', commandProps?.className ,)}
+                className={cn('overflow-visible bg-white', commandProps?.className)}
                 shouldFilter={
                     commandProps?.shouldFilter !== undefined
                         ? commandProps.shouldFilter
@@ -387,8 +387,8 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
             >
                 <div
                     className={cn(
-                        'border-input group flex items-center rounded-md border px-3  py-2 text-sm focus-within:outline focus-within:outline-2 focus-within:outline-offset-0', 
-                        selected.length >= maxSelected ? "bg-brand-White-200" : "",
+                        'border-input group flex items-center rounded-md border px-3  py-2 text-sm focus-within:outline focus-within:outline-2 focus-within:outline-offset-0',
+                        selected.length >= maxSelected ? 'bg-brand-White-200' : '',
                         className
                     )}
                 >
@@ -419,7 +419,10 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                             }
                             className={cn(
                                 'placeholder:text-muted-foreground ml-2 w-[90%] flex-1 bg-white outline-none',
-                                inputProps?.className, selected.length >= maxSelected ? 'bg-brand-White-200' : ""
+                                inputProps?.className,
+                                selected.length >= maxSelected
+                                    ? 'bg-brand-White-200'
+                                    : ''
                             )}
                         />
                     </div>
@@ -430,7 +433,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                         /** DropDown appearOnTop  */
                         <CommandList
                             className={cn(
-                                'text-popover-foreground  rounded-md border min-w-full bg-white shadow-md outline-none animate-in max-h-[200px]',
+                                'text-popover-foreground  max-h-[200px] min-w-full rounded-md border bg-white shadow-md outline-none animate-in',
                                 {
                                     'absolute top-0 ': appearOnTop
                                 }

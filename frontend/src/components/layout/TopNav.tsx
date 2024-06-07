@@ -13,17 +13,17 @@ import { Label } from '../atoms/label';
 export default function TopNav() {
     const path: string = usePathname();
 
-    const PageTitles : {[key:string] : string} = {
+    const PageTitles: { [key: string]: string } = {
         '/': 'Dashboard',
         '/agents': 'Agents Page',
         '/agents/create-agent': 'Agent Form',
-        '/templates' : 'Template page',
-        '/templates/create-template' : 'Template Form'
+        '/templates': 'Template page',
+        '/templates/create-template': 'Template Form'
     };
 
     return (
         <div className="flex w-[full] items-center justify-between text-sm">
-            <span className='h1'>{PageTitles[path]}</span>
+            <span className="h1">{PageTitles[path]}</span>
             <DropdownMenu>
                 <DropdownMenuTrigger>Admin</DropdownMenuTrigger>
                 <DropdownMenuContent>

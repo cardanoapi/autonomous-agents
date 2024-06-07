@@ -1,9 +1,9 @@
-export interface IOverViewCardTitle{
-    title : string 
-    value : number | string
+export interface IOverViewCardTitle {
+    title: string;
+    value: number | string;
 }
 
-export default function OverViewCardTitle({title , value} : IOverViewCardTitle) {
+export default function OverViewCardTitle({ title, value }: IOverViewCardTitle) {
     return (
         <div className="flex flex-col gap-y-2">
             <div className="h4">{title}</div>

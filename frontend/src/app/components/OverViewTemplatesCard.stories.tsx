@@ -1,7 +1,7 @@
+import { Card } from '@mui/material';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import  OverViewTemplatesCard  from './OverViewTemplatesCard';
-import { Card } from '@mui/material';
+import OverViewTemplatesCard from './OverViewTemplatesCard';
 
 const meta = {
     title: 'OverViewTemplatesCard',
@@ -19,7 +19,14 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
     args: {
-        className : 'w-[269px] h-[143px]',
-        children : <OverViewTemplatesCard title='Number of Templates' totalTemplates={15} defaultTemplates={5} customTemplates={10}/>
+        className: 'w-[269px] h-[143px]',
+        children: (
+            <OverViewTemplatesCard
+                title="Number of Templates"
+                totalTemplates={15}
+                defaultTemplates={5}
+                customTemplates={10}
+            />
+        )
     }
 };

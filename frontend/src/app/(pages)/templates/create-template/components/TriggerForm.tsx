@@ -47,7 +47,7 @@ export default function TriggerForm({
         ? formValues.label[0].toUpperCase() + formValues.label.slice(1)
         : 'Default';
 
-    const [cronParameters, setCronParameters] = useState<IParameter[]|[]>([]);
+    const [cronParameters, setCronParameters] = useState<IParameter[] | []>([]);
     const [cronExpression, setCronExpression] = useState(defaultCron || '');
     const [defaultSelected, setDefaultSelected] = useState<string>(
         previousSelectedOption || 'Minute-option-one'
@@ -60,8 +60,20 @@ export default function TriggerForm({
         e.preventDefault();
     }
 
-    function updateCronParameters(name: string, value: string , data_type : string , description : string , optional : boolean) {
-        const newParam : IParameter = { name: name, value: value , data_type : data_type , description : description , optional : optional }
+    function updateCronParameters(
+        name: string,
+        value: string,
+        data_type: string,
+        description: string,
+        optional: boolean
+    ) {
+        const newParam: IParameter = {
+            name: name,
+            value: value,
+            data_type: data_type,
+            description: description,
+            optional: optional
+        };
         if (cronParameters.length <= 0) {
             setCronParameters([newParam]);
             return;

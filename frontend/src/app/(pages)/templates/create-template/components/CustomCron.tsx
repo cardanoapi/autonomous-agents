@@ -1,9 +1,10 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
 import { Input } from '@app/components/atoms/Input';
 
 export default function CustomCron({
     customCron,
-    onChange,
+    onChange
 }: {
     customCron?: string[];
     onChange?: any;
@@ -30,7 +31,13 @@ export default function CustomCron({
             return;
         }
 
-        const newCron = [`${seconds}`, `${minutes}`, `${hours}`, `${months}`, `${years}`];
+        const newCron = [
+            `${seconds}`,
+            `${minutes}`,
+            `${hours}`,
+            `${months}`,
+            `${years}`
+        ];
         setCron(newCron);
         onChange?.(newCron);
     }, [seconds, minutes, hours, months, years]);

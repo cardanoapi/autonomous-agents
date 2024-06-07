@@ -1,24 +1,23 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 
-import  ComboBox , {IComboBoxOption}  from './ComboBox';
 import { Card } from '../atoms/Card';
+import ComboBox, { IComboBoxOption } from './ComboBox';
 
-
-const demoOptions : IComboBoxOption[] = [
+const demoOptions: IComboBoxOption[] = [
     {
-        label: "Newest",
-        value : "Newest"
+        label: 'Newest',
+        value: 'Newest'
     },
     {
-        label: "Oldest",
-        value: "Oldest"
+        label: 'Oldest',
+        value: 'Oldest'
     },
     {
-        label: "Most Used",
-        value: "Most Used"
-    },
-]
+        label: 'Most Used',
+        value: 'Most Used'
+    }
+];
 
 const meta = {
     title: 'ComboBoxSelect',
@@ -35,10 +34,9 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
-    
     args: {
-        options : demoOptions,
-        className : "",
-        defaultValue : "Oldest"
+        options: demoOptions,
+        className: '',
+        defaultValue: 'Oldest'
     }
 };

@@ -2,9 +2,11 @@
   "extends": [
     "next/core-web-vitals",
     "prettier",
-    "plugin:storybook/recommended"
+    "plugin:storybook/recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
   "rules": {
-    "react-hooks/exhaustive-deps": "off"
+      "react-hooks/exhaustive-deps": "off",
+      "@typescript-eslint/no-explicit-any": "off"
   }
 }

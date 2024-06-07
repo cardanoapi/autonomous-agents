@@ -1,11 +1,11 @@
 'use client';
 
 import axios from 'axios';
+import { json } from 'stream/consumers';
 import { z } from 'zod';
 
 import { agentFormSchema } from '../(pages)/agents/create-agent/page';
 import { baseAPIurl } from './config';
-import { json } from 'stream/consumers';
 
 export interface IAgent {
     id: string;
@@ -34,30 +34,33 @@ export const fetchActiveAgentsCount = async () => {
     return data;
 };
 
-
 export const postAgentData = async (formData: z.infer<typeof agentFormSchema>) => {
     try {
-        const response = await axios.post(`${baseAPIurl}/agents`, {
-            name: formData.agentName,
-            template_id: formData.agentTemplate,
-            instance: formData.numberOfAgents,
-        }, {
-            headers: {
-                'Content-Type': 'application/json'
+        const response = await axios.post(
+            `${baseAPIurl}/agents`,
+            {
+                name: formData.agentName,
+                template_id: formData.agentTemplate,
+                instance: formData.numberOfAgents
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             }
-        });
+        );
         return response.data;
     } catch (error) {
         console.error('Error posting agent data:', error);
-        throw error; 
+        throw error;
     }
 };
 
-export const deleteAgentbyID = async (agentID : string) => {
+export const deleteAgentbyID = async (agentID: string) => {
     try {
         const response = await axios.delete(`${baseAPIurl}/agents/${agentID}/`);
         if (response.status === 204) {
-             return {success : true , agentID}
+            return { success: true, agentID };
         } else {
             throw new Error('Template deletion failed: Unexpected status code');
         }
@@ -67,14 +70,13 @@ export const deleteAgentbyID = async (agentID : string) => {
     }
 };
 
-
 export const fetchAgentbyID = async (agentID: string): Promise<IAgent> => {
     const url = `${baseAPIurl}/agent/${agentID}`;
-  
+
     try {
-      const response = await axios.get(url);
-      return response.data;
+        const response = await axios.get(url);
+        return response.data;
     } catch (error) {
-      throw new Error('Agent Fetch Operation failed: Network Error');
+        throw new Error('Agent Fetch Operation failed: Network Error');
     }
-  };
+};

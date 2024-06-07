@@ -1,1 +1,1 @@
-export const baseAPIurl = 'http://api.agents.cardanoapi.io/api'
+export const baseAPIurl = 'http://api.agents.cardanoapi.io/api';

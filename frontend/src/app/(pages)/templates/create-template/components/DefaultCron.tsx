@@ -14,14 +14,14 @@ export default function DefaultCron({
     defaultSelected = '',
     setDefaultSelected,
     saveConfiguration,
-    configuredSettings ,
+    configuredSettings
 }: {
     cronSetting: ICronSetting;
     defaultSelected?: string;
     setDefaultSelected?: any;
     onChange?: any;
-    saveConfiguration? : any,
-    configuredSettings? : IInputSetting[]
+    saveConfiguration?: any;
+    configuredSettings?: IInputSetting[];
 }) {
     const [cron, setCron] = useState<string[]>(cronSetting.default);
     const [optionTwo, setOptionTwo] = useState('1');
@@ -80,9 +80,18 @@ export default function DefaultCron({
                             });
                             setCron(newExpression);
                             onChange?.(newExpression);
-                            saveConfiguration({ value : e.target.value , name : `${cronSetting.placeholder}-option-two`})
+                            saveConfiguration({
+                                value: e.target.value,
+                                name: `${cronSetting.placeholder}-option-two`
+                            });
                         }}
-                        defaultValue={configuredSettings?.find((item) => item.name === `${cronSetting.placeholder}-option-two`)?.value || '1'}
+                        defaultValue={
+                            configuredSettings?.find(
+                                (item) =>
+                                    item.name ===
+                                    `${cronSetting.placeholder}-option-two`
+                            )?.value || '1'
+                        }
                         disabled={selected !== `${cronSetting.placeholder}-option-two`}
                     />{' '}
                     {cronSetting.placeholder}
@@ -121,10 +130,21 @@ export default function DefaultCron({
                             });
                             setCron(newExpression);
                             onChange?.(newExpression);
-                            saveConfiguration({ value : e.target.value , name : `${cronSetting.placeholder}-option-three-start`})
+                            saveConfiguration({
+                                value: e.target.value,
+                                name: `${cronSetting.placeholder}-option-three-start`
+                            });
                         }}
-                        defaultValue={configuredSettings?.find((item) => item.name === `${cronSetting.placeholder}-option-three-start`)?.value || '1'}
-                        disabled={selected !== `${cronSetting.placeholder}-option-three`}
+                        defaultValue={
+                            configuredSettings?.find(
+                                (item) =>
+                                    item.name ===
+                                    `${cronSetting.placeholder}-option-three-start`
+                            )?.value || '1'
+                        }
+                        disabled={
+                            selected !== `${cronSetting.placeholder}-option-three`
+                        }
                     />
                     {cronSetting.placeholder} and
                     <NumberInput
@@ -140,9 +160,18 @@ export default function DefaultCron({
                             });
                             setCron(newExpression);
                             onChange?.(newExpression);
-                            saveConfiguration({ value : e.target.value , name :`${cronSetting.placeholder}-option-three-end`})
+                            saveConfiguration({
+                                value: e.target.value,
+                                name: `${cronSetting.placeholder}-option-three-end`
+                            });
                         }}
-                        defaultValue={configuredSettings?.find((item) => item.name === `${cronSetting.placeholder}-option-three-end`)?.value || '1'}
+                        defaultValue={
+                            configuredSettings?.find(
+                                (item) =>
+                                    item.name ===
+                                    `${cronSetting.placeholder}-option-three-end`
+                            )?.value || '1'
+                        }
                         disabled={
                             selected !== `${cronSetting.placeholder}-option-three`
                         }

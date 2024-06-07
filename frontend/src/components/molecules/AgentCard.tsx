@@ -137,7 +137,7 @@ export default function AgentCard({
                             className="hidden hover:cursor-pointer group-hover:flex"
                             onClick={() => {
                                 navigator.clipboard.writeText(agentID);
-                                SuccessToast('Agent ID Copied!')
+                                SuccessToast('Agent ID Copied!');
                             }}
                         />
                         <Trash2

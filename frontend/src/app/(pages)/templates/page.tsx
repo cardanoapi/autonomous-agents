@@ -1,8 +1,13 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
 import Link from 'next/link';
+
 import { useQuery } from '@tanstack/react-query';
-import { fetchTemplates, ITemplate } from '@app/app/api/templates';
+import { useAtom } from 'jotai';
+
+import { ITemplate, fetchTemplates } from '@app/app/api/templates';
 import { Button } from '@app/components/atoms/Button';
 import {
     DropdownMenu,
@@ -11,32 +16,30 @@ import {
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
-import TemplatesContainer from './TemplatesContainer';
-import { templateCreatedAtom } from '@app/store/loaclStore';
-import { useAtom } from 'jotai';
-import { useEffect, useState } from 'react';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import FilterSelect, { ISelectItem } from '@app/components/molecules/FilterSelect';
+import { templateCreatedAtom } from '@app/store/loaclStore';
 
-const FilterSelectOption : ISelectItem[] = [
+import TemplatesContainer from './TemplatesContainer';
+
+const FilterSelectOption: ISelectItem[] = [
     {
-        label : "Newest",
-        value : "Newest"
+        label: 'Newest',
+        value: 'Newest'
     },
     {
-        label : "Oldest",
-        value : "Oldest"
+        label: 'Oldest',
+        value: 'Oldest'
     },
     {
-        label : "MostUsed",
-        value : "MostUsed"
+        label: 'MostUsed',
+        value: 'MostUsed'
     },
     {
-        label : "LeastUsed",
-        value : "LeastUsed"
+        label: 'LeastUsed',
+        value: 'LeastUsed'
     }
-
-]
+];
 
 export default function TemplatesPage() {
     const {
@@ -62,16 +65,17 @@ export default function TemplatesPage() {
     }, [templates]);
 
     function handleSearch(templateName: string) {
-        const newTemplates = templates?.filter(template =>
-            template.name.toLowerCase().includes(templateName.toLowerCase())
-        ) || [];
+        const newTemplates =
+            templates?.filter((template) =>
+                template.name.toLowerCase().includes(templateName.toLowerCase())
+            ) || [];
         setFilteredTemplates(newTemplates);
     }
 
     return (
         <div>
             <div className="flex justify-between">
-                <div className="flex gap-x-4 justify-center items-center">
+                <div className="flex items-center justify-center gap-x-4">
                     <span className="h1-new">Templates({templates?.length})</span>
                     <SearchField
                         variant="secondary"
@@ -83,7 +87,7 @@ export default function TemplatesPage() {
                         <DropdownMenuTrigger border={true}>
                             Function
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className='bg-white'>
+                        <DropdownMenuContent className="bg-white">
                             <DropdownMenuItem>Send Ada</DropdownMenuItem>
                             <DropdownMenuItem>Vote Proposal</DropdownMenuItem>
                             <DropdownMenuItem>Others</DropdownMenuItem>

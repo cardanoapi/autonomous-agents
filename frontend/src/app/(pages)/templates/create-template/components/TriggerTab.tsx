@@ -10,8 +10,8 @@ import {
     TabsTrigger
 } from '@app/components/molecules/Tabs';
 
-import DefaultCron from './DefaultCron';
 import CustomCron from './CustomCron';
+import DefaultCron from './DefaultCron';
 
 export interface ICronSetting {
     placeholder: string;
@@ -19,8 +19,8 @@ export interface ICronSetting {
     index: number;
 }
 export interface IInputSetting {
-    name : string,
-    value : string | number
+    name: string;
+    value: string | number;
 }
 
 const defaultCronSetting: ICronSetting[] = [
@@ -46,23 +46,29 @@ const defaultCronSetting: ICronSetting[] = [
     }
 ];
 
-
-export default function TriggerTab({onChange , defaultCron , previousSelectedOption , previousConfiguredSettings} : {
-    onChange? : any ,
-    defaultCron? : any,
-    previousSelectedOption? : string,
-    previousConfiguredSettings? : any
+export default function TriggerTab({
+    onChange,
+    defaultCron,
+    previousSelectedOption,
+    previousConfiguredSettings
+}: {
+    onChange?: any;
+    defaultCron?: any;
+    previousSelectedOption?: string;
+    previousConfiguredSettings?: any;
 }) {
-    const [cron, setCron] = useState<string[]>(defaultCron || ['*','*','*','*','*']);
+    const [cron, setCron] = useState<string[]>(
+        defaultCron || ['*', '*', '*', '*', '*']
+    );
 
     /* State for persisiting custom cron settings when switching tabs*/
-    const [customCron , setCustomCron] = useState<string[]>(['*','*','*','*','*']);
-    
+    const [customCron, setCustomCron] = useState<string[]>(['*', '*', '*', '*', '*']);
 
     /* state for persisiting user cron settings when switching tabs*/
 
-    const [defaultSelected, setDefaultSelected] = useState(previousSelectedOption || 'Minute-option-one');
-
+    const [defaultSelected, setDefaultSelected] = useState(
+        previousSelectedOption || 'Minute-option-one'
+    );
 
     const initialSettings: IInputSetting[] = [
         { name: 'Minute-option-two', value: 1 },
@@ -76,36 +82,36 @@ export default function TriggerTab({onChange , defaultCron , previousSelectedOpt
         { name: 'Day-option-three-end', value: 1 },
         { name: 'Year-option-two', value: 1 },
         { name: 'Year-option-three-start', value: 0 },
-        { name: 'Year-option-three-end', value: 1 },
+        { name: 'Year-option-three-end', value: 1 }
     ];
-    
-    const [configuredSettings , setConfiguredSettings] = useState<IInputSetting[]>(previousConfiguredSettings || initialSettings)
 
-    function saveCronConfiguration(setting : IInputSetting){
-        const newSettings : IInputSetting[] = configuredSettings.map((item , index) => {
-            if (item.name === setting.name){
+    const [configuredSettings, setConfiguredSettings] = useState<IInputSetting[]>(
+        previousConfiguredSettings || initialSettings
+    );
+
+    function saveCronConfiguration(setting: IInputSetting) {
+        const newSettings: IInputSetting[] = configuredSettings.map((item, index) => {
+            if (item.name === setting.name) {
                 return {
-                    name : setting.name,
-                    value : setting.value
-                }
+                    name: setting.name,
+                    value: setting.value
+                };
+            } else {
+                return item;
             }
-            else {
-                return item
-            }
-
-        })
-        setConfiguredSettings(newSettings)
+        });
+        setConfiguredSettings(newSettings);
     }
 
-    function onChangeCustomCron(customSelectedCron : string[]){
-        setDefaultSelected('')
-        setCustomCron(customSelectedCron)
-        setCron(customSelectedCron)
+    function onChangeCustomCron(customSelectedCron: string[]) {
+        setDefaultSelected('');
+        setCustomCron(customSelectedCron);
+        setCron(customSelectedCron);
     }
 
     useEffect(() => {
-        const cronExpression = cron.map((item)=>item)
-        onChange?.(cronExpression , defaultSelected , configuredSettings)
+        const cronExpression = cron.map((item) => item);
+        onChange?.(cronExpression, defaultSelected, configuredSettings);
     }, [cron]);
 
     return (
@@ -125,7 +131,7 @@ export default function TriggerTab({onChange , defaultCron , previousSelectedOpt
                             <TabsTrigger value="Custom">Custom</TabsTrigger>
                         </TabsList>
                         <div className="mt-2 flex flex-col pl-3 pt-2">
-                            {defaultCronSetting.map((item: ICronSetting , index) => (
+                            {defaultCronSetting.map((item: ICronSetting, index) => (
                                 <TabsContent value={item.placeholder} key={index}>
                                     <DefaultCron
                                         cronSetting={item}
@@ -138,7 +144,10 @@ export default function TriggerTab({onChange , defaultCron , previousSelectedOpt
                                 </TabsContent>
                             ))}
                             <TabsContent value="Custom">
-                                <CustomCron customCron={cron} onChange={onChangeCustomCron}/>
+                                <CustomCron
+                                    customCron={cron}
+                                    onChange={onChangeCustomCron}
+                                />
                             </TabsContent>
                         </div>
                     </Tabs>

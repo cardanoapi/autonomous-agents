@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-function PolygonIcon({ width = 12, height = 12, className="" } : IPolygonIcon) {
+function PolygonIcon({ width = 12, height = 12, className = '' }: IPolygonIcon) {
     return (
         <svg
             width={width}
@@ -21,9 +21,9 @@ function PolygonIcon({ width = 12, height = 12, className="" } : IPolygonIcon) {
 }
 
 interface IPolygonIcon {
-    width?: number
-    height?: number
-    className?: string
-};
+    width?: number;
+    height?: number;
+    className?: string;
+}
 
 export default PolygonIcon;

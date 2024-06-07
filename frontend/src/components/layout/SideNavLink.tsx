@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -9,7 +9,9 @@ import { ISideNavItem } from './SideNav';
 export default function SideNavLink({ Prop }: { Prop: ISideNavItem }) {
     const currentPath = usePathname();
 
-    const isActive =  (currentPath.includes(Prop.href) && Prop.href.length > 2) || (Prop.href.length === 1 && currentPath === '/');
+    const isActive =
+        (currentPath.includes(Prop.href) && Prop.href.length > 2) ||
+        (Prop.href.length === 1 && currentPath === '/');
 
     return (
         <Link href={Prop.href}>
@@ -19,8 +21,15 @@ export default function SideNavLink({ Prop }: { Prop: ISideNavItem }) {
                     { 'bg-brand-Blue-100': isActive }
                 )}
             >
-                <Prop.icon fill={isActive ? "#1C63E7" : "#8C8C8C"} />
-                <div className={cn("h3 pl-4", {'text-brand-Black-100': !isActive, 'text-brand-Blue-200': isActive})}>{Prop.title}</div>
+                <Prop.icon fill={isActive ? '#1C63E7' : '#8C8C8C'} />
+                <div
+                    className={cn('h3 pl-4', {
+                        'text-brand-Black-100': !isActive,
+                        'text-brand-Blue-200': isActive
+                    })}
+                >
+                    {Prop.title}
+                </div>
             </div>
         </Link>
     );

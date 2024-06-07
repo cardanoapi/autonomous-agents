@@ -1,4 +1,5 @@
 import { Card } from '@app/components/atoms/Card';
+
 import OverViewCard from './OverViewCard';
 
 export interface IOverViewAgentsCard {
@@ -16,12 +17,14 @@ export default function OverViewAgentsCard({
 }: IOverViewAgentsCard) {
     return (
         <OverViewCard title={title} value={totalAgents}>
-            <div className="flex w-full gap-x-8 items-center 4xl:gap-x-12">
+            <div className="flex w-full items-center gap-x-8 4xl:gap-x-12">
                 <div className="flex items-center gap-x-2">
-                    <div className="bg-brand-Green-100 flex h-4 w-4  items-center justify-center rounded-full">
-                        <div className="bg-brand-Green-200  h-1 w-1 animate-ping rounded-full"></div>
+                    <div className="flex h-4 w-4 items-center  justify-center rounded-full bg-brand-Green-100">
+                        <div className="h-1  w-1 animate-ping rounded-full bg-brand-Green-200"></div>
                     </div>
-                    <div className="card-h4 !text-brand-Green-200">{activeAgents} Running</div>
+                    <div className="card-h4 !text-brand-Green-200">
+                        {activeAgents} Running
+                    </div>
                 </div>
                 <div className="flex items-center gap-x-1">
                     <div className="flex h-4 w-4 items-center justify-center rounded-full bg-brand-Inactive-100 opacity-50">

@@ -1,110 +1,106 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-  
 
-
-.h1{
-    @apply text-xl font-semibold text-brand-Black-300
+.h1 {
+    @apply text-xl font-semibold text-brand-Black-300;
 }
 
-.h1-new{
-    @apply text-lg font-semibold text-brand-Black-200
+.h1-new {
+    @apply text-lg font-semibold text-brand-Black-200;
 }
 
-.h2{
-    @apply text-base font-medium text-brand-Black-200
+.h2 {
+    @apply text-base font-medium text-brand-Black-200;
 }
 
-.h3{
-    @apply text-sm font-medium
+.h3 {
+    @apply text-sm font-medium;
 }
 .h4 {
-    @apply text-sm font-normal
+    @apply text-sm font-normal;
 }
 
-.h5{
-    @apply font-semibold text-base 
+.h5 {
+    @apply text-base font-semibold;
 }
 
-.h6{
-    @apply font-normal text-base
+.h6 {
+    @apply text-base font-normal;
 }
 
-.h7{
-    @apply font-normal text-xs
+.h7 {
+    @apply text-xs font-normal;
 }
 
-.card-h1{
-    @apply text-lg font-bold text-[#464F60]
+.card-h1 {
+    @apply text-lg font-bold text-[#464F60];
 }
 
-.card-h2{
-    @apply text-base font-semibold
+.card-h2 {
+    @apply text-base font-semibold;
 }
 
-.card-h3{
-    @apply text-sm text-brand-Gray-100 font-normal
+.card-h3 {
+    @apply text-sm font-normal text-brand-Gray-100;
 }
 
-.card-h4{
-    @apply text-xs leading-[18px] text-[#4A4A4A]
+.card-h4 {
+    @apply text-xs leading-[18px] text-[#4A4A4A];
 }
 
-.card-description1{
-    @apply text-xs text-gray-500 leading-[18px]
+.card-description1 {
+    @apply text-xs leading-[18px] text-gray-500;
 }
 
-.title-1{
-    @apply text-lg font-bold leading-7
+.title-1 {
+    @apply text-lg font-bold leading-7;
 }
 
-
-.text-active{
-    @apply text-brand-Black-200
+.text-active {
+    @apply text-brand-Black-200;
 }
 
-.hover-transition-blue{
-    @apply hover:bg-brand-Blue-100 hover:text-brand-Blue-200 hover:transition-all
+.hover-transition-blue {
+    @apply hover:bg-brand-Blue-100 hover:text-brand-Blue-200 hover:transition-all;
 }
 
-.hover-transition-gray{
-    @apply hover:bg-brand-Gray-100 !important
+.hover-transition-gray {
+    @apply hover:bg-brand-Gray-100 !important;
 }
 
 .gray-background {
-    @apply bg-gray-100 text-black rounded-lg px-2 py-1
+    @apply rounded-lg bg-gray-100 px-2 py-1 text-black;
 }
 
-.custom-cron-input{
-    @apply bg-transparent w-12
+.custom-cron-input {
+    @apply w-12 bg-transparent;
 }
 
 /* Chrome, Safari, Edge, Opera */
 .custom-cron-input::-webkit-outer-spin-button,
 .custom-cron-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 /* Firefox */
-.custom-cron-input[type=number] {
-  -moz-appearance: textfield;
+.custom-cron-input[type='number'] {
+    -moz-appearance: textfield;
 }
 
 .custom-cron-text {
-    @apply text-center flex justify-center
+    @apply flex justify-center text-center;
 }
 
 .focus-outline-primary {
-    @apply focus:outline-none focus:outline-brand-active-100/[.80] focus:outline-offset-0 
+    @apply focus:outline-none focus:outline-offset-0 focus:outline-brand-active-100/[.80];
 }
 
 .hover-transition-primary {
-    @apply hover:shadow-md hover:transition-all
+    @apply hover:shadow-md hover:transition-all;
 }
 
 .without-ring {
-    @apply focus:ring-0 focus:ring-offset-0  !ring-0 !ring-offset-0
-  }
-  
+    @apply !ring-0 !ring-offset-0  focus:ring-0 focus:ring-offset-0;
+}

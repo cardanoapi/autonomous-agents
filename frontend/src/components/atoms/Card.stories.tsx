@@ -23,9 +23,7 @@ export const Primary: Story = {
     args: {
         children: (
             <>
-                <CardHeader>
-                    Demo Card
-                </CardHeader>
+                <CardHeader>Demo Card</CardHeader>
             </>
         )
     }

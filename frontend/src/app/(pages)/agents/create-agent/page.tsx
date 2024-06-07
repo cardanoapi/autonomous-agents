@@ -6,8 +6,10 @@ import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useAtom } from 'jotai';
 import { Loader, LoaderCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import toast, { Toaster } from 'react-hot-toast';
 import { z } from 'zod';
 
 import { postAgentData } from '@app/app/api/agents';
@@ -26,15 +28,13 @@ import {
 import { Input } from '@app/components/atoms/Input';
 import { Label } from '@app/components/atoms/label';
 import { cn } from '@app/components/lib/utils';
+import { ErrorToast } from '@app/components/molecules/CustomToasts';
 import MultipleSelector, { IOption } from '@app/components/molecules/MultiSearchSelect';
 import { NumberInput } from '@app/components/molecules/NumberInput';
 import SelectedCard from '@app/components/molecules/SelectedCard';
-import toast , {Toaster} from 'react-hot-toast'
-import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 import { SubmitButton } from '@app/components/molecules/SubmitButton';
-import { useAtom } from 'jotai'
 import { agentCreatedAtom } from '@app/store/loaclStore';
-import { ErrorToast } from '@app/components/molecules/CustomToasts';
+import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 export const agentFormSchema = z.object({
     agentName: z.string(),
@@ -44,8 +44,8 @@ export const agentFormSchema = z.object({
 
 export default function CreateAgentForm() {
     const [selected, setSelected] = useState<IOption[]>([]);
-    const [agentCreated , setAgentCreated] = useAtom(agentCreatedAtom)
-    const [submittingForm , setSubmittingForm] = useState(false)
+    const [agentCreated, setAgentCreated] = useAtom(agentCreatedAtom);
+    const [submittingForm, setSubmittingForm] = useState(false);
 
     const [agentTemplateOptions, setAgentTemplateOptions] = useState<IOption[] | []>(
         []
@@ -81,24 +81,21 @@ export default function CreateAgentForm() {
     const agentMutation = useMutation({
         mutationFn: (data: z.infer<typeof agentFormSchema>) => postAgentData(data),
         onSuccess: () => {
-            queryClient.refetchQueries({queryKey:['agents']})
-            setAgentCreated(true)
-            router.push('/agents')
+            queryClient.refetchQueries({ queryKey: ['agents'] });
+            setAgentCreated(true);
+            router.push('/agents');
         },
         onError: () => {
-            console.log('Error Response')
-            setSubmittingForm(false)
-            ErrorToast('Error while creating Agent. Try Again!')
-
+            console.log('Error Response');
+            setSubmittingForm(false);
+            ErrorToast('Error while creating Agent. Try Again!');
         }
     });
-    
 
     async function onSubmit(formData: z.infer<typeof agentFormSchema>) {
-        setSubmittingForm(true)
+        setSubmittingForm(true);
         await agentMutation.mutateAsync(formData);
     }
-
 
     function unselectOption(option: IOption) {
         const filteredSelected = selected.filter((s) => s.value !== option.value);
@@ -171,7 +168,9 @@ export default function CreateAgentForm() {
                                         description={option.value}
                                         key={index}
                                         handleEdit={() => {
-                                            toast.error('Template Editing is currently unavailable.')
+                                            toast.error(
+                                                'Template Editing is currently unavailable.'
+                                            );
                                         }}
                                         handleUnselect={() => {
                                             multiSelectorRef.current.handleUnselect(
@@ -207,7 +206,7 @@ export default function CreateAgentForm() {
                             )}
                         />
                     </div>
-                    <SubmitButton disabled={submittingForm}/>
+                    <SubmitButton disabled={submittingForm} />
                 </Card>
             </form>
         </Form>

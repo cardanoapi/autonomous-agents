@@ -1,5 +1,5 @@
-"use client"
-export default function DashBoardIcon({fill = "#8C8C8C"}) {
+'use client';
+export default function DashBoardIcon({ fill = '#8C8C8C' }) {
     return (
         <svg
             width="24"
@@ -18,4 +18,3 @@ export default function DashBoardIcon({fill = "#8C8C8C"}) {
         </svg>
     );
 }
-

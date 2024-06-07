@@ -1,4 +1,5 @@
-"use client"
+'use client';
+
 import { SlidersHorizontal } from 'lucide-react';
 
 import {
@@ -32,10 +33,10 @@ export default function FilterSelect({
                 renderArrow={false}
             >
                 <SlidersHorizontal className="max-h-[80%] bg-black" />
-                <SelectValue placeholder="Newest"/>
+                <SelectValue placeholder="Newest" />
             </SelectTrigger>
             <SelectContent className="h4 bg-white">
-                {options?.map((item , index) => (
+                {options?.map((item, index) => (
                     <div key={index}>
                         <SelectItem value={item.value}>{item.label}</SelectItem>
                     </div>

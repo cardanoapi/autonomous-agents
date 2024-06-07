@@ -39,7 +39,7 @@ export default function Loader({
     showOnlyThreeDots,
     className
 }: Readonly<LoaderTypes>) {
-    let Component = tag;
+    const Component = tag;
     return (
         <Component
             className={cn(
@@ -50,21 +50,21 @@ export default function Loader({
         >
             <span
                 className={cn(
-                    'rounded-full bg-black-900 dark:bg-white',
+                    'bg-black-900 rounded-full dark:bg-white',
                     handleVariantClasses(variant, size),
                     sizes[size]
                 )}
             />
             <span
                 className={cn(
-                    'animation-delay-200 rounded-full bg-black-900 dark:bg-white',
+                    'animation-delay-200 bg-black-900 rounded-full dark:bg-white',
                     handleVariantClasses(variant, size),
                     sizes[size]
                 )}
             />
             <span
                 className={cn(
-                    'animation-delay-500 rounded-full bg-black-900 dark:bg-white',
+                    'animation-delay-500 bg-black-900 rounded-full dark:bg-white',
                     handleVariantClasses(variant, size),
                     sizes[size]
                 )}
@@ -72,7 +72,7 @@ export default function Loader({
             {variant === 'moveUp' && !showOnlyThreeDots ? (
                 <span
                     className={cn(
-                        'animation-delay-700 rounded-full bg-black-900 dark:bg-white',
+                        'animation-delay-700 bg-black-900 rounded-full dark:bg-white',
                         handleVariantClasses(variant, size),
                         sizes[size]
                     )}

@@ -25,7 +25,7 @@ const DropdownMenuTrigger = ({
     ...props
 }: {
     children: React.ReactNode;
-    border?: Boolean;
+    border?: boolean;
     className?: string;
 }) => (
     <DropdownMenuPrimitive.Trigger
@@ -105,9 +105,8 @@ const DropdownMenuItem = React.forwardRef<
     <DropdownMenuPrimitive.Item
         ref={ref}
         className={cn(
-            'hover:bg-brand-Gray-400 focus:bg-accent focus:text-accent-foreground relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-            inset && 
-            className
+            'focus:bg-accent focus:text-accent-foreground relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-brand-Gray-400 data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+            inset && className
         )}
         {...props}
     />

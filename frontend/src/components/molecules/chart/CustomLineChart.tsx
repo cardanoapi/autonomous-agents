@@ -1,18 +1,21 @@
 'use client';
 
 import { useEffect } from 'react';
-import { 
-    Area, 
-    AreaChart, 
-    CartesianGrid, 
-    ResponsiveContainer, 
-    Tooltip, 
-    XAxis, 
-    YAxis 
+
+import {
+    Area,
+    AreaChart,
+    CartesianGrid,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis
 } from 'recharts';
+import { v4 as uuidv4 } from 'uuid';
 
 import CustomTooltip from './CustomTooltip';
-import { v4 as uuidv4 } from 'uuid';  // Import the UUID library
+
+// Import the UUID library
 
 export interface ILineChartData {
     name: string;
@@ -59,8 +62,7 @@ export default function CustomLineChart({
     renderYaxis?: boolean;
     smoothStroke?: boolean;
 }) {
-
-    const uniqueId = uuidv4();  // Generate a unique ID for this chart instance
+    const uniqueId = uuidv4(); // Generate a unique ID for this chart instance
 
     return (
         <ResponsiveContainer width="100%" height="100%" className={className}>
@@ -69,27 +71,41 @@ export default function CustomLineChart({
                 margin={{ top: 40, right: 0, left: 0, bottom: 0 }}
             >
                 <defs>
-                    <linearGradient id={`colorUv-${uniqueId}`} x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor={strokeCoverColor} stopOpacity={1} />
-                        <stop offset="90%" stopColor={strokeCoverColor} stopOpacity={0} />
+                    <linearGradient
+                        id={`colorUv-${uniqueId}`}
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                    >
+                        <stop
+                            offset="5%"
+                            stopColor={strokeCoverColor}
+                            stopOpacity={1}
+                        />
+                        <stop
+                            offset="90%"
+                            stopColor={strokeCoverColor}
+                            stopOpacity={0}
+                        />
                     </linearGradient>
                 </defs>
                 {renderLines && (
-                <CartesianGrid
-                    strokeDasharray="0"
-                    vertical={false}
-                    stroke="#A2A3A5"
-                    strokeOpacity={0.4}
-                />
+                    <CartesianGrid
+                        strokeDasharray="0"
+                        vertical={false}
+                        stroke="#A2A3A5"
+                        strokeOpacity={0.4}
+                    />
                 )}
                 {renderYaxis && (
-                <YAxis
-                    dx={-10}
-                    tickCount={4}
-                    axisLine={false}
-                    tickLine={false}
-                    stroke="#A2A3A5"
-                />
+                    <YAxis
+                        dx={-10}
+                        tickCount={4}
+                        axisLine={false}
+                        tickLine={false}
+                        stroke="#A2A3A5"
+                    />
                 )}
                 {renderToolTip && (
                     <Tooltip
@@ -98,7 +114,7 @@ export default function CustomLineChart({
                     />
                 )}
                 <Area
-                    type={smoothStroke ? "monotone" : "linear"}
+                    type={smoothStroke ? 'monotone' : 'linear'}
                     dataKey="amt"
                     stroke={strokeColor}
                     strokeWidth={strokeWidth}
@@ -110,7 +126,12 @@ export default function CustomLineChart({
                     activeDot={{ r: 8 }}
                 />
                 {renderXaxis && (
-                <XAxis tickLine={false} dy={5} fill="#2196F3" stroke="#A2A3A5"></XAxis>
+                    <XAxis
+                        tickLine={false}
+                        dy={5}
+                        fill="#2196F3"
+                        stroke="#A2A3A5"
+                    ></XAxis>
                 )}
             </AreaChart>
         </ResponsiveContainer>

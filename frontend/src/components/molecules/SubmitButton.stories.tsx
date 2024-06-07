@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
 
-import { SubmitButton } from './SubmitButton';
 import { Card } from '../atoms/Card';
+import { SubmitButton } from './SubmitButton';
 
 const meta = {
     title: 'SubmitButton',
@@ -14,12 +14,12 @@ const meta = {
     tags: ['autodocs'],
 
     argTypes: {}
-}
+};
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
     args: {
-        children : <SubmitButton/>
+        children: <SubmitButton />
     }
 };

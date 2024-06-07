@@ -20,20 +20,22 @@ const SelectGroup = React.forwardRef<
     />
 ));
 
-SelectGroup.displayName = SelectPrimitive.SelectGroup.displayName
+SelectGroup.displayName = SelectPrimitive.SelectGroup.displayName;
 
 const SelectValue = React.forwardRef<
     React.ElementRef<typeof SelectPrimitive.Value>,
     React.ComponentPropsWithoutRef<typeof SelectPrimitive.Value>
 >(({ className, ...props }, ref) => (
-    <SelectPrimitive.Value ref={ref} className={cn('', className )} {...props} />
+    <SelectPrimitive.Value ref={ref} className={cn('', className)} {...props} />
 ));
-SelectValue.displayName = SelectPrimitive.Value.displayName
+SelectValue.displayName = SelectPrimitive.Value.displayName;
 
 const SelectTrigger = React.forwardRef<
     React.ElementRef<typeof SelectPrimitive.Trigger>,
-    React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> & {renderArrow? : boolean}
->(({ className, children,color ,renderArrow = true, ...props }, ref) => (
+    React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> & {
+        renderArrow?: boolean;
+    }
+>(({ className, children, color, renderArrow = true, ...props }, ref) => (
     <SelectPrimitive.Trigger
         ref={ref}
         className={cn(
@@ -43,12 +45,11 @@ const SelectTrigger = React.forwardRef<
         {...props}
     >
         {children}
-        {
-            renderArrow &&   <SelectPrimitive.Icon asChild>
-            <ChevronDown className="h-4 w-4 opacity-50" />
-        </SelectPrimitive.Icon>
-        }
-      
+        {renderArrow && (
+            <SelectPrimitive.Icon asChild>
+                <ChevronDown className="h-4 w-4 opacity-50" />
+            </SelectPrimitive.Icon>
+        )}
     </SelectPrimitive.Trigger>
 ));
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
@@ -138,7 +139,7 @@ const SelectItem = React.forwardRef<
     <SelectPrimitive.Item
         ref={ref}
         className={cn(
-            'relative flex w-[99%] h-[36px] cursor-default select-none items-center rounded-sm py-1.5 pl-[10px] pr-2 pt-[6px] text-[16px] outline-none hover:rounded-[6px] hover:bg-brand-White-200 hover:transition-all data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+            'relative flex h-[36px] w-[99%] cursor-default select-none items-center rounded-sm py-1.5 pl-[10px] pr-2 pt-[6px] text-[16px] outline-none hover:rounded-[6px] hover:bg-brand-White-200 hover:transition-all data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
             className
         )}
         {...props}

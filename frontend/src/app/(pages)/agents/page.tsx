@@ -1,24 +1,32 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
 import Link from 'next/link';
+
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { IAgent, fetchAgents, deleteAgentbyID } from '@app/app/api/agents';
+import { atom, useAtom } from 'jotai';
+
+import { IAgent, deleteAgentbyID, fetchAgents } from '@app/app/api/agents';
 import { Button } from '@app/components/atoms/Button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@app/components/atoms/DropDownMenu';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
 import AgentCard, { IAgentCard } from '@app/components/molecules/AgentCard';
-import { queryClient } from '@app/utils/providers/ReactQueryProvider';
-import { useEffect, useState } from 'react';
-import { atom, useAtom } from 'jotai';
-import { agentCreatedAtom } from '@app/store/loaclStore';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
+import { agentCreatedAtom } from '@app/store/loaclStore';
+import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 export default function AgentsPage() {
     const [agentCreated, setAgentCreated] = useAtom(agentCreatedAtom);
     const {
         data: agents,
         isLoading: loadingAgents,
-        isError: errorAgents,
+        isError: errorAgents
     } = useQuery<IAgent[]>({ queryKey: ['agents'], queryFn: fetchAgents });
 
     const [filteredAgents, setFilteredAgents] = useState<IAgent[]>([]);
@@ -40,9 +48,10 @@ export default function AgentsPage() {
     }, [agents]);
 
     function handleSearch(agentName: string) {
-        const newAgents = agents?.filter(agent =>
-            agent.name.toLowerCase().includes(agentName.toLowerCase())
-        ) || [];
+        const newAgents =
+            agents?.filter((agent) =>
+                agent.name.toLowerCase().includes(agentName.toLowerCase())
+            ) || [];
         setFilteredAgents(newAgents);
     }
 
@@ -69,12 +78,12 @@ export default function AgentsPage() {
                     </DropdownMenu>
                 </div>
                 <Link href="/agents/create-agent">
-                    <Button variant="primary" className='w-[145px] h-[36px]'>
+                    <Button variant="primary" className="h-[36px] w-[145px]">
                         Create Agent
                     </Button>
                 </Link>
             </div>
-            <div className="3xl:grid-cols-4 5xl:grid-cols-6 mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-5 4xl:grid-cols-5">
+            <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6">
                 {filteredAgents.map((agent: IAgent, index) => (
                     <AgentCard
                         agentName={agent?.name || 'NA'}

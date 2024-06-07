@@ -39,7 +39,7 @@ export default function FormProviderIcon({
     const providerObj = getProvider();
 
     return (
-        <div className="flex items-center gap-2 text-sm text-black-600">
+        <div className="text-black-600 flex items-center gap-2 text-sm">
             <providerObj.icon height={size} width={size} />
             {variant === 'full' && <span>{providerObj.text}</span>}
         </div>

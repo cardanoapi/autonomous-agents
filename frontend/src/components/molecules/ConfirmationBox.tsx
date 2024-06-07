@@ -8,13 +8,13 @@ import { cn } from '../lib/utils';
 export default function ConfirmationBox({
     msg,
     title,
-    onAccept = ()=>{},
-    onDecline = ()=>{},
+    onAccept = () => {},
+    onDecline = () => {},
     acceptPlaceholder = 'Delete',
     declinePlaceholder = 'Cancel',
     className = '',
     showDangerIcon = true,
-    onClose = ()=>{}
+    onClose = () => {}
 }: {
     msg: string;
     title: string;
@@ -24,23 +24,40 @@ export default function ConfirmationBox({
     declinePlaceholder?: string;
     className?: string;
     showDangerIcon?: boolean;
-    onClose? : any
+    onClose?: any;
 }) {
     return (
         <Card className={cn('flex w-full gap-y-4', className)}>
-            <div className="flex justify-between w-full items-start">
-                <div className="flex gap-x-2 font-medium items-center">
+            <div className="flex w-full items-start justify-between">
+                <div className="flex items-center gap-x-2 font-medium">
                     {showDangerIcon && <CircleAlert fill="#D04D52" stroke="#fff" />}
                     {title}
                 </div>
-                <X className="cursor-pointer mt-[-12px]" onClick={()=>{onClose()}}/>
+                <X
+                    className="mt-[-12px] cursor-pointer"
+                    onClick={() => {
+                        onClose();
+                    }}
+                />
             </div>
             <div className="max-w-[80%] text-[14px] font-normal">{msg}</div>
             <div className="flex justify-end gap-x-2">
-                <Button variant={'cool'} className="h-[36px] w-[145px]" onClick={()=>{onDecline()}}>
+                <Button
+                    variant={'cool'}
+                    className="h-[36px] w-[145px]"
+                    onClick={() => {
+                        onDecline();
+                    }}
+                >
                     {declinePlaceholder}
                 </Button>
-                <Button variant={'danger'} className="h-[36px] w-[145px]" onClick={()=>{onAccept()}}>
+                <Button
+                    variant={'danger'}
+                    className="h-[36px] w-[145px]"
+                    onClick={() => {
+                        onAccept();
+                    }}
+                >
                     {acceptPlaceholder}
                 </Button>
             </div>

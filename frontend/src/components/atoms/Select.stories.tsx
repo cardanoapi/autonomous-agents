@@ -30,9 +30,7 @@ export const Primary: Story = {
         children: (
             <>
                 <SelectTrigger className="w-[297px] ">
-                    <SelectValue
-                        placeholder="Select Agent Role"
-                    ></SelectValue>
+                    <SelectValue placeholder="Select Agent Role"></SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
