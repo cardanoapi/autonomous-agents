@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const RefreshIcon: React.FC<React.SVGAttributes<{}>> = (props) => {
+export const RefreshIcon: React.FC<React.SVGAttributes<HTMLOrSVGElement>> = (props) => {
     return (
         <svg
             width="18"

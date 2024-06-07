@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function ResponderIcon(props: React.SVGAttributes<{}>) {
+export default function ResponderIcon(props: React.SVGAttributes<HTMLOrSVGElement>) {
     return (
         <svg
             width="24"

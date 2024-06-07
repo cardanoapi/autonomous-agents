@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function ShareIcon(props: React.SVGAttributes<{}>) {
+export default function ShareIcon(props: React.SVGAttributes<HTMLOrSVGElement>) {
     return (
         <svg
             width="20"

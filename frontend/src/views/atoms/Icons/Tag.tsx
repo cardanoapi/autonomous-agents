@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function TagIcon(props: React.SVGAttributes<{}>) {
+export function TagIcon(props: React.SVGAttributes<HTMLOrSVGElement>) {
     return (
         <svg
             width="28"

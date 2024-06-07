@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function SwapIcon(props: React.SVGAttributes<{}>) {
+export function SwapIcon(props: React.SVGAttributes<HTMLOrSVGElement>) {
     return (
         <svg
             viewBox="0 0 13 14"

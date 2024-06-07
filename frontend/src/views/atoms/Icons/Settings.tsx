@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function SettingsIcon(props: React.SVGAttributes<{}>) {
+export default function SettingsIcon(props: React.SVGAttributes<HTMLOrSVGElement>) {
     return (
         <svg
             width="20"

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const SearchIcon: React.FC<React.SVGAttributes<{}>> = (props) => {
+export const SearchIcon: React.FC<React.SVGAttributes<HTMLOrSVGElement>> = (props) => {
     return (
         <svg
             width="22"

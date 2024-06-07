@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function SandClockIcon(props: React.SVGAttributes<{}>) {
+export function SandClockIcon(props: React.SVGAttributes<HTMLOrSVGElement>) {
     return (
         <svg
             width="18"

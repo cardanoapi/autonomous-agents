@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SaveIcon = (props: React.SVGAttributes<{}>) => {
+const SaveIcon = (props: React.SVGAttributes<HTMLOrSVGElement>) => {
     return (
         <svg
             width="24"
