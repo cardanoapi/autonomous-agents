@@ -1,7 +1,3 @@
-import { FileText } from 'lucide-react';
-import { FileCog } from 'lucide-react';
-
-import { Card } from '@app/components/atoms/Card';
 import { TemplateEditIcon } from '@app/components/icons/TemplateEditIcon';
 import TemplateIcon from '@app/components/icons/TemplatesIcon';
 

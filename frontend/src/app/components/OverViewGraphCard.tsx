@@ -1,7 +1,5 @@
-import { ArrowDown, ArrowUp, FileText } from 'lucide-react';
-import { FileCog } from 'lucide-react';
+import { ArrowDown, ArrowUp } from 'lucide-react';
 
-import { Card } from '@app/components/atoms/Card';
 import { cn } from '@app/components/lib/utils';
 import CustomLineChart, {
     ILineChartData

@@ -1,13 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { X } from 'lucide-react';
 
 import { IParameter } from '@app/app/api/functions';
 import { Button } from '@app/components/atoms/Button';
-import { CardTitle } from '@app/components/atoms/Card';
-import { Card } from '@app/components/atoms/Card';
+import { Card, CardTitle } from '@app/components/atoms/Card';
 import { Input } from '@app/components/atoms/Input';
 import { IOption } from '@app/components/molecules/MultiSearchSelect';
 

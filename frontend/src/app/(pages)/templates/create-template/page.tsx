@@ -5,22 +5,19 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQuery } from '@tanstack/react-query';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { IFunction, fetchFunctions } from '@app/app/api/functions';
-import { IParameter } from '@app/app/api/functions';
-import { ITemplate, postTemplateData } from '@app/app/api/templates';
+import { IFunction, IParameter, fetchFunctions } from '@app/app/api/functions';
+import { postTemplateData } from '@app/app/api/templates';
 import { Card } from '@app/components/atoms/Card';
 import { Dialog, DialogContent } from '@app/components/atoms/Dialog';
 import { Form, FormControl, FormField, FormItem } from '@app/components/atoms/Form';
 import { Input } from '@app/components/atoms/Input';
 import { Textarea } from '@app/components/atoms/Textarea';
 import { Label } from '@app/components/atoms/label';
-import ConfirmationBox from '@app/components/molecules/ConfirmationBox';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
 import MultipleSelector from '@app/components/molecules/MultiSearchSelect';
 import SelectedCard from '@app/components/molecules/SelectedCard';

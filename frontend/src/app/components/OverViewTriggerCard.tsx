@@ -1,5 +1,4 @@
-import { CalendarClock } from 'lucide-react';
-import { Cable } from 'lucide-react';
+import { Cable, CalendarClock } from 'lucide-react';
 
 import { Card } from '@app/components/atoms/Card';
 

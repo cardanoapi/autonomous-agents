@@ -1,10 +1,6 @@
-import { FileText } from 'lucide-react';
-import { FileCog } from 'lucide-react';
-
-import { Card } from '@app/components/atoms/Card';
+import { FileCog, FileText } from 'lucide-react';
 
 import OverViewCard from './OverViewCard';
-import OverViewCardTitle from './OverViewCardTitle';
 
 export interface IOverViewTemplatesCard {
     title: string;

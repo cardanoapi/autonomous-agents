@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react';
 
 import Link from 'next/link';
 
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { atom, useAtom } from 'jotai';
+import { useQuery } from '@tanstack/react-query';
+import { useAtom } from 'jotai';
 
-import { IAgent, deleteAgentbyID, fetchAgents } from '@app/app/api/agents';
+import { IAgent, fetchAgents } from '@app/app/api/agents';
 import { Button } from '@app/components/atoms/Button';
 import {
     DropdownMenu,
@@ -16,10 +16,9 @@ import {
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
-import AgentCard, { IAgentCard } from '@app/components/molecules/AgentCard';
+import AgentCard from '@app/components/molecules/AgentCard';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import { agentCreatedAtom } from '@app/store/loaclStore';
-import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 export default function AgentsPage() {
     const [agentCreated, setAgentCreated] = useAtom(agentCreatedAtom);

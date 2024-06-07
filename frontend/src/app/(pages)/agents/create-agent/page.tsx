@@ -7,24 +7,14 @@ import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
-import { Loader, LoaderCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { postAgentData } from '@app/app/api/agents';
 import { ITemplate, fetchTemplates } from '@app/app/api/templates';
-import { Button } from '@app/components/atoms/Button';
 import { Card } from '@app/components/atoms/Card';
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage
-} from '@app/components/atoms/Form';
+import { Form, FormControl, FormField, FormItem } from '@app/components/atoms/Form';
 import { Input } from '@app/components/atoms/Input';
 import { Label } from '@app/components/atoms/label';
 import { cn } from '@app/components/lib/utils';

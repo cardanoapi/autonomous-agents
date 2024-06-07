@@ -1,9 +1,6 @@
-import { Children } from 'react';
-
 import type { Meta, StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
 
-import { Card, CardContent, CardDescription, CardHeader } from './Card';
+import { Card, CardHeader } from './Card';
 
 const meta = {
     title: 'Card',

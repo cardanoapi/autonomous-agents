@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Poppins } from 'next/font/google';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { Provider } from 'jotai';
 // import '@uiw/react-markdown-preview/dist/markdown.min.css';
 // import '@uiw/react-markdown-preview/esm/styles/markdown.css';
@@ -18,7 +18,7 @@ import 'vanilla-cookieconsent/dist/cookieconsent.css';
 
 import '@app/assets/css/globals.css';
 import '@app/assets/css/tailwind.css';
-import SideNav, { ISideNavItem } from '@app/components/layout/SideNav';
+import SideNav from '@app/components/layout/SideNav';
 import TopNav from '@app/components/layout/TopNav';
 import ThemeProvider from '@app/shared/hocs/ThemeProvider';
 import ReactQueryProvider from '@app/utils/providers/ReactQueryProvider';

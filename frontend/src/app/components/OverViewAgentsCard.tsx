@@ -1,5 +1,3 @@
-import { Card } from '@app/components/atoms/Card';
-
 import OverViewCard from './OverViewCard';
 
 export interface IOverViewAgentsCard {

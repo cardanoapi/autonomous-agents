@@ -1,12 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { RadioGroup, RadioGroupItem } from '@app/components/atoms/RadioGroup';
 import { Label } from '@app/components/atoms/label';
 import { cn } from '@app/components/lib/utils';
 import { NumberInput } from '@app/components/molecules/NumberInput';
 
-import { ICronSetting } from './TriggerTab';
-import { IInputSetting } from './TriggerTab';
+import { ICronSetting, IInputSetting } from './TriggerTab';
 
 export default function DefaultCron({
     cronSetting,

@@ -1,11 +1,6 @@
-import { ArrowUp } from 'lucide-react';
-import { ArrowDown } from 'lucide-react';
-import { LineChart } from 'lucide-react';
-
-import { Card } from '@app/components/atoms/Card';
+import { ArrowDown, LineChart } from 'lucide-react';
 
 import OverViewCard from './OverViewCard';
-import OverViewCardTitle from './OverViewCardTitle';
 
 export interface IOverViewAgentsCard {
     title: string;
