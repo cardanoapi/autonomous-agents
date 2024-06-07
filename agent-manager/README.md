@@ -1,17 +1,18 @@
-#  Agent Manager Application
+# Agent Manager Application
 
 This project is a TypeScript Agent Manager application where Agents are connected to it through websocket .
 
 ## Table of Contents
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Development](#development)
+
+-   [Requirements](#requirements)
+-   [Installation](#installation)
+-   [Usage](#usage)
+-   [Development](#development)
 
 ## Requirements
 
-- [Node.js](https://nodejs.org/) (v16 or higher)
-- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/) package manager
+-   [Node.js](https://nodejs.org/) (v16 or higher)
+-   [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/) package manager
 
 ## Installation
 
@@ -49,8 +50,9 @@ To run the Agent Manager application, follow these steps:
 2. Run the application with an agent ID as a command-line argument:
 
     ```shell
-    npm run start 
+    npm run start
     ```
+
 3. Run this command for generating the database client and creating the required table mentioned in schema
 
 ```bash
@@ -59,7 +61,8 @@ To run the Agent Manager application, follow these steps:
 
 Make sure your API service is up and running .
 
-## Docker 
+## Docker
+
 hange directory
 
 ```bash
@@ -73,5 +76,3 @@ Run Docker-Compose . This will setup up the **postgres Database**, **pgadmin4** 
 ```
 
 After successfully running the service ,It will be up and running at http://localhost:3001 and its websocket service will be available to use by agents.
-
-

@@ -145,7 +145,6 @@ class WebSocketConnectionManager {
                                         bigIntReplacer
                                     )
                                 )
-                            } else {
                             }
                         })
                     } else {
@@ -179,9 +178,9 @@ class WebSocketConnectionManager {
     }
 }
 
-function replacer(key: any, value: any) {
-    return typeof value === 'bigint' ? value.toString() : value
-}
+// function replacer(key: any, value: any) {
+//     return typeof value === 'bigint' ? value.toString() : value
+// }
 
 function removeUndefined(obj: Record<string, any>): Record<string, any> {
     const newObj: Record<string, any> = {}
