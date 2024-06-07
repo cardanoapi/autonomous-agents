@@ -1,6 +1,6 @@
 import React, { SVGAttributes } from 'react';
 
-export default function UserMoreIcon(props: SVGAttributes<{}>) {
+export default function UserMoreIcon(props: SVGAttributes<any>) {
     return (
         <svg
             width="48"

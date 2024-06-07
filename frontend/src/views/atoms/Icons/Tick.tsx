@@ -1,4 +1,4 @@
-export default function TickIcon(props: React.SVGAttributes<{}>) {
+export default function TickIcon(props: React.SVGAttributes<HTMLOrSVGElement>) {
     return (
         <svg
             width="24"

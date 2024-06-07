@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function TetherIcon(props: React.SVGAttributes<{}>) {
+export function TetherIcon(props: React.SVGAttributes<HTMLOrSVGElement>) {
     return (
         <svg
             width="24"

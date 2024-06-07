@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function Unlocked(props: React.SVGAttributes<{}>) {
+export function Unlocked(props: React.SVGAttributes<any>) {
     return (
         <svg
             width="14"

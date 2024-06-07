@@ -17,13 +17,6 @@ import { setJoyrideState } from '@app/store/tours/slice';
 
 import BeaconComponent from './JoyrideBeacon';
 
-interface LocalStorageJoyrideState {
-    id: string;
-    run?: boolean;
-    finished?: boolean;
-    stepIndex?: number;
-}
-
 export interface IJoyrideProps {
     steps: Array<Step>;
     id: string;
@@ -147,6 +140,7 @@ export default function Joyride({
 
     const { run, stepIndex, steps: jrSteps } = state;
 
+    /* eslint-disable no-unused-vars */
     const getFilteredState = ({ steps, ...rest }: JoyrideState) => rest;
 
     useEffect(() => {

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function Warning(props: React.SVGAttributes<{}>) {
+export function Warning(props: React.SVGAttributes<any>) {
     return (
         <svg
             width="18"

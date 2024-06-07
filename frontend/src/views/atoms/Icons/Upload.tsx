@@ -1,6 +1,6 @@
 import React, { SVGAttributes } from 'react';
 
-const UploadIcon = (props: SVGAttributes<{}>) => {
+const UploadIcon = (props: SVGAttributes<any>) => {
     return (
         <svg
             width="62px"

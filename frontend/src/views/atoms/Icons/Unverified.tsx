@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const UnverifiedIcon: React.FC<React.SVGAttributes<{}>> = (props) => {
+export const UnverifiedIcon: React.FC<React.SVGAttributes<any>> = (props) => {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"

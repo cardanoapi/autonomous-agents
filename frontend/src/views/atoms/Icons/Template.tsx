@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const TemplateIcon = (props: React.SVGAttributes<{}>) => {
+export const TemplateIcon = (props: React.SVGAttributes<HTMLOrSVGElement>) => {
     return (
         <svg
             width="20"

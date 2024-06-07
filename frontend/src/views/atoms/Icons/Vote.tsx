@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function VoteIcon(props: React.SVGAttributes<{}>) {
+export function VoteIcon(props: React.SVGAttributes<any>) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
