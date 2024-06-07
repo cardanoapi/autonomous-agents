@@ -10,6 +10,7 @@ import { useAtom } from 'jotai';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { templateFormSchema } from '@app/app/(pages)/templates/create-template/components/schema';
 import { IFunction, IParameter, fetchFunctions } from '@app/app/api/functions';
 import { postTemplateData } from '@app/app/api/templates';
 import { Card } from '@app/components/atoms/Card';
@@ -38,18 +39,13 @@ export interface ITemplateOption {
     cronExpression?: string[];
     defaultSelected?: any;
     configuredSettings?: any;
+
     [key: string]: string | boolean | undefined | object;
 }
 
-export const templateFormSchema = z.object({
-    name: z.string(),
-    description: z.string().optional(),
-    triggers: z.any()
-});
-
 export default function TemplateForm() {
     const [submittingForm, setSubmittingForm] = useState(false);
-    const [templateCreated, setTemplateCreated] = useAtom(templateCreatedAtom);
+    const [, setTemplateCreated] = useAtom(templateCreatedAtom);
 
     const templateMutation = useMutation({
         mutationFn: (data: z.infer<typeof templateFormSchema>) =>
@@ -86,11 +82,13 @@ export default function TemplateForm() {
 
     /*Related to Selected option*/
     const [selected, setSelected] = useState<ITemplateOption[]>([]);
+
     function openSelectedOption(option: ITemplateOption) {
         console.log(option);
         setCurrentDialogForm(option);
         setDialogOpen(true);
     }
+
     function unselectOption(option: ITemplateOption) {
         const filteredSelected = selected.filter((s) => s.value !== option.value);
         setSelected(filteredSelected);
@@ -151,6 +149,7 @@ export default function TemplateForm() {
         setSubmittingForm(true);
         templateMutation.mutateAsync(formData);
     }
+
     function renderSelectedFunctionsCard() {
         return (
             <div className="grid w-[80%] grid-cols-2 gap-4">

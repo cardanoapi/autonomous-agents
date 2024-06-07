@@ -8,7 +8,7 @@ const sentryHost = 'sentry.sireto.io';
 // want to accept through this proxy.
 const knownProjectIds: Array<any> = ['/24'];
 
-async function handler(req: any, res: any) {
+async function handler(req: any) {
     try {
         const envelope = req.body;
         const pieces = envelope.split('\n');

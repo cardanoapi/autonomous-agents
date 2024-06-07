@@ -22,11 +22,10 @@ import { agentCreatedAtom } from '@app/store/loaclStore';
 
 export default function AgentsPage() {
     const [agentCreated, setAgentCreated] = useAtom(agentCreatedAtom);
-    const {
-        data: agents,
-        isLoading: loadingAgents,
-        isError: errorAgents
-    } = useQuery<IAgent[]>({ queryKey: ['agents'], queryFn: fetchAgents });
+    const { data: agents } = useQuery<IAgent[]>({
+        queryKey: ['agents'],
+        queryFn: fetchAgents
+    });
 
     const [filteredAgents, setFilteredAgents] = useState<IAgent[]>([]);
 

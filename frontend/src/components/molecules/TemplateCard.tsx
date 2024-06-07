@@ -1,12 +1,9 @@
 import { useState } from 'react';
 
 import { useMutation } from '@tanstack/react-query';
-import { useQuery } from '@tanstack/react-query';
 import { Trash2 } from 'lucide-react';
 
 import { deleteTemplatebyID } from '@app/app/api/templates';
-import { fetchtriggersbyTemplateID } from '@app/app/api/trigger';
-import { ITrigger } from '@app/app/api/trigger';
 import { Truncate } from '@app/utils/common/extra';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
@@ -40,10 +37,10 @@ export default function TemplateCard({
         }
     });
 
-    const { data: templateTriggers = [] } = useQuery<ITrigger[]>({
-        queryKey: [`triggers${templateID}`],
-        queryFn: () => fetchtriggersbyTemplateID(templateID)
-    });
+    // const { data: templateTriggers = [] } = useQuery<ITrigger[]>({
+    //     queryKey: [`triggers${templateID}`],
+    //     queryFn: () => fetchtriggersbyTemplateID(templateID)
+    // });
 
     return (
         <>

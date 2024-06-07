@@ -18,6 +18,7 @@ export interface ICronSetting {
     default: string[];
     index: number;
 }
+
 export interface IInputSetting {
     name: string;
     value: string | number;
@@ -62,7 +63,7 @@ export default function TriggerTab({
     );
 
     /* State for persisiting custom cron settings when switching tabs*/
-    const [customCron, setCustomCron] = useState<string[]>(['*', '*', '*', '*', '*']);
+    const [, setCustomCron] = useState<string[]>(['*', '*', '*', '*', '*']);
 
     /* state for persisiting user cron settings when switching tabs*/
 
@@ -90,7 +91,7 @@ export default function TriggerTab({
     );
 
     function saveCronConfiguration(setting: IInputSetting) {
-        const newSettings: IInputSetting[] = configuredSettings.map((item, index) => {
+        const newSettings: IInputSetting[] = configuredSettings.map((item) => {
             if (item.name === setting.name) {
                 return {
                     name: setting.name,

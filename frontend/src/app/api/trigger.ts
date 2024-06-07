@@ -41,9 +41,7 @@ export const fetchUnSuccessfullTriggersbyAgentID = async (agentID: string) => {
     if (!res.ok) {
         throw new Error('Trigger Fetch Failed: Network Error');
     }
-    const data = await res.json();
-    const count = Object.keys(data).length;
-    return data;
+    return await res.json();
 };
 
 export const fetchTransactionsCount = async (transactionState: string) => {
@@ -53,9 +51,7 @@ export const fetchTransactionsCount = async (transactionState: string) => {
     if (!res.ok) {
         throw new Error('Agents Fetch Operation failed: Network Error');
     }
-    const data = await res.json();
-    const count = Object.keys(data).length;
-    return data;
+    return await res.json();
 };
 
 export const fetchTriggers = async () => {

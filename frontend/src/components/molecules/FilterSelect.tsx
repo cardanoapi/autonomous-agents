@@ -16,10 +16,7 @@ export interface ISelectItem {
 }
 
 export default function FilterSelect({
-    renderIcon = false,
-    className,
-    options,
-    value
+    options
 }: {
     renderIcon?: boolean;
     className?: string;

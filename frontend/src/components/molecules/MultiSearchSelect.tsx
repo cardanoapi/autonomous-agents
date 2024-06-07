@@ -3,22 +3,11 @@
 import * as React from 'react';
 import { forwardRef, useEffect } from 'react';
 
-import { set } from 'lodash';
-
 import { Command as CommandPrimitive, useCommandState } from 'cmdk';
-import { SearchIcon, X } from 'lucide-react';
+import { SearchIcon } from 'lucide-react';
 
-import { Badge } from '../atoms/Badge';
 import { Command, CommandGroup, CommandItem, CommandList } from '../atoms/Command';
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogHeader,
-    DialogTrigger
-} from '../atoms/Dialog';
 import { cn } from '../lib/utils';
-import SelectedTemplateCard from './SelectedCard';
 
 export interface IOption {
     value: string;
@@ -27,9 +16,11 @@ export interface IOption {
     extraValues?: any;
     /** fixed option that can't be removed. */
     fixed?: boolean;
+
     /** Group the options by providing key. */
     [key: string]: string | boolean | undefined | object;
 }
+
 interface GroupOption {
     [key: string]: IOption[];
 }
@@ -40,7 +31,7 @@ interface MultipleSelectorProps {
     /** manually controlled options */
     options?: IOption[];
     placeholder?: string;
-    setDialogOpen?: Function;
+    setDialogOpen?: (open: boolean) => void;
     /** Loading component. */
     loadingIndicator?: React.ReactNode;
     /** Empty component. */
@@ -51,12 +42,12 @@ interface MultipleSelectorProps {
      * Only work with `onSearch` prop. Trigger search when `onFocus`.
      * For example, when user click on the input, it will trigger the search to get initial options.
      **/
-    openSelectedOption?: Function;
+    openSelectedOption?: any;
     triggerSearchOnFocus?: boolean;
     /** async search */
     onSearch?: (value: string) => Promise<IOption[]>;
-    onChange?: Function;
-    onUnselect?: Function;
+    onChange?: any;
+    onUnselect?: any;
     /** Limit the maximum number of selected options. */
     maxSelected?: number;
     /** When the number of selected options exceeds the limit, the onMaxSelected will be called. */
@@ -183,7 +174,6 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
             disabled = false,
             groupBy,
             className,
-            badgeClassName,
             selectFirstItem = true,
             creatable = false,
             triggerSearchOnFocus = false,
@@ -468,7 +458,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                                                                     e.preventDefault();
                                                                     e.stopPropagation();
                                                                 }}
-                                                                onSelect={(value) => {
+                                                                onSelect={() => {
                                                                     if (
                                                                         selected.length >=
                                                                         maxSelected

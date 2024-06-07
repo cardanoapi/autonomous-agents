@@ -1,11 +1,10 @@
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Copy, Trash2 } from 'lucide-react';
 
 import { IAgent, deleteAgentbyID, fetchAgentbyID } from '@app/app/api/agents';
-import { ITemplate, fetchTemplatebyID, fetchTemplates } from '@app/app/api/templates';
+import { ITemplate, fetchTemplatebyID } from '@app/app/api/templates';
 import {
     ITrigger,
     fetchSuccessfullTriggersbyAgentID,
@@ -15,8 +14,8 @@ import {
 import { Truncate } from '@app/utils/common/extra';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
-import { Card, CardContent, CardDescription, CardTitle } from '../atoms/Card';
-import { Dialog, DialogClose, DialogContent, DialogTrigger } from '../atoms/Dialog';
+import { Card, CardContent, CardTitle } from '../atoms/Card';
+import { Dialog, DialogContent } from '../atoms/Dialog';
 import { Switch } from '../atoms/Switch';
 import ConfirmationBox from './ConfirmationBox';
 import { ErrorToast, SuccessToast } from './CustomToasts';
@@ -36,9 +35,7 @@ export default function AgentCard({
     agentID,
     agentRole,
     templateID,
-    functionCount,
-    lastActive = '',
-    totalTrigger
+    lastActive = ''
 }: IAgentCard) {
     const { data: template } = useQuery<ITemplate>({
         queryKey: [`template${templateID}`],
@@ -67,10 +64,10 @@ export default function AgentCard({
 
     const [dialogOpen, setDialogOpen] = useState(false);
 
-    interface DeleteAgentParams {
-        agentID: string;
-        onSuccess?: () => void;
-    }
+    // interface DeleteAgentParams {
+    //     agentID: string;
+    //     onSuccess?: () => void;
+    // }
 
     const deleteAgentMutation = useMutation({
         mutationFn: (agentID: string) => deleteAgentbyID(agentID),

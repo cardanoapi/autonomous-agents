@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function AddIcon(props: React.SVGAttributes<{}>) {
+export function AddIcon(props: React.SVGAttributes<any>) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"

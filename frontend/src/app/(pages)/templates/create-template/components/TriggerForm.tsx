@@ -12,11 +12,12 @@ import { IOption } from '@app/components/molecules/MultiSearchSelect';
 
 import TriggerTab from './TriggerTab';
 
-interface ICronParameter {
-    name: string;
-    description?: string;
-    value: string;
-}
+//
+// interface ICronParameter {
+//     name: string;
+//     description?: string;
+//     value: string;
+// }
 
 interface ICronTriggerForm {
     defaultCron?: string[];
@@ -26,11 +27,6 @@ interface ICronTriggerForm {
     previousConfiguredSettings: any;
     setClose: any;
     onSave?: any;
-}
-
-interface ICron {
-    parameters: ICronParameter[];
-    cronExpression: string;
 }
 
 export default function TriggerForm({

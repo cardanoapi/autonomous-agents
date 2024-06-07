@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
+import { agentFormSchema } from '@app/app/(pages)/agents/create-agent/_form/schema';
 import { postAgentData } from '@app/app/api/agents';
 import { ITemplate, fetchTemplates } from '@app/app/api/templates';
 import { Card } from '@app/components/atoms/Card';
@@ -26,15 +27,9 @@ import { SubmitButton } from '@app/components/molecules/SubmitButton';
 import { agentCreatedAtom } from '@app/store/loaclStore';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
-export const agentFormSchema = z.object({
-    agentName: z.string(),
-    agentTemplate: z.string(),
-    numberOfAgents: z.number().min(1)
-});
-
 export default function CreateAgentForm() {
     const [selected, setSelected] = useState<IOption[]>([]);
-    const [agentCreated, setAgentCreated] = useAtom(agentCreatedAtom);
+    const [, setAgentCreated] = useAtom(agentCreatedAtom);
     const [submittingForm, setSubmittingForm] = useState(false);
 
     const [agentTemplateOptions, setAgentTemplateOptions] = useState<IOption[] | []>(
@@ -121,7 +116,7 @@ export default function CreateAgentForm() {
                         <FormField
                             control={form.control}
                             name="agentTemplate"
-                            render={({ field }) => (
+                            render={({}) => (
                                 <FormItem>
                                     <Label className="inline-flex">
                                         Agent Template

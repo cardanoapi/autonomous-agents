@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
-import { Inter, Poppins } from 'next/font/google';
+import { Poppins } from 'next/font/google';
 
-import { QueryClient } from '@tanstack/react-query';
 import { Provider } from 'jotai';
 // import '@uiw/react-markdown-preview/dist/markdown.min.css';
 // import '@uiw/react-markdown-preview/esm/styles/markdown.css';
@@ -25,8 +24,8 @@ import ReactQueryProvider from '@app/utils/providers/ReactQueryProvider';
 import CookieConsent from '@app/views/atoms/CookieConsent';
 import NextNProgress from '@app/views/atoms/NextNProgress';
 
-const inter = Inter({ subsets: ['latin'] });
-const queryClient = new QueryClient();
+// const inter = Inter({ subsets: ['latin'] });
+// const queryClient = new QueryClient();
 
 const poppins = Poppins({
     subsets: ['latin'],

@@ -3,11 +3,7 @@ import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipCont
 
 import { Card } from '@app/components/atoms/Card';
 
-const CustomTooltip = ({
-    active,
-    payload,
-    label
-}: TooltipProps<ValueType, NameType>) => {
+const CustomTooltip = ({ active, payload }: TooltipProps<ValueType, NameType>) => {
     if (active) {
         return (
             <Card className="min-w-32 items-center rounded-xl pb-4 pt-4 text-center shadow-[0_3px_10px_rgb(0,0,0,0.2)]">

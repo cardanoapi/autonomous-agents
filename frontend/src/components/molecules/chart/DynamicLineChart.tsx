@@ -3,8 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, YAxis } from 'recharts';
 
 function Chart() {
-    const [response, setResponse] = useState([]);
-    const [time, setTime] = useState('');
+    const [time] = useState('');
     const [arr, setArr] = useState([
         { X: 0 },
         { X: 0 },
@@ -76,6 +75,7 @@ function Chart() {
         { X: 0 }
     ]);
     const timeoutRef = useRef<any>(null);
+
     function validate() {
         setArr((prevState) =>
             [...prevState, { X: Math.random() >= 0.5 ? 5 : 0 }].slice(1)

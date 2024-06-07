@@ -8,7 +8,6 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '../atoms/DropDownMenu';
-import { Label } from '../atoms/label';
 
 export default function TopNav() {
     const path: string = usePathname();

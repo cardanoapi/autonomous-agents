@@ -1,21 +1,19 @@
-import { Pencil } from 'lucide-react';
 import { Trash2 } from 'lucide-react';
-import { Eye } from 'lucide-react';
 
-import { Card, CardTitle } from '../atoms/Card';
+import { Card } from '../atoms/Card';
 
 export default function SelectedCard({
     name,
     handleUnselect = () => {
         console.log('Handle unselect');
     },
-    handleEdit = () => console.log('Handle Edit'),
+    // handleEdit = () => console.log('Handle Edit'),
     description
 }: {
     name: string;
     description?: any;
-    handleUnselect: Function;
-    handleEdit?: Function;
+    handleUnselect: any;
+    handleEdit?: any;
     className?: string;
 }) {
     return (

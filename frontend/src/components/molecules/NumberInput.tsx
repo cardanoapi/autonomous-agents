@@ -1,11 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { useState } from 'react';
 
 import { Input } from '../atoms/Input';
 // assuming cn is defined here
-import PolygonIcon from '../icons/Polygon';
 import { cn } from '../lib/utils';
 
 // Correct import path

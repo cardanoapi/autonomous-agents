@@ -15,7 +15,7 @@ export default function CustomCron({
     const [months, setMonths] = useState(customCron ? customCron[3] : '*');
     const [years, setYears] = useState(customCron ? customCron[4] : '*');
 
-    const [cron, setCron] = useState([
+    const [, setCron] = useState([
         `${seconds}`,
         `${minutes}`,
         `${hours}`,

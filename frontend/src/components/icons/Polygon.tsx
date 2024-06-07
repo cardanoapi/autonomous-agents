@@ -1,5 +1,3 @@
-import PropTypes from 'prop-types';
-
 function PolygonIcon({ width = 12, height = 12, className = '' }: IPolygonIcon) {
     return (
         <svg

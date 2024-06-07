@@ -1,5 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { fn } from '@storybook/test';
+import type { StoryObj } from '@storybook/react';
 
 import { Card } from '../atoms/Card';
 import { SubmitButton } from './SubmitButton';

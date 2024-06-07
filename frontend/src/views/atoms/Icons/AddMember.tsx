@@ -1,6 +1,6 @@
 import React, { SVGAttributes } from 'react';
 
-export default function AddMember(props: SVGAttributes<{}>) {
+export default function AddMember(props: SVGAttributes<any>) {
     return (
         <svg
             width="22"

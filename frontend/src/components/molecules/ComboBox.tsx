@@ -29,7 +29,6 @@ export interface ComboboxProps extends React.HTMLAttributes<HTMLDivElement> {
 const Combobox: React.FC<ComboboxProps> = ({
     options,
     enableSearch = false,
-    onSelect,
     className,
     ...rest
 }) => {

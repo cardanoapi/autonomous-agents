@@ -35,7 +35,7 @@ const SelectTrigger = React.forwardRef<
     React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> & {
         renderArrow?: boolean;
     }
->(({ className, children, color, renderArrow = true, ...props }, ref) => (
+>(({ className, children, renderArrow = true, ...props }, ref) => (
     <SelectPrimitive.Trigger
         ref={ref}
         className={cn(

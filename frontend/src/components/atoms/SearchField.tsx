@@ -22,6 +22,7 @@ const SearchFieldVariants = cva(
         }
     }
 );
+
 export interface SearchFieldProps
     extends React.InputHTMLAttributes<HTMLInputElement>,
         VariantProps<typeof SearchFieldVariants> {
@@ -30,10 +31,7 @@ export interface SearchFieldProps
 }
 
 export const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
-    (
-        { className, variant, size, onChange, onSearch, asChild = false, ...props },
-        ref
-    ) => {
+    ({ className, variant, onChange, onSearch, asChild = false, ...props }, ref) => {
         const Comp = asChild ? Slot : 'input';
 
         const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
