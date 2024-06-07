@@ -7,8 +7,8 @@
         "build": "tsc",
         "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
         "format:check": "prettier --check .",
-        "format:write": "prettier --write .",
         "lint:check": "eslint .",
+        "format:write": "prettier --write .",
         "lint:fix": "eslint --fix ."
     },
     "keywords": [],
