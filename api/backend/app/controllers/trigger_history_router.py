@@ -55,7 +55,7 @@ class TriggerHistory(Routable):
         results = await self.db.prisma.functiondetail.find_many()
         return results
 
-    @get("/transaction-counts/", response_model=dict)
+    @get("/transaction-counts", response_model=dict)
     async def get_transaction_counts_success(self, success: bool = Query(True)):
         # Calculate the start and end timestamps for the last 24 hours
         end_time = datetime.now()

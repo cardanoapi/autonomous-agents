@@ -15,7 +15,7 @@ class AgentRouter(Routable):
         super().__init__(*args, **kwargs)
         self.agent_service = agent_service
 
-    @post("/agents/", status_code=HTTPStatus.CREATED)
+    @post("/agents", status_code=HTTPStatus.CREATED)
     async def create_agent(self, agent_data: AgentCreateDTO):
         agent = await self.agent_service.create_agent(agent_data)
         return agent
@@ -25,7 +25,7 @@ class AgentRouter(Routable):
         agent = await self.agent_service.get_agent_key(agent_id)
         return agent
 
-    @get("/agents/", response_model=List[AgentResponse])
+    @get("/agents", response_model=List[AgentResponse])
     async def list_agents(
         self,
         page: int = Query(default=1, ge=1),
