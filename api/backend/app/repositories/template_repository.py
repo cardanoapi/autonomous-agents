@@ -41,10 +41,8 @@ class TemplateRepository:
 
     async def retrieve_templates(self, page, limit) -> List[TemplateResponse]:
         skip = (page - 1) * limit
-        templates = await self.db.prisma.template.find_many(where={"deleted_at": None}, skip=skip, take=limit)
-        if not templates:
-            raise HTTPException(status_code=404, detail="No templates found")
-        return templates
+        return await self.db.prisma.template.find_many(where={"deleted_at": None}, skip=skip, take=limit)
+        
 
     async def retrieve_template(self, template_id: str) -> Optional[TemplateResponse]:
         template = await self.db.prisma.template.find_first(where={"id": template_id, "deleted_at": None})
