@@ -1,7 +1,5 @@
 import React from 'react';
 
-import PropTypes from 'prop-types';
-
 import { Card } from '@app/components/atoms/Card';
 import { cn } from '@app/components/lib/utils';
 
@@ -32,18 +30,6 @@ const OverViewCard: React.FC<IOverViewCard> = ({
             {children}
         </Card>
     );
-};
-
-OverViewCard.propTypes = {
-    title: PropTypes.string,
-    value: PropTypes.number,
-    children: PropTypes.node
-};
-
-OverViewCard.defaultProps = {
-    title: '',
-    value: 0,
-    children: null
 };
 
 export default OverViewCard;

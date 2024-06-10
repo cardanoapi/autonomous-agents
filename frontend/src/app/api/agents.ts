@@ -3,7 +3,7 @@
 import axios from 'axios';
 import { z } from 'zod';
 
-import { agentFormSchema } from '../(pages)/agents/create-agent/page';
+import { agentFormSchema } from '../(pages)/agents/create-agent/_form/schema';
 import { baseAPIurl } from './config';
 
 export interface IAgent {
@@ -16,7 +16,7 @@ export interface IAgent {
 }
 
 export const fetchAgents = async (): Promise<IAgent[]> => {
-    const res = await fetch(`${baseAPIurl}/agents/`);
+    const res = await fetch(`${baseAPIurl}/agents`);
     if (!res.ok) {
         throw new Error('Agents Fetch Operation failed: Network Error');
     }
@@ -25,7 +25,7 @@ export const fetchAgents = async (): Promise<IAgent[]> => {
 };
 
 export const fetchActiveAgentsCount = async () => {
-    const res = await fetch(`${baseAPIurl}/agents/online/`);
+    const res = await fetch(`${baseAPIurl}/agents/online`);
     if (!res.ok) {
         throw new Error('Active Agents Fetch Opetation failed: Network Error');
     }
@@ -57,7 +57,7 @@ export const postAgentData = async (formData: z.infer<typeof agentFormSchema>) =
 
 export const deleteAgentbyID = async (agentID: string) => {
     try {
-        const response = await axios.delete(`${baseAPIurl}/agents/${agentID}/`);
+        const response = await axios.delete(`${baseAPIurl}/agents/${agentID}`);
         if (response.status === 204) {
             return { success: true, agentID };
         } else {
