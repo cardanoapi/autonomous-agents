@@ -1,9 +1,21 @@
 version: '3.8'
 
 services:
+
+  # Frontend
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports: 
+      - "3000:3000"
+    environment:
+      - "NEXT_PUBLIC_API_ENDPOINT_HOST=http://api.agents.cardanoapi.io/api"
+
+
   # FastAPI application (build the image)
   cardano-autonomous:
-    build: ./autonomous-agents-api  # Path to your FastAPI project directory
+    build: ./api  # Path to your FastAPI project directory
     ports:
       - "8000:8000"
     environment:
@@ -17,7 +29,7 @@ services:
   # Agent Manager application (build image)
   agent_manager:
     build:
-      context: ./autonomous-agent-manager
+      context: ./agent-manager
       dockerfile: Dockerfile
     ports:
       - "3001:3001"
@@ -34,7 +46,7 @@ services:
   #Agent (build image)
   agent:
     build:
-      context: ./autonomous-agent
+      context: ./agent-node
       dockerfile: Dockerfile
     ports:
       - "3002:3002"
@@ -110,14 +122,7 @@ services:
     environment:
       - KAFKA_CLUSTERS_0_NAME=local
       - KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS=kafka:9093
-    networks:
-      - cardano-autonomous-backend
 
-networks:
-  cardano-autonomous-backend:
-    name: backend
-    driver: bridge
-    external: true
 
 volumes:
   pg-data:
