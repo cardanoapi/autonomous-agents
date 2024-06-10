@@ -3,7 +3,7 @@
 import axios from 'axios';
 import { z } from 'zod';
 
-import { agentFormSchema } from '../(pages)/agents/create-agent/page';
+import { agentFormSchema } from '../(pages)/agents/create-agent/_form/schema';
 import { baseAPIurl } from './config';
 
 export interface IAgent {
