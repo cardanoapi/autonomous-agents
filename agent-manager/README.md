@@ -11,8 +11,8 @@ This project is a TypeScript Agent Manager application where Agents are connecte
 
 ## Requirements
 
--   [Node.js](https://nodejs.org/) (v16 or higher)
--   [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/) package manager
+-   [Node.js](https://nodejs.org/) (v18.18.0 or higher)
+-   [yarn](https://yarnpkg.com/) package manager
 
 ## Installation
 
@@ -20,16 +20,10 @@ This project is a TypeScript Agent Manager application where Agents are connecte
 
     ```shell
     git clone https://github.com/sireto/cardano-autonomous-agent.git
-    cd  cardano-autonomous-agent/autonomous-agent-manager
+    cd  cardano-autonomous-agent/agent-manager
     ```
 
-2. Install dependencies using npm or yarn:
-
-    ```shell
-    npm install
-    ```
-
-    or
+2. Install dependencies using yarn:
 
     ```shell
     yarn install
@@ -37,12 +31,30 @@ This project is a TypeScript Agent Manager application where Agents are connecte
 
 ## Usage
 
+Copy the env variables form `.env.example` to `.env` and update the env variables.
+
+Make sure to run the following command to generate the database client and creating the required table mentioned in schema
+
+```bash
+yarn prisma generate
+```
+
+### Development Mode
+
+To run the application in dev mode run the following command
+
+```shell
+yarn dev
+```
+
+### Production Mode
+
 To run the Agent Manager application, follow these steps:
 
 1. Build the application using the following command:
 
     ```shell
-    npm run build
+    yarn build
     ```
 
     This will compile the TypeScript files into JavaScript and place the output in the `dist` directory.
@@ -50,29 +62,11 @@ To run the Agent Manager application, follow these steps:
 2. Run the application with an agent ID as a command-line argument:
 
     ```shell
-    npm run start
+    yarn start
     ```
-
-3. Run this command for generating the database client and creating the required table mentioned in schema
-
-```bash
-   prisma generate
-```
 
 Make sure your API service is up and running .
 
-## Docker
+If successful a server listening on port `3000` will be running:
 
-hange directory
-
-```bash
-  cd cardano-autonomous-agent
-```
-
-Run Docker-Compose . This will setup up the **postgres Database**, **pgadmin4** , **kafka** and **backend** via Docker.
-
-```bash
- docker compose -f "docker-compose.deployment.yml" up --build -d
-```
-
-After successfully running the service ,It will be up and running at http://localhost:3001 and its websocket service will be available to use by agents.
+> http://localhost:3001

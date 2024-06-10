@@ -13,4 +13,6 @@ logs/
 .vscode/
 .idea/
 
+.env
+
 

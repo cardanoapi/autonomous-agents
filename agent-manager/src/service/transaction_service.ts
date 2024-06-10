@@ -337,7 +337,6 @@ export const handleTransaction = async (
                 )
             }
         } else if (data.function_name == 'Vote') {
-            console.log('inside vote function')
             if (data.trigInfo == 'true') {
                 const status = await checkDrepStatus(
                     kuberBaseUrl,
@@ -345,7 +344,7 @@ export const handleTransaction = async (
                     agentId,
                     kuberApiKey
                 )
-                if (await status) {
+                if (status) {
                     await createOrUpdateFunctionDetail('Vote', true)
                     const addressApiUrl = `${ApiUrl}/api/agent/${agentId}/keys`
                     const addressResponse = await axios.get(addressApiUrl)
