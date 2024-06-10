@@ -25,7 +25,7 @@ export interface IFunctionParameter {
 }
 
 export const fetchFunctions = async (): Promise<IFunction[]> => {
-    const res = await fetch(`${baseAPIurl}/functions/`);
+    const res = await fetch(`${baseAPIurl}/functions`);
     if (!res.ok) {
         throw new Error('Agents Fetch Operation failed: Network Error');
     }

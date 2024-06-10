@@ -3,10 +3,8 @@
 import axios from 'axios';
 import { z } from 'zod';
 
-import {
-    ITemplateOption,
-    templateFormSchema
-} from '../(pages)/templates/create-template/page';
+import { templateFormSchema } from '../(pages)/templates/create-template/components/schema';
+import { ITemplateOption } from '../(pages)/templates/create-template/page';
 import { baseAPIurl } from './config';
 
 axios.interceptors.request.use((request) => {
@@ -26,7 +24,7 @@ export interface ITemplate {
 }
 
 export const fetchTemplates = async (): Promise<ITemplate[]> => {
-    const res = await fetch(`${baseAPIurl}/templates/`);
+    const res = await fetch(`${baseAPIurl}/templates`);
     if (!res.ok) {
         throw new Error('Templates Fetch Operation failed: Network Error');
     }
@@ -35,7 +33,7 @@ export const fetchTemplates = async (): Promise<ITemplate[]> => {
 };
 
 export const fetchTemplatebyID = async (templateID: string): Promise<ITemplate> => {
-    const res = await fetch(`${baseAPIurl}/templates/${templateID}/`);
+    const res = await fetch(`${baseAPIurl}/templates/${templateID}`);
     if (!res.ok) {
         throw new Error('Templates Fetch Operation failed: Network Error');
     }
@@ -67,7 +65,7 @@ export const postTemplateData = async (
 
     try {
         const response = await axios.post(
-            `${baseAPIurl}/templates/`,
+            `${baseAPIurl}/templates`,
             formatedTemplatedata,
             {
                 headers: {
@@ -84,7 +82,7 @@ export const postTemplateData = async (
 
 export const deleteTemplatebyID = async (templateID: string) => {
     try {
-        const response = await axios.delete(`${baseAPIurl}/templates/${templateID}/`);
+        const response = await axios.delete(`${baseAPIurl}/templates/${templateID}`);
         console.log(response);
         if (response.status === 204) {
             return true;
