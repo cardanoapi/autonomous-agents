@@ -14,13 +14,15 @@ services:
 
 
   # FastAPI application (build the image)
-  cardano-autonomous:
+  api:
     build: ./api  # Path to your FastAPI project directory
     ports:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgresql://root:root@postgres:5432/cardano_autonomous_agent_testing_db
       - KAFKA_BROKERS=kafka:9093
+      - DOCS_URL=/api/docs
+      - OPENAPI_URL=/aio/openapi.json
     depends_on:
       - postgres
       - kafka
@@ -42,6 +44,7 @@ services:
       - BROKER_URL=kafka:9093
       - CLIENT_ID=my-app
       - CARDANO_NODE_URL=95.217.224.100:3006
+      - API_URL=http://api:8000
 
   #Agent (build image)
   agent:
