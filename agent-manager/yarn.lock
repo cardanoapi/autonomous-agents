@@ -2461,10 +2461,10 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-libcardano@^0.0.6:
-  version "0.0.6"
-  resolved "https://registry.npmjs.org/libcardano/-/libcardano-0.0.6.tgz"
-  integrity sha512-Y0DioHlE7b4nd5oKoIqSN7ar94xAgw3ZpfRCid7t0ZbdFq8rRXmPELo0t9L5AQuDK1rf2oz/6M7rSoPHSq5uWw==
+libcardano@^0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/libcardano/-/libcardano-0.0.8.tgz#40a12fadcbe599f1f612db8f6e3fcc6461edce5f"
+  integrity sha512-yMJms00SB1R6S9tl9WHiKpNzQ0ra9qMNaAHBZbQ97t9f5eJ5D7Qjm+DrTUUwRJtqpHC5s5hv21BtFOo3a3XdOA==
   dependencies:
     "@cardano-sdk/crypto" "^0.1.22"
     "@noble/ed25519" "^2.1.0"
