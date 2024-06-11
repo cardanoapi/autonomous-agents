@@ -38,7 +38,7 @@ services:
     depends_on:
       - postgres
       - kafka
-      - cardano-autonomous
+      - api
     environment:
       - DATABASE_URL=postgresql://root:root@postgres:5432/cardano_autonomous_agent_testing_db
       - BROKER_URL=kafka:9093
@@ -62,7 +62,6 @@ services:
   #Database
   postgres:
     image: postgres:16.2
-    container_name: postgres_container
     environment:
      POSTGRES_DB: cardano_autonomous_agent_testing_db
      POSTGRES_USER: root
@@ -75,7 +74,6 @@ services:
   #Pgadmin
   pgadmin:
     image: dpage/pgadmin4:8.2
-    container_name: pg-admin
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@pgadmin.com
       PGADMIN_DEFAULT_PASSWORD: password
@@ -85,7 +83,6 @@ services:
 #Zookeper
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
-    container_name: zookeeper_agent_autonomous
     ports:
       - "2181:2181"
     environment:
@@ -97,7 +94,6 @@ services:
   kafka:
     image: confluentinc/cp-kafka:7.0.1
     hostname: kafka
-    container_name: kafka_agent_autonomous
     depends_on:
       - zookeeper
     ports:
@@ -118,7 +114,6 @@ services:
 #Kafka UI
   kafka-ui:
     image: provectuslabs/kafka-ui
-    container_name: kafka-ui-agent-autonomous
     ports:
       - "8080:8080"
     restart: always
