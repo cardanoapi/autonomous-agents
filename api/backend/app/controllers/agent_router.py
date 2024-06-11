@@ -7,11 +7,11 @@ from fastapi import HTTPException, Query
 from backend.app.models.agent.agent_dto import AgentCreateDTO
 from backend.app.services.agent_service import AgentService
 from backend.app.models.agent.response_dto import AgentResponse
-from backend.dependency import get_agent_service
+from backend.dependency import agent_service
 
 
 class AgentRouter(Routable):
-    def __init__(self, agent_service: AgentService = get_agent_service(), *args, **kwargs):
+    def __init__(self, agent_service: AgentService =agent_service , *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.agent_service = agent_service
 

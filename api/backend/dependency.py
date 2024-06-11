@@ -9,29 +9,15 @@ from backend.app.services.template_service import TemplateService
 from backend.app.services.template_trigger_service import TemplateTriggerService
 from backend.app.services.trigger_service import TriggerService
 
-
-def get_agent_service() -> AgentService:
-    agent_repository = AgentRepository()
-    template_trigger_service = get_template_trigger_service()
-    trigger_service = get_trigger_service()
-    agent_service = AgentService(agent_repository, template_trigger_service, trigger_service)
-    return agent_service
+# Repository
+agent_repository = AgentRepository()
+trigger_repository = TriggerRepository()
+template_trigger_repository = TemplateTriggerRepository()
+template_repository = TemplateRepository()
 
 
-def get_trigger_service() -> TriggerService:
-    trigger_repository = TriggerRepository()
-    trigger_service = TriggerService(trigger_repository)
-    return trigger_service
-
-
-def get_template_trigger_service() -> TemplateTriggerService:
-    template_trigger_repository = TemplateTriggerRepository()
-    template_trigger_service = TemplateTriggerService(template_trigger_repository)
-    return template_trigger_service
-
-
-def get_template_service() -> TemplateService:
-    template_repository = TemplateRepository()
-    template_trigger_service = get_template_trigger_service()
-    template_service = TemplateService(template_repository, template_trigger_service)
-    return template_service
+# Services
+template_trigger_service = TemplateTriggerService(template_trigger_repository)
+trigger_service = TriggerService(trigger_repository)
+template_service = TemplateService(template_repository, template_trigger_service)
+agent_service = AgentService(agent_repository, template_trigger_service, trigger_service)

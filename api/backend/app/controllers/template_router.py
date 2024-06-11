@@ -7,11 +7,11 @@ from fastapi import Query
 from backend.app.models import TemplateCreateDto, TemplateResponse
 from backend.app.models.template.template_dto import TemplateEditDto
 from backend.app.services.template_service import TemplateService
-from backend.dependency import get_template_service
+from backend.dependency import template_service
 
 
 class TemplateRouter(Routable):
-    def __init__(self, template_service: TemplateService = get_template_service(), *args, **kwargs):
+    def __init__(self, template_service: TemplateService = template_service, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.template_service = template_service
 

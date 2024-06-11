@@ -5,12 +5,12 @@ from classy_fastapi import Routable, post, get, put, delete
 
 from backend.app.models import TemplateTriggerCreateDto, TemplateTriggerResponse
 from backend.app.services.template_trigger_service import TemplateTriggerService
-from backend.dependency import get_template_trigger_service
+from backend.dependency import template_trigger_service
 
 
 class TemplateTriggerRouter(Routable):
     def __init__(
-        self, template_trigger_service: TemplateTriggerService = get_template_trigger_service(), *args, **kwargs
+        self, template_trigger_service: TemplateTriggerService = template_trigger_service, *args, **kwargs
     ):
         super().__init__(*args, **kwargs)
         self.template_trigger_service = template_trigger_service

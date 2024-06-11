@@ -7,11 +7,11 @@ from fastapi import HTTPException
 from backend.app.models import TriggerResponse
 from backend.app.models import TriggerCreateDTO
 from backend.app.services.trigger_service import TriggerService
-from backend.dependency import get_trigger_service
+from backend.dependency import trigger_service
 
 
 class TriggerRouter(Routable):
-    def __init__(self, trigger_service: TriggerService = get_trigger_service(), *args, **kwargs):
+    def __init__(self, trigger_service: TriggerService = trigger_service, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.trigger_service = trigger_service
 

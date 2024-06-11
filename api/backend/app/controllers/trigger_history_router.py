@@ -8,7 +8,6 @@ from classy_fastapi import Routable, post, get, put, delete
 from fastapi import Query
 
 from backend.config.database import prisma_connection
-from backend.dependency import get_template_service
 
 
 class TriggerHistory(Routable):
