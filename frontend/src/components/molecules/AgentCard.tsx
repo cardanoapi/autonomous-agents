@@ -86,9 +86,9 @@ export default function AgentCard({
         useState(false);
     const [formatedLastActive, setFormatedLastActive] = useState<string | number>('');
 
-    useEffect(() => {
+    function getLastActiveMsg(lastActive: string | number): string {
         if (lastActive === 'NA') {
-            setFormatedLastActive('Not activated yet');
+            return 'Not activated yet';
         } else {
             const lastActiveDate = new Date(lastActive);
             const currentDate = new Date();
@@ -101,26 +101,23 @@ export default function AgentCard({
             const diffInDays = Math.floor(diffInHours / 24);
 
             if (diffInSeconds <= 60) {
-                setFormatedLastActive(
-                    `${diffInSeconds} second${diffInSeconds > 1 ? 's' : ''} ago`
-                );
                 if (diffInSeconds <= 33) {
                     setIsActiveWithinLast33Seconds(true);
                 }
+                return `${diffInSeconds} second${diffInSeconds > 1 ? 's' : ''} ago`;
             } else if (diffInDays >= 1) {
-                setFormatedLastActive(
-                    `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`
-                );
+                return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
             } else if (diffInHours >= 1) {
-                setFormatedLastActive(
-                    `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`
-                );
+                return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
             } else if (diffInMinutes >= 1) {
-                setFormatedLastActive(
-                    `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`
-                );
-            }
+                return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
+            } else return '';
         }
+    }
+
+    useEffect(() => {
+        const lastActiveMsg = getLastActiveMsg(lastActive);
+        lastActiveMsg && setFormatedLastActive(lastActiveMsg);
     }, [lastActive]);
 
     return (

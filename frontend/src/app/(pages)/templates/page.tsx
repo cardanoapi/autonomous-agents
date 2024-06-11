@@ -21,31 +21,11 @@ import { templateCreatedAtom } from '@app/store/loaclStore';
 
 import TemplatesContainer from './TemplatesContainer';
 
-// const FilterSelectOption: ISelectItem[] = [
-//     {
-//         label: 'Newest',
-//         value: 'Newest'
-//     },
-//     {
-//         label: 'Oldest',
-//         value: 'Oldest'
-//     },
-//     {
-//         label: 'MostUsed',
-//         value: 'MostUsed'
-//     },
-//     {
-//         label: 'LeastUsed',
-//         value: 'LeastUsed'
-//     }
-// ];
-
 export default function TemplatesPage() {
-    const {
-        data: templates = []
-        // isError: errorTemplates,
-        // isLoading: loadingTemplates
-    } = useQuery<ITemplate[]>({ queryKey: ['templates'], queryFn: fetchTemplates });
+    const { data: templates = [] } = useQuery<ITemplate[]>({
+        queryKey: ['templates'],
+        queryFn: fetchTemplates
+    });
 
     const [templateCreated, setTemplateCreated] = useAtom(templateCreatedAtom);
     const [filteredTemplates, setFilteredTemplates] = useState<ITemplate[]>([]);
