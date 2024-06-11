@@ -19,6 +19,9 @@ let reconnectAttempts = 0
 const maxReconnectAttempts = 3
 
 function connectToManagerWebSocket() {
+    if (ws !== null) {
+        return
+    }
     // Create a new WebSocket client connection
     ws = new WebSocket(`${wsUrl}/${agentId}`)
     // Event listener for the connection opening
@@ -61,7 +64,7 @@ function attemptReconnect() {
         console.log('Waiting for 10 seconds before reconnecting')
         setTimeout(() => {
             connectToManagerWebSocket()
-        }, 10000) // Wait 3 seconds before attempting to reconnect
+        }, 10000) // Wait 10 seconds before attempting to reconnect
     } else {
         console.error('Max reconnect attempts reached. Exiting application.')
         process.exit(1) // Exit the application after max attempts
