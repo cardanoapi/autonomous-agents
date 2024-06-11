@@ -40,7 +40,7 @@ wss.on('connection', async function connection(ws, req) {
         if (agentExists) {
             await kafka_event()
             await manager.removePreviousAgentConnectionIfExists(agentId)
-            await manager.connectWebSocket(agentId, ws)
+            await manager.webSocketConnected(agentId, ws)
             const { instanceCount, configurations } =
                 await fetchAgentConfiguration(agentId)
             ws.send(
@@ -58,7 +58,6 @@ wss.on('connection', async function connection(ws, req) {
         ws.on('message', async function incoming(message) {
             console.log(`Received message from agent ${agentId}: ${message}`)
             await handleTransaction(message, agentId)
-            manager.sendToWebSocket(agentId, { message: 'cardano-node-blocks' })
             ws.send(
                 JSON.stringify({
                     message: 'Pong received from Server',

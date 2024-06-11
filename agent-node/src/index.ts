@@ -17,20 +17,19 @@ if (!agentId) {
 let ws: WebSocket | null = null
 let reconnectAttempts = 0
 const maxReconnectAttempts = 3
+let isReconnecting = false
 
 function connectToManagerWebSocket() {
-    if (ws !== null) {
-        return
-    }
+    let interval: NodeJS.Timeout
     // Create a new WebSocket client connection
     ws = new WebSocket(`${wsUrl}/${agentId}`)
     // Event listener for the connection opening
     ws.on('open', () => {
         console.log('Connected to the server.')
         reconnectAttempts = 0
-
+        isReconnecting = false
         // Send a "Ping" message to the server every 10 seconds
-        setInterval(() => {
+        interval = setInterval(() => {
             ws?.send('Ping')
         }, 10000)
     })
@@ -46,17 +45,23 @@ function connectToManagerWebSocket() {
         console.log(
             `Disconnected from the server (code: ${code}, reason: ${reason}).`
         )
+        clearInterval(interval)
     })
 
     // Event listener for any errors
     ws.on('error', (er) => {
         console.error('WebSocket error', er)
         attemptReconnect()
+        clearInterval(interval)
     })
 }
 
 function attemptReconnect() {
     if (maxReconnectAttempts >= reconnectAttempts) {
+        if (isReconnecting) {
+            return
+        }
+        isReconnecting = true
         reconnectAttempts++
         console.log(
             `Attempting to reconnect... (${reconnectAttempts}/${maxReconnectAttempts})`
@@ -64,6 +69,7 @@ function attemptReconnect() {
         console.log('Waiting for 10 seconds before reconnecting')
         setTimeout(() => {
             connectToManagerWebSocket()
+            isReconnecting = false
         }, 10000) // Wait 10 seconds before attempting to reconnect
     } else {
         console.error('Max reconnect attempts reached. Exiting application.')
@@ -72,11 +78,6 @@ function attemptReconnect() {
 }
 
 export function sendParamsToWebSocket(action: any) {
-    // Check WebSocket connection state
-
-    // Convert parameters to JSON string
-
-    // Send parameters to WebSocket server
     ws?.send(action)
 }
 
