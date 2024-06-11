@@ -4,7 +4,7 @@ import { createOrUpdateFunctionDetail } from '../repository/fucntion_details_rep
 import { checkDrepStatus } from '../helper/delegateRep'
 import { checkStakeReg } from '../helper/stakeReg'
 
-const kuberBaseUrl = 'https://kuber-govtool.cardanoapi.io'
+const kuberBaseUrl = 'https://sanchonet.kuber.cardanoapi.io/api/v1'
 const kuberApiKey =
     'bS6Nm7dJTnCtk0wqwJChwZ7Wot2RTvDS7dETmYYHJ8htqrMs3xYI5njFeGUbno'
 const ApiUrl = process.env.API_SERVER
@@ -97,7 +97,7 @@ export const handleTransaction = async (
                 const addressResponse = await axios.get(addressApiUrl)
                 const agentAddress = addressResponse.data.agent_address
                 const agentCborhex = addressResponse.data.payment_signing_key
-                const kuberUrl = `${kuberBaseUrl}/api/v1/tx?submit=true`
+                const kuberUrl = `${kuberBaseUrl}/tx?submit=true`
 
                 const body: RequestBody = {
                     selections: [
@@ -199,7 +199,7 @@ export const handleTransaction = async (
                     'Content-Type': 'application/json',
                     'api-key': kuberApiKey,
                 }
-                const kuberUrlSendAda = `${kuberBaseUrl}/api/v1/tx?submit=true`
+                const kuberUrlSendAda = `${kuberBaseUrl}/tx?submit=true`
                 try {
                     const response = await fetch(kuberUrlSendAda, {
                         method: 'POST',
@@ -286,7 +286,7 @@ export const handleTransaction = async (
                     'Content-Type': 'application/json',
                     'api-key': kuberApiKey,
                 }
-                const kuberUrlDelegation = `${kuberBaseUrl}/api/v1/tx?submit=true`
+                const kuberUrlDelegation = `${kuberBaseUrl}/tx?submit=true`
 
                 try {
                     const response = await fetch(kuberUrlDelegation, {
@@ -385,7 +385,7 @@ export const handleTransaction = async (
                         'Content-Type': 'application/json',
                         'api-key': kuberApiKey,
                     }
-                    const kuberUrlDelegation = `${kuberBaseUrl}/api/v1/tx?submit=true`
+                    const kuberUrlDelegation = `${kuberBaseUrl}/tx?submit=true`
 
                     try {
                         const response = await fetch(kuberUrlDelegation, {
@@ -473,7 +473,7 @@ export const handleTransaction = async (
                     'Content-Type': 'application/json',
                     'api-key': kuberApiKey,
                 }
-                const kuberUrlDelegation = `${kuberBaseUrl}/api/v1/tx?submit=true`
+                const kuberUrlDelegation = `${kuberBaseUrl}/tx?submit=true`
 
                 try {
                     const response = await fetch(kuberUrlDelegation, {

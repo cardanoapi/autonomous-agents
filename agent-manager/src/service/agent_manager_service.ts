@@ -109,7 +109,7 @@ class WebSocketConnectionManager {
         })
 
         if (transactionBodies !== '80' && transactionWitnesses !== '80') {
-            const transaction = parseTransaction(decoded[1])
+            const transaction = parseTransaction(decoded)
             const filteredTransaction = {
                 transactionBody: transaction.body,
                 transactionWitnessSet: transaction.witnessSet,

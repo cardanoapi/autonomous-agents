@@ -13,7 +13,7 @@ from backend.config.logger import logger
 from backend.app.utils import RedisClient, AiohttpClient
 from backend.app.exceptions import HTTPException, http_exception_handler
 from backend.config.database import prisma_connection
-
+from backend.dependency import kafka_service
 log = logging.getLogger(__name__)
 
 
@@ -26,12 +26,17 @@ async def lifespan(app: FastAPI):
 
     AiohttpClient.get_aiohttp_client()
 
-    logger.info("Starting Server")
+    log.info("Starting Server")
 
     await prisma_connection.connect()
+    
+    await kafka_service.start()
 
     yield
     log.debug("Execute FastAPI shutdown event handler.")
+
+    await kafka_service.stop()
+
     # Gracefully close utilities.
     if settings.USE_REDIS:
         await RedisClient.close_redis_client()
@@ -40,7 +45,7 @@ async def lifespan(app: FastAPI):
 
     await prisma_connection.disconnect()
 
-    logger.info("Stopping Server")
+    log.info("Stopping Server")
 
 
 # Lifespan used for Test Environmnet : Configurations such as Live Database and Redis is Disabled.
@@ -54,6 +59,7 @@ async def test_lifespan(app: FastAPI):
     logger.info("Starting Test Server")
 
     yield
+
     log.debug("Execute FastAPI shutdown event handler.")
 
     logger.info("Stopping Test Server")

@@ -8,6 +8,7 @@ from backend.app.services.agent_service import AgentService
 from backend.app.services.template_service import TemplateService
 from backend.app.services.template_trigger_service import TemplateTriggerService
 from backend.app.services.trigger_service import TriggerService
+from backend.app.services.kafka_service import KafkaService
 
 # Repository
 agent_repository = AgentRepository()
@@ -17,7 +18,8 @@ template_repository = TemplateRepository()
 
 
 # Services
+kafka_service = KafkaService()
 template_trigger_service = TemplateTriggerService(template_trigger_repository)
-trigger_service = TriggerService(trigger_repository)
+trigger_service = TriggerService(trigger_repository, kafka_service=kafka_service)
 template_service = TemplateService(template_repository, template_trigger_service)
 agent_service = AgentService(agent_repository, template_trigger_service, trigger_service)
