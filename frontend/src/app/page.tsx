@@ -18,8 +18,6 @@ import CustomLineChart, {
 } from '@app/components/molecules/chart/CustomLineChart';
 import { getFilteredData } from '@app/utils/dashboard';
 
-import { fetchActiveAgentsCount, fetchAgents } from './api/agents';
-import { fetchTemplates } from './api/templates';
 import { fetchTransactionsCount } from './api/trigger';
 import DashboardCards from './components/DashboardCards';
 
@@ -45,18 +43,6 @@ export const demoVoterGraphData: ILineChartData[] = [
 ];
 
 export default function Home() {
-    const { data: agents = [] } = useQuery({
-        queryKey: ['agents'],
-        queryFn: fetchAgents
-    });
-    const { data: activeAgents } = useQuery({
-        queryKey: ['activeAgentsCount'],
-        queryFn: fetchActiveAgentsCount
-    });
-    const { data: templates = [] } = useQuery({
-        queryKey: ['templates'],
-        queryFn: fetchTemplates
-    });
     const { data: transactionCount = {} } = useQuery({
         queryKey: ['transactionCounts'],
         queryFn: () => fetchTransactionsCount('true')
