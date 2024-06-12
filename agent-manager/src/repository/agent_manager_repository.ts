@@ -13,7 +13,7 @@ export async function checkIfAgentExistsInDB(
                 deleted_at: null,
             },
         })
-        .then((agents) => {
+        .then((agents: any) => {
             return !!agents
         })
 }
