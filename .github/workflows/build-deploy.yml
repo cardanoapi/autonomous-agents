@@ -37,14 +37,15 @@ jobs:
               run: |
                   REPO_NAME="${GITHUB_REPOSITORY##*/}"
                   COMMON_TAG="${{ github.ref_name }}"
-
+                  API_ENDPOINT_HOST=${{ vars.DEV_API }}
                   if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
                     COMMON_TAG="latest"
+                    API_ENDPOINT_HOST=${{ vars.PROD_API }}
                   fi
 
                   IMAGE_NAME="${{ vars.DOCKER_REGISTRY_HOST }}/${{ vars.DOCKER_IMAGE_PREFIX }}/${REPO_NAME}-${SERVICE_NAME}"
 
-                  docker build -t "$IMAGE_NAME:${{ github.sha }}" -t "$IMAGE_NAME:$COMMON_TAG" ${SERVICE_NAME}
+                  docker build --build-arg NEXT_PUBLIC_API_ENDPOINT_HOST=${API_ENDPOINT_HOST} -t "$IMAGE_NAME:${{ github.sha }}" -t "$IMAGE_NAME:$COMMON_TAG" ${SERVICE_NAME}
 
                   docker push "$IMAGE_NAME:${{ github.sha }}"
                   docker push "$IMAGE_NAME:$COMMON_TAG"
@@ -56,8 +57,6 @@ jobs:
                 service:
                     - agent-manager
                     - api
-                    - agent-node
-                    - agent-python
                     - frontend
             max-parallel: 1
 
@@ -75,16 +74,12 @@ jobs:
 
                   DEPLOY_TAG="${{ github.sha }}"
 
-                  if [[ "${{ github.ref }}" == "refs/tags/"* ]]; then
-                    DOCKER_HOST="${{ vars.PROD_HOST }}"
-                    DOCKER_STACK="${REPO_NAME}"
-                    DEPLOY_TAG="${{ github.ref_name }}"
-                  elif [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+                  if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
                     DOCKER_HOST="${{ vars.DEV_HOST }}"
                     DOCKER_STACK="${{ vars.DEV_STACK }}"
                   elif [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
-                    DOCKER_HOST="${{ vars.STAGING_HOST }}"
-                    DOCKER_STACK="${REPO_NAME}_staging"
+                    DOCKER_HOST="${{ vars.PROD_HOST }}"
+                    DOCKER_STACK="${{ vars.PROD_STACK }}"
                   fi
 
                   docker --host "$DOCKER_HOST" service update --image $IMAGE_NAME:$DEPLOY_TAG ${DOCKER_STACK}_${SERVICE_NAME}
