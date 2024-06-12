@@ -47,6 +47,8 @@ RUN pip install --no-cache-dir --upgrade -r $PYSETUP_PATH/requirements.txt
 # Copy the rest of the application code
 COPY . ./backend
 
+COPY healthcheck.py /usr/local/bin/healthcheck.py
+
 WORKDIR $PYSETUP_PATH
 
 # Generate Prisma client
@@ -54,7 +56,7 @@ RUN prisma generate
 
 # Expose port and set healthcheck
 EXPOSE 8000/tcp
-HEALTHCHECK CMD curl --fail http://localhost:8000 || exit 1
+HEALTHCHECK CMD ["python", "/usr/local/bin/healthcheck.py"]
 
 # Command to run the application
 CMD ["sh", "-c" ,"prisma migrate deploy && exec uvicorn backend.app:get_application --host 0.0.0.0 --port 8000"]
