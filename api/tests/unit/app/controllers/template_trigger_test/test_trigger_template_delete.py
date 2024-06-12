@@ -2,7 +2,6 @@ import pytest
 from unittest.mock import MagicMock, AsyncMock
 
 from backend.app.controllers.template_trigger_router import TemplateTriggerRouter
-from backend.app.controllers.trigger_router import TriggerRouter
 from backend.app.services.template_trigger_service import TemplateTriggerService
 
 from backend.app.services.trigger_service import TriggerService

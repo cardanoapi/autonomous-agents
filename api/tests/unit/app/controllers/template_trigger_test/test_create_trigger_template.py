@@ -1,14 +1,11 @@
 from pydantic import ValidationError
 
 from backend.app.controllers.template_trigger_router import TemplateTriggerRouter
-from backend.app.controllers.trigger_router import TriggerRouter
-from backend.app.models import TriggerCreateDTO, TriggerResponse
 from backend.app.models.template_trigger.response_dto import TemplateTriggerResponse
 from backend.app.models.template_trigger.template_trigger_dto import (
     TemplateTriggerCreateDto,
 )
 from backend.app.services.template_trigger_service import TemplateTriggerService
-from backend.app.services.trigger_service import TriggerService
 from unittest.mock import MagicMock, AsyncMock
 import pytest
 
