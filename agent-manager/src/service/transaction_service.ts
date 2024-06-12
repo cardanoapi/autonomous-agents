@@ -3,10 +3,8 @@ import { saveTriggerHistory } from '../repository/trigger_history_repository'
 import { createOrUpdateFunctionDetail } from '../repository/fucntion_details_repository'
 import { checkDrepStatus } from '../helper/delegateRep'
 import { checkStakeReg } from '../helper/stakeReg'
+import { kuberApiKey, kuberBaseUrl } from '../config/environments'
 
-const kuberBaseUrl = 'https://sanchonet.kuber.cardanoapi.io/api/v1'
-const kuberApiKey =
-    'bS6Nm7dJTnCtk0wqwJChwZ7Wot2RTvDS7dETmYYHJ8htqrMs3xYI5njFeGUbno'
 const ApiUrl = process.env.API_SERVER
 interface Parameter {
     name: string
