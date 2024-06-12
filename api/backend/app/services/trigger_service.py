@@ -43,5 +43,4 @@ class TriggerService:
         return trigger_response
 
     async def publish_trigger_event(self, agent_id: str):
-        await self.kafka_service.publish_message("trigger_config_updates","config_updated", key=agent_id )
-        
+        await self.kafka_service.publish_message("trigger_config_updates", "config_updated", key=agent_id)

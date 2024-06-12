@@ -14,6 +14,7 @@ from backend.app.utils import RedisClient, AiohttpClient
 from backend.app.exceptions import HTTPException, http_exception_handler
 from backend.config.database import prisma_connection
 from backend.dependency import kafka_service
+
 log = logging.getLogger(__name__)
 
 
@@ -29,7 +30,7 @@ async def lifespan(app: FastAPI):
     log.info("Starting Server")
 
     await prisma_connection.connect()
-    
+
     await kafka_service.start()
 
     yield

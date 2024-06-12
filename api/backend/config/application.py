@@ -33,7 +33,7 @@ class Application(BaseSettings):
     VERSION: str = __version__
     DOCS_URL: str = "/"
     USE_REDIS: bool = False
-    KAFKA_BROKERS:str = "localhost:9092"
+    KAFKA_BROKERS: str = "localhost:9092"
     # All your additional application configuration should go either here or in
     # separate file in this submodule.
 

@@ -9,9 +9,7 @@ from backend.dependency import template_trigger_service
 
 
 class TemplateTriggerRouter(Routable):
-    def __init__(
-        self, template_trigger_service: TemplateTriggerService = template_trigger_service, *args, **kwargs
-    ):
+    def __init__(self, template_trigger_service: TemplateTriggerService = template_trigger_service, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.template_trigger_service = template_trigger_service
 
