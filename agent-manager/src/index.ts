@@ -8,11 +8,7 @@ import manager from './service/agent_manager_service'
 import express from 'express'
 import { WebSocket } from 'ws'
 import { kafka_event } from './service/kafka_message_consumer'
-import {
-    handleTransaction,
-    stopFunctionsWhenAgentDisconnects,
-} from './service/transaction_service'
-
+import { handleTransaction } from './service/transaction_service'
 const app = express()
 const port = 3001
 
@@ -70,7 +66,6 @@ wss.on('connection', async function connection(ws, req) {
 
         ws.on('close', function close() {
             console.log(`Agent disconnected: ${agentId}`)
-            stopFunctionsWhenAgentDisconnects(agentId)
             manager.disconnectWebSocket(agentId)
         })
     } else {

@@ -1,6 +1,6 @@
 import cbor from 'libcardano/lib/cbor'
-import { kuberBaseUrl, kuberApiKey } from './../config/environments'
 import * as blake from 'blakejs'
+import environments from '../config/environments'
 
 type CertificateType = 'registerstake' | 'registerdrep' | 'deregisterdrep'
 
@@ -17,8 +17,8 @@ type KuberBalanceResponse = {
 }
 
 const config = {
-    apiUrl: kuberBaseUrl,
-    apiKey: kuberApiKey,
+    apiUrl: environments.kuberBaseUrl,
+    apiKey: environments.kuberApiKey,
 }
 
 class Kuber {

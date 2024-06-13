@@ -1,10 +1,11 @@
+import axios from 'axios'
 import { parseTransaction } from 'libcardano/cardano/ledger-serialization/transaction'
 import cbor from 'libcardano/lib/cbor'
 import { createInMemoryClientWithPeer } from 'libcardano/src/helper'
+import { InmemoryBlockchain } from 'libcardano/src/InmemoryBlockchain'
+import { BlockEvent } from 'libcardano/src/types'
 import { WebSocket } from 'ws'
 import { fetchAgentConfiguration } from '../repository/agent_manager_repository'
-import { BlockEvent } from 'libcardano/src/types'
-import { InmemoryBlockchain } from 'libcardano/src/InmemoryBlockchain'
 
 const bigIntReplacer = (key: any, value: any) => {
     if (typeof value === 'bigint') {
@@ -33,6 +34,15 @@ class WebSocketConnectionManager {
         websocket: WebSocket
     ): Promise<void> {
         this.activeConnections[websocketAgentId] = websocket
+        const addressApiUrl = `${process.env.API_SERVER}/api/agent/${websocketAgentId}/keys`
+        const addressResponse = await axios.get(addressApiUrl)
+        websocket.send(
+            JSON.stringify({
+                message: 'agent_keys',
+                payload: addressResponse.data,
+                timeStamp: new Date().toISOString(),
+            })
+        )
     }
 
     async disconnectWebSocket(websocketAgentId: string): Promise<void> {
