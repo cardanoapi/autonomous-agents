@@ -1,77 +1,96 @@
+import { globalState } from './global'
 import cron, { ScheduledTask } from 'node-cron'
-import { TransactionKuber } from './kuber-transaction'
-// interface FunctionData {
-//     parameter: Parameter[]
-//     function_name: string
-// }
-// interface Parameter {
-//     name: string
-//     value: string
-// }
+import { sendDataToWebSocket } from '.'
+import kuberService from './transaction-service'
 
-// Define an array to keep track of scheduled tasks
+// Define the types for the action parameter and action
+export interface ActionParameter {
+    name: string
+    value: string
+}
+
+export interface Action {
+    parameter: ActionParameter[]
+    function_name: string
+}
+
+export interface Data {
+    frequency: string
+    probability: number
+}
+
+export interface Configuration {
+    id: string
+    type: string
+    data: Data
+    action: Action
+}
 let scheduledTasks: ScheduledTask[] = []
 
-// Function to clear previously scheduled tasks
 function clearScheduledTasks() {
     scheduledTasks.forEach((task) => {
-        task.stop() // Cancel the scheduled task
+        task.stop()
     })
 
-    // Clear the list of scheduled tasks
     scheduledTasks = []
 }
 
-// Function to schedule functions based on configurations
 export async function scheduleFunctions(configurations: any[]) {
-    // Clear previously scheduled tasks
     clearScheduledTasks()
-    // const trigInfo: string = ''
-    // Iterate over configurations and schedule functions
-    configurations.forEach((config: any) => {
+
+    configurations.forEach((config: Configuration) => {
         const { data, action } = config
         if (action) {
-            // Determine the function to call based on the function name
-            let functionToCall: any = null
-            if (action.function_name === 'Proposal New Constitution') {
-                functionToCall = TransactionKuber
-            } else if (action.function_name === 'SendAda Token') {
-                functionToCall = TransactionKuber
-            } else if (action.function_name === 'Vote') {
-                functionToCall = TransactionKuber
-            } else if (action.function_name === 'Delegation') {
-                TransactionKuber(action)
-            }
+            const { frequency, probability } = data
 
-            // If the function is defined, schedule it according to the cron expression
-            if (functionToCall) {
-                // Get the cron expression and probability from the data
-                const { frequency, probability } = data
-
-                // Schedule the function using node-cron
-                const task = cron.schedule(frequency, async () => {
-                    // Only trigger the function based on probability
-                    if (Math.random() < probability) {
-                        const actionWithTrigInfo = {
-                            ...action,
-                            trigInfo: 'true',
-                        }
-                        await functionToCall(actionWithTrigInfo)
-                    } else {
-                        const actionWithTrigInfo = {
-                            ...action,
-                            trigInfo: 'false',
-                        }
-                        await functionToCall(actionWithTrigInfo)
+            const task = cron.schedule(frequency, async () => {
+                if (
+                    Math.random() > probability ||
+                    !globalState.agentWalletDetails
+                ) {
+                    const actionWithTrigInfo = {
+                        action,
+                        messageType: 'action',
+                        trigger: 'false',
                     }
-                })
-
-                // Add the scheduled task to the list
-                scheduledTasks.push(task)
-            }
-        } else {
-            data.topics == 'proposal'
-            // sendParamsToWebSocket(JSON.stringify(data.topics))
+                    await sendDataToWebSocket(
+                        JSON.stringify(actionWithTrigInfo)
+                    )
+                } else {
+                    switch (action.function_name) {
+                        case 'SendAda Token':
+                            await sendDataToWebSocket(
+                                JSON.stringify({
+                                    action,
+                                    messageType: 'action',
+                                    trigger: 'true',
+                                    payload: kuberService.transferADA(
+                                        [
+                                            getParameterValue(
+                                                action.parameter,
+                                                'Receiver Address'
+                                            ) || '',
+                                        ],
+                                        10,
+                                        globalState.agentWalletDetails!
+                                            .agent_address,
+                                        globalState.agentWalletDetails!
+                                            .payment_signing_key
+                                    ),
+                                })
+                            )
+                    }
+                }
+            })
+            scheduledTasks.push(task)
         }
     })
+}
+
+function getParameterValue(
+    parameters: ActionParameter[],
+    name: string
+): string | undefined {
+    const param = parameters.find((param) => param.name === name)
+    return param ? param.value : undefined
 }

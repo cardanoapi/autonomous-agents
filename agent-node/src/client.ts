@@ -1,3 +1,4 @@
+import { globalState } from './global'
 import { scheduleFunctions } from './scheduler'
 import WebSocket from 'ws'
 
@@ -33,6 +34,9 @@ export async function handleIncomingMessage(
             // }
             // Reschedule functions based on the updated configurations
             await scheduleFunctions(message.configurations)
+        } else if (message.message === 'agent_keys') {
+            console.log('Received Agent Keys: ', message.payload)
+            globalState.agentWalletDetails = message.payload
         } else {
             console.log('Received message:', message)
         }

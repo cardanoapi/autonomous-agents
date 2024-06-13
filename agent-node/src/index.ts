@@ -77,7 +77,9 @@ function attemptReconnect() {
     }
 }
 
-export function sendParamsToWebSocket(action: any) {
+export const sendDataToWebSocket: typeof WebSocket.prototype.send = (
+    action
+) => {
     ws?.send(action)
 }
 
