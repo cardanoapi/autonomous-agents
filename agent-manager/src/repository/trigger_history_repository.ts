@@ -9,7 +9,8 @@ export async function saveTriggerHistory(
     functionName: string,
     status: boolean,
     success: boolean,
-    message: string
+    message: string,
+    txHash?: string
 ): Promise<void> {
     try {
         const triggerHistory: any = {}
@@ -20,7 +21,9 @@ export async function saveTriggerHistory(
         triggerHistory['success'] = success
         triggerHistory['message'] = message
         triggerHistory['timestamp'] = DateTime.utc().toISO()
-
+        if (txHash) {
+            triggerHistory['txHash'] = txHash
+        }
         await prisma.triggerHistory.create({
             data: triggerHistory,
         })
