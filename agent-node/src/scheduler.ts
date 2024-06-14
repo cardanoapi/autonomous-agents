@@ -49,7 +49,7 @@ function sendActionToWebSocket(
 }
 
 function getParameterValue(
-    parameters: ActionParameter[],
+    parameters: ActionParameter[] = [],
     name: string
 ): string {
     const param = parameters.find((param) => param.name === name)
@@ -66,8 +66,7 @@ export async function triggerAction(action: Action, probability: number) {
     if (Math.random() > probability || !globalState.agentWalletDetails) {
         sendActionToWebSocket(action, false)
     } else {
-        const agentAddress =
-            getParameterValue(action.parameter, 'Receiver Address') || ''
+        const agentAddress = globalState.agentWalletDetails?.agent_address || ''
         let payload
         switch (action.function_name) {
             case 'SendAda Token':
