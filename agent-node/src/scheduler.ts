@@ -71,7 +71,7 @@ export async function triggerAction(action: Action, probability: number) {
         switch (action.function_name) {
             case 'SendAda Token':
                 payload = kuberService.transferADA(
-                    [agentAddress],
+                    [getParameterValue(action.parameter, 'Receiver Address')],
                     10,
                     globalState.agentWalletDetails.agent_address,
                     globalState.agentWalletDetails.payment_signing_key
