@@ -13,6 +13,8 @@ export interface IAgent {
     instance: number;
     index: number;
     last_active: string;
+    agent_address?: string;
+    wallet_amount?: string;
 }
 
 export const fetchAgents = async (): Promise<IAgent[]> => {
