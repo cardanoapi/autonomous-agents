@@ -21,7 +21,9 @@ export default function SideNavLink({ Prop }: { Prop: ISideNavItem }) {
                     { 'bg-brand-Blue-100': isActive }
                 )}
             >
-                <Prop.icon fill={isActive ? '#1C63E7' : '#8C8C8C'} />
+                <Prop.icon
+                    className={cn(isActive ? 'text-brand-Blue-200' : 'text-gray-500')}
+                />
                 <div
                     className={cn('h3 pl-4', {
                         'text-brand-Black-100': !isActive,

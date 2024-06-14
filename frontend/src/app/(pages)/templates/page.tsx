@@ -29,6 +29,7 @@ export default function TemplatesPage() {
 
     const [templateCreated, setTemplateCreated] = useAtom(templateCreatedAtom);
     const [filteredTemplates, setFilteredTemplates] = useState<ITemplate[]>([]);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
     useEffect(() => {
         if (templateCreated === true) {

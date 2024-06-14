@@ -20,9 +20,23 @@ export default function TopNav() {
         '/templates/create-template': 'Template Form'
     };
 
+    function getPageTitleByRegexMatch() {
+        const RegexForAgentIdPage = /^\/agents\/.*$/;
+        if (RegexForAgentIdPage.test(path)) {
+            return 'Agent Profile';
+        } else {
+            return '';
+        }
+    }
+
+    function getPageTitle() {
+        const title = PageTitles[path];
+        return title ? title : getPageTitleByRegexMatch();
+    }
+
     return (
         <div className="flex w-[full] items-center justify-between text-sm">
-            <span className="h1">{PageTitles[path]}</span>
+            <span className="h1">{getPageTitle()}</span>
             <DropdownMenu>
                 <DropdownMenuTrigger>Admin</DropdownMenuTrigger>
                 <DropdownMenuContent>
