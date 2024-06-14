@@ -18,11 +18,12 @@ import {
 import { SearchField } from '@app/components/atoms/SearchField';
 import AgentCard from '@app/components/molecules/AgentCard';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
+import { Skeleton } from '@app/components/ui/skeleton';
 import { agentCreatedAtom } from '@app/store/loaclStore';
 
 export default function AgentsPage() {
     const [agentCreated, setAgentCreated] = useAtom(agentCreatedAtom);
-    const { data: agents } = useQuery<IAgent[]>({
+    const { data: agents, isLoading } = useQuery<IAgent[]>({
         queryKey: ['agents'],
         queryFn: fetchAgents
     });
@@ -81,20 +82,36 @@ export default function AgentsPage() {
                     </Button>
                 </Link>
             </div>
-            <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6">
-                {filteredAgents.map((agent: IAgent, index) => (
-                    <AgentCard
-                        agentName={agent?.name || 'NA'}
-                        agentID={agent?.id}
-                        agentRole={'null'}
-                        templateID={agent?.template_id}
-                        totalTrigger={0}
-                        lastActive={agent?.last_active || 'NA'}
-                        functionCount={0}
-                        key={index}
-                    />
-                ))}
-            </div>
+            {isLoading ? (
+                <SkeletonLoadingForAgentsPage />
+            ) : (
+                <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6">
+                    {filteredAgents.map((agent: IAgent, index) => (
+                        <AgentCard
+                            agentName={agent?.name || 'NA'}
+                            agentID={agent?.id}
+                            agentRole={'null'}
+                            templateID={agent?.template_id}
+                            totalTrigger={0}
+                            lastActive={agent?.last_active || 'NA'}
+                            functionCount={0}
+                            key={index}
+                        />
+                    ))}
+                </div>
+            )}
         </>
     );
 }
+
+const SkeletonLoadingForAgentsPage = () => {
+    return (
+        <div className={'mt-12 flex flex-wrap gap-8'}>
+            {Array(8)
+                .fill(undefined)
+                .map((_, index) => (
+                    <Skeleton className={'h-[240px] w-[240px]'} key={index} />
+                ))}
+        </div>
+    );
+};
