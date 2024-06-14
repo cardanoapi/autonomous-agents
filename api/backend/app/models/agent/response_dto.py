@@ -13,6 +13,11 @@ class AgentResponse(BaseModel):
     last_active: Optional[datetime]
 
 
+class AgentResponseWithWalletDetails(AgentResponse):
+    agent_address: Optional[str]
+    wallet_amount: Optional[float]
+
+
 class AgentKeyResponse(BaseModel):
     payment_signing_key: str
     stake_signing_key: str
