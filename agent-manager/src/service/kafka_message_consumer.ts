@@ -7,18 +7,51 @@ const kafka = new Kafka({
     brokers: [brokerUrl], // Update with your Kafka broker address
 })
 
-const consumer = kafka.consumer({ groupId: 'trigger_consumer_group' })
 // Initialize WebSocket manager
-consumer.connect()
-consumer.subscribe({ topic: 'trigger_config_updates', fromBeginning: true })
-export async function kafka_event(): Promise<void> {
-    await consumer.run({
+
+const consumer = kafka.consumer({ groupId: 'agent-manager-configs' })
+
+const manualTriggerConsumer = kafka.consumer({
+    groupId: 'agent-manager-actions',
+})
+
+export async function initKafkaConsumers() {
+    consumer.connect()
+    consumer.subscribe({
+        topic: 'trigger_config_updates',
+        fromBeginning: true,
+    })
+
+    consumer.run({
         eachMessage: async ({ message }) => {
             // Process message
             const agentId = message.key?.toString()
             if (agentId) {
                 // Notify WebSocket manager about config update
-                manager.sendToWebSocket(agentId, { message: 'config_updated' })
+                manager.sendToWebSocket(agentId, {
+                    message: 'config_updated',
+                })
+            }
+        },
+    })
+
+    manualTriggerConsumer.connect()
+    manualTriggerConsumer.subscribe({ topic: 'manual_trigger_event' })
+
+    manualTriggerConsumer.run({
+        eachMessage: async ({ message }) => {
+            const agentId = message.key?.toString()
+            const actionName = message.value?.toString()
+            if (agentId) {
+                manager.sendToWebSocket(agentId, {
+                    message: 'trigger_action',
+                    payload: {
+                        action: {
+                            function_name: actionName,
+                        },
+                        probability: 1,
+                    },
+                })
             }
         },
     })

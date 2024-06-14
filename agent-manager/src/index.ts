@@ -7,13 +7,14 @@ import manager from './service/agent_manager_service'
 
 import express from 'express'
 import { WebSocket } from 'ws'
-import { kafka_event } from './service/kafka_message_consumer'
+import { initKafkaConsumers } from './service/kafka_message_consumer'
 import { handleTransaction } from './service/transaction_service'
 const app = express()
 const port = 3001
 
-const server = app.listen(port, () => {
+const server = app.listen(port, async () => {
     console.log(`Server is running on http://localhost:${port}`)
+    await initKafkaConsumers()
 })
 
 const wss = new WebSocket.Server({ server })
@@ -35,7 +36,6 @@ wss.on('connection', async function connection(ws, req) {
 
         const agentExists = await checkIfAgentExistsInDB(agentId)
         if (agentExists) {
-            await kafka_event()
             await manager.removePreviousAgentConnectionIfExists(agentId)
             await manager.webSocketConnected(agentId, ws)
             const { instanceCount, configurations } =
