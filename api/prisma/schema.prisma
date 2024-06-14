@@ -62,6 +62,7 @@ model TriggerHistory {
   success      Boolean
   message      String
   timestamp    DateTime?
+  txHash       String?
 }
 
 model FunctionDetail {

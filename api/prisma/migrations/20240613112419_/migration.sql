@@ -63,7 +63,9 @@ CREATE TABLE "TriggerHistory" (
     "functionName" TEXT NOT NULL,
     "status" BOOLEAN NOT NULL,
     "success" BOOLEAN NOT NULL,
+    "message" TEXT NOT NULL,
     "timestamp" TIMESTAMP(3),
+    "txHash" TEXT,
 
     CONSTRAINT "TriggerHistory_pkey" PRIMARY KEY ("id")
 );

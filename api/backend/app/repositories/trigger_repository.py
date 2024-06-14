@@ -12,7 +12,6 @@ from backend.app.models.trigger.trigger_dto import (
     validate_type_TOPIC,
 )
 from backend.config.database import prisma_connection
-from backend.config.logger import logger
 
 
 class TriggerRepository:
