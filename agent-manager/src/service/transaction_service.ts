@@ -87,7 +87,7 @@ export const handleTransaction = async (
                         const responseBody = await response.text()
                         const responseJson: any = JSON.parse(responseBody)
                         throw new Error(
-                            `${data.action.function_name} failed ${response.status}. ${responseJson}`
+                            `${data.action.function_name} failed ${response.status}.\n ${JSON.stringify(responseJson, undefined, 4)}`
                         )
                     }
                     const kuberData = await response.json()
