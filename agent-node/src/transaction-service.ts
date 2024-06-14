@@ -1,17 +1,3 @@
-// Function to handle proposal new constitution
-import { sendDataToWebSocket } from './index'
-
-export function TransactionKuber(action: any) {
-    // Log message for debugging
-    console.log(
-        'Executing Proposal New Constitution function.',
-        action.function_name
-    )
-
-    // Call the WebSocket message sending function with parameters
-    sendDataToWebSocket(JSON.stringify(action))
-}
-
 type CertificateType = 'registerstake' | 'registerdrep' | 'deregisterdrep'
 
 export type TxSubmitResponse = {
@@ -155,7 +141,7 @@ const kuberService = {
             {
                 type: 'PaymentSigningKeyShelley_ed25519',
                 description: 'Payment Signing Key',
-                cborHex: '5820' + stakePrivateKey,
+                cborHex: stakePrivateKey,
             },
         ]
         const req = {
@@ -178,7 +164,7 @@ const kuberService = {
             {
                 type: 'PaymentSigningKeyShelley_ed25519',
                 description: 'Payment Signing Key',
-                cborHex: '5820' + stakePrivateKey,
+                cborHex: stakePrivateKey,
             },
         ]
         const req = {
@@ -188,6 +174,42 @@ const kuberService = {
                     type: 'delegate',
                     key: pkh,
                     drep: dRep,
+                },
+            ],
+        }
+        return kuber.signAndSubmitTx(req)
+    },
+    proposeNewConstitution: (
+        addr: string,
+        signingKey: string,
+        stakePrivateKey: string,
+        anchorUrl: string,
+        anchorDataHash: string,
+        newConstitutionUrl: string,
+        newConstitutionDataHash: string
+    ) => {
+        const kuber = new Kuber(addr, signingKey)
+
+        const selections = [
+            {
+                type: 'PaymentSigningKeyShelley_ed25519',
+                description: 'Payment Signing Key',
+                cborHex: stakePrivateKey,
+            },
+        ]
+
+        const req = {
+            selections,
+            proposals: [
+                {
+                    anchor: {
+                        url: anchorUrl,
+                        dataHash: anchorDataHash,
+                    },
+                    newConstitution: {
+                        url: newConstitutionUrl,
+                        dataHash: newConstitutionDataHash,
+                    },
                 },
             ],
         }
@@ -214,7 +236,7 @@ const kuberService = {
             {
                 type: 'PaymentSigningKeyShelley_ed25519',
                 description: 'Payment Signing Key',
-                cborHex: '5820' + stakePrivateKey,
+                cborHex: stakePrivateKey,
             },
         ]
         const req = {
@@ -224,7 +246,13 @@ const kuberService = {
         return kuber.signAndSubmitTx(req)
     },
 
-    createInfoGovAction(address: string, signingKey: string) {
+    createInfoGovAction(
+        address: string,
+        signingKey: string,
+        anchorUrl?: string,
+        anchorDataHash?: string,
+        stakeKeyHash?: string
+    ) {
         const kuber = new Kuber(address, signingKey)
         const infoProposal = {
             deposit: 1000000000,
@@ -232,12 +260,14 @@ const kuberService = {
                 network: 'Testnet',
                 credential: {
                     'key hash':
+                        stakeKeyHash ||
                         'db1bc3c3f99ce68977ceaf27ab4dd917123ef9e73f85c304236eab23',
                 },
             },
             anchor: {
-                url: 'https://bit.ly/3zCH2HL',
+                url: anchorUrl || 'https://bit.ly/3zCH2HL',
                 dataHash:
+                    anchorDataHash ||
                     '1111111111111111111111111111111111111111111111111111111111111111',
             },
         }
@@ -278,7 +308,7 @@ const kuberService = {
                 {
                     type: 'PaymentSigningKeyShelley_ed25519',
                     description: 'Payment Signing Key',
-                    cborHex: '5820' + dRepStakePrivKey,
+                    cborHex: dRepStakePrivKey,
                 },
             ],
             vote: {
@@ -307,7 +337,7 @@ const kuberService = {
             return {
                 type: 'PaymentSigningKeyShelley_ed25519',
                 description: 'Payment Signing Key',
-                cborHex: '5820' + key,
+                cborHex: key,
             }
         })
 
