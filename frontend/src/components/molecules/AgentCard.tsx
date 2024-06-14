@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import { useRouter } from 'next/navigation';
+
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Copy, Trash2 } from 'lucide-react';
 
@@ -11,12 +13,12 @@ import {
     fetchUnSuccessfullTriggersbyAgentID,
     fetchtriggersbyTemplateID
 } from '@app/app/api/trigger';
+import { Badge } from '@app/components/atoms/Badge';
 import { Truncate } from '@app/utils/common/extra';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { Card, CardContent, CardTitle } from '../atoms/Card';
 import { Dialog, DialogContent } from '../atoms/Dialog';
-import { Switch } from '../atoms/Switch';
 import ConfirmationBox from './ConfirmationBox';
 import { ErrorToast, SuccessToast } from './CustomToasts';
 
@@ -37,6 +39,8 @@ export default function AgentCard({
     templateID,
     lastActive = ''
 }: IAgentCard) {
+    const router = useRouter();
+
     const { data: template } = useQuery<ITemplate>({
         queryKey: [`template${templateID}`],
         queryFn: () => fetchTemplatebyID(templateID)
@@ -63,11 +67,6 @@ export default function AgentCard({
     });
 
     const [dialogOpen, setDialogOpen] = useState(false);
-
-    // interface DeleteAgentParams {
-    //     agentID: string;
-    //     onSuccess?: () => void;
-    // }
 
     const deleteAgentMutation = useMutation({
         mutationFn: (agentID: string) => deleteAgentbyID(agentID),
@@ -122,7 +121,12 @@ export default function AgentCard({
 
     return (
         <>
-            <Card className="hover-transition-primary group min-h-[260px] min-w-[260px] rounded-xl p-6 transition-all">
+            <Card
+                onClick={() => {
+                    router.push(`/agents/${agentID}`);
+                }}
+                className="hover-transition-primary group min-h-[260px] min-w-[260px] cursor-pointer rounded-xl p-6 transition-all"
+            >
                 <div className="flex items-center justify-between">
                     <div className="card-h2">{Truncate(agentName, 10)}</div>
                     <div className="flex gap-x-2">
@@ -141,7 +145,11 @@ export default function AgentCard({
                             }}
                             className="hidden hover:cursor-pointer group-hover:flex"
                         />
-                        <Switch checked={isActiveWithinLast33Seconds} />
+                        {isActiveWithinLast33Seconds ? (
+                            <Badge variant={'success'}>Online</Badge>
+                        ) : (
+                            <Badge variant={'destructive'}>Offline</Badge>
+                        )}
                     </div>
                 </div>
                 <CardTitle className="!card-h3">{agentRole}</CardTitle>
