@@ -1,3 +1,4 @@
+import { parseRawBlockBody } from 'libcardano/cardano/ledger-serialization/transaction'
 import axios from 'axios'
 import { parseTransaction } from 'libcardano/cardano/ledger-serialization/transaction'
 import cbor from 'libcardano/lib/cbor'
@@ -6,6 +7,8 @@ import { InmemoryBlockchain } from 'libcardano/src/InmemoryBlockchain'
 import { BlockEvent } from 'libcardano/src/types'
 import { WebSocket } from 'ws'
 import { fetchAgentConfiguration } from '../repository/agent_manager_repository'
+import { BlockEvent } from 'libcardano/src/types'
+import { InmemoryBlockchain } from 'libcardano/src/InmemoryBlockchain'
 
 const bigIntReplacer = (key: any, value: any) => {
     if (typeof value === 'bigint') {
@@ -13,6 +16,7 @@ const bigIntReplacer = (key: any, value: any) => {
     }
     return value
 }
+
 class WebSocketConnectionManager {
     activeConnections: { [key: string]: WebSocket } = {}
     blockchain: InmemoryBlockchain
@@ -106,7 +110,7 @@ class WebSocketConnectionManager {
 
     sendNewBlockToActiveAgents(block: BlockEvent, cb: (error: any) => void) {
         setImmediate(cb)
-        const decoded = cbor.decode(block.body)[1]
+        const decoded = cbor.decode(block.body)
         const transactionBodies = cbor.encode(decoded[1]).toString('hex')
         const transactionWitnesses = cbor.encode(decoded[2]).toString('hex')
         const data = {
@@ -119,16 +123,9 @@ class WebSocketConnectionManager {
         })
 
         if (transactionBodies !== '80' && transactionWitnesses !== '80') {
-            const transaction = parseTransaction(decoded)
-            const filteredTransaction = {
-                transactionBody: transaction.body,
-                transactionWitnessSet: transaction.witnessSet,
-                auxiliaryDataSet: transaction.auxiliaryData,
-            }
+            const transaction = parseRawBlockBody(block.body)
             Object.values(this.activeConnections).forEach((websocket) => {
-                websocket.send(
-                    JSON.stringify(filteredTransaction, bigIntReplacer)
-                )
+                websocket.send(JSON.stringify(transaction, bigIntReplacer))
             })
         }
     }
