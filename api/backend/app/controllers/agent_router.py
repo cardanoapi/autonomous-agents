@@ -6,7 +6,7 @@ from fastapi import HTTPException, Query
 
 from backend.app.models.agent.agent_dto import AgentCreateDTO
 from backend.app.services.agent_service import AgentService
-from backend.app.models.agent.response_dto import AgentResponse
+from backend.app.models.agent.response_dto import AgentResponse, AgentResponseWithWalletDetails
 from backend.dependency import agent_service
 
 
@@ -34,7 +34,7 @@ class AgentRouter(Routable):
         agents = await self.agent_service.list_agents(page, limit)
         return agents
 
-    @get("/agent/{agent_id}", response_model=AgentResponse)
+    @get("/agent/{agent_id}", response_model=AgentResponseWithWalletDetails)
     async def get_agent(self, agent_id: str):
         agent = await self.agent_service.get_agent(agent_id)
         return agent
