@@ -1,8 +1,6 @@
 import { globalState } from './global'
-import { scheduleFunctions } from './scheduler'
+import { scheduleFunctions, triggerAction } from './scheduler'
 import WebSocket from 'ws'
-
-// let globalConfig: { [key: string]: any } = {}
 
 // Function to handle incoming messages
 export async function handleIncomingMessage(
@@ -16,10 +14,6 @@ export async function handleIncomingMessage(
         if (message.message == 'initial') {
             const initial_message = JSON.stringify(message)
             console.log('Received initial configurations:', initial_message)
-            // globalConfig = {
-            //     instance_count: message.instance_count,
-            //     configurations: message.configurations,
-            // }
             // Schedule functions based on the received configurations
             await scheduleFunctions(message.configurations)
         } else if (message.message === 'config_updated') {
@@ -28,15 +22,13 @@ export async function handleIncomingMessage(
                 'Received updated configurations:',
                 JSON.stringify(message)
             )
-            // globalConfig = {
-            //     instance_count: message.instance_count,
-            //     configurations: message.configurations,
-            // }
-            // Reschedule functions based on the updated configurations
             await scheduleFunctions(message.configurations)
         } else if (message.message === 'agent_keys') {
             console.log('Received Agent Keys: ', message.payload)
             globalState.agentWalletDetails = message.payload
+        } else if (message.message === 'trigger_action') {
+            const { action, probability } = message.payload
+            triggerAction(action, probability)
         } else {
             console.log('Received message:', message)
         }
