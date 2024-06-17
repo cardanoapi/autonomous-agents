@@ -1,14 +1,11 @@
-import { parseRawBlockBody } from 'libcardano/cardano/ledger-serialization/transaction'
 import axios from 'axios'
-import { parseTransaction } from 'libcardano/cardano/ledger-serialization/transaction'
+import { parseRawBlockBody } from 'libcardano/cardano/ledger-serialization/transaction'
 import cbor from 'libcardano/lib/cbor'
 import { createInMemoryClientWithPeer } from 'libcardano/src/helper'
 import { InmemoryBlockchain } from 'libcardano/src/InmemoryBlockchain'
 import { BlockEvent } from 'libcardano/src/types'
 import { WebSocket } from 'ws'
 import { fetchAgentConfiguration } from '../repository/agent_manager_repository'
-import { BlockEvent } from 'libcardano/src/types'
-import { InmemoryBlockchain } from 'libcardano/src/InmemoryBlockchain'
 
 const bigIntReplacer = (key: any, value: any) => {
     if (typeof value === 'bigint') {
