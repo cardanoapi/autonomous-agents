@@ -14,6 +14,7 @@ from backend.app.utils import RedisClient, AiohttpClient
 from backend.app.exceptions import HTTPException, http_exception_handler
 from backend.config.database import prisma_connection
 from backend.dependency import kafka_service
+from fastapi_pagination import add_pagination
 
 log = logging.getLogger(__name__)
 
@@ -99,7 +100,7 @@ def get_application() -> FastAPI:
     app.include_router(root_api_router)
     log.debug("Register global exception handler for custom HTTPException.")
     app.add_exception_handler(HTTPException, http_exception_handler)
-
+    add_pagination(app)
     return app
 
 
