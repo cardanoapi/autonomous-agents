@@ -50,9 +50,10 @@ class AgentService:
             response = await client.get(f"{settings.KUBER_URL}/utxo?address={agent_with_keys.agent_address}")
             transactions = response.json()
             for transaction in transactions:
-                utxo = float(transaction.get('value', {}).get('lovelace', '0'))
-        return AgentResponseWithWalletDetails(**agent.dict(), agent_address=agent_with_keys.agent_address,
-                                              wallet_amount=utxo/(10**6))
+                utxo = float(transaction.get("value", {}).get("lovelace", "0"))
+        return AgentResponseWithWalletDetails(
+            **agent.dict(), agent_address=agent_with_keys.agent_address, wallet_amount=utxo / (10**6)
+        )
 
     async def update_agent(self, agent_id: str, agent_data: AgentCreateDTO) -> AgentResponse:
         return await self.agent_repository.modify_agent(agent_id, agent_data)

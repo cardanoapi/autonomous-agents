@@ -35,7 +35,7 @@ class Application(BaseSettings):
     USE_REDIS: bool = False
     KAFKA_BROKERS: str = "localhost:9092"
     KAFKA_ENABLED: bool = False
-    KUBER_URL: str = ''
+    KUBER_URL: str = ""
     # All your additional application configuration should go either here or in
     # separate file in this submodule.
 
