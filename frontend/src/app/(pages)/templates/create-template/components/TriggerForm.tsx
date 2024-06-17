@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import { X } from 'lucide-react';
 
@@ -50,6 +50,8 @@ export default function TriggerForm({
     const [configuredSettings, setConfiguredSettings] = useState<any>(
         previousConfiguredSettings || ''
     );
+    const [probability, setProbability] = useState<number>(100);
+    const [errorMsg, setErrorMsg] = useState('');
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -89,6 +91,20 @@ export default function TriggerForm({
         setCronExpression(cronExpression);
         setConfiguredSettings(currentSettings);
     }
+
+    const handleProbabilityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        setErrorMsg('');
+        const value = +e.target.value;
+        if (!value) {
+            setProbability(0);
+        } else {
+            if (value < 0 || value > 100) {
+                setErrorMsg('Value cannot be less than 0 or greater than 100');
+                return;
+            } else setProbability(value);
+        }
+    };
 
     return (
         <Card className="flex h-full min-h-[449px] min-w-[696px] flex-col gap-y-4 bg-brand-Azure-400 p-4 px-8">
@@ -130,6 +146,22 @@ export default function TriggerForm({
                     previousSelectedOption={defaultSelected}
                     previousConfiguredSettings={previousConfiguredSettings}
                 />
+                <div className={'flex flex-col gap-4'}>
+                    <span>Probability</span>
+                    <div className={'flex flex-col gap-2'}>
+                        <input
+                            value={probability}
+                            onChange={handleProbabilityChange}
+                            className={'w-[140px] p-2 text-center'}
+                            type={'number'}
+                        />
+                        {errorMsg ? (
+                            <span className={' text-xs text-red-500'}>{errorMsg}</span>
+                        ) : (
+                            <span className={'h-4'}></span>
+                        )}
+                    </div>
+                </div>
                 <div className="flex justify-center">
                     <Button
                         variant="primary"
@@ -142,7 +174,8 @@ export default function TriggerForm({
                                 inputCronParameters: cronParameters,
                                 inputCronExpression: cronExpression,
                                 inputDefaultSelected: defaultSelected,
-                                inputDefaultSettings: configuredSettings || ''
+                                inputDefaultSettings: configuredSettings || '',
+                                inputProbability: probability ? probability : 100
                             });
                         }}
                     >

@@ -121,17 +121,17 @@ export default function TriggerTab({
                 <TabsTrigger value="Cron">Cron Trigger</TabsTrigger>
                 <TabsTrigger value="Events">Event Trigger</TabsTrigger>
             </TabsList>
-            <Card className="border-brand-gray-100 min-h-[160px] w-full border-[1px] bg-transparent p-0 pb-5">
+            <Card className="border-brand-gray-100 min-h-[160px] w-full border-[1px] bg-white p-0 pb-5">
                 <TabsContent value="Cron">
                     <Tabs defaultValue="Minute">
-                        <TabsList className="w-full justify-start gap-6 rounded-none border-b-[1px] pl-4">
+                        <TabsList className=" w-full justify-start gap-6 rounded-none border-b-[1px] bg-brand-Azure-400 pl-4">
                             <TabsTrigger value="Minute">Minute</TabsTrigger>
                             <TabsTrigger value="Hour">Hour</TabsTrigger>
                             <TabsTrigger value="Day">Day</TabsTrigger>
                             <TabsTrigger value="Year">Year</TabsTrigger>
                             <TabsTrigger value="Custom">Custom</TabsTrigger>
                         </TabsList>
-                        <div className="mt-2 flex flex-col pl-3 pt-2">
+                        <div className="mt-2 flex flex-col bg-white pl-3 pt-2">
                             {defaultCronSetting.map((item: ICronSetting, index) => (
                                 <TabsContent value={item.placeholder} key={index}>
                                     <DefaultCron

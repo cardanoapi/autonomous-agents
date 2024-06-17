@@ -58,7 +58,7 @@ export const postTemplateData = async (
             },
             data: {
                 frequency: item.cronExpression?.join(' '),
-                probability: 1
+                probability: item.probability
             }
         }))
     };

@@ -39,8 +39,9 @@ export interface ITemplateOption {
     cronExpression?: string[];
     defaultSelected?: any;
     configuredSettings?: any;
+    probability?: number;
 
-    [key: string]: string | boolean | undefined | object;
+    [key: string]: string | boolean | undefined | object | number;
 }
 
 export default function TemplateForm() {
@@ -72,7 +73,7 @@ export default function TemplateForm() {
         queryKey: ['functions'],
         queryFn: fetchFunctions
     });
-    const [functionOptions, setFunctionOptions] = useState<ITemplateOption[] | []>([]);
+    const [functionOptions, setFunctionOptions] = useState<any[] | []>([]);
 
     /*Related to Popup dialog */
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -115,13 +116,15 @@ export default function TemplateForm() {
         inputCronParameters,
         inputCronExpression,
         inputDefaultSelected,
-        inputDefaultSettings
+        inputDefaultSettings,
+        inputProbability
     }: {
         inputLabel: string;
         inputCronParameters: IParameter[];
         inputCronExpression: string[];
         inputDefaultSelected: string;
         inputDefaultSettings: any;
+        inputProbability: number;
     }) {
         const newSelected: ITemplateOption[] = selected.map(
             (item): ITemplateOption =>
@@ -132,7 +135,8 @@ export default function TemplateForm() {
                           cronExpression: inputCronExpression,
                           defaultSelected: inputDefaultSelected,
                           configuredSettings: inputDefaultSettings,
-                          parameters: inputCronParameters
+                          parameters: inputCronParameters,
+                          probability: inputProbability
                       }
                     : item
         );
@@ -177,6 +181,9 @@ export default function TemplateForm() {
         );
     }
 
+    // @ts-ignore
+    // @ts-ignore
+    // @ts-ignore
     return (
         <>
             <Card className="min-h-[493px] w-[790px]">
@@ -243,6 +250,7 @@ export default function TemplateForm() {
             <Dialog open={dialogOpen}>
                 <DialogContent>
                     <TriggerForm
+                        //@ts-ignore
                         formValues={selected.find((elem) => elem === currentDialogForm)}
                         setClose={() => {
                             /* Remove selected option if user does not save the dialog form*/
