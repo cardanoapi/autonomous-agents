@@ -135,7 +135,7 @@ export default function TemplateForm() {
                           defaultSelected: inputDefaultSelected,
                           configuredSettings: inputDefaultSettings,
                           parameters: inputCronParameters,
-                          probability: inputProbability
+                          probability: inputProbability / 100
                       }
                     : item
         );
