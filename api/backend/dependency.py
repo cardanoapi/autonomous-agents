@@ -31,4 +31,3 @@ template_service = TemplateService(template_repository, template_trigger_service
 agent_service = AgentService(agent_repository, template_trigger_service, trigger_service)
 trigger_history_service = TriggerHistoryService(trigger_history_repo=trigger_history_repository)
 function_service = AgentFunctionDetailService(function_repo=function_repository)
-

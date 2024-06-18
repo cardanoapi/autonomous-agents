@@ -1,7 +1,8 @@
-from fastapi import HTTPException
 from typing import Union, Optional
 from pydantic import BaseModel, json
 from croniter import croniter
+
+from backend.app.exceptions import HTTPException
 
 
 class CronTriggerDTO(BaseModel):

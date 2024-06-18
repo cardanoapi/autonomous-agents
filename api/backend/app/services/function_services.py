@@ -7,4 +7,3 @@ class AgentFunctionDetailService:
 
     async def get_all_function_details(self):
         return await self.function_repo.get_agent_all_functions_details()
-

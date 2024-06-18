@@ -4,6 +4,7 @@ from typing import List
 from classy_fastapi import Routable, post, get, put, delete
 from fastapi import Query
 
+from backend.app.exceptions import HTTPException
 from backend.app.models import TemplateCreateDto, TemplateResponse
 from backend.app.models.template.template_dto import TemplateEditDto
 from backend.app.services.template_service import TemplateService
@@ -15,7 +16,7 @@ class TemplateRouter(Routable):
         super().__init__(*args, **kwargs)
         self.template_service = template_service
 
-    @post("/templates", status_code=HTTPStatus.CREATED)
+    @post("/templates")
     async def create_template(self, template_data: TemplateCreateDto):
         template = await self.template_service.create_template(template_data)
         return template

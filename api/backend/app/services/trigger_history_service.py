@@ -29,20 +29,15 @@ class TriggerHistoryService:
         if agent_id is not None:
             agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
             if agent is None or agent.last_active is None:
-                raise HTTPException(
-                    status_code=400,
-                    content=f"Agent with {agent_id} does not exist"
-                )
+                raise HTTPException(status_code=400, content=f"Agent with {agent_id} does not exist")
             else:
-                query['agentId'] = agent_id
+                query["agentId"] = agent_id
 
         # Initialize a dictionary to store transaction counts for each minute
         transaction_counts = defaultdict(int)
 
         # Query transactions within the specified time range
-        transactions = await self.trigger_history_repo.get_trigger_history_by_query(
-           query
-        )
+        transactions = await self.trigger_history_repo.get_trigger_history_by_query(query)
 
         # Count transactions for each minute
         for transaction in transactions:
@@ -61,4 +56,3 @@ class TriggerHistoryService:
         sorted_transaction_counts = dict(sorted(transaction_counts.items()))
 
         return sorted_transaction_counts
-

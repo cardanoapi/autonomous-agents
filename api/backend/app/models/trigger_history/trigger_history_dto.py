@@ -9,4 +9,3 @@ class TriggerHistoryDto(BaseModel):
     success: bool
     timestamp: datetime
     message: str
-

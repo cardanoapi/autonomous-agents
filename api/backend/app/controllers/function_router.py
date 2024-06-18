@@ -20,6 +20,6 @@ class AgentFunctionDetailRouter(Routable):
     async def get_all_functions(self):
         return functions_metadata
 
-    @get('/functions/details', response_model=List[AgentFunctionDetailDto])
+    @get("/functions/details", response_model=List[AgentFunctionDetailDto])
     async def get_all_functions_detail(self):
         return await self.agent_service.get_all_function_details()

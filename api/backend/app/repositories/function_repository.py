@@ -7,4 +7,3 @@ class AgentFunctionDetailRepository:
 
     async def get_agent_all_functions_details(self):
         return await self.db.prisma.functiondetail.find_many()
-

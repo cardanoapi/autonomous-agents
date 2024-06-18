@@ -44,9 +44,9 @@ root_api_router.include_router(template_router.TemplateRouter().router, tags=["T
 root_api_router.include_router(template_trigger_router.TemplateTriggerRouter().router, tags=["Template Trigger"])
 # For Function
 
-root_api_router.include_router(function_router.AgentFunctionDetailRouter().router, tags=["Agent function"],
-                               prefix='/agents')
+root_api_router.include_router(
+    function_router.AgentFunctionDetailRouter().router, tags=["Agent function"], prefix="/agents"
+)
 
 # for trigger history
 root_api_router.include_router(trigger_history_router.TriggerHistory().router, tags=["Trigger History"])
-

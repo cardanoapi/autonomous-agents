@@ -22,31 +22,28 @@ class TemplateService:
         self.template_trigger_service = template_trigger_service
 
     async def create_template(self, template_data):
-        try:
-            # creating the instance of prisma transaction for template and template trigger creation
-            async with prisma_connection.prisma.tx() as transaction:
-                template = await self.template_repository.save_template(transaction, template_data)
-                # Save the template triggers
-                template_id = template["id"]
-                template_triggers = template["template_triggers"]
-                template_trigger_responses = []
+        # creating the instance of prisma transaction for template and template trigger creation
+        async with prisma_connection.prisma.tx() as transaction:
+            template = await self.template_repository.save_template(transaction, template_data)
+            # Save the template triggers
+            template_id = template["id"]
+            template_triggers = template["template_triggers"]
+            template_trigger_responses = []
 
-                if template_triggers:
-                    for trigger_data in template_triggers:
-                        template_trigger_response = await self.template_trigger_service.create_template_trigger(
-                            transaction, template_id, trigger_data
-                        )
-                        template_trigger_responses.append(template_trigger_response)
+            if template_triggers:
+                for trigger_data in template_triggers:
+                    template_trigger_response = await self.template_trigger_service.create_template_trigger(
+                        transaction, template_id, trigger_data
+                    )
+                    template_trigger_responses.append(template_trigger_response)
 
-                template_response = TemplateResponse(
-                    id=template["id"],
-                    name=template_data.name,
-                    description=template_data.description,
-                )
+            template_response = TemplateResponse(
+                id=template["id"],
+                name=template_data.name,
+                description=template_data.description,
+            )
 
-            return template_response
-        except Exception as e:
-            return e
+        return template_response
 
     async def list_templates(self, page, limit) -> List[TemplateResponse]:
         return await self.template_repository.retrieve_templates(page, limit)

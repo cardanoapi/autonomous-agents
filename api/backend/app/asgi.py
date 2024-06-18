@@ -89,6 +89,11 @@ def get_application() -> FastAPI:
         "http://localhost:3000",
         "*",
     ]
+    log.debug("Add application routes.")
+    log.debug("Register global exception handler for custom HTTPException.")
+    add_pagination(app)
+    app.include_router(root_api_router)
+    app.add_exception_handler(HTTPException, http_exception_handler)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=origins,
@@ -96,11 +101,6 @@ def get_application() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    log.debug("Add application routes.")
-    app.include_router(root_api_router)
-    log.debug("Register global exception handler for custom HTTPException.")
-    app.add_exception_handler(HTTPException, http_exception_handler)
-    add_pagination(app)
     return app
 
 
@@ -122,7 +122,7 @@ def get_test_application() -> FastAPI:
         docs_url=settings.DOCS_URL,
         lifespan=test_lifespan,
     )
-    log.debug("Add application routes.")
+    log.debug("Add test application routes.")
     app.include_router(root_api_router)
     log.debug("Register global exception handler for custom HTTPException.")
     app.add_exception_handler(HTTPException, http_exception_handler)
