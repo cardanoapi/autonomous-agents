@@ -24,9 +24,7 @@ export const fetchtriggersbyTemplateID = async (templateID: string) => {
 };
 
 export const fetchSuccessfullTriggersbyAgentID = async (agentID: string) => {
-    const res = await fetch(
-        `${baseAPIurl}/transaction-counts/${agentID}/agent?&success=true`
-    );
+    const res = await fetch(`${baseAPIurl}/transaction-counts/${agentID}?success=true`);
     if (!res.ok) {
         throw new Error('Trigger Fetch failed: Network Error');
     }
@@ -36,7 +34,7 @@ export const fetchSuccessfullTriggersbyAgentID = async (agentID: string) => {
 
 export const fetchUnSuccessfullTriggersbyAgentID = async (agentID: string) => {
     const res = await fetch(
-        `${baseAPIurl}/transaction-counts/${agentID}/agent?success=false`
+        `${baseAPIurl}/transaction-counts/${agentID}/?success=false`
     );
     if (!res.ok) {
         throw new Error('Trigger Fetch Failed: Network Error');
@@ -55,7 +53,7 @@ export const fetchTransactionsCount = async (transactionState: string) => {
 };
 
 export const fetchTriggers = async () => {
-    const res = await fetch(`${baseAPIurl}/templates/trigger`);
+    const res = await fetch(`${baseAPIurl}/triggers`);
     if (!res.ok) {
         throw new Error('Agents Fetch Operation failed: Network Error');
     }

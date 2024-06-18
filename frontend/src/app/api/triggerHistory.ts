@@ -10,8 +10,13 @@ export interface IAgentTriggerHistory {
     timestamp: string;
 }
 
-export const fetchAgentTriggerHistoryById = async (agentId: string) => {
-    const res = await fetch(`${baseAPIurl}/trigger-history/${agentId}/agent`);
+export const fetchAgentTriggerHistoryById = async (
+    agentId: string,
+    pageItemsSize: number
+) => {
+    const res = await fetch(
+        `${baseAPIurl}/trigger-history?agent_id=${agentId}&size=${pageItemsSize}`
+    );
     if (!res.ok) {
         throw new Error('Trigger Fetch failed: Network Error');
     }
@@ -19,7 +24,7 @@ export const fetchAgentTriggerHistoryById = async (agentId: string) => {
 };
 
 export const fetchTransactionCountOfAgentById = async (agentId: string) => {
-    const res = await fetch(`${baseAPIurl}/transaction-counts/${agentId}/agent`);
+    const res = await fetch(`${baseAPIurl}/transaction-counts/${agentId}`);
     if (!res.ok) {
         throw new Error('Trigger Fetch failed: Network Error');
     }

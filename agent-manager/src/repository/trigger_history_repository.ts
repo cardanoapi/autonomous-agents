@@ -10,7 +10,7 @@ export async function saveTriggerHistory(
     status: boolean,
     success: boolean,
     message: string,
-    txHash?: string
+    txHash: string
 ): Promise<void> {
     try {
         const triggerHistory: any = {}
