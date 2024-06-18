@@ -17,12 +17,13 @@ import {
 } from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
+import { Skeleton } from '@app/components/ui/skeleton';
 import { templateCreatedAtom } from '@app/store/loaclStore';
 
 import TemplatesContainer from './TemplatesContainer';
 
 export default function TemplatesPage() {
-    const { data: templates = [] } = useQuery<ITemplate[]>({
+    const { data: templates = [], isLoading } = useQuery<ITemplate[]>({
         queryKey: ['templates'],
         queryFn: fetchTemplates
     });
@@ -84,13 +85,38 @@ export default function TemplatesPage() {
             <div className="flex flex-col gap-y-[80px] pb-10 pt-10">
                 <div className="mt-2 flex flex-col gap-y-5">
                     <span className="h5 inline-block">My Templates</span>
-                    <TemplatesContainer templates={filteredTemplates} />
+                    {isLoading ? (
+                        <TemplatesSkeleton />
+                    ) : (
+                        <TemplatesContainer templates={filteredTemplates} />
+                    )}
                 </div>
                 <div className="flex flex-col gap-y-5">
                     <span className="h5 inline-block">Existing Templates</span>
-                    <TemplatesContainer templates={filteredTemplates} />
+                    {isLoading ? (
+                        <TemplatesSkeleton />
+                    ) : (
+                        <TemplatesContainer templates={filteredTemplates} />
+                    )}
                 </div>
             </div>
         </div>
     );
 }
+
+const TemplatesSkeleton = () => {
+    return (
+        <div className={'flex flex-row flex-wrap gap-4'}>
+            {Array(4)
+                .fill(undefined)
+                .map((_, index: number) => {
+                    return (
+                        <Skeleton
+                            key={index}
+                            className={'h-[160px] w-[280px] rounded-lg'}
+                        />
+                    );
+                })}
+        </div>
+    );
+};
