@@ -85,20 +85,28 @@ export default function TemplatesPage() {
             <div className="flex flex-col gap-y-[80px] pb-10 pt-10">
                 <div className="mt-2 flex flex-col gap-y-5">
                     <span className="h5 inline-block">My Templates</span>
-                    {isLoading ? (
-                        <TemplatesSkeleton />
+                    {filteredTemplates.length ? (
+                        isLoading ? (
+                            <TemplatesSkeleton />
+                        ) : (
+                            <TemplatesContainer templates={filteredTemplates} />
+                        )
                     ) : (
-                        <TemplatesContainer templates={filteredTemplates} />
+                        <span>No Templates Found</span>
                     )}
                 </div>
-                <div className="flex flex-col gap-y-5">
-                    <span className="h5 inline-block">Existing Templates</span>
-                    {isLoading ? (
-                        <TemplatesSkeleton />
-                    ) : (
-                        <TemplatesContainer templates={filteredTemplates} />
-                    )}
-                </div>
+                {/*<div className="flex flex-col gap-y-5">*/}
+                {/*    <span className="h5 inline-block">Existing Templates</span>*/}
+                {/*    {filteredTemplates.length ? (*/}
+                {/*        isLoading ? (*/}
+                {/*            <TemplatesSkeleton />*/}
+                {/*        ) : (*/}
+                {/*            <TemplatesContainer templates={filteredTemplates} />*/}
+                {/*        )*/}
+                {/*    ) : (*/}
+                {/*        <span>No Existing Templates Found</span>*/}
+                {/*    )}*/}
+                {/*</div>*/}
             </div>
         </div>
     );

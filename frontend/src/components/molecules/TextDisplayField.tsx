@@ -19,7 +19,7 @@ const TextDisplayField = ({
             <div className={'flex items-center gap-1'}>
                 <div
                     className={
-                        'w-fit min-w-[360px] max-w-[600px] truncate rounded border-0 border-b border-gray-300 px-4 py-2 drop-shadow-md'
+                        'w-fit max-w-[250px] truncate rounded border-0 border-b border-gray-300 px-4 py-2 drop-shadow-md xl:min-w-[360px] xl:max-w-[600px]'
                     }
                 >
                     {content}

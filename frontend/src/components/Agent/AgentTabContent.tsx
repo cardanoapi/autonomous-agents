@@ -34,7 +34,7 @@ const AgentTabContent = ({
     }
 
     return (
-        <div className={'flex-1 rounded-lg bg-white px-9 py-6'}>
+        <div className={'max-h-[600px] flex-1 rounded-lg bg-white px-9 py-6'}>
             {agentLoading ? (
                 <SkeletonLoadingForAgentOverview />
             ) : (

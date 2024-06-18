@@ -56,10 +56,9 @@ export default function TemplateForm() {
             router.push('/templates');
             setTemplateCreated(true);
         },
-        onError: () => {
+        onError: (error: any) => {
             setSubmittingForm(false);
-            console.log('Error Response');
-            ErrorToast('Error in Creating Template. Try Again!');
+            ErrorToast(error?.response?.data);
         }
     });
 
@@ -140,7 +139,6 @@ export default function TemplateForm() {
                       }
                     : item
         );
-        console.log(`current selected : ${inputDefaultSelected}`);
         setDialogOpen(false);
         setSelected(newSelected);
         form.setValue('triggers', newSelected);

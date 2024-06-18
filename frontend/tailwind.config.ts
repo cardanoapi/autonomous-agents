@@ -86,6 +86,9 @@ const config = {
                     }
                 }
             },
+            height: {
+                agentComponentHeight: 'calc-(100%-30px)'
+            },
             keyframes: {
                 'accordion-down': {
                     from: { height: '0' },
