@@ -63,6 +63,7 @@ model TriggerHistory {
   message      String
   timestamp    DateTime?
   txHash       String?
+  triggerType  TriggerType
 }
 
 model FunctionDetail {
@@ -74,5 +75,6 @@ model FunctionDetail {
 
 enum TriggerType {
   CRON
-  TOPIC
+  MANUAL
+  EVENT
 }

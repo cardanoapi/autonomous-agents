@@ -4,13 +4,16 @@ import { v4 as uuidv4 } from 'uuid'
 
 const prisma = new PrismaClient()
 
+type TriggerType = 'CRON' | 'MANUAL' | 'EVENT'
+
 export async function saveTriggerHistory(
     agentId: string,
     functionName: string,
     status: boolean,
     success: boolean,
     message: string,
-    txHash: string
+    triggerType: TriggerType,
+    txHash?: string
 ): Promise<void> {
     try {
         const triggerHistory: any = {}
@@ -21,6 +24,7 @@ export async function saveTriggerHistory(
         triggerHistory['success'] = success
         triggerHistory['message'] = message
         triggerHistory['timestamp'] = DateTime.utc().toISO()
+        triggerHistory['triggerType'] = triggerType
         if (txHash) {
             triggerHistory['txHash'] = txHash
         }

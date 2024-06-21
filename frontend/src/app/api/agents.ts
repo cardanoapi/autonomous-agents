@@ -81,3 +81,18 @@ export const fetchAgentbyID = async (agentID: string): Promise<IAgent> => {
         throw new Error('Agent Fetch Operation failed: Network Error');
     }
 };
+
+export const manualTriggerForAgent = async (agentId: string, agentFunction: any) => {
+    const url = `${baseAPIurl}/agents/${agentId}/trigger`;
+    try {
+        const response = await axios.post(url, agentFunction, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error posting agent data:', error);
+        throw error;
+    }
+};

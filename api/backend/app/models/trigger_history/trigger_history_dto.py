@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 from datetime import datetime
 
@@ -9,3 +11,5 @@ class TriggerHistoryDto(BaseModel):
     success: bool
     timestamp: datetime
     message: str
+    triggerType: Optional[str]
+    txHash: Optional[str]

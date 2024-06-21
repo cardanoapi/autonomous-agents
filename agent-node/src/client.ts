@@ -28,7 +28,7 @@ export async function handleIncomingMessage(
             globalState.agentWalletDetails = message.payload
         } else if (message.message === 'trigger_action') {
             const { action, probability } = message.payload
-            triggerAction(action, probability)
+            triggerAction(action, probability, 'MANUAL')
         } else {
             console.log('Received message:', message)
         }

@@ -17,7 +17,7 @@ class SubParameter(BaseModel):
 
 class TopicTriggerDTO(BaseModel):
     topic: str
-    parameter: Optional[list[SubParameter]]
+    parameters: Optional[list[SubParameter]]
 
 
 class Action(BaseModel):

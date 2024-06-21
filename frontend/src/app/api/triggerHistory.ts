@@ -8,6 +8,8 @@ export interface IAgentTriggerHistory {
     success: boolean;
     message: string;
     timestamp: string;
+    triggerType: string;
+    txHash: string;
 }
 
 export const fetchAgentTriggerHistoryById = async (

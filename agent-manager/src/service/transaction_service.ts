@@ -9,6 +9,8 @@ interface Parameter {
     value: string
 }
 
+type TriggerType = 'CRON' | 'MANUAL' | 'EVENT'
+
 interface FunctionData {
     parameter: Parameter[]
     trigger: string
@@ -17,6 +19,7 @@ interface FunctionData {
     }
     payload: any
     messageType: string
+    triggerType: TriggerType
 }
 
 // interface Selection {
@@ -80,12 +83,18 @@ export const handleTransaction = async (
                 const kuberUrlSendAda = kuberBaseUrl + data.payload.url
                 const options = data.payload.options
                 options.headers['api-key'] = kuberApiKey
-
                 try {
                     const response = await fetch(kuberUrlSendAda, options)
                     if (!response.ok) {
                         const responseBody = await response.text()
-                        const responseJson: any = JSON.parse(responseBody)
+                        let responseJson
+                        try {
+                            responseJson = JSON.parse(responseBody)
+                        } catch (err) {
+                            responseJson = JSON.parse(
+                                JSON.stringify(responseBody)
+                            )
+                        }
                         throw new Error(
                             `${data.action.function_name} failed ${response.status}.\n ${JSON.stringify(responseJson, undefined, 4)}`
                         )
@@ -101,6 +110,7 @@ export const handleTransaction = async (
                         true,
                         true,
                         `Successful Creation of transaction of ${data.action.function_name}`,
+                        data.triggerType,
                         kuberData.hash
                     )
                 } catch (error: any) {
@@ -108,12 +118,15 @@ export const handleTransaction = async (
                         'Error submitting transaction:',
                         error.message
                     )
+                    console.log('failed request:', options.body)
                     await saveTriggerHistory(
                         agentId,
                         data.action.function_name,
                         true,
                         false,
-                        error.message
+                        error.message,
+                        data.triggerType,
+                        ''
                     )
                 }
             } else {
@@ -122,6 +135,8 @@ export const handleTransaction = async (
                     data.action.function_name,
                     false,
                     false,
+                    '',
+                    'CRON',
                     ''
                 )
             }
