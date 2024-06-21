@@ -25,6 +25,7 @@ export interface Configuration {
     data: Data
     action: Action
 }
+
 let scheduledTasks: ScheduledTask[] = []
 
 function clearScheduledTasks() {
@@ -34,16 +35,21 @@ function clearScheduledTasks() {
 
     scheduledTasks = []
 }
+
+type TriggerType = 'MANUAL' | 'EVENT' | 'CRON'
+
 function sendActionToWebSocket(
     action: Action,
     trigger: boolean,
-    payload: any = null
+    payload: any = null,
+    triggerType: TriggerType = 'CRON'
 ) {
     const actionWithTrigInfo = {
         action,
         messageType: 'action',
         trigger: trigger.toString(),
         payload,
+        triggerType: triggerType,
     }
     sendDataToWebSocket(JSON.stringify(actionWithTrigInfo))
 }
@@ -58,11 +64,15 @@ function getParameterValue(
 
 function createTask(action: Action, frequency: string, probability: number) {
     return cron.schedule(frequency, () => {
-        triggerAction(action, probability)
+        triggerAction(action, probability, 'CRON')
     })
 }
 
-export async function triggerAction(action: Action, probability: number) {
+export async function triggerAction(
+    action: Action,
+    probability: number,
+    triggerType: TriggerType
+) {
     if (Math.random() > probability || !globalState.agentWalletDetails) {
         sendActionToWebSocket(action, false)
     } else {
@@ -109,6 +119,7 @@ export async function triggerAction(action: Action, probability: number) {
                     agentAddress,
                     globalState.agentWalletDetails.payment_signing_key,
                     globalState.agentWalletDetails.stake_signing_key,
+                    globalState.agentWalletDetails.stake_verification_key_hash,
                     getParameterValue(action.parameter, 'anchor_url'),
                     getParameterValue(action.parameter, 'anchor_dataHash'),
                     getParameterValue(action.parameter, 'newConstitution_url'),
@@ -156,7 +167,7 @@ export async function triggerAction(action: Action, probability: number) {
             default:
                 return
         }
-        sendActionToWebSocket(action, true, payload)
+        sendActionToWebSocket(action, true, payload, triggerType)
     }
 }
 

@@ -1,3 +1,5 @@
+import { bech32 } from 'bech32'
+
 type CertificateType = 'registerstake' | 'registerdrep' | 'deregisterdrep'
 
 export type TxSubmitResponse = {
@@ -16,6 +18,8 @@ class Kuber {
     walletAddr: string
     signingKey: string
     version: string
+
+    KEYHASH_LENGTH = 28
 
     constructor(walletAddr: string, signingKey: string, version = 'v1') {
         this.walletAddr = walletAddr
@@ -41,6 +45,7 @@ class Kuber {
             }
         }
     }
+
     signTx(tx: any) {
         return {
             ...tx,
@@ -68,6 +73,26 @@ class Kuber {
             `/api/${this.version}/tx?submit=true`,
             'POST',
             JSON.stringify(signedTx)
+        )
+    }
+
+    rewardAddressRawBytes(network: number, stakevkh: string) {
+        const rewardAccountPrefix = 0xe0
+        const header = network | rewardAccountPrefix
+        const result = new Uint8Array(this.KEYHASH_LENGTH + 1)
+        result[0] = header
+        result.set(Buffer.from(stakevkh, 'hex'), 1)
+        return result
+    }
+
+    rewardAddressBech32(networkId: number, stakevkh: string): string {
+        const prefix = networkId == 0 ? 'stake_test' : 'stake'
+        return bech32.encode(
+            prefix,
+            bech32.toWords(
+                Buffer.from(this.rewardAddressRawBytes(networkId, stakevkh))
+            ),
+            200
         )
     }
 }
@@ -113,18 +138,18 @@ const kuberService = {
 
     dRepRegistration: (
         stakeSigningKey: string,
-        pkh: string,
+        svkh: string,
         address: string,
-        signingKey: string
+        paymentSigningKey: string
     ) => {
-        const kuber = new Kuber(address, signingKey)
+        const kuber = new Kuber(address, paymentSigningKey)
         const req = {
-            certificates: [Kuber.generateCert('registerdrep', pkh)],
+            certificates: [Kuber.generateCert('registerdrep', svkh)],
             selections: [
                 {
                     type: 'PaymentSigningKeyShelley_ed25519',
                     description: 'Stake Signing Key',
-                    cborHex: `5820${stakeSigningKey}`,
+                    cborHex: `${stakeSigningKey}`,
                 },
             ],
         }
@@ -183,6 +208,7 @@ const kuberService = {
         addr: string,
         signingKey: string,
         stakePrivateKey: string,
+        stakeVerificationKeyHash: string,
         anchorUrl: string,
         anchorDataHash: string,
         newConstitutionUrl: string,
@@ -198,6 +224,11 @@ const kuberService = {
             },
         ]
 
+        const rewardAddress = kuber.rewardAddressBech32(
+            0,
+            stakeVerificationKeyHash
+        )
+
         const req = {
             selections,
             proposals: [
@@ -210,6 +241,8 @@ const kuberService = {
                         url: newConstitutionUrl,
                         dataHash: newConstitutionDataHash,
                     },
+                    refundAccount: rewardAddress,
+                    deposit: 50000000000,
                 },
             ],
         }
@@ -255,7 +288,7 @@ const kuberService = {
     ) {
         const kuber = new Kuber(address, signingKey)
         const infoProposal = {
-            deposit: 1000000000,
+            deposit: 50000000000,
             refundAccount: {
                 network: 'Testnet',
                 credential: {
@@ -355,6 +388,7 @@ const kuberService = {
         return kuber.signAndSubmitTx(req)
     },
 }
+
 function buildApiObject(
     path: any,
     method: 'GET' | 'POST' = 'GET',

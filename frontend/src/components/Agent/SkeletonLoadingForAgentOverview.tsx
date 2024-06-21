@@ -1,6 +1,6 @@
 'use client';
 
-import { Skeleton } from '@app/components/ui/skeleton';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
 const SkeletonLoadingForAgentOverview = () => {
     return (
