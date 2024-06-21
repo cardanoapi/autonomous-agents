@@ -2,7 +2,7 @@
 
 import AgentTabItem from './AgentTabItem';
 
-const AgentTabType = ['Overview', 'History', 'Logs'];
+const AgentTabType = ['Overview', 'History', 'Logs', 'Manual Trigger', 'Agent Runner'];
 
 const AgentTabSection = () => {
     return (
