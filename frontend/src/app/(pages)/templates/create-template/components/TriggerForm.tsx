@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { X } from 'lucide-react';
+import { ChevronDown, ChevronUp, X } from 'lucide-react';
 
 import { IParameter } from '@app/app/api/functions';
 import { Button } from '@app/components/atoms/Button';
@@ -50,7 +50,7 @@ export default function TriggerForm({
     const [configuredSettings, setConfiguredSettings] = useState<any>(
         previousConfiguredSettings || ''
     );
-    const [probability, setProbability] = useState<number>(100);
+    const [probability, setProbability] = useState<string>('100');
     const [errorMsg, setErrorMsg] = useState('');
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -92,19 +92,27 @@ export default function TriggerForm({
         setConfiguredSettings(currentSettings);
     }
 
-    const handleProbabilityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        e.preventDefault();
+    const handleProbabilityChange = (value: string) => {
         setErrorMsg('');
-        const value = +e.target.value;
+        console.log('valye : ', value, +value);
         if (!value) {
-            setProbability(0);
+            setProbability('');
         } else {
-            if (value < 0 || value > 100) {
+            if (+value < 0 || +value > 100) {
                 setErrorMsg('Value cannot be less than 0 or greater than 100');
                 return;
             } else setProbability(value);
         }
     };
+
+    useEffect(() => {
+        if (errorMsg) {
+            const clearErrorMsg = setTimeout(() => {
+                setErrorMsg('');
+            }, 3000);
+            return () => clearTimeout(clearErrorMsg);
+        }
+    }, [errorMsg]);
 
     return (
         <Card className="flex h-full min-h-[449px] min-w-[696px] flex-col gap-y-4 bg-brand-Azure-400 p-4 px-8">
@@ -149,12 +157,37 @@ export default function TriggerForm({
                 <div className={'flex flex-col gap-4'}>
                     <span>Probability</span>
                     <div className={'flex flex-col gap-2'}>
-                        <input
-                            value={probability}
-                            onChange={handleProbabilityChange}
-                            className={'w-[140px] p-2 text-center'}
-                            type={'number'}
-                        />
+                        <div className={'relative flex w-fit flex-row items-center'}>
+                            <input
+                                value={probability}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                    handleProbabilityChange(e.target.value)
+                                }
+                                className={'w-[140px] p-2 text-center'}
+                                type={'text'}
+                            />
+                            <div className={'absolute right-4 flex flex-col'}>
+                                <ChevronUp
+                                    className={'h-4 w-4 cursor-pointer'}
+                                    onClick={() =>
+                                        handleProbabilityChange(
+                                            (+probability + 1).toString()
+                                        )
+                                    }
+                                />
+                                <ChevronDown
+                                    className={
+                                        'h-4 w-4 cursor-pointer active:scale-105'
+                                    }
+                                    onClick={() =>
+                                        handleProbabilityChange(
+                                            (+probability - 1).toString()
+                                        )
+                                    }
+                                />
+                            </div>
+                        </div>
+
                         {errorMsg ? (
                             <span className={' text-xs text-red-500'}>{errorMsg}</span>
                         ) : (
@@ -175,7 +208,7 @@ export default function TriggerForm({
                                 inputCronExpression: cronExpression,
                                 inputDefaultSelected: defaultSelected,
                                 inputDefaultSettings: configuredSettings || '',
-                                inputProbability: probability ? probability : 100
+                                inputProbability: probability ? +probability : 0
                             });
                         }}
                     >

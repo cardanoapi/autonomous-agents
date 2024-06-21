@@ -6,7 +6,7 @@ import { manualTriggerForAgent } from '@app/app/api/agents';
 import { IFunction, IParameter } from '@app/app/api/functions';
 import { Button } from '@app/components/atoms/Button';
 import { Input } from '@app/components/atoms/Input';
-import { ErrorToast } from '@app/components/molecules/CustomToasts';
+import { ErrorToast, SuccessToast } from '@app/components/molecules/CustomToasts';
 import { Separator } from '@app/components/shadcn/ui/separator';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
@@ -30,6 +30,9 @@ const AgentManualTriggerModalView = ({
         onSuccess: () => {
             queryClient.refetchQueries({ queryKey: ['agents'] });
             // router.push('/agents');
+            SuccessToast(
+                `${agentFunction.function_name} has been successfully triggered.`
+            );
             closeModal();
         },
         onError: () => {
