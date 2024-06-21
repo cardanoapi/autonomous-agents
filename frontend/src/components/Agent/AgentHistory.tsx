@@ -16,7 +16,7 @@ import AgentsIcon from '@app/components/icons/AgentsIcon';
 import CustomLineChart, {
     ILineChartData
 } from '@app/components/molecules/chart/CustomLineChart';
-import { Skeleton } from '@app/components/ui/skeleton';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { getFilteredData } from '@app/utils/dashboard';
 
 const AgentHistoryComponent = ({ agent }: { agent?: IAgent }) => {
