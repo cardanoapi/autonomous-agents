@@ -33,6 +33,7 @@ classy-fastapi = "^0.6.1"
 croniter = "^2.0.3"
 pycardano = "^0.10.0"
 aiokafka = "^0.10.0"
+fastapi-pagination = "^0.12.25"
 [tool.poetry.group.dev.dependencies]
 pytest = "~7.4.0"
 pytest-cov = "~4.0.0"
