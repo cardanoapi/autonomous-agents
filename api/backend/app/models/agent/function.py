@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -9,5 +9,5 @@ class ActionParameters(BaseModel):
 
 
 class AgentFunction(BaseModel):
-    name: str
-    parameters: List[ActionParameters]
+    function_name: str
+    parameter: Optional[List[ActionParameters]]

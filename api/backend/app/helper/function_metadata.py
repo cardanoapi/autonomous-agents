@@ -2,7 +2,6 @@ from typing import List
 
 from pydantic import BaseModel
 
-
 # class Parameter(BaseModel):
 #     name: str
 #     description: str
@@ -20,6 +19,24 @@ from pydantic import BaseModel
 # Mock data for function metadata
 functions_metadata = [
     {
+        "function_name": "Drep Registration",
+        "num_parameters": 0,
+        "parameters": [],
+        "description": "This will register you as Decentralized Representative (DRep) on the Cardano network.",
+    },
+    {
+        "function_name": "Drep deRegistration",
+        "num_parameters": 0,
+        "parameters": [],
+        "description": "This will retire you as Decentralized Representative (DRep) on the Cardano network.",
+    },
+    {
+        "function_name": "Register Stake",
+        "num_parameters": 0,
+        "parameters": [],
+        "description": "This will register you as Stake Pool Operator on the Cardano network.",
+    },
+    {
         "function_name": "SendAda Token",
         "num_parameters": 1,
         "parameters": [
@@ -30,9 +47,10 @@ functions_metadata = [
                 "data_type": "string",
             }
         ],
+        "description": "Send the Ada to other Ada Holders in the cardano network.",
     },
     {
-        "function_name": "Proposal New Constituion",
+        "function_name": "Proposal New Constitution",
         "num_parameters": 4,
         "parameters": [
             {
@@ -60,6 +78,8 @@ functions_metadata = [
                 "data_type": "hex",
             },
         ],
+        "description": "Submit a new constitution for the Cardano network. Outline fundamental principles and "
+        "guidelines to shape the ecosystem's future.",
     },
     {
         "function_name": "Info Action Proposal",
@@ -78,6 +98,8 @@ functions_metadata = [
                 "data_type": "url",
             },
         ],
+        "description": "Submit a proposal to share crucial information or updates with the Cardano community to drive"
+        " informed decision-making.",
     },
     {
         "function_name": "Delegation",
@@ -85,7 +107,7 @@ functions_metadata = [
         "parameters": [
             {
                 "name": "certificates_type",
-                "description": "Type",
+                "description": "Certification Type",
                 "optional": False,
                 "data_type": "CertificatesType",
             },
@@ -96,6 +118,8 @@ functions_metadata = [
                 "data_type": "Drep Hash",
             },
         ],
+        "description": "Delegate your voting power to a trusted DRep, allowing them to vote on governance decisions on "
+        "your behalf.",
     },
     {
         "function_name": "Vote",
@@ -120,5 +144,7 @@ functions_metadata = [
                 "data_type": "hash",
             },
         ],
+        "description": "Cast your vote on active governance proposals to influence key decisions within the Cardano "
+        "ecosystem.",
     },
 ]
