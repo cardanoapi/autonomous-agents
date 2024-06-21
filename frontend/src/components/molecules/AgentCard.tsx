@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Copy, Trash2 } from 'lucide-react';
+import { PlayIcon, Trash2 } from 'lucide-react';
 
 import { IAgent, deleteAgentbyID, fetchAgentbyID } from '@app/app/api/agents';
 import { ITemplate, fetchTemplatebyID } from '@app/app/api/templates';
@@ -17,6 +17,7 @@ import { Badge } from '@app/components/atoms/Badge';
 import { Truncate } from '@app/utils/common/extra';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
+import { useModal } from '../Modals/context';
 import { Card, CardContent, CardTitle } from '../atoms/Card';
 import { Dialog, DialogContent } from '../atoms/Dialog';
 import ConfirmationBox from './ConfirmationBox';
@@ -40,6 +41,8 @@ export default function AgentCard({
     lastActive = ''
 }: IAgentCard) {
     const router = useRouter();
+
+    const { openModal } = useModal();
 
     const { data: template } = useQuery<ITemplate>({
         queryKey: [`template${templateID}`],
@@ -130,12 +133,12 @@ export default function AgentCard({
                 <div className="flex items-center justify-between">
                     <div className="card-h2">{Truncate(agentName, 10)}</div>
                     <div className="flex gap-x-2">
-                        <Copy
+                        <PlayIcon
                             color="#A1A1A1"
                             className="hidden hover:cursor-pointer group-hover:flex"
-                            onClick={() => {
-                                navigator.clipboard.writeText(agentID);
-                                SuccessToast('Agent ID Copied!');
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                openModal('AgentRunnerView', { agentId: agentID });
                             }}
                         />
                         <Trash2
