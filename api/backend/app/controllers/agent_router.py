@@ -5,6 +5,7 @@ from classy_fastapi import Routable, get, post, put, delete
 from fastapi import HTTPException, Query
 
 from backend.app.models.agent.agent_dto import AgentCreateDTO
+from backend.app.models.agent.function import AgentFunction
 from backend.app.services.agent_service import AgentService
 from backend.app.models.agent.response_dto import AgentResponse, AgentResponseWithWalletDetails
 from backend.dependency import agent_service
@@ -54,5 +55,5 @@ class AgentRouter(Routable):
         await self.agent_service.delete_agent(agent_id)
 
     @post("/agents/{agent_id}/trigger", status_code=HTTPStatus.OK)
-    async def trigger_agent_action(self, agent_id: str):
-        await self.agent_service.trigger_agent_action(agent_id)
+    async def trigger_agent_action(self, agent_id: str, action: AgentFunction):
+        await self.agent_service.trigger_agent_action(agent_id, action)

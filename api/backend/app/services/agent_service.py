@@ -1,11 +1,14 @@
 # agent_service.py
+import json
 from typing import List
 
 import httpx
 
 from backend.app.models import TriggerCreateDTO, AgentResponseWithWalletDetails
 from backend.app.models import AgentCreateDTO, AgentKeyResponse, AgentResponse
+from backend.app.models.agent.function import AgentFunction
 from backend.app.repositories.agent_repository import AgentRepository
+from backend.app.services.kafka_service import KafkaService
 from backend.app.services.template_trigger_service import TemplateTriggerService
 from backend.app.services.trigger_service import TriggerService
 from backend.config import settings
@@ -17,10 +20,12 @@ class AgentService:
         agent_repository: AgentRepository,
         template_trigger_service: TemplateTriggerService,
         trigger_service: TriggerService,
+        kafka_service: KafkaService,
     ):
         self.agent_repository = agent_repository
         self.template_trigger_service = template_trigger_service
         self.trigger_service = trigger_service
+        self.kafka_service = kafka_service
 
     async def create_agent(self, agent_data: AgentCreateDTO):
         agent = await self.agent_repository.save_agent(agent_data)
@@ -63,3 +68,11 @@ class AgentService:
 
     async def delete_agent(self, agent_id: str) -> None:
         await self.agent_repository.remove_agent(agent_id)
+
+    async def check_if_agent_exists(self, agent_id: str):
+        await self.agent_repository.retrieve_agent(agent_id)
+        return True
+
+    async def trigger_agent_action(self, agent_id: str, action: AgentFunction):
+        await self.check_if_agent_exists(agent_id)
+        await self.kafka_service.publish_message("manual_trigger_event", action.json(), key=agent_id)
