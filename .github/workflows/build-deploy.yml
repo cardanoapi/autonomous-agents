@@ -1,85 +1,88 @@
 name: Docker Build and Deploy
 
 on:
-    push:
-        branches:
-            - master
-            - dev
-        tags:
-            - "*"
+  push:
+    branches:
+      - master
+      - dev
+    tags:
+      - "*"
 
 jobs:
-    build_on_push:
-        runs-on: self-hosted
-        strategy:
-            matrix:
-                service:
-                    - agent-manager
-                    - api
-                    - agent-node
-                    - frontend
-                    - agent-python
-        steps:
-            - name: Checkout repo
-              uses: actions/checkout@v4
+  build_on_push:
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        service:
+          - agent-manager
+          - api
+          - agent-node
+          - frontend
+          - agent-python
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-            - name: Login to Docker Hub
-              uses: docker/login-action@v2
-              with:
-                  registry: ${{ vars.DOCKER_REGISTRY_HOST }}
-                  username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
-                  password: ${{ secrets.DOCKER_REGISTRY_SECRET }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ vars.DOCKER_REGISTRY_HOST }}
+          username: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          password: ${{ secrets.DOCKER_REGISTRY_SECRET }}
+          wsUrl: ${{vars.WS_URL}}
 
-            - name: Build and push Docker image
-              id: docker_build
-              env:
-                  SERVICE_NAME: ${{ matrix.service }}
-              run: |
-                  REPO_NAME="${GITHUB_REPOSITORY##*/}"
-                  COMMON_TAG="${{ github.ref_name }}"
-                  API_ENDPOINT_HOST=${{ vars.DEV_API }}
-                  if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
-                    COMMON_TAG="latest"
-                    API_ENDPOINT_HOST=${{ vars.PROD_API }}
-                  fi
 
-                  IMAGE_NAME="${{ vars.DOCKER_REGISTRY_HOST }}/${{ vars.DOCKER_IMAGE_PREFIX }}/${REPO_NAME}-${SERVICE_NAME}"
-
-                  docker build --build-arg NEXT_PUBLIC_API_ENDPOINT_HOST=${API_ENDPOINT_HOST} -t "$IMAGE_NAME:${{ github.sha }}" -t "$IMAGE_NAME:$COMMON_TAG" ${SERVICE_NAME}
-
-                  docker push "$IMAGE_NAME:${{ github.sha }}"
-                  docker push "$IMAGE_NAME:$COMMON_TAG"
-
-    deploy_services:
-        needs: build_on_push
-        strategy:
-            matrix:
-                service:
-                    - agent-manager
-                    - api
-                    - frontend
-            max-parallel: 1
-
-        runs-on: self-hosted
+      - name: Build and push Docker image
+        id: docker_build
         env:
-            SERVICE_NAME: ${{ matrix.service }}
-            GITHUB_REPOSITORY: ${{ github.repository }}
+          SERVICE_NAME: ${{ matrix.service }}
+        run: |
+          REPO_NAME="${GITHUB_REPOSITORY##*/}"
+          COMMON_TAG="${{ vars.DEV_IMAGE_TAG }}"
+          API_ENDPOINT_HOST=${{ vars.DEV_API }}
+          WS_URL=${{vars.DEV_WS_URL}}
+          if [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+            COMMON_TAG="latest"
+            API_ENDPOINT_HOST=${{ vars.PROD_API }}
+          fi
+          
+          IMAGE_NAME="${{ vars.DOCKER_REGISTRY_HOST }}/${{ vars.DOCKER_IMAGE_PREFIX }}/${REPO_NAME}-${SERVICE_NAME}"
+          
+          docker build --build-arg NEXT_PUBLIC_WS_URL=${WS_URL} --build-arg NEXT_PUBLIC_API_ENDPOINT_HOST=${API_ENDPOINT_HOST} -t "$IMAGE_NAME:${{ github.sha }}" -t "$IMAGE_NAME:$COMMON_TAG" ${SERVICE_NAME}
+          
+          docker push "$IMAGE_NAME:${{ github.sha }}"
+          docker push "$IMAGE_NAME:$COMMON_TAG"
 
-        steps:
-            - name: Deploy built image
-              id: docker_deploy
-              run: |
-                  REPO_NAME="${GITHUB_REPOSITORY##*/}"
-                  IMAGE_NAME="${{ vars.DOCKER_REGISTRY_HOST }}/${{ vars.DOCKER_IMAGE_PREFIX }}/${REPO_NAME}-${SERVICE_NAME}"
+  deploy_services:
+    needs: build_on_push
+    strategy:
+      matrix:
+        service:
+          - agent-manager
+          - api
+          - frontend
+      max-parallel: 1
 
-                  DEPLOY_TAG="${{ github.sha }}"
+    runs-on: self-hosted
+    env:
+      SERVICE_NAME: ${{ matrix.service }}
+      GITHUB_REPOSITORY: ${{ github.repository }}
 
-                  if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
-                    DOCKER_HOST="${{ vars.DEV_HOST }}"
-                    DOCKER_STACK="${{ vars.DEV_STACK }}"
-                  elif [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
-                    DOCKER_HOST="${{ vars.PROD_HOST }}"
-                    DOCKER_STACK="${{ vars.PROD_STACK }}"
-                  fi
-
-                  docker --host "$DOCKER_HOST" service update --image $IMAGE_NAME:$DEPLOY_TAG ${DOCKER_STACK}_${SERVICE_NAME}
+    steps:
+      - name: Deploy built image
+        id: docker_deploy
+        run: |
+          REPO_NAME="${GITHUB_REPOSITORY##*/}"
+          IMAGE_NAME="${{ vars.DOCKER_REGISTRY_HOST }}/${{ vars.DOCKER_IMAGE_PREFIX }}/${REPO_NAME}-${SERVICE_NAME}"
+          
+          DEPLOY_TAG="${{ github.sha }}"
+          
+          if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
+            DOCKER_HOST="${{ vars.DEV_HOST }}"
+            DOCKER_STACK="${{ vars.DEV_STACK }}"
+          elif [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
+            DOCKER_HOST="${{ vars.PROD_HOST }}"
+            DOCKER_STACK="${{ vars.PROD_STACK }}"
+          fi
+          
+          docker --host "$DOCKER_HOST" service update --image $IMAGE_NAME:$DEPLOY_TAG ${DOCKER_STACK}_${SERVICE_NAME}
