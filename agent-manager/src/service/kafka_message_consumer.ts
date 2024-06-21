@@ -42,12 +42,15 @@ export async function initKafkaConsumers() {
         eachMessage: async ({ message }) => {
             const agentId = message.key?.toString()
             const actionName = message.value?.toString()
-            if (agentId) {
+            const parsedActionName = JSON.parse(actionName || '')
+            if (agentId && parsedActionName) {
+                console.log('manual trigger starting', parsedActionName)
                 manager.sendToWebSocket(agentId, {
                     message: 'trigger_action',
                     payload: {
                         action: {
-                            function_name: actionName,
+                            function_name: parsedActionName.function_name,
+                            parameter: parsedActionName.parameter,
                         },
                         probability: 1,
                     },

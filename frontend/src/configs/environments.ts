@@ -45,7 +45,9 @@ const environments = {
     ELASTIC_APM_SERVICE_NAME: process.env.ELASTIC_APM_SERVICE_NAME,
     ELASTIC_APM_ENVIRONMENT: process.env.ELASTIC_APM_ENVIRONMENT,
     APM_ENABLED:
-        process.env.ELASTIC_APM_SERVER_URL && process.env.ELASTIC_APM_SERVICE_NAME
+        process.env.ELASTIC_APM_SERVER_URL && process.env.ELASTIC_APM_SERVICE_NAME,
+    NEXT_PUBLIC_WS_URL: process.env.NEXT_PUBLIC_WS_URL ?? 'ws://172.17.0.1:3001',
+    NEXT_PUBLIC_IMAGE_TAG: process.env.NEXT_PUBLIC_IMAGE_TAG ?? 'dev'
 };
 
 export default environments;

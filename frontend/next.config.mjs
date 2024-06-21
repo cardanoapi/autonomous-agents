@@ -78,7 +78,9 @@ const nextConfig = {
         FORM_PRIVACY_POLICY_URL: process.env.FORM_PRIVACY_POLICY_URL,
         GA_MEASUREMENT_ID: process.env.GA_MEASUREMENT_ID,
         MICROSOFT_CLARITY_TRACKING_CODE: process.env.MICROSOFT_CLARITY_TRACKING_CODE,
-        NEXT_PUBLIC_NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV ?? 'production'
+        NEXT_PUBLIC_NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV ?? 'production',
+        NEXT_PUBLIC_WS_URL: process.env.NEXT_PUBLIC_WS_URL ?? 'ws://172.17.0.1:3001',
+        NEXT_PUBLIC_IMAGE_TAG: process.env.NEXT_PUBLIC_IMAGE_TAG ?? 'dev'
     }
 };
 

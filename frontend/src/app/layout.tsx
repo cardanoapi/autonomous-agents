@@ -17,6 +17,7 @@ import 'vanilla-cookieconsent/dist/cookieconsent.css';
 
 import '@app/assets/css/globals.css';
 import '@app/assets/css/tailwind.css';
+import ModalContainer from '@app/components/Modals/container';
 import SideNav from '@app/components/layout/SideNav';
 import TopNav from '@app/components/layout/TopNav';
 import ThemeProvider from '@app/shared/hocs/ThemeProvider';
@@ -71,7 +72,7 @@ export default function RootLayout({
                         <ReactQueryProvider>
                             <Toaster />
                             <div className="flex h-full w-full  bg-gradient-to-r from-[#F8F9FC] via-[#F5F5FC] to-[#E9EAF8]">
-                                <div className="hidden  min-h-screen min-w-[256px] lg:flex 3xl:w-[278px] 5xl:w-[300px] ">
+                                <div className="hidden min-h-screen w-[275px] min-w-[275px] lg:flex ">
                                     <SideNav />
                                 </div>
                                 <div className="no-scrollbar mt-[3%] min-h-full flex-grow flex-col overflow-y-auto overflow-x-clip px-[34px] 2xl:px-[45px]">
@@ -79,6 +80,7 @@ export default function RootLayout({
                                     <div className="mt-10">{children}</div>
                                 </div>
                             </div>
+                            <ModalContainer />
                         </ReactQueryProvider>
                     </Provider>
                 </ThemeProvider>
