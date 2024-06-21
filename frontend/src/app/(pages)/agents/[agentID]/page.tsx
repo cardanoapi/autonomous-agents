@@ -37,7 +37,7 @@ export default function AgentPageById() {
                 <ChevronLeft />
                 <span className={'text-base text-brand-Black-300'}>Back</span>
             </div>
-            <div className={'flex h-full min-h-[600px] gap-4 '}>
+            <div className={'flex h-full min-h-[600px] w-full gap-4 '}>
                 <AgentTabSection />
                 <AgentTabContent
                     agent={agent}

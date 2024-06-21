@@ -18,7 +18,7 @@ import {
 import { SearchField } from '@app/components/atoms/SearchField';
 import AgentCard from '@app/components/molecules/AgentCard';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
-import { Skeleton } from '@app/components/ui/skeleton';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { agentCreatedAtom } from '@app/store/loaclStore';
 
 export default function AgentsPage() {

@@ -17,7 +17,7 @@ import {
 } from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
-import { Skeleton } from '@app/components/ui/skeleton';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { templateCreatedAtom } from '@app/store/loaclStore';
 
 import TemplatesContainer from './TemplatesContainer';

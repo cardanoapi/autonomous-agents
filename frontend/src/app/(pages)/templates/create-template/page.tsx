@@ -98,13 +98,13 @@ export default function TemplateForm() {
     useEffect(() => {
         if (functions) {
             setFunctionOptions(
-                functions.map(
-                    (item: IFunction): ITemplateOption => ({
+                functions
+                    .filter((item: IFunction): any => item.num_parameters != 0)
+                    .map((item: IFunction): any => ({
                         label: item.function_name,
                         value: item.function_name,
                         parameters: item.parameters
-                    })
-                )
+                    }))
             );
         }
     }, [functions]);
