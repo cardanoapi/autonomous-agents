@@ -2,7 +2,7 @@ import json
 import uuid
 from datetime import datetime, timezone
 from typing import List, Optional, Union
-from fastapi import HTTPException
+from backend.app.exceptions import HTTPException
 from backend.app.models.trigger.resposne_dto import TriggerResponse
 from backend.app.models.trigger.trigger_dto import (
     TriggerCreateDTO,
@@ -24,7 +24,7 @@ class TriggerRepository:
         elif trigger_data.type == "TOPIC":
             await validate_type_TOPIC(trigger_data.data.topic)
         else:
-            raise HTTPException(400, f"Invalid Trigger Type")
+            raise HTTPException(status_code=400, content=f"Invalid Trigger Type {trigger_data.type}")
         trigger_data_dict = trigger_data.dict()
         trigger_data_dict["id"] = str(uuid.uuid4())
         # for config data
@@ -77,14 +77,14 @@ class TriggerRepository:
     async def retreive_trigger_by_id(self, trigger_id: str) -> Optional[TriggerResponse]:
         trigger = await self.db.prisma.trigger.find_first(where={"id": trigger_id, "deleted_at": None})
         if trigger is None:
-            raise HTTPException(status_code=404, detail="Trigger not found")
+            raise HTTPException(status_code=404, content="Trigger not found")
         else:
             return trigger
 
     async def modify_trigger_by_id(self, trigger_id: str, trigger_data: TriggerCreateDTO) -> Optional[TriggerResponse]:
         trigger = await self.db.prisma.trigger.find_first(where={"id": trigger_id})
         if trigger is None or trigger.deleted_at is not None:
-            raise HTTPException(status_code=404, detail="Trigger not found")
+            raise HTTPException(status_code=404, content="Trigger not found")
         updated_data_dict = trigger_data.dict()
 
         # validation for CRON nad TOPIC
