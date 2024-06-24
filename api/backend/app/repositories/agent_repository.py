@@ -7,7 +7,7 @@ from datetime import datetime, timezone, timedelta
 from typing import List, Optional
 
 import pycardano
-from fastapi import HTTPException
+from backend.app.exceptions.http import HTTPException
 from pycardano import (
     HDWallet,
     PaymentSigningKey,
@@ -60,7 +60,7 @@ class AgentRepository:
         #     status = False
 
         if agent is None:
-            raise HTTPException(status_code=404, detail="Agent not found")
+            raise HTTPException(status_code=404, content="Agent not found")
         else:
             agent_response = AgentResponse(
                 id=agent.id,
@@ -75,7 +75,7 @@ class AgentRepository:
     async def modify_agent(self, agent_id: str, agent_data: AgentCreateDTO) -> Optional[AgentResponse]:
         agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
         if agent is None or agent.deleted_at is not None:
-            raise HTTPException(status_code=404, detail="Agent not found")
+            raise HTTPException(status_code=404, content="Agent not found")
 
         updated_data = agent_data.dict(exclude_unset=True)
         updated_data["updated_at"] = datetime.now(timezone.utc)
@@ -96,7 +96,7 @@ class AgentRepository:
         except Exception as e:
             raise HTTPException(
                 status_code=500,
-                detail=f"Failed to retrieve online agents count: {str(e)}",
+                content=f"Failed to retrieve online agents count: {str(e)}",
             )
 
     async def remove_agent(self, agent_id: str) -> bool:
