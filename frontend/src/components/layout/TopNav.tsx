@@ -2,6 +2,10 @@
 
 import { usePathname } from 'next/navigation';
 
+import { useAtom } from 'jotai';
+
+import { currentAgentNameAtom } from '@app/store/loaclStore';
+
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -10,6 +14,7 @@ import {
 } from '../atoms/DropDownMenu';
 
 export default function TopNav() {
+    const [currentAgentName] = useAtom(currentAgentNameAtom);
     const path: string = usePathname();
 
     const PageTitles: { [key: string]: string } = {
@@ -23,7 +28,7 @@ export default function TopNav() {
     function getPageTitleByRegexMatch() {
         const RegexForAgentIdPage = /^\/agents\/.*$/;
         if (RegexForAgentIdPage.test(path)) {
-            return 'Agent Profile';
+            return currentAgentName;
         } else {
             return '';
         }

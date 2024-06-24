@@ -11,3 +11,5 @@ export const templateDeletedAtom = atom(false);
 type AgentTabType = 'Overview' | 'History';
 
 export const selectedAgentTabAtom = atom<AgentTabType>('Overview');
+
+export const currentAgentNameAtom = atom('Agent Profile');

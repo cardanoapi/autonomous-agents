@@ -8,7 +8,7 @@ const AgentTabSection = () => {
     return (
         <div
             className={
-                'flex min-h-full w-[200px] flex-col gap-2 rounded-lg bg-white py-6'
+                'flex min-h-full min-w-[200px] flex-col gap-2 rounded-lg bg-white py-6'
             }
         >
             {AgentTabType.map((item, index) => {
