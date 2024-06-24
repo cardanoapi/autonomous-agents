@@ -143,7 +143,8 @@ export default function AgentCard({
                         />
                         <Trash2
                             color="#A1A1A1"
-                            onClick={() => {
+                            onClick={(e) => {
+                                e.stopPropagation();
                                 setDialogOpen(true);
                             }}
                             className="hidden hover:cursor-pointer group-hover:flex"
