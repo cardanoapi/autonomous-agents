@@ -60,7 +60,7 @@ class AgentRepository:
         #     status = False
 
         if agent is None:
-            raise HTTPException(status_code=404, content="Agent not found")
+            return None
         else:
             agent_response = AgentResponse(
                 id=agent.id,
@@ -75,8 +75,7 @@ class AgentRepository:
     async def modify_agent(self, agent_id: str, agent_data: AgentCreateDTO) -> Optional[AgentResponse]:
         agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
         if agent is None or agent.deleted_at is not None:
-            raise HTTPException(status_code=404, content="Agent not found")
-
+            return None
         updated_data = agent_data.dict(exclude_unset=True)
         updated_data["updated_at"] = datetime.now(timezone.utc)
 
@@ -102,17 +101,7 @@ class AgentRepository:
     async def remove_agent(self, agent_id: str) -> bool:
         agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
         if agent is None:
-            return False
-        elif agent.deleted_at is not None:
-            return True
-
-        await self.db.prisma.agent.update(where={"id": agent_id}, data={"deleted_at": datetime.now(timezone.utc)})
-        return True
-
-    async def remove_agent(self, agent_id: str) -> bool:
-        agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
-        if agent is None:
-            return False
+            return None
         elif agent.deleted_at is not None:
             return True
 

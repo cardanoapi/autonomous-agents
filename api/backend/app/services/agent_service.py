@@ -12,6 +12,7 @@ from backend.app.services.kafka_service import KafkaService
 from backend.app.services.template_trigger_service import TemplateTriggerService
 from backend.app.services.trigger_service import TriggerService
 from backend.config import settings
+from backend.app.exceptions import HTTPException
 
 
 class AgentService:
@@ -49,6 +50,7 @@ class AgentService:
 
     async def get_agent(self, agent_id: str) -> AgentResponseWithWalletDetails:
         agent = await self.agent_repository.retrieve_agent(agent_id)
+        self.raise_exception_if_agent_not_found(agent)
         agent_with_keys = await self.agent_repository.retreive_agent_key(agent_id)
         utxo = 0
         async with httpx.AsyncClient() as client:
@@ -61,18 +63,27 @@ class AgentService:
         )
 
     async def update_agent(self, agent_id: str, agent_data: AgentCreateDTO) -> AgentResponse:
-        return await self.agent_repository.modify_agent(agent_id, agent_data)
+        agent = await self.agent_repository.modify_agent(agent_id, agent_data)
+        self.raise_exception_if_agent_not_found(agent)
+        return agent
 
     async def get_active_agents_count(self):
         return await self.agent_repository.get_online_agents_count()
 
     async def delete_agent(self, agent_id: str) -> None:
-        await self.agent_repository.remove_agent(agent_id)
+        agent = await self.agent_repository.remove_agent(agent_id)
+        self.raise_exception_if_agent_not_found(agent)
+        return True
 
     async def check_if_agent_exists(self, agent_id: str):
-        await self.agent_repository.retrieve_agent(agent_id)
+        agent = await self.agent_repository.retrieve_agent(agent_id)
+        self.raise_exception_if_agent_not_found(agent)
         return True
 
     async def trigger_agent_action(self, agent_id: str, action: AgentFunction):
         await self.check_if_agent_exists(agent_id)
         await self.kafka_service.publish_message("manual_trigger_event", action.json(), key=agent_id)
+
+    def raise_exception_if_agent_not_found(self, agent):
+        if agent is None or False:
+            raise HTTPException(status_code=404, content="Agent not found")

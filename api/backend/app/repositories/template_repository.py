@@ -3,7 +3,6 @@ import uuid
 from datetime import datetime, timezone
 from typing import List, Optional
 
-from fastapi import HTTPException
 from prisma import Prisma
 
 from backend.app.models import TemplateCreateDto, TemplateResponse
@@ -45,15 +44,12 @@ class TemplateRepository:
 
     async def retrieve_template(self, template_id: str) -> Optional[TemplateResponse]:
         template = await self.db.prisma.template.find_first(where={"id": template_id, "deleted_at": None})
-        if template is None:
-            raise HTTPException(status_code=404, detail="template not found")
-        else:
-            return template
+        return template
 
     async def modify_template(self, template_id: str, template_data: TemplateEditDto):
         template = await self.db.prisma.template.find_first(where={"id": template_id})
         if template is None or template.deleted_at is not None:
-            raise HTTPException(status_code=404, detail="template not found")
+            return None
 
         updated_data = template_data.dict(exclude_unset=True)
         updated_data["updated_at"] = datetime.now(timezone.utc)
@@ -69,7 +65,7 @@ class TemplateRepository:
     async def remove_template(self, template_id: str) -> bool:
         template = await self.db.prisma.template.find_first(where={"id": template_id})
         if template is None:
-            return False
+            return None
         elif template.deleted_at is not None:
             return True
 

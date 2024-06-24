@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import HTTPException
+from backend.app.exceptions.http import HTTPException
 
 from backend.app.models import TemplateResponse, TemplateCreateDto
 from backend.app.models.template.template_dto import TemplateEditDto
@@ -49,10 +49,20 @@ class TemplateService:
         return await self.template_repository.retrieve_templates(page, limit)
 
     async def get_template(self, template_id: str) -> TemplateResponse:
-        return await self.template_repository.retrieve_template(template_id)
+        template = await self.template_repository.retrieve_template(template_id)
+        self.raise_exception_if_template_not_found(template)
+        return template
 
     async def update_template(self, template_id: str, template_data: TemplateEditDto) -> TemplateResponse:
-        return await self.template_repository.modify_template(template_id, template_data)
+        template = await self.template_repository.modify_template(template_id, template_data)
+        self.raise_exception_if_template_not_found(template)
+        return template
 
     async def delete_template(self, template_id: str) -> None:
-        await self.template_repository.remove_template(template_id)
+        template = await self.template_repository.remove_template(template_id)
+        self.raise_exception_if_template_not_found(template)
+        return True
+
+    def raise_exception_if_template_not_found(self, template):
+        if template is None or False:
+            raise HTTPException(status_code=404, content="Template not Found")
