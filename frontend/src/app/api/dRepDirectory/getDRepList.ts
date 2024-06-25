@@ -6,7 +6,7 @@ import axiosClient from '@app/utils/axios';
 
 axiosClient.defaults.baseURL = `${ENVIRONMENTS.GOVTOOL_BASE_URL}/api`;
 
-export type GetDRepListParams = {
+export type GetDRepListArgs = {
     filters?: string[];
     page?: number;
     pageSize?: number;
@@ -29,7 +29,7 @@ export const getDRepList = async ({
     pageSize = 10,
     searchPhrase = '',
     status = []
-}: GetDRepListParams): Promise<DRepListResponse> => {
+}: GetDRepListArgs): Promise<DRepListResponse> => {
     const response = await axiosClient.get('/drep/list', {
         params: {
             page,

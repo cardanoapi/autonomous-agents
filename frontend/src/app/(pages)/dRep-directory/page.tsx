@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { getDRepList } from '@api/dRepDirectory';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { TypographyH2 } from '@typography';
 
 import DataActionBar from '@app/app/components/DataActionBar';
@@ -15,16 +15,30 @@ import DRepCard from './components/DRepCard';
 
 export default function DRepDirectory() {
     const [searchInput, setSearchInput] = useState('');
-    const { isLoading, data } = useQuery({
-        queryKey: [QUERY_KEYS.useGetDRepList, searchInput],
-        queryFn: () => getDRepList({ searchPhrase: searchInput })
-    });
+
+    const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
+        useInfiniteQuery({
+            queryKey: [QUERY_KEYS.useGetDRepList, searchInput],
+            queryFn: ({ pageParam = 0 }) =>
+                getDRepList({ searchPhrase: searchInput, page: pageParam }),
+            getNextPageParam: (lastPage) => {
+                return lastPage.page + 1 < lastPage.total
+                    ? lastPage.page + 1
+                    : undefined;
+            },
+            initialPageParam: 0
+        });
+
+    const dRepList = useMemo(
+        () => data?.pages.flatMap((page) => page.elements),
+        [data]
+    );
 
     const handleSearch = (searchValue: string) => {
         setSearchInput(searchValue);
     };
 
-    if (isLoading) {
+    if (isLoading && dRepList?.length == 0) {
         return <Loader />;
     }
 
@@ -35,12 +49,20 @@ export default function DRepDirectory() {
             <DataActionBar onSearch={handleSearch} />
 
             <div className="flex flex-col space-y-4">
-                {data?.elements.map((dRep) => <DRepCard dRep={dRep} />)}
+                {dRepList?.map((dRep) => <DRepCard dRep={dRep} />)}
             </div>
 
-            <Button className="w-fit rounded-3xl text-blue-900" variant="outline">
-                Show more
-            </Button>
+            {hasNextPage && !isFetchingNextPage && (
+                <div className="flex justify-center">
+                    <Button
+                        onClick={() => fetchNextPage()}
+                        className="w-fit rounded-3xl text-blue-900"
+                        variant="outline"
+                    >
+                        Show more
+                    </Button>
+                </div>
+            )}
         </div>
     );
 }
