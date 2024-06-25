@@ -30,7 +30,7 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
 
     return (
         <div
-            className={`flex w-full items-center justify-between rounded-xl border bg-white p-4 shadow-md ${isDataMissing && 'shadow-red-100'}`}
+            className={`flex w-full items-center justify-between rounded-xl border bg-white p-4 shadow-md ${isDataMissing && 'shadow-bg-red-100 bg-red-100/40'}`}
         >
             <div className="flex space-x-8">
                 <div className="flex flex-col space-y-2">
