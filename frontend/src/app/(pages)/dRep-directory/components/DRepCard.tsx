@@ -60,9 +60,16 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                 </div>
             </div>
 
-            <Button className="rounded-3xl text-blue-900" variant="outline">
-                View Details
-            </Button>
+            <div className="flex space-x-4">
+                <Button
+                    className="rounded-3xl border !border-blue-200 bg-transparent text-blue-900"
+                    variant="outline"
+                >
+                    View Details
+                </Button>
+
+                <Button className="rounded-3xl bg-blue-900">Delegate</Button>
+            </div>
         </div>
     );
 };
