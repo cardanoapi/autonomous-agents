@@ -20,9 +20,9 @@ export interface IDRep {
     votingPower: number;
     status: DRepStatus;
     type: 'DRep' | 'SoleVoter';
-    bio: string | null;
-    dRepName: string | null;
-    email: string | null;
+    bio: string;
+    dRepName?: string;
+    email?: string;
     references: string[];
     metadataValid: boolean;
 }
