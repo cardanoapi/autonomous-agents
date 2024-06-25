@@ -6,6 +6,7 @@ import { DRepStatus, IDRep } from '@models/types';
 import { TypographyH2 } from '@typography';
 import { convertLovelaceToAda } from '@utils';
 import { CopyIcon } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 import { Badge } from '@app/components/atoms/Badge';
 import { Button } from '@app/components/atoms/Button';
@@ -28,6 +29,11 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
         return convertLovelaceToAda(dRep.votingPower).toLocaleString('en-Us');
     }, [dRep.votingPower]);
 
+    const handleCopyDRepId = () => {
+        navigator.clipboard.writeText(dRep.drepId);
+        toast.success('Copied to clipboard');
+    };
+
     return (
         <div
             className={`flex w-full items-center justify-between rounded-xl border bg-white p-4 shadow-md ${isDataMissing && 'shadow-bg-red-100 bg-red-100/40'}`}
@@ -43,7 +49,11 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                         <p className="w-80 truncate text-sm font-medium">
                             {dRep.drepId}
                         </p>
-                        <CopyIcon className="ml-2 cursor-pointer" size={20} />
+                        <CopyIcon
+                            onClick={handleCopyDRepId}
+                            className="ml-2 cursor-pointer"
+                            size={20}
+                        />
                     </div>
                 </div>
 
