@@ -1,9 +1,9 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
 import { getDRepList } from '@api/dRepDirectory';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { TypographyH2, TypographyHeading } from '@typography';
 
 import DataActionBar from '@app/app/components/DataActionBar';
@@ -15,6 +15,7 @@ import AutomaticDelegationOptions from './components/AutomaticDelegationOptions'
 import DRepCard from './components/DRepCard';
 
 export default function DRepDirectory() {
+    const initialLoad = useRef(true);
     const [searchInput, setSearchInput] = useState('');
 
     const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
@@ -31,7 +32,7 @@ export default function DRepDirectory() {
         });
 
     const dRepList = useMemo(
-        () => data?.pages.flatMap((page) => page.elements) || [],
+        () => data?.pages.flatMap((page) => page.elements),
         [data]
     );
 
@@ -39,14 +40,14 @@ export default function DRepDirectory() {
         setSearchInput(searchValue);
     };
 
-    if (isLoading && !dRepList) {
+    if (isLoading && !dRepList && initialLoad.current) {
+        initialLoad.current = false;
+
         return <Loader />;
     }
 
     return (
         <div className="flex flex-col space-y-12 pb-12">
-            <TypographyH2>Find a DRep</TypographyH2>
-
             {/* Automatic Delegation */}
             <div className="flex flex-col space-y-4">
                 <TypographyHeading className="font-normal">
@@ -55,6 +56,7 @@ export default function DRepDirectory() {
                 <AutomaticDelegationOptions />
             </div>
 
+            <TypographyH2>Find a DRep</TypographyH2>
             <DataActionBar onSearch={handleSearch} />
 
             {/* DRep list */}
