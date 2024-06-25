@@ -32,3 +32,15 @@ export const fetchTransactionCountOfAgentById = async (agentId: string) => {
     }
     return await res.json();
 };
+
+export const fetchTriggerHistoryByFunctionName = async (functionName: string) => {
+    const encodedFunctionName = encodeURI(functionName);
+    const res = await fetch(
+        `${baseAPIurl}/trigger-history?function_name=${encodedFunctionName}`
+    );
+    if (!res.ok) {
+        throw new Error('Trigger Fetch Failed: Network Error');
+    }
+    const data = await res.json();
+    return data;
+};

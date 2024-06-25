@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowUp } from 'lucide-react';
+import { ArrowDown, ArrowUp, Minus } from 'lucide-react';
 
 import { cn } from '@app/components/lib/utils';
 import CustomLineChart, {
@@ -59,6 +59,11 @@ export default function OverViewGraphCard({
                     >
                         {changeRate > 0 ? (
                             <ArrowUp
+                                stroke={cn(theme === 'Primary' ? '#FF660F' : '#007900')}
+                                size={20}
+                            />
+                        ) : changeRate === 0 ? (
+                            <Minus
                                 stroke={cn(theme === 'Primary' ? '#FF660F' : '#007900')}
                                 size={20}
                             />
