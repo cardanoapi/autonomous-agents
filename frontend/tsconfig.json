@@ -20,6 +20,7 @@
         "baseUrl": ".",
         "paths": {
             "@configs": ["./src/configs"],
+            "@consts": ["./src/consts"],
             "@typography": ["./src/app/components/typography"],
             "@models/*": ["./src/models/*"],
             "@api/*": ["./src/app/api/*"],

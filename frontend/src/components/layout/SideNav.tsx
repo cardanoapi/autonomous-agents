@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
-import { PATHS } from '@configs';
+import { PATHS } from '@consts';
 import { Boxes, Users, UsersRound } from 'lucide-react';
 
 import Logo from '../icons/Logo';
@@ -43,7 +43,7 @@ const SideNavItems: ISideNavItem[] = [
     },
     {
         title: 'DRep Directory',
-        href: PATHS.DREP_DIRECTORY,
+        href: PATHS.dRepDirectory,
         icon: Boxes
     }
 ];

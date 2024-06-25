@@ -77,7 +77,7 @@ export default function RootLayout({
                                 </div>
                                 <div className="max-h-screen flex-grow flex-col overflow-y-auto overflow-x-clip px-[34px] pt-[3%] 2xl:px-[45px]">
                                     <TopNav />
-                                    <div className="mt-10">{children}</div>
+                                    <div className="mt-10 h-full">{children}</div>
                                 </div>
                             </div>
                             <ModalContainer />

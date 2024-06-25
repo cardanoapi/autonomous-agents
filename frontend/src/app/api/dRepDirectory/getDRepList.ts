@@ -6,7 +6,7 @@ import axiosClient from '@app/utils/axios';
 
 axiosClient.defaults.baseURL = `${ENVIRONMENTS.GOVTOOL_BASE_URL}/api`;
 
-type GetDRepListParams = {
+export type GetDRepListParams = {
     filters?: string[];
     page?: number;
     pageSize?: number;

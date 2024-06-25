@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 
-import { PATHS } from '@configs';
+import { PATHS } from '@consts';
 import { useAtom } from 'jotai';
 
 import { currentAgentNameAtom } from '@app/store/loaclStore';
@@ -24,7 +24,7 @@ export default function TopNav() {
         '/agents/create-agent': 'Agent Form',
         '/templates': 'Template page',
         '/templates/create-template': 'Template Form',
-        [PATHS.DREP_DIRECTORY]: 'DRep Directory'
+        [PATHS.dRepDirectory]: 'DRep Directory'
     };
 
     function getPageTitleByRegexMatch() {
