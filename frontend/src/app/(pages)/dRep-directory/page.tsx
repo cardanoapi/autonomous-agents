@@ -31,7 +31,7 @@ export default function DRepDirectory() {
         });
 
     const dRepList = useMemo(
-        () => data?.pages.flatMap((page) => page.elements),
+        () => data?.pages.flatMap((page) => page.elements) || [],
         [data]
     );
 
