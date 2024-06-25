@@ -75,7 +75,7 @@ export default function RootLayout({
                                 <div className="hidden min-h-screen w-[275px] min-w-[275px] lg:flex ">
                                     <SideNav />
                                 </div>
-                                <div className="no-scrollbar mt-[3%] min-h-full flex-grow flex-col overflow-y-auto overflow-x-clip px-[34px] 2xl:px-[45px]">
+                                <div className="max-h-screen flex-grow flex-col overflow-y-auto overflow-x-clip px-[34px] pt-[3%] 2xl:px-[45px]">
                                     <TopNav />
                                     <div className="mt-10">{children}</div>
                                 </div>
