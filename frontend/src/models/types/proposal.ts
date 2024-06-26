@@ -1,10 +1,3 @@
-export interface ProposalResponse {
-    page: number;
-    pageSize: number;
-    total: number;
-    elements: IProposal[];
-}
-
 export interface IProposal {
     id: string;
     txHash: string;
@@ -28,4 +21,10 @@ export interface IProposal {
     abstainVotes: number;
     metadataStatus: null | string;
     metadataValid: boolean;
+}
+
+export enum ProposalListSort {
+    SonnestToExpire = 'SoonestToExpire',
+    NewestCreated = 'NewestCreated',
+    Status = 'MostYesVotes'
 }
