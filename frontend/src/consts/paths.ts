@@ -1,3 +1,4 @@
 export const PATHS = {
-    dRepDirectory: '/dRep-directory'
+    dRepDirectory: '/dRep-directory',
+    governanceActions: '/governance-actions'
 };
