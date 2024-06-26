@@ -10,25 +10,33 @@ interface ProposalCardProps {
     proposal: IProposal;
 }
 const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
+    const isDataMissing = proposal.title === null;
+
     const handleCopyGovernanceActionId = () => {
         navigator.clipboard.writeText(`${proposal.txHash}#${proposal.index}`);
         toast.success('Copied to clipboard');
     };
 
     return (
-        <div className="boxShadow mb-10 flex w-full max-w-[350px] flex-col justify-between rounded-[20px] ">
-            <div className=" flex h-full w-full flex-col gap-5 rounded-t-[20px] bg-brand-White-200  px-6 pb-6 pt-10">
-                <p className="line-clamp-2 text-[18px]  font-semibold leading-[24px]">
-                    {proposal.title}
+        <div className="boxShadow flex w-full flex-col justify-between rounded-[20px]">
+            <div
+                className={`flex h-full w-full flex-col gap-5 rounded-t-[20px]  ${isDataMissing ? 'shadow-bg-red-100 bg-red-100/40' : 'bg-brand-White-200'}  px-6 pb-6 pt-10`}
+            >
+                <p
+                    className={`line-clamp-2 text-[18px]  font-semibold leading-[24px] ${isDataMissing && 'text-red-600'}`}
+                >
+                    {isDataMissing ? 'Data Missing' : proposal.title}
                 </p>
-                <div className="flex flex-col gap-1">
-                    <p className=" text- text-brand-Gray-50 text-[12px] font-medium leading-[16px]">
-                        Abstract
-                    </p>
-                    <p className="line-clamp-2 text-[14px] leading-[20px] text-brand-Black-300">
-                        {proposal.abstract}
-                    </p>
-                </div>
+                {proposal.abstract !== null && (
+                    <div className="flex flex-col gap-1">
+                        <p className=" text- text-brand-Gray-50 text-[12px] font-medium leading-[16px]">
+                            Abstract
+                        </p>
+                        <p className="line-clamp-2 text-[14px] leading-[20px] text-brand-Black-300">
+                            {proposal.abstract}
+                        </p>
+                    </div>
+                )}
                 <div className="flex flex-col gap-1">
                     <p className="text-brand-Gray-50 text-xs font-medium">
                         Governance Action Type
@@ -72,7 +80,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                 </div>
             </div>
             <div className="flex w-full rounded-b-[20px] bg-white p-6">
-                <Button className="bg-brand-primaryBlue w-full rounded-[100px]">
+                <Button className="bg-brand-primaryBlue hover:bg-brand-navy w-full rounded-[100px] hover:shadow-lg">
                     Vote
                 </Button>
             </div>

@@ -33,6 +33,7 @@ const config = {
                     100: '',
                     lightBlue: '#D6E2FF',
                     primaryBlue: '#0033AD',
+                    navy: '#000080',
                     Blue: {
                         100: '#1C63E71F',
                         200: '#1C63E7',
