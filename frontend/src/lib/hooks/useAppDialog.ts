@@ -1,19 +1,11 @@
-import React from 'react';
-
-import { atom, useAtom } from 'jotai';
-
-const dialogAtom = atom<boolean>(false);
+import { useState } from 'react';
 
 export function useAppDialog() {
-    const [isDialogOpen, setDialogOpen] = useAtom(dialogAtom);
+    const [isOpen, setOpen] = useState(false);
 
-    const openDialog = () => {
-        setDialogOpen(true);
+    const toggleDialog = () => {
+        setOpen(!isOpen);
     };
 
-    const closeDialog = () => {
-        setDialogOpen(false);
-    };
-
-    return { isDialogOpen, openDialog, closeDialog, setDialogOpen };
+    return { isOpen, toggleDialog };
 }

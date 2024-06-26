@@ -1,8 +1,5 @@
 import React from 'react';
 
-import { useAppDialog } from '@hooks';
-import { Cross2Icon } from '@radix-ui/react-icons';
-
 import {
     Dialog,
     DialogContent,
@@ -12,35 +9,48 @@ import {
 } from '@app/components/atoms/Dialog';
 
 interface AppDialogProps extends React.PropsWithChildren {
+    isOpen?: boolean;
+    toggleDialog?: (open: boolean) => void;
+}
+
+interface AppDialogContentProps extends React.PropsWithChildren {
     title?: string;
     description?: string;
     className?: string;
 }
 
-export default function AppDialog(props: AppDialogProps) {
+export const AppDialogContent: React.FC<AppDialogContentProps> = (props) => {
     const { title, description, children, className } = props;
 
-    const { isDialogOpen, closeDialog, setDialogOpen } = useAppDialog();
+    return (
+        <DialogContent className={className}>
+            <DialogHeader className="mb-2">
+                {title && <DialogTitle>{title}</DialogTitle>}
+                {description && <DialogDescription>{description}</DialogDescription>}
+            </DialogHeader>
+
+            {children}
+        </DialogContent>
+    );
+};
+
+const AppDialog: React.FC<AppDialogProps> = ({ isOpen, toggleDialog, children }) => {
+    let contentElement: React.ReactNode = null;
+
+    React.Children.forEach(children, (child) => {
+        if (
+            React.isValidElement(child) &&
+            child.type.toString().includes('DialogContent')
+        ) {
+            contentElement = child;
+        }
+    });
 
     return (
-        <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
-            <DialogContent className={className}>
-                <DialogHeader className="mb-2">
-                    {title && <DialogTitle>{title}</DialogTitle>}
-                    {description && (
-                        <DialogDescription>{description}</DialogDescription>
-                    )}
-                    <div
-                        onClick={closeDialog}
-                        className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute right-4 top-4 cursor-pointer rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none"
-                    >
-                        <Cross2Icon className="h-4 w-4" />
-                        <span className="sr-only">Close</span>
-                    </div>
-                </DialogHeader>
-
-                <div>{children}</div>
-            </DialogContent>
+        <Dialog open={isOpen} onOpenChange={toggleDialog}>
+            {contentElement}
         </Dialog>
     );
-}
+};
+
+export default AppDialog;
