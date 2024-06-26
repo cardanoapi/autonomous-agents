@@ -48,18 +48,31 @@ export const postTemplateData = async (
         name: formData.name,
         description: formData.description,
         template_triggers: formData.triggers.map((item: ITemplateOption) => ({
-            type: 'CRON',
-            action: {
-                function_name: item.label,
-                parameter: item?.cronParameters?.map((param) => ({
-                    name: param.name,
-                    value: param.value
-                }))
-            },
-            data: {
-                frequency: item.cronExpression?.join(' '),
-                probability: item.probability
-            }
+            type: item.type,
+            action:
+                item.type === 'CRON'
+                    ? {
+                          function_name: item.label,
+                          parameter: item?.cronParameters?.map((param) => ({
+                              name: param.name,
+                              value: param.value
+                          }))
+                      }
+                    : {
+                          function_name: 'Vote',
+                          parameter: []
+                      },
+
+            data:
+                item.type === 'CRON'
+                    ? {
+                          frequency: item.cronExpression?.join(' '),
+                          probability: item.probability
+                      }
+                    : {
+                          event: 'VoteEvent',
+                          parameters: []
+                      }
         }))
     };
 

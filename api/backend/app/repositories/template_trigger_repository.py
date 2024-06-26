@@ -9,12 +9,12 @@ from prisma import Prisma
 
 from backend.app.models import (
     validate_type_CRON,
-    validate_type_TOPIC,
     CronTriggerDTO,
-    TopicTriggerDTO,
+    EventTriggerDTO,
     TemplateTriggerResponse,
     TemplateTriggerCreateDto,
     TriggerCreateDTO,
+    validate_type_EVENT,
 )
 from backend.config.database import prisma_connection
 
@@ -29,8 +29,8 @@ class TemplateTriggerRepository:
 
         if template_data.type == "CRON":
             await validate_type_CRON(template_data.data.frequency, template_data.data.probability)
-        elif template_data.type == "TOPIC":
-            await validate_type_TOPIC(template_data.data.topic)
+        elif template_data.type == "EVENT":
+            await validate_type_EVENT(template_data.data.event)
         else:
             raise HTTPException(status_code=400, content=f"Invalid Trigger Type {template_data.type}")
 
@@ -85,8 +85,8 @@ class TemplateTriggerRepository:
         if template_data.type == "CRON":
             await validate_type_CRON(template_data.data.frequency, template_data.data.probability)
 
-        if template_data.type == "TOPIC":
-            await validate_type_TOPIC(template_data.data.topic)
+        if template_data.type == "EVENT":
+            await validate_type_EVENT(template_data.data.event)
 
         # for config data
         data_dict = updated_data_dict.pop("data")
@@ -125,10 +125,10 @@ class TemplateTriggerRepository:
         )
         return True
 
-    def _convert_data_to_dto(self, trigger_type: str, data_dict: dict) -> Union[CronTriggerDTO, TopicTriggerDTO]:
+    def _convert_data_to_dto(self, trigger_type: str, data_dict: dict) -> Union[CronTriggerDTO, EventTriggerDTO]:
         if trigger_type == "CRON":
             return CronTriggerDTO(**data_dict)
-        elif trigger_type == "TOPIC":
-            return TopicTriggerDTO(**data_dict)
+        elif trigger_type == "EVENT":
+            return EventTriggerDTO(**data_dict)
         else:
             raise ValueError("Invalid trigger type")

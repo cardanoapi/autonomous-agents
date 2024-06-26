@@ -102,7 +102,9 @@ export async function triggerAction(
                     globalState.agentWalletDetails.payment_signing_key,
                     globalState.agentWalletDetails.drep_id,
                     globalState.agentWalletDetails.stake_signing_key,
-                    getParameterValue(action.parameter, 'proposal') || ''
+                    getParameterValue(action.parameter, 'proposal') || '',
+                    getParameterValue(action.parameter, 'anchorUrl') || '',
+                    getParameterValue(action.parameter, 'anchorHash') || ''
                 )
                 break
             case 'Info Action Proposal':
@@ -175,8 +177,8 @@ export async function scheduleFunctions(configurations: Configuration[]) {
     clearScheduledTasks()
 
     configurations.forEach((config) => {
-        const { data, action } = config
-        if (action) {
+        const { data, action, type } = config
+        if (action && type === 'CRON') {
             const { frequency, probability } = data
             const task = createTask(action, frequency, probability)
             scheduledTasks.push(task)

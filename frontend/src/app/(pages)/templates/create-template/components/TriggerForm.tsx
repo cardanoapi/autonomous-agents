@@ -52,6 +52,7 @@ export default function TriggerForm({
     );
     const [probability, setProbability] = useState<string>('100');
     const [errorMsg, setErrorMsg] = useState('');
+    const [triggerType, setTriggerType] = useState('CRON');
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -94,7 +95,6 @@ export default function TriggerForm({
 
     const handleProbabilityChange = (value: string) => {
         setErrorMsg('');
-        console.log('valye : ', value, +value);
         if (!value) {
             setProbability('');
         } else {
@@ -149,6 +149,7 @@ export default function TriggerForm({
                     })}
                 </div>
                 <TriggerTab
+                    setTriggerType={setTriggerType}
                     onChange={updateCronExpression}
                     defaultCron={cronExpression}
                     previousSelectedOption={defaultSelected}
@@ -203,6 +204,7 @@ export default function TriggerForm({
                         type="submit"
                         onClick={() => {
                             onSave?.({
+                                inputType: triggerType,
                                 inputLabel: formValues?.label,
                                 inputCronParameters: cronParameters,
                                 inputCronExpression: cronExpression,

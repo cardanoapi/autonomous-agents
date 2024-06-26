@@ -4,7 +4,7 @@ from typing import Union, Optional
 from backend.app.models.trigger.trigger_dto import (
     Action,
     CronTriggerDTO,
-    TopicTriggerDTO,
+    EventTriggerDTO,
 )
 
 
@@ -13,7 +13,7 @@ class TriggerResponse(BaseModel):
     agent_id: str
     type: str
     action: Optional[Action] = None
-    data: Optional[Union[CronTriggerDTO, TopicTriggerDTO]] = None
+    data: Optional[Union[CronTriggerDTO, EventTriggerDTO]] = None
 
 
 # class TriggerResponse_agent_id(BaseModel):

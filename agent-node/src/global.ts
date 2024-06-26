@@ -10,3 +10,11 @@ export type AgentWalletDetails = {
 export const globalState: { agentWalletDetails: AgentWalletDetails | null } = {
     agentWalletDetails: null,
 }
+
+export const AgentWithTriggerTypeEvent: {
+    eventType: boolean
+    function_name: string
+} = {
+    eventType: false,
+    function_name: '',
+}

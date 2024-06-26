@@ -80,12 +80,13 @@ export const handleTransaction = async (
 
         if (data.messageType == 'action') {
             if (data.trigger == 'true') {
-                const kuberUrlSendAda = kuberBaseUrl + data.payload.url
+                const kuberUrl = kuberBaseUrl + data.payload.url
                 const options = data.payload.options
                 options.headers['api-key'] = kuberApiKey
                 try {
-                    const response = await fetch(kuberUrlSendAda, options)
+                    const response = await fetch(kuberUrl, options)
                     if (!response.ok) {
+                        console.log('failed reques', options)
                         const responseBody = await response.text()
                         let responseJson
                         try {

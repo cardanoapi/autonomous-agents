@@ -15,8 +15,8 @@ class SubParameter(BaseModel):
     value: str
 
 
-class TopicTriggerDTO(BaseModel):
-    topic: str
+class EventTriggerDTO(BaseModel):
+    event: str
     parameters: Optional[list[SubParameter]]
 
 
@@ -28,7 +28,7 @@ class Action(BaseModel):
 class TriggerCreateDTO(BaseModel):
     type: str
     action: Optional[Action] = None
-    data: Optional[Union[CronTriggerDTO, TopicTriggerDTO]] = None
+    data: Optional[Union[CronTriggerDTO, EventTriggerDTO]] = None
 
 
 # validation for cron expression
@@ -43,7 +43,7 @@ async def validate_type_CRON(cron_expression: str, probability: float):
 
 
 # validation for Topic
-async def validate_type_TOPIC(value: str):
+async def validate_type_EVENT(value: str):
     try:
         if value.isnumeric():
             raise HTTPException(400, f"Invalid topic :")
