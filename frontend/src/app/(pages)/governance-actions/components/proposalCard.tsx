@@ -29,25 +29,25 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                 </p>
                 {proposal.abstract !== null && (
                     <div className="flex flex-col gap-1">
-                        <p className=" text- text-brand-Gray-50 text-[12px] font-medium leading-[16px]">
+                        <p className="  text-xs font-medium  text-brand-Gray-50">
                             Abstract
                         </p>
-                        <p className="line-clamp-2 text-[14px] leading-[20px] text-brand-Black-300">
+                        <p className="line-clamp-2 text-sm text-brand-Black-300">
                             {proposal.abstract}
                         </p>
                     </div>
                 )}
                 <div className="flex flex-col gap-1">
-                    <p className="text-brand-Gray-50 text-xs font-medium">
+                    <p className="text-xs font-medium text-brand-Gray-50">
                         Governance Action Type
                     </p>
-                    <p className="bg-brand-lightBlue w-min rounded-[100px] px-[18px] py-[6px] text-xs text-brand-Black-300">
+                    <p className=" w-fit rounded-[100px] bg-brand-lightBlue px-[18px] py-[6px] text-xs  text-brand-Black-300">
                         {proposal.type}
                     </p>
                 </div>
 
-                <div className="border-brand-lightBlue rounded-xl border text-xs ">
-                    <div className="bg-brand-lightBlue space-x-1 bg-opacity-50 py-[6px] text-center ">
+                <div className="rounded-xl border border-brand-lightBlue text-xs ">
+                    <div className="space-x-1 bg-brand-lightBlue bg-opacity-50 py-[6px] text-center ">
                         <span>Submitted:</span>
                         <span className="font-medium">
                             {formatDisplayDate(proposal.createdDate)}
@@ -66,7 +66,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                     <p className="text-xs font-medium text-[#8E908E]">
                         Governance Action Id
                     </p>
-                    <div className="text-brand-primaryBlue flex justify-between gap-2">
+                    <div className="flex justify-between gap-2 text-brand-primaryBlue">
                         <Typography className="text-sm" noWrap>
                             {proposal.txHash}#{proposal.index}
                         </Typography>
@@ -80,7 +80,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                 </div>
             </div>
             <div className="flex w-full rounded-b-[20px] bg-white p-6">
-                <Button className="bg-brand-primaryBlue hover:bg-brand-navy w-full rounded-[100px] hover:shadow-lg">
+                <Button className="w-full rounded-[100px] bg-brand-primaryBlue hover:bg-brand-navy hover:shadow-lg">
                     Vote
                 </Button>
             </div>
