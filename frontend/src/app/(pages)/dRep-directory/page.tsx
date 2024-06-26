@@ -11,7 +11,6 @@ import Loader from '@app/app/components/Loader';
 import { Button } from '@app/components/atoms/Button';
 import { QUERY_KEYS } from '@app/consts/queryKeys';
 
-import AutomaticDelegationOptions from './components/AutomaticDelegationOptions';
 import DRepCard from './components/DRepCard';
 
 export default function DRepDirectory() {
@@ -53,7 +52,6 @@ export default function DRepDirectory() {
                 <TypographyHeading className="font-normal">
                     Delegation Options
                 </TypographyHeading>
-                <AutomaticDelegationOptions />
             </div>
 
             <TypographyH2>Find a DRep</TypographyH2>
