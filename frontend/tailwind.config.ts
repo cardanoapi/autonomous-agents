@@ -31,6 +31,8 @@ const config = {
                 background: '#FFFFFF',
                 brand: {
                     100: '',
+                    lightBlue: '#D6E2FF',
+                    primaryBlue: '#0033AD',
                     Blue: {
                         100: '#1C63E71F',
                         200: '#1C63E7',
@@ -42,6 +44,7 @@ const config = {
                         300: '#2E2E2E'
                     },
                     Gray: {
+                        50: '#8E908E',
                         100: '#AAAAAA',
                         200: '#2E2E2E',
                         300: '#4A4A4A',
