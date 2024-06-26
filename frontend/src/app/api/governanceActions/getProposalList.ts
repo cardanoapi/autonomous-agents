@@ -25,7 +25,7 @@ export const getProposalList = async ({
     sorting,
     filters = [],
     page = 0,
-    pageSize = 50,
+    pageSize = 10,
     searchPhrase = '',
     dRepId
 }: GetproposalListArgs): Promise<ProposalResponse> => {

@@ -27,7 +27,9 @@ function GovernanceAction() {
                     sorting: ProposalListSort.NewestCreated
                 }),
             getNextPageParam: (lastPage) => {
-                return searchInput === '' && lastPage.page + 1 < lastPage.total
+                return searchInput === '' &&
+                    lastPage.pageSize * lastPage.page + lastPage.pageSize <
+                        lastPage.total
                     ? lastPage.page + 1
                     : undefined;
             },
@@ -39,6 +41,7 @@ function GovernanceAction() {
         [data]
     );
 
+    console.log(proposalList?.length, 'length');
     const handleSearch = (searchValue: string) => {
         setSearchInput(searchValue);
     };
@@ -50,20 +53,20 @@ function GovernanceAction() {
     }
 
     return (
-        <div className=" flex w-full flex-col gap-10">
+        <div className="flex w-full flex-col gap-10 pb-10">
             <SearchField
                 placeholder="Search..."
                 variant={'secondary'}
                 className="h-10 max-w-[510px] "
                 onSearch={handleSearch}
             ></SearchField>
-            <div className=" grid w-full grid-flow-row grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <div className="grid w-full grid-flow-row grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 {proposalList?.map((proposal) => (
                     <ProposalCard key={proposal.id} proposal={proposal} />
                 ))}
             </div>
             {hasNextPage && !isFetchingNextPage && (
-                <div className="flex justify-center">
+                <div className=" flex justify-center">
                     <Button
                         onClick={() => fetchNextPage()}
                         className="w-fit rounded-3xl text-blue-900"
