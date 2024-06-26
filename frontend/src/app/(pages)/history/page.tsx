@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { useQuery } from '@tanstack/react-query';
 
+import { IFunction, fetchFunctions } from '@app/app/api/functions';
 import {
     IAgentTriggerHistory,
     fetchAllTriggerHistory
@@ -23,15 +24,19 @@ export default function LogsPage() {
         queryKey: ['LogsHistory'],
         queryFn: fetchAllTriggerHistory
     });
+    const { data: agentFunctions = [] } = useQuery({
+        queryKey: ['AgentFunctions'],
+        queryFn: fetchFunctions
+    });
 
     const [statusFilter, setStatusFilter] = useState('Filter');
-    const [searchKeyword, setSearchKeyword] = useState('');
+    const [searchKeywordFilter, setSearchKeywordFilter] = useState('');
+    const [functionFilter, setFunctionFilter] = useState('Function');
     const [filteredLogs, setFilteredLogs] = useState<IAgentTriggerHistory[]>([]);
 
-    function filterbyLogStatus(
-        targetStatus: string,
-        sourceLogs: IAgentTriggerHistory[]
-    ) {
+    const statusOptions = ['Success', 'Skipped', 'Failed'];
+
+    function filterbyStatus(sourceLogs: IAgentTriggerHistory[]) {
         let newLogs = sourceLogs;
         switch (statusFilter) {
             case 'Success':
@@ -58,12 +63,17 @@ export default function LogsPage() {
         return newLogs;
     }
 
-    function filterbyAgentID(
-        targetAgentID: string,
-        sourceLogs: IAgentTriggerHistory[]
-    ) {
+    function filterbyAgentID(sourceLogs: IAgentTriggerHistory[]) {
         const newLogs = sourceLogs.filter((history: IAgentTriggerHistory) =>
-            history.agentId.includes(targetAgentID)
+            history.agentId.includes(searchKeywordFilter)
+        );
+        return newLogs;
+    }
+
+    //TODO : Implement function filtering using the Backend API directly instead of filtering here.
+    function filterbyFunction(sourceLogs: IAgentTriggerHistory[]) {
+        const newLogs = sourceLogs.filter(
+            (history: IAgentTriggerHistory) => history.functionName === functionFilter
         );
         return newLogs;
     }
@@ -72,23 +82,30 @@ export default function LogsPage() {
         setStatusFilter(status === 'None' ? 'Filter' : status);
     }
 
-    function handleSearch(targetAgentID: string) {
-        setSearchKeyword(targetAgentID);
+    function applyFunctionFilter(filter: string) {
+        setFunctionFilter(filter === 'All' ? 'Filter' : filter);
     }
+
+    function handleSearch(targetAgentID: string) {
+        setSearchKeywordFilter(targetAgentID);
+    }
+
     useEffect(() => {
         if (LogsHistory?.items) {
             let newLogs = LogsHistory?.items;
-
             // Check if any filtering options are active
             if (statusFilter !== 'Filter') {
-                newLogs = filterbyLogStatus(statusFilter, newLogs);
+                newLogs = filterbyStatus(newLogs);
             }
-            if (searchKeyword.length !== 0) {
-                newLogs = filterbyAgentID(searchKeyword, newLogs);
+            if (functionFilter !== 'Function') {
+                newLogs = filterbyFunction(newLogs);
+            }
+            if (searchKeywordFilter.length !== 0) {
+                newLogs = filterbyAgentID(newLogs);
             }
             setFilteredLogs(newLogs);
         }
-    }, [statusFilter, LogsHistory, searchKeyword]);
+    }, [searchKeywordFilter, functionFilter, statusFilter, LogsHistory]);
 
     return (
         <div>
@@ -99,11 +116,23 @@ export default function LogsPage() {
                     onSearch={handleSearch}
                 />
                 <DropdownMenu>
-                    <DropdownMenuTrigger border={true}>Function</DropdownMenuTrigger>
+                    <DropdownMenuTrigger border={true}>
+                        {functionFilter}
+                    </DropdownMenuTrigger>
                     <DropdownMenuContent className="bg-white">
-                        <DropdownMenuItem>Send Ada</DropdownMenuItem>
-                        <DropdownMenuItem>Vote Proposal</DropdownMenuItem>
-                        <DropdownMenuItem>Others</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => applyFunctionFilter('All')}>
+                            All
+                        </DropdownMenuItem>
+                        {agentFunctions?.map((agentFunction: IFunction, index) => (
+                            <DropdownMenuItem
+                                key={index}
+                                onClick={() =>
+                                    applyFunctionFilter(agentFunction.function_name)
+                                }
+                            >
+                                {agentFunction.function_name}
+                            </DropdownMenuItem>
+                        ))}
                     </DropdownMenuContent>
                 </DropdownMenu>
                 <DropdownMenu>
@@ -114,15 +143,14 @@ export default function LogsPage() {
                         <DropdownMenuItem onClick={() => applyStatusFilter('None')}>
                             All
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => applyStatusFilter('Success')}>
-                            Success
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => applyStatusFilter('Skipped')}>
-                            Skipped
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => applyStatusFilter('Failed')}>
-                            Failed
-                        </DropdownMenuItem>
+                        {statusOptions.map((status: string, index) => (
+                            <DropdownMenuItem
+                                onClick={() => applyStatusFilter(status)}
+                                key={index}
+                            >
+                                {status}
+                            </DropdownMenuItem>
+                        ))}
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
