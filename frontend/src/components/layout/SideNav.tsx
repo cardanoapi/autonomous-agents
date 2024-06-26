@@ -56,8 +56,8 @@ const SideNavItems: ISideNavItem[] = [
         icon: GovernanceActionIcon
     },
     {
-        title: 'Logs',
-        href: '/logs',
+        title: 'History',
+        href: '/history',
         icon: LogsIcon
     }
 ];
