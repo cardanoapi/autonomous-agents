@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 
+import { useAppDialog } from '@hooks';
 import { DRepStatus, IDRep } from '@models/types';
 import { TypographyH2 } from '@typography';
 import { convertLovelaceToAda } from '@utils';
@@ -10,16 +11,8 @@ import toast from 'react-hot-toast';
 
 import { Badge } from '@app/components/atoms/Badge';
 import { Button } from '@app/components/atoms/Button';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger
-} from '@app/components/atoms/Dialog';
 
-import AgentList from './AgentList';
+import AgentsDelegationDealog from './AgentsDelegationDialog';
 
 const statusColor: Record<DRepStatus, string> = {
     Active: 'text-green-600',
@@ -33,6 +26,8 @@ interface DRepCardProps {
 }
 
 const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
+    const { openDialog } = useAppDialog();
+
     const isDataMissing = dRep.dRepName === null;
 
     const formattedVotingPower = useMemo(() => {
@@ -80,24 +75,10 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                 </div>
             </div>
 
-            <Dialog>
-                <DialogTrigger asChild>
-                    <Button className="rounded-3xl bg-blue-900">Delegate</Button>
-                </DialogTrigger>
-
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>
-                            Delegate to {dRep.dRepName ?? 'Data Missing'}
-                        </DialogTitle>
-                        <DialogDescription>
-                            Select agents to delegate.
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    <AgentList />
-                </DialogContent>
-            </Dialog>
+            <Button onClick={openDialog} className="rounded-3xl bg-blue-900">
+                Delegate
+            </Button>
+            <AgentsDelegationDealog />
         </div>
     );
 };
