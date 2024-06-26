@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "TriggerType" AS ENUM ('CRON', 'TOPIC');
+CREATE TYPE "TriggerType" AS ENUM ('CRON', 'EVENT');
 
 -- CreateTable
 CREATE TABLE "Agent" (
