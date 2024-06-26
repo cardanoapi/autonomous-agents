@@ -44,7 +44,7 @@ const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
     );
 };
 
-const AgentLogCard = ({ history }: { history: IAgentTriggerHistory }) => {
+export const AgentLogCard = ({ history }: { history: IAgentTriggerHistory }) => {
     function getAgentExecutionStatus() {
         if (!history.status) return 'Skipped';
         else if (history.success) return 'Success';

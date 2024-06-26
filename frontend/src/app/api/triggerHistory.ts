@@ -44,3 +44,12 @@ export const fetchTriggerHistoryByFunctionName = async (functionName: string) =>
     const data = await res.json();
     return data;
 };
+
+export const fetchAllTriggerHistory = async () => {
+    const res = await fetch(`${baseAPIurl}/trigger-history`);
+    if (!res.ok) {
+        throw new Error('Trigger Fetch Failed: Network Error');
+    }
+    const data = await res.json();
+    return data;
+};

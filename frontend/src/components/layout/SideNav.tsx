@@ -25,6 +25,9 @@ const DashBoardIcon = dynamic(() => import('@app/components/icons/DashboardIcon'
 const TemplateIcon = dynamic(() => import('@app/components/icons/TemplatesIcon'), {
     ssr: false
 });
+const LogsIcon = dynamic(() => import('@app/components/icons/LogsIcon'), {
+    ssr: false
+});
 
 const SideNavItems: ISideNavItem[] = [
     {
@@ -51,6 +54,11 @@ const SideNavItems: ISideNavItem[] = [
         title: 'Governance Actions',
         href: PATHS.governanceActions,
         icon: GovernanceActionIcon
+    },
+    {
+        title: 'Logs',
+        href: '/logs',
+        icon: LogsIcon
     }
 ];
 
