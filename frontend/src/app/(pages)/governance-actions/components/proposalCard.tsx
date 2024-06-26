@@ -4,6 +4,7 @@ import { CopyIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import { Button } from '@app/components/atoms/Button';
+import { formatDisplayDate } from '@app/utils/dateAndTimeUtils';
 
 interface ProposalCardProps {
     proposal: IProposal;
@@ -38,13 +39,19 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                 </div>
 
                 <div className="border-brand-lightBlue rounded-xl border text-xs ">
-                    <p className="bg-brand-lightBlue bg-opacity-50 py-[6px] text-center opacity-50">
-                        Submitted:
-                        <span className="font-medium"> {proposal.createdDate}</span>
-                    </p>
-                    <p className="py-[6px] text-center">
-                        Expires:
-                        <span className="font-medium"> {proposal.expiryDate}</span>
+                    <div className="bg-brand-lightBlue space-x-1 bg-opacity-50 py-[6px] text-center ">
+                        <span>Submitted:</span>
+                        <span className="font-medium">
+                            {formatDisplayDate(proposal.createdDate)}
+                        </span>
+                        <span>(Epoch {proposal.createdEpochNo})</span>
+                    </div>
+                    <p className="space-x-1 py-[6px] text-center">
+                        <span>Expires:</span>
+                        <span className="font-medium">
+                            {formatDisplayDate(proposal.expiryDate)}
+                        </span>
+                        <span>(Epoch {proposal.expiryEpochNo})</span>
                     </p>
                 </div>
                 <div className="flex flex-col gap-1">

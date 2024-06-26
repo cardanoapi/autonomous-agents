@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+
 export default function parseTimestamp(timestamp: string) {
     const dateObj = new Date(timestamp);
 
@@ -14,3 +16,6 @@ export default function parseTimestamp(timestamp: string) {
     const hour = String(hours).padStart(2, '0');
     return `${year}-${month}-${day} ${hour}:${minutes} ${period}`;
 }
+
+export const formatDisplayDate = (date: string | Date, outputFormat = 'do MMM yyyy') =>
+    format(new Date(date), outputFormat).toString();
