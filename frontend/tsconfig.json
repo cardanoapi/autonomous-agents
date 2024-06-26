@@ -19,6 +19,7 @@
         ],
         "baseUrl": ".",
         "paths": {
+            "@hooks": ["./src/lib/hooks"],
             "@configs": ["./src/configs"],
             "@consts": ["./src/consts"],
             "@typography": ["./src/app/components/typography"],
