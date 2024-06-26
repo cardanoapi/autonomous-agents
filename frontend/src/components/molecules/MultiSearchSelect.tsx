@@ -199,21 +199,17 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
         const debouncedSearchTerm = useDebounce(inputValue, delay || 500);
         const [disabledValue, setDisabledValue] = React.useState(disabled);
 
-        React.useImperativeHandle(
-            ref,
-            () => {
-                return {
-                    selectedValue: [...selected],
-                    input: inputRef.current as HTMLInputElement,
-                    handleUnselect:
-                        handleUnselect ||
-                        (() => {
-                            console.log('No handle unselect provided');
-                        })
-                };
-            },
-            [selected]
-        );
+        React.useImperativeHandle(ref, () => {
+            return {
+                selectedValue: [...selected],
+                input: inputRef.current as HTMLInputElement,
+                handleUnselect:
+                    handleUnselect ||
+                    (() => {
+                        console.log('No handle unselect provided');
+                    })
+            };
+        }, [selected]);
 
         const handleUnselect = React.useCallback(
             (option: IOption) => {

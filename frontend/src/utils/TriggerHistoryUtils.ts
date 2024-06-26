@@ -1,4 +1,3 @@
-import { ITrigger } from '@app/app/api/trigger';
 import { IAgentTriggerHistory } from '@app/app/api/triggerHistory';
 
 export function filterSuccessTriggers(triggers: IAgentTriggerHistory[]) {

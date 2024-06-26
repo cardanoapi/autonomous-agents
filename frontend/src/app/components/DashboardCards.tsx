@@ -37,16 +37,16 @@ const DashboardCards = () => {
         queryKey: ['templates'],
         queryFn: fetchTemplates
     });
-    const { data: infoActionProposalsHistory = [] } = useQuery({
-        queryKey: ['infoActionProposalsHistory'],
+    const { data: infoActionProposalHistory = [] } = useQuery({
+        queryKey: ['infoActionProposalHistory'],
         queryFn: () => fetchTriggerHistoryByFunctionName('Info Action Proposal')
     });
-    const { data: proposalNewConstitutionsHistory = [] } = useQuery({
+    const { data: proposalNewConstitutionHistory = [] } = useQuery({
         queryKey: ['propsalNewConstitutionHistory'],
         queryFn: () => fetchTriggerHistoryByFunctionName('Proposal New Constitution')
     });
-    const { data: votesHistory = [] } = useQuery({
-        queryKey: ['votesHistory'],
+    const { data: voteHistory = [] } = useQuery({
+        queryKey: ['voteHistory'],
         queryFn: () => fetchTriggerHistoryByFunctionName('Vote')
     });
 
@@ -58,36 +58,39 @@ const DashboardCards = () => {
         useState<ILineChartData[]>(graphDataPlaceholder);
 
     useEffect(() => {
-        if (infoActionProposalsHistory.length !== 0) {
+        if (
+            infoActionProposalHistory.length !== 0 &&
+            proposalNewConstitutionHistory.length !== 0
+        ) {
+            const combinedProposals = proposalNewConstitutionHistory.items.concat(
+                infoActionProposalHistory.items
+            );
             const accumulatedData = accumulateSuccessfullTriggersforLast24Hours(
-                infoActionProposalsHistory.items,
+                combinedProposals,
                 4
             );
             setProposalGraphData(formatArrayIntoChartData(accumulatedData));
-            const changeRate = calculateTriggerChangeRateforLast24Hours(
-                infoActionProposalsHistory.items
-            );
+            const changeRate =
+                calculateTriggerChangeRateforLast24Hours(combinedProposals);
             setProposalChangeRate(changeRate);
         }
-    }, [infoActionProposalsHistory]);
+    }, [infoActionProposalHistory, proposalNewConstitutionHistory]);
 
     useEffect(() => {
-        if (votesHistory.length !== 0) {
+        if (voteHistory.length !== 0) {
             const accumulatedData = accumulateSuccessfullTriggersforLast24Hours(
-                votesHistory.items,
+                voteHistory.items,
                 4
             );
             setVoteGraphData(formatArrayIntoChartData(accumulatedData));
             const changeRate = calculateTriggerChangeRateforLast24Hours(
-                votesHistory.items
+                voteHistory.items
             );
             setVoteChangeRate(changeRate);
         }
-    }, [votesHistory]);
+    }, [voteHistory]);
 
-    //todo : Add Proposal with Info action for Card Data.
-
-    /*//For Testing with More Data
+    /* For Testing with More Data
     const { data: sendAdaHistory = [] } = useQuery({
         queryKey: ['sendAdaHistory'],
         queryFn: () => fetchTriggerHistoryByFunctionName('SendAda Token')
@@ -98,7 +101,7 @@ const DashboardCards = () => {
             const accumulatedData = accumulateSuccessfullTriggersforLast24Hours(sendAdaHistory.items , 4)
             setVoteGraphData(formatArrayIntoChartData(accumulatedData))
         }
-    })*/
+    }) */
 
     return (
         <div className="flex h-36 w-full grid-cols-4 gap-[12px] 2xl:gap-[25px] ">
@@ -120,17 +123,16 @@ const DashboardCards = () => {
             <OverViewGraphCard
                 title="No of Proposals"
                 totalValue={
-                    filterSuccessTriggers(proposalNewConstitutionsHistory?.items || [])
+                    filterSuccessTriggers(proposalNewConstitutionHistory?.items || [])
                         .length +
-                    filterSuccessTriggers(infoActionProposalsHistory?.items || [])
-                        .length
+                    filterSuccessTriggers(infoActionProposalHistory?.items || []).length
                 }
                 changeRate={proposalChangeRate}
                 graphData={proposalGraphData}
             />
             <OverViewGraphCard
                 title="No of Votes"
-                totalValue={filterSuccessTriggers(votesHistory?.items || []).length}
+                totalValue={filterSuccessTriggers(voteHistory?.items || []).length}
                 changeRate={voteChangeRate || 0}
                 theme="Secondary"
                 graphData={voteGrpahData}
