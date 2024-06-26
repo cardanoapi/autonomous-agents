@@ -28,6 +28,7 @@ const config = {
                 '5xl': '2000px'
             },
             colors: {
+                background: '#FFFFFF',
                 brand: {
                     100: '',
                     Blue: {

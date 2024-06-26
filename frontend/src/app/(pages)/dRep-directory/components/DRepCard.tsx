@@ -10,6 +10,16 @@ import toast from 'react-hot-toast';
 
 import { Badge } from '@app/components/atoms/Badge';
 import { Button } from '@app/components/atoms/Button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from '@app/components/atoms/Dialog';
+
+import AgentList from './AgentList';
 
 const statusColor: Record<DRepStatus, string> = {
     Active: 'text-green-600',
@@ -70,16 +80,24 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                 </div>
             </div>
 
-            <div className="flex space-x-4">
-                <Button
-                    className="rounded-3xl border !border-blue-200 bg-transparent text-blue-900"
-                    variant="outline"
-                >
-                    View Details
-                </Button>
+            <Dialog>
+                <DialogTrigger asChild>
+                    <Button className="rounded-3xl bg-blue-900">Delegate</Button>
+                </DialogTrigger>
 
-                <Button className="rounded-3xl bg-blue-900">Delegate</Button>
-            </div>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>
+                            Delegate to {dRep.dRepName ?? 'Data Missing'}
+                        </DialogTitle>
+                        <DialogDescription>
+                            Select agents to delegate.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <AgentList />
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };

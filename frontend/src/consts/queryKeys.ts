@@ -1,4 +1,5 @@
 export const QUERY_KEYS = {
     useGetDRepListKey: 'useGetDRepListKey',
-    useGetNetworkMetricsKey: 'useGetNetworkMetricsKey'
+    useGetNetworkMetricsKey: 'useGetNetworkMetricsKey',
+    useFetchAgentsKey: 'agents'
 };
