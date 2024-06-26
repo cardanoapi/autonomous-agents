@@ -51,12 +51,14 @@ export default function TriggerTab({
     onChange,
     defaultCron,
     previousSelectedOption,
-    previousConfiguredSettings
+    previousConfiguredSettings,
+    setTriggerType
 }: {
     onChange?: any;
     defaultCron?: any;
     previousSelectedOption?: string;
     previousConfiguredSettings?: any;
+    setTriggerType?: any;
 }) {
     const [cron, setCron] = useState<string[]>(
         defaultCron || ['*', '*', '*', '*', '*']
@@ -153,15 +155,17 @@ export default function TriggerTab({
                         </div>
                     </Tabs>
                 </TabsContent>
-                <TabsContent value="Events">
-                    <Tabs defaultValue="DemoEvents">
-                        <TabsList>
-                            <TabsTrigger value="DemoEvent">DemoEvent</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="DemoEvent">
-                            <span>Event Tab</span>
-                        </TabsContent>
-                    </Tabs>
+                <TabsContent value="Events" className={'p-4'}>
+                    <div className={'flex flex-row gap-4'}>
+                        <span>Vote on all proposal</span>
+                        <input
+                            type="checkbox"
+                            name={'VoteEvent'}
+                            value={'EVENT'}
+                            onChange={(e) => setTriggerType(e.target.value)}
+                            className={'h-5 w-5'}
+                        />
+                    </div>
                 </TabsContent>
             </Card>
         </Tabs>
