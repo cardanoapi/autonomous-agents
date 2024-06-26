@@ -18,7 +18,10 @@ import { ScrollArea } from '../shadcn/ui/scroll-area';
 const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
     const { data: agentHistory } = useQuery({
         queryKey: [`agentHistory${agent?.id}`],
-        queryFn: () => fetchAgentTriggerHistoryById(agent?.id || '', 50)
+        queryFn: () => fetchAgentTriggerHistoryById(agent?.id || '', 50),
+        refetchInterval: 60000,
+        refetchOnWindowFocus: true,
+        refetchOnMount: true
     });
     return (
         <div className={'flex h-full w-full flex-col gap-10'}>

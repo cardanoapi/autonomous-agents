@@ -10,7 +10,7 @@ const AgentFunctionCard = ({ func, agentId }: { func: IFunction; agentId: string
         <div
             onClick={handleClick}
             className={
-                'flex h-[120px] w-full cursor-pointer flex-col gap-2 rounded-md bg-gray-100 px-3 py-2 drop-shadow-md hover:bg-gray-200 lg:w-[270px]'
+                'flex h-[120px] w-full cursor-pointer flex-col gap-2 rounded-md bg-gray-100 px-3 py-2 drop-shadow-md hover:bg-gray-200 lg:w-[300px]'
             }
         >
             <span className={'text-base'}>{func.function_name}</span>

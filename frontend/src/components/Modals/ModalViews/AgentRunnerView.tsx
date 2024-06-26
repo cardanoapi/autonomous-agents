@@ -8,9 +8,20 @@ import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import { Separator } from '@app/components/shadcn/ui/separator';
 import environments from '@app/configs/environments';
 
-const AgentRunnerModalView = ({ agentId }: { agentId: string }) => {
-    const dockerCommand = `docker run -e WS_URL=${environments.NEXT_PUBLIC_WS_URL} -e AGENT_ID=${agentId} cardanoapi/cardano-autonomous-agent-agent-node:
-    ${environments.NEXT_PUBLIC_IMAGE_TAG}`;
+const AgentRunnerModalView = ({
+    agentId,
+    refetchData
+}: {
+    agentId: string;
+    refetchData?: () => void;
+}) => {
+    const dockerCommand = `docker run -e WS_URL=${environments.NEXT_PUBLIC_WS_URL} -e AGENT_ID=${agentId} cardanoapi/cardano-autonomous-agent-agent-node:${environments.NEXT_PUBLIC_IMAGE_TAG}`;
+    const handleClickCopy = () => {
+        navigator.clipboard.writeText(dockerCommand);
+        SuccessToast('Docker Command Copied!');
+        const fetchTimeOut = setTimeout(() => refetchData && refetchData(), 10000);
+        return () => clearTimeout(fetchTimeOut);
+    };
     return (
         <div className={'flex h-full w-full flex-col '}>
             <span className={'px-5 py-2 text-base font-medium'}>Agent Runner</span>
@@ -23,10 +34,7 @@ const AgentRunnerModalView = ({ agentId }: { agentId: string }) => {
                     </span>
                     <div className={'flex w-full items-center gap-1'}>
                         <div
-                            onClick={() => {
-                                navigator.clipboard.writeText(dockerCommand);
-                                SuccessToast('Docker Command Copied!');
-                            }}
+                            onClick={handleClickCopy}
                             className={
                                 'w-[520px] cursor-pointer truncate rounded bg-blue-100 p-2 font-sans text-sm drop-shadow-sm hover:text-brand-Black-300/90'
                             }
@@ -36,10 +44,7 @@ const AgentRunnerModalView = ({ agentId }: { agentId: string }) => {
                         <Copy
                             color="#A1A1A1"
                             className=" w- h-5 hover:cursor-pointer"
-                            onClick={() => {
-                                navigator.clipboard.writeText(dockerCommand);
-                                SuccessToast('Docker Command Copied!');
-                            }}
+                            onClick={handleClickCopy}
                         />
                     </div>
                     <span className={'text-xs'}>

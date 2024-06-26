@@ -21,7 +21,7 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
             <ScrollArea className={'w-full overflow-y-auto pr-4'}>
                 <div
                     className={
-                        'grid h-full w-full grid-cols-1 gap-10 py-4 md:grid-cols-2 2xl:grid-cols-3 4xl:grid-cols-4'
+                        'grid h-full w-full grid-cols-1 gap-4 py-4 md:grid-cols-2 2xl:grid-cols-3 4xl:grid-cols-4'
                     }
                 >
                     {functions &&
