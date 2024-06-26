@@ -28,3 +28,13 @@ export enum ProposalListSort {
     NewestCreated = 'NewestCreated',
     Status = 'MostYesVotes'
 }
+
+export enum GovernanceActionFilter {
+    NoConfidence = 'No Confidence',
+    NewCommitte = 'New Committe',
+    NewConstitution = 'Update to the Constitution',
+    HardForkInitiation = 'Hard Fork',
+    ParameterChange = 'Protocol Parameter Change',
+    TreasuryWithdrawals = 'Treasury Withdrawal',
+    InfoAction = 'Info Action'
+}

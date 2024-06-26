@@ -1,4 +1,4 @@
-import { IProposal } from '@models/types/proposal';
+import { GovernanceActionFilter, IProposal } from '@models/types/proposal';
 import { Typography } from '@mui/material';
 import { CopyIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -9,6 +9,13 @@ import { formatDisplayDate } from '@app/utils/dateAndTimeUtils';
 interface ProposalCardProps {
     proposal: IProposal;
 }
+const formatProposalType = (type: string) => {
+    const proposalFilterKeys = Object.keys(GovernanceActionFilter);
+    const proposalFilterValue = Object.values(GovernanceActionFilter);
+    const title = proposalFilterValue[proposalFilterKeys.indexOf(type)] ?? type;
+
+    return title || type;
+};
 const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
     const isDataMissing = proposal.title === null;
 
@@ -42,7 +49,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                         Governance Action Type
                     </p>
                     <p className=" w-fit rounded-[100px] bg-brand-lightBlue px-[18px] py-[6px] text-xs  text-brand-Black-300">
-                        {proposal.type}
+                        {formatProposalType(proposal.type)}
                     </p>
                 </div>
 
