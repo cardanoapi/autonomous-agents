@@ -1,6 +1,7 @@
 import { IProposal } from '@models/types/proposal';
 import { Typography } from '@mui/material';
 import { CopyIcon } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 import { Button } from '@app/components/atoms/Button';
 
@@ -8,6 +9,11 @@ interface ProposalCardProps {
     proposal: IProposal;
 }
 const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
+    const handleCopyGovernanceActionId = () => {
+        navigator.clipboard.writeText(`${proposal.txHash}#${proposal.index}`);
+        toast.success('Copied to clipboard');
+    };
+
     return (
         <div className="boxShadow mb-10 flex w-full max-w-[350px] flex-col justify-between rounded-[20px] ">
             <div className=" flex h-full w-full flex-col gap-5 rounded-t-[20px] bg-brand-White-200  px-6 pb-6 pt-10">
@@ -47,10 +53,13 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                     </p>
                     <div className="text-brand-primaryBlue flex justify-between gap-2">
                         <Typography className="text-sm" noWrap>
-                            {proposal.txHash}
+                            {proposal.txHash}#{proposal.index}
                         </Typography>
-                        <div>
-                            <CopyIcon className="h-5 w-5" />
+                        <div
+                            onClick={handleCopyGovernanceActionId}
+                            className="cursor-pointer"
+                        >
+                            <CopyIcon className="h-5 w-5 " />
                         </div>
                     </div>
                 </div>
