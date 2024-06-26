@@ -1,4 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+
+import { isEmpty } from 'lodash';
 
 import { IAgent, fetchAgents, manualTriggerForAgent } from '@api/agents';
 import { QUERY_KEYS } from '@consts';
@@ -20,7 +22,7 @@ interface AgentsDelegationDialogContentProps {
 export default function AgentsDelegationDialogContent({
     handleClose
 }: AgentsDelegationDialogContentProps) {
-    const [selectedAgents, setSelectedAgents] = useState<string[]>([]);
+    const [selectedAgentIds, setSelectedAgentIds] = useState<string[]>([]);
 
     const { data: agents, isLoading } = useQuery<IAgent[]>({
         queryKey: [QUERY_KEYS.useFetchAgentsKey],
@@ -38,18 +40,25 @@ export default function AgentsDelegationDialogContent({
 
     const handleSelect = (checked: string | boolean, agent: IAgent) => {
         if (checked) {
-            setSelectedAgents([...selectedAgents, agent.id]);
+            setSelectedAgentIds([...selectedAgentIds, agent.id]);
         } else {
-            setSelectedAgents(selectedAgents.filter((p) => p !== agent.id));
+            setSelectedAgentIds(selectedAgentIds.filter((p) => p !== agent.id));
         }
     };
 
     const handleDelegation = async () => {
-        const promises = selectedAgents.map((id) => delegationMutation.mutateAsync(id));
+        const promises = selectedAgentIds.map((id) =>
+            delegationMutation.mutateAsync(id)
+        );
         await Promise.all(promises);
 
         handleClose();
     };
+
+    useEffect(() => {
+        // clear states
+        return () => setSelectedAgentIds([]);
+    }, []);
 
     if (isLoading) return <Loader />;
 
@@ -71,7 +80,7 @@ export default function AgentsDelegationDialogContent({
 
             <Button
                 onClick={handleDelegation}
-                disabled={selectedAgents.length === 0}
+                disabled={isEmpty(selectedAgentIds.length)}
                 className="mt-6 w-full rounded-3xl bg-blue-900"
             >
                 {isSubmitting ? <CircularProgress /> : 'Continue Delegation'}
