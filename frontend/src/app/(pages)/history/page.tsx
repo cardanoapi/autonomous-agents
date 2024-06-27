@@ -33,26 +33,47 @@ export default function LogsPage() {
     const [searchKeywordFilter, setSearchKeywordFilter] = useState('');
     const [functionFilter, setFunctionFilter] = useState('Function');
     const [filteredLogs, setFilteredLogs] = useState<IAgentTriggerHistory[]>([]);
-
     const statusOptions = ['Success', 'Skipped', 'Failed'];
 
+    useEffect(() => {
+        if (LogsHistory?.items) {
+            let newLogs = LogsHistory?.items;
+            // Apply if any of the filtering options are active
+            if (searchKeywordFilter.length !== 0) {
+                newLogs = filterbyAgentID(newLogs);
+            }
+            if (functionFilter !== 'Function') {
+                newLogs = filterbyFunction(newLogs);
+                console.log('Current function filter', functionFilter);
+                console.log('Logs After function filter', newLogs);
+            }
+            if (statusFilter !== 'Filter') {
+                console.log('Logs before status filter', newLogs);
+                newLogs = filterbyStatus(newLogs);
+                console.log('logs after status filter', newLogs);
+            }
+            console.log('final logs', newLogs);
+            setFilteredLogs(newLogs);
+        }
+    }, [searchKeywordFilter, functionFilter, statusFilter, LogsHistory]);
+
     function filterbyStatus(sourceLogs: IAgentTriggerHistory[]) {
-        let newLogs = sourceLogs;
+        let newLogs;
         switch (statusFilter) {
             case 'Success':
-                newLogs = LogsHistory.items.filter(
+                newLogs = sourceLogs.filter(
                     (history: IAgentTriggerHistory) =>
                         history.status === true && history.success === true
                 );
                 break;
             case 'Skipped':
-                newLogs = LogsHistory.items.filter(
+                newLogs = sourceLogs.filter(
                     (history: IAgentTriggerHistory) =>
                         history.status === false && history.success === false
                 );
                 break;
             case 'Failed':
-                newLogs = LogsHistory.items.filter(
+                newLogs = sourceLogs.filter(
                     (history: IAgentTriggerHistory) =>
                         history.status === true && history.success === false
                 );
@@ -83,29 +104,12 @@ export default function LogsPage() {
     }
 
     function applyFunctionFilter(filter: string) {
-        setFunctionFilter(filter === 'All' ? 'Filter' : filter);
+        setFunctionFilter(filter === 'All' ? 'Function' : filter);
     }
 
     function handleSearch(targetAgentID: string) {
         setSearchKeywordFilter(targetAgentID);
     }
-
-    useEffect(() => {
-        if (LogsHistory?.items) {
-            let newLogs = LogsHistory?.items;
-            // Check if any filtering options are active
-            if (statusFilter !== 'Filter') {
-                newLogs = filterbyStatus(newLogs);
-            }
-            if (functionFilter !== 'Function') {
-                newLogs = filterbyFunction(newLogs);
-            }
-            if (searchKeywordFilter.length !== 0) {
-                newLogs = filterbyAgentID(newLogs);
-            }
-            setFilteredLogs(newLogs);
-        }
-    }, [searchKeywordFilter, functionFilter, statusFilter, LogsHistory]);
 
     return (
         <div>
