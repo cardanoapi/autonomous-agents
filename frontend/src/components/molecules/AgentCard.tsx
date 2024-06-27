@@ -131,7 +131,7 @@ export default function AgentCard({
                 className="hover-transition-primary group min-h-[260px] min-w-[260px] cursor-pointer rounded-xl p-6 transition-all"
             >
                 <div className="flex items-center justify-between">
-                    <div className="card-h2">{Truncate(agentName, 10)}</div>
+                    <div className="card-h2">{Truncate(agentName, 7)}</div>
                     <div className="flex gap-x-2">
                         <PlayIcon
                             color="#A1A1A1"
