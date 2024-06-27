@@ -4,7 +4,7 @@ import { useMemo, useRef, useState } from 'react';
 
 import { getDRepList } from '@api/dRepDirectory';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { TypographyH2, TypographyHeading } from '@typography';
+import { TypographyH2 } from '@typography';
 
 import DataActionBar from '@app/app/components/DataActionBar';
 import Loader from '@app/app/components/Loader';
@@ -47,13 +47,6 @@ export default function DRepDirectory() {
 
     return (
         <div className="flex flex-col space-y-12 pb-12">
-            {/* Automatic Delegation */}
-            <div className="flex flex-col space-y-4">
-                <TypographyHeading className="font-normal">
-                    Delegation Options
-                </TypographyHeading>
-            </div>
-
             <TypographyH2>Find a DRep</TypographyH2>
             <DataActionBar onSearch={handleSearch} />
 
