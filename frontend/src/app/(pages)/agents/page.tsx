@@ -23,9 +23,18 @@ import { agentCreatedAtom } from '@app/store/loaclStore';
 
 export default function AgentsPage() {
     const [agentCreated, setAgentCreated] = useAtom(agentCreatedAtom);
-    const { data: agents, isLoading } = useQuery<IAgent[]>({
+
+    const {
+        data: agents,
+        isLoading,
+        refetch
+    } = useQuery<IAgent[]>({
         queryKey: ['agents'],
-        queryFn: fetchAgents
+        queryFn: fetchAgents,
+        refetchOnWindowFocus: true,
+        refetchOnMount: 'always',
+        refetchInterval: 100000,
+        refetchIntervalInBackground: true
     });
 
     const [filteredAgents, setFilteredAgents] = useState<IAgent[]>([]);
@@ -96,6 +105,7 @@ export default function AgentsPage() {
                             lastActive={agent?.last_active || 'NA'}
                             functionCount={0}
                             key={index}
+                            refetchData={refetch}
                         />
                     ))}
                 </div>

@@ -333,7 +333,9 @@ const kuberService = {
         signingKey: string,
         voter: string, // dRepHash
         dRepStakePrivKey: string,
-        proposal: string
+        proposal: string,
+        anchorUrl: string,
+        anchorHash: string
     ) {
         const kuber = new Kuber(addr, signingKey)
         const req = {
@@ -350,9 +352,10 @@ const kuberService = {
                 proposal,
                 vote: true,
                 anchor: {
-                    url: 'https://bit.ly/3zCH2HL',
-                    dataHash:
-                        '1111111111111111111111111111111111111111111111111111111111111111',
+                    url: anchorUrl ? anchorUrl : 'https://bit.ly/3zCH2HL',
+                    dataHash: anchorHash
+                        ? anchorHash
+                        : '1111111111111111111111111111111111111111111111111111111111111111',
                 },
             },
         }

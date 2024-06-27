@@ -40,6 +40,7 @@ export interface ITemplateOption {
     defaultSelected?: any;
     configuredSettings?: any;
     probability?: number;
+    type?: string;
 
     [key: string]: string | boolean | undefined | object | number;
 }
@@ -111,6 +112,7 @@ export default function TemplateForm() {
 
     /* Related to saving parameter fromt the dialog popup*/
     function updateSelected({
+        inputType,
         inputLabel,
         inputCronParameters,
         inputCronExpression,
@@ -118,6 +120,7 @@ export default function TemplateForm() {
         inputDefaultSettings,
         inputProbability
     }: {
+        inputType: string;
         inputLabel: string;
         inputCronParameters: IParameter[];
         inputCronExpression: string[];
@@ -130,6 +133,7 @@ export default function TemplateForm() {
                 item.label === inputLabel
                     ? {
                           ...item,
+                          type: inputType ? inputType : 'CRON',
                           cronParameters: inputCronParameters,
                           cronExpression: inputCronExpression,
                           defaultSelected: inputDefaultSelected,

@@ -37,6 +37,14 @@ functions_metadata = [
         "description": "This will register you as Stake Pool Operator on the Cardano network.",
     },
     {
+        "function_name": "Abstain Delegation",
+        "num_parameters": 0,
+        "parameters": [],
+        "description": "This will delegate your voting rights to Abstain governance action which ensures your stake "
+        "is excluded from the active voting stake but is"
+        "registered for incentive purposes.",
+    },
+    {
         "function_name": "SendAda Token",
         "num_parameters": 1,
         "parameters": [

@@ -31,6 +31,7 @@ export interface IAgentCard {
     functionCount: number;
     lastActive: string | number;
     totalTrigger: number;
+    refetchData?: () => void;
 }
 
 export default function AgentCard({
@@ -38,6 +39,7 @@ export default function AgentCard({
     agentID,
     agentRole,
     templateID,
+    refetchData,
     lastActive = ''
 }: IAgentCard) {
     const router = useRouter();
@@ -138,7 +140,10 @@ export default function AgentCard({
                             className="hidden hover:cursor-pointer group-hover:flex"
                             onClick={(e) => {
                                 e.stopPropagation();
-                                openModal('AgentRunnerView', { agentId: agentID });
+                                openModal('AgentRunnerView', {
+                                    agentId: agentID,
+                                    refetchData: refetchData
+                                });
                             }}
                         />
                         <Trash2

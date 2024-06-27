@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { parseRawBlockBody } from 'libcardano/cardano/ledger-serialization/transaction'
-import cbor from 'libcardano/lib/cbor'
 import { createInMemoryClientWithPeer } from 'libcardano/src/helper'
 import { InmemoryBlockchain } from 'libcardano/src/InmemoryBlockchain'
 import { BlockEvent } from 'libcardano/src/types'
@@ -106,10 +105,19 @@ class WebSocketConnectionManager {
     }
 
     sendNewBlockToActiveAgents(block: BlockEvent, cb: (error: any) => void) {
+        const transactions = parseRawBlockBody(block.body)
+        console.log(
+            'blockNo:',
+            block.blockNo,
+            'slotNo:',
+            block.slotNo,
+            'txCount:',
+            transactions.length
+        )
+        transactions.forEach((tx) => {
+            console.log(' New Tx is : ', tx.hash.toString('hex'), tx.body)
+        })
         setImmediate(cb)
-        const decoded = cbor.decode(block.body)
-        const transactionBodies = cbor.encode(decoded[1]).toString('hex')
-        const transactionWitnesses = cbor.encode(decoded[2]).toString('hex')
         const data = {
             'New Block hash': block.headerHash.toString('hex'),
             blockNo: block.blockNo,
@@ -119,12 +127,15 @@ class WebSocketConnectionManager {
             websocket.send(JSON.stringify(data))
         })
 
-        if (transactionBodies !== '80' && transactionWitnesses !== '80') {
-            const transaction = parseRawBlockBody(block.body)
+        transactions.length &&
             Object.values(this.activeConnections).forEach((websocket) => {
-                websocket.send(JSON.stringify(transaction, bigIntReplacer))
+                websocket.send(
+                    JSON.stringify(
+                        { message: 'on_chain_tx', transactions },
+                        bigIntReplacer
+                    )
+                )
             })
-        }
     }
 }
 

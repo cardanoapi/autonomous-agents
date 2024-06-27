@@ -7,9 +7,9 @@ from backend.app.models.trigger.resposne_dto import TriggerResponse
 from backend.app.models.trigger.trigger_dto import (
     TriggerCreateDTO,
     CronTriggerDTO,
-    TopicTriggerDTO,
+    EventTriggerDTO,
     validate_type_CRON,
-    validate_type_TOPIC,
+    validate_type_EVENT,
 )
 from backend.config.database import prisma_connection
 
@@ -21,8 +21,8 @@ class TriggerRepository:
     async def save_trigger(self, agent_id: str, trigger_data: TriggerCreateDTO):
         if trigger_data.type == "CRON":
             await validate_type_CRON(trigger_data.data.frequency, trigger_data.data.probability)
-        elif trigger_data.type == "TOPIC":
-            await validate_type_TOPIC(trigger_data.data.topic)
+        elif trigger_data.type == "EVENT":
+            await validate_type_EVENT(trigger_data.data.event)
         else:
             raise HTTPException(status_code=400, content=f"Invalid Trigger Type {trigger_data.type}")
         trigger_data_dict = trigger_data.dict()
@@ -91,8 +91,8 @@ class TriggerRepository:
         if trigger_data.type == "CRON":
             await validate_type_CRON(trigger_data.data.frequency, trigger_data.data.probability)
 
-        if trigger_data.type == "TOPIC":
-            await validate_type_TOPIC(trigger_data.data.topic)
+        if trigger_data.type == "EVENT":
+            await validate_type_EVENT(trigger_data.data.event)
 
         # for config data
         data_dict = updated_data_dict.pop("data")
@@ -118,10 +118,10 @@ class TriggerRepository:
         )
         return trigger_response
 
-    def _convert_data_to_dto(self, trigger_type: str, data_dict: dict) -> Union[CronTriggerDTO, TopicTriggerDTO]:
+    def _convert_data_to_dto(self, trigger_type: str, data_dict: dict) -> Union[CronTriggerDTO, EventTriggerDTO]:
         if trigger_type == "CRON":
             return CronTriggerDTO(**data_dict)
-        elif trigger_type == "TOPIC":
-            return TopicTriggerDTO(**data_dict)
+        elif trigger_type == "EVENT":
+            return EventTriggerDTO(**data_dict)
         else:
             raise ValueError("Invalid trigger type")
