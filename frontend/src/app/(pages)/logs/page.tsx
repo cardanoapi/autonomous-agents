@@ -198,7 +198,11 @@ export default function LogsPage() {
                     >
                         <div className={'grid grid-cols-1 gap-2'}>
                             {filteredLogs.map((history, index) => (
-                                <AgentLogCard history={history} key={index} />
+                                <AgentLogCard
+                                    history={history}
+                                    key={index}
+                                    className="bg-white"
+                                />
                             ))}
                         </div>
                     </ScrollArea>

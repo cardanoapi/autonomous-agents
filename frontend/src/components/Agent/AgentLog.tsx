@@ -13,6 +13,7 @@ import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import parseTimestamp from '@app/utils/dateAndTimeUtils';
 
 import { Badge } from '../atoms/Badge';
+import { cn } from '../lib/utils';
 import { ScrollArea } from '../shadcn/ui/scroll-area';
 
 const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
@@ -44,7 +45,13 @@ const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
     );
 };
 
-export const AgentLogCard = ({ history }: { history: IAgentTriggerHistory }) => {
+export const AgentLogCard = ({
+    history,
+    className
+}: {
+    history: IAgentTriggerHistory;
+    className?: string;
+}) => {
     function getAgentExecutionStatus() {
         if (!history.status) return 'Skipped';
         else if (history.success) return 'Success';
@@ -59,8 +66,11 @@ export const AgentLogCard = ({ history }: { history: IAgentTriggerHistory }) => 
 
     return (
         <div
-            className={`flex h-fit flex-row justify-between gap-4 rounded-lg bg-gray-100 px-3 py-2 drop-shadow-sm hover:bg-gray-200
-                `}
+            className={cn(
+                `flex h-fit flex-row justify-between gap-4 rounded-lg bg-gray-100 px-3 py-2 drop-shadow-sm hover:bg-gray-200
+                `,
+                className
+            )}
         >
             <div className={'flex flex-col items-start gap-1'}>
                 <div className={'flex flex-row items-center gap-1'}>
