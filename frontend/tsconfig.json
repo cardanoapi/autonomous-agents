@@ -1,44 +1,41 @@
 {
-  "compilerOptions": {
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
+    "compilerOptions": {
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "allowJs": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "noEmit": true,
+        "esModuleInterop": true,
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "jsx": "preserve",
+        "incremental": true,
+        "plugins": [
+            {
+                "name": "next"
+            }
+        ],
+        "baseUrl": ".",
+        "paths": {
+            "@hooks": ["./src/lib/hooks"],
+            "@configs": ["./src/configs"],
+            "@consts": ["./src/consts"],
+            "@typography": ["./src/app/components/typography"],
+            "@models/*": ["./src/models/*"],
+            "@api/*": ["./src/app/api/*"],
+            "@utils": ["./src/utils"],
+            "@app/*": ["./src/*"]
+        }
+    },
+    "include": [
+        "next-env.d.ts",
+        "**/*.ts",
+        "**/*.tsx",
+        ".next/types/**/*.ts",
+        ".next-dev/types/**/*.ts",
+        "src/utils/providers/ReactQueryProvider.tsx"
     ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "@app/*": [
-        "./src/*"
-      ]
-    }
-  },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    ".next-dev/types/**/*.ts"
-, "src/utils/providers/ReactQueryProvider.tsx"  ],
-  "exclude": [
-    "node_modules",
-    "build",
-    ".next",
-    ".next-dev"
-  ]
+    "exclude": ["node_modules", "build", ".next", ".next-dev"]
 }

@@ -47,7 +47,11 @@ const environments = {
     APM_ENABLED:
         process.env.ELASTIC_APM_SERVER_URL && process.env.ELASTIC_APM_SERVICE_NAME,
     NEXT_PUBLIC_WS_URL: process.env.NEXT_PUBLIC_WS_URL ?? 'ws://172.17.0.1:3001',
-    NEXT_PUBLIC_IMAGE_TAG: process.env.NEXT_PUBLIC_IMAGE_TAG ?? 'dev'
+    NEXT_PUBLIC_IMAGE_TAG: process.env.NEXT_PUBLIC_IMAGE_TAG ?? 'dev',
+    API_URL:
+        process.env.NEXT_PUBLIC_API_ENDPOINT_HOST ||
+        'https://api.agents.cardanoapi.io/api',
+    GOVTOOL_BASE_URL: 'https://govtool.cardanoapi.io'
 };
 
 export default environments;
