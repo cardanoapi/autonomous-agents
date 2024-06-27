@@ -18,10 +18,25 @@ import {
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
+import PaginationBtns from '@app/components/molecules/PaginationBtns';
 
 export default function LogsPage() {
-    const { data: LogsHistory } = useQuery({
-        queryKey: ['LogsHistory'],
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [currentResponseSize, setCurrentResponseSize] = useState<number>(8);
+    const [totalPages, setTotalPages] = useState<number>(1);
+    const [functionFilter, setFunctionFilter] = useState('Function');
+    const [statusFilter, setStatusFilter] = useState('Filter');
+    const [searchKeywordFilter, setSearchKeywordFilter] = useState('');
+    const [filteredLogs, setFilteredLogs] = useState<IAgentTriggerHistory[]>([]);
+    const statusOptions = ['Success', 'Skipped', 'Failed'];
+
+    const { data: LogsHistory, refetch: refetchLogsHistory } = useQuery({
+        queryKey: [
+            'LogsHistory',
+            currentPage,
+            currentResponseSize,
+            functionFilter !== 'Function' ? functionFilter : ''
+        ],
         queryFn: fetchAllTriggerHistory
     });
     const { data: agentFunctions = [] } = useQuery({
@@ -29,33 +44,37 @@ export default function LogsPage() {
         queryFn: fetchFunctions
     });
 
-    const [statusFilter, setStatusFilter] = useState('Filter');
-    const [searchKeywordFilter, setSearchKeywordFilter] = useState('');
-    const [functionFilter, setFunctionFilter] = useState('Function');
-    const [filteredLogs, setFilteredLogs] = useState<IAgentTriggerHistory[]>([]);
-    const statusOptions = ['Success', 'Skipped', 'Failed'];
-
     useEffect(() => {
+        // For filtering Logs using actve filter options
         if (LogsHistory?.items) {
             let newLogs = LogsHistory?.items;
-            // Apply if any of the filtering options are active
             if (searchKeywordFilter.length !== 0) {
                 newLogs = filterbyAgentID(newLogs);
             }
             if (functionFilter !== 'Function') {
                 newLogs = filterbyFunction(newLogs);
-                console.log('Current function filter', functionFilter);
-                console.log('Logs After function filter', newLogs);
             }
             if (statusFilter !== 'Filter') {
-                console.log('Logs before status filter', newLogs);
                 newLogs = filterbyStatus(newLogs);
-                console.log('logs after status filter', newLogs);
             }
-            console.log('final logs', newLogs);
             setFilteredLogs(newLogs);
         }
+        setTotalPages(LogsHistory?.pages);
     }, [searchKeywordFilter, functionFilter, statusFilter, LogsHistory]);
+
+    useEffect(() => {
+        // For Dynamic Pagination Response Count
+        function updateResponseSize() {
+            const clientHeight = window.innerHeight;
+            const calculatedResponseSize = Math.floor(clientHeight / 100);
+            setCurrentResponseSize(calculatedResponseSize);
+        }
+        updateResponseSize();
+        window.addEventListener('resize', updateResponseSize);
+        return () => {
+            window.removeEventListener('resize', updateResponseSize);
+        };
+    }, []);
 
     function filterbyStatus(sourceLogs: IAgentTriggerHistory[]) {
         let newLogs;
@@ -111,52 +130,66 @@ export default function LogsPage() {
         setSearchKeywordFilter(targetAgentID);
     }
 
+    function handlePagination(val: number) {
+        setCurrentPage(val);
+        refetchLogsHistory();
+    }
+
     return (
         <div>
-            <div className="flex gap-2">
-                <SearchField
-                    placeholder="Search Agent ID"
-                    variant="secondary"
-                    onSearch={handleSearch}
+            <div className="flex items-center justify-between">
+                <div className="flex gap-2">
+                    <SearchField
+                        placeholder="Search Agent ID"
+                        variant="secondary"
+                        onSearch={handleSearch}
+                    />
+                    <DropdownMenu>
+                        <DropdownMenuTrigger border={true}>
+                            {functionFilter}
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="bg-white">
+                            <DropdownMenuItem
+                                onClick={() => applyFunctionFilter('All')}
+                            >
+                                All
+                            </DropdownMenuItem>
+                            {agentFunctions?.map((agentFunction: IFunction, index) => (
+                                <DropdownMenuItem
+                                    key={index}
+                                    onClick={() =>
+                                        applyFunctionFilter(agentFunction.function_name)
+                                    }
+                                >
+                                    {agentFunction.function_name}
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger border={true}>
+                            Status : <span className="w-16">{statusFilter}</span>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="bg-white">
+                            <DropdownMenuItem onClick={() => applyStatusFilter('None')}>
+                                All
+                            </DropdownMenuItem>
+                            {statusOptions.map((status: string, index) => (
+                                <DropdownMenuItem
+                                    onClick={() => applyStatusFilter(status)}
+                                    key={index}
+                                >
+                                    {status}
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+                <PaginationBtns
+                    className="pr-4"
+                    onPaginate={handlePagination}
+                    upperLimit={totalPages}
                 />
-                <DropdownMenu>
-                    <DropdownMenuTrigger border={true}>
-                        {functionFilter}
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="bg-white">
-                        <DropdownMenuItem onClick={() => applyFunctionFilter('All')}>
-                            All
-                        </DropdownMenuItem>
-                        {agentFunctions?.map((agentFunction: IFunction, index) => (
-                            <DropdownMenuItem
-                                key={index}
-                                onClick={() =>
-                                    applyFunctionFilter(agentFunction.function_name)
-                                }
-                            >
-                                {agentFunction.function_name}
-                            </DropdownMenuItem>
-                        ))}
-                    </DropdownMenuContent>
-                </DropdownMenu>
-                <DropdownMenu>
-                    <DropdownMenuTrigger border={true}>
-                        Status : <span className="w-16">{statusFilter}</span>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="bg-white">
-                        <DropdownMenuItem onClick={() => applyStatusFilter('None')}>
-                            All
-                        </DropdownMenuItem>
-                        {statusOptions.map((status: string, index) => (
-                            <DropdownMenuItem
-                                onClick={() => applyStatusFilter(status)}
-                                key={index}
-                            >
-                                {status}
-                            </DropdownMenuItem>
-                        ))}
-                    </DropdownMenuContent>
-                </DropdownMenu>
             </div>
             <div className="mt-8">
                 <div className={'flex h-full w-full flex-col gap-10'}>
