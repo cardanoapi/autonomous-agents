@@ -4,7 +4,7 @@ import uuid
 from typing import List, Optional, Union
 from datetime import datetime, timezone
 
-from fastapi import HTTPException
+from backend.app.exceptions import HTTPException
 from prisma import Prisma
 
 from backend.app.models import (
@@ -32,7 +32,7 @@ class TemplateTriggerRepository:
         elif template_data.type == "TOPIC":
             await validate_type_TOPIC(template_data.data.topic)
         else:
-            raise HTTPException(400, f"Invalid Trigger Type")
+            raise HTTPException(status_code=400, content=f"Invalid Trigger Type {template_data.type}")
 
         # for config data
         data_dict = template_data_dict.pop("data")
