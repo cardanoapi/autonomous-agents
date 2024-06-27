@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
 import { PATHS } from '@consts';
-import { Boxes, Users, UsersRound } from 'lucide-react';
+import { Boxes } from 'lucide-react';
 
 import Logo from '../icons/Logo';
 import SideNavLink from './SideNavLink';

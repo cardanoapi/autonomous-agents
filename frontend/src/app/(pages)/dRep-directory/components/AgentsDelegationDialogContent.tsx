@@ -69,7 +69,10 @@ export default function AgentsDelegationDialogContent({
         >
             <div className={cn('flex w-full flex-col space-y-2')}>
                 {activeAgents.map((agent) => (
-                    <div className="flex items-center space-x-2 rounded-lg border p-2 text-sm font-medium">
+                    <div
+                        key={agent.id}
+                        className="flex items-center space-x-2 rounded-lg border p-2 text-sm font-medium"
+                    >
                         <Checkbox
                             onCheckedChange={(checked) => handleSelect(checked, agent)}
                         />
