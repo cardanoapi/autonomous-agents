@@ -1,21 +1,27 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { getProposalList } from '@api/governanceActions';
 import { QUERY_KEYS } from '@consts';
 import { ProposalListSort } from '@models/types/proposal';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInView } from 'react-intersection-observer';
 
 import Loader from '@app/app/components/Loader';
-import { Button } from '@app/components/atoms/Button';
 import { SearchField } from '@app/components/atoms/SearchField';
 
 import ProposalCard from './components/proposalCard';
 
 function GovernanceAction() {
-    const initialLoad = useRef(true);
     const [searchInput, setSearchInput] = useState('');
+    const { ref, inView } = useInView();
+
+    useEffect(() => {
+        if (inView && hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
+        }
+    }, [inView]);
 
     const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
         useInfiniteQuery({
@@ -41,14 +47,11 @@ function GovernanceAction() {
         [data]
     );
 
-    console.log(proposalList?.length, 'length');
     const handleSearch = (searchValue: string) => {
         setSearchInput(searchValue);
     };
 
-    if (isLoading && !proposalList && initialLoad.current) {
-        initialLoad.current = false;
-
+    if (isLoading && !proposalList) {
         return <Loader />;
     }
 
@@ -65,15 +68,9 @@ function GovernanceAction() {
                     <ProposalCard key={proposal.id} proposal={proposal} />
                 ))}
             </div>
-            {hasNextPage && !isFetchingNextPage && (
-                <div className=" flex justify-center">
-                    <Button
-                        onClick={() => fetchNextPage()}
-                        className="w-fit rounded-3xl text-blue-900"
-                        variant="outline"
-                    >
-                        Show more
-                    </Button>
+            {hasNextPage && (
+                <div className="my-10" ref={ref}>
+                    <Loader />
                 </div>
             )}
         </div>
