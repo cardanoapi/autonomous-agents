@@ -83,7 +83,7 @@ export default function AgentsDelegationDialogContent({
 
             <Button
                 onClick={handleDelegation}
-                disabled={isEmpty(selectedAgentIds.length)}
+                disabled={isEmpty(selectedAgentIds)}
                 className="mt-6 w-full rounded-3xl bg-blue-900"
             >
                 {isSubmitting ? <CircularProgress /> : 'Continue Delegation'}
