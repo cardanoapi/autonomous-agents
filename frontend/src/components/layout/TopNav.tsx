@@ -26,7 +26,7 @@ export default function TopNav() {
         '/templates/create-template': 'Template Form',
         [PATHS.dRepDirectory]: 'DRep Directory',
         [PATHS.governanceActions]: 'Governance Actions',
-        '/history': 'Agents Log History'
+        '/logs': 'Agents Log History'
     };
 
     function getPageTitleByRegexMatch() {
