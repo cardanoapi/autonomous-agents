@@ -20,7 +20,7 @@ export interface ILineChartData {
     amt: number;
 }
 
-const demoData: ILineChartData[] = [
+export const demoCustomLineChartData: ILineChartData[] = [
     { name: 'A', amt: 10 },
     { name: 'B', amt: 15 },
     { name: 'C', amt: 24 },
@@ -65,7 +65,7 @@ export default function CustomLineChart({
     return (
         <ResponsiveContainer width="100%" height="100%" className={className}>
             <AreaChart
-                data={chartData || demoData}
+                data={chartData || demoCustomLineChartData}
                 margin={{ top: 40, right: 0, left: 0, bottom: 0 }}
             >
                 <defs>
@@ -103,6 +103,7 @@ export default function CustomLineChart({
                         axisLine={false}
                         tickLine={false}
                         stroke="#A2A3A5"
+                        allowDecimals={false}
                     />
                 )}
                 {renderToolTip && (
