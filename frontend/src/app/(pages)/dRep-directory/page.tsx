@@ -52,7 +52,7 @@ export default function DRepDirectory() {
 
             {/* DRep list */}
             <div className="flex flex-col space-y-4">
-                {dRepList?.map((dRep) => <DRepCard dRep={dRep} />)}
+                {dRepList?.map((dRep) => <DRepCard key={dRep.drepId} dRep={dRep} />)}
             </div>
 
             {hasNextPage && !isFetchingNextPage && (

@@ -69,7 +69,10 @@ export default function AgentsDelegationDialogContent({
         >
             <div className={cn('flex w-full flex-col space-y-2')}>
                 {activeAgents.map((agent) => (
-                    <div className="flex items-center space-x-2 rounded-lg border p-2 text-sm font-medium">
+                    <div
+                        key={agent.id}
+                        className="flex items-center space-x-2 rounded-lg border p-2 text-sm font-medium"
+                    >
                         <Checkbox
                             onCheckedChange={(checked) => handleSelect(checked, agent)}
                         />
@@ -80,7 +83,7 @@ export default function AgentsDelegationDialogContent({
 
             <Button
                 onClick={handleDelegation}
-                disabled={isEmpty(selectedAgentIds.length)}
+                disabled={isEmpty(selectedAgentIds)}
                 className="mt-6 w-full rounded-3xl bg-blue-900"
             >
                 {isSubmitting ? <CircularProgress /> : 'Continue Delegation'}

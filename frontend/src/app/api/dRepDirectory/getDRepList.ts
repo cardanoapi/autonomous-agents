@@ -1,5 +1,4 @@
 import { ENVIRONMENTS } from '@configs';
-import { useQuery } from '@tanstack/react-query';
 
 import { DRepListSort, DRepStatus, IDRep } from '@app/models/types';
 import axiosClient from '@app/utils/axios';
