@@ -33,14 +33,14 @@ export default function AgentsPage() {
         queryFn: fetchAgents,
         refetchOnWindowFocus: true,
         refetchOnMount: 'always',
-        refetchInterval: 100000,
+        refetchInterval: 20000,
         refetchIntervalInBackground: true
     });
 
     const [filteredAgents, setFilteredAgents] = useState<IAgent[]>([]);
 
     useEffect(() => {
-        if (agentCreated === true) {
+        if (agentCreated) {
             SuccessToast('Agent Created Successfully');
             setAgentCreated(false);
         }
