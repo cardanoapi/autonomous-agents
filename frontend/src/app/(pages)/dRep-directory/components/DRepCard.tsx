@@ -77,9 +77,11 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                     </div>
                 </div>
 
-                <Button onClick={toggleDialog} className="rounded-3xl bg-blue-900">
-                    Delegate
-                </Button>
+                {dRep.status === DRepStatus.Active && (
+                    <Button onClick={toggleDialog} className="rounded-3xl bg-blue-900">
+                        Delegate
+                    </Button>
+                )}
             </div>
 
             {/* Dialogs */}
