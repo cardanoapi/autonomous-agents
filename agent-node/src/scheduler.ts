@@ -166,6 +166,13 @@ export async function triggerAction(
                     globalState.agentWalletDetails.payment_signing_key
                 )
                 break
+            case 'No Confidence':
+                payload = kuberService.noConfidence(
+                    agentAddress,
+                    globalState.agentWalletDetails.payment_signing_key,
+                    globalState.agentWalletDetails.stake_verification_key_hash
+                )
+                break
             default:
                 return
         }

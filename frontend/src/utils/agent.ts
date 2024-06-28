@@ -1,4 +1,5 @@
 import { IAgent } from '@api/agents';
+import { IParameter } from '@api/functions';
 import { AGENT_TRIGGER } from '@consts';
 import { AgentTriggerFunctionType, IAgentTrigger } from '@models/types';
 
@@ -10,10 +11,14 @@ export function isAgentActive({ last_active }: IAgent): boolean {
     return diffInSeconds <= 33;
 }
 
+interface ConfiguredAgentTrigger extends Omit<IAgentTrigger, 'parameters'> {
+    parameter: IParameter[];
+}
+
 export function getConfiguredAgentTrigger(
     func: AgentTriggerFunctionType,
     value: string
-): IAgentTrigger {
+): ConfiguredAgentTrigger {
     const trigger = AGENT_TRIGGER[func];
 
     if (!trigger) {
@@ -28,6 +33,6 @@ export function getConfiguredAgentTrigger(
             return { ...trigger, parameter: [{ ...trigger.parameters[0], value }] };
 
         default:
-            return trigger;
+            return { ...trigger, parameter: [] };
     }
 }

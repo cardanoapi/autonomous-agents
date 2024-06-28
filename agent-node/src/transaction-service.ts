@@ -390,6 +390,33 @@ const kuberService = {
         }
         return kuber.signAndSubmitTx(req)
     },
+
+    noConfidence(address: string, signingKey: string, stakeKeyHash?: string) {
+        const kuber = new Kuber(address, signingKey)
+        const noConfidenceProposal = {
+            refundAccount: {
+                network: 'Testnet',
+                credential: {
+                    'key hash':
+                        stakeKeyHash ||
+                        'db1bc3c3f99ce68977ceaf27ab4dd917123ef9e73f85c304236eab23',
+                },
+            },
+            anchor: {
+                url: 'https://bit.ly/3zCH2HL',
+                dataHash:
+                    '1111111111111111111111111111111111111111111111111111111111111111',
+            },
+        }
+        const req = kuber.signTx({
+            proposals: [noConfidenceProposal],
+        })
+        return buildApiObject(
+            '/api/v1/tx?submit=true',
+            'POST',
+            JSON.stringify(req)
+        )
+    },
 }
 
 function buildApiObject(

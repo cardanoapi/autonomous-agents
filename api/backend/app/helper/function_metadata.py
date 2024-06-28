@@ -45,6 +45,14 @@ functions_metadata = [
         "registered for incentive purposes.",
     },
     {
+        "function_name": "No Confidence",
+        "num_parameters": 0,
+        "parameters": [],
+        "description": "This will allow stakeholders to express a lack of confidence in the current governance "
+        "structure potentially leading to changes to "
+        "address the concerns raised by the community.",
+    },
+    {
         "function_name": "SendAda Token",
         "num_parameters": 1,
         "parameters": [
@@ -114,15 +122,15 @@ functions_metadata = [
         "num_parameters": 3,
         "parameters": [
             {
-                "name": "certificates_type",
-                "description": "Certification Type",
-                "optional": False,
-                "data_type": "CertificatesType",
-            },
-            {
                 "name": "drep",
                 "description": "Drep",
-                "optional": False,
+                "optional": True,
+                "data_type": "Drep Hash",
+            },
+            {
+                "name": "pool",
+                "description": "Stake Pool",
+                "optional": True,
                 "data_type": "Drep Hash",
             },
         ],
@@ -142,13 +150,13 @@ functions_metadata = [
             {
                 "name": "anchor_url",
                 "description": "Anchor Url",
-                "optional": False,
+                "optional": True,
                 "data_type": "url",
             },
             {
                 "name": "anchor_dataHash",
                 "description": "Anchor Data Hash",
-                "optional": False,
+                "optional": True,
                 "data_type": "hash",
             },
         ],
