@@ -4,10 +4,9 @@ import { isEmpty } from 'lodash';
 
 import { IAgent, fetchAgents, manualTriggerForAgent } from '@api/agents';
 import { QUERY_KEYS } from '@consts';
-import { AgentFunction } from '@models/types';
 import { CircularProgress } from '@mui/material';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { isAgentActive } from '@utils';
+import { getConfiguredAgentTrigger, isAgentActive } from '@utils';
 
 import { AppDialogContent } from '@app/app/components/AppDialog';
 import Loader from '@app/app/components/Loader';
@@ -16,10 +15,12 @@ import { Checkbox } from '@app/components/atoms/Checkbox';
 import { cn } from '@app/components/lib/utils';
 
 interface AgentsDelegationDialogContentProps {
+    dRepId: string;
     handleClose: () => void;
 }
 
 export default function AgentsDelegationDialogContent({
+    dRepId,
     handleClose
 }: AgentsDelegationDialogContentProps) {
     const [selectedAgentIds, setSelectedAgentIds] = useState<string[]>([]);
@@ -29,13 +30,15 @@ export default function AgentsDelegationDialogContent({
         queryFn: fetchAgents
     });
 
-    const delegationMutation = useMutation({
-        mutationFn: (id: string) => manualTriggerForAgent(id, AgentFunction.Delegation)
+    const agentTriggerMutation = useMutation({
+        mutationFn: (id: string) =>
+            manualTriggerForAgent(id, getConfiguredAgentTrigger('Delegation', dRepId))
     });
 
-    const isSubmitting = delegationMutation.isPending && !delegationMutation.isError;
+    const isSubmitting =
+        agentTriggerMutation.isPending && !agentTriggerMutation.isError;
     const activeAgents = useMemo(() => {
-        return agents?.filter((agent) => !isAgentActive(agent)) || [];
+        return agents?.filter((agent) => isAgentActive(agent)) || [];
     }, [agents]);
 
     const handleSelect = (checked: string | boolean, agent: IAgent) => {
@@ -48,7 +51,7 @@ export default function AgentsDelegationDialogContent({
 
     const handleDelegation = async () => {
         const promises = selectedAgentIds.map((id) =>
-            delegationMutation.mutateAsync(id)
+            agentTriggerMutation.mutateAsync(id)
         );
         await Promise.all(promises);
 
