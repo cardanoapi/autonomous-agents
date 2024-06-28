@@ -35,20 +35,9 @@ export const AppDialogContent: React.FC<AppDialogContentProps> = (props) => {
 };
 
 const AppDialog: React.FC<AppDialogProps> = ({ isOpen, toggleDialog, children }) => {
-    let contentElement: React.ReactNode = null;
-
-    React.Children.forEach(children, (child) => {
-        if (
-            React.isValidElement(child) &&
-            child.type.toString().includes('DialogContent')
-        ) {
-            contentElement = child;
-        }
-    });
-
     return (
         <Dialog open={isOpen} onOpenChange={toggleDialog}>
-            {contentElement}
+            {children}
         </Dialog>
     );
 };

@@ -10,4 +10,5 @@ interface IParamater {
 export interface IAgentTrigger {
     function_name: AgentTriggerFunctionType;
     parameters: IParamater[];
+    parameter: IParamater[];
 }

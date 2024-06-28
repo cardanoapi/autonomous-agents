@@ -10,7 +10,8 @@ export const AGENT_TRIGGER: Record<AgentTriggerFunctionType, IAgentTrigger> = {
                 optional: false,
                 data_type: 'Drep Hash'
             }
-        ]
+        ],
+        parameter: []
     },
     Vote: {
         function_name: 'Vote',
@@ -21,6 +22,7 @@ export const AGENT_TRIGGER: Record<AgentTriggerFunctionType, IAgentTrigger> = {
                 optional: false,
                 data_type: 'proposal'
             }
-        ]
+        ],
+        parameter: []
     }
 };
