@@ -21,21 +21,27 @@ import { SearchField } from '@app/components/atoms/SearchField';
 import PaginationBtns from '@app/components/molecules/PaginationBtns';
 
 export default function LogsPage() {
+    //Related to Log query
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [currentResponseSize, setCurrentResponseSize] = useState<number>(8);
+    const [currentStatus, setCurrentStatus] = useState<string>('None');
+    const [currentSuccess, setCurrentSucccess] = useState<string>('None');
+    const [currentFunction, setCurrentFunction] = useState('None');
+    const [currentAgentID, setCurrentAgentID] = useState('None');
     const [totalPages, setTotalPages] = useState<number>(1);
-    const [functionFilter, setFunctionFilter] = useState('Function');
-    const [statusFilter, setStatusFilter] = useState('Filter');
-    const [searchKeywordFilter, setSearchKeywordFilter] = useState('');
-    const [filteredLogs, setFilteredLogs] = useState<IAgentTriggerHistory[]>([]);
+
     const statusOptions = ['Success', 'Skipped', 'Failed'];
+    const [statusPlaceholder, setStatusPlaceholder] = useState('None');
 
     const { data: LogsHistory, refetch: refetchLogsHistory } = useQuery({
         queryKey: [
             'LogsHistory',
             currentPage,
             currentResponseSize,
-            functionFilter !== 'Function' ? functionFilter : ''
+            currentAgentID,
+            currentFunction,
+            currentStatus,
+            currentSuccess
         ],
         queryFn: fetchAllTriggerHistory
     });
@@ -45,22 +51,15 @@ export default function LogsPage() {
     });
 
     useEffect(() => {
-        // For filtering Logs using actve filter options
-        if (LogsHistory?.items) {
-            let newLogs = LogsHistory?.items;
-            if (searchKeywordFilter.length !== 0) {
-                newLogs = filterbyAgentID(newLogs);
-            }
-            if (functionFilter !== 'Function') {
-                newLogs = filterbyFunction(newLogs);
-            }
-            if (statusFilter !== 'Filter') {
-                newLogs = filterbyStatus(newLogs);
-            }
-            setFilteredLogs(newLogs);
+        refetchLogsHistory();
+    }, [currentPage, currentFunction, currentStatus, currentSuccess, currentAgentID]);
+
+    useEffect(() => {
+        setTotalPages(LogsHistory ? LogsHistory.pages : 1);
+        if (LogsHistory && LogsHistory.pages < currentPage) {
+            setCurrentPage(1);
         }
-        setTotalPages(LogsHistory?.pages);
-    }, [searchKeywordFilter, functionFilter, statusFilter, LogsHistory]);
+    }, [LogsHistory]);
 
     useEffect(() => {
         // For Dynamic Pagination Response Count
@@ -76,63 +75,26 @@ export default function LogsPage() {
         };
     }, []);
 
-    function filterbyStatus(sourceLogs: IAgentTriggerHistory[]) {
-        let newLogs;
-        switch (statusFilter) {
+    function handleStatusChange(status: string) {
+        switch (status) {
+            case 'None':
+                setCurrentStatus('None');
+                setCurrentSucccess('None');
+                break;
             case 'Success':
-                newLogs = sourceLogs.filter(
-                    (history: IAgentTriggerHistory) =>
-                        history.status === true && history.success === true
-                );
+                setCurrentStatus('True');
+                setCurrentSucccess('True');
                 break;
             case 'Skipped':
-                newLogs = sourceLogs.filter(
-                    (history: IAgentTriggerHistory) =>
-                        history.status === false && history.success === false
-                );
+                setCurrentStatus('False');
+                setCurrentSucccess('False');
                 break;
             case 'Failed':
-                newLogs = sourceLogs.filter(
-                    (history: IAgentTriggerHistory) =>
-                        history.status === true && history.success === false
-                );
-                break;
-            default:
+                setCurrentStatus('True');
+                setCurrentSucccess('False');
                 break;
         }
-        return newLogs;
-    }
-
-    function filterbyAgentID(sourceLogs: IAgentTriggerHistory[]) {
-        const newLogs = sourceLogs.filter((history: IAgentTriggerHistory) =>
-            history.agentId.includes(searchKeywordFilter)
-        );
-        return newLogs;
-    }
-
-    //TODO : Implement function filtering using the Backend API directly instead of filtering here.
-    function filterbyFunction(sourceLogs: IAgentTriggerHistory[]) {
-        const newLogs = sourceLogs.filter(
-            (history: IAgentTriggerHistory) => history.functionName === functionFilter
-        );
-        return newLogs;
-    }
-
-    function applyStatusFilter(status: string) {
-        setStatusFilter(status === 'None' ? 'Filter' : status);
-    }
-
-    function applyFunctionFilter(filter: string) {
-        setFunctionFilter(filter === 'All' ? 'Function' : filter);
-    }
-
-    function handleSearch(targetAgentID: string) {
-        setSearchKeywordFilter(targetAgentID);
-    }
-
-    function handlePagination(val: number) {
-        setCurrentPage(val);
-        refetchLogsHistory();
+        setStatusPlaceholder(status);
     }
 
     return (
@@ -142,15 +104,17 @@ export default function LogsPage() {
                     <SearchField
                         placeholder="Search Agent ID"
                         variant="secondary"
-                        onSearch={handleSearch}
+                        onSearch={(val: string) => {
+                            setCurrentAgentID(val);
+                        }}
                     />
                     <DropdownMenu>
                         <DropdownMenuTrigger border={true}>
-                            {functionFilter}
+                            {currentFunction === 'None' ? 'Function' : currentFunction}
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-white">
                             <DropdownMenuItem
-                                onClick={() => applyFunctionFilter('All')}
+                                onClick={() => setCurrentFunction('None')}
                             >
                                 All
                             </DropdownMenuItem>
@@ -158,7 +122,7 @@ export default function LogsPage() {
                                 <DropdownMenuItem
                                     key={index}
                                     onClick={() =>
-                                        applyFunctionFilter(agentFunction.function_name)
+                                        setCurrentFunction(agentFunction.function_name)
                                     }
                                 >
                                     {agentFunction.function_name}
@@ -168,15 +132,22 @@ export default function LogsPage() {
                     </DropdownMenu>
                     <DropdownMenu>
                         <DropdownMenuTrigger border={true}>
-                            Status : <span className="w-16">{statusFilter}</span>
+                            Status :{' '}
+                            <span className="w-16">
+                                {statusPlaceholder === 'None'
+                                    ? 'Filter'
+                                    : statusPlaceholder}
+                            </span>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-white">
-                            <DropdownMenuItem onClick={() => applyStatusFilter('None')}>
+                            <DropdownMenuItem
+                                onClick={() => handleStatusChange('None')}
+                            >
                                 All
                             </DropdownMenuItem>
                             {statusOptions.map((status: string, index) => (
                                 <DropdownMenuItem
-                                    onClick={() => applyStatusFilter(status)}
+                                    onClick={() => handleStatusChange(status)}
                                     key={index}
                                 >
                                     {status}
@@ -187,7 +158,10 @@ export default function LogsPage() {
                 </div>
                 <PaginationBtns
                     className="pr-4"
-                    onPaginate={handlePagination}
+                    onPaginate={(val: number) => {
+                        setCurrentPage(val);
+                    }}
+                    refCurrentPage={currentPage}
                     upperLimit={totalPages}
                 />
             </div>
@@ -197,13 +171,15 @@ export default function LogsPage() {
                         className={'h-agentComponentHeight overflow-y-auto pr-4'}
                     >
                         <div className={'grid grid-cols-1 gap-2'}>
-                            {filteredLogs.map((history, index) => (
-                                <AgentLogCard
-                                    history={history}
-                                    key={index}
-                                    className="bg-white"
-                                />
-                            ))}
+                            {LogsHistory?.items.map(
+                                (history: IAgentTriggerHistory, index: number) => (
+                                    <AgentLogCard
+                                        history={history}
+                                        key={index}
+                                        className="bg-white"
+                                    />
+                                )
+                            )}
                         </div>
                     </ScrollArea>
                 </div>

@@ -49,21 +49,36 @@ export const fetchTriggerHistoryByFunctionName = async (functionName: string) =>
 
 export const fetchAllTriggerHistory = async ({
     queryKey
-}: QueryFunctionContext<[string, number?, number?, string?]>) => {
-    const [, page, size = 50, functionName] = queryKey;
+}: QueryFunctionContext<
+    [string, number?, number?, string?, string?, string?, string?]
+>) => {
+    const [, page, size = 50, agentID, functionName, status, success] = queryKey;
 
     let fetchURL = `${baseAPIurl}/trigger-history?page=${page}&size=${size}`;
 
-    if (functionName && functionName.length !== 0) {
-        fetchURL += `&function_name=${functionName}`;
+    if (agentID && agentID !== 'None') {
+        fetchURL += `&agent_id=${agentID}`;
     }
 
-    const res = await fetch(fetchURL);
+    if (functionName && functionName !== 'None') {
+        fetchURL += `&function_name=${functionName}`;
+    }
+    if (status && status !== 'None') {
+        fetchURL += `&status=${status}`;
+    }
+    if (success && success !== 'None') {
+        fetchURL += `&success=${success}`;
+    }
+
+    const encodedURL = encodeURI(fetchURL);
+
+    const res = await fetch(encodedURL);
+    console.log(fetchURL);
 
     if (!res.ok) {
         throw new Error('Trigger Fetch Failed: Network Error');
     }
     const data = await res.json();
-
+    console.log(data);
     return data;
 };

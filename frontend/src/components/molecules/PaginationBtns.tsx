@@ -6,6 +6,7 @@ import { cn } from '../lib/utils';
 
 interface PaginationBtnsProps extends React.HTMLAttributes<HTMLDivElement> {
     lowerLimit?: number;
+    refCurrentPage?: number;
     upperLimit: number;
     onPaginate?: any;
 }
@@ -18,11 +19,12 @@ const disableChevron = 'pointer-events-none bg-gray-200';
 const PaginationBtns: React.FC<PaginationBtnsProps> = ({
     className,
     lowerLimit = 1,
+    refCurrentPage = 1,
     upperLimit,
     onPaginate = () => {},
     ...props
 }) => {
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(refCurrentPage);
 
     function handleLeftClick() {
         const newPage = currentPage - 1;
@@ -50,7 +52,10 @@ const PaginationBtns: React.FC<PaginationBtnsProps> = ({
                     onClick={handleLeftClick}
                 />
             </div>
-            <span className="w-6 text-center text-base">{currentPage}</span>
+            <span className="w-8 text-center text-base ">
+                {currentPage}
+                {upperLimit ? `/${upperLimit}` : ''}
+            </span>
             <div
                 className={cn(
                     chevronWrapper,
