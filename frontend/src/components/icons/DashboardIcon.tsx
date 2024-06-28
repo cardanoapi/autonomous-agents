@@ -1,4 +1,3 @@
-'use client';
 export default function DashBoardIcon(props: React.SVGAttributes<any>) {
     return (
         <svg

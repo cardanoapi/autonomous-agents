@@ -1,33 +1,24 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
 import { PATHS } from '@consts';
 import { Boxes } from 'lucide-react';
 
+import DashBoardIcon from '@app/components/icons/DashboardIcon';
 import GovernanceActionIcon from '@app/components/icons/GovernanceActionIcon';
 import Logo from '@app/components/icons/Logo';
+import LogsIcon from '@app/components/icons/LogsIcon';
+import TemplateIcon from '@app/components/icons/TemplatesIcon';
 import SideNavLink from '@app/components/layout/SideNavLink';
+
+import AgentsIcon from '../icons/AgentsIcon';
 
 export interface ISideNavItem {
     title: string;
     href: string;
     icon: any;
 }
-
-const AgentsIcon = dynamic(() => import('@app/components/icons/AgentsIcon'), {
-    ssr: false
-});
-const DashBoardIcon = dynamic(() => import('@app/components/icons/DashboardIcon'), {
-    ssr: false
-});
-const TemplateIcon = dynamic(() => import('@app/components/icons/TemplatesIcon'), {
-    ssr: false
-});
-const LogsIcon = dynamic(() => import('@app/components/icons/LogsIcon'), {
-    ssr: false
-});
 
 const SideNavItems: ISideNavItem[] = [
     {
