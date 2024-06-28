@@ -8,7 +8,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
 import { IAgent, fetchAgentbyID } from '@app/app/api/agents';
-import { ITemplate, fetchTemplates } from '@app/app/api/templates';
 import AgentTabSection from '@app/components/Agent/AgentTab';
 import AgentTabContent from '@app/components/Agent/AgentTabContent';
 import {
@@ -17,8 +16,7 @@ import {
     BreadcrumbList,
     BreadcrumbSeparator
 } from '@app/components/atoms/Breadcrumb';
-import { selectedAgentTabAtom } from '@app/store/loaclStore';
-import { currentAgentNameAtom } from '@app/store/loaclStore';
+import { currentAgentNameAtom, selectedAgentTabAtom } from '@app/store/loaclStore';
 
 export default function AgentPageById() {
     const [, setCurrentAgentName] = useAtom(currentAgentNameAtom);
@@ -35,13 +33,7 @@ export default function AgentPageById() {
         queryKey: [`agent${agentID}`],
         queryFn: () => fetchAgentbyID(agentID)
     });
-    const { data: templates = [] } = useQuery<ITemplate[]>({
-        queryKey: ['templates'],
-        queryFn: fetchTemplates
-    });
-    const agentTemplate = templates.find(
-        (template) => template.id === agent?.template_id
-    );
+
     return (
         <div className={'flex flex-col gap-4'}>
             <Breadcrumb>
@@ -60,11 +52,7 @@ export default function AgentPageById() {
             </Breadcrumb>
             <div className={'flex h-full min-h-[600px] w-full gap-4 '}>
                 <AgentTabSection />
-                <AgentTabContent
-                    agent={agent}
-                    agentTemplate={agentTemplate}
-                    agentLoading={agentLoading}
-                />
+                <AgentTabContent agent={agent} agentLoading={agentLoading} />
             </div>
         </div>
     );

@@ -7,6 +7,36 @@ import { z } from 'zod';
 import { agentFormSchema } from '../(pages)/agents/create-agent/_form/schema';
 import { baseAPIurl } from './config';
 
+type TriggerType = 'CRON' | 'MANUAL' | 'EVENT';
+
+interface ISubParameter {
+    name: string;
+    value: string;
+}
+
+interface IAgentAction {
+    function_name: string;
+    parameter: Array<ISubParameter>;
+}
+
+export interface ICronTrigger {
+    frequency: string;
+    probability: number;
+}
+
+interface IEventTrigger {
+    event: string;
+    parameters?: Array<ISubParameter>;
+}
+
+interface IAgentConfiguration {
+    id: string;
+    agentId: string;
+    type: TriggerType;
+    action?: IAgentAction;
+    data?: ICronTrigger | IEventTrigger;
+}
+
 export interface IAgent {
     id: string;
     name: string;
@@ -16,6 +46,7 @@ export interface IAgent {
     last_active: string;
     agent_address?: string;
     wallet_amount?: string;
+    agent_configurations?: Array<IAgentConfiguration>;
 }
 
 export const fetchAgents = async (): Promise<IAgent[]> => {
