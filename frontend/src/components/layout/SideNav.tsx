@@ -6,8 +6,9 @@ import Link from 'next/link';
 import { PATHS } from '@consts';
 import { Boxes } from 'lucide-react';
 
-import Logo from '../icons/Logo';
-import SideNavLink from './SideNavLink';
+import GovernanceActionIcon from '@app/components/icons/GovernanceActionIcon';
+import Logo from '@app/components/icons/Logo';
+import SideNavLink from '@app/components/layout/SideNavLink';
 
 export interface ISideNavItem {
     title: string;
@@ -45,6 +46,11 @@ const SideNavItems: ISideNavItem[] = [
         title: 'DRep Directory',
         href: PATHS.dRepDirectory,
         icon: Boxes
+    },
+    {
+        title: 'Governance Actions',
+        href: PATHS.governanceActions,
+        icon: GovernanceActionIcon
     }
 ];
 
