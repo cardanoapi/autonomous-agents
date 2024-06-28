@@ -3,6 +3,8 @@ from datetime import datetime
 from pydantic import BaseModel
 from typing import List, Optional
 
+from backend.app.models import TriggerResponse
+
 
 class AgentResponse(BaseModel):
     id: str
@@ -16,6 +18,7 @@ class AgentResponse(BaseModel):
 class AgentResponseWithWalletDetails(AgentResponse):
     agent_address: Optional[str]
     wallet_amount: Optional[float]
+    agent_configurations: Optional[List[TriggerResponse]]
 
 
 class AgentKeyResponse(BaseModel):

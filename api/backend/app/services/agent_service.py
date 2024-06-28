@@ -58,8 +58,12 @@ class AgentService:
             transactions = response.json()
             for transaction in transactions:
                 utxo = float(transaction.get("value", {}).get("lovelace", "0"))
+        agent_configurations = await self.trigger_service.list_triggers_by_agent_id(agent_id)
         return AgentResponseWithWalletDetails(
-            **agent.dict(), agent_address=agent_with_keys.agent_address, wallet_amount=utxo / (10**6)
+            **agent.dict(),
+            agent_address=agent_with_keys.agent_address,
+            wallet_amount=utxo / (10**6),
+            agent_configurations=agent_configurations,
         )
 
     async def update_agent(self, agent_id: str, agent_data: AgentCreateDTO) -> AgentResponse:
