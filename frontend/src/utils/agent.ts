@@ -24,6 +24,9 @@ export function getConfiguredAgentTrigger(
         case 'Delegation':
             return { ...trigger, parameters: [{ ...trigger.parameters[0], value }] };
 
+        case 'Vote':
+            return { ...trigger, parameters: [{ ...trigger.parameters[0], value }] };
+
         default:
             return trigger;
     }
