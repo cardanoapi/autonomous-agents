@@ -8,13 +8,14 @@ import { ProposalListSort } from '@models/types/proposal';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 
+import DataActionBar from '@app/app/components/DataActionBar';
 import Loader from '@app/app/components/Loader';
-import { SearchField } from '@app/components/atoms/SearchField';
 
 import ProposalCard from './components/proposalCard';
 
 function GovernanceAction() {
     const [searchInput, setSearchInput] = useState('');
+    const [isInitialLoad, setInitialLoad] = useState(true);
     const { ref, inView } = useInView();
 
     useEffect(() => {
@@ -33,9 +34,8 @@ function GovernanceAction() {
                     sorting: ProposalListSort.NewestCreated
                 }),
             getNextPageParam: (lastPage) => {
-                return searchInput === '' &&
-                    lastPage.pageSize * lastPage.page + lastPage.pageSize <
-                        lastPage.total
+                return lastPage.pageSize * lastPage.page + lastPage.pageSize <
+                    lastPage.total
                     ? lastPage.page + 1
                     : undefined;
             },
@@ -51,18 +51,14 @@ function GovernanceAction() {
         setSearchInput(searchValue);
     };
 
-    if (isLoading && !proposalList) {
+    if (isLoading && !proposalList && isInitialLoad) {
+        setInitialLoad(false);
         return <Loader />;
     }
 
     return (
         <div className="flex w-full flex-col gap-10 pb-10">
-            <SearchField
-                placeholder="Search..."
-                variant={'secondary'}
-                className="h-10 max-w-[510px] "
-                onSearch={handleSearch}
-            ></SearchField>
+            <DataActionBar onSearch={handleSearch} />
             <div className="grid w-full grid-flow-row grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 {proposalList?.map((proposal) => (
                     <ProposalCard key={proposal.id} proposal={proposal} />
