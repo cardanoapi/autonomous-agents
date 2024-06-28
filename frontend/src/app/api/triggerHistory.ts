@@ -1,3 +1,5 @@
+import { QueryFunctionContext } from '@tanstack/react-query';
+
 import { baseAPIurl } from './config';
 
 export interface IAgentTriggerHistory {
@@ -42,5 +44,41 @@ export const fetchTriggerHistoryByFunctionName = async (functionName: string) =>
         throw new Error('Trigger Fetch Failed: Network Error');
     }
     const data = await res.json();
+    return data;
+};
+
+export const fetchAllTriggerHistory = async ({
+    queryKey
+}: QueryFunctionContext<
+    [string, number?, number?, string?, string?, string?, string?]
+>) => {
+    const [, page, size = 50, agentID, functionName, status, success] = queryKey;
+
+    let fetchURL = `${baseAPIurl}/trigger-history?page=${page}&size=${size}`;
+
+    if (agentID && agentID !== 'None') {
+        fetchURL += `&agent_id=${agentID}`;
+    }
+
+    if (functionName && functionName !== 'None') {
+        fetchURL += `&function_name=${functionName}`;
+    }
+    if (status && status !== 'None') {
+        fetchURL += `&status=${status}`;
+    }
+    if (success && success !== 'None') {
+        fetchURL += `&success=${success}`;
+    }
+
+    const encodedURL = encodeURI(fetchURL);
+
+    const res = await fetch(encodedURL);
+    console.log(fetchURL);
+
+    if (!res.ok) {
+        throw new Error('Trigger Fetch Failed: Network Error');
+    }
+    const data = await res.json();
+    console.log(data);
     return data;
 };

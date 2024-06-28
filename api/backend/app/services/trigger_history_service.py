@@ -15,8 +15,12 @@ class TriggerHistoryService:
         self.trigger_history_repo = trigger_history_repo
         self.db = prisma_connection
 
-    async def get_all_trigger_history(self, agent_id, function_name) -> Page[TriggerHistoryDto]:
-        return await self.trigger_history_repo.get_all_triggers_history(agent_id, function_name)
+    async def get_all_trigger_history(
+        self, agent_id, function_name, status, success, functions_list
+    ) -> Page[TriggerHistoryDto]:
+        return await self.trigger_history_repo.get_all_triggers_history(
+            agent_id, function_name, status, success, functions_list
+        )
 
     async def count_number_of_executed_transactions(self, success: bool, agent_id: Optional[str] = None):
         end_time = datetime.now()
