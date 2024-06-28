@@ -31,7 +31,7 @@ export enum ProposalListSort {
 
 export enum GovernanceActionFilter {
     NoConfidence = 'No Confidence',
-    NewCommitte = 'New Committe',
+    NewCommittee = 'New Committe',
     NewConstitution = 'Update to the Constitution',
     HardForkInitiation = 'Hard Fork',
     ParameterChange = 'Protocol Parameter Change',
