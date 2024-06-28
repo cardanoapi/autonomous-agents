@@ -3,26 +3,24 @@ import { AgentTriggerFunctionType, IAgentTrigger } from '@models/types';
 export const AGENT_TRIGGER: Record<AgentTriggerFunctionType, IAgentTrigger> = {
     Delegation: {
         function_name: 'Delegation',
-        parameters: [
+        parameter: [
             {
                 name: 'drep',
                 description: 'Drep',
                 optional: false,
                 data_type: 'Drep Hash'
             }
-        ],
-        parameter: []
+        ]
     },
     Vote: {
         function_name: 'Vote',
-        parameters: [
+        parameter: [
             {
                 name: 'proposal',
                 description: 'Proposal',
                 optional: false,
                 data_type: 'proposal'
             }
-        ],
-        parameter: []
+        ]
     }
 };
