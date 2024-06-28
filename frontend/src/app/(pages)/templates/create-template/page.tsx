@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useAppDialog } from '@hooks';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { useForm } from 'react-hook-form';
@@ -76,7 +77,7 @@ export default function TemplateForm() {
     const [functionOptions, setFunctionOptions] = useState<any[] | []>([]);
 
     /*Related to Popup dialog */
-    const [dialogOpen, setDialogOpen] = useState(false);
+    const { isOpen, toggleDialog } = useAppDialog();
     const [currentDialogForm, setCurrentDialogForm] = useState<ITemplateOption | null>(
         null
     );
@@ -87,7 +88,7 @@ export default function TemplateForm() {
     function openSelectedOption(option: ITemplateOption) {
         console.log(option);
         setCurrentDialogForm(option);
-        setDialogOpen(true);
+        toggleDialog();
     }
 
     function unselectOption(option: ITemplateOption) {
@@ -143,7 +144,7 @@ export default function TemplateForm() {
                       }
                     : item
         );
-        setDialogOpen(false);
+        toggleDialog();
         setSelected(newSelected);
         form.setValue('triggers', newSelected);
     }
@@ -249,8 +250,8 @@ export default function TemplateForm() {
                     </form>
                 </Form>
             </Card>
-            <Dialog open={dialogOpen}>
-                <DialogContent>
+            <Dialog open={isOpen}>
+                <DialogContent className="!p-0" defaultCross={false}>
                     <TriggerForm
                         //@ts-ignore
                         formValues={selected.find((elem) => elem === currentDialogForm)}
@@ -269,7 +270,7 @@ export default function TemplateForm() {
                                 functionRef.current.handleUnselect(optionToUnselect);
                             }
 
-                            setDialogOpen(false);
+                            toggleDialog();
                         }}
                         parameters={currentDialogForm?.parameters}
                         onSave={updateSelected}
