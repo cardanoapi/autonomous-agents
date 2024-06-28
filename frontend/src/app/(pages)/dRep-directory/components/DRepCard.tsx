@@ -86,7 +86,10 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
 
             {/* Dialogs */}
             <AppDialog isOpen={isOpen} toggleDialog={toggleDialog}>
-                <AgentsDelegationDialogContent handleClose={toggleDialog} />
+                <AgentsDelegationDialogContent
+                    dRepId={dRep.drepId}
+                    handleClose={toggleDialog}
+                />
             </AppDialog>
         </>
     );

@@ -1,10 +1,13 @@
-export enum AgentFunction {
-    DrepRegistration = 'Drep Registration',
-    DrepDeRegistration = 'Drep deRegistration',
-    RegisterStake = 'Register Stake',
-    SendAdaToken = 'SendAda Token',
-    ProposalNewConstitution = 'Proposal New Constitution',
-    InfoActionProposal = 'Info Action Proposal',
-    Delegation = 'Delegation',
-    Vote = 'Vote'
+export type AgentTriggerFunctionType = 'Delegation' | 'Vote';
+
+interface IParamater {
+    name: string;
+    description: string;
+    optional: boolean;
+    data_type: string;
+    value?: string;
+}
+export interface IAgentTrigger {
+    function_name: AgentTriggerFunctionType;
+    parameters: IParamater[];
 }

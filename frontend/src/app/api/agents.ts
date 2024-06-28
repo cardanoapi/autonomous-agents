@@ -1,6 +1,6 @@
 'use client';
 
-import { AgentFunction } from '@models/types';
+import { IAgentTrigger } from '@models/types';
 import axios from 'axios';
 import { z } from 'zod';
 
@@ -83,13 +83,15 @@ export const fetchAgentbyID = async (agentID: string): Promise<IAgent> => {
     }
 };
 
+interface AgentTriggerRequestData extends IAgentTrigger {}
+
 export const manualTriggerForAgent = async (
     agentId: string,
-    agentFunction: AgentFunction
+    data: AgentTriggerRequestData
 ) => {
     const url = `${baseAPIurl}/agents/${agentId}/trigger`;
     try {
-        const response = await axios.post(url, agentFunction, {
+        const response = await axios.post(url, data, {
             headers: {
                 'Content-Type': 'application/json'
             }
