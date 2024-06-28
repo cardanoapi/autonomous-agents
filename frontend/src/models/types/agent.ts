@@ -9,6 +9,6 @@ interface IParamater {
 }
 export interface IAgentTrigger {
     function_name: AgentTriggerFunctionType;
-    parameters: IParamater[];
+    parameters?: IParamater[];
     parameter: IParamater[];
 }

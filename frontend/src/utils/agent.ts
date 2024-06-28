@@ -27,10 +27,10 @@ export function getConfiguredAgentTrigger(
 
     switch (func) {
         case 'Delegation':
-            return { ...trigger, parameter: [{ ...trigger.parameters[0], value }] };
+            return { ...trigger, parameter: [{ ...trigger.parameter[0], value }] };
 
         case 'Vote':
-            return { ...trigger, parameter: [{ ...trigger.parameters[0], value }] };
+            return { ...trigger, parameter: [{ ...trigger.parameter[0], value }] };
 
         default:
             return { ...trigger, parameter: [] };
