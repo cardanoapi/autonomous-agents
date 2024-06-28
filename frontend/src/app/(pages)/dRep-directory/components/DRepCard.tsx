@@ -45,7 +45,7 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
             <div
                 className={`flex w-full items-center justify-between rounded-xl border bg-white p-4 shadow-md ${isDataMissing && 'shadow-bg-red-100 bg-red-100/40'}`}
             >
-                <div className="flex space-x-8">
+                <div className="flex space-x-4 sm:space-x-6 lg:space-x-12 xl:space-x-20">
                     <div className="flex flex-col space-y-2">
                         <TypographyH2
                             className={`font-semibold ${isDataMissing && 'text-red-600'}`}
@@ -53,7 +53,7 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                             {isDataMissing ? 'Data Missing' : dRep.dRepName}
                         </TypographyH2>
                         <div className="flex items-center text-blue-900">
-                            <p className="w-80 truncate text-sm font-medium">
+                            <p className="w-24 truncate text-sm font-medium xl:w-80">
                                 {dRep.drepId}
                             </p>
                             <CopyIcon
@@ -64,12 +64,12 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                         </div>
                     </div>
 
-                    <div className="flex w-52 flex-col items-center space-y-2">
+                    <div className="flex w-32 flex-col items-center space-y-2">
                         <p className="text-sm text-gray-800">Voting Power</p>
                         <p className="font-semibold">₳ {formattedVotingPower}</p>
                     </div>
 
-                    <div className="flex w-52 flex-col items-center space-y-2">
+                    <div className="flex w-32 flex-col items-center space-y-2">
                         <p className="text-sm text-gray-800">Status</p>
                         <Badge className={statusColor[dRep.status]} variant="outline">
                             {dRep.status}
@@ -77,9 +77,11 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                     </div>
                 </div>
 
-                <Button onClick={toggleDialog} className="rounded-3xl bg-blue-900">
-                    Delegate
-                </Button>
+                {dRep.status === DRepStatus.Active && (
+                    <Button onClick={toggleDialog} className="rounded-3xl bg-blue-900">
+                        Delegate
+                    </Button>
+                )}
             </div>
 
             {/* Dialogs */}
