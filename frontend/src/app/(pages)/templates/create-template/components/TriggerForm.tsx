@@ -115,7 +115,7 @@ export default function TriggerForm({
     }, [errorMsg]);
 
     return (
-        <Card className="flex h-full min-h-[449px] min-w-[696px] flex-col gap-y-4 bg-brand-Azure-400 p-4 px-8">
+        <Card className="flex h-full flex-col gap-y-4 bg-brand-Azure-400 ">
             <form
                 className="flex w-full flex-col gap-y-4 2xl:gap-y-6"
                 onSubmit={handleSubmit}
