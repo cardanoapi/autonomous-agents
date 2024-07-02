@@ -11,7 +11,9 @@ export interface ITriggerHistoryMetric {
     today_fluctuation_rate: number;
 }
 
-export const fecthTriggerHistoryMetric = async (functions: string[]) : Promise<ITriggerHistoryMetric> => {
+export const fecthTriggerHistoryMetric = async (
+    functions: string[]
+): Promise<ITriggerHistoryMetric> => {
     let fetchURL = `${baseAPIurl}/trigger-metric`;
     if (functions.length > 0) {
         const queryParams = functions

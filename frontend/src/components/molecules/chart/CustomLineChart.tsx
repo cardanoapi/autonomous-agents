@@ -21,16 +21,16 @@ export interface ILineChartData {
 }
 
 export const demoCustomLineChartData: ILineChartData[] = [
-    { name: 'A', amt: 10 },
-    { name: 'B', amt: 15 },
-    { name: 'C', amt: 24 },
-    { name: 'D', amt: 18 },
-    { name: 'E', amt: 12 },
-    { name: 'F', amt: 20 },
-    { name: 'G', amt: 28 },
-    { name: 'H', amt: 26 },
-    { name: 'I', amt: 32 },
-    { name: 'J', amt: 34 }
+    { name: 'A', amt: 0 },
+    { name: 'B', amt: 0 },
+    { name: 'C', amt: 0 },
+    { name: 'D', amt: 0 },
+    { name: 'E', amt: 0 },
+    { name: 'F', amt: 0 },
+    { name: 'G', amt: 0 },
+    { name: 'H', amt: 0 },
+    { name: 'I', amt: 0 },
+    { name: 'J', amt: 0 }
 ];
 
 export default function CustomLineChart({
