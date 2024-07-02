@@ -1,23 +1,17 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
-import { ChevronDown, ChevronUp, X } from 'lucide-react';
+import { X } from 'lucide-react';
 
 import { IParameter } from '@app/app/api/functions';
 import { Button } from '@app/components/atoms/Button';
 import { Card, CardTitle } from '@app/components/atoms/Card';
 import { Input } from '@app/components/atoms/Input';
 import { IOption } from '@app/components/molecules/MultiSearchSelect';
+import ProbabilityInput from '@app/components/molecules/ProbabilityInput';
 
 import TriggerTab from './TriggerTab';
-
-//
-// interface ICronParameter {
-//     name: string;
-//     description?: string;
-//     value: string;
-// }
 
 interface ICronTriggerForm {
     defaultCron?: string[];
@@ -51,7 +45,6 @@ export default function TriggerForm({
         previousConfiguredSettings || ''
     );
     const [probability, setProbability] = useState<string>('100');
-    const [errorMsg, setErrorMsg] = useState('');
     const [triggerType, setTriggerType] = useState('CRON');
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -92,27 +85,6 @@ export default function TriggerForm({
         setCronExpression(cronExpression);
         setConfiguredSettings(currentSettings);
     }
-
-    const handleProbabilityChange = (value: string) => {
-        setErrorMsg('');
-        if (!value) {
-            setProbability('');
-        } else {
-            if (+value < 0 || +value > 100) {
-                setErrorMsg('Value cannot be less than 0 or greater than 100');
-                return;
-            } else setProbability(value);
-        }
-    };
-
-    useEffect(() => {
-        if (errorMsg) {
-            const clearErrorMsg = setTimeout(() => {
-                setErrorMsg('');
-            }, 3000);
-            return () => clearTimeout(clearErrorMsg);
-        }
-    }, [errorMsg]);
 
     return (
         <Card className="flex h-full flex-col gap-y-4 bg-brand-Azure-400 ">
@@ -157,44 +129,11 @@ export default function TriggerForm({
                 />
                 <div className={'flex flex-col gap-4'}>
                     <span>Probability</span>
-                    <div className={'flex flex-col gap-2'}>
-                        <div className={'relative flex w-fit flex-row items-center'}>
-                            <input
-                                value={probability}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                    handleProbabilityChange(e.target.value)
-                                }
-                                className={'w-[140px] p-2 text-center'}
-                                type={'text'}
-                            />
-                            <div className={'absolute right-4 flex flex-col'}>
-                                <ChevronUp
-                                    className={'h-4 w-4 cursor-pointer'}
-                                    onClick={() =>
-                                        handleProbabilityChange(
-                                            (+probability + 1).toString()
-                                        )
-                                    }
-                                />
-                                <ChevronDown
-                                    className={
-                                        'h-4 w-4 cursor-pointer active:scale-105'
-                                    }
-                                    onClick={() =>
-                                        handleProbabilityChange(
-                                            (+probability - 1).toString()
-                                        )
-                                    }
-                                />
-                            </div>
-                        </div>
-
-                        {errorMsg ? (
-                            <span className={' text-xs text-red-500'}>{errorMsg}</span>
-                        ) : (
-                            <span className={'h-4'}></span>
-                        )}
-                    </div>
+                    <ProbabilityInput
+                        onInputChange={(probability: string) =>
+                            setProbability(probability)
+                        }
+                    />
                 </div>
                 <div className="flex justify-center">
                     <Button
