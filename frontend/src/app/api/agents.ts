@@ -9,7 +9,7 @@ import { baseAPIurl } from './config';
 
 type TriggerType = 'CRON' | 'MANUAL' | 'EVENT';
 
-interface ISubParameter {
+export interface ISubParameter {
     name: string;
     value: string;
 }
@@ -29,7 +29,7 @@ interface IEventTrigger {
     parameters?: Array<ISubParameter>;
 }
 
-interface IAgentConfiguration {
+export interface IAgentConfiguration {
     id: string;
     agentId: string;
     type: TriggerType;
