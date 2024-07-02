@@ -55,7 +55,7 @@ function GovernanceAction() {
         <div className="flex w-full flex-col gap-10 pb-10">
             <DataActionBar onSearch={handleSearch} />
             {isLoading && !proposalList ? (
-                <div className="h-proposalEmptyListHeight flex items-center justify-center">
+                <div className="flex h-proposalEmptyListHeight items-center justify-center">
                     <Loader />
                 </div>
             ) : (
