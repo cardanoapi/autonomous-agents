@@ -28,15 +28,15 @@ class TriggerClassifier:
 
         self.accumulator = [0 for i in range(0, max_range)]
 
-    
     def append(self, item):
         today = datetime.now(timezone.utc)
         if self.classifier_type == "LASTHOUR":
-            self.accumulator[(today.minute - item.minute)%60] += 1
+            self.accumulator[(today.minute - item.minute) % 60] += 1
         elif self.classifier_type == "LAST24HOUR":
-            self.accumulator[(today.hour - item.hour)%24] += 1
-        elif self.classifier_type == 'LASTWEEK':
-            self.accumulator[(today.day - item.day)%7] += 1
+            self.accumulator[(today.hour - item.hour) % 24] += 1
+        elif self.classifier_type == "LASTWEEK":
+            #Todo: handle edge case for days from previous month and new month
+            self.accumulator[(today.day - item.day) % 7] += 1
 
 
 class TriggerHistoryService:
@@ -45,10 +45,10 @@ class TriggerHistoryService:
         self.db = prisma_connection
 
     async def get_all_trigger_history(
-        self, agent_id, function_name, status, success, functions_list
+        self, agent_id, function_name, status, success,
     ) -> Page[TriggerHistoryDto]:
         return await self.trigger_history_repo.get_all_triggers_history(
-            agent_id, function_name, status, success, functions_list
+            agent_id, function_name, status, success
         )
 
     async def count_number_of_executed_transactions(self, success: bool, agent_id: Optional[str] = None):
@@ -92,12 +92,14 @@ class TriggerHistoryService:
 
     async def calculate_trigger_metric(self, function_name: str):
 
+        if function_name == '*':
+            function_name = None
+
         successfull_triggers = await self.trigger_history_repo.get_all_triggers_history(
             agent_id=None,
             function_name=function_name,
             status=True,
             success=True,
-            functions_list=None,
             enable_pagination=False,
         )
         unsuccessfull_triggers = await self.trigger_history_repo.get_all_triggers_history(
@@ -105,7 +107,6 @@ class TriggerHistoryService:
             function_name=function_name,
             status=True,
             success=False,
-            functions_list=None,
             enable_pagination=False,
         )
         skipeed_triggers = await self.trigger_history_repo.get_all_triggers_history(
@@ -113,7 +114,6 @@ class TriggerHistoryService:
             function_name=function_name,
             status=False,
             success=False,
-            functions_list=None,
             enable_pagination=False,
         )
 
@@ -124,13 +124,13 @@ class TriggerHistoryService:
 
         for item in successfull_triggers:
             time_diff = today - item.timestamp
-            #Check the Time difference / Time passed between today and log timestamp.
+            # Check the Time difference / Time passed between today and log timestamp.
             if time_diff.days < 7:
                 last_week_successful_triggers.append(item.timestamp)
-                if time_diff.days < 1: 
+                if time_diff.days < 1:
                     last_24hour_successful_triggers.append(item.timestamp)
-                    if (time_diff.seconds/60) < 60: 
-                         last_hour_successful_triggers.append(item.timestamp)
+                    if (time_diff.seconds / 60) < 60:
+                        last_hour_successful_triggers.append(item.timestamp)
 
         response = {
             "function_name": function_name,
@@ -139,6 +139,6 @@ class TriggerHistoryService:
             "skipped_triggers": len(skipeed_triggers),
             "last_hour_successfull_triggers": last_hour_successful_triggers.accumulator,
             "last_24hour_successfull_triggers": last_24hour_successful_triggers.accumulator,
-            "last_week_successfull_triggers" : last_week_successful_triggers.accumulator
+            "last_week_successfull_triggers": last_week_successful_triggers.accumulator,
         }
         return response
