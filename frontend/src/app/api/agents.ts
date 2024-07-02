@@ -37,6 +37,13 @@ export interface IAgentConfiguration {
     data?: ICronTrigger | IEventTrigger;
 }
 
+export interface IAgentUpdateReqDto {
+    agentId?: string;
+    agentName?: string;
+    templateId?: string;
+    agentConfigurations?: Array<IAgentConfiguration>;
+}
+
 export interface IAgent {
     id: string;
     name: string;
@@ -75,6 +82,28 @@ export const postAgentData = async (formData: z.infer<typeof agentFormSchema>) =
                 name: formData.agentName,
                 template_id: formData.agentTemplate,
                 instance: formData.numberOfAgents
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error posting agent data:', error);
+        throw error;
+    }
+};
+
+export const updateAgentData = async (formData: IAgentUpdateReqDto) => {
+    try {
+        const response = await axios.put(
+            `${baseAPIurl}/agents/${formData.agentId}`,
+            {
+                name: formData.agentName,
+                template_id: formData.templateId,
+                agent_configurations: formData.agentConfigurations
             },
             {
                 headers: {
