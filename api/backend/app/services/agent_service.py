@@ -4,7 +4,12 @@ from typing import List
 
 import httpx
 
-from backend.app.models import TriggerCreateDTO, AgentResponseWithWalletDetails
+from backend.app.models import (
+    TriggerCreateDTO,
+    AgentResponseWithWalletDetails,
+    AgentUpdateDTO,
+    AgentResponseWithAgentConfigurations,
+)
 from backend.app.models import AgentCreateDTO, AgentKeyResponse, AgentResponse
 from backend.app.models.agent.function import AgentFunction
 from backend.app.repositories.agent_repository import AgentRepository
@@ -66,10 +71,28 @@ class AgentService:
             agent_configurations=agent_configurations,
         )
 
-    async def update_agent(self, agent_id: str, agent_data: AgentCreateDTO) -> AgentResponse:
-        agent = await self.agent_repository.modify_agent(agent_id, agent_data)
-        self.raise_exception_if_agent_not_found(agent)
-        return agent
+    async def update_agent(self, agent_id: str, agent_data: AgentUpdateDTO) -> AgentResponseWithAgentConfigurations:
+        existing_agent = await self.agent_repository.retrieve_agent(agent_id)
+        self.raise_exception_if_agent_not_found(existing_agent)
+        # if agent_data.template_id:
+        #     if existing_agent.template_id != agent_data.template_id:
+        #         updated_template_triggers = await self.template_trigger_service.get_template_trigger(
+        #             agent_data.template_id)
+        #
+        #         for template_trigger_data in updated_template_triggers:
+        #             trigger_data = TriggerCreateDTO(
+        #                 type=template_trigger_data.type,
+        #                 data=template_trigger_data.data,
+        #                 action=template_trigger_data.action,
+        #             )
+        #             await self.trigger_service.create_trigger(agent_id, trigger_data)
+        #         pass
+        updated_triggers = await self.trigger_service.update_trigger_for_agent(
+            agent_id, agent_data.agent_configurations
+        )
+        existing_agent = await self.agent_repository.modify_agent(agent_id, agent_data)
+        self.raise_exception_if_agent_not_found(existing_agent)
+        return AgentResponseWithAgentConfigurations(**existing_agent.dict(), agent_configurations=updated_triggers)
 
     async def get_active_agents_count(self):
         return await self.agent_repository.get_online_agents_count()

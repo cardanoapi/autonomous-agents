@@ -42,5 +42,12 @@ class TriggerService:
 
         return trigger_response
 
+    async def update_trigger_for_agent(self, agent_id: str, agent_configurations: List[TriggerResponse]):
+        for agent_config in agent_configurations:
+            await self.trigger_repository.modify_trigger_by_id(agent_config.id, TriggerCreateDTO(**agent_config.dict()))
+
+        await self.publish_trigger_event(agent_id)
+        return await self.list_triggers_by_agent_id(agent_id)
+
     async def publish_trigger_event(self, agent_id: str):
         await self.kafka_service.publish_message("trigger_config_updates", "config_updated", key=agent_id)
