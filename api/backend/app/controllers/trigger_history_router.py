@@ -48,3 +48,8 @@ class TriggerHistory(Routable):
         return await self.trigger_history_service.count_number_of_executed_transactions(
             success=success, agent_id=agent_id
         )
+
+    @get("/trigger-metric/{function_name}")
+    async def get_trigger_metric(self, function_name: str):
+        # Returns Data related to Given Function Trigger. (Used especially in DASHBOARD Chart Visualization.)
+        return await self.trigger_history_service.calculate_trigger_metric(function_name=function_name)

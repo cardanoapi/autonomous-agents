@@ -1,5 +1,5 @@
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from fastapi_pagination import Page
@@ -8,6 +8,35 @@ from backend.app.exceptions import HTTPException
 from backend.app.models.trigger_history.trigger_history_dto import TriggerHistoryDto
 from backend.app.repositories.trigger_history_repository import TriggerHistoryRepository
 from backend.config.database import prisma_connection
+
+
+class TriggerClassifier:
+    # Custom Data structure for Accumulating Transaction Count using TimeStamp.
+    # The append method offsets the index for data acuumulation accordingly.
+    def __init__(self, classifier_type) -> None:
+        self.classifier_type = classifier_type
+        classifier_types = ["LASTHOUR", "LAST24HOUR", "LASTWEEK"]
+        assert self.classifier_type in classifier_types
+
+        max_range = None
+        if classifier_type == "LASTHOUR":
+            max_range = 60
+        if classifier_type == "LAST24HOUR":
+            max_range = 24
+        if classifier_type == "LASTWEEK":
+            max_range = 7
+
+        self.accumulator = [0 for i in range(0, max_range)]
+
+    
+    def append(self, item):
+        today = datetime.now(timezone.utc)
+        if self.classifier_type == "LASTHOUR":
+            self.accumulator[(today.minute - item.minute)%60] += 1
+        elif self.classifier_type == "LAST24HOUR":
+            self.accumulator[(today.hour - item.hour)%24] += 1
+        elif self.classifier_type == 'LASTWEEK':
+            self.accumulator[(today.day - item.day)%7] += 1
 
 
 class TriggerHistoryService:
@@ -60,3 +89,56 @@ class TriggerHistoryService:
         sorted_transaction_counts = dict(sorted(transaction_counts.items()))
 
         return sorted_transaction_counts
+
+    async def calculate_trigger_metric(self, function_name: str):
+
+        successfull_triggers = await self.trigger_history_repo.get_all_triggers_history(
+            agent_id=None,
+            function_name=function_name,
+            status=True,
+            success=True,
+            functions_list=None,
+            enable_pagination=False,
+        )
+        unsuccessfull_triggers = await self.trigger_history_repo.get_all_triggers_history(
+            agent_id=None,
+            function_name=function_name,
+            status=True,
+            success=False,
+            functions_list=None,
+            enable_pagination=False,
+        )
+        skipeed_triggers = await self.trigger_history_repo.get_all_triggers_history(
+            agent_id=None,
+            function_name=function_name,
+            status=False,
+            success=False,
+            functions_list=None,
+            enable_pagination=False,
+        )
+
+        today = datetime.now(timezone.utc)
+        last_hour_successful_triggers = TriggerClassifier("LASTHOUR")
+        last_24hour_successful_triggers = TriggerClassifier("LAST24HOUR")
+        last_week_successful_triggers = TriggerClassifier("LASTWEEK")
+
+        for item in successfull_triggers:
+            time_diff = today - item.timestamp
+            #Check the Time difference / Time passed between today and log timestamp.
+            if time_diff.days < 7:
+                last_week_successful_triggers.append(item.timestamp)
+                if time_diff.days < 1: 
+                    last_24hour_successful_triggers.append(item.timestamp)
+                    if (time_diff.seconds/60) < 60: 
+                         last_hour_successful_triggers.append(item.timestamp)
+
+        response = {
+            "function_name": function_name,
+            "successfull_triggers": len(successfull_triggers),
+            "unsuccessfull_triggers": len(unsuccessfull_triggers),
+            "skipped_triggers": len(skipeed_triggers),
+            "last_hour_successfull_triggers": last_hour_successful_triggers.accumulator,
+            "last_24hour_successfull_triggers": last_24hour_successful_triggers.accumulator,
+            "last_week_successfull_triggers" : last_week_successful_triggers.accumulator
+        }
+        return response
