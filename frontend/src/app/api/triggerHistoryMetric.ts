@@ -6,12 +6,12 @@ export interface ITriggerHistoryMetric {
     unsuccessful_triggers: number;
     skipped_triggers: number;
     last_hour_successful_triggers: number[];
-    last_24_hour_successful_triggers: number[];
+    last_24hour_successful_triggers: number[];
     last_week_successful_triggers: number[];
     today_fluctuation_rate: number;
 }
 
-export const fecthTriggerHistoryMetric = async (functions: string[]) => {
+export const fecthTriggerHistoryMetric = async (functions: string[]) : Promise<ITriggerHistoryMetric> => {
     let fetchURL = `${baseAPIurl}/trigger-metric`;
     if (functions.length > 0) {
         const queryParams = functions

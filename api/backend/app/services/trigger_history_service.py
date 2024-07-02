@@ -147,12 +147,12 @@ class TriggerHistoryService:
 
         response = {
             "function_name": function_name,
-            "successfull_triggers": len(successfull_triggers),
-            "unsuccessfull_triggers": len(unsuccessfull_triggers),
+            "successful_triggers": len(successfull_triggers),
+            "unsuccessful_triggers": len(unsuccessfull_triggers),
             "skipped_triggers": len(skipeed_triggers),
-            "last_hour_successfull_triggers": last_hour_successful_triggers.accumulator,
-            "last_24hour_successfull_triggers": last_24hour_successful_triggers.accumulator,
-            "last_week_successfull_triggers": last_week_successful_triggers.accumulator,
-            "24_hour_fluctuation_rate": calculate_change_rate(last_day_transactions, today_transactions),
+            "last_hour_successful_triggers": last_hour_successful_triggers.accumulator,
+            "last_24hour_successful_triggers": last_24hour_successful_triggers.accumulator,
+            "last_week_successful_triggers": last_week_successful_triggers.accumulator,
+            "today_fluctuation_rate": calculate_change_rate(last_day_transactions, today_transactions),
         }
         return response
