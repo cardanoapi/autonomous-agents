@@ -6,14 +6,12 @@ class TriggerHistoryRepository:
     def __init__(self, db_connection=None):
         self.db = db_connection or prisma_connection
 
-    async def get_all_triggers_history(
-        self, agent_id, function_name, status, success , enable_pagination=True
-    ):
+    async def get_all_triggers_history(self, agent_id, function_name, status, success, enable_pagination=True):
         query = {}
         if agent_id is not None:
             query["agentId"] = agent_id
         if function_name is not None:
-            query["functionName"] = {"in" : function_name}
+            query["functionName"] = {"in": function_name}
         if status is not None:
             query["status"] = status
         if success is not None:

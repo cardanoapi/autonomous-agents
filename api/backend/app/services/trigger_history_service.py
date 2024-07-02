@@ -8,6 +8,7 @@ from backend.app.exceptions import HTTPException
 from backend.app.models.trigger_history.trigger_history_dto import TriggerHistoryDto
 from backend.app.repositories.trigger_history_repository import TriggerHistoryRepository
 from backend.config.database import prisma_connection
+from backend.app.utils.extras import calculate_change_rate
 
 
 class TriggerClassifier:
@@ -35,7 +36,7 @@ class TriggerClassifier:
         elif self.classifier_type == "LAST24HOUR":
             self.accumulator[(today.hour - item.hour) % 24] += 1
         elif self.classifier_type == "LASTWEEK":
-            #Todo: handle edge case for days from previous month and new month
+            # Todo: handle edge case for days from previous month and new month
             self.accumulator[(today.day - item.day) % 7] += 1
 
 
@@ -45,11 +46,13 @@ class TriggerHistoryService:
         self.db = prisma_connection
 
     async def get_all_trigger_history(
-        self, agent_id, function_name, status, success,
+        self,
+        agent_id,
+        function_name,
+        status,
+        success,
     ) -> Page[TriggerHistoryDto]:
-        return await self.trigger_history_repo.get_all_triggers_history(
-            agent_id, function_name, status, success
-        )
+        return await self.trigger_history_repo.get_all_triggers_history(agent_id, function_name, status, success)
 
     async def count_number_of_executed_transactions(self, success: bool, agent_id: Optional[str] = None):
         end_time = datetime.now()
@@ -90,9 +93,9 @@ class TriggerHistoryService:
 
         return sorted_transaction_counts
 
-    async def calculate_trigger_metric(self, function_name: str):
+    async def calculate_trigger_metric(self, function_name: list[str]):
 
-        if function_name == '*':
+        if function_name == "*":
             function_name = None
 
         successfull_triggers = await self.trigger_history_repo.get_all_triggers_history(
@@ -122,8 +125,12 @@ class TriggerHistoryService:
         last_24hour_successful_triggers = TriggerClassifier("LAST24HOUR")
         last_week_successful_triggers = TriggerClassifier("LASTWEEK")
 
+        last_day_transactions = 0
+        today_transactions = 0
+
         for item in successfull_triggers:
             time_diff = today - item.timestamp
+
             # Check the Time difference / Time passed between today and log timestamp.
             if time_diff.days < 7:
                 last_week_successful_triggers.append(item.timestamp)
@@ -131,6 +138,12 @@ class TriggerHistoryService:
                     last_24hour_successful_triggers.append(item.timestamp)
                     if (time_diff.seconds / 60) < 60:
                         last_hour_successful_triggers.append(item.timestamp)
+
+            # For calculating fluctuation rate
+            if time_diff.days < 3 and time_diff.days >= 1:
+                last_day_transactions += 1
+            elif time_diff.days < 1:
+                today_transactions += 1
 
         response = {
             "function_name": function_name,
@@ -140,5 +153,6 @@ class TriggerHistoryService:
             "last_hour_successfull_triggers": last_hour_successful_triggers.accumulator,
             "last_24hour_successfull_triggers": last_24hour_successful_triggers.accumulator,
             "last_week_successfull_triggers": last_week_successful_triggers.accumulator,
+            "24_hour_fluctuation_rate": calculate_change_rate(last_day_transactions, today_transactions),
         }
         return response
