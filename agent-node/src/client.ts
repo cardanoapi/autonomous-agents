@@ -17,10 +17,6 @@ function handleFunctionForEventTriggerType(transactions: any) {
         if (Array.isArray(tx.body.proposalProcedures)) {
             tx.body.proposalProcedures.forEach(
                 (proposal: any, index: number) => {
-                    console.log(
-                        `Proposal for event type of tx at index ${index} is :`,
-                        JSON.stringify(proposal)
-                    )
                     triggerAction(
                         {
                             function_name:
@@ -72,11 +68,6 @@ export async function handleIncomingMessage(
         } else if (message.message === 'on_chain_tx') {
             console.log('Received on_chain_tx:', JSON.stringify(message))
             const { transactions } = message
-            console.log(
-                'GlobalAgentConfigDetails are : ',
-                JSON.stringify(AgentWithTriggerTypeEvent),
-                transactions
-            )
             if (AgentWithTriggerTypeEvent.eventType) {
                 handleFunctionForEventTriggerType(transactions)
             }
