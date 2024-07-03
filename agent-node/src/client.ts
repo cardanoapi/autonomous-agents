@@ -72,6 +72,11 @@ export async function handleIncomingMessage(
         } else if (message.message === 'on_chain_tx') {
             console.log('Received on_chain_tx:', JSON.stringify(message))
             const { transactions } = message
+            console.log(
+                'GlobalAgentConfigDetails are : ',
+                JSON.stringify(AgentWithTriggerTypeEvent),
+                transactions
+            )
             if (AgentWithTriggerTypeEvent.eventType) {
                 handleFunctionForEventTriggerType(transactions)
             }
