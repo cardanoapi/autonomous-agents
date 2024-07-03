@@ -31,13 +31,16 @@ class TriggerClassifier:
 
     def append(self, item):
         today = datetime.now(timezone.utc)
+        time_diff = today - item
+
         if self.classifier_type == "LASTHOUR":
-            self.accumulator[(today.minute - item.minute) % 60] += 1
+            index = int(time_diff.total_seconds() / 60) % 60
         elif self.classifier_type == "LAST24HOUR":
-            self.accumulator[(today.hour - item.hour) % 24] += 1
+            index = int(time_diff.total_seconds() / 3600) % 24
         elif self.classifier_type == "LASTWEEK":
-            # Todo: handle edge case for days from previous month and new month
-            self.accumulator[(today.day - item.day) % 7] += 1
+            index = time_diff.days % 7
+
+        self.accumulator[index] += 1
 
 
 class TriggerHistoryService:
@@ -95,9 +98,6 @@ class TriggerHistoryService:
 
     async def calculate_trigger_metric(self, function_name: list[str]):
 
-        if function_name == "*":
-            function_name = None
-
         successfull_triggers = await self.trigger_history_repo.get_all_triggers_history(
             agent_id=None,
             function_name=function_name,
@@ -135,6 +135,7 @@ class TriggerHistoryService:
             if time_diff.days < 7:
                 last_week_successful_triggers.append(item.timestamp)
                 if time_diff.days < 1:
+                    print(item.timestamp, today, time_diff, item.timestamp.hour)
                     last_24hour_successful_triggers.append(item.timestamp)
                     if (time_diff.seconds / 60) < 60:
                         last_hour_successful_triggers.append(item.timestamp)
