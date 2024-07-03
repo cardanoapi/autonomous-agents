@@ -50,7 +50,7 @@ class WebSocketConnectionManager {
         const existingWebSocket = this.activeConnections[websocketAgentId]
         if (existingWebSocket) {
             delete this.activeConnections[websocketAgentId]
-            await existingWebSocket.close(1000, 'Connection closed')
+            existingWebSocket.close(1000, 'Connection closed')
         }
     }
 
@@ -93,14 +93,17 @@ class WebSocketConnectionManager {
         return !!this.activeConnections[websocketAgentId]
     }
 
-    async removePreviousAgentConnectionIfExists(
-        websocketAgentId: string
+    async handleDuplicateAgentIdIfExists(
+        websocketAgentId: string,
+        newWebSocket: WebSocket
     ): Promise<void> {
         // Remove previous WebSocket connection of agent if exists
         const existingWebSocket = this.activeConnections[websocketAgentId]
         if (existingWebSocket) {
-            delete this.activeConnections[websocketAgentId]
-            await existingWebSocket.close(1000, 'Establishing a new connection')
+            newWebSocket.close(
+                1000,
+                `Agent with id ${websocketAgentId} is already running.`
+            )
         }
     }
 

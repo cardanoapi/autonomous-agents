@@ -9,6 +9,7 @@ import express from 'express'
 import { WebSocket } from 'ws'
 import { initKafkaConsumers } from './service/kafka_message_consumer'
 import { handleTransaction } from './service/transaction_service'
+
 const app = express()
 const port = 3001
 
@@ -31,12 +32,11 @@ wss.on('connection', async function connection(ws, req) {
         )
     }
     if (typeof agentId === 'string') {
-        // Handle agentId as a valid string
         console.log(`Agent connected: ${agentId}`)
 
         const agentExists = await checkIfAgentExistsInDB(agentId)
         if (agentExists) {
-            await manager.removePreviousAgentConnectionIfExists(agentId)
+            await manager.handleDuplicateAgentIdIfExists(agentId, ws)
             await manager.webSocketConnected(agentId, ws)
             const { instanceCount, configurations } =
                 await fetchAgentConfiguration(agentId)
