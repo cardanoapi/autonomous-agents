@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
-
 import {
     Area,
     AreaChart,
@@ -47,7 +45,8 @@ export default function CustomLineChart({
     renderToolTip = true,
     renderXaxis = true,
     renderYaxis = true,
-    smoothStroke = true
+    smoothStroke = true,
+    xaxisInterval = 0
 }: {
     chartData?: ILineChartData[];
     className?: string;
@@ -61,12 +60,9 @@ export default function CustomLineChart({
     renderXaxis?: boolean;
     renderYaxis?: boolean;
     smoothStroke?: boolean;
+    xaxisInterval?: number;
 }) {
     const uniqueId = uuidv4(); // Generate a unique ID for this chart instance
-
-    useEffect(() => {
-        console.log(chartData);
-    }, [chartData]);
 
     return (
         <ResponsiveContainer width="100%" height="100%" className={className}>
@@ -132,10 +128,12 @@ export default function CustomLineChart({
                 />
                 {renderXaxis && (
                     <XAxis
+                        dataKey="name"
                         tickLine={false}
                         dy={5}
                         fill="#2196F3"
                         stroke="#A2A3A5"
+                        interval={xaxisInterval}
                     ></XAxis>
                 )}
             </AreaChart>

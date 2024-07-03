@@ -26,20 +26,43 @@ export default function Home() {
         queryFn: () => fecthTriggerHistoryMetric([])
     });
 
-    const [currentChartFilter, setCurrentChartFilter] = useState('Last 24 Hours');
-    const [currentChartUnit, setCurrentChartUnit] = useState('Hours');
+    interface IChartFilterOption {
+        placeholder: string;
+        unit: string;
+        xaxisInterval: number;
+    }
+
     const [chartDataSource, setChartDataSource] = useState<number[]>([]);
+    const chartFilterOptions: IChartFilterOption[] = [
+        {
+            placeholder: 'Last Hour',
+            unit: 'Mins',
+            xaxisInterval: 5
+        },
+        {
+            placeholder: 'Last 24 Hours',
+            unit: 'Hours',
+            xaxisInterval: 3
+        },
+        {
+            placeholder: 'Last 7 Days',
+            unit: 'Days',
+            xaxisInterval: 0
+        }
+    ];
+    const [currentChartFilterOption, setCurrentChartFilterOption] =
+        useState<IChartFilterOption>(chartFilterOptions[1]);
 
     function convertArraytoGraphDataFormat(arr: number[]): ILineChartData[] {
         return arr.map((val, index) => ({
-            name: `a${index}`,
+            name: index.toString(),
             amt: val
         }));
     }
 
     useEffect(() => {
         if (triggerHistoryMetric !== undefined) {
-            switch (currentChartFilter) {
+            switch (currentChartFilterOption.placeholder) {
                 case 'Last Hour':
                     setChartDataSource(
                         triggerHistoryMetric.last_hour_successful_triggers
@@ -57,27 +80,7 @@ export default function Home() {
                     break;
             }
         }
-    }, [currentChartFilter, triggerHistoryMetric]);
-
-    interface IChartUnit {
-        placeholder: string;
-        unit: string;
-    }
-
-    const chartUnits: IChartUnit[] = [
-        {
-            placeholder: 'Last Hour',
-            unit: 'Mins'
-        },
-        {
-            placeholder: 'Last 24 Hours',
-            unit: 'Hours'
-        },
-        {
-            placeholder: 'Last 7 Days',
-            unit: 'Days'
-        }
-    ];
+    }, [currentChartFilterOption, triggerHistoryMetric]);
 
     return (
         <>
@@ -99,20 +102,25 @@ export default function Home() {
                                 border={true}
                                 className="flex min-w-40 justify-between"
                             >
-                                {currentChartFilter}
+                                {currentChartFilterOption.placeholder}
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="bg-white">
-                                {chartUnits.map((item: IChartUnit, index) => (
-                                    <DropdownMenuItem
-                                        onClick={() => {
-                                            setCurrentChartFilter(item.placeholder);
-                                            setCurrentChartUnit(item.unit);
-                                        }}
-                                        key={index}
-                                    >
-                                        {item.placeholder}
-                                    </DropdownMenuItem>
-                                ))}
+                                {chartFilterOptions.map(
+                                    (item: IChartFilterOption, index) => (
+                                        <DropdownMenuItem
+                                            onClick={() => {
+                                                setCurrentChartFilterOption({
+                                                    placeholder: item.placeholder,
+                                                    unit: item.unit,
+                                                    xaxisInterval: item.xaxisInterval
+                                                });
+                                            }}
+                                            key={index}
+                                        >
+                                            {item.placeholder}
+                                        </DropdownMenuItem>
+                                    )
+                                )}
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
@@ -125,9 +133,10 @@ export default function Home() {
                                       )
                                     : []
                             }
+                            xaxisInterval={currentChartFilterOption.xaxisInterval}
                         />
                         <div className="mt-2 text-center">
-                            Time ({currentChartUnit})
+                            Time ({currentChartFilterOption.unit})
                         </div>
                     </div>
                 </div>
