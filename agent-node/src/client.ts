@@ -17,6 +17,10 @@ function handleFunctionForEventTriggerType(transactions: any) {
         if (Array.isArray(tx.body.proposalProcedures)) {
             tx.body.proposalProcedures.forEach(
                 (proposal: any, index: number) => {
+                    console.log(
+                        `Proposal for event type of tx at index ${index} is :`,
+                        JSON.stringify(proposal)
+                    )
                     triggerAction(
                         {
                             function_name:
