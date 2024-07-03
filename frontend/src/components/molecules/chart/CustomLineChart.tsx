@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+
 import {
     Area,
     AreaChart,
@@ -61,6 +63,10 @@ export default function CustomLineChart({
     smoothStroke?: boolean;
 }) {
     const uniqueId = uuidv4(); // Generate a unique ID for this chart instance
+
+    useEffect(() => {
+        console.log(chartData);
+    }, [chartData]);
 
     return (
         <ResponsiveContainer width="100%" height="100%" className={className}>

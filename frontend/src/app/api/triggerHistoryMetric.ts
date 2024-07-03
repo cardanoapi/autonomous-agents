@@ -21,6 +21,7 @@ export const fecthTriggerHistoryMetric = async (
             .join('&');
         fetchURL += `?${queryParams}`;
     }
+    console.log(fetchURL);
     const res = fetch(fetchURL);
     console.log(fetchURL);
     const data = (await res).json();
