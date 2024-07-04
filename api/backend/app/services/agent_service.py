@@ -87,7 +87,7 @@ class AgentService:
         #             )
         #             await self.trigger_service.create_trigger(agent_id, trigger_data)
         #         pass
-        updated_triggers = await self.trigger_service.update_trigger_for_agent(
+        updated_triggers = await self.trigger_service.update_configurations_for_agent(
             agent_id, agent_data.agent_configurations
         )
         existing_agent = await self.agent_repository.modify_agent(agent_id, agent_data)
