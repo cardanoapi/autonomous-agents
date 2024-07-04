@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+
 import { cn } from '../lib/utils';
 
 interface PaginationBtnsProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -37,7 +39,7 @@ const PaginationBtns: React.FC<PaginationBtnsProps> = ({
             <div
                 className={cn(
                     chevronWrapper,
-                    currentPage === refCurrentPage ? disableChevron : ''
+                    currentPage === lowerLimit ? disableChevron : ''
                 )}
             >
                 <ChevronLeft

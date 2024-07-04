@@ -11,6 +11,7 @@ import {
     fetchAllTriggerHistory
 } from '@app/app/api/triggerHistory';
 import { AgentLogCard } from '@app/components/Agent/AgentLog';
+import { Badge } from '@app/components/atoms/Badge';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -29,6 +30,7 @@ export default function LogsPage() {
     const [currentFunction, setCurrentFunction] = useState('None');
     const [currentAgentID, setCurrentAgentID] = useState('None');
     const [totalPages, setTotalPages] = useState<number>(1);
+    const [currentLogReuslt, setCurrentLogResult] = useState('None');
 
     const statusOptions = ['Success', 'Skipped', 'Failed'];
     const [statusPlaceholder, setStatusPlaceholder] = useState('None');
@@ -96,7 +98,7 @@ export default function LogsPage() {
         }
         setStatusPlaceholder(status);
         setCurrentPage(1);
-        console.log(currentPage);
+        setCurrentLogResult(status);
     }
 
     return (
@@ -157,6 +159,22 @@ export default function LogsPage() {
                             ))}
                         </DropdownMenuContent>
                     </DropdownMenu>
+                    <div className="flex justify-center gap-2">
+                        {statusOptions.map((status: string, index) => (
+                            <Badge
+                                key={index}
+                                variant={
+                                    currentLogReuslt === status
+                                        ? 'successPrimary'
+                                        : 'primary'
+                                }
+                                className="flex w-20 justify-center"
+                                onClick={() => handleStatusChange(status)}
+                            >
+                                {status}
+                            </Badge>
+                        ))}
+                    </div>
                 </div>
                 <PaginationBtns
                     className="pr-4"
