@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { IAgentConfiguration, ICronTrigger } from '@api/agents';
 import { AGENT_TRIGGER, AgentFunctions } from '@consts';
 import { AgentTriggerFunctionType } from '@models/types';
 
-import { Combobox } from '@app/app/(pages)/agents/[agentID]/Components/Combobox';
 import { Button } from '@app/components/atoms/Button';
+import { Combobox } from '@app/components/molecules/Combobox';
 import ProbabilityInput from '@app/components/molecules/ProbabilityInput';
 import { Separator } from '@app/components/shadcn/ui/separator';
 
@@ -28,11 +28,17 @@ const UpdateAgentFunctionModal = ({
 
     const [localAgentConfigurations, setLocalAgentConfigurations] = useState<{
         function_name: string;
-        parameter: Array<{ name: string; description: string; value: string }>;
+        parameter: Array<{ name: string; description?: string; value: string }>;
     }>({
-        function_name: agentConfig.action?.function_name || '',
+        function_name: '',
         parameter: []
     });
+
+    useEffect(() => {
+        agentConfig &&
+            agentConfig.action &&
+            setLocalAgentConfigurations(agentConfig.action);
+    }, [agentConfig]);
 
     const [probability, setProbability] = useState<string>(
         defaultProbabilityStringValue
@@ -68,7 +74,7 @@ const UpdateAgentFunctionModal = ({
 
     return (
         <div className={'bg-white'}>
-            <div className={'px-5 py-2'}>Update Agent Function</div>
+            <div className={'px-5 py-2'}>Update Agent Configurations</div>
             <Separator />
             <div className={'flex flex-col gap-4 p-5'}>
                 <div className={'flex flex-col gap-1'}>
@@ -99,7 +105,7 @@ const UpdateAgentFunctionModal = ({
                             return (
                                 <div className={'flex flex-col gap-2'} key={index}>
                                     <span className={'text-sm text-brand-Black-300'}>
-                                        {param.description}
+                                        {param?.description}
                                     </span>
                                     <input
                                         value={param.value}
@@ -119,15 +125,19 @@ const UpdateAgentFunctionModal = ({
                         })}
                     </div>
                 </div>
-                <div className={'flex flex-col gap-1'}>
-                    <span className={'font-medium'}>Probability</span>
-                    <ProbabilityInput
-                        onInputChange={(probability: string) =>
-                            setProbability(probability)
-                        }
-                        defaultValue={defaultProbabilityStringValue}
-                    />
-                </div>
+                {agentConfig.type === 'CRON' ? (
+                    <div className={'flex flex-col gap-1'}>
+                        <span className={'font-medium'}>Probability</span>
+                        <ProbabilityInput
+                            onInputChange={(probability: string) =>
+                                setProbability(probability)
+                            }
+                            defaultValue={defaultProbabilityStringValue}
+                        />
+                    </div>
+                ) : (
+                    <></>
+                )}
                 <Button
                     onClick={handleClickSave}
                     className={'relative right-0 w-1/4'}
