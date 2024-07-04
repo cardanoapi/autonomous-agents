@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
-export function Combobox({
+export function CustomCombobox({
     defaultValue,
     itemsList,
     onSelect

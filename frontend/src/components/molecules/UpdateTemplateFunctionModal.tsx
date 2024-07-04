@@ -8,7 +8,7 @@ import { AGENT_TRIGGER, AgentFunctions } from '@consts';
 import { AgentTriggerFunctionType } from '@models/types';
 
 import { Button } from '@app/components/atoms/Button';
-import { Combobox } from '@app/components/molecules/Combobox';
+import { CustomCombobox } from '@app/components/molecules/CustomCombobox';
 import ProbabilityInput from '@app/components/molecules/ProbabilityInput';
 import { Separator } from '@app/components/shadcn/ui/separator';
 
@@ -80,7 +80,7 @@ const UpdateTemplateFunctionModal = ({
             <div className={'flex flex-col gap-4 p-5'}>
                 <div className={'flex flex-col gap-1'}>
                     <span className={'font-medium'}>Function Name</span>
-                    <Combobox
+                    <CustomCombobox
                         defaultValue={templateConfig.action?.function_name}
                         itemsList={filteredAgentFunctions}
                         onSelect={(function_name: string) => {

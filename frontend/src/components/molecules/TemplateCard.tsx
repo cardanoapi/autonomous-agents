@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+
+import { useRouter } from 'next/navigation';
 
 import { useMutation } from '@tanstack/react-query';
-import { Trash2 } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 
-import { deleteTemplatebyID } from '@app/app/api/templates';
+import { ITemplate, deleteTemplatebyID } from '@app/app/api/templates';
 import { Truncate } from '@app/utils/common/extra';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
@@ -14,18 +16,13 @@ import ConfirmationBox from './ConfirmationBox';
 import { SuccessToast } from './CustomToasts';
 
 export interface ITemplateCard {
-    templateName: string;
-    templateID: string;
-    templateDescription: string;
+    template: ITemplate;
     templateTrigger: string;
 }
 
-export default function TemplateCard({
-    templateName,
-    templateID,
-    templateDescription,
-    templateTrigger
-}: ITemplateCard) {
+export default function TemplateCard({ template, templateTrigger }: ITemplateCard) {
+    const router = useRouter();
+
     const [dialogOpen, setDialogOpen] = useState(false);
 
     const deleteTemplateMutation = useMutation({
@@ -37,11 +34,6 @@ export default function TemplateCard({
         }
     });
 
-    // const { data: templateTriggers = [] } = useQuery<ITrigger[]>({
-    //     queryKey: [`triggers${templateID}`],
-    //     queryFn: () => fetchtriggersbyTemplateID(templateID)
-    // });
-
     return (
         <>
             <Card className="hover-transition-primary group flex min-h-[157px] min-w-[271px] flex-col justify-between gap-y-0 p-4 pb-6 pr-4">
@@ -50,26 +42,37 @@ export default function TemplateCard({
                         <div className="flex items-center gap-x-2">
                             <TemplateIcon fill="#1C63E7" />
                             <CardTitle className="!h2">
-                                {Truncate(templateName, 17)}
+                                {Truncate(template.name, 17)}
                             </CardTitle>
                         </div>
-                        <Trash2
-                            stroke="#A1A1A1"
-                            onClick={() => {
-                                setDialogOpen(true);
-                            }}
-                            className="hidden hover:cursor-pointer group-hover:flex"
-                        />
+                        <div className={'flex flex-row gap-1'}>
+                            <Edit
+                                color="#A1A1A1"
+                                className={
+                                    'hidden hover:cursor-pointer group-hover:flex'
+                                }
+                                onClick={() =>
+                                    router.push(`/templates/${template.id}/edit`)
+                                }
+                            />
+                            <Trash2
+                                stroke="#A1A1A1"
+                                onClick={() => {
+                                    setDialogOpen(true);
+                                }}
+                                className="hidden hover:cursor-pointer group-hover:flex"
+                            />
+                        </div>
                     </div>
                     <CardDescription className="card-description1 mt-2">
-                        {Truncate(templateDescription, 60)}
+                        {Truncate(template.description, 60)}
                     </CardDescription>
                 </div>
                 <CardContent className="gap flex flex-col gap-y-2">
                     <span className="card-h4">
                         Total Triggers: {templateTrigger.length}
                     </span>
-                    <span className="card-h4 p-0">{templateID}</span>
+                    <span className="card-h4 p-0">{template.id}</span>
                 </CardContent>
             </Card>
             <Dialog open={dialogOpen}>
@@ -84,7 +87,7 @@ export default function TemplateCard({
                             setDialogOpen(false);
                         }}
                         onAccept={() => {
-                            deleteTemplateMutation.mutateAsync(templateID);
+                            deleteTemplateMutation.mutateAsync(template.id);
                         }}
                     />
                 </DialogContent>
