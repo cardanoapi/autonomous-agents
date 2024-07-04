@@ -97,10 +97,15 @@ class AgentService:
     async def get_active_agents_count(self):
         return await self.agent_repository.get_online_agents_count()
 
-    async def delete_agent(self, agent_id: str) -> None:
+    async def delete_agent(self, agent_id: str) -> str:
         agent = await self.agent_repository.remove_agent(agent_id)
         self.raise_exception_if_agent_not_found(agent)
-        return True
+        await self.kafka_service.publish_message(
+            "manual_trigger_event",
+            json.dumps({"function_name": "delete_agent_websocket", "agent_id": agent_id}),
+            agent_id,
+        )
+        return agent_id
 
     async def check_if_agent_exists(self, agent_id: str):
         agent = await self.agent_repository.retrieve_agent(agent_id)

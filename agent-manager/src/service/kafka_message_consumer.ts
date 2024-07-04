@@ -45,16 +45,31 @@ export async function initKafkaConsumers() {
             const parsedActionName = JSON.parse(actionName || '')
             if (agentId && parsedActionName) {
                 console.log('manual trigger starting', parsedActionName)
-                manager.sendToWebSocket(agentId, {
-                    message: 'trigger_action',
-                    payload: {
-                        action: {
-                            function_name: parsedActionName.function_name,
-                            parameter: parsedActionName.parameter,
+                if (
+                    parsedActionName.function_name === 'delete_agent_websocket'
+                ) {
+                    const isAgentActive = await manager.checkIfAgentActive(
+                        parsedActionName.agent_id
+                    )
+                    isAgentActive &&
+                        (await manager.disconnectWebSocket(
+                            parsedActionName.agent_id
+                        ))
+                    console.log(
+                        `Agent with id ${parsedActionName.agent_id} is disconnected as it has been deleted`
+                    )
+                } else {
+                    await manager.sendToWebSocket(agentId, {
+                        message: 'trigger_action',
+                        payload: {
+                            action: {
+                                function_name: parsedActionName.function_name,
+                                parameter: parsedActionName.parameter,
+                            },
+                            probability: 1,
                         },
-                        probability: 1,
-                    },
-                })
+                    })
+                }
             }
         },
     })

@@ -52,7 +52,7 @@ class AgentRouter(Routable):
 
     @delete("/agents/{agent_id}", status_code=HTTPStatus.NO_CONTENT)
     async def delete_agent(self, agent_id: str):
-        await self.agent_service.delete_agent(agent_id)
+        return await self.agent_service.delete_agent(agent_id)
 
     @post("/agents/{agent_id}/trigger", status_code=HTTPStatus.OK)
     async def trigger_agent_action(self, agent_id: str, action: AgentFunction):

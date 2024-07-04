@@ -90,7 +90,7 @@ class AgentRepository:
                 content=f"Failed to retrieve online agents count: {str(e)}",
             )
 
-    async def remove_agent(self, agent_id: str) -> bool:
+    async def remove_agent(self, agent_id: str):
         agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
         if agent is None:
             return None
