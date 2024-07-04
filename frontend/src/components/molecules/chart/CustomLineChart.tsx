@@ -18,6 +18,7 @@ import CustomTooltip from './CustomTooltip';
 export interface ILineChartData {
     name: string;
     amt: number;
+    xaxisTick?: string;
 }
 
 export const demoCustomLineChartData: ILineChartData[] = [
@@ -68,7 +69,7 @@ export default function CustomLineChart({
         <ResponsiveContainer width="100%" height="100%" className={className}>
             <AreaChart
                 data={chartData || demoCustomLineChartData}
-                margin={{ top: 40, right: 0, left: 0, bottom: 0 }}
+                margin={{ top: 40, right: 20, left: 0, bottom: 0 }}
             >
                 <defs>
                     <linearGradient
@@ -128,12 +129,14 @@ export default function CustomLineChart({
                 />
                 {renderXaxis && (
                     <XAxis
-                        dataKey="name"
+                        dataKey={'xaxisTick'}
                         tickLine={false}
                         dy={5}
                         fill="#2196F3"
                         stroke="#A2A3A5"
                         interval={xaxisInterval}
+                        reversed={true}
+                        padding={{ right: 5 }}
                     ></XAxis>
                 )}
             </AreaChart>

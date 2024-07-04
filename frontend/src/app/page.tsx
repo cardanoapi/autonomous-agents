@@ -53,11 +53,61 @@ export default function Home() {
     const [currentChartFilterOption, setCurrentChartFilterOption] =
         useState<IChartFilterOption>(chartFilterOptions[1]);
 
-    function convertArraytoGraphDataFormat(arr: number[]): ILineChartData[] {
+    function convertArraytoGraphDataFormat(
+        arr: number[],
+        chartUnit: string
+    ): ILineChartData[] {
+        let timeStampCalculator: (val: number) => string;
+        let xAxisTickGenerator: (val: number) => string;
+
+        switch (chartUnit) {
+            case 'Mins':
+                timeStampCalculator = (val: number) =>
+                    new Date(Date.now() - val * 60000).toTimeString();
+                xAxisTickGenerator = (val: number) => {
+                    const date = new Date(Date.now() - val * 60000);
+                    return (
+                        appendZeroIfRequired(date.getHours()) +
+                        ':' +
+                        appendZeroIfRequired(date.getMinutes())
+                    );
+                };
+                break;
+            case 'Hours':
+                timeStampCalculator = (val: number) =>
+                    new Date(Date.now() - val * 3600000).toTimeString();
+                xAxisTickGenerator = (val: number) => {
+                    const date = new Date(Date.now() - val * 3600000);
+                    return (
+                        appendZeroIfRequired(date.getHours()) +
+                        ':' +
+                        appendZeroIfRequired(date.getMinutes())
+                    );
+                };
+                break;
+            case 'Days':
+                timeStampCalculator = (val: number) =>
+                    new Date(Date.now() - val * 86400000).toDateString();
+                xAxisTickGenerator = (val: number) => {
+                    const dateParts = new Date(Date.now() - val * 86400000)
+                        .toDateString()
+                        .split(' ');
+                    return dateParts.slice(1, 3).join(' ');
+                };
+                break;
+            default:
+                throw new Error('Invalid chart unit');
+        }
+
         return arr.map((val, index) => ({
-            name: index.toString(),
-            amt: val
+            name: timeStampCalculator(index),
+            amt: val,
+            xaxisTick: xAxisTickGenerator(index)
         }));
+    }
+
+    function appendZeroIfRequired(n: number) {
+        return n.toString().length === 1 ? `0${n}` : n;
     }
 
     useEffect(() => {
@@ -129,7 +179,8 @@ export default function Home() {
                             chartData={
                                 triggerHistoryMetric !== undefined
                                     ? convertArraytoGraphDataFormat(
-                                          chartDataSource.toReversed() || []
+                                          chartDataSource || [],
+                                          currentChartFilterOption.unit
                                       )
                                     : []
                             }
