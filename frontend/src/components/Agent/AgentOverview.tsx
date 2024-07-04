@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import { useMutation } from '@tanstack/react-query';
-import { Edit, Save } from 'lucide-react';
+import { Edit } from 'lucide-react';
 
 import {
     IAgent,
@@ -16,6 +16,7 @@ import { ErrorToast, SuccessToast } from '@app/components/molecules/CustomToasts
 import TextDisplayField from '@app/components/molecules/TextDisplayField';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
+import { Button } from '../atoms/Button';
 import { ScrollArea } from '../shadcn/ui/scroll-area';
 import AgentFunctionsDetailComponent from './AgentFunctionsDetail';
 
@@ -61,7 +62,7 @@ const AgentOverViewComponent = ({ agent }: { agent?: IAgent }) => {
         }
     };
 
-    const handleClickSave = () => {
+    const handleClickUpdate = () => {
         updateAgent
             .mutateAsync({
                 agentId: agent?.id,
@@ -74,6 +75,15 @@ const AgentOverViewComponent = ({ agent }: { agent?: IAgent }) => {
             });
     };
 
+    const handleClickDeleteAgent = (configIndex: number) => {
+        if (agent) {
+            const updatedConfigs = agentConfigurations?.filter(
+                (_, index) => index != configIndex
+            );
+            updatedConfigs && setAgentConfigurations(updatedConfigs);
+        }
+    };
+
     return (
         <div className={'flex h-full flex-col gap-10 '}>
             <div className={'flex justify-between'}>
@@ -82,7 +92,7 @@ const AgentOverViewComponent = ({ agent }: { agent?: IAgent }) => {
                     <span className={'text-[20px] font-semibold'}>Agent Overview</span>
                 </div>
                 {isEditing ? (
-                    <Save className={'cursor-pointer'} onClick={handleClickSave} />
+                    <></>
                 ) : (
                     <Edit
                         className={'cursor-pointer'}
@@ -113,14 +123,27 @@ const AgentOverViewComponent = ({ agent }: { agent?: IAgent }) => {
                             onClickSave={(agentConfig, index) => {
                                 handleUpdateAgentFunction(agentConfig, index);
                             }}
-                            agent={agent}
+                            onClickDelete={(configIndex: number) =>
+                                handleClickDeleteAgent(configIndex)
+                            }
+                            agentConfigurations={agentConfigurations}
                             isEditing={true}
                         />
+                        <div className={'flex justify-end'}>
+                            <Button
+                                onClick={() => handleClickUpdate()}
+                                variant={'primary'}
+                            >
+                                Update
+                            </Button>
+                        </div>
                     </div>
                 ) : (
                     <div className={'flex flex-col gap-10'}>
                         <TextDisplayField title={'Agent Name'} content={agent?.name} />
-                        <AgentFunctionsDetailComponent agent={agent} />
+                        <AgentFunctionsDetailComponent
+                            agentConfigurations={agentConfigurations}
+                        />
                         <div className={'flex justify-between'}>
                             <div className={'flex w-full items-center gap-1'}>
                                 <TextDisplayField

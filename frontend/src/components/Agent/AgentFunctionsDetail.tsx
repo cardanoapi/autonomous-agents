@@ -2,21 +2,22 @@
 
 import React, { useState } from 'react';
 
-import { Edit } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 
-import UpdateAgentFunctionModal from '@app/app/(pages)/agents/[agentID]/Components/UpdateAgentFunctionModal';
-import { IAgent, ICronTrigger } from '@app/app/api/agents';
-
-import { Dialog, DialogContent } from '../shadcn/dialog';
+import { IAgentConfiguration, ICronTrigger } from '@app/app/api/agents';
+import UpdateAgentFunctionModal from '@app/components/molecules/UpdateAgentFunctionModal';
+import { Dialog, DialogContent } from '@app/components/shadcn/dialog';
 
 const AgentFunctionsDetailComponent = ({
     onClickSave,
-    agent,
+    onClickDelete,
+    agentConfigurations,
     isEditing = false
 }: {
-    agent?: IAgent;
+    agentConfigurations?: Array<IAgentConfiguration>;
     isEditing?: boolean;
     onClickSave?: (...args: any) => void;
+    onClickDelete?: (configIndex: number) => void;
 }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [agentConfigIndex, setAgentConfigIndex] = useState(0);
@@ -24,41 +25,60 @@ const AgentFunctionsDetailComponent = ({
         <div className={'flex flex-col gap-2'}>
             <h1 className={'text-sm font-medium'}>Agent Functions</h1>
             <div className={'flex flex-row flex-wrap gap-4 '}>
-                {agent?.agent_configurations?.map((config, index: number) => {
-                    return (
-                        <div
-                            className={
-                                'group relative flex w-[280px] flex-col flex-wrap gap-2 rounded bg-brand-White-200 p-3 drop-shadow-md'
-                            }
-                            key={config.agentId}
-                        >
-                            <span className={'text-sm text-gray-700'}>
-                                Name : {config?.action?.function_name}
-                            </span>
-                            <span className={'text-sm text-gray-700'}>
-                                Type : {config.type}
-                            </span>
-                            <span className={'text-sm text-gray-700'}>
-                                Probability :{' '}
-                                {(config.data as ICronTrigger).probability
-                                    ? (config.data as ICronTrigger).probability
-                                    : 1}
-                            </span>
-                            {isEditing && (
-                                <Edit
-                                    color="#A1A1A1"
-                                    className={
-                                        'absolute right-1 top-1 hidden cursor-pointer group-hover:block'
-                                    }
-                                    onClick={() => {
-                                        setAgentConfigIndex(index);
-                                        setOpenDialog(true);
-                                    }}
-                                />
-                            )}
-                        </div>
-                    );
-                })}
+                {!agentConfigurations?.length ? (
+                    <span className={'text-xs text-brand-Black-300'}>
+                        No Agents Function Found
+                    </span>
+                ) : (
+                    agentConfigurations?.map((config, index: number) => {
+                        return (
+                            <div
+                                className={
+                                    'group relative flex w-[300px] flex-col flex-wrap gap-2 rounded bg-brand-White-200 p-3 drop-shadow-md'
+                                }
+                                key={`${config.agentId}-${config.id}`}
+                            >
+                                <span className={'text-sm text-gray-700'}>
+                                    Name : {config?.action?.function_name}
+                                </span>
+                                <span className={'text-sm text-gray-700'}>
+                                    Type : {config.type}
+                                </span>
+                                <span className={'text-sm text-gray-700'}>
+                                    Probability :{' '}
+                                    {(config.data as ICronTrigger).probability
+                                        ? (config.data as ICronTrigger).probability
+                                        : 1}
+                                </span>
+                                {isEditing && (
+                                    <div className={'to-2 absolute right-2 flex gap-1'}>
+                                        {config.type === 'CRON' && (
+                                            <Edit
+                                                color="#A1A1A1"
+                                                className={
+                                                    'hidden h-4 w-4 cursor-pointer group-hover:block'
+                                                }
+                                                onClick={() => {
+                                                    setAgentConfigIndex(index);
+                                                    setOpenDialog(true);
+                                                }}
+                                            />
+                                        )}
+
+                                        <Trash2
+                                            color="#A1A1A1"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onClickDelete && onClickDelete(index);
+                                            }}
+                                            className="hidden h-4  w-4 hover:cursor-pointer  group-hover:block"
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })
+                )}
             </div>
             <Dialog open={openDialog} onOpenChange={setOpenDialog}>
                 <DialogContent
@@ -67,7 +87,7 @@ const AgentFunctionsDetailComponent = ({
                 >
                     <UpdateAgentFunctionModal
                         agentConfigIndex={agentConfigIndex}
-                        agentConfigs={agent?.agent_configurations}
+                        agentConfigs={agentConfigurations}
                         onClickSave={(agentConfig, index) => {
                             onClickSave && onClickSave(agentConfig, index);
                             setOpenDialog(false);
