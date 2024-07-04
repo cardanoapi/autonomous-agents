@@ -2,13 +2,15 @@ import { baseAPIurl } from './config';
 
 export interface ITriggerHistoryMetric {
     function_name: string[];
-    successfull_triggers: { [key: string]: number };
     no_of_successful_triggers: number;
     no_of_unsuccessful_triggers: number;
     no_of_skipped_triggers: number;
-    last_hour_successful_triggers: number[];
-    last_24hour_successful_triggers: number[];
-    last_week_successful_triggers: number[];
+    last_hour_successful_triggers: { count: number; values: Record<string, number> }[];
+    last_24hour_successful_triggers: {
+        count: number;
+        values: Record<string, number>;
+    }[];
+    last_week_successful_triggers: { count: number; values: Record<string, number> }[];
     today_fluctuation_rate: number;
 }
 

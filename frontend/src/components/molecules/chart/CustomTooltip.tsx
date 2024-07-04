@@ -12,6 +12,9 @@ const CustomTooltip = ({ active, payload }: TooltipProps<ValueType, NameType>) =
                     <span className="h2 !text-brand-Gray-100">Transactions</span>
                 </div>
                 <div className="h4">{payload?.[0]?.payload?.name}</div>
+                {payload?.[0]?.payload?.toolTipFooter && (
+                    <div>{payload[0].payload.toolTipFooter}</div>
+                )}
             </Card>
         );
     }

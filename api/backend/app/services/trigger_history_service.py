@@ -11,9 +11,12 @@ from backend.config.database import prisma_connection
 from backend.app.utils.extras import calculate_change_rate
 
 
+from datetime import datetime, timezone
+
+
 class TriggerClassifier:
     # Custom Data structure for Accumulating Transaction Count using TimeStamp.
-    # The append method offsets the index for data acuumulation accordingly.
+    # The append method offsets the index for data accumulation accordingly.
     def __init__(self, classifier_type) -> None:
         self.classifier_type = classifier_type
         classifier_types = ["LASTHOUR", "LAST24HOUR", "LASTWEEK"]
@@ -22,16 +25,16 @@ class TriggerClassifier:
         max_range = None
         if classifier_type == "LASTHOUR":
             max_range = 60
-        if classifier_type == "LAST24HOUR":
+        elif classifier_type == "LAST24HOUR":
             max_range = 24
-        if classifier_type == "LASTWEEK":
+        elif classifier_type == "LASTWEEK":
             max_range = 7
 
-        self.accumulator = [0 for i in range(0, max_range)]
+        self.accumulator = [{"count": 0, "values": {}} for _ in range(max_range)]
 
-    def append(self, item):
+    def append(self, timestamp, itemName):
         today = datetime.now(timezone.utc)
-        time_diff = today - item
+        time_diff = today - timestamp
 
         if self.classifier_type == "LASTHOUR":
             index = int(time_diff.total_seconds() / 60) % 60
@@ -40,7 +43,11 @@ class TriggerClassifier:
         elif self.classifier_type == "LASTWEEK":
             index = time_diff.days % 7
 
-        self.accumulator[index] += 1
+        self.accumulator[index]["count"] += 1
+        if itemName in self.accumulator[index]["values"]:
+            self.accumulator[index]["values"][itemName] += 1
+        else:
+            self.accumulator[index]["values"][itemName] = 1
 
 
 class TriggerHistoryService:
@@ -129,17 +136,16 @@ class TriggerHistoryService:
         today_transactions = 0
         successfull_triggers_dict = {}
 
-        for item in successfull_triggers:
-            time_diff = today - item.timestamp
+        for trigger in successfull_triggers:
+            time_diff = today - trigger.timestamp
 
             # Check the Time difference / Time passed between today and log timestamp.
             if time_diff.days < 7:
-                last_week_successful_triggers.append(item.timestamp)
+                last_week_successful_triggers.append(trigger.timestamp, trigger.functionName)
                 if time_diff.days < 1:
-                    print(item.timestamp, today, time_diff, item.timestamp.hour)
-                    last_24hour_successful_triggers.append(item.timestamp)
+                    last_24hour_successful_triggers.append(trigger.timestamp, trigger.functionName)
                     if (time_diff.seconds / 60) < 60:
-                        last_hour_successful_triggers.append(item.timestamp)
+                        last_hour_successful_triggers.append(trigger.timestamp, trigger.functionName)
 
             # For calculating fluctuation rate
             if time_diff.days < 3 and time_diff.days >= 1:
@@ -156,7 +162,6 @@ class TriggerHistoryService:
 
         response = {
             "function_name": function_name,
-            "successfull_triggers": successfull_triggers_dict,
             "no_of_successful_triggers": len(successfull_triggers),
             "no_of_unsuccessful_triggers": len(unsuccessfull_triggers),
             "no_of_skipped_triggers": len(skipeed_triggers),

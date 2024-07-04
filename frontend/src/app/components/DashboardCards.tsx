@@ -17,18 +17,21 @@ export const graphDataPlaceholder: ILineChartData[] = [
 ];
 
 function convertArraytoGraphDataFormat(
-    arr: number[],
+    arr: { count: number; values: Record<string, number> }[],
     smoothenBy?: number
 ): ILineChartData[] {
+    // Create a new array that includes only the count
+    let countArray = arr.map((element) => element.count);
+
     if (smoothenBy) {
-        arr = smoothenArray(arr, 4);
+        countArray = smoothenArray(countArray, smoothenBy);
     }
-    return arr.map((val, index) => ({
+
+    return countArray.map((val, index) => ({
         name: `a${index}`,
         amt: val
     }));
 }
-
 function smoothenArray(arr: number[], n: number): number[] {
     return arr.reduce((acc, val, index) => {
         const chunkIndex = Math.floor(index / n);

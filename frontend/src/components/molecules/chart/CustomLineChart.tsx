@@ -19,6 +19,7 @@ export interface ILineChartData {
     name: string;
     amt: number;
     xaxisTick?: string;
+    toolTipFooter?: React.ReactNode;
 }
 
 export const demoCustomLineChartData: ILineChartData[] = [

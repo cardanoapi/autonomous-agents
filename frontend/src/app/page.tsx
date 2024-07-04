@@ -32,7 +32,9 @@ export default function Home() {
         xaxisInterval: number;
     }
 
-    const [chartDataSource, setChartDataSource] = useState<number[]>([]);
+    const [chartDataSource, setChartDataSource] = useState<
+        { count: number; values: Record<string, number> }[]
+    >([]);
     const chartFilterOptions: IChartFilterOption[] = [
         {
             placeholder: 'Last Hour',
@@ -53,8 +55,8 @@ export default function Home() {
     const [currentChartFilterOption, setCurrentChartFilterOption] =
         useState<IChartFilterOption>(chartFilterOptions[1]);
 
-    function convertArraytoGraphDataFormat(
-        arr: number[],
+    function convertDicttoGraphDataFormat(
+        arr: { count: number; values: Record<string, number> }[],
         chartUnit: string
     ): ILineChartData[] {
         let timeStampCalculator: (val: number) => string;
@@ -99,10 +101,21 @@ export default function Home() {
                 throw new Error('Invalid chart unit');
         }
 
-        return arr.map((val, index) => ({
+        return arr.map((item, index) => ({
             name: timeStampCalculator(index),
-            amt: val,
-            xaxisTick: xAxisTickGenerator(index)
+            amt: item.count,
+            xaxisTick: xAxisTickGenerator(index),
+            toolTipFooter: (
+                <div>
+                    {Object.entries(item.values).map(([key, value], valueIndex) => (
+                        <div key={valueIndex}>
+                            <span className="h-5 text-brand-Gray-50">
+                                {key}(<span className="text-green-400">{value}</span>)
+                            </span>
+                        </div>
+                    ))}
+                </div>
+            )
         }));
     }
 
@@ -178,7 +191,7 @@ export default function Home() {
                         <CustomLineChart
                             chartData={
                                 triggerHistoryMetric !== undefined
-                                    ? convertArraytoGraphDataFormat(
+                                    ? convertDicttoGraphDataFormat(
                                           chartDataSource || [],
                                           currentChartFilterOption.unit
                                       )
