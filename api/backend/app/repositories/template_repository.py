@@ -56,9 +56,9 @@ class TemplateRepository:
 
         updated_template = await self.db.prisma.template.update(where={"id": template_id}, data=updated_data)
         template_response = {
-            "id": template_id,
-            "name": template_data.name,
-            "description": template_data.description,
+            "id": updated_template.id,
+            "name": updated_template.name,
+            "description": updated_template.description,
         }
         return template_response
 

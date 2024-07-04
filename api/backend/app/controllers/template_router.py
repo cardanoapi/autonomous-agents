@@ -5,7 +5,7 @@ from classy_fastapi import Routable, post, get, put, delete
 from fastapi import Query
 
 from backend.app.exceptions import HTTPException
-from backend.app.models import TemplateCreateDto, TemplateResponse
+from backend.app.models import TemplateCreateDto, TemplateResponse, TemplateResponseWithConfigurations
 from backend.app.models.template.template_dto import TemplateEditDto
 from backend.app.services.template_service import TemplateService
 from backend.dependency import template_service
@@ -21,7 +21,7 @@ class TemplateRouter(Routable):
         template = await self.template_service.create_template(template_data)
         return template
 
-    @get("/templates", response_model=List[TemplateResponse])
+    @get("/templates", response_model=List[TemplateResponseWithConfigurations])
     async def list_templates(
         self,
         page: int = Query(default=1, ge=1),
@@ -30,7 +30,7 @@ class TemplateRouter(Routable):
         template = await self.template_service.list_templates(page, limit)
         return template
 
-    @get("/templates/{template_id}", response_model=TemplateResponse)
+    @get("/templates/{template_id}", response_model=TemplateResponseWithConfigurations)
     async def get_template_by_template_id(self, template_id: str):
         template = await self.template_service.get_template(template_id)
         return template
@@ -42,4 +42,4 @@ class TemplateRouter(Routable):
 
     @delete("/templates/{template_id}", status_code=HTTPStatus.NO_CONTENT)
     async def delete_template(self, template_id: str):
-        await self.template_service.delete_template(template_id)
+        return await self.template_service.delete_template(template_id)

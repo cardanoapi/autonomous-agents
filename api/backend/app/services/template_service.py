@@ -2,7 +2,7 @@ from typing import List
 
 from backend.app.exceptions.http import HTTPException
 
-from backend.app.models import TemplateResponse, TemplateCreateDto
+from backend.app.models import TemplateResponse, TemplateCreateDto, TemplateResponseWithConfigurations
 from backend.app.models.template.template_dto import TemplateEditDto
 from backend.app.repositories.template_repository import TemplateRepository
 from backend.app.repositories.template_trigger_repository import (
@@ -45,23 +45,40 @@ class TemplateService:
 
         return template_response
 
-    async def list_templates(self, page, limit) -> List[TemplateResponse]:
-        return await self.template_repository.retrieve_templates(page, limit)
+    async def list_templates(self, page, limit) -> List[TemplateResponseWithConfigurations]:
+        templates_with_configurations = []
+        templates = await self.template_repository.retrieve_templates(page, limit)
+        for template in templates:
+            template_configurations = await self.template_trigger_service.get_template_trigger(template.id)
+            updated_template = TemplateResponseWithConfigurations(
+                **template.dict(), template_configurations=template_configurations
+            )
+            templates_with_configurations.append(updated_template)
+        return templates_with_configurations
 
-    async def get_template(self, template_id: str) -> TemplateResponse:
+    async def get_template(self, template_id: str) -> TemplateResponseWithConfigurations:
         template = await self.template_repository.retrieve_template(template_id)
+        template_configurations = await self.template_trigger_service.get_template_trigger(template_id)
         self.raise_exception_if_template_not_found(template)
-        return template
+        return TemplateResponseWithConfigurations(**template.dict(), template_configurations=template_configurations)
 
-    async def update_template(self, template_id: str, template_data: TemplateEditDto) -> TemplateResponse:
-        template = await self.template_repository.modify_template(template_id, template_data)
-        self.raise_exception_if_template_not_found(template)
-        return template
+    async def update_template(
+        self, template_id: str, template_data: TemplateEditDto
+    ) -> TemplateResponseWithConfigurations:
+        updating_template_detail = TemplateEditDto(name=template_data.name, description=template_data.description)
+        updated_template = await self.template_repository.modify_template(template_id, updating_template_detail)
+        self.raise_exception_if_template_not_found(updated_template)
+        updated_template_configurations = await self.template_trigger_service.update_configurations_for_template(
+            template_id, template_data.template_configurations
+        )
+        return TemplateResponseWithConfigurations(
+            **updated_template, template_configurations=updated_template_configurations
+        )
 
-    async def delete_template(self, template_id: str) -> None:
+    async def delete_template(self, template_id: str) -> str:
         template = await self.template_repository.remove_template(template_id)
         self.raise_exception_if_template_not_found(template)
-        return True
+        return template_id
 
     def raise_exception_if_template_not_found(self, template):
         if template is None or False:

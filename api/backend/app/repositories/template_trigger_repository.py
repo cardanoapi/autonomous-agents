@@ -112,18 +112,18 @@ class TemplateTriggerRepository:
         )
         return template_response
 
-    async def remove_template_trigger(self, template_trigger_id: str) -> bool:
+    async def remove_template_trigger(self, template_trigger_id: str):
         template = await self.db.prisma.template_trigger.find_first(where={"id": template_trigger_id})
         if template is None:
             return False
         elif template.deleted_at is not None:
             return True
 
-        await self.db.prisma.template.update(
+        updated_template = await self.db.prisma.template_trigger.update(
             where={"id": template_trigger_id},
             data={"deleted_at": datetime.now(timezone.utc)},
         )
-        return True
+        return updated_template
 
     def _convert_data_to_dto(self, trigger_type: str, data_dict: dict) -> Union[CronTriggerDTO, EventTriggerDTO]:
         if trigger_type == "CRON":
