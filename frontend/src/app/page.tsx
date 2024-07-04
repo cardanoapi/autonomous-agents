@@ -42,7 +42,7 @@ export default function Home() {
         {
             placeholder: 'Last 24 Hours',
             unit: 'Hours',
-            xaxisInterval: 3
+            xaxisInterval: 2
         },
         {
             placeholder: 'Last 7 Days',
