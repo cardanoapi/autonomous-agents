@@ -22,19 +22,19 @@ export const demoGraphData: ILineChartData[] = [
     },
     {
         name: 'b',
-        amt: 5
+        amt: 0
     },
     {
         name: 'c',
-        amt: 12
+        amt: 0
     },
     {
         name: 'd',
-        amt: 11
+        amt: 0
     },
     {
         name: 'e',
-        amt: 7
+        amt: 0
     }
 ];
 

@@ -8,7 +8,7 @@ import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import environments from '@app/configs/environments';
 
 const AgentRunnerComponent = ({ agent }: { agent?: IAgent }) => {
-    const dockerCommand = `docker run -e WS_URL=${environments.NEXT_PUBLIC_WS_URL} -e AGENT_ID=${agent?.id} cardanoapi/cardano-autonomous-agent-agent-node:${environments.NEXT_PUBLIC_IMAGE_TAG}`;
+    const dockerCommand = `docker run --pull always -e WS_URL=${environments.NEXT_PUBLIC_WS_URL} -e AGENT_ID=${agent?.id} cardanoapi/cardano-autonomous-agent-agent-node:${environments.NEXT_PUBLIC_IMAGE_TAG}`;
     return (
         <div className={'flex h-full w-full flex-col gap-10'}>
             <div className={'flex items-center gap-3'}>

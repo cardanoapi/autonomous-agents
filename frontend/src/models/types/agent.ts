@@ -1,4 +1,9 @@
-export type AgentTriggerFunctionType = 'Delegation' | 'Vote';
+export type AgentTriggerFunctionType =
+    | 'Delegation'
+    | 'Vote'
+    | 'SendAda Token'
+    | 'Proposal New Constitution'
+    | 'Info Action Proposal';
 
 interface IParamater {
     name: string;

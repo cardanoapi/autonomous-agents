@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { ITemplate } from '@app/app/api/templates';
 import TemplateCard from '@app/components/molecules/TemplateCard';
 
@@ -9,13 +11,7 @@ export default function TemplatesContainer({ templates }: TemplatesContainerProp
     return (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2  lg:grid-cols-3 xl:grid-cols-4 4xl:grid-cols-5">
             {templates.map((item: ITemplate, index: number) => (
-                <TemplateCard
-                    templateName={item.name}
-                    templateID={item.id}
-                    templateDescription={item.description}
-                    templateTrigger={'null'}
-                    key={index}
-                />
+                <TemplateCard template={item} templateTrigger={'null'} key={index} />
             ))}
         </div>
     );

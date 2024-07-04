@@ -7,7 +7,7 @@ export interface IParameter {
     description: string;
     optional: boolean;
     data_type: string;
-    value: any;
+    value?: any;
 }
 
 export interface IFunction {

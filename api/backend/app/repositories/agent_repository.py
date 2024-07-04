@@ -3,7 +3,7 @@ import hashlib
 import json
 import os
 import uuid
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone, timedelta, UTC
 from typing import List, Optional
 
 import pycardano
@@ -19,7 +19,7 @@ from pycardano import (
 )
 from pycardano.crypto.bech32 import bech32_encode, convertbits, Encoding
 
-from backend.app.models import AgentResponse, AgentCreateDTO, AgentKeyResponse
+from backend.app.models import AgentResponse, AgentCreateDTO, AgentKeyResponse, AgentUpdateDTO
 from backend.config.database import prisma_connection
 
 
@@ -52,12 +52,6 @@ class AgentRepository:
 
     async def retrieve_agent(self, agent_id: str) -> Optional[AgentResponse]:
         agent = await self.db.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})
-        # threshold_time = datetime.utcnow() - timedelta(seconds=10)
-        # online_agent = await self.db.prisma.agent.find_first(where={"id": agent_id,"last_active": {"gte": threshold_time}})
-        # if online_agent:
-        #     status = True
-        # else:
-        #     status = False
 
         if agent is None:
             return None
@@ -72,20 +66,18 @@ class AgentRepository:
             )
             return agent_response
 
-    async def modify_agent(self, agent_id: str, agent_data: AgentCreateDTO) -> Optional[AgentResponse]:
+    async def modify_agent(self, agent_id: str, agent_data: AgentUpdateDTO) -> Optional[AgentResponse]:
         agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
         if agent is None or agent.deleted_at is not None:
             return None
-        updated_data = agent_data.dict(exclude_unset=True)
-        updated_data["updated_at"] = datetime.now(timezone.utc)
-
+        updated_data = {"name": agent_data.name, "updated_at": datetime.now(timezone.utc)}
         updated_agent = await self.db.prisma.agent.update(where={"id": agent_id}, data=updated_data)
         return updated_agent
 
     async def get_online_agents_count(self):
         try:
             # Calculate the threshold for last active time (e.g., 10 seconds ago)
-            threshold_time = datetime.utcnow() - timedelta(seconds=10)
+            threshold_time = datetime.now(UTC) - timedelta(seconds=10)
 
             # Query the database for online agents
             online_agents_count = await self.db.prisma.agent.count(where={"last_active": {"gte": threshold_time}})
@@ -98,7 +90,7 @@ class AgentRepository:
                 content=f"Failed to retrieve online agents count: {str(e)}",
             )
 
-    async def remove_agent(self, agent_id: str) -> bool:
+    async def remove_agent(self, agent_id: str):
         agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
         if agent is None:
             return None

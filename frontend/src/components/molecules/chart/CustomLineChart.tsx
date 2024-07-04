@@ -18,19 +18,21 @@ import CustomTooltip from './CustomTooltip';
 export interface ILineChartData {
     name: string;
     amt: number;
+    xaxisTick?: string;
+    toolTipFooter?: React.ReactNode;
 }
 
 export const demoCustomLineChartData: ILineChartData[] = [
-    { name: 'A', amt: 10 },
-    { name: 'B', amt: 15 },
-    { name: 'C', amt: 24 },
-    { name: 'D', amt: 18 },
-    { name: 'E', amt: 12 },
-    { name: 'F', amt: 20 },
-    { name: 'G', amt: 28 },
-    { name: 'H', amt: 26 },
-    { name: 'I', amt: 32 },
-    { name: 'J', amt: 34 }
+    { name: 'A', amt: 0 },
+    { name: 'B', amt: 0 },
+    { name: 'C', amt: 0 },
+    { name: 'D', amt: 0 },
+    { name: 'E', amt: 0 },
+    { name: 'F', amt: 0 },
+    { name: 'G', amt: 0 },
+    { name: 'H', amt: 0 },
+    { name: 'I', amt: 0 },
+    { name: 'J', amt: 0 }
 ];
 
 export default function CustomLineChart({
@@ -45,7 +47,8 @@ export default function CustomLineChart({
     renderToolTip = true,
     renderXaxis = true,
     renderYaxis = true,
-    smoothStroke = true
+    smoothStroke = true,
+    xaxisInterval = 0
 }: {
     chartData?: ILineChartData[];
     className?: string;
@@ -59,6 +62,7 @@ export default function CustomLineChart({
     renderXaxis?: boolean;
     renderYaxis?: boolean;
     smoothStroke?: boolean;
+    xaxisInterval?: number;
 }) {
     const uniqueId = uuidv4(); // Generate a unique ID for this chart instance
 
@@ -66,7 +70,7 @@ export default function CustomLineChart({
         <ResponsiveContainer width="100%" height="100%" className={className}>
             <AreaChart
                 data={chartData || demoCustomLineChartData}
-                margin={{ top: 40, right: 0, left: 0, bottom: 0 }}
+                margin={{ top: 40, right: 20, left: 0, bottom: 0 }}
             >
                 <defs>
                     <linearGradient
@@ -126,10 +130,14 @@ export default function CustomLineChart({
                 />
                 {renderXaxis && (
                     <XAxis
+                        dataKey={'xaxisTick'}
                         tickLine={false}
                         dy={5}
                         fill="#2196F3"
                         stroke="#A2A3A5"
+                        interval={xaxisInterval}
+                        reversed={true}
+                        padding={{ right: 5 }}
                     ></XAxis>
                 )}
             </AreaChart>

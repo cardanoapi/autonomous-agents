@@ -4,7 +4,7 @@ from typing import List
 from classy_fastapi import Routable, get, post, put, delete
 from fastapi import HTTPException, Query
 
-from backend.app.models.agent.agent_dto import AgentCreateDTO
+from backend.app.models.agent.agent_dto import AgentCreateDTO, AgentUpdateDTO
 from backend.app.models.agent.function import AgentFunction
 from backend.app.services.agent_service import AgentService
 from backend.app.models.agent.response_dto import AgentResponse, AgentResponseWithWalletDetails
@@ -41,7 +41,7 @@ class AgentRouter(Routable):
         return agent
 
     @put("/agents/{agent_id}", status_code=HTTPStatus.OK)
-    async def update_agent(self, agent_id: str, agent_data: AgentCreateDTO):
+    async def update_agent(self, agent_id: str, agent_data: AgentUpdateDTO):
         updated_agent = await self.agent_service.update_agent(agent_id, agent_data)
         return updated_agent
 
@@ -52,7 +52,7 @@ class AgentRouter(Routable):
 
     @delete("/agents/{agent_id}", status_code=HTTPStatus.NO_CONTENT)
     async def delete_agent(self, agent_id: str):
-        await self.agent_service.delete_agent(agent_id)
+        return await self.agent_service.delete_agent(agent_id)
 
     @post("/agents/{agent_id}/trigger", status_code=HTTPStatus.OK)
     async def trigger_agent_action(self, agent_id: str, action: AgentFunction):

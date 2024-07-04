@@ -15,10 +15,13 @@ class AgentResponse(BaseModel):
     last_active: Optional[datetime]
 
 
-class AgentResponseWithWalletDetails(AgentResponse):
+class AgentResponseWithAgentConfigurations(AgentResponse):
+    agent_configurations: Optional[List[TriggerResponse]]
+
+
+class AgentResponseWithWalletDetails(AgentResponseWithAgentConfigurations):
     agent_address: Optional[str]
     wallet_amount: Optional[float]
-    agent_configurations: Optional[List[TriggerResponse]]
 
 
 class AgentKeyResponse(BaseModel):

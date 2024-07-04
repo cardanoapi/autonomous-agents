@@ -9,12 +9,12 @@ import { baseAPIurl } from './config';
 
 type TriggerType = 'CRON' | 'MANUAL' | 'EVENT';
 
-interface ISubParameter {
+export interface ISubParameter {
     name: string;
     value: string;
 }
 
-interface IAgentAction {
+export interface IAgentAction {
     function_name: string;
     parameter: Array<ISubParameter>;
 }
@@ -24,17 +24,24 @@ export interface ICronTrigger {
     probability: number;
 }
 
-interface IEventTrigger {
+export interface IEventTrigger {
     event: string;
     parameters?: Array<ISubParameter>;
 }
 
-interface IAgentConfiguration {
+export interface IAgentConfiguration {
     id: string;
     agentId: string;
     type: TriggerType;
     action?: IAgentAction;
     data?: ICronTrigger | IEventTrigger;
+}
+
+export interface IAgentUpdateReqDto {
+    agentId?: string;
+    agentName?: string;
+    templateId?: string;
+    agentConfigurations?: Array<IAgentConfiguration>;
 }
 
 export interface IAgent {
@@ -75,6 +82,28 @@ export const postAgentData = async (formData: z.infer<typeof agentFormSchema>) =
                 name: formData.agentName,
                 template_id: formData.agentTemplate,
                 instance: formData.numberOfAgents
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error posting agent data:', error);
+        throw error;
+    }
+};
+
+export const updateAgentData = async (formData: IAgentUpdateReqDto) => {
+    try {
+        const response = await axios.put(
+            `${baseAPIurl}/agents/${formData.agentId}`,
+            {
+                name: formData.agentName,
+                template_id: formData.templateId,
+                agent_configurations: formData.agentConfigurations
             },
             {
                 headers: {
