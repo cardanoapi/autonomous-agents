@@ -127,6 +127,7 @@ class TriggerHistoryService:
 
         last_day_transactions = 0
         today_transactions = 0
+        successfull_triggers_dict = {}
 
         for item in successfull_triggers:
             time_diff = today - item.timestamp
@@ -146,11 +147,19 @@ class TriggerHistoryService:
             elif time_diff.days < 1:
                 today_transactions += 1
 
+        # for classifying succcesfull triggers
+        for trigger in successfull_triggers:
+            if trigger.functionName in successfull_triggers_dict:
+                successfull_triggers_dict[trigger.functionName] += 1
+            else:
+                successfull_triggers_dict[trigger.functionName] = 1
+
         response = {
             "function_name": function_name,
-            "successful_triggers": len(successfull_triggers),
-            "unsuccessful_triggers": len(unsuccessfull_triggers),
-            "skipped_triggers": len(skipeed_triggers),
+            "successfull_triggers": successfull_triggers_dict,
+            "no_of_successful_triggers": len(successfull_triggers),
+            "no_of_unsuccessful_triggers": len(unsuccessfull_triggers),
+            "no_of_skipped_triggers": len(skipeed_triggers),
             "last_hour_successful_triggers": last_hour_successful_triggers.accumulator,
             "last_24hour_successful_triggers": last_24hour_successful_triggers.accumulator,
             "last_week_successful_triggers": last_week_successful_triggers.accumulator,

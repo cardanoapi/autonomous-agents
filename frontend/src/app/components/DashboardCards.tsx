@@ -87,7 +87,9 @@ const DashboardCards = () => {
             />
             <OverViewGraphCard
                 title="No of Proposals"
-                totalValue={(proposalMetric && proposalMetric.successful_triggers) || 0}
+                totalValue={
+                    (proposalMetric && proposalMetric.no_of_successful_triggers) || 0
+                }
                 changeRate={
                     (proposalMetric && proposalMetric.today_fluctuation_rate) || 0
                 }
@@ -103,7 +105,7 @@ const DashboardCards = () => {
             />
             <OverViewGraphCard
                 title="No of Votes"
-                totalValue={voteMetric?.successful_triggers || 0}
+                totalValue={voteMetric?.no_of_successful_triggers || 0}
                 changeRate={(voteMetric && voteMetric.today_fluctuation_rate) || 0}
                 theme="Secondary"
                 graphData={
