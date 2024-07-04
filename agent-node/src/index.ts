@@ -41,11 +41,16 @@ function connectToManagerWebSocket() {
 
     // Event listener for the connection closing
     ws.on('close', (code, reason) => {
-        attemptReconnect()
+        if (code !== 1000) {
+            attemptReconnect()
+            console.log(
+                `Disconnected from the server (code: ${code}, reason: ${reason}).`
+            )
+        }
+        clearInterval(interval)
         console.log(
             `Disconnected from the server (code: ${code}, reason: ${reason}).`
         )
-        clearInterval(interval)
     })
 
     // Event listener for any errors

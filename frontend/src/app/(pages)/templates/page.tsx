@@ -33,7 +33,7 @@ export default function TemplatesPage() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
     useEffect(() => {
-        if (templateCreated === true) {
+        if (templateCreated) {
             SuccessToast('Template Created Successfully');
             setTemplateCreated(false);
         }
@@ -95,18 +95,6 @@ export default function TemplatesPage() {
                         <span>No Templates Found</span>
                     )}
                 </div>
-                {/*<div className="flex flex-col gap-y-5">*/}
-                {/*    <span className="h5 inline-block">Existing Templates</span>*/}
-                {/*    {filteredTemplates.length ? (*/}
-                {/*        isLoading ? (*/}
-                {/*            <TemplatesSkeleton />*/}
-                {/*        ) : (*/}
-                {/*            <TemplatesContainer templates={filteredTemplates} />*/}
-                {/*        )*/}
-                {/*    ) : (*/}
-                {/*        <span>No Existing Templates Found</span>*/}
-                {/*    )}*/}
-                {/*</div>*/}
             </div>
         </div>
     );

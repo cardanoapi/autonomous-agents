@@ -26,9 +26,11 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
     args: {
-        templateName: 'Send Ada Template',
-        templateID: 'qerqwer',
-        templateDescription: 'Send Ada to Eco Charity every 3 Days',
+        template: {
+            name: 'Send Ada Template',
+            description: 'Send Ada to Eco Charity every 3 Days',
+            id: 'qerqwer'
+        },
         templateTrigger: 'Cron Trigger'
     }
 };

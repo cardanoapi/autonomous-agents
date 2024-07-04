@@ -50,7 +50,7 @@ const ProbabilityInput = ({
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         handleProbabilityChange(e.target.value)
                     }
-                    className={'w-[140px] px-1 py-2 text-center'}
+                    className={'w-[140px] px-1 py-2 text-center outline-none'}
                     type={'text'}
                 />
                 <div className={'absolute right-4 flex flex-col'}>

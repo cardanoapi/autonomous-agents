@@ -1,4 +1,4 @@
-import os
+import asyncio
 from typing import List
 from backend.app.models.trigger.resposne_dto import TriggerResponse
 from backend.app.models.trigger.trigger_dto import (
@@ -42,10 +42,16 @@ class TriggerService:
 
         return trigger_response
 
-    async def update_trigger_for_agent(self, agent_id: str, agent_configurations: List[TriggerResponse]):
+    async def update_configurations_for_agent(self, agent_id: str, agent_configurations: List[TriggerResponse]):
+        agent_existing_configuration_ids = [config.id for config in await self.list_triggers_by_agent_id(agent_id)]
+        updating_configuration_ids = [config.id for config in agent_configurations]
+        configs_to_delete = [
+            config_id for config_id in agent_existing_configuration_ids if config_id not in updating_configuration_ids
+        ]
         for agent_config in agent_configurations:
             await self.trigger_repository.modify_trigger_by_id(agent_config.id, TriggerCreateDTO(**agent_config.dict()))
-
+        for config_id in configs_to_delete:
+            await self.trigger_repository.remove_trigger_by_trigger_id(config_id)
         await self.publish_trigger_event(agent_id)
         return await self.list_triggers_by_agent_id(agent_id)
 

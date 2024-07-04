@@ -14,7 +14,7 @@ export interface ISubParameter {
     value: string;
 }
 
-interface IAgentAction {
+export interface IAgentAction {
     function_name: string;
     parameter: Array<ISubParameter>;
 }
@@ -24,7 +24,7 @@ export interface ICronTrigger {
     probability: number;
 }
 
-interface IEventTrigger {
+export interface IEventTrigger {
     event: string;
     parameters?: Array<ISubParameter>;
 }

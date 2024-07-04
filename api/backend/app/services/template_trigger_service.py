@@ -27,5 +27,23 @@ class TemplateTriggerService:
     ) -> TemplateTriggerResponse:
         return await self.template_trigger_repository.modify_template_trigger(template_trigger_id, template_data)
 
+    async def update_configurations_for_template(
+        self, template_id: str, template_configurations: List[TemplateTriggerResponse]
+    ):
+        updated_configs = []
+        template_existing_config_ids = [config.id for config in await self.get_template_trigger(template_id)]
+        updating_configuration_ids = [config.id for config in template_configurations]
+        configs_to_delete = [
+            config_id for config_id in template_existing_config_ids if config_id not in updating_configuration_ids
+        ]
+        for config in template_configurations:
+            updated_config = await self.template_trigger_repository.modify_template_trigger(
+                config.id, TemplateTriggerCreateDto(**config.dict())
+            )
+            updated_configs.append(updated_config)
+        for config_id in configs_to_delete:
+            template = await self.template_trigger_repository.remove_template_trigger(config_id)
+        return updated_configs
+
     async def delete_template_trigger(self, template_trigger_id: str) -> None:
         await self.template_trigger_repository.remove_template_trigger(template_trigger_id)

@@ -1,11 +1,14 @@
 'use client';
 
+import { IAgentAction, ICronTrigger, IEventTrigger } from '@api/agents';
 import axios from 'axios';
 import { z } from 'zod';
 
 import { templateFormSchema } from '../(pages)/templates/create-template/components/schema';
 import { ITemplateOption } from '../(pages)/templates/create-template/page';
 import { baseAPIurl } from './config';
+
+type TriggerType = 'CRON' | 'MANUAL' | 'EVENT';
 
 axios.interceptors.request.use((request) => {
     //console.log('Request data:', request);
@@ -17,10 +20,19 @@ axios.interceptors.response.use((response) => {
     return response;
 });
 
+export interface ITemplateConfiguration {
+    id: string;
+    template_id: string;
+    type: TriggerType;
+    action?: IAgentAction;
+    data?: ICronTrigger | IEventTrigger;
+}
+
 export interface ITemplate {
     id: string;
     name: string;
     description: string;
+    template_configurations?: Array<ITemplateConfiguration>;
 }
 
 export const fetchTemplates = async (): Promise<ITemplate[]> => {
@@ -89,6 +101,28 @@ export const postTemplateData = async (
         return response.data;
     } catch (error) {
         console.error('Error posting template data:', error);
+        throw error;
+    }
+};
+
+export const updateTemplateData = async (formData: ITemplate) => {
+    try {
+        const response = await axios.put(
+            `${baseAPIurl}/templates/${formData.id}`,
+            {
+                name: formData.name,
+                description: formData.description,
+                template_configurations: formData.template_configurations
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error posting agent data:', error);
         throw error;
     }
 };
