@@ -55,7 +55,7 @@ export default function LogsPage() {
     }, [currentPage, currentFunction, currentStatus, currentSuccess, currentAgentID]);
 
     useEffect(() => {
-        setTotalPages(LogsHistory ? LogsHistory.pages : 1);
+        LogsHistory ? setTotalPages(LogsHistory.pages) : {};
         if (LogsHistory && LogsHistory.pages < currentPage) {
             setCurrentPage(1);
         }
@@ -95,6 +95,8 @@ export default function LogsPage() {
                 break;
         }
         setStatusPlaceholder(status);
+        setCurrentPage(1);
+        console.log(currentPage);
     }
 
     return (
@@ -102,7 +104,7 @@ export default function LogsPage() {
             <div className="flex items-center justify-between">
                 <div className="flex gap-2">
                     <SearchField
-                        placeholder="Search Agent ID"
+                        placeholder="Enter Agent ID"
                         variant="secondary"
                         onSearch={(val: string) => {
                             setCurrentAgentID(val);
@@ -159,7 +161,8 @@ export default function LogsPage() {
                 <PaginationBtns
                     className="pr-4"
                     onPaginate={(val: number) => {
-                        setCurrentPage(val);
+                        const newVal = currentPage + val;
+                        setCurrentPage(newVal);
                     }}
                     refCurrentPage={currentPage}
                     upperLimit={totalPages}
