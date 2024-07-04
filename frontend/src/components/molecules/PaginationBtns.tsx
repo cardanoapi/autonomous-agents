@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
-
+import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-
 import { cn } from '../lib/utils';
 
 interface PaginationBtnsProps extends React.HTMLAttributes<HTMLDivElement> {
