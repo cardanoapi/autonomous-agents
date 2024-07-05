@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react';
 
+import { fecthTriggerHistoryMetric } from '@api/triggerHistoryMetric';
 import { useQuery } from '@tanstack/react-query';
 
 import { IAgent } from '@app/app/api/agents';
-import { fetchTransactionCountOfAgentById } from '@app/app/api/triggerHistory';
-import CustomLineChart, { ILineChartData } from '@app/components/Chart/CustomLineChart';
+import CustomLineChart from '@app/components/Chart/CustomLineChart';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -15,23 +15,43 @@ import {
 } from '@app/components/atoms/DropDownMenu';
 import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
-import { getFilteredData } from '@app/utils/dashboard';
+
+import { IChartFilterOption, chartFilterOptions } from '../Chart/ChartFilter';
+import { convertDictToGraphDataFormat } from '../Chart/ChartFilter';
 
 const AgentHistoryComponent = ({ agent }: { agent?: IAgent }) => {
-    const [currentChartFilter, setCurrentChartFilter] = useState('Last 24 Hours');
-    const [filteredChartData, setFilteredChartData] = useState<ILineChartData[]>([]);
+    const [currentChartFilterOption, setCurrentChartFilterOption] = useState(
+        chartFilterOptions[1]
+    );
+    const [chartDataSource, setChartDataSource] = useState<
+        { count: number; values: Record<string, number> }[]
+    >([]);
 
-    const { data: agentTransactionCount, isLoading } = useQuery<any>({
-        queryKey: [`agentTriggerHistory${agent?.id}`],
-        queryFn: () => fetchTransactionCountOfAgentById(agent?.id || '')
+    const { data: triggerHistoryMetric, isLoading: isLoading } = useQuery({
+        queryKey: [`${agent?.id}TriggerHistoryMetric`],
+        queryFn: () => fecthTriggerHistoryMetric([], agent?.id)
     });
-
     useEffect(() => {
-        const filteredData = agentTransactionCount
-            ? getFilteredData(agentTransactionCount, currentChartFilter)
-            : [];
-        setFilteredChartData(filteredData);
-    }, [currentChartFilter, agentTransactionCount]);
+        if (triggerHistoryMetric !== undefined) {
+            switch (currentChartFilterOption.placeholder) {
+                case 'Last Hour':
+                    setChartDataSource(
+                        triggerHistoryMetric.last_hour_successful_triggers
+                    );
+                    break;
+                case 'Last 24 Hours':
+                    setChartDataSource(
+                        triggerHistoryMetric.last_24hour_successful_triggers
+                    );
+                    break;
+                case 'Last 7 Days':
+                    setChartDataSource(
+                        triggerHistoryMetric.last_week_successful_triggers
+                    );
+                    break;
+            }
+        }
+    }, [currentChartFilterOption, triggerHistoryMetric]);
 
     if (isLoading)
         return (
@@ -40,7 +60,6 @@ const AgentHistoryComponent = ({ agent }: { agent?: IAgent }) => {
                 <Skeleton className={'h-full w-full'} />
             </div>
         );
-
     return (
         <div className={'flex h-full w-full flex-col gap-10'}>
             <div className={'flex items-center gap-3'}>
@@ -52,33 +71,49 @@ const AgentHistoryComponent = ({ agent }: { agent?: IAgent }) => {
                     'flex h-full w-full flex-col gap-2 rounded border border-brand-White-200 p-4'
                 }
             >
-                <div>
-                    <div className="flex justify-between">
-                        <span className="title-1">Transactions</span>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger border={true}>
-                                {currentChartFilter}
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="bg-white">
-                                <DropdownMenuItem
-                                    onClick={() => {
-                                        setCurrentChartFilter('Last Hour');
-                                    }}
-                                >
-                                    Last Hour
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() => {
-                                        setCurrentChartFilter('Last 24 Hours');
-                                    }}
-                                >
-                                    Last 24 Hours
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
+                <div className="flex justify-between">
+                    <span className="title-1">Transactions</span>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger
+                            border={true}
+                            className="flex min-w-40 justify-between"
+                        >
+                            {currentChartFilterOption.placeholder}
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="bg-white">
+                            {chartFilterOptions.map(
+                                (item: IChartFilterOption, index) => (
+                                    <DropdownMenuItem
+                                        onClick={() => {
+                                            setCurrentChartFilterOption({
+                                                placeholder: item.placeholder,
+                                                unit: item.unit,
+                                                xaxisInterval: item.xaxisInterval
+                                            });
+                                        }}
+                                        key={index}
+                                    >
+                                        {item.placeholder}
+                                    </DropdownMenuItem>
+                                )
+                            )}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
-                <CustomLineChart chartData={filteredChartData} />
+                <CustomLineChart
+                    chartData={
+                        triggerHistoryMetric !== undefined
+                            ? convertDictToGraphDataFormat(
+                                  chartDataSource || [],
+                                  currentChartFilterOption.unit
+                              )
+                            : []
+                    }
+                    xaxisInterval={currentChartFilterOption.xaxisInterval}
+                />
+                <div className="mt-2 text-center">
+                    Time ({currentChartFilterOption.unit})
+                </div>
             </div>
         </div>
     );
