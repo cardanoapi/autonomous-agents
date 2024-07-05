@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
+import { IFunction, fetchFunctions } from '@api/functions';
 import { fecthTriggerHistoryMetric } from '@api/triggerHistoryMetric';
 import { useQuery } from '@tanstack/react-query';
 
@@ -26,11 +27,24 @@ const AgentHistoryComponent = ({ agent }: { agent?: IAgent }) => {
     const [chartDataSource, setChartDataSource] = useState<
         { count: number; values: Record<string, number> }[]
     >([]);
-
-    const { data: triggerHistoryMetric, isLoading: isLoading } = useQuery({
+    const {
+        data: triggerHistoryMetric,
+        isLoading: isLoading,
+        refetch: refecthTriggerHistory
+    } = useQuery({
         queryKey: [`${agent?.id}TriggerHistoryMetric`],
-        queryFn: () => fecthTriggerHistoryMetric([], agent?.id)
+        queryFn: () =>
+            fecthTriggerHistoryMetric(
+                currentFunction === 'None' ? [] : [currentFunction],
+                agent?.id
+            )
     });
+    const { data: agentFunctions = [] } = useQuery({
+        queryKey: ['AgentFunctions'],
+        queryFn: fetchFunctions
+    });
+    const [currentFunction, setCurrentFunction] = useState('None');
+
     useEffect(() => {
         if (triggerHistoryMetric !== undefined) {
             switch (currentChartFilterOption.placeholder) {
@@ -53,6 +67,10 @@ const AgentHistoryComponent = ({ agent }: { agent?: IAgent }) => {
         }
     }, [currentChartFilterOption, triggerHistoryMetric]);
 
+    useEffect(() => {
+        refecthTriggerHistory();
+    }, [currentFunction]);
+
     if (isLoading)
         return (
             <div className={'flex h-full w-full flex-col gap-10'}>
@@ -73,32 +91,65 @@ const AgentHistoryComponent = ({ agent }: { agent?: IAgent }) => {
             >
                 <div className="flex justify-between">
                     <span className="title-1">Transactions</span>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger
-                            border={true}
-                            className="flex min-w-40 justify-between"
-                        >
-                            {currentChartFilterOption.placeholder}
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-white">
-                            {chartFilterOptions.map(
-                                (item: IChartFilterOption, index) => (
-                                    <DropdownMenuItem
-                                        onClick={() => {
-                                            setCurrentChartFilterOption({
-                                                placeholder: item.placeholder,
-                                                unit: item.unit,
-                                                xaxisInterval: item.xaxisInterval
-                                            });
-                                        }}
-                                        key={index}
-                                    >
-                                        {item.placeholder}
-                                    </DropdownMenuItem>
-                                )
-                            )}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <div className="flex gap-2">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger
+                                border={true}
+                                className="flex w-72 justify-between"
+                            >
+                                {currentFunction === 'None'
+                                    ? 'Function'
+                                    : currentFunction}
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="bg-white">
+                                <DropdownMenuItem
+                                    onClick={() => setCurrentFunction('None')}
+                                >
+                                    All
+                                </DropdownMenuItem>
+                                {agentFunctions?.map(
+                                    (agentFunction: IFunction, index) => (
+                                        <DropdownMenuItem
+                                            key={index}
+                                            onClick={() =>
+                                                setCurrentFunction(
+                                                    agentFunction.function_name
+                                                )
+                                            }
+                                        >
+                                            {agentFunction.function_name}
+                                        </DropdownMenuItem>
+                                    )
+                                )}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger
+                                border={true}
+                                className="flex min-w-40 justify-between"
+                            >
+                                {currentChartFilterOption.placeholder}
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="bg-white">
+                                {chartFilterOptions.map(
+                                    (item: IChartFilterOption, index) => (
+                                        <DropdownMenuItem
+                                            onClick={() => {
+                                                setCurrentChartFilterOption({
+                                                    placeholder: item.placeholder,
+                                                    unit: item.unit,
+                                                    xaxisInterval: item.xaxisInterval
+                                                });
+                                            }}
+                                            key={index}
+                                        >
+                                            {item.placeholder}
+                                        </DropdownMenuItem>
+                                    )
+                                )}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
                 </div>
                 <CustomLineChart
                     chartData={
