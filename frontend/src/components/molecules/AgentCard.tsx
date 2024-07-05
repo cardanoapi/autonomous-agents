@@ -200,7 +200,7 @@ export default function AgentCard({
                 </div>
             </Card>
             <Dialog open={dialogOpen}>
-                <DialogContent>
+                <DialogContent defaultCross={false} disableBG={true}>
                     <ConfirmationBox
                         title="Confirm Delete"
                         msg="Are you sure you want to delete this Agent? This process cannot be undone !"
