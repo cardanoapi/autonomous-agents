@@ -103,24 +103,24 @@ class TriggerHistoryService:
 
         return sorted_transaction_counts
 
-    async def calculate_trigger_metric(self, function_name: list[str]):
+    async def calculate_trigger_metric(self, function_name: list[str], agent_id: str):
 
         successfull_triggers = await self.trigger_history_repo.get_all_triggers_history(
-            agent_id=None,
+            agent_id=agent_id,
             function_name=function_name,
             status=True,
             success=True,
             enable_pagination=False,
         )
         unsuccessfull_triggers = await self.trigger_history_repo.get_all_triggers_history(
-            agent_id=None,
+            agent_id=agent_id,
             function_name=function_name,
             status=True,
             success=False,
             enable_pagination=False,
         )
         skipeed_triggers = await self.trigger_history_repo.get_all_triggers_history(
-            agent_id=None,
+            agent_id=agent_id,
             function_name=function_name,
             status=False,
             success=False,
