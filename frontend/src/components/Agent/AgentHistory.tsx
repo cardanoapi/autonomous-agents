@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { IAgent } from '@app/app/api/agents';
 import { fetchTransactionCountOfAgentById } from '@app/app/api/triggerHistory';
+import CustomLineChart, { ILineChartData } from '@app/components/Chart/CustomLineChart';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -13,9 +14,6 @@ import {
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
 import AgentsIcon from '@app/components/icons/AgentsIcon';
-import CustomLineChart, {
-    ILineChartData
-} from '@app/components/molecules/chart/CustomLineChart';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { getFilteredData } from '@app/utils/dashboard';
 
