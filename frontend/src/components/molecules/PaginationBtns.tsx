@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -24,22 +24,18 @@ const PaginationBtns: React.FC<PaginationBtnsProps> = ({
     onPaginate = () => {},
     ...props
 }) => {
-    const [currentPage, setCurrentPage] = useState(refCurrentPage);
+    const currentPage = refCurrentPage;
 
     function handleLeftClick() {
-        const newPage = currentPage - 1;
-        setCurrentPage(newPage);
-        onPaginate(newPage);
+        onPaginate(-1);
     }
 
     function handleRightClick() {
-        const newPage = currentPage + 1;
-        setCurrentPage(newPage);
-        onPaginate(newPage);
+        onPaginate(+1);
     }
 
     return (
-        <div {...props} className={cn('flex items-center gap-x-1', className)}>
+        <div {...props} className={cn('flex items-center gap-x-2', className)}>
             <div
                 className={cn(
                     chevronWrapper,
@@ -48,23 +44,23 @@ const PaginationBtns: React.FC<PaginationBtnsProps> = ({
             >
                 <ChevronLeft
                     size={18}
-                    stroke={lowerLimit === currentPage ? '#868FA0' : '#464F60'}
+                    stroke={lowerLimit === refCurrentPage ? '#868FA0' : '#464F60'}
                     onClick={handleLeftClick}
                 />
             </div>
-            <span className="w-8 text-center text-base ">
-                {currentPage}
+            <span className="text-center text-base ">
+                {refCurrentPage ? refCurrentPage : currentPage}
                 {upperLimit ? `/${upperLimit}` : ''}
             </span>
             <div
                 className={cn(
                     chevronWrapper,
-                    upperLimit === currentPage ? disableChevron : ''
+                    upperLimit === refCurrentPage ? disableChevron : ''
                 )}
             >
                 <ChevronRight
                     size={18}
-                    stroke={upperLimit === currentPage ? '#868FA0' : '#464F60'}
+                    stroke={upperLimit === refCurrentPage ? '#868FA0' : '#464F60'}
                     onClick={handleRightClick}
                 />
             </div>

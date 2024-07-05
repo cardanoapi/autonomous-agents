@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { useQuery } from '@tanstack/react-query';
+import { OctagonAlert } from 'lucide-react';
 
 import { IFunction, fetchFunctions } from '@app/app/api/functions';
 import {
@@ -11,6 +12,7 @@ import {
     fetchAllTriggerHistory
 } from '@app/app/api/triggerHistory';
 import { AgentLogCard } from '@app/components/Agent/AgentLog';
+import { Badge } from '@app/components/atoms/Badge';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -33,7 +35,11 @@ export default function LogsPage() {
     const statusOptions = ['Success', 'Skipped', 'Failed'];
     const [statusPlaceholder, setStatusPlaceholder] = useState('None');
 
-    const { data: LogsHistory, refetch: refetchLogsHistory } = useQuery({
+    const {
+        data: LogsHistory,
+        refetch: refetchLogsHistory,
+        isLoading: loadingLogs
+    } = useQuery({
         queryKey: [
             'LogsHistory',
             currentPage,
@@ -55,7 +61,7 @@ export default function LogsPage() {
     }, [currentPage, currentFunction, currentStatus, currentSuccess, currentAgentID]);
 
     useEffect(() => {
-        setTotalPages(LogsHistory ? LogsHistory.pages : 1);
+        LogsHistory ? setTotalPages(LogsHistory.pages) : {};
         if (LogsHistory && LogsHistory.pages < currentPage) {
             setCurrentPage(1);
         }
@@ -76,6 +82,13 @@ export default function LogsPage() {
     }, []);
 
     function handleStatusChange(status: string) {
+        if (status === statusPlaceholder) {
+            setStatusPlaceholder('None');
+            setCurrentStatus('None');
+            setCurrentSucccess('None');
+            refetchLogsHistory();
+            return;
+        }
         switch (status) {
             case 'None':
                 setCurrentStatus('None');
@@ -95,6 +108,7 @@ export default function LogsPage() {
                 break;
         }
         setStatusPlaceholder(status);
+        setCurrentPage(1);
     }
 
     return (
@@ -102,14 +116,17 @@ export default function LogsPage() {
             <div className="flex items-center justify-between">
                 <div className="flex gap-2">
                     <SearchField
-                        placeholder="Search Agent ID"
+                        placeholder="Enter Agent ID"
                         variant="secondary"
                         onSearch={(val: string) => {
                             setCurrentAgentID(val);
                         }}
                     />
                     <DropdownMenu>
-                        <DropdownMenuTrigger border={true}>
+                        <DropdownMenuTrigger
+                            border={true}
+                            className="flex w-72 justify-between"
+                        >
                             {currentFunction === 'None' ? 'Function' : currentFunction}
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-white">
@@ -130,36 +147,28 @@ export default function LogsPage() {
                             ))}
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger border={true}>
-                            Status :{' '}
-                            <span className="w-16">
-                                {statusPlaceholder === 'None'
-                                    ? 'Filter'
-                                    : statusPlaceholder}
-                            </span>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-white">
-                            <DropdownMenuItem
-                                onClick={() => handleStatusChange('None')}
+                    <div className="flex justify-center gap-2">
+                        {statusOptions.map((status: string, index) => (
+                            <Badge
+                                key={index}
+                                variant={
+                                    statusPlaceholder === status
+                                        ? 'successPrimary'
+                                        : 'primary'
+                                }
+                                className="flex w-20 justify-center"
+                                onClick={() => handleStatusChange(status)}
                             >
-                                All
-                            </DropdownMenuItem>
-                            {statusOptions.map((status: string, index) => (
-                                <DropdownMenuItem
-                                    onClick={() => handleStatusChange(status)}
-                                    key={index}
-                                >
-                                    {status}
-                                </DropdownMenuItem>
-                            ))}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                                {status}
+                            </Badge>
+                        ))}
+                    </div>
                 </div>
                 <PaginationBtns
                     className="pr-4"
                     onPaginate={(val: number) => {
-                        setCurrentPage(val);
+                        const newVal = currentPage + val;
+                        setCurrentPage(newVal);
                     }}
                     refCurrentPage={currentPage}
                     upperLimit={totalPages}
@@ -170,15 +179,30 @@ export default function LogsPage() {
                     <ScrollArea
                         className={'h-agentComponentHeight overflow-y-auto pr-4'}
                     >
-                        <div className={'grid grid-cols-1 gap-2'}>
-                            {LogsHistory?.items.map(
-                                (history: IAgentTriggerHistory, index: number) => (
-                                    <AgentLogCard
-                                        history={history}
-                                        key={index}
-                                        className="bg-white"
-                                    />
+                        <div className="grid grid-cols-1 gap-2">
+                            {LogsHistory?.items.length > 0 ? (
+                                LogsHistory.items.map(
+                                    (history: IAgentTriggerHistory, index: number) => (
+                                        <AgentLogCard
+                                            history={history}
+                                            key={index}
+                                            className="bg-white"
+                                        />
+                                    )
                                 )
+                            ) : loadingLogs === false ? (
+                                <div className="flex gap-2 text-gray-500">
+                                    Trigger History Logs for{' '}
+                                    {statusPlaceholder === 'None'
+                                        ? ''
+                                        : `${statusPlaceholder}`}{' '}
+                                    {currentFunction === 'None'
+                                        ? ''
+                                        : `${currentFunction}`}{' '}
+                                    are empty <OctagonAlert />
+                                </div>
+                            ) : (
+                                ''
                             )}
                         </div>
                     </ScrollArea>
