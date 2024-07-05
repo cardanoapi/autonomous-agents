@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { useQuery } from '@tanstack/react-query';
+import { OctagonAlert } from 'lucide-react';
 
 import { IFunction, fetchFunctions } from '@app/app/api/functions';
 import {
@@ -30,12 +31,15 @@ export default function LogsPage() {
     const [currentFunction, setCurrentFunction] = useState('None');
     const [currentAgentID, setCurrentAgentID] = useState('None');
     const [totalPages, setTotalPages] = useState<number>(1);
-    const [currentLogReuslt, setCurrentLogResult] = useState('None');
 
     const statusOptions = ['Success', 'Skipped', 'Failed'];
     const [statusPlaceholder, setStatusPlaceholder] = useState('None');
 
-    const { data: LogsHistory, refetch: refetchLogsHistory } = useQuery({
+    const {
+        data: LogsHistory,
+        refetch: refetchLogsHistory,
+        isLoading: loadingLogs
+    } = useQuery({
         queryKey: [
             'LogsHistory',
             currentPage,
@@ -78,6 +82,13 @@ export default function LogsPage() {
     }, []);
 
     function handleStatusChange(status: string) {
+        if (status === statusPlaceholder) {
+            setStatusPlaceholder('None');
+            setCurrentStatus('None');
+            setCurrentSucccess('None');
+            refetchLogsHistory();
+            return;
+        }
         switch (status) {
             case 'None':
                 setCurrentStatus('None');
@@ -98,7 +109,6 @@ export default function LogsPage() {
         }
         setStatusPlaceholder(status);
         setCurrentPage(1);
-        setCurrentLogResult(status);
     }
 
     return (
@@ -113,7 +123,10 @@ export default function LogsPage() {
                         }}
                     />
                     <DropdownMenu>
-                        <DropdownMenuTrigger border={true}>
+                        <DropdownMenuTrigger
+                            border={true}
+                            className="flex w-72 justify-between"
+                        >
                             {currentFunction === 'None' ? 'Function' : currentFunction}
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-white">
@@ -134,37 +147,12 @@ export default function LogsPage() {
                             ))}
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger border={true}>
-                            Status :{' '}
-                            <span className="w-16">
-                                {statusPlaceholder === 'None'
-                                    ? 'Filter'
-                                    : statusPlaceholder}
-                            </span>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-white">
-                            <DropdownMenuItem
-                                onClick={() => handleStatusChange('None')}
-                            >
-                                All
-                            </DropdownMenuItem>
-                            {statusOptions.map((status: string, index) => (
-                                <DropdownMenuItem
-                                    onClick={() => handleStatusChange(status)}
-                                    key={index}
-                                >
-                                    {status}
-                                </DropdownMenuItem>
-                            ))}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
                     <div className="flex justify-center gap-2">
                         {statusOptions.map((status: string, index) => (
                             <Badge
                                 key={index}
                                 variant={
-                                    currentLogReuslt === status
+                                    statusPlaceholder === status
                                         ? 'successPrimary'
                                         : 'primary'
                                 }
@@ -191,15 +179,30 @@ export default function LogsPage() {
                     <ScrollArea
                         className={'h-agentComponentHeight overflow-y-auto pr-4'}
                     >
-                        <div className={'grid grid-cols-1 gap-2'}>
-                            {LogsHistory?.items.map(
-                                (history: IAgentTriggerHistory, index: number) => (
-                                    <AgentLogCard
-                                        history={history}
-                                        key={index}
-                                        className="bg-white"
-                                    />
+                        <div className="grid grid-cols-1 gap-2">
+                            {LogsHistory?.items.length > 0 ? (
+                                LogsHistory.items.map(
+                                    (history: IAgentTriggerHistory, index: number) => (
+                                        <AgentLogCard
+                                            history={history}
+                                            key={index}
+                                            className="bg-white"
+                                        />
+                                    )
                                 )
+                            ) : loadingLogs === false ? (
+                                <div className="flex gap-2 text-gray-500">
+                                    Trigger History Logs for{' '}
+                                    {statusPlaceholder === 'None'
+                                        ? ''
+                                        : `${statusPlaceholder}`}{' '}
+                                    {currentFunction === 'None'
+                                        ? ''
+                                        : `${currentFunction}`}{' '}
+                                    are empty <OctagonAlert />
+                                </div>
+                            ) : (
+                                ''
                             )}
                         </div>
                     </ScrollArea>
