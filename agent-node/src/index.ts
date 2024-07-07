@@ -1,12 +1,14 @@
-import WebSocket from 'ws'
+import WebSocket, {RawData} from 'ws'
 import { setInterval } from 'timers'
-import { handleIncomingMessage } from './client'
 
 import { configDotenv } from 'dotenv'
+import {RpcV1} from "libcardano/network/Rpc";
+import {Pipe} from "libcardano/network/event";
+import {CborDuplex} from "libcardano/network/ouroboros";
 
 configDotenv()
 // Define the WebSocket URL and agent ID
-const wsUrl = process.env.WS_URL || '' // Use WS_URL if provided, otherwise use default
+const wsUrl = process.env.WS_URL || 'ws://localhost:3001' // Use WS_URL if provided, otherwise use default
 const agentId = process.env.AGENT_ID || '' // Retrieve agent ID from environment variable
 // Check if agent ID is provided
 if (!agentId) {
@@ -19,12 +21,56 @@ let reconnectAttempts = 0
 const maxReconnectAttempts = 3
 let isReconnecting = false
 
+class AgentRpc extends  RpcV1{
+    handleMethodCall(method: string, args: any[]): void {
+        console.log("Server called method",method,args)
+    }
+
+    onEvent(topic: string, message: any): void {
+        console.log("event received",topic,message)
+    }
+
+    getId(): string {
+        return agentId;
+    }
+}
+export class WsClientPipe extends  Pipe<any,any> {
+    ws: WebSocket
+
+    constructor(ws: WebSocket) {
+        super()
+        this.ws = ws
+        ws.on('message', (message: RawData) => {
+            this.emit('data', message)
+        })
+        ws.on('close',  (...args) => {
+            this.emit('close',...args)
+        })
+        ws.on('error', (...args:any) => {
+            this.emit('error',...args)
+        })
+    }
+
+    write(chunk: any, cb?: ((error?: Error | undefined) => void) | undefined): boolean {
+        this.ws.send(chunk, {binary: true}, cb,)
+        return true
+    }
+
+    terminate(code: number, message: string) {
+        this.ws.close(code, message)
+
+    }
+}
+
 function connectToManagerWebSocket() {
     let interval: NodeJS.Timeout
     // Create a new WebSocket client connection
     ws = new WebSocket(`${wsUrl}/${agentId}`)
+    let clientPipe=new WsClientPipe(ws)
+    let rpcChannel=new AgentRpc(new CborDuplex(clientPipe));
     // Event listener for the connection opening
     ws.on('open', () => {
+        rpcChannel.emit("hello","I am connected")
         console.log('Connected to the server.')
         reconnectAttempts = 0
         isReconnecting = false
@@ -32,11 +78,6 @@ function connectToManagerWebSocket() {
         interval = setInterval(() => {
             ws?.send('Ping')
         }, 10000)
-    })
-
-    // Event listener for incoming messages
-    ws.on('message', (data) => {
-        handleIncomingMessage(data)
     })
 
     // Event listener for the connection closing
