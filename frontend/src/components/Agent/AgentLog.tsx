@@ -73,18 +73,6 @@ const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
         }
         setStatusPlaceholder(status);
     }
-
-    if (loadingLogs === false && LogsHistory && LogsHistory.length == 0) {
-        return (
-            <div className="flex gap-2 text-gray-500">
-                Trigger History Logs for{' '}
-                {statusPlaceholder === 'None' ? '' : `${statusPlaceholder}`}{' '}
-                {currentFunction === 'None' ? '' : `${currentFunction}`} are empty{' '}
-                <OctagonAlert />
-            </div>
-        );
-    }
-
     return (
         <div className={'flex h-full w-full flex-col gap-10'}>
             <div className={'flex items-center gap-3'}>
@@ -115,17 +103,27 @@ const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
                 </div>
             </div>
             <ScrollArea className={'h-agentComponentHeight overflow-y-auto pr-4'}>
-                <div className={'grid grid-cols-1 gap-2'}>
-                    {LogsHistory?.items &&
+                <div className="grid grid-cols-1 gap-2">
+                    {LogsHistory?.items.length > 0 ? (
                         LogsHistory.items.map(
                             (history: IAgentTriggerHistory, index: number) => (
                                 <AgentLogCard
                                     history={history}
                                     key={index}
-                                    className="bg-white"
+                                    className="bg-gray-100"
                                 />
                             )
-                        )}
+                        )
+                    ) : loadingLogs === false ? (
+                        <div className="flex gap-2 text-gray-500">
+                            Trigger History Logs for{' '}
+                            {statusPlaceholder === 'None' ? '' : `${statusPlaceholder}`}{' '}
+                            {currentFunction === 'None' ? '' : `${currentFunction}`} are
+                            empty <OctagonAlert />
+                        </div>
+                    ) : (
+                        ''
+                    )}
                 </div>
             </ScrollArea>
         </div>
