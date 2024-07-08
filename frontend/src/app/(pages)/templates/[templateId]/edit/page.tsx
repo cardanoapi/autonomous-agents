@@ -11,11 +11,13 @@ import {
     updateTemplateData
 } from '@api/templates';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Plus } from 'lucide-react';
 
 import { Button } from '@app/components/atoms/Button';
 import { ErrorToast, SuccessToast } from '@app/components/molecules/CustomToasts';
 import TemplateConfigurations from '@app/components/molecules/TemplateConfigurations';
+import UpdateTemplateFunctionModal from '@app/components/molecules/UpdateTemplateFunctionModal';
+import { Dialog, DialogContent } from '@app/components/shadcn/dialog';
 
 const EditTemplateCard = () => {
     const params = useParams();
@@ -38,6 +40,7 @@ const EditTemplateCard = () => {
         }
     });
 
+    const [openDialog, setOpenDialog] = useState(false);
     const [templateConfigurations, setTemplateConfigurations] = useState<
         Array<ITemplateConfiguration>
     >([]);
@@ -61,7 +64,11 @@ const EditTemplateCard = () => {
         updatedTemplateConfig: ITemplateConfiguration,
         updatedTemplateConfigIndex: number
     ) => {
-        templateConfigurations[updatedTemplateConfigIndex] = updatedTemplateConfig;
+        if (updatedTemplateConfigIndex < templateConfigurations.length) {
+            templateConfigurations[updatedTemplateConfigIndex] = updatedTemplateConfig;
+        } else {
+            templateConfigurations.push(updatedTemplateConfig);
+        }
         setTemplateConfigurations([...templateConfigurations]);
     };
 
@@ -132,12 +139,42 @@ const EditTemplateCard = () => {
                         />
                     </div>
                 </div>
-                <span className={'font-medium'}>Template Functions</span>
+                <div className={'flex items-center gap-4'}>
+                    <span className={'font-medium'}>Template Functions</span>
+                    <div
+                        className={'cursor-pointer rounded p-1 hover:bg-gray-200'}
+                        onClick={() => setOpenDialog(true)}
+                    >
+                        <Plus />
+                    </div>
+                </div>
                 <TemplateConfigurations
                     templateConfigurations={templateConfigurations}
                     onDeleteConfig={onDeleteConfig}
                     handleUpdateTemplateConfig={handleUpdateTemplateConfig}
                 />
+                <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+                    <DialogContent
+                        className={'!min-w-[650px] !p-0'}
+                        onClickCloseIcon={() => setOpenDialog(false)}
+                    >
+                        <UpdateTemplateFunctionModal
+                            header={'Add New Template Configurations'}
+                            templateConfigIndex={templateConfigurations.length}
+                            templateConfigs={[]}
+                            onClickSave={(
+                                updatedTemplateConfig,
+                                updatedTemplateConfigIndex
+                            ) => {
+                                handleUpdateTemplateConfig(
+                                    updatedTemplateConfig,
+                                    updatedTemplateConfigIndex
+                                );
+                                setOpenDialog(false);
+                            }}
+                        />
+                    </DialogContent>
+                </Dialog>
 
                 <div className={'flex justify-end'}>
                     <Button onClick={() => handleOnClickUpdate()}>Update</Button>

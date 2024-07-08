@@ -31,7 +31,7 @@ export interface IEventTrigger {
 
 export interface IAgentConfiguration {
     id: string;
-    agentId: string;
+    agent_id: string;
     type: TriggerType;
     action?: IAgentAction;
     data?: ICronTrigger | IEventTrigger;
