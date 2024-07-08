@@ -1,7 +1,7 @@
 import { fecthTriggerHistoryMetric } from '@api/triggerHistoryMetric';
 import { useQuery } from '@tanstack/react-query';
 
-import { ILineChartData } from '@app/components/molecules/chart/CustomLineChart';
+import { ILineChartData } from '@app/components/Chart/CustomLineChart';
 
 import { fetchActiveAgentsCount, fetchAgents } from '../api/agents';
 import { fetchTemplates } from '../api/templates';

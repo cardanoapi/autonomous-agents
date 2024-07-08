@@ -1,9 +1,7 @@
 import { ArrowDown, ArrowUp, Minus } from 'lucide-react';
 
+import CustomLineChart, { ILineChartData } from '@app/components/Chart/CustomLineChart';
 import { cn } from '@app/components/lib/utils';
-import CustomLineChart, {
-    ILineChartData
-} from '@app/components/molecules/chart/CustomLineChart';
 
 import OverViewCard from './OverViewCard';
 

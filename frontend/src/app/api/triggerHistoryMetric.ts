@@ -15,7 +15,8 @@ export interface ITriggerHistoryMetric {
 }
 
 export const fecthTriggerHistoryMetric = async (
-    functions: string[]
+    functions: string[],
+    agent_id?: string
 ): Promise<ITriggerHistoryMetric> => {
     let fetchURL = `${baseAPIurl}/trigger-metric`;
     if (functions.length > 0) {
@@ -24,9 +25,11 @@ export const fecthTriggerHistoryMetric = async (
             .join('&');
         fetchURL += `?${queryParams}`;
     }
-    console.log(fetchURL);
+    if (agent_id && agent_id?.length >= 0) {
+        fetchURL +=
+            functions.length == 0 ? `?agent_id=${agent_id}` : `&agent_id=${agent_id}`;
+    }
     const res = fetch(fetchURL);
-    console.log(fetchURL);
     const data = (await res).json();
     return data;
 };

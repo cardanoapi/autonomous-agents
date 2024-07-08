@@ -79,6 +79,5 @@ export const fetchAllTriggerHistory = async ({
         throw new Error('Trigger Fetch Failed: Network Error');
     }
     const data = await res.json();
-    console.log(data);
     return data;
 };

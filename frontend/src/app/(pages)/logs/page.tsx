@@ -6,19 +6,13 @@ import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { useQuery } from '@tanstack/react-query';
 import { OctagonAlert } from 'lucide-react';
 
-import { IFunction, fetchFunctions } from '@app/app/api/functions';
 import {
     IAgentTriggerHistory,
     fetchAllTriggerHistory
 } from '@app/app/api/triggerHistory';
 import { AgentLogCard } from '@app/components/Agent/AgentLog';
+import AgentFunctionsDropDown from '@app/components/Common/AgentFunctionsDropDown';
 import { Badge } from '@app/components/atoms/Badge';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
 import PaginationBtns from '@app/components/molecules/PaginationBtns';
 
@@ -50,10 +44,6 @@ export default function LogsPage() {
             currentSuccess
         ],
         queryFn: fetchAllTriggerHistory
-    });
-    const { data: agentFunctions = [] } = useQuery({
-        queryKey: ['AgentFunctions'],
-        queryFn: fetchFunctions
     });
 
     useEffect(() => {
@@ -122,31 +112,11 @@ export default function LogsPage() {
                             setCurrentAgentID(val);
                         }}
                     />
-                    <DropdownMenu>
-                        <DropdownMenuTrigger
-                            border={true}
-                            className="flex w-72 justify-between"
-                        >
-                            {currentFunction === 'None' ? 'Function' : currentFunction}
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-white">
-                            <DropdownMenuItem
-                                onClick={() => setCurrentFunction('None')}
-                            >
-                                All
-                            </DropdownMenuItem>
-                            {agentFunctions?.map((agentFunction: IFunction, index) => (
-                                <DropdownMenuItem
-                                    key={index}
-                                    onClick={() =>
-                                        setCurrentFunction(agentFunction.function_name)
-                                    }
-                                >
-                                    {agentFunction.function_name}
-                                </DropdownMenuItem>
-                            ))}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <AgentFunctionsDropDown
+                        onChange={(strValue: string) => {
+                            setCurrentFunction(strValue);
+                        }}
+                    />
                     <div className="flex justify-center gap-2">
                         {statusOptions.map((status: string, index) => (
                             <Badge
