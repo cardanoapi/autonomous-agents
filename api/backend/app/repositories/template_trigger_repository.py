@@ -74,19 +74,19 @@ class TemplateTriggerRepository:
         return template
 
     async def modify_template_trigger(
-        self, template_trigger_id: str, template_data: TemplateTriggerCreateDto
+        self, template_trigger_id: str, template_trigger_data: TemplateTriggerCreateDto
     ) -> Optional[TemplateTriggerResponse]:
-        template = await self.db.prisma.template_trigger.find_first(where={"id": template_trigger_id})
-        if template is None or template.deleted_at is not None:
-            raise HTTPException(status_code=404, detail="Template not found")
-        updated_data_dict = template_data.dict()
+        template_trigger = await self.db.prisma.template_trigger.find_first(where={"id": template_trigger_id})
+        if template_trigger is None or template_trigger.deleted_at is not None:
+            raise HTTPException(status_code=404, content="Template not found")
+        updated_data_dict = template_trigger_data.dict()
 
         # validation for CRON nad TOPIC
-        if template_data.type == "CRON":
-            await validate_type_CRON(template_data.data.frequency, template_data.data.probability)
+        if template_trigger_data.type == "CRON":
+            await validate_type_CRON(template_trigger_data.data.frequency, template_trigger_data.data.probability)
 
-        if template_data.type == "EVENT":
-            await validate_type_EVENT(template_data.data.event)
+        if template_trigger_data.type == "EVENT":
+            await validate_type_EVENT(template_trigger_data.data.event)
 
         # for config data
         data_dict = updated_data_dict.pop("data")
@@ -105,10 +105,10 @@ class TemplateTriggerRepository:
         # Create a TriggerResponse object with the converted data
         template_response = TemplateTriggerResponse(
             id=template_trigger_id,
-            template_id=template.template_id,
-            type=template_data.type,
-            action=template_data.action,
-            data=template_data.data,
+            template_id=template_trigger.template_id,
+            type=template_trigger_data.type,
+            action=template_trigger_data.action,
+            data=template_trigger_data.data,
         )
         return template_response
 
