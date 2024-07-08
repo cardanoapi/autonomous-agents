@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Plus, Trash2 } from 'lucide-react';
 
 import { IAgentConfiguration, ICronTrigger } from '@app/app/api/agents';
 import UpdateAgentFunctionModal from '@app/components/molecules/UpdateAgentFunctionModal';
@@ -20,10 +20,25 @@ const AgentFunctionsDetailComponent = ({
     onClickDelete?: (configIndex: number) => void;
 }) => {
     const [openDialog, setOpenDialog] = useState(false);
+    const [addNewConfigBtnClicked, setAddNewConfigBtnClicked] = useState(false);
+
     const [agentConfigIndex, setAgentConfigIndex] = useState(0);
     return (
         <div className={'flex flex-col gap-2'}>
-            <h1 className={'text-sm font-medium'}>Agent Functions</h1>
+            <div className={'flex items-center gap-4'}>
+                <h1 className={'text-sm font-medium'}>Agent Functions</h1>
+                {isEditing && (
+                    <div
+                        className={'cursor-pointer rounded p-1 hover:bg-gray-200'}
+                        onClick={() => {
+                            setOpenDialog(true);
+                            setAddNewConfigBtnClicked(true);
+                        }}
+                    >
+                        <Plus />
+                    </div>
+                )}
+            </div>
             <div className={'flex flex-row flex-wrap gap-4 '}>
                 {!agentConfigurations?.length ? (
                     <span className={'text-xs text-brand-Black-300'}>
@@ -36,7 +51,7 @@ const AgentFunctionsDetailComponent = ({
                                 className={
                                     'group relative flex w-[300px] flex-col flex-wrap gap-2 rounded bg-brand-White-200 p-3 drop-shadow-md'
                                 }
-                                key={`${config.agentId}-${config.id}`}
+                                key={`${config.agent_id}-${config.id}`}
                             >
                                 <span className={'text-sm text-gray-700'}>
                                     Name : {config?.action?.function_name}
@@ -85,14 +100,27 @@ const AgentFunctionsDetailComponent = ({
                     className={'!min-w-[650px] !p-0'}
                     onClickCloseIcon={() => setOpenDialog(false)}
                 >
-                    <UpdateAgentFunctionModal
-                        agentConfigIndex={agentConfigIndex}
-                        agentConfigs={agentConfigurations}
-                        onClickSave={(agentConfig, index) => {
-                            onClickSave && onClickSave(agentConfig, index);
-                            setOpenDialog(false);
-                        }}
-                    />
+                    {addNewConfigBtnClicked ? (
+                        <UpdateAgentFunctionModal
+                            header={'Add New Agent Configuration'}
+                            agentConfigIndex={agentConfigurations?.length || 0}
+                            agentConfigs={[]}
+                            onClickSave={(agentConfig, index) => {
+                                onClickSave && onClickSave(agentConfig, index);
+                                setOpenDialog(false);
+                            }}
+                        />
+                    ) : (
+                        <UpdateAgentFunctionModal
+                            header={'Update Agent Configuration'}
+                            agentConfigIndex={agentConfigIndex}
+                            agentConfigs={agentConfigurations}
+                            onClickSave={(agentConfig, index) => {
+                                onClickSave && onClickSave(agentConfig, index);
+                                setOpenDialog(false);
+                            }}
+                        />
+                    )}
                 </DialogContent>
             </Dialog>
         </div>

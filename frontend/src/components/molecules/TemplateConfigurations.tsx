@@ -23,6 +23,7 @@ const TemplateConfigurations = ({
 }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [templateConfigIndex, setTemplateConfigIndex] = useState(0);
+    console.log('sads : ', templateConfigurations);
     return (
         <div className={'flex flex-row flex-wrap gap-10'}>
             {templateConfigurations && templateConfigurations.length ? (
@@ -32,7 +33,7 @@ const TemplateConfigurations = ({
                             className={
                                 'group relative flex w-[300px] flex-col flex-wrap gap-2 rounded bg-brand-White-200 p-3 drop-shadow-md'
                             }
-                            key={config.id}
+                            key={`${index}-${config?.id}`}
                         >
                             <span className={'text-sm text-gray-700'}>
                                 Name : {config?.action?.function_name}
@@ -82,6 +83,7 @@ const TemplateConfigurations = ({
                     onClickCloseIcon={() => setOpenDialog(false)}
                 >
                     <UpdateTemplateFunctionModal
+                        header={'Update Template Configurations'}
                         templateConfigIndex={templateConfigIndex}
                         templateConfigs={templateConfigurations}
                         onClickSave={(

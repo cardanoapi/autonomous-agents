@@ -1,5 +1,4 @@
-import { CircleAlert } from 'lucide-react';
-import { X } from 'lucide-react';
+import { CircleAlert, X } from 'lucide-react';
 
 import { Button } from '../atoms/Button';
 import { Card } from '../atoms/Card';
@@ -27,14 +26,14 @@ export default function ConfirmationBox({
     onClose?: any;
 }) {
     return (
-        <Card className={cn('flex w-full gap-y-4', className)}>
+        <Card className={cn('flex w-full gap-y-4 !p-0', className)}>
             <div className="flex w-full items-start justify-between">
-                <div className="flex items-center gap-x-2 font-medium">
+                <div className="flex items-start gap-x-2 font-medium">
                     {showDangerIcon && <CircleAlert fill="#D04D52" stroke="#fff" />}
                     {title}
                 </div>
                 <X
-                    className="mt-[-12px] cursor-pointer"
+                    className="-mt-1 cursor-pointer"
                     onClick={() => {
                         onClose();
                     }}

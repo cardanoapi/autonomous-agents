@@ -53,21 +53,27 @@ const AgentOverViewComponent = ({ agent }: { agent?: IAgent }) => {
         agentConfig: IAgentConfiguration,
         configIndex: number
     ) => {
-        if (agent) {
-            const updatedConfigs = agent.agent_configurations?.map((config, index) => {
-                if (configIndex === index) return agentConfig;
-                else return config;
-            });
-            updatedConfigs && setAgentConfigurations(updatedConfigs);
+        if (configIndex < agentConfigurations.length) {
+            agentConfigurations[configIndex] = agentConfig;
+        } else {
+            agentConfigurations.push(agentConfig);
         }
+        setAgentConfigurations([...agentConfigurations]);
     };
 
     const handleClickUpdate = () => {
+        const updatedAgentConfigs = agentConfigurations.map((config) => ({
+            id: config.id,
+            agent_id: agent?.id || '',
+            type: config.type,
+            action: config.action,
+            data: config.data
+        }));
         updateAgent
             .mutateAsync({
                 agentId: agent?.id,
                 agentName: agentName,
-                agentConfigurations: agentConfigurations
+                agentConfigurations: updatedAgentConfigs
             })
             .then((res) => {
                 setIsEditing(false);

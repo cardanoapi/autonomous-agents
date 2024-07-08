@@ -48,12 +48,26 @@ class TriggerService:
         configs_to_delete = [
             config_id for config_id in agent_existing_configuration_ids if config_id not in updating_configuration_ids
         ]
-        for agent_config in agent_configurations:
-            await self.trigger_repository.modify_trigger_by_id(agent_config.id, TriggerCreateDTO(**agent_config.dict()))
-        for config_id in configs_to_delete:
-            await self.trigger_repository.remove_trigger_by_trigger_id(config_id)
+        updated_configs = await self.update_agent_multiple_configs(agent_configurations)
+        await self.delete_agent_multiple_configs(configs_to_delete)
         await self.publish_trigger_event(agent_id)
-        return await self.list_triggers_by_agent_id(agent_id)
+        return updated_configs
+
+    async def update_agent_multiple_configs(self, agent_configurations: List[TriggerResponse]):
+        updated_configs = []
+        new_configs = [config for config in agent_configurations if config.id == ""]
+        updating_configs = [config for config in agent_configurations if config.id != ""]
+        for config in updating_configs:
+            res = await self.trigger_repository.modify_trigger_by_id(config.id, TriggerCreateDTO(**config.dict()))
+            updated_configs.append(res)
+        for config in new_configs:
+            res = await self.trigger_repository.save_trigger(config.agent_id, TriggerCreateDTO(**config.dict()))
+            updated_configs.append(res)
+        return updated_configs
+
+    async def delete_agent_multiple_configs(self, config_ids: List[str]):
+        for config_id in config_ids:
+            await self.trigger_repository.remove_trigger_by_trigger_id(config_id)
 
     async def publish_trigger_event(self, agent_id: str):
         await self.kafka_service.publish_message("trigger_config_updates", "config_updated", key=agent_id)

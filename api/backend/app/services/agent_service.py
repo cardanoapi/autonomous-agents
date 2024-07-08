@@ -74,19 +74,6 @@ class AgentService:
     async def update_agent(self, agent_id: str, agent_data: AgentUpdateDTO) -> AgentResponseWithAgentConfigurations:
         existing_agent = await self.agent_repository.retrieve_agent(agent_id)
         self.raise_exception_if_agent_not_found(existing_agent)
-        # if agent_data.template_id:
-        #     if existing_agent.template_id != agent_data.template_id:
-        #         updated_template_triggers = await self.template_trigger_service.get_template_trigger(
-        #             agent_data.template_id)
-        #
-        #         for template_trigger_data in updated_template_triggers:
-        #             trigger_data = TriggerCreateDTO(
-        #                 type=template_trigger_data.type,
-        #                 data=template_trigger_data.data,
-        #                 action=template_trigger_data.action,
-        #             )
-        #             await self.trigger_service.create_trigger(agent_id, trigger_data)
-        #         pass
         updated_triggers = await self.trigger_service.update_configurations_for_agent(
             agent_id, agent_data.agent_configurations
         )
