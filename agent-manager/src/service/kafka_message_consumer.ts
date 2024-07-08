@@ -16,29 +16,29 @@ const manualTriggerConsumer = kafka.consumer({
 })
 
 export async function initKafkaConsumers() {
-    consumer.connect()
-    consumer.subscribe({
+    await consumer.connect()
+    await consumer.subscribe({
         topic: 'trigger_config_updates',
         fromBeginning: true,
     })
 
-    consumer.run({
+    await consumer.run({
         eachMessage: async ({ message }) => {
             // Process message
             const agentId = message.key?.toString()
             if (agentId) {
                 // Notify WebSocket manager about config update
-                manager.sendToWebSocket(agentId, {
+                await manager.sendToWebSocket(agentId, {
                     message: 'config_updated',
                 })
             }
         },
     })
 
-    manualTriggerConsumer.connect()
-    manualTriggerConsumer.subscribe({ topic: 'manual_trigger_event' })
+    await manualTriggerConsumer.connect()
+    await manualTriggerConsumer.subscribe({ topic: 'manual_trigger_event' })
 
-    manualTriggerConsumer.run({
+    await manualTriggerConsumer.run({
         eachMessage: async ({ message }) => {
             const agentId = message.key?.toString()
             const actionName = message.value?.toString()
