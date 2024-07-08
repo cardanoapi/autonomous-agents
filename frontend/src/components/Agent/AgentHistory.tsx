@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 
-import { IFunction, fetchFunctions } from '@api/functions';
 import { fecthTriggerHistoryMetric } from '@api/triggerHistoryMetric';
 import { useQuery } from '@tanstack/react-query';
 
@@ -19,6 +18,7 @@ import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
 import { IChartFilterOption, chartFilterOptions } from '../Chart/ChartFilter';
 import { convertDictToGraphDataFormat } from '../Chart/ChartFilter';
+import AgentFunctionsDropDown from '../Common/AgentFunctionsDropDown';
 
 const AgentHistoryComponent = ({ agent }: { agent?: IAgent }) => {
     const [currentChartFilterOption, setCurrentChartFilterOption] = useState(
@@ -39,10 +39,7 @@ const AgentHistoryComponent = ({ agent }: { agent?: IAgent }) => {
                 agent?.id
             )
     });
-    const { data: agentFunctions = [] } = useQuery({
-        queryKey: ['AgentFunctions'],
-        queryFn: fetchFunctions
-    });
+
     const [currentFunction, setCurrentFunction] = useState('None');
 
     useEffect(() => {
@@ -92,37 +89,11 @@ const AgentHistoryComponent = ({ agent }: { agent?: IAgent }) => {
                 <div className="flex justify-between">
                     <span className="title-1">Transactions</span>
                     <div className="flex gap-2">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger
-                                border={true}
-                                className="flex w-72 justify-between"
-                            >
-                                {currentFunction === 'None'
-                                    ? 'Function'
-                                    : currentFunction}
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="bg-white">
-                                <DropdownMenuItem
-                                    onClick={() => setCurrentFunction('None')}
-                                >
-                                    All
-                                </DropdownMenuItem>
-                                {agentFunctions?.map(
-                                    (agentFunction: IFunction, index) => (
-                                        <DropdownMenuItem
-                                            key={index}
-                                            onClick={() =>
-                                                setCurrentFunction(
-                                                    agentFunction.function_name
-                                                )
-                                            }
-                                        >
-                                            {agentFunction.function_name}
-                                        </DropdownMenuItem>
-                                    )
-                                )}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        <AgentFunctionsDropDown
+                            onChange={(stringValue: string) => {
+                                setCurrentFunction(stringValue);
+                            }}
+                        />
                         <DropdownMenu>
                             <DropdownMenuTrigger
                                 border={true}

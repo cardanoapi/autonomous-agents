@@ -1,44 +1,131 @@
 'use client';
 
+import { useState } from 'react';
+
 import { useQuery } from '@tanstack/react-query';
 import { Copy } from 'lucide-react';
+import { OctagonAlert } from 'lucide-react';
 
 import { IAgent } from '@app/app/api/agents';
-import {
-    IAgentTriggerHistory,
-    fetchAgentTriggerHistoryById
-} from '@app/app/api/triggerHistory';
+import { IAgentTriggerHistory } from '@app/app/api/triggerHistory';
+import { fetchAllTriggerHistory } from '@app/app/api/triggerHistory';
 import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import parseTimestamp from '@app/utils/dateAndTimeUtils';
 
+import AgentFunctionsDropDown from '../Common/AgentFunctionsDropDown';
 import { Badge } from '../atoms/Badge';
 import { cn } from '../lib/utils';
 import { ScrollArea } from '../shadcn/ui/scroll-area';
 
 const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
-    const { data: agentHistory } = useQuery({
-        queryKey: [`agentHistory${agent?.id}`],
-        queryFn: () => fetchAgentTriggerHistoryById(agent?.id || '', 50),
+    const statusOptions = ['Success', 'Skipped', 'Failed'];
+    const [statusPlaceholder, setStatusPlaceholder] = useState('None');
+    const [currentFunction, setCurrentFunction] = useState('None');
+    const [currentStatus, setCurrentStatus] = useState('None');
+    const [currentSuccess, setCurrentSucccess] = useState('None');
+
+    const {
+        data: LogsHistory,
+        refetch: refetchLogsHistory,
+        isLoading: loadingLogs
+    } = useQuery({
+        queryKey: [
+            `${agent?.id}LogsHistory`,
+            1,
+            50,
+            agent?.id,
+            currentFunction,
+            currentStatus,
+            currentSuccess
+        ],
+        queryFn: fetchAllTriggerHistory,
         refetchInterval: 60000,
         refetchOnWindowFocus: true,
         refetchOnMount: true
     });
+
+    function handleStatusChange(status: string) {
+        if (status === statusPlaceholder) {
+            setStatusPlaceholder('None');
+            setCurrentStatus('None');
+            setCurrentSucccess('None');
+            refetchLogsHistory();
+            return;
+        }
+        switch (status) {
+            case 'None':
+                setCurrentStatus('None');
+                setCurrentSucccess('None');
+                break;
+            case 'Success':
+                setCurrentStatus('True');
+                setCurrentSucccess('True');
+                break;
+            case 'Skipped':
+                setCurrentStatus('False');
+                setCurrentSucccess('False');
+                break;
+            case 'Failed':
+                setCurrentStatus('True');
+                setCurrentSucccess('False');
+                break;
+        }
+        setStatusPlaceholder(status);
+    }
+
+    if (loadingLogs === false && LogsHistory && LogsHistory.length == 0) {
+        return (
+            <div className="flex gap-2 text-gray-500">
+                Trigger History Logs for{' '}
+                {statusPlaceholder === 'None' ? '' : `${statusPlaceholder}`}{' '}
+                {currentFunction === 'None' ? '' : `${currentFunction}`} are empty{' '}
+                <OctagonAlert />
+            </div>
+        );
+    }
+
     return (
         <div className={'flex h-full w-full flex-col gap-10'}>
             <div className={'flex items-center gap-3'}>
                 <AgentsIcon />
                 <span className={'text-[20px] font-semibold'}>Agent Logs</span>
             </div>
+            <div className="flex justify-end gap-4 pr-4 ">
+                <AgentFunctionsDropDown
+                    onChange={(strVal: string) => {
+                        setCurrentFunction(strVal);
+                    }}
+                />
+                <div className="flex justify-center gap-2">
+                    {statusOptions.map((status: string, index) => (
+                        <Badge
+                            key={index}
+                            variant={
+                                statusPlaceholder === status
+                                    ? 'successPrimary'
+                                    : 'primary'
+                            }
+                            className="flex w-20 justify-center"
+                            onClick={() => handleStatusChange(status)}
+                        >
+                            {status}
+                        </Badge>
+                    ))}
+                </div>
+            </div>
             <ScrollArea className={'h-agentComponentHeight overflow-y-auto pr-4'}>
                 <div className={'grid grid-cols-1 gap-2'}>
-                    {agentHistory?.items?.length ? (
-                        agentHistory?.items?.map((history: IAgentTriggerHistory) => (
-                            <AgentLogCard history={history} key={history.agentId} />
-                        ))
-                    ) : (
-                        <span>No Agent Log Exists.</span>
-                    )}
+                    {LogsHistory?.items &&
+                        LogsHistory.items.map(
+                            (history: IAgentTriggerHistory, index: number) => (
+                                <AgentLogCard
+                                    history={history}
+                                    key={index}
+                                    className="bg-white"
+                                />
+                            )
+                        )}
                 </div>
             </ScrollArea>
         </div>
