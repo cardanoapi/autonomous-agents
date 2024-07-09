@@ -63,6 +63,8 @@ export default function WalletSignInDialog() {
         } catch (error: any) {
             ErrorToast(error.info);
             setConnectingWallet(false);
+            setDialogOpen(true);
+            localStorage.removeItem('wallet');
         }
     }
 
