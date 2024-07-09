@@ -33,7 +33,6 @@ function listProviders(): CIP30Provider[] {
         }
     });
     const providers = Array.from(pluginMap.values());
-    console.info('Provides', providers);
     // yoroi doesn't work (remove this after yoroi works)
     return providers.filter((x) => x.name != 'yoroi');
 }
@@ -42,22 +41,27 @@ export default function WalletSignInDialog() {
     //to do save to atom WalletAPI
     const [walletApi, setWalletApi] = useAtom(walletApiAtom);
     const [walletProviders, setWalletProviders] = useState<CIP30Provider[]>([]);
-    const [dialogOpen, setDialogOpen] = useState<boolean>(true);
+    const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
     const [currentSelectedWalletProvider, setCurrentSelectedWalletProvider] =
         useState<CIP30Provider | null>(null);
     const [connectingWallet, setConnectingWallet] = useState<boolean>(false);
 
-    async function enableWallet(wallet: CIP30Provider) {
+    async function enableWallet(wallet: CIP30Provider, disabletoast: boolean = false) {
         console.log(`Enabling ${wallet.name}`);
         setConnectingWallet(true);
         try {
             const enabledApi = await wallet.enable();
             setWalletApi(enabledApi);
-            SuccessToast('Wallet Connected Successfully! Redirecting you right now');
+            setDialogOpen(false);
+            localStorage.setItem('wallet', wallet.name);
+            if (!disabletoast) {
+                SuccessToast(
+                    'Wallet Connected Successfully! Redirecting you right now'
+                );
+            }
         } catch (error: any) {
             ErrorToast(error.info);
-            console.log(error);
             setConnectingWallet(false);
         }
     }
@@ -65,6 +69,12 @@ export default function WalletSignInDialog() {
     useEffect(() => {
         const wallets = listProviders();
         setWalletProviders(wallets);
+        //Check and enable Wallet if previous Wallet is stored in Local Storage.
+        const currentLocalWallet = localStorage.getItem('wallet');
+        const prev_wallet = wallets.find(
+            (wallet) => wallet.name === currentLocalWallet
+        );
+        prev_wallet ? enableWallet(prev_wallet, true) : setDialogOpen(true);
     }, []);
 
     useEffect(() => {
