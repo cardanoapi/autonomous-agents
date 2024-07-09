@@ -5,25 +5,28 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-//import { CIP30Wallet } from 'kuber-client';
+import { useAtom } from 'jotai';
 import { CIP30Provider } from 'kuber-client/types';
 import { OctagonAlert, Wallet } from 'lucide-react';
 import { X } from 'lucide-react';
 
 import { Dialog, DialogContent } from '@app/components/atoms/Dialog';
+import { walletApiAtom } from '@app/store/loaclStore';
 
-interface IWalletInfo {
-    name: string;
-    icon: string;
-}
+import { Button } from '../atoms/Button';
+import { cn } from '../lib/utils';
+import { ErrorToast, SuccessToast } from '../molecules/CustomToasts';
 
 function listProviders(): CIP30Provider[] {
     const pluginMap = new Map();
+    //@ts-ignore
     if (!window.cardano) {
         return [];
     }
+    //@ts-ignore
     Object.keys(window.cardano).forEach((x) => {
-        const plugin: IWalletInfo = window.cardano[x];
+        //@ts-ignore
+        const plugin: CIP30Provider = window.cardano[x];
         //@ts-ignore
         if (plugin.enable && plugin.name) {
             pluginMap.set(plugin.name, plugin);
@@ -35,24 +38,38 @@ function listProviders(): CIP30Provider[] {
     return providers.filter((x) => x.name != 'yoroi');
 }
 
-export default function WalletSignIn() {
-    //to do save to atom
-    //const [walletApi, setWalletApi] = useState<CIP30Wallet | null>(null);
+export default function WalletSignInDialog() {
+    //to do save to atom WalletAPI
+    const [walletApi, setWalletApi] = useAtom(walletApiAtom);
     const [walletProviders, setWalletProviders] = useState<CIP30Provider[]>([]);
     const [dialogOpen, setDialogOpen] = useState<boolean>(true);
 
-    //async function enableWallet(wallet: CIP30ProviderProxy) {
-    //  const enabledApi = await wallet.enable();
-    //setWalletApi(enabledApi);
-    // local storage
-    // wallet name
-    //}
+    const [currentSelectedWalletProvider, setCurrentSelectedWalletProvider] =
+        useState<CIP30Provider | null>(null);
+    const [connectingWallet, setConnectingWallet] = useState<boolean>(false);
+
+    async function enableWallet(wallet: CIP30Provider) {
+        console.log(`Enabling ${wallet.name}`);
+        setConnectingWallet(true);
+        try {
+            const enabledApi = await wallet.enable();
+            setWalletApi(enabledApi);
+            SuccessToast('Wallet Connected Successfully! Redirecting you right now');
+        } catch (error: any) {
+            ErrorToast(error.info);
+            console.log(error);
+            setConnectingWallet(false);
+        }
+    }
 
     useEffect(() => {
-        console.log('use effect started');
         const wallets = listProviders();
         setWalletProviders(wallets);
     }, []);
+
+    useEffect(() => {
+        console.log(walletApi);
+    }, [walletApi]);
 
     //async function verifyWallet() {
     //  if (!walletApi) return;
@@ -87,17 +104,30 @@ export default function WalletSignIn() {
                             <Wallet size={28} stroke="#2595FCFA" />
                             <span className="text-2xl font-semibold">
                                 {' '}
-                                Connect <span className="text-blue-600">
-                                    CIP-30
-                                </span>{' '}
-                                Wallet
+                                Connect your{' '}
+                                <span className="text-blue-600">CIP-30</span> Wallet
                             </span>
                         </div>
                         <div className="flex items-center justify-center gap-x-4">
                             {walletProviders.length > 0 ? (
-                                walletProviders.map((wallet, index) => (
-                                    <div className="basix-1/4" key={index}>
-                                        <WalletProviderDiv wallet={wallet} />
+                                walletProviders.map((wallet: CIP30Provider, index) => (
+                                    <div className="basix-1/4 disabled" key={index}>
+                                        <WalletProviderDiv
+                                            wallet={wallet}
+                                            onClick={(wallet: CIP30Provider) =>
+                                                currentSelectedWalletProvider === wallet
+                                                    ? setCurrentSelectedWalletProvider(
+                                                          null
+                                                      )
+                                                    : setCurrentSelectedWalletProvider(
+                                                          wallet
+                                                      )
+                                            }
+                                            selected={
+                                                currentSelectedWalletProvider === wallet
+                                            }
+                                            disabled={connectingWallet}
+                                        />
                                     </div>
                                 ))
                             ) : (
@@ -109,6 +139,22 @@ export default function WalletSignIn() {
                             <span className={textHiglight}>Terms & Conditons </span> and{' '}
                             <span className={textHiglight}>Privacy Policy.</span>
                         </div>
+                        <div className="mt-4 flex justify-center">
+                            <Button
+                                variant={'primary'}
+                                size={'lg'}
+                                className="without-focus-visible min-w-56 py-6 text-xl"
+                                onClick={() => {
+                                    if (currentSelectedWalletProvider === null) return;
+                                    enableWallet(currentSelectedWalletProvider);
+                                }}
+                                disabled={
+                                    connectingWallet || walletProviders.length === 0
+                                }
+                            >
+                                {connectingWallet ? 'Connecting...' : 'Connect Wallet'}
+                            </Button>
+                        </div>
                     </div>
                 </DialogContent>
             </Dialog>
@@ -116,9 +162,28 @@ export default function WalletSignIn() {
     );
 }
 
-function WalletProviderDiv({ wallet }: { wallet: CIP30Provider }) {
+function WalletProviderDiv({
+    wallet,
+    onClick,
+    selected,
+    disabled = false
+}: {
+    wallet: CIP30Provider;
+    onClick?: any;
+    selected?: boolean;
+    disabled?: boolean;
+}) {
     return (
-        <div className="flex justify-center rounded-lg bg-gray-100 p-8 hover:cursor-pointer hover:bg-gray-200">
+        <div
+            className={cn(
+                'flex justify-center rounded-lg p-8 hover:cursor-pointer',
+                selected
+                    ? 'bg-[#35eae1] shadow-[0_20px_50px_rgba(53,_234,_225,_0.1)]'
+                    : 'bg-gray-100 hover:bg-gray-200',
+                disabled ? 'pointer-events-none opacity-60' : ''
+            )}
+            onClick={() => onClick?.(wallet)}
+        >
             <Image src={wallet.icon} alt={wallet.name} width={48} height={48} />
         </div>
     );
