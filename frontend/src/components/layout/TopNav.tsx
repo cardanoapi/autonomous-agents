@@ -1,11 +1,12 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import { PATHS } from '@consts';
 import { useAtom } from 'jotai';
 
-import { currentAgentNameAtom } from '@app/store/loaclStore';
+import { currentAgentNameAtom, walletApiAtom } from '@app/store/loaclStore';
 
 import {
     DropdownMenu,
@@ -13,10 +14,15 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '../atoms/DropDownMenu';
+import { SuccessToast } from '../molecules/CustomToasts';
 
 export default function TopNav() {
     const [currentAgentName] = useAtom(currentAgentNameAtom);
     const path: string = usePathname();
+
+    const router = useRouter();
+
+    const [, setWalletApiAtom] = useAtom(walletApiAtom);
 
     const PageTitles: { [key: string]: string } = {
         '/': 'Dashboard',
@@ -43,6 +49,13 @@ export default function TopNav() {
         return title ? title : getPageTitleByRegexMatch();
     }
 
+    function handleLogout() {
+        localStorage.removeItem('wallet');
+        setWalletApiAtom(null);
+        router.push('/');
+        SuccessToast('User Logged out successfully');
+    }
+
     return (
         <div className="flex w-[full] items-center justify-between text-sm">
             <span className="h1">{getPageTitle()}</span>
@@ -51,7 +64,7 @@ export default function TopNav() {
                 <DropdownMenuContent>
                     <DropdownMenuItem>Settings</DropdownMenuItem>
                     <DropdownMenuItem>Privacy</DropdownMenuItem>
-                    <DropdownMenuItem>Logout</DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
         </div>
