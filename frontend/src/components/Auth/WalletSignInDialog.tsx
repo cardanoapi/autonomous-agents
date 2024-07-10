@@ -12,6 +12,7 @@ import { X } from 'lucide-react';
 
 import { Dialog, DialogContent } from '@app/components/atoms/Dialog';
 import { walletApiAtom } from '@app/store/loaclStore';
+import { generateSignData } from '@app/utils/auth';
 
 import { Button } from '../atoms/Button';
 import { cn } from '../lib/utils';
@@ -55,10 +56,10 @@ export default function WalletSignInDialog() {
             setWalletApi(enabledApi);
             setDialogOpen(false);
             localStorage.setItem('wallet', wallet.name);
+            const signData = await generateSignData(enabledApi);
+            console.log(signData);
             if (!disabletoast) {
-                SuccessToast(
-                    'Wallet Connected Successfully! Redirecting you right now'
-                );
+                SuccessToast('Wallet Connection Successfull!');
             }
         } catch (error: any) {
             ErrorToast(error.info);
@@ -71,6 +72,7 @@ export default function WalletSignInDialog() {
     useEffect(() => {
         const wallets = listProviders();
         setWalletProviders(wallets);
+
         //Check and enable Wallet if previous Wallet is stored in Local Storage.
         const currentLocalWallet = localStorage.getItem('wallet');
         const prev_wallet = wallets.find(
