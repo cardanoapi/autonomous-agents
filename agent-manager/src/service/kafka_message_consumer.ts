@@ -1,5 +1,7 @@
 import { Kafka } from 'kafkajs'
-import manager from './agent_manager_service'
+import { ManagerService } from './ManagerService'
+import { AgentManagerRPC } from './AgentManagerRPC'
+import { fetchAgentConfiguration } from '../repository/agent_manager_repository'
 
 const brokerUrl = process.env.BROKER_URL || ''
 const kafka = new Kafka({
@@ -7,15 +9,14 @@ const kafka = new Kafka({
     brokers: [brokerUrl], // Update with your Kafka broker address
 })
 
-// Initialize WebSocket manager
-
 const consumer = kafka.consumer({ groupId: 'agent-manager-configs' })
 
 const manualTriggerConsumer = kafka.consumer({
     groupId: 'agent-manager-actions',
 })
 
-export async function initKafkaConsumers() {
+export async function initKafkaConsumers(manager: AgentManagerRPC) {
+    const managerService = new ManagerService(manager)
     await consumer.connect()
     await consumer.subscribe({
         topic: 'trigger_config_updates',
@@ -24,51 +25,37 @@ export async function initKafkaConsumers() {
 
     await consumer.run({
         eachMessage: async ({ message }) => {
-            // Process message
-            const agentId = message.key?.toString()
-            if (agentId) {
-                // Notify WebSocket manager about config update
-                await manager.sendToWebSocket(agentId, {
+            const agentId = message.key?.toString() || ''
+            const isActive = managerService.isAgentActive(agentId)
+            if (isActive) {
+                const updatedConfigs = await fetchAgentConfiguration(agentId)
+                managerService.sendToWebSocket(agentId, 'Agent_Configs', {
                     message: 'config_updated',
+                    configurations: updatedConfigs,
                 })
             }
         },
     })
 
+    // kafka message are consumed in RPC format
     await manualTriggerConsumer.connect()
-    await manualTriggerConsumer.subscribe({ topic: 'manual_trigger_event' })
+    await manualTriggerConsumer.subscribe({ topic: 'Agent_Trigger' })
 
     await manualTriggerConsumer.run({
         eachMessage: async ({ message }) => {
             const agentId = message.key?.toString()
-            const actionName = message.value?.toString()
-            const parsedActionName = JSON.parse(actionName || '')
-            if (agentId && parsedActionName) {
-                console.log('manual trigger starting', parsedActionName)
-                if (
-                    parsedActionName.function_name === 'delete_agent_websocket'
-                ) {
-                    const isAgentActive = await manager.checkIfAgentActive(
-                        parsedActionName.agent_id
-                    )
-                    isAgentActive &&
-                        (await manager.disconnectWebSocket(
-                            parsedActionName.agent_id
-                        ))
-                    console.log(
-                        `Agent with id ${parsedActionName.agent_id} is disconnected as it has been deleted`
+            const methodConfig = message.value?.toString()
+            const parsedMethodConfig = JSON.parse(methodConfig || '')
+            if (agentId && parsedMethodConfig) {
+                const method = parsedMethodConfig.method
+                const params = parsedMethodConfig.params
+                if (method === 'Agent_Deletion') {
+                    managerService.disconnectWebsocketConnection(
+                        agentId,
+                        `Due to deletion,Agent with id ${agentId} is disconnected.`
                     )
                 } else {
-                    await manager.sendToWebSocket(agentId, {
-                        message: 'trigger_action',
-                        payload: {
-                            action: {
-                                function_name: parsedActionName.function_name,
-                                parameter: parsedActionName.parameter,
-                            },
-                            probability: 1,
-                        },
-                    })
+                    manager.fireMethod(agentId, method, params)
                 }
             }
         },

@@ -3,9 +3,7 @@ import { JsonValue } from '@prisma/client/runtime/library'
 
 const prisma = new PrismaClient()
 
-export async function checkIfAgentExistsInDB(
-    agentId: string
-): Promise<boolean> {
+export async function checkIfAgentExistsInDB(agentId: string): Promise<boolean> {
     return prisma.agent
         .findFirst({
             where: {
@@ -40,12 +38,7 @@ export async function fetchAgentConfiguration(agentId: string): Promise<{
         if (agentInstance != null) {
             const instanceCount = Number(agentInstance.instance)
             const configurationsData = agentConfigurations.map(
-                (config: {
-                    id: string
-                    type: string
-                    data: JsonValue
-                    action: JsonValue
-                }) => ({
+                (config: { id: string; type: string; data: JsonValue; action: JsonValue }) => ({
                     id: config.id,
                     type: config.type,
                     data: config.data,
@@ -63,17 +56,13 @@ export async function fetchAgentConfiguration(agentId: string): Promise<{
     }
 }
 
-export async function updateLastActiveTimestamp(
-    agentId: string
-): Promise<void> {
+export async function updateLastActiveTimestamp(agentId: string): Promise<void> {
     try {
         await prisma.agent.update({
             where: { id: agentId },
             data: { last_active: new Date() },
         })
     } catch (error) {
-        console.log(
-            `Error updating last active timestamp for agent ${agentId}: ${error}`
-        )
+        console.log(`Error updating last active timestamp for agent ${agentId}: ${error}`)
     }
 }

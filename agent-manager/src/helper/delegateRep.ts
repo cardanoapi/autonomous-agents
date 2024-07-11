@@ -20,20 +20,13 @@ interface RequestBody {
     certificates: Certificate[]
 }
 
-const runCheckUntil400 = async (
-    kuberUrl: string,
-    apiUrl: any,
-    agent_id: string,
-    api_key: string
-) => {
+const runCheckUntil400 = async (kuberUrl: string, apiUrl: any, agent_id: string, api_key: string) => {
     const addressApiUrl = `${apiUrl}/api/agent/${agent_id}/keys`
 
     try {
         const addressResponse = await fetch(addressApiUrl)
         if (!addressResponse.ok) {
-            throw new Error(
-                `Error fetching address data: ${addressResponse.statusText}`
-            )
+            throw new Error(`Error fetching address data: ${addressResponse.statusText}`)
         }
 
         const addressData = await addressResponse.json()
@@ -62,8 +55,7 @@ const runCheckUntil400 = async (
                     key: ownerKeyHash,
                     anchor: {
                         url: 'https://bit.ly/3zCH2HL',
-                        dataHash:
-                            '1111111111111111111111111111111111111111111111111111111111111111',
+                        dataHash: '1111111111111111111111111111111111111111111111111111111111111111',
                     },
                 },
             ],
@@ -94,10 +86,7 @@ const runCheckUntil400 = async (
             if (contentType && contentType.includes('application/json')) {
                 const errorData = await response.json()
 
-                if (
-                    errorData.message &&
-                    errorData.message.includes('ConwayDRepAlreadyRegistered')
-                ) {
+                if (errorData.message && errorData.message.includes('ConwayDRepAlreadyRegistered')) {
                     console.log('error message')
                     return {
                         status: 400,
@@ -131,20 +120,10 @@ const runCheckUntil400 = async (
     }
 }
 
-export const checkDrepStatus = async (
-    kuberUrl: string,
-    apiUrl: any,
-    agent_id: string,
-    api_key: string
-) => {
+export const checkDrepStatus = async (kuberUrl: string, apiUrl: any, agent_id: string, api_key: string) => {
     let status = 401 // Initial status to start the loop
     while (status !== 400) {
-        const result = await runCheckUntil400(
-            kuberUrl,
-            apiUrl,
-            agent_id,
-            api_key
-        )
+        const result = await runCheckUntil400(kuberUrl, apiUrl, agent_id, api_key)
         status = result.status
         if (status === 400 && result.data.registered) {
             console.log('Registered:', result.data)

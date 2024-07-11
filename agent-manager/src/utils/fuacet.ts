@@ -1,9 +1,7 @@
 import environments from '../config/environments'
 
 export default function getFaucetAdaForAddress(address: string) {
-    const url = new URL(
-        'https://faucet.sanchonet.world.dev.cardano.org/send-money'
-    )
+    const url = new URL('https://faucet.sanchonet.world.dev.cardano.org/send-money')
     const params: Record<string, string> = {
         type: 'default',
         action: 'funds',
@@ -11,9 +9,7 @@ export default function getFaucetAdaForAddress(address: string) {
         api_key: environments.sanchonetFaucetApiKey,
     }
 
-    Object.keys(params).forEach((key) =>
-        url.searchParams.append(key, params[key])
-    )
+    Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]))
 
     return fetch(url)
         .then((response) => response.json())
