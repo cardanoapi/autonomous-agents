@@ -70,10 +70,7 @@ interface FunctionData {
 //     }[]
 // }
 
-export const handleTransaction = async (
-    message: any,
-    agentId: string
-): Promise<void> => {
+export const handleTransaction = async (message: any, agentId: string): Promise<void> => {
     if (message != 'Ping' || message == 'proposal') {
         // Parse the JSON string into a JavaScript object
         const data: FunctionData = JSON.parse(message)
@@ -92,19 +89,14 @@ export const handleTransaction = async (
                         try {
                             responseJson = JSON.parse(responseBody)
                         } catch (err) {
-                            responseJson = JSON.parse(
-                                JSON.stringify(responseBody)
-                            )
+                            responseJson = JSON.parse(JSON.stringify(responseBody))
                         }
                         throw new Error(
                             `${data.action.function_name} failed ${response.status}.\n ${JSON.stringify(responseJson, undefined, 4)}`
                         )
                     }
                     const kuberData = await response.json()
-                    console.log(
-                        `Kuber Response:  ${data.action.function_name}`,
-                        kuberData
-                    )
+                    console.log(`Kuber Response:  ${data.action.function_name}`, kuberData)
                     await saveTriggerHistory(
                         agentId,
                         data.action.function_name,
@@ -115,10 +107,7 @@ export const handleTransaction = async (
                         kuberData.hash
                     )
                 } catch (error: any) {
-                    console.error(
-                        'Error submitting transaction:',
-                        error.message
-                    )
+                    console.error('Error submitting transaction:', error.message)
                     console.log('failed request:', options.body)
                     await saveTriggerHistory(
                         agentId,
@@ -131,15 +120,7 @@ export const handleTransaction = async (
                     )
                 }
             } else {
-                await saveTriggerHistory(
-                    agentId,
-                    data.action.function_name,
-                    false,
-                    false,
-                    '',
-                    'CRON',
-                    ''
-                )
+                await saveTriggerHistory(agentId, data.action.function_name, false, false, '', 'CRON', '')
             }
         }
     }

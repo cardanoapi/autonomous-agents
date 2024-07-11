@@ -14,20 +14,13 @@ interface RequestBody {
     certificates: Certificate[]
 }
 
-const runCheckUntil400 = async (
-    kuberUrl: string,
-    apiUrl: any,
-    agent_id: string,
-    api_key: string
-) => {
+const runCheckUntil400 = async (kuberUrl: string, apiUrl: any, agent_id: string, api_key: string) => {
     const addressApiUrl = `${apiUrl}/api/agent/${agent_id}/keys`
 
     try {
         const addressResponse = await fetch(addressApiUrl)
         if (!addressResponse.ok) {
-            throw new Error(
-                `Error fetching address data: ${addressResponse.statusText}`
-            )
+            throw new Error(`Error fetching address data: ${addressResponse.statusText}`)
         }
 
         const addressData = await addressResponse.json()
@@ -96,30 +89,16 @@ const runCheckUntil400 = async (
     }
 }
 
-export const checkStakeReg = async (
-    kuberUrl: string,
-    apiUrl: any,
-    agent_id: string,
-    api_key: string
-) => {
+export const checkStakeReg = async (kuberUrl: string, apiUrl: any, agent_id: string, api_key: string) => {
     let status = 200 // Initial status to start the loop
     while (status !== 400) {
-        const result = await runCheckUntil400(
-            kuberUrl,
-            apiUrl,
-            agent_id,
-            api_key
-        )
+        const result = await runCheckUntil400(kuberUrl, apiUrl, agent_id, api_key)
         status = result.status
         if (status === 200) {
             // Pause execution for 15 seconds
             await new Promise((resolve) => setTimeout(resolve, 15000))
         }
-        if (
-            status === 400 &&
-            result.data.message &&
-            result.data.message.includes('StakeKeyRegisteredDELEG')
-        ) {
+        if (status === 400 && result.data.message && result.data.message.includes('StakeKeyRegisteredDELEG')) {
             console.log('Stake key registered:', result.data)
             return { registered: true }
         }

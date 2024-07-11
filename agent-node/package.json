@@ -23,9 +23,9 @@
         "bech32": "^2.0.0",
         "dotenv": "^16.4.5",
         "kuber-client": "^2.0.0",
-        "libcardano": "^0.0.8",
+        "libcardano": "^0.1.0",
         "node-cron": "^3.0.3",
-        "ws": "^8.16.0"
+        "ws": "^8.18.0"
     },
     "devDependencies": {
         "@eslint/js": "^9.4.0",

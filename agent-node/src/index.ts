@@ -1,14 +1,15 @@
 import WebSocket from 'ws'
-import { setInterval } from 'timers'
-import { handleIncomingMessage } from './client'
 
 import { configDotenv } from 'dotenv'
+import { CborDuplex } from 'libcardano/network/ouroboros'
+import { cborxBackend } from 'libcardano/lib/cbor'
+import { WsClientPipe } from './service/WsClientPipe'
+import { AgentRpc } from './service/AgentRpc'
+import { ManagerInterface } from './service/ManagerInterfaceService'
 
 configDotenv()
-// Define the WebSocket URL and agent ID
-const wsUrl = process.env.WS_URL || '' // Use WS_URL if provided, otherwise use default
-const agentId = process.env.AGENT_ID || '' // Retrieve agent ID from environment variable
-// Check if agent ID is provided
+const wsUrl = process.env.WS_URL || 'ws://localhost:3001'
+const agentId = process.env.AGENT_ID || ''
 if (!agentId) {
     console.error('Agent ID is required as an argument')
     process.exit(1)
@@ -20,42 +21,33 @@ const maxReconnectAttempts = 3
 let isReconnecting = false
 
 function connectToManagerWebSocket() {
-    let interval: NodeJS.Timeout
-    // Create a new WebSocket client connection
+    let interval: NodeJS.Timeout | number
     ws = new WebSocket(`${wsUrl}/${agentId}`)
-    // Event listener for the connection opening
+    const clientPipe = new WsClientPipe(ws)
+    const rpcChannel = new AgentRpc(
+        new CborDuplex(clientPipe, cborxBackend(true))
+    )
+    ManagerInterface.setInstance(rpcChannel)
+
     ws.on('open', () => {
-        console.log('Connected to the server.')
-        reconnectAttempts = 0
-        isReconnecting = false
-        // Send a "Ping" message to the server every 10 seconds
         interval = setInterval(() => {
-            ws?.send('Ping')
+            rpcChannel.emit('active_connection', 'Ping')
         }, 10000)
+        rpcChannel.emit('hello', 'I am connected')
     })
 
-    // Event listener for incoming messages
-    ws.on('message', (data) => {
-        handleIncomingMessage(data)
-    })
-
-    // Event listener for the connection closing
     ws.on('close', (code, reason) => {
         if (code === 1000 || code === 1008) {
             clearInterval(interval)
-            console.log(
-                `Disconnected from the server (code: ${code}, reason: ${reason}).`
-            )
         } else {
             attemptReconnect()
             clearInterval(interval)
-            console.log(
-                `Disconnected from the server (code: ${code}, reason: ${reason}).`
-            )
         }
+        console.log(
+            `Disconnected from the server (code: ${code}, reason: ${reason}).`
+        )
     })
 
-    // Event listener for any errors
     ws.on('error', (er) => {
         console.error('WebSocket error', er)
         attemptReconnect()
@@ -77,17 +69,11 @@ function attemptReconnect() {
         setTimeout(() => {
             connectToManagerWebSocket()
             isReconnecting = false
-        }, 10000) // Wait 10 seconds before attempting to reconnect
+        }, 10000)
     } else {
         console.error('Max reconnect attempts reached. Exiting application.')
-        process.exit(1) // Exit the application after max attempts
+        process.exit(1)
     }
-}
-
-export const sendDataToWebSocket: typeof WebSocket.prototype.send = (
-    action
-) => {
-    ws?.send(action)
 }
 
 connectToManagerWebSocket()
