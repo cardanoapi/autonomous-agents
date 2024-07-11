@@ -88,8 +88,8 @@ class AgentService:
         agent = await self.agent_repository.remove_agent(agent_id)
         self.raise_exception_if_agent_not_found(agent)
         await self.kafka_service.publish_message(
-            "manual_trigger_event",
-            json.dumps({"function_name": "delete_agent_websocket", "agent_id": agent_id}),
+            "Agent_Trigger",
+            json.dumps({"method": "Agent_Deletion", "params": []}),
             agent_id,
         )
         return agent_id
@@ -101,7 +101,8 @@ class AgentService:
 
     async def trigger_agent_action(self, agent_id: str, action: AgentFunction):
         await self.check_if_agent_exists(agent_id)
-        await self.kafka_service.publish_message("manual_trigger_event", action.json(), key=agent_id)
+        message_in_rpc_format = json.dumps({"method": action.function_name, "params": action.dict()})
+        await self.kafka_service.publish_message("Agent_Trigger", message_in_rpc_format, key=agent_id)
 
     def raise_exception_if_agent_not_found(self, agent):
         if agent is None or False:
