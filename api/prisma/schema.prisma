@@ -20,8 +20,8 @@ model Agent {
   created_at  DateTime
   updated_at  DateTime
   deleted_at  DateTime? // Soft deletion field
-  owner       User?     @relation(fields: [userId], references: [id])
-  userId      String?
+  owner       User?     @relation(fields: [userAddress], references: [address])
+  userAddress      String?
 }
 
 model Trigger {
@@ -53,8 +53,8 @@ model Template {
   created_at  DateTime
   updated_at  DateTime
   deleted_at  DateTime?
-  owner       User?      @relation(fields: [userId], references: [id])
-  userId      String?
+  owner       User?      @relation(fields: [userAddress], references: [address])
+  userAddress      String?
 }
 
 // schema.prisma
@@ -84,10 +84,10 @@ enum TriggerType {
 }
 
 model User {
-  id         String     @id
+  address    String     @id
   created_at DateTime
   updated_at DateTime
-  deleted_at DateTime
+  deleted_at DateTime?
   Agent      Agent[]
   Template   Template[]
 }
