@@ -85,7 +85,6 @@ enum TriggerType {
 
 model User {
   id         String     @id
-  address    String     @unique
   created_at DateTime
   updated_at DateTime
   deleted_at DateTime
