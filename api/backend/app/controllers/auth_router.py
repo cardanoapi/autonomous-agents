@@ -2,6 +2,7 @@ from classy_fastapi import Routable, post, get
 from pydantic import BaseModel
 from backend.app.utils.signed_data import verify_signed_data, extract_signed_address_from_signature_header
 from backend.app.services.user_service import UserService
+from backend.app.utils.auth import generate_jwt_token_using_user_address
 
 
 class SignatureDataDto(BaseModel):
@@ -20,11 +21,10 @@ class AuthRouter(Routable):
         try:
             valid_data = verify_signed_data(hex_signature=signed_data.signature, hex_key=signed_data.key)
             if valid_data:
-                print(valid_data)
                 signed_address = extract_signed_address_from_signature_header(hex_signature=signed_data.signature)
                 user = await self.user_service.create_user(user_address=signed_address)
-                print(user)
-                return {"Signed Address": signed_address, "Access": valid_data, "User": user}
+                token = generate_jwt_token_using_user_address(user.address)
+                return {"token": token}
             else:
                 return {"Status": "Rejected", "Info": "Signed Data Signature Verification Failed"}
         except Exception as e:
