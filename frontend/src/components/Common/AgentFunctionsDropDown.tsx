@@ -32,17 +32,19 @@ export default function AgentFunctionsDropDown({ onChange }: { onChange?: any })
                 >
                     All
                 </DropdownMenuItem>
-                {agentFunctions?.map((agentFunction: IFunction, index) => (
-                    <DropdownMenuItem
-                        key={index}
-                        onClick={() => {
-                            setCurrentFunction(agentFunction.name);
-                            onChange?.(agentFunction.name);
-                        }}
-                    >
-                        {agentFunction.name}
-                    </DropdownMenuItem>
-                ))}
+                {Object.values(agentFunctions)
+                    ?.flat()
+                    ?.map((agentFunction: IFunction, index) => (
+                        <DropdownMenuItem
+                            key={index}
+                            onClick={() => {
+                                setCurrentFunction(agentFunction.function_name);
+                                onChange?.(agentFunction.function_name);
+                            }}
+                        >
+                            {agentFunction.name}
+                        </DropdownMenuItem>
+                    ))}
             </DropdownMenuContent>
         </DropdownMenu>
     );

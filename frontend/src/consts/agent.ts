@@ -95,14 +95,14 @@ export const AGENT_TRIGGER = {
 } as Record<AgentTriggerFunctionType, IAgentTrigger>;
 
 export const MapFunctionNameAndViewName: Record<string, string> = {
-    transferADA: 'SendAda Token',
+    transferADA: 'Transfer Ada',
     voteOnProposal: 'Vote',
-    stakeDelegation: 'Delegation',
+    stakeDelegation: 'Stake Delegation',
     createInfoGovAction: 'Info Action Proposal',
     proposalNewConstitution: 'Proposal New Constitution',
     dRepRegistration: 'Drep Registration',
     dRepDeRegistration: 'Drep deRegistration',
-    registerStake: 'Register Stake',
+    registerStake: 'Stake Registration',
     abstainDelegation: 'Abstain Delegation',
     noConfidence: 'No Confidence'
 } as Record<AgentTriggerFunctionType, string>;
@@ -110,7 +110,7 @@ export const MapFunctionNameAndViewName: Record<string, string> = {
 export const AgentFunctions = [
     {
         function_name: 'transferAda',
-        name: 'SendAda Token',
+        name: 'Transfer Ada',
         parameters: [
             {
                 name: 'Receiver Address',
@@ -169,7 +169,7 @@ export const AgentFunctions = [
         ]
     },
     {
-        name: 'Delegation',
+        name: 'Stake Delegation',
         function_name: 'stakeDelegation',
         parameters: [
             {

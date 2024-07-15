@@ -169,7 +169,7 @@ export const AgentLogCard = ({
                         {history.triggerType || 'CRON'}
                     </span>
                 </div>
-                <span className={'text-xs '}>{history.message || 'No message'}</span>
+                <span className={'text-xs '}>{history.message}</span>
                 {history.txHash && <TxHashComponent txHash={history.txHash} />}
             </div>
             <div

@@ -61,8 +61,9 @@ class AgentService:
         async with httpx.AsyncClient() as client:
             response = await client.get(f"{settings.KUBER_URL}/utxo?address={agent_with_keys.agent_address}")
             transactions = response.json()
-            for transaction in transactions:
-                utxo = float(transaction.get("value", {}).get("lovelace", "0"))
+            if isinstance(transactions, list):
+                for transaction in transactions:
+                    utxo = float(transaction.get("value", {}).get("lovelace", "0"))
         agent_configurations = await self.trigger_service.list_triggers_by_agent_id(agent_id)
         return AgentResponseWithWalletDetails(
             **agent.dict(),

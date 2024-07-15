@@ -70,7 +70,7 @@ export default function TemplateForm() {
 
     /*Related to Function Options*/
     const functionRef = useRef<any>(null);
-    const { data: functions } = useQuery<IFunction[]>({
+    const { data: functions } = useQuery<Record<string, IFunction[]>>({
         queryKey: ['functions'],
         queryFn: fetchFunctions
     });
@@ -100,7 +100,8 @@ export default function TemplateForm() {
     useEffect(() => {
         if (functions) {
             setFunctionOptions(
-                functions
+                Object.values(functions)
+                    .flat()
                     .filter((item: IFunction): any => item.num_parameters != 0)
                     .map((item: IFunction): any => ({
                         label: item.name,
