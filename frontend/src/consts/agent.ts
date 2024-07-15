@@ -1,20 +1,26 @@
 import { AgentTriggerFunctionType, IAgentTrigger } from '@models/types';
 
-export const AGENT_TRIGGER: Record<AgentTriggerFunctionType, IAgentTrigger> = {
-    Delegation: {
-        function_name: 'Delegation',
-        parameter: [
+export const AGENT_TRIGGER = {
+    stakeDelegation: {
+        function_name: 'stakeDelegation',
+        parameters: [
             {
-                name: 'drep',
-                description: 'Drep',
+                name: 'stakeholder',
+                description: 'The stakeholder delegating their ADA',
                 optional: false,
-                data_type: 'Drep Hash'
+                data_type: 'string'
+            },
+            {
+                name: 'amount',
+                description: 'The amount of ADA to delegate',
+                optional: false,
+                data_type: 'number'
             }
         ]
     },
-    Vote: {
-        function_name: 'Vote',
-        parameter: [
+    voteOnProposal: {
+        function_name: 'voteOnProposal',
+        parameters: [
             {
                 name: 'proposal',
                 description: 'Proposal',
@@ -23,9 +29,9 @@ export const AGENT_TRIGGER: Record<AgentTriggerFunctionType, IAgentTrigger> = {
             }
         ]
     },
-    'Info Action Proposal': {
-        function_name: 'Info Action Proposal',
-        parameter: [
+    createInfoGovAction: {
+        function_name: 'createInfoGovAction',
+        parameters: [
             {
                 name: 'anchor_url',
                 description: 'Anchor Url',
@@ -40,9 +46,9 @@ export const AGENT_TRIGGER: Record<AgentTriggerFunctionType, IAgentTrigger> = {
             }
         ]
     },
-    'Proposal New Constitution': {
-        function_name: 'Proposal New Constitution',
-        parameter: [
+    proposalNewConstitution: {
+        function_name: 'proposalNewConstitution',
+        parameters: [
             {
                 name: 'anchor_url',
                 description: 'Anchor Url',
@@ -69,22 +75,42 @@ export const AGENT_TRIGGER: Record<AgentTriggerFunctionType, IAgentTrigger> = {
             }
         ]
     },
-    'SendAda Token': {
-        function_name: 'SendAda Token',
-        parameter: [
+    transferADA: {
+        function_name: 'transferADA',
+        parameters: [
             {
-                name: 'Receiver Address',
+                name: 'receiver_address',
                 description: 'Ada holder Receiver Address',
                 optional: false,
                 data_type: 'string'
+            },
+            {
+                name: 'receiving_ada',
+                description: 'Receiving Ada Amount',
+                optional: false,
+                data_type: 'number'
             }
         ]
     }
-};
+} as Record<AgentTriggerFunctionType, IAgentTrigger>;
+
+export const MapFunctionNameAndViewName: Record<string, string> = {
+    transferADA: 'SendAda Token',
+    voteOnProposal: 'Vote',
+    stakeDelegation: 'Delegation',
+    createInfoGovAction: 'Info Action Proposal',
+    proposalNewConstitution: 'Proposal New Constitution',
+    dRepRegistration: 'Drep Registration',
+    dRepDeRegistration: 'Drep deRegistration',
+    registerStake: 'Register Stake',
+    abstainDelegation: 'Abstain Delegation',
+    noConfidence: 'No Confidence'
+} as Record<AgentTriggerFunctionType, string>;
 
 export const AgentFunctions = [
     {
-        function_name: 'SendAda Token',
+        function_name: 'transferAda',
+        name: 'SendAda Token',
         parameters: [
             {
                 name: 'Receiver Address',
@@ -95,7 +121,8 @@ export const AgentFunctions = [
         ]
     },
     {
-        function_name: 'Proposal New Constitution',
+        name: 'Proposal New Constitution',
+        function_name: 'proposalNewConstitution',
         parameters: [
             {
                 name: 'anchor_url',
@@ -124,7 +151,8 @@ export const AgentFunctions = [
         ]
     },
     {
-        function_name: 'Info Action Proposal',
+        name: 'Info Action Proposal',
+        function_name: 'createInfoGovAction',
         parameters: [
             {
                 name: 'anchor_url',
@@ -141,7 +169,8 @@ export const AgentFunctions = [
         ]
     },
     {
-        function_name: 'Delegation',
+        name: 'Delegation',
+        function_name: 'stakeDelegation',
         parameters: [
             {
                 name: 'drep',
@@ -158,7 +187,8 @@ export const AgentFunctions = [
         ]
     },
     {
-        function_name: 'Vote',
+        name: 'Vote',
+        function_name: 'voteOnProposal',
         parameters: [
             {
                 name: 'proposal',

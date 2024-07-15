@@ -36,11 +36,11 @@ export default function AgentFunctionsDropDown({ onChange }: { onChange?: any })
                     <DropdownMenuItem
                         key={index}
                         onClick={() => {
-                            setCurrentFunction(agentFunction.function_name);
-                            onChange?.(agentFunction.function_name);
+                            setCurrentFunction(agentFunction.name);
+                            onChange?.(agentFunction.name);
                         }}
                     >
-                        {agentFunction.function_name}
+                        {agentFunction.name}
                     </DropdownMenuItem>
                 ))}
             </DropdownMenuContent>

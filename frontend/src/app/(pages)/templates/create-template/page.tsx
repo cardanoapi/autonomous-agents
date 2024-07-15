@@ -103,8 +103,8 @@ export default function TemplateForm() {
                 functions
                     .filter((item: IFunction): any => item.num_parameters != 0)
                     .map((item: IFunction): any => ({
-                        label: item.function_name,
-                        value: item.function_name,
+                        label: item.name,
+                        value: item.name,
                         parameters: item.parameters
                     }))
             );

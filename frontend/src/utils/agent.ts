@@ -1,5 +1,4 @@
 import { IAgent } from '@api/agents';
-import { IParameter } from '@api/functions';
 import { AGENT_TRIGGER } from '@consts';
 import { AgentTriggerFunctionType, IAgentTrigger } from '@models/types';
 
@@ -11,14 +10,10 @@ export function isAgentActive({ last_active }: IAgent): boolean {
     return diffInSeconds <= 33;
 }
 
-interface ConfiguredAgentTrigger extends Omit<IAgentTrigger, 'parameters'> {
-    parameter: IParameter[];
-}
-
 export function getConfiguredAgentTrigger(
     func: AgentTriggerFunctionType,
     value: string
-): ConfiguredAgentTrigger {
+): IAgentTrigger {
     const trigger = AGENT_TRIGGER[func];
 
     if (!trigger) {
@@ -26,13 +21,13 @@ export function getConfiguredAgentTrigger(
     }
 
     switch (func) {
-        case 'Delegation':
-            return { ...trigger, parameter: [{ ...trigger.parameter[0], value }] };
+        case 'stakeDelegation':
+            return { ...trigger, parameters: [{ ...trigger.parameters[0], value }] };
 
-        case 'Vote':
-            return { ...trigger, parameter: [{ ...trigger.parameter[0], value }] };
+        case 'voteOnProposal':
+            return { ...trigger, parameters: [{ ...trigger.parameters[0], value }] };
 
         default:
-            return { ...trigger, parameter: [] };
+            return { ...trigger, parameters: [] };
     }
 }

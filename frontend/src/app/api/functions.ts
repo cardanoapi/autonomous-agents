@@ -11,6 +11,7 @@ export interface IParameter {
 }
 
 export interface IFunction {
+    name: string;
     function_name: string;
     num_parameters?: number;
     parameters?: IParameter[];

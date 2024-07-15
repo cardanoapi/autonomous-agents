@@ -36,10 +36,10 @@ const UpdateAgentFunctionModal = ({
     const [localAgentActionConfigurations, setLocalAgentActionConfigurations] =
         useState<{
             function_name: string;
-            parameter: Array<{ name: string; description?: string; value: string }>;
+            parameters: Array<{ name: string; description?: string; value: string }>;
         }>({
             function_name: '',
-            parameter: []
+            parameters: []
         });
 
     useEffect(() => {
@@ -53,12 +53,12 @@ const UpdateAgentFunctionModal = ({
     );
 
     const handleInputParamsChange = (value: string, index: number) => {
-        localAgentActionConfigurations.parameter[index].value = value;
+        localAgentActionConfigurations.parameters[index].value = value;
         setLocalAgentActionConfigurations({ ...localAgentActionConfigurations });
     };
 
     const handleClickSave = () => {
-        const filteredParams = localAgentActionConfigurations.parameter.map(
+        const filteredParams = localAgentActionConfigurations.parameters.map(
             (param) => ({
                 name: param.name,
                 value: param.value
@@ -71,7 +71,7 @@ const UpdateAgentFunctionModal = ({
                     action: {
                         ...agentConfig?.action,
                         function_name: localAgentActionConfigurations.function_name,
-                        parameter: filteredParams
+                        parameters: filteredParams
                     },
                     data: {
                         ...(agentConfig?.data as ICronTrigger),
@@ -103,7 +103,7 @@ const UpdateAgentFunctionModal = ({
                         onSelect={(function_name: string) => {
                             const parameter =
                                 AGENT_TRIGGER[function_name as AgentTriggerFunctionType]
-                                    ?.parameter;
+                                    .parameters;
                             const filteredParams = parameter?.map((param) => ({
                                 name: param.name,
                                 description: param.description,
@@ -111,7 +111,7 @@ const UpdateAgentFunctionModal = ({
                             }));
                             setLocalAgentActionConfigurations({
                                 function_name,
-                                parameter: filteredParams
+                                parameters: filteredParams || []
                             });
                         }}
                     />
@@ -119,7 +119,7 @@ const UpdateAgentFunctionModal = ({
                 <div className={'flex flex-col gap-1'}>
                     <span className={'font-medium'}>Parameters</span>
                     <div className={'grid grid-cols-2 gap-2'}>
-                        {localAgentActionConfigurations?.parameter?.map(
+                        {localAgentActionConfigurations?.parameters?.map(
                             (param, index) => {
                                 return (
                                     <div className={'flex flex-col gap-2'} key={index}>

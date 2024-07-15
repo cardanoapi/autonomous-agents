@@ -48,14 +48,14 @@ export async function initKafkaConsumers(manager: AgentManagerRPC) {
             const parsedMethodConfig = JSON.parse(methodConfig || '')
             if (agentId && parsedMethodConfig) {
                 const method = parsedMethodConfig.method
-                const params = parsedMethodConfig.params
+                const parameters = parsedMethodConfig.parameters
                 if (method === 'Agent_Deletion') {
                     managerService.disconnectWebsocketConnection(
                         agentId,
                         `Due to deletion,Agent with id ${agentId} is disconnected.`
                     )
                 } else {
-                    manager.fireMethod(agentId, method, params)
+                    manager.fireMethod(agentId, method, parameters)
                 }
             }
         },

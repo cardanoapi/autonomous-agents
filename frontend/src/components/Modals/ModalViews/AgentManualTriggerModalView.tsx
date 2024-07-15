@@ -30,14 +30,11 @@ const AgentManualTriggerModalView = ({
         onSuccess: () => {
             queryClient.refetchQueries({ queryKey: ['agents'] });
             // router.push('/agents');
-            SuccessToast(
-                `${agentFunction.function_name} has been successfully triggered.`
-            );
+            SuccessToast(`${agentFunction.name} has been successfully triggered.`);
             closeModal();
         },
         onError: () => {
             console.log('Error Response');
-            // setSubmittingForm(false);
             ErrorToast('Error while manually triggering Agent Function. Try Again!');
         }
     });
@@ -50,7 +47,7 @@ const AgentManualTriggerModalView = ({
             agentId,
             agentFunction: {
                 function_name: agentFunction.function_name,
-                parameter: params
+                parameters: params
             }
         });
     };
@@ -87,9 +84,7 @@ const AgentManualTriggerModalView = ({
             <span className={'px-5 py-2 text-base font-medium'}>Manual Trigger</span>
             <Separator />
             <div className={'flex flex-col gap-2 px-5 py-4'}>
-                <span className={'text-lg '}>
-                    {agentFunction.function_name} Function
-                </span>
+                <span className={'text-lg '}>{agentFunction.name} Function</span>
                 <span className={'text-sm text-brand-Black-300/80'}>
                     {agentFunction.description}
                 </span>

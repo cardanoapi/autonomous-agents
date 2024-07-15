@@ -7,7 +7,7 @@ export interface ActionParameter {
 }
 
 export interface Action {
-    parameter: ActionParameter[]
+    parameters: ActionParameter[]
     function_name: string
 }
 
@@ -28,7 +28,7 @@ export type TriggerType = 'MANUAL' | 'EVENT' | 'CRON'
 function getParameterValue(
     parameters: ActionParameter[] = [],
     name: string
-): string {
+): any {
     const param = parameters.find((param) => param.name === name)
     return param ? param.value : ''
 }
@@ -49,16 +49,16 @@ export async function triggerAction(
         process.exit(1)
     }
     switch (function_name) {
-        case 'SendAda Token':
+        case 'transferADA':
             body = transactionBuilder.transferADA(
-                getParameterValue(parameter, 'Receiver Address'),
-                10
+                getParameterValue(parameter, 'receiver_address'),
+                getParameterValue(parameter, 'receiving_ada')
             )
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 console.log('error is : ', err)
                 throw err
             })
-        case 'Delegation':
+        case 'stakeDelegation':
             body = transactionBuilder.stakeDelegation(
                 getParameterValue(parameter, 'drep') || 'abstain'
             )
@@ -66,7 +66,7 @@ export async function triggerAction(
                 console.log('error is : ', err)
                 throw err
             })
-        case 'Vote':
+        case 'voteOnProposal':
             body = transactionBuilder.voteOnProposal(
                 getParameterValue(parameter, 'proposal') || '',
                 getParameterValue(parameter, 'anchorUrl') || '',
@@ -79,7 +79,7 @@ export async function triggerAction(
                     throw err
                 }
             })
-        case 'Info Action Proposal':
+        case 'createInfoGovAction':
             body = transactionBuilder.createInfoGovAction(
                 getParameterValue(parameter, 'anchor_url'),
                 getParameterValue(parameter, 'anchor_datahash')
@@ -87,7 +87,7 @@ export async function triggerAction(
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 throw err
             })
-        case 'Proposal New Constitution':
+        case 'proposalNewConstitution':
             body = transactionBuilder.proposalNewConstitution(
                 getParameterValue(parameter, 'anchor_url'),
                 getParameterValue(parameter, 'anchor_dataHash'),
@@ -97,7 +97,7 @@ export async function triggerAction(
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 throw err
             })
-        case 'Drep Registration':
+        case 'dRepRegistration':
             body = transactionBuilder.dRepRegistration()
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 if (
@@ -109,7 +109,7 @@ export async function triggerAction(
                     throw err
                 }
             })
-        case 'Drep deRegistration':
+        case 'dRepDeRegistration':
             body = transactionBuilder.dRepDeRegistration()
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 if (err && err.message.includes('Drep  is not registered ')) {
@@ -118,7 +118,7 @@ export async function triggerAction(
                     throw err
                 }
             })
-        case 'Register Stake':
+        case 'registerStake':
             body = transactionBuilder.registerStake()
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 if (err && err.message.includes('StakeKeyRegisteredDELEG')) {
@@ -127,12 +127,23 @@ export async function triggerAction(
                     throw err
                 }
             })
-        case 'Abstain Delegation':
-            body = transactionBuilder.abstainDelegations()
+        case 'stakeDeRegistration':
+            body = transactionBuilder.stakeDeRegistration()
+            return managerInterface.buildTx(body, true).catch((err: Error) => {
+                console.log('Stake De Registration Error : ', err)
+                throw err
+                // if (err && err.message.includes('Drep  is not registered ')) {
+                //     throw new Error('Drep is not registered.')
+                // } else {
+                //     throw err
+                // }
+            })
+        case 'abstainDelegation':
+            body = transactionBuilder.abstainDelegation()
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 throw err
             })
-        case 'No Confidence':
+        case 'noConfidence':
             body = transactionBuilder.noConfidence()
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 throw err

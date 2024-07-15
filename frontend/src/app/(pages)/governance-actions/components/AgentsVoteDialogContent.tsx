@@ -14,7 +14,7 @@ const AgentsVoteDialogContent = ({
             title="Vote on Proposal"
             description="Select agents for vote."
             handleClose={handleClose}
-            triggerType={'Vote'}
+            triggerType={'voteOnProposal'}
             functionId={proposalId}
         />
     );

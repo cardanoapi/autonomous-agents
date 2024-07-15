@@ -21,7 +21,7 @@ export function checkIfAgentWithTriggerTypeExists(
 export function createActionDtoForEventTrigger(tx: any, index: number): Action {
     return {
         function_name: globalState.eventTriggerTypeDetails.function_name,
-        parameter: [
+        parameters: [
             {
                 name: 'proposal',
                 value: `${Buffer.from(tx.hash, 'utf-8').toString('hex')}#${index}`,

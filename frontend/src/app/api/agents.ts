@@ -16,7 +16,7 @@ export interface ISubParameter {
 
 export interface IAgentAction {
     function_name: string;
-    parameter: Array<ISubParameter>;
+    parameters: Array<ISubParameter>;
 }
 
 export interface ICronTrigger {
@@ -61,8 +61,7 @@ export const fetchAgents = async (): Promise<IAgent[]> => {
     if (!res.ok) {
         throw new Error('Agents Fetch Operation failed: Network Error');
     }
-    const data = await res.json();
-    return data;
+    return await res.json();
 };
 
 export const fetchActiveAgentsCount = async () => {
@@ -70,8 +69,7 @@ export const fetchActiveAgentsCount = async () => {
     if (!res.ok) {
         throw new Error('Active Agents Fetch Opetation failed: Network Error');
     }
-    const data = await res.json();
-    return data;
+    return await res.json();
 };
 
 export const postAgentData = async (formData: z.infer<typeof agentFormSchema>) => {
