@@ -6,4 +6,4 @@ class UserService:
         self.user_repository = user_repository()
 
     async def create_user(self, user_address: str):
-        return await self.user_repository.save_user(user_address)
+        return await self.user_repository.create_user(user_address)

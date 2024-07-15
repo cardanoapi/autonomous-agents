@@ -22,19 +22,23 @@ class TemplateRepository:
         template_id = str(uuid.uuid4())
         template_data_dict = {
             "id": template_id,
-            "name": template_data.name,
-            "description": template_data.description,
+            "name": template_data["name"],
+            "description": template_data["description"],
             "created_at": datetime.now(timezone.utc),
             "updated_at": datetime.now(timezone.utc),
+            "userAddress": template_data["userAddress"],
         }
         # Use the transaction object for creating the template
         template = await transaction.template.create(data=template_data_dict)
+
         template_response = {
             "id": template_id,
-            "name": template_data.name,
-            "description": template_data.description,
-            "template_triggers": template_data.template_triggers,
+            "name": template_data["name"],
+            "description": template_data["description"],
+            "template_triggers": template_data["template_triggers"],
         }
+
+        print(template_response)
 
         return template_response
 
