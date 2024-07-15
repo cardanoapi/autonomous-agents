@@ -5,6 +5,7 @@ type CertificateType =
     | 'registerdrep'
     | 'deregisterdrep'
     | 'delegate'
+    | 'deregisterstake'
 
 export type TxSubmitResponse = {
     cbor: string
@@ -26,7 +27,11 @@ export class Kuber {
     }
 
     static generateCert(type: CertificateType, key: string, dRep: string = '') {
-        if (type === 'registerstake' || type === 'deregisterdrep') {
+        if (
+            type === 'registerstake' ||
+            type === 'deregisterdrep' ||
+            type === 'deregisterstake'
+        ) {
             return {
                 type: type,
                 key: key,

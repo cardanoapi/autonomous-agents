@@ -26,7 +26,10 @@ class Kuber {
             'content-type': 'application/json',
             'api-key': `${KuberAPIKey}`,
         })
-            .then((res) => res.text())
+            .then((res) => {
+                console.log('response is : ', res)
+                return res.text()
+            })
             .then((str) => {
                 console.log('Kuber Call Response : ', str)
                 return Kuber.parseJson(str)

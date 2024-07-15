@@ -1,20 +1,21 @@
 import { RpcV1 } from 'libcardano/network/Rpc'
 
-import { Action } from './triggerService'
+import { ActionParameter } from './triggerService'
 import { triggerHandler } from './TriggerActionHandler'
 import { RpcTopicHandler } from '../utils/agent'
 
 const TransactionType = [
-    'vote',
-    'SendAda Token',
-    'Delegation',
-    'Info Action Proposal',
-    'Proposal New Constitution',
-    'Drep Registration',
-    'Drep deRegistration',
-    'Register Stake',
-    'Abstain Delegation',
-    'No Confidence',
+    'voteOnProposal',
+    'transferADA',
+    'stakeDelegation',
+    'createInfoGovAction',
+    'proposalNewConstitution',
+    'dRepRegistration',
+    'dRepDeRegistration',
+    'registerStake',
+    'abstainDelegation',
+    'noConfidence',
+    'stakeDeRegistration',
 ]
 
 const agentId = process.env.AGENT_ID || ''
@@ -24,9 +25,12 @@ const getAgentId = () => agentId
 export class AgentRpc extends RpcV1 {
     handleMethodCall(method: string, args: any[]) {
         console.log('Server called method', method, args)
-        const params: Action = args[0]
+        const params: ActionParameter[] = args[0]
         if (TransactionType.includes(method)) {
-            triggerHandler.triggerAndLogAction(params, 'MANUAL')
+            triggerHandler.triggerAndLogAction(
+                { function_name: method, parameters: params },
+                'MANUAL'
+            )
         }
     }
 

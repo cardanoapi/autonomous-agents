@@ -89,7 +89,7 @@ class AgentService:
         self.raise_exception_if_agent_not_found(agent)
         await self.kafka_service.publish_message(
             "Agent_Trigger",
-            json.dumps({"method": "Agent_Deletion", "params": []}),
+            json.dumps({"method": "Agent_Deletion", "parameters": []}),
             agent_id,
         )
         return agent_id
@@ -101,7 +101,7 @@ class AgentService:
 
     async def trigger_agent_action(self, agent_id: str, action: AgentFunction):
         await self.check_if_agent_exists(agent_id)
-        message_in_rpc_format = json.dumps({"method": action.function_name, "params": action.dict()})
+        message_in_rpc_format = json.dumps({"method": action.function_name, "parameters": action.dict()["parameters"]})
         await self.kafka_service.publish_message("Agent_Trigger", message_in_rpc_format, key=agent_id)
 
     def raise_exception_if_agent_not_found(self, agent):

@@ -19,10 +19,13 @@ class TriggerActionHandler {
             message: '',
             success: true,
         }
-        triggerAction(action['function_name'], action['parameter'])
+        triggerAction(action['function_name'], action['parameters'])
             .then((res) => {
+                console.log('Tx Hash of res is : ', res)
                 if (res) {
                     result.txHash = res.hash
+                } else {
+                    throw new Error('Something went wrong')
                 }
             })
             .catch((e) => {
