@@ -1,12 +1,10 @@
 import { CIP30Instance } from 'kuber-client/types';
 
-export function generateSignData(walletApi: CIP30Instance) {
-    const changeAddr = walletApi.getChangeAddress();
-    const netowrkId = walletApi.getNetworkId();
+export async function generateSignedData(walletApi: CIP30Instance) {
+    const changeAddr = await walletApi.getChangeAddress();
     const messageUtf = `account : ${changeAddr}`;
     const messageHex = Buffer.from(messageUtf).toString('hex');
     //@ts-ignore
-    const signData = walletApi.signData(changeAddr, messageHex);
-    console.log(changeAddr, netowrkId, signData);
+    const signData = await walletApi.signData(changeAddr, messageHex);
     return signData;
 }

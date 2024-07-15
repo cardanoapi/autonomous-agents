@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { SendLoginRequest } from '@api/auth';
 import { useAtom } from 'jotai';
 import { CIP30Provider } from 'kuber-client/types';
 import { OctagonAlert, Wallet } from 'lucide-react';
@@ -12,7 +13,7 @@ import { X } from 'lucide-react';
 
 import { Dialog, DialogContent } from '@app/components/atoms/Dialog';
 import { walletApiAtom } from '@app/store/loaclStore';
-import { generateSignData } from '@app/utils/auth';
+import { generateSignedData } from '@app/utils/auth';
 
 import { Button } from '../atoms/Button';
 import { cn } from '../lib/utils';
@@ -40,7 +41,7 @@ function listProviders(): CIP30Provider[] {
 
 export default function WalletSignInDialog() {
     //to do save to atom WalletAPI
-    const [walletApi, setWalletApi] = useAtom(walletApiAtom);
+    const [, setWalletApi] = useAtom(walletApiAtom);
     const [walletProviders, setWalletProviders] = useState<CIP30Provider[]>([]);
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
@@ -52,15 +53,19 @@ export default function WalletSignInDialog() {
         console.log(`Enabling ${wallet.name}`);
         setConnectingWallet(true);
         try {
+            // Wallet connect
             const enabledApi = await wallet.enable();
             setWalletApi(enabledApi);
-            setDialogOpen(false);
             localStorage.setItem('wallet', wallet.name);
-            const signData = await generateSignData(enabledApi);
-            console.log(signData);
+
+            // Wallet verification / authentication
+            const signedData = await generateSignedData(enabledApi);
+            console.log(signedData);
+            SendLoginRequest(signedData);
             if (!disabletoast) {
                 SuccessToast('Wallet Connection Successfull!');
             }
+            setDialogOpen(false);
         } catch (error: any) {
             ErrorToast(error.info);
             setConnectingWallet(false);
@@ -80,11 +85,6 @@ export default function WalletSignInDialog() {
         );
         prev_wallet ? enableWallet(prev_wallet, true) : setDialogOpen(true);
     }, []);
-
-    useEffect(() => {
-        console.log(walletApi);
-    }, [walletApi]);
-
     //async function verifyWallet() {
     //  if (!walletApi) return;
     // const changeAddress = await walletApi.changeAddress();
