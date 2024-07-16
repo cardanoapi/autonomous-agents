@@ -85,8 +85,8 @@ class AgentService:
     async def get_active_agents_count(self):
         return await self.agent_repository.get_online_agents_count()
 
-    async def delete_agent(self, agent_id: str) -> str:
-        agent = await self.agent_repository.remove_agent(agent_id)
+    async def delete_agent(self, agent_id: str, user_address: str) -> str:
+        agent = await self.agent_repository.remove_agent(agent_id, user_address)
         self.raise_exception_if_agent_not_found(agent)
         await self.kafka_service.publish_message(
             "Agent_Trigger",

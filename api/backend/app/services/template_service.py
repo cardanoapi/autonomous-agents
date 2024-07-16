@@ -65,7 +65,9 @@ class TemplateService:
     async def update_template(
         self, template_id: str, template_data: TemplateEditDto
     ) -> TemplateResponseWithConfigurations:
-        updating_template_detail = TemplateEditDto(name=template_data.name, description=template_data.description)
+        updating_template_detail = TemplateEditDto(
+            name=template_data.name, description=template_data.description, userAddress=template_data.userAddress
+        )
         updated_template = await self.template_repository.modify_template(template_id, updating_template_detail)
         self.raise_exception_if_template_not_found(updated_template)
         updated_template_configurations = await self.template_trigger_service.update_configurations_for_template(
@@ -75,8 +77,8 @@ class TemplateService:
             **updated_template, template_configurations=updated_template_configurations
         )
 
-    async def delete_template(self, template_id: str) -> str:
-        template = await self.template_repository.remove_template(template_id)
+    async def delete_template(self, template_id: str, userAddress: str) -> str:
+        template = await self.template_repository.remove_template(template_id, userAddress)
         self.raise_exception_if_template_not_found(template)
         return template_id
 

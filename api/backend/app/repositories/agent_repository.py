@@ -67,7 +67,7 @@ class AgentRepository:
             return agent_response
 
     async def modify_agent(self, agent_id: str, agent_data: AgentUpdateDTO) -> Optional[AgentResponse]:
-        agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
+        agent = await self.db.prisma.agent.find_first(where={"id": agent_id, "userAddress": agent_data.userAddress})
         if agent is None or agent.deleted_at is not None:
             return None
         updated_data = {"name": agent_data.name, "updated_at": datetime.now(timezone.utc)}
@@ -90,8 +90,8 @@ class AgentRepository:
                 content=f"Failed to retrieve online agents count: {str(e)}",
             )
 
-    async def remove_agent(self, agent_id: str):
-        agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
+    async def remove_agent(self, agent_id: str, user_address: str):
+        agent = await self.db.prisma.agent.find_first(where={"id": agent_id, "userAddress": user_address})
         if agent is None:
             return None
         elif agent.deleted_at is not None:
