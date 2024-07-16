@@ -26,6 +26,7 @@ class TemplateRepository:
             "description": template_data.description,
             "created_at": datetime.now(timezone.utc),
             "updated_at": datetime.now(timezone.utc),
+            "userAddress": template_data.userAddress,
         }
         # Use the transaction object for creating the template
         template = await transaction.template.create(data=template_data_dict)
@@ -47,7 +48,9 @@ class TemplateRepository:
         return template
 
     async def modify_template(self, template_id: str, template_data: TemplateEditDto):
-        template = await self.db.prisma.template.find_first(where={"id": template_id})
+        template = await self.db.prisma.template.find_first(
+            where={"id": template_id, "userAddress": template_data.userAddress}
+        )
         if template is None or template.deleted_at is not None:
             return None
 
@@ -62,8 +65,8 @@ class TemplateRepository:
         }
         return template_response
 
-    async def remove_template(self, template_id: str) -> bool:
-        template = await self.db.prisma.template.find_first(where={"id": template_id})
+    async def remove_template(self, template_id: str, user_address: str) -> bool:
+        template = await self.db.prisma.template.find_first(where={"id": template_id, "userAddress": user_address})
         if template is None:
             return None
         elif template.deleted_at is not None:

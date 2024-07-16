@@ -2,7 +2,7 @@ from classy_fastapi import Routable, post, get
 from pydantic import BaseModel
 from backend.app.utils.signed_data import verify_signed_data, extract_signed_address_from_signature_header
 from backend.app.services.user_service import UserService
-from backend.app.utils.auth import generate_jwt_token_using_user_address
+from backend.app.auth.jwt_token import generate_jwt_token_using_user_address
 from fastapi.responses import JSONResponse
 import os
 
@@ -41,7 +41,7 @@ class AuthRouter(Routable):
                 response.set_cookie(
                     key="access_token",
                     value=token,
-                    samesite="None",
+                    samesite="lax",
                     secure=secure,
                     expires=60 * 60 * 24,
                     domain=domain,
