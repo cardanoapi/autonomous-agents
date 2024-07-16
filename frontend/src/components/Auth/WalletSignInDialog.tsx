@@ -7,9 +7,9 @@ import Link from 'next/link';
 
 import { SendLoginRequest } from '@api/auth';
 import { useAtom } from 'jotai';
+import Cookies from 'js-cookie';
 import { CIP30Provider } from 'kuber-client/types';
 import { OctagonAlert, Wallet } from 'lucide-react';
-import { X } from 'lucide-react';
 
 import { Dialog, DialogContent } from '@app/components/atoms/Dialog';
 import { walletApiAtom } from '@app/store/loaclStore';
@@ -83,7 +83,9 @@ export default function WalletSignInDialog() {
         const prev_wallet = wallets.find(
             (wallet) => wallet.name === currentLocalWallet
         );
-        prev_wallet ? enableWallet(prev_wallet, true) : setDialogOpen(true);
+        if (Cookies.get('access_token') === undefined) {
+            prev_wallet ? enableWallet(prev_wallet, true) : setDialogOpen(true);
+        }
     }, []);
     //async function verifyWallet() {
     //  if (!walletApi) return;
@@ -95,8 +97,12 @@ export default function WalletSignInDialog() {
     //console.log(signature);
     // }
 
-    function toggleDialog() {
-        dialogOpen ? setDialogOpen(false) : setDialogOpen(true);
+    {
+        /*
+        function toggleDialog() {
+            dialogOpen ? setDialogOpen(false) : setDialogOpen(true);
+        }
+        */
     }
 
     const textHiglight = 'text-blue-500';
@@ -104,16 +110,16 @@ export default function WalletSignInDialog() {
         <div>
             <Dialog open={dialogOpen}>
                 <DialogContent
-                    className="max-w-4xl px-8 pb-24 focus:outline-none"
+                    className="max-w-4xl px-8 pb-24 pt-20 focus:outline-none"
                     defaultCross={false}
                 >
                     <div className="flex flex-col gap-y-4 ">
-                        <div className="mb-4 flex justify-end">
+                        {/*} <div className="mb-4 flex justify-end">
                             <X
                                 onClick={toggleDialog}
                                 className="hover:cursor-pointer"
                             />
-                        </div>
+                        </div> */}
                         <div className="mb-4 flex items-center justify-center gap-2">
                             <Wallet size={28} stroke="#2595FCFA" />
                             <span className="text-2xl font-semibold">

@@ -24,3 +24,18 @@ export const SendLoginRequest = async (signedData: ISignedData) => {
         throw error;
     }
 };
+
+export const SendLogoutRequest = async () => {
+    try {
+        const response = await axios.post(
+            `${baseAPIurl}/logout`,
+            {},
+            {
+                withCredentials: true
+            }
+        );
+        console.log(response.data);
+    } catch (error) {
+        throw error;
+    }
+};

@@ -4,6 +4,7 @@ from backend.app.utils.signed_data import verify_signed_data, extract_signed_add
 from backend.app.services.user_service import UserService
 from backend.app.auth.jwt_token import generate_jwt_token_using_user_address
 from fastapi.responses import JSONResponse
+from fastapi import Response, Request
 import os
 
 
@@ -17,6 +18,9 @@ class AuthRouter(Routable):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.user_service = UserService()
+        current_environment = os.environ.get("NODE_ENV")
+        self.secure = True if current_environment == "production" else False
+        self.domain = "api.agents.cardanoapi.io" if current_environment == "production" else "localhost"
 
     @post("/login")
     async def login_user(self, signed_data: SignatureDataDto):
@@ -34,17 +38,14 @@ class AuthRouter(Routable):
                 response = JSONResponse(content={"status": "verified"})
 
                 # Cookie configs
-                current_environment = os.environ.get("NODE_ENV")
-                secure = True if current_environment == "production" else False
-                domain = "api.agents.cardanoapi.io" if current_environment == "production" else "localhost"
 
                 response.set_cookie(
                     key="access_token",
                     value=token,
                     samesite="lax",
-                    secure=secure,
+                    secure=self.secure,
                     expires=60 * 60 * 24,
-                    domain=domain,
+                    domain=self.domain,
                     path="/",
                 )
 
@@ -54,3 +55,13 @@ class AuthRouter(Routable):
         except Exception as e:
             print(e)
             return {"Status": "Rejected", "Info": "Invalid Signature Format"}
+
+    @post("/logout")
+    async def logout_user(self, response: Response):
+        try:
+            response = JSONResponse(content={"status": "logged out"})
+            response.delete_cookie("access_token")
+            return response
+        except Exception as e:
+            print(e)
+            return {"Status": "Failed", "Info": "Error while logging out"}
