@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 
+import { SendLogoutRequest } from '@api/auth';
 import { PATHS } from '@consts';
 import { useAtom } from 'jotai';
 
@@ -54,6 +55,7 @@ export default function TopNav() {
         setWalletApiAtom(null);
         router.push('/');
         SuccessToast('User Logged out successfully');
+        SendLogoutRequest();
     }
 
     return (
