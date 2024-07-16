@@ -84,7 +84,8 @@ export const postAgentData = async (formData: z.infer<typeof agentFormSchema>) =
             {
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
+                withCredentials: true
             }
         );
         return response.data;
@@ -106,7 +107,8 @@ export const updateAgentData = async (formData: IAgentUpdateReqDto) => {
             {
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
+                withCredentials: true
             }
         );
         return response.data;
@@ -118,7 +120,9 @@ export const updateAgentData = async (formData: IAgentUpdateReqDto) => {
 
 export const deleteAgentbyID = async (agentID: string) => {
     try {
-        const response = await axios.delete(`${baseAPIurl}/agents/${agentID}`);
+        const response = await axios.delete(`${baseAPIurl}/agents/${agentID}`, {
+            withCredentials: true
+        });
         if (response.status === 204) {
             return { success: true, agentID };
         } else {
@@ -134,7 +138,7 @@ export const fetchAgentbyID = async (agentID: string): Promise<IAgent> => {
     const url = `${baseAPIurl}/agent/${agentID}`;
 
     try {
-        const response = await axios.get(url);
+        const response = await axios.get(url, { withCredentials: true });
         return response.data;
     } catch (error) {
         throw new Error('Agent Fetch Operation failed: Network Error');
@@ -152,7 +156,8 @@ export const manualTriggerForAgent = async (
         const response = await axios.post(url, data, {
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            withCredentials: true
         });
         return response.data;
     } catch (error) {
