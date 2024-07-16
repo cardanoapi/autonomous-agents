@@ -91,7 +91,8 @@ export const postTemplateData = async (
             {
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
+                withCredentials: true
             }
         );
         return response.data;
@@ -113,7 +114,8 @@ export const updateTemplateData = async (formData: ITemplate) => {
             {
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
+                withCredentials: true
             }
         );
         return response.data;
@@ -125,7 +127,9 @@ export const updateTemplateData = async (formData: ITemplate) => {
 
 export const deleteTemplatebyID = async (templateID: string) => {
     try {
-        const response = await axios.delete(`${baseAPIurl}/templates/${templateID}`);
+        const response = await axios.delete(`${baseAPIurl}/templates/${templateID}`, {
+            withCredentials: true
+        });
         console.log(response);
         if (response.status === 204) {
             return true;
