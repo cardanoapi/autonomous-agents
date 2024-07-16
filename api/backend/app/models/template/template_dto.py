@@ -6,14 +6,14 @@ from backend.app.models import TriggerCreateDTO, TemplateTriggerResponse
 
 
 class TemplateCreateDto(BaseModel):
-    userAddress: str
+    userAddress: Optional[str] = None
     name: str = Field(..., description="Name of Template", min_length=1)
     description: str
     template_triggers: list[TriggerCreateDTO]
 
 
 class TemplateEditDto(BaseModel):
-    userAddress: str
+    userAddress: Optional[str] = None
     name: str = Field(..., description="Name of Template", min_length=1)
     description: str
     template_configurations: Optional[List[TemplateTriggerResponse]]

@@ -30,15 +30,10 @@ class AgentRepository:
     async def save_agent(self, agent_data: AgentCreateDTO):
         # Generate a random UUID for the agent ID
         agent_id = str(uuid.uuid4())
-        agent_data_dict = {
-            "id": agent_id,
-            "name": agent_data["name"],
-            "instance": agent_data["instance"],
-            "template_id": agent_data["template_id"],
-            "created_at": datetime.now(timezone.utc),
-            "updated_at": datetime.now(timezone.utc),
-            "userAddress": agent_data["userAddress"],
-        }
+        agent_data_dict = agent_data.dict()
+        agent_data_dict["id"] = agent_id
+        agent_data_dict["created_at"] = datetime.now(timezone.utc)
+        agent_data_dict["updated_at"] = datetime.now(timezone.utc)
         agent = await self.db.prisma.agent.create(data=agent_data_dict)
         agent_response = AgentResponse(
             id=agent_id,
@@ -47,6 +42,7 @@ class AgentRepository:
             instance=agent.instance,
             index=agent.index,
         )
+
         return agent_response
 
     async def retrieve_agents(self, page: int, limit: int) -> List[AgentResponse]:
