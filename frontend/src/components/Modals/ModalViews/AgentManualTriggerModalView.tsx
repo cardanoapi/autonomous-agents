@@ -86,11 +86,15 @@ const AgentManualTriggerModalView = ({
         groupIndex: number = 0
     ) => {
         const updatedParams = [...params];
-        if (isGroupParams) {
-            updatedParams[groupIndex].parameters[index] = {
-                ...updatedParams[groupIndex].parameters[index],
-                value
-            };
+        if (isGroupParams && updatedParams.length) {
+            const group = updatedParams[groupIndex];
+            if (group && group.parameters && group.parameters[index]) {
+                group.parameters[index] = {
+                    ...group.parameters[index],
+                    value
+                };
+            }
+            updatedParams[groupIndex] = group;
         } else {
             updatedParams[index] = { ...updatedParams[index], value };
         }

@@ -122,10 +122,10 @@ export default function TriggerTab({
     return (
         <Tabs defaultValue="Cron">
             <TabsList className="mb-4 w-full justify-start gap-6 rounded-none border-b-[1px] pl-0">
-                <TabsTrigger value="Cron" onClick={() => setSelectedTab('CRON')}>
+                <TabsTrigger value="Cron" onClick={() => setSelectedTab?.('CRON')}>
                     Cron Trigger
                 </TabsTrigger>
-                <TabsTrigger value="Event" onClick={() => setSelectedTab('EVENT')}>
+                <TabsTrigger value="Event" onClick={() => setSelectedTab?.('EVENT')}>
                     Event Trigger
                 </TabsTrigger>
             </TabsList>

@@ -252,7 +252,7 @@ export default function TemplateForm() {
                 </Form>
             </Card>
             <Dialog open={isOpen}>
-                <DialogContent className="!p-0" defaultCross={false}>
+                <DialogContent className="!p-0" defaultCross={true}>
                     <TriggerForm
                         //@ts-ignore
                         formValues={selected.find((elem) => elem === currentDialogForm)}
