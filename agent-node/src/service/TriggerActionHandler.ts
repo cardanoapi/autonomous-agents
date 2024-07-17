@@ -26,27 +26,26 @@ class TriggerActionHandler {
             if (this.triggerQueue.length) {
                 this.triggerQueue = removeRedundantTrigger(this.triggerQueue)
             }
-            const trigger = this.triggerQueue.pop()
+            const trigger = this.triggerQueue.shift()
             if (trigger) {
                 this.triggerAndLogAction(trigger)
             } else {
-                console.log('No Task Available')
+                console.log('SetTimeOut: Task Queue is empty')
             }
-            console.log('Timeout starting')
         }, 80000)
     }
 
     clearTimeoutAndTrigger() {
         if (this.timeOut) {
             clearTimeout(this.timeOut)
+            this.timeOut = null
         }
         const trigger = this.triggerQueue.pop()
         if (trigger) {
             this.triggerAndLogAction(trigger)
         } else {
-            console.log('No Task to trigger.')
+            console.log('ClearTimeoutAndTrigger : Task Queue is empty')
         }
-        this.setTimeOut()
     }
 
     triggerAndLogAction(trigger: ITrigger) {
@@ -59,16 +58,20 @@ class TriggerActionHandler {
             message: '',
             success: true,
         }
-        triggerAction(action['function_name'], action['parameters'])
+        triggerAction(
+            action['function_name'],
+            action['parameters'],
+            triggerType
+        )
             .then((res) => {
                 console.log('Tx Hash of res is : ', res)
                 if (res) {
                     result.txHash = res.hash
                     this.txHash = res.hash
-                    this.setTimeOut()
                 } else {
-                    throw new Error('Something went wrong')
+                    result.triggerType = ''
                 }
+                this.setTimeOut()
             })
             .catch((e) => {
                 console.log('Tx Error : ', e)
@@ -77,7 +80,9 @@ class TriggerActionHandler {
                 this.clearTimeoutAndTrigger()
             })
             .finally(() => {
-                managerInterface?.logTx(result)
+                if (triggerType !== '') {
+                    managerInterface?.logTx(result)
+                }
             })
     }
 
@@ -85,20 +90,21 @@ class TriggerActionHandler {
         if (this.timeOut) {
             this.triggerQueue.push({ action, triggerType })
         } else {
+            this.setTimeOut()
             this.triggerAndLogAction({ action, triggerType })
         }
     }
 }
 
 function removeRedundantTrigger(triggerQueue: Array<ITrigger>) {
-    const lastTrigger = triggerQueue.at(-1)
-    const secondLastTrigger = triggerQueue.at(-2)
+    const firstTrigger = triggerQueue.at(-1)
+    const secondTrigger = triggerQueue.at(-2)
     if (
-        lastTrigger?.triggerType === secondLastTrigger?.triggerType &&
-        lastTrigger?.action.function_name ===
-            secondLastTrigger?.action.function_name
+        firstTrigger?.triggerType === secondTrigger?.triggerType &&
+        firstTrigger?.action.function_name ===
+            secondTrigger?.action.function_name
     ) {
-        triggerQueue.pop()
+        triggerQueue.shift()
     }
     return triggerQueue
 }

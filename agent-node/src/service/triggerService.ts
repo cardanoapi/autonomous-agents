@@ -1,5 +1,6 @@
 import { ManagerInterface } from './ManagerInterfaceService'
 import { AgentTransactionBuilder } from './transactionBuilder'
+import { triggerHandler } from './TriggerActionHandler'
 
 export interface ActionParameter {
     name: string
@@ -23,7 +24,7 @@ export interface Configuration {
     action: Action
 }
 
-export type TriggerType = 'MANUAL' | 'EVENT' | 'CRON'
+export type TriggerType = 'MANUAL' | 'EVENT' | 'CRON' | ''
 
 function getParameterValue(
     parameters: ActionParameter[] = [],
@@ -35,7 +36,8 @@ function getParameterValue(
 
 export async function triggerAction(
     function_name: string,
-    parameter: ActionParameter[]
+    parameters: ActionParameter[],
+    triggerType: TriggerType
 ): Promise<any> {
     const transactionBuilder = AgentTransactionBuilder.getInstance()
     const managerInterface = ManagerInterface.getInstance()
@@ -51,8 +53,8 @@ export async function triggerAction(
     switch (function_name) {
         case 'transferADA':
             body = transactionBuilder.transferADA(
-                getParameterValue(parameter, 'receiver_address'),
-                getParameterValue(parameter, 'receiving_ada')
+                getParameterValue(parameters, 'receiver_address'),
+                getParameterValue(parameters, 'receiving_ada')
             )
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 console.log('error is : ', err)
@@ -60,7 +62,7 @@ export async function triggerAction(
             })
         case 'stakeDelegation':
             body = transactionBuilder.stakeDelegation(
-                getParameterValue(parameter, 'drep') || 'abstain'
+                getParameterValue(parameters, 'drep') || 'abstain'
             )
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 console.log('error is : ', err)
@@ -68,47 +70,43 @@ export async function triggerAction(
             })
         case 'voteOnProposal':
             body = transactionBuilder.voteOnProposal(
-                getParameterValue(parameter, 'proposal') || '',
-                getParameterValue(parameter, 'anchor_url') || '',
-                getParameterValue(parameter, 'anchor_datahash') || ''
+                getParameterValue(parameters, 'proposal') || '',
+                getParameterValue(parameters, 'anchor_url') || '',
+                getParameterValue(parameters, 'anchor_datahash') || ''
             )
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 if (err && err.message.includes('GovActionsDoNotExist')) {
                     throw new Error('Governance Action Proposal doesnot exist')
                 } else if (err && err.message.includes('VotersDoNotExist')) {
-                    const drepRegisterBody =
-                        transactionBuilder.dRepRegistration()
-                    managerInterface
-                        .buildTx(drepRegisterBody, true)
-                        .then(() => {
-                            return managerInterface
-                                .buildTx(body, true)
-                                .catch((err: Error) => {
-                                    throw err
-                                })
-                        })
-                        .catch((err: Error) => {
-                            console.log('DrepRegisterErrorDuringVote : ', err)
-                            throw err
-                        })
+                    triggerHandler.setTriggerOnQueue(
+                        { function_name: 'dRepRegistration', parameters: [] },
+                        ''
+                    )
+                    triggerHandler.setTriggerOnQueue(
+                        {
+                            function_name: 'voteOnProposal',
+                            parameters: parameters,
+                        },
+                        triggerType
+                    )
                 } else {
                     throw err
                 }
             })
         case 'createInfoGovAction':
             body = transactionBuilder.createInfoGovAction(
-                getParameterValue(parameter, 'anchor_url'),
-                getParameterValue(parameter, 'anchor_datahash')
+                getParameterValue(parameters, 'anchor_url'),
+                getParameterValue(parameters, 'anchor_datahash')
             )
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 throw err
             })
         case 'proposalNewConstitution':
             body = transactionBuilder.proposalNewConstitution(
-                getParameterValue(parameter, 'anchor_url'),
-                getParameterValue(parameter, 'anchor_dataHash'),
-                getParameterValue(parameter, 'newConstitution_url'),
-                getParameterValue(parameter, 'newConstitution_dataHash')
+                getParameterValue(parameters, 'anchor_url'),
+                getParameterValue(parameters, 'anchor_dataHash'),
+                getParameterValue(parameters, 'newConstitution_url'),
+                getParameterValue(parameters, 'newConstitution_dataHash')
             )
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 throw err

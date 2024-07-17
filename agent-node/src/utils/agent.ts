@@ -37,7 +37,9 @@ export const RpcTopicHandler: Record<string, any> = {
             transactions.forEach((tx: any) => {
                 const txHash = Buffer.from(tx.hash, 'utf-8').toString('hex')
                 if (txHash === triggerHandler.txHash) {
-                    console.log('TxHash for action has been matched')
+                    console.log(
+                        'txhash Matched: ClearTimeout and trigger another action'
+                    )
                     triggerHandler.clearTimeoutAndTrigger()
                 }
             })
