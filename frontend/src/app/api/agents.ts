@@ -165,3 +165,14 @@ export const manualTriggerForAgent = async (
         throw error;
     }
 };
+
+export const fetchMyAgent = async (): Promise<IAgent> => {
+    const url = `${baseAPIurl}/my-agent`;
+
+    try {
+        const response = await axios.get(url, { withCredentials: true });
+        return response.data;
+    } catch (error) {
+        throw new Error('Agent Fetch Operation failed: Network Error');
+    }
+};
