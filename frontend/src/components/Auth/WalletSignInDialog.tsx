@@ -10,9 +10,10 @@ import { useAtom } from 'jotai';
 import Cookies from 'js-cookie';
 import { CIP30Provider } from 'kuber-client/types';
 import { OctagonAlert, Wallet } from 'lucide-react';
+import { X } from 'lucide-react';
 
 import { Dialog, DialogContent } from '@app/components/atoms/Dialog';
-import { walletApiAtom } from '@app/store/loaclStore';
+import { walletApiAtom, walletStakeAddressAtom } from '@app/store/localStore';
 import { generateSignedData } from '@app/utils/auth';
 
 import { Button } from '../atoms/Button';
@@ -39,9 +40,18 @@ function listProviders(): CIP30Provider[] {
     return providers.filter((x) => x.name != 'yoroi');
 }
 
-export default function WalletSignInDialog() {
+export default function WalletSignInDialog({
+    refDialogOpen = false,
+    onComplete,
+    onClose
+}: {
+    refDialogOpen?: boolean;
+    onComplete?: any;
+    onClose?: any;
+}) {
     //to do save to atom WalletAPI
     const [, setWalletApi] = useAtom(walletApiAtom);
+    const [, setWalletStakeAddress] = useAtom(walletStakeAddressAtom);
     const [walletProviders, setWalletProviders] = useState<CIP30Provider[]>([]);
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
@@ -53,23 +63,31 @@ export default function WalletSignInDialog() {
         console.log(`Enabling ${wallet.name}`);
         setConnectingWallet(true);
         try {
-            // Wallet connect
             const enabledApi = await wallet.enable();
-            setWalletApi(enabledApi);
-            localStorage.setItem('wallet', wallet.name);
-
-            // Wallet verification / authentication
             const signedData = await generateSignedData(enabledApi);
             console.log(signedData);
-            SendLoginRequest(signedData);
-            if (!disabletoast) {
-                SuccessToast('Wallet Connection Successfull!');
+
+            const response = await SendLoginRequest(signedData);
+            if (response) {
+                onComplete();
+                setConnectingWallet(false);
+                const rewardAddresses = await enabledApi.getRewardAddresses();
+                const walletStakeAddress =
+                    rewardAddresses.length > 0 ? rewardAddresses[0] : null;
+                setWalletApi(enabledApi);
+                setWalletStakeAddress(walletStakeAddress);
+                localStorage.setItem('wallet_provider', wallet.name);
+                walletStakeAddress
+                    ? localStorage.setItem('wallet_stake_address', walletStakeAddress)
+                    : {};
             }
-            setDialogOpen(false);
+            if (!disabletoast) {
+                setDialogOpen(false);
+                SuccessToast('Wallet Connected!');
+            }
         } catch (error: any) {
-            ErrorToast(error.info);
+            ErrorToast('Unable to Sign In. Please try again');
             setConnectingWallet(false);
-            setDialogOpen(true);
             localStorage.removeItem('wallet');
         }
     }
@@ -78,54 +96,53 @@ export default function WalletSignInDialog() {
         const wallets = listProviders();
         setWalletProviders(wallets);
 
-        //Check and enable Wallet if previous Wallet is stored in Local Storage.
-        const currentLocalWallet = localStorage.getItem('wallet');
-        const prev_wallet = wallets.find(
-            (wallet) => wallet.name === currentLocalWallet
-        );
-        if (Cookies.get('access_token') === undefined) {
-            prev_wallet ? enableWallet(prev_wallet, true) : setDialogOpen(true);
-        }
-    }, []);
-    //async function verifyWallet() {
-    //  if (!walletApi) return;
-    // const changeAddress = await walletApi.changeAddress();
-    // const signature = await walletApi.signData(
-    //   changeAddress.to_hex(),
-    //   'hello world'
-    //);
-    //console.log(signature);
-    // }
+        async function enablePrevWallet() {
+            // Check and enable previous session wallet if conditions meet.
+            const storedWalletProvider = localStorage.getItem('wallet_provider');
+            const storedWalletStakeAddress =
+                localStorage.getItem('wallet_stake_address');
+            const accessToken = Cookies.get('access_token');
 
-    {
-        /*
-        function toggleDialog() {
-            dialogOpen ? setDialogOpen(false) : setDialogOpen(true);
+            if (storedWalletProvider && storedWalletStakeAddress && accessToken) {
+                const wallet = wallets.find(
+                    (wallet) => wallet.name === storedWalletProvider
+                );
+                if (wallet) {
+                    const enabledApi = await wallet.enable();
+                    const rewardAddresses = await enabledApi.getRewardAddresses();
+                    const walletStakeAddress =
+                        rewardAddresses.length > 0 ? rewardAddresses[0] : null;
+
+                    if (walletStakeAddress === storedWalletStakeAddress) {
+                        setWalletApi(enabledApi);
+                        setWalletStakeAddress(walletStakeAddress);
+                    }
+                }
+            }
         }
-        */
-    }
+
+        enablePrevWallet();
+    }, []);
 
     const textHiglight = 'text-blue-500';
     return (
         <div>
-            <Dialog open={dialogOpen}>
+            <Dialog open={refDialogOpen || dialogOpen}>
                 <DialogContent
-                    className="max-w-4xl px-8 pb-24 pt-20 focus:outline-none"
+                    className="max-w-4xl px-8 pb-24  focus:outline-none"
                     defaultCross={false}
                 >
                     <div className="flex flex-col gap-y-4 ">
-                        {/*} <div className="mb-4 flex justify-end">
-                            <X
-                                onClick={toggleDialog}
-                                className="hover:cursor-pointer"
-                            />
-                        </div> */}
+                        <div className="mb-4 flex justify-end">
+                            <X onClick={onClose} className="hover:cursor-pointer" />
+                        </div>
                         <div className="mb-4 flex items-center justify-center gap-2">
                             <Wallet size={28} stroke="#2595FCFA" />
                             <span className="text-2xl font-semibold">
                                 {' '}
-                                Connect your{' '}
-                                <span className="text-blue-600">CIP-30</span> Wallet
+                                Select your{' '}
+                                <span className="text-blue-600">CIP-30</span> wallet
+                                provider
                             </span>
                         </div>
                         <div className="flex items-center justify-center gap-x-4">
@@ -163,16 +180,20 @@ export default function WalletSignInDialog() {
                             <Button
                                 variant={'primary'}
                                 size={'lg'}
-                                className="without-focus-visible min-w-56 py-6 text-xl"
+                                className={cn(
+                                    'without-focus-visible min-w-56 py-6 text-xl'
+                                )}
                                 onClick={() => {
                                     if (currentSelectedWalletProvider === null) return;
                                     enableWallet(currentSelectedWalletProvider);
                                 }}
                                 disabled={
-                                    connectingWallet || walletProviders.length === 0
+                                    connectingWallet ||
+                                    walletProviders.length === 0 ||
+                                    currentSelectedWalletProvider === null
                                 }
                             >
-                                {connectingWallet ? 'Connecting...' : 'Connect Wallet'}
+                                {connectingWallet ? 'Connecting...' : 'Use Wallet'}
                             </Button>
                         </div>
                     </div>
