@@ -17,13 +17,17 @@ export default function SideNavLink({ Prop }: { Prop: ISideNavItem }) {
         <Link href={Prop.href}>
             <div
                 className={cn(
-                    'hover-transition-blue flex h-10 items-center rounded px-3 ',
+                    'hover-transition-blue flex h-10 items-center rounded px-3',
                     { 'bg-brand-Blue-100': isActive }
                 )}
             >
-                <Prop.icon
-                    className={cn(isActive ? 'text-brand-Blue-200' : 'text-gray-500')}
-                />
+                <div className="w-[10%]">
+                    <Prop.icon
+                        className={cn(
+                            isActive ? 'text-brand-Blue-200' : 'text-gray-500'
+                        )}
+                    />
+                </div>
                 <div
                     className={cn('h3 pl-4', {
                         'text-brand-Black-100': !isActive,

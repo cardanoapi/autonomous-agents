@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { SendLogoutRequest } from '@api/auth';
 import { PATHS } from '@consts';
@@ -21,6 +22,7 @@ import { walletApiAtom, walletStakeAddressAtom } from '@app/store/localStore';
 import WalletSignInDialog from '../Auth/WalletSignInDialog';
 import { Button } from '../atoms/Button';
 import AgentsIcon from '../icons/AgentsIcon';
+import MyAgentIcon from '../icons/MyAgentIcon';
 import { cn } from '../lib/utils';
 import { SuccessToast } from '../molecules/CustomToasts';
 
@@ -60,6 +62,11 @@ const SideNavItems: ISideNavItem[] = [
         title: 'Logs',
         href: '/logs',
         icon: LogsIcon
+    },
+    {
+        title: 'My Agent',
+        href: '/my-agent',
+        icon: MyAgentIcon
     }
 ];
 
@@ -67,6 +74,8 @@ export default function SideNav() {
     const [walletApi, setWalletApi] = useAtom(walletApiAtom);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [walletStakeAddress, setWalletStakeAddress] = useAtom(walletStakeAddressAtom);
+
+    const router = useRouter();
 
     function toggleDialog() {
         dialogOpen ? setDialogOpen(false) : setDialogOpen(true);
@@ -79,6 +88,7 @@ export default function SideNav() {
         localStorage.removeItem('wallet_stake_address');
         SendLogoutRequest();
         SuccessToast('Wallet Disconnected');
+        router.push('/');
     }
 
     return (
@@ -147,7 +157,7 @@ function CurrentWalletDiv({
                 className
             )}
         >
-            <div className="h3 text-gray-500">Connected Wallet</div>
+            <div className="h3 text-brand-Blue-200">Connected Wallet</div>
             <div>
                 <Typography className="break-all text-xs text-brand-Black-200">
                     {address}
