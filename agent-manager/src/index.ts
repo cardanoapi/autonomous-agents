@@ -17,7 +17,6 @@ const server = app.listen(port, async () => {
 
     setInterval(() => {
         console.log('Connection count:', manager.server.clients.size)
-        manager.broadcast('ping', 'hello from server')
     }, 10000)
 
     blockchain.on('extendBlock', (block) => {

@@ -8,7 +8,7 @@ export class ManagerService {
 
     sendToWebSocket(agentId: string, topic: string, message: any) {
         this.manager.withClient(agentId, (c) => {
-            c.emit(topic, JSON.stringify(message))
+            c.emit(topic, message)
         })
     }
 

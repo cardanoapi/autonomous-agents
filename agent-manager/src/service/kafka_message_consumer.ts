@@ -29,10 +29,7 @@ export async function initKafkaConsumers(manager: AgentManagerRPC) {
             const isActive = managerService.isAgentActive(agentId)
             if (isActive) {
                 const updatedConfigs = await fetchAgentConfiguration(agentId)
-                managerService.sendToWebSocket(agentId, 'Agent_Configs', {
-                    message: 'config_updated',
-                    configurations: updatedConfigs,
-                })
+                managerService.sendToWebSocket(agentId, 'config_updated', updatedConfigs)
             }
         },
     })
@@ -55,7 +52,7 @@ export async function initKafkaConsumers(manager: AgentManagerRPC) {
                         `Due to deletion,Agent with id ${agentId} is disconnected.`
                     )
                 } else {
-                    manager.fireMethod(agentId, method, parameters)
+                    manager.isActive(agentId) && manager.fireMethod(agentId, method, parameters)
                 }
             }
         },
