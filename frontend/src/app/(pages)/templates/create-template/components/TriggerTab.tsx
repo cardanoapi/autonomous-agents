@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Card } from '@app/components/atoms/Card';
 import {
@@ -52,13 +52,15 @@ export default function TriggerTab({
     defaultCron,
     previousSelectedOption,
     previousConfiguredSettings,
-    setTriggerType
+    setTriggerType,
+    setSelectedTab
 }: {
     onChange?: any;
     defaultCron?: any;
     previousSelectedOption?: string;
     previousConfiguredSettings?: any;
     setTriggerType?: any;
+    setSelectedTab?: React.Dispatch<React.SetStateAction<string>>;
 }) {
     const [cron, setCron] = useState<string[]>(
         defaultCron || ['*', '*', '*', '*', '*']
@@ -120,8 +122,12 @@ export default function TriggerTab({
     return (
         <Tabs defaultValue="Cron">
             <TabsList className="mb-4 w-full justify-start gap-6 rounded-none border-b-[1px] pl-0">
-                <TabsTrigger value="Cron">Cron Trigger</TabsTrigger>
-                <TabsTrigger value="Events">Event Trigger</TabsTrigger>
+                <TabsTrigger value="Cron" onClick={() => setSelectedTab('CRON')}>
+                    Cron Trigger
+                </TabsTrigger>
+                <TabsTrigger value="Event" onClick={() => setSelectedTab('EVENT')}>
+                    Event Trigger
+                </TabsTrigger>
             </TabsList>
             <Card className="border-brand-gray-100 min-h-[160px] w-full border-[1px] bg-white p-0 pb-5">
                 <TabsContent value="Cron">
@@ -155,7 +161,7 @@ export default function TriggerTab({
                         </div>
                     </Tabs>
                 </TabsContent>
-                <TabsContent value="Events" className={'p-4'}>
+                <TabsContent value="Event" className={'p-4'}>
                     <div className={'flex flex-row gap-4'}>
                         <span>Vote on all proposal</span>
                         <input
