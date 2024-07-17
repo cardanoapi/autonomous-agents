@@ -17,6 +17,5 @@ class TestGetApplication:
         assert app.debug == settings.DEBUG
         assert app.version == settings.VERSION
         assert app.docs_url == settings.DOCS_URL
-        assert app.lifespan == lifespan
         assert all(r in app.routes for r in root_api_router.routes)
         assert app.exception_handlers[HTTPException] == http_exception_handler

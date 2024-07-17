@@ -26,7 +26,7 @@ class TestCreateTrigger:
             type="CRON",
             action={
                 "function_name": "SendAda Token",
-                "parameter": [
+                "parameters": [
                     {
                         "name": "Receiver Address",
                         "value": "addr_test1qpxsqwr4lp7zrwcj5mjpzvmrlzry3makw5uve6ddhrzrm9q7epr775ukm23hed7jdy3vhme05dcy78x8suaqd0e73sgq4h298e",
@@ -41,7 +41,7 @@ class TestCreateTrigger:
             type="CRON",
             action={
                 "function_name": "SendAda Token",
-                "parameter": [
+                "parameters": [
                     {
                         "name": "Receiver Address",
                         "value": "addr_test1qpxsqwr4lp7zrwcj5mjpzvmrlzry3makw5uve6ddhrzrm9q7epr775ukm23hed7jdy3vhme05dcy78x8suaqd0e73sgq4h298e",
@@ -65,14 +65,14 @@ class TestCreateTrigger:
             id = "trigger_id"
             agent_id = "agent_id"
             valid_cron_trigger_data = TriggerCreateDTO(
-                action={"function_name": "string", "parameter": ["string"]},
+                action={"function_name": "string", "parameters": ["string"]},
                 data={"frequency": "* * * * *", "probability": 0.5},
             )
             updated_data = TriggerResponse(
                 id=id,
                 agent_id=agent_id,
                 type="CRON",
-                action={"function_name": "string", "parameter": ["string"]},
+                action={"function_name": "string", "parameters": ["string"]},
                 data={"frequency": "* * * * *", "probability": 0.5},
             )
 

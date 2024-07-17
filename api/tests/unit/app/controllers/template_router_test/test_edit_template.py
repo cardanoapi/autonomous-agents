@@ -31,7 +31,7 @@ class TestEditTrigger:
                     "type": "CRON",
                     "action": {
                         "function_name": "SendAda Token",
-                        "parameter": [
+                        "parameters": [
                             {
                                 "name": "Receiver Address",
                                 "value": "addr_test1qpxsqwr4lp7zrwcj5mjpzvmrlzry3makw5uve6ddhrzrm9q7epr775ukm23hed7jdy3vhme05dcy78x8suaqd0e73sgq4h298e",
