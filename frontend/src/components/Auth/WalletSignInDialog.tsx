@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { SendLoginRequest } from '@api/auth';
 import { useAtom } from 'jotai';
@@ -55,6 +56,8 @@ export default function WalletSignInDialog({
     const [walletProviders, setWalletProviders] = useState<CIP30Provider[]>([]);
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
+    const router = useRouter();
+
     const [currentSelectedWalletProvider, setCurrentSelectedWalletProvider] =
         useState<CIP30Provider | null>(null);
     const [connectingWallet, setConnectingWallet] = useState<boolean>(false);
@@ -80,6 +83,7 @@ export default function WalletSignInDialog({
                 walletStakeAddress
                     ? localStorage.setItem('wallet_stake_address', walletStakeAddress)
                     : {};
+                router.push('/');
             }
             if (!disabletoast) {
                 setDialogOpen(false);
