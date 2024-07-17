@@ -109,7 +109,7 @@ export const MapFunctionNameAndViewName: Record<string, string> = {
 
 export const AgentFunctions = [
     {
-        function_name: 'transferAda',
+        function_name: 'transferADA',
         name: 'Transfer Ada',
         parameters: [
             {

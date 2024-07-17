@@ -16,7 +16,7 @@ const AgentFunctionsDetailComponent = ({
 }: {
     agentConfigurations?: Array<IAgentConfiguration>;
     isEditing?: boolean;
-    onClickSave?: (...args: any) => void;
+    onClickSave?: (agentConfig: IAgentConfiguration, index: number) => void;
     onClickDelete?: (configIndex: number) => void;
 }) => {
     const [openDialog, setOpenDialog] = useState(false);

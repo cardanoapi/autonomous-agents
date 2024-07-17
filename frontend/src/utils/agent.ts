@@ -1,4 +1,5 @@
 import { IAgent } from '@api/agents';
+import { IParameter } from '@api/functions';
 import { AGENT_TRIGGER } from '@consts';
 import { AgentTriggerFunctionType, IAgentTrigger } from '@models/types';
 
@@ -29,5 +30,44 @@ export function getConfiguredAgentTrigger(
 
         default:
             return { ...trigger, parameters: [] };
+    }
+}
+
+export function validateInputFieldForGroup(param: IParameter) {
+    if (!param.parameters?.length) {
+        return false;
+    }
+    if (param.optional) {
+        const isAnyFieldFilled =
+            param.parameters?.some(
+                (param) =>
+                    param.value !== '' &&
+                    param.value !== undefined &&
+                    param.value !== null
+            ) || false;
+        if (isAnyFieldFilled) {
+            return param.parameters.every((param: IParameter) => {
+                if (!param.optional) {
+                    return (
+                        param.value !== '' &&
+                        param.value !== undefined &&
+                        param.value !== null
+                    );
+                }
+                return true;
+            });
+        }
+        return true;
+    } else {
+        return param.parameters.every((param: IParameter) => {
+            if (!param.optional) {
+                return (
+                    param.value !== '' &&
+                    param.value !== undefined &&
+                    param.value !== null
+                );
+            }
+            return true;
+        });
     }
 }

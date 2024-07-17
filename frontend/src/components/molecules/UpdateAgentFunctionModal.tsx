@@ -97,13 +97,13 @@ const UpdateAgentFunctionModal = ({
                     <span className={'font-medium'}>Function Name</span>
                     <CustomCombobox
                         defaultValue={
-                            agentConfig?.action?.function_name || 'SendAda Token'
+                            agentConfig?.action?.function_name || 'transferADA'
                         }
                         itemsList={filteredAgentFunctions}
                         onSelect={(function_name: string) => {
                             const parameter =
                                 AGENT_TRIGGER[function_name as AgentTriggerFunctionType]
-                                    .parameters;
+                                    ?.parameters;
                             const filteredParams = parameter?.map((param) => ({
                                 name: param.name,
                                 description: param.description,

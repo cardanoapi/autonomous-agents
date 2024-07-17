@@ -8,6 +8,7 @@ export interface IParameter {
     optional: boolean;
     data_type: string;
     value?: any;
+    parameters?: IParameter[];
 }
 
 export interface IFunction {

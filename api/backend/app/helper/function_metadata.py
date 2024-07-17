@@ -3,23 +3,7 @@ from typing import List
 from pydantic import BaseModel
 
 functions_metadata = {
-    "DeRegistration": [
-        {
-            "name": "Drep deRegistration",
-            "function_name": "dRepDeRegistration",
-            "num_parameters": 0,
-            "parameters": [],
-            "description": "This will retire you as Decentralized Representative (DRep) on the Cardano network.",
-        },
-        {
-            "name": "Stake deRegistration",
-            "function_name": "stakeDeRegistration",
-            "num_parameters": 0,
-            "parameters": [],
-            "description": "This will halt any further accumulation of staking rewards from the moment of deregistration.",
-        },
-    ],
-    "Registration": [
+    "DRep": [
         {
             "function_name": "dRepRegistration",
             "name": "Drep Registration",
@@ -28,11 +12,27 @@ functions_metadata = {
             "description": "This will register you as Decentralized Representative (DRep) on the Cardano network.",
         },
         {
+            "name": "Drep deRegistration",
+            "function_name": "dRepDeRegistration",
+            "num_parameters": 0,
+            "parameters": [],
+            "description": "This will retire you as Decentralized Representative (DRep) on the Cardano network.",
+        },
+    ],
+    "Stake": [
+        {
             "name": "Stake Registration",
             "function_name": "registerStake",
             "num_parameters": 0,
             "parameters": [],
             "description": "This will register you as Stake Pool Operator on the Cardano network.",
+        },
+        {
+            "name": "Stake deRegistration",
+            "function_name": "stakeDeRegistration",
+            "num_parameters": 0,
+            "parameters": [],
+            "description": "This will halt any further accumulation of staking rewards from the moment of deregistration.",
         },
     ],
     "Delegation": [
@@ -89,16 +89,24 @@ functions_metadata = {
                     "data_type": "proposal",
                 },
                 {
-                    "name": "anchor_url",
-                    "description": "Anchor Url",
-                    "optional": True,
-                    "data_type": "url",
-                },
-                {
-                    "name": "anchor_dataHash",
-                    "description": "Anchor Data Hash",
-                    "optional": True,
-                    "data_type": "hash",
+                    "name": "anchor",
+                    "data_type": "group",
+                    "optional": False,
+                    "description": "Anchor",
+                    "parameters": [
+                        {
+                            "name": "anchor_url",
+                            "description": "Url",
+                            "optional": False,
+                            "data_type": "url",
+                        },
+                        {
+                            "name": "anchor_dataHash",
+                            "description": "Data Hash",
+                            "optional": False,
+                            "data_type": "hash",
+                        },
+                    ],
                 },
             ],
             "description": "Cast your vote on active governance proposals to influence key decisions within the Cardano "
@@ -112,28 +120,44 @@ functions_metadata = {
             "num_parameters": 4,
             "parameters": [
                 {
-                    "name": "anchor_url",
-                    "description": "Anchor Url",
+                    "name": "anchor",
+                    "data_type": "group",
                     "optional": False,
-                    "data_type": "url",
+                    "description": "Anchor",
+                    "parameters": [
+                        {
+                            "name": "anchor_url",
+                            "description": "Url",
+                            "optional": False,
+                            "data_type": "url",
+                        },
+                        {
+                            "name": "anchor_dataHash",
+                            "description": "Data Hash",
+                            "optional": False,
+                            "data_type": "hash",
+                        },
+                    ],
                 },
                 {
-                    "name": "anchor_dataHash",
-                    "description": "Anchor Data Hash",
+                    "name": "newConstitution",
+                    "data_type": "group",
                     "optional": False,
-                    "data_type": "hex",
-                },
-                {
-                    "name": "newConstitution_url",
-                    "description": "New Constitution Url",
-                    "optional": False,
-                    "data_type": "url",
-                },
-                {
-                    "name": "newConstitution_dataHash",
-                    "description": "New Constitution Data Hash",
-                    "optional": False,
-                    "data_type": "hex",
+                    "description": "New Constitution",
+                    "parameters": [
+                        {
+                            "name": "newConstitution_url",
+                            "description": "Url",
+                            "optional": False,
+                            "data_type": "url",
+                        },
+                        {
+                            "name": "newConstitution_dataHash",
+                            "description": "Data Hash",
+                            "optional": False,
+                            "data_type": "hash",
+                        },
+                    ],
                 },
             ],
             "description": "Submit a new constitution for the Cardano network. Outline fundamental principles and "
@@ -145,16 +169,24 @@ functions_metadata = {
             "num_parameters": 2,
             "parameters": [
                 {
-                    "name": "anchor_url",
-                    "description": "Anchor Url",
+                    "name": "anchor",
+                    "data_type": "group",
                     "optional": False,
-                    "data_type": "url",
-                },
-                {
-                    "name": "anchor_dataHash",
-                    "description": "Anchor Data Hash",
-                    "optional": False,
-                    "data_type": "url",
+                    "description": "Anchor",
+                    "parameters": [
+                        {
+                            "name": "anchor_url",
+                            "description": "Url",
+                            "optional": False,
+                            "data_type": "url",
+                        },
+                        {
+                            "name": "anchor_dataHash",
+                            "description": "Data Hash",
+                            "optional": False,
+                            "data_type": "hash",
+                        },
+                    ],
                 },
             ],
             "description": "Submit a proposal to share crucial information or updates with the Cardano community to drive"
