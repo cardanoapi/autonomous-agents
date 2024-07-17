@@ -62,6 +62,6 @@ class AgentRouter(Routable):
         await self.agent_service.trigger_agent_action(agent_id, action)
 
     @get("/my-agent", response_model=AgentResponseWithWalletDetails)
-    async def get_agent(self, user: dict = Depends(verify_cookie)):
+    async def get_my_agent(self, user: dict = Depends(verify_cookie)):
         agent = await self.agent_service.get_agent_by_user_address(user.address)
         return agent
