@@ -11,14 +11,10 @@ export function isAgentActive({ last_active }: IAgent): boolean {
     return diffInSeconds <= 33;
 }
 
-interface ConfiguredAgentTrigger extends Omit<IAgentTrigger, 'parameters'> {
-    parameter: IParameter[];
-}
-
 export function getConfiguredAgentTrigger(
     func: AgentTriggerFunctionType,
     value: string
-): ConfiguredAgentTrigger {
+): IAgentTrigger {
     const trigger = AGENT_TRIGGER[func];
 
     if (!trigger) {
@@ -26,13 +22,52 @@ export function getConfiguredAgentTrigger(
     }
 
     switch (func) {
-        case 'Delegation':
-            return { ...trigger, parameter: [{ ...trigger.parameter[0], value }] };
+        case 'stakeDelegation':
+            return { ...trigger, parameters: [{ ...trigger.parameters[0], value }] };
 
-        case 'Vote':
-            return { ...trigger, parameter: [{ ...trigger.parameter[0], value }] };
+        case 'voteOnProposal':
+            return { ...trigger, parameters: [{ ...trigger.parameters[0], value }] };
 
         default:
-            return { ...trigger, parameter: [] };
+            return { ...trigger, parameters: [] };
+    }
+}
+
+export function validateInputFieldForGroup(param: IParameter) {
+    if (!param.parameters?.length) {
+        return false;
+    }
+    if (param.optional) {
+        const isAnyFieldFilled =
+            param.parameters?.some(
+                (param) =>
+                    param.value !== '' &&
+                    param.value !== undefined &&
+                    param.value !== null
+            ) || false;
+        if (isAnyFieldFilled) {
+            return param.parameters.every((param: IParameter) => {
+                if (!param.optional) {
+                    return (
+                        param.value !== '' &&
+                        param.value !== undefined &&
+                        param.value !== null
+                    );
+                }
+                return true;
+            });
+        }
+        return true;
+    } else {
+        return param.parameters.every((param: IParameter) => {
+            if (!param.optional) {
+                return (
+                    param.value !== '' &&
+                    param.value !== undefined &&
+                    param.value !== null
+                );
+            }
+            return true;
+        });
     }
 }

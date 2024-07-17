@@ -37,10 +37,10 @@ const UpdateTemplateFunctionModal = ({
     const [localTemplateActionConfigurations, setLocalTemplateActionConfigurations] =
         useState<{
             function_name: string;
-            parameter: Array<{ name: string; value: string }>;
+            parameters: Array<{ name: string; value: string }>;
         }>({
             function_name: '',
-            parameter: []
+            parameters: []
         });
 
     useEffect(() => {
@@ -54,12 +54,12 @@ const UpdateTemplateFunctionModal = ({
     );
 
     const handleInputParamsChange = (value: string, index: number) => {
-        localTemplateActionConfigurations.parameter[index].value = value;
+        localTemplateActionConfigurations.parameters[index].value = value;
         setLocalTemplateActionConfigurations({ ...localTemplateActionConfigurations });
     };
 
     const handleClickSave = () => {
-        const filteredParams = localTemplateActionConfigurations.parameter.map(
+        const filteredParams = localTemplateActionConfigurations.parameters.map(
             (param) => ({
                 name: param.name,
                 value: param.value
@@ -72,7 +72,7 @@ const UpdateTemplateFunctionModal = ({
                     action: {
                         ...templateConfig?.action,
                         function_name: localTemplateActionConfigurations.function_name,
-                        parameter: filteredParams
+                        parameters: filteredParams
                     },
                     data: {
                         ...(templateConfig?.data as ICronTrigger),
@@ -107,14 +107,14 @@ const UpdateTemplateFunctionModal = ({
                         onSelect={(function_name: string) => {
                             const parameter =
                                 AGENT_TRIGGER[function_name as AgentTriggerFunctionType]
-                                    ?.parameter;
+                                    ?.parameters;
                             const filteredParams = parameter?.map((param) => ({
                                 name: param.name,
                                 value: ''
                             }));
                             setLocalTemplateActionConfigurations({
                                 function_name,
-                                parameter: filteredParams
+                                parameters: filteredParams || []
                             });
                         }}
                     />
@@ -122,7 +122,7 @@ const UpdateTemplateFunctionModal = ({
                 <div className={'flex flex-col gap-1'}>
                     <span className={'font-medium'}>Parameters</span>
                     <div className={'grid grid-cols-2 gap-2'}>
-                        {localTemplateActionConfigurations?.parameter?.map(
+                        {localTemplateActionConfigurations?.parameters?.map(
                             (param, index) => {
                                 return (
                                     <div

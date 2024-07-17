@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Any
 
 from classy_fastapi import get, Routable
 from fastapi import APIRouter
@@ -16,7 +16,7 @@ class AgentFunctionDetailRouter(Routable):
         super().__init__(*args, **kwargs)
         self.agent_service = agent_service
 
-    @get("/functions", response_model=List)
+    @get("/functions", response_model=dict[str, Any])
     async def get_all_functions(self):
         return functions_metadata
 

@@ -1,11 +1,11 @@
 export type AgentTriggerFunctionType =
-    | 'Delegation'
-    | 'Vote'
-    | 'SendAda Token'
-    | 'Proposal New Constitution'
-    | 'Info Action Proposal';
+    | 'voteOnProposal'
+    | 'transferADA'
+    | 'stakeDelegation'
+    | 'createInfoGovAction'
+    | 'proposalNewConstitution';
 
-interface IParamater {
+interface IParameter {
     name: string;
     description: string;
     optional: boolean;
@@ -14,6 +14,5 @@ interface IParamater {
 }
 export interface IAgentTrigger {
     function_name: AgentTriggerFunctionType;
-    parameters?: IParamater[];
-    parameter: IParamater[];
+    parameters: IParameter[];
 }

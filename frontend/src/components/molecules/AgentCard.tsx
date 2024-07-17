@@ -25,9 +25,9 @@ import { ErrorToast, SuccessToast } from './CustomToasts';
 
 export interface IAgentCard {
     agentName: string;
-    agentID: string;
+    agentID?: string;
     agentRole: string;
-    templateID: string;
+    templateID?: string;
     functionCount: number;
     lastActive: string | number;
     totalTrigger: number;
@@ -48,27 +48,27 @@ export default function AgentCard({
 
     const { data: template } = useQuery<ITemplate>({
         queryKey: [`template${templateID}`],
-        queryFn: () => fetchTemplatebyID(templateID)
+        queryFn: () => fetchTemplatebyID(templateID || '')
     });
 
     const { data: currentagent } = useQuery<IAgent>({
         queryKey: [`agent${agentID}`],
-        queryFn: () => fetchAgentbyID(agentID)
+        queryFn: () => fetchAgentbyID(agentID || '')
     });
 
     const { data: templateTriggers = [] } = useQuery<ITrigger[]>({
         queryKey: [`triggers${templateID}`],
-        queryFn: () => fetchtriggersbyTemplateID(templateID)
+        queryFn: () => fetchtriggersbyTemplateID(templateID || '')
     });
 
     const { data: successfullTransactions = {} } = useQuery<{ string: string }[]>({
         queryKey: [`sucessfullTransactions${agentID}`],
-        queryFn: () => fetchSuccessfullTriggersbyAgentID(agentID)
+        queryFn: () => fetchSuccessfullTriggersbyAgentID(agentID || '')
     });
 
     const { data: unsuccessfullTransactions = {} } = useQuery({
         queryKey: [`unsucessfullTransactions${agentID}`],
-        queryFn: () => fetchUnSuccessfullTriggersbyAgentID(agentID)
+        queryFn: () => fetchUnSuccessfullTriggersbyAgentID(agentID || '')
     });
 
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -200,7 +200,7 @@ export default function AgentCard({
                 </div>
             </Card>
             <Dialog open={dialogOpen}>
-                <DialogContent defaultCross={false} disableBG={true}>
+                <DialogContent defaultCross={true} disableBG={false}>
                     <ConfirmationBox
                         title="Confirm Delete"
                         msg="Are you sure you want to delete this Agent? This process cannot be undone !"
@@ -211,7 +211,7 @@ export default function AgentCard({
                             setDialogOpen(false);
                         }}
                         onAccept={() => {
-                            deleteAgentMutation.mutateAsync(agentID);
+                            deleteAgentMutation.mutateAsync(agentID || '');
                         }}
                     />
                 </DialogContent>

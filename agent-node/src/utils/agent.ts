@@ -21,7 +21,7 @@ export function checkIfAgentWithTriggerTypeExists(
 export function createActionDtoForEventTrigger(tx: any, index: number): Action {
     return {
         function_name: globalState.eventTriggerTypeDetails.function_name,
-        parameter: [
+        parameters: [
             {
                 name: 'proposal',
                 value: `${Buffer.from(tx.hash, 'utf-8').toString('hex')}#${index}`,
@@ -33,6 +33,14 @@ export function createActionDtoForEventTrigger(tx: any, index: number): Action {
 export const RpcTopicHandler: Record<string, any> = {
     extend_block: (block: any) => {
         const transactions = parseRawBlockBody(block.body)
+        transactions.length &&
+            transactions.forEach((tx: any) => {
+                const txHash = Buffer.from(tx.hash, 'utf-8').toString('hex')
+                if (txHash === triggerHandler.txHash) {
+                    console.log('TxHash for action has been matched')
+                    triggerHandler.clearTimeoutAndTrigger()
+                }
+            })
         if (
             globalState.eventTriggerTypeDetails.eventType &&
             transactions.length
@@ -41,7 +49,7 @@ export const RpcTopicHandler: Record<string, any> = {
                 if (Array.isArray(tx.body.proposalProcedures)) {
                     tx.body.proposalProcedures.forEach(
                         (proposal: any, index: number) => {
-                            triggerHandler.triggerAndLogAction(
+                            triggerHandler.setTriggerOnQueue(
                                 createActionDtoForEventTrigger(tx, index),
                                 'EVENT'
                             )

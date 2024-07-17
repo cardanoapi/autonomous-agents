@@ -8,9 +8,11 @@ export interface IParameter {
     optional: boolean;
     data_type: string;
     value?: any;
+    parameters?: IParameter[];
 }
 
 export interface IFunction {
+    name: string;
     function_name: string;
     num_parameters?: number;
     parameters?: IParameter[];
@@ -25,7 +27,7 @@ export interface IFunctionParameter {
     value: number;
 }
 
-export const fetchFunctions = async (): Promise<IFunction[]> => {
+export const fetchFunctions = async (): Promise<Record<string, IFunction[]>> => {
     const res = await fetch(`${baseAPIurl}/agents/functions`);
     if (!res.ok) {
         throw new Error('Agents Fetch Operation failed: Network Error');

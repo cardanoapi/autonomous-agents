@@ -26,7 +26,7 @@ export default function ConfirmationBox({
     onClose?: any;
 }) {
     return (
-        <Card className={cn('flex w-full gap-y-4 !p-0', className)}>
+        <Card className={cn('flex w-full gap-y-4 !p-0 shadow-none', className)}>
             <div className="flex w-full items-start justify-between">
                 <div className="flex items-start gap-x-2 font-medium">
                     {showDangerIcon && <CircleAlert fill="#D04D52" stroke="#fff" />}

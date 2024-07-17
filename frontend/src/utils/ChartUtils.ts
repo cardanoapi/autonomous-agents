@@ -1,4 +1,4 @@
-import { ILineChartData } from '@app/components/molecules/chart/CustomLineChart';
+import { ILineChartData } from '@app/components/Chart/CustomLineChart';
 
 export function formatArrayIntoChartData(li: number[]): ILineChartData[] {
     const formatedData: ILineChartData[] = li.map((item, index) => ({

@@ -70,7 +70,7 @@ export default function TemplateForm() {
 
     /*Related to Function Options*/
     const functionRef = useRef<any>(null);
-    const { data: functions } = useQuery<IFunction[]>({
+    const { data: functions } = useQuery<Record<string, IFunction[]>>({
         queryKey: ['functions'],
         queryFn: fetchFunctions
     });
@@ -100,11 +100,12 @@ export default function TemplateForm() {
     useEffect(() => {
         if (functions) {
             setFunctionOptions(
-                functions
+                Object.values(functions)
+                    .flat()
                     .filter((item: IFunction): any => item.num_parameters != 0)
                     .map((item: IFunction): any => ({
-                        label: item.function_name,
-                        value: item.function_name,
+                        label: item.name,
+                        value: item.name,
                         parameters: item.parameters
                     }))
             );
@@ -251,7 +252,7 @@ export default function TemplateForm() {
                 </Form>
             </Card>
             <Dialog open={isOpen}>
-                <DialogContent className="!p-0" defaultCross={false}>
+                <DialogContent className="!p-0" defaultCross={true}>
                     <TriggerForm
                         //@ts-ignore
                         formValues={selected.find((elem) => elem === currentDialogForm)}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { useMutation } from '@tanstack/react-query';
+import { validateInputFieldForGroup } from '@utils';
 
 import { manualTriggerForAgent } from '@app/app/api/agents';
 import { IFunction, IParameter } from '@app/app/api/functions';
@@ -30,27 +31,34 @@ const AgentManualTriggerModalView = ({
         onSuccess: () => {
             queryClient.refetchQueries({ queryKey: ['agents'] });
             // router.push('/agents');
-            SuccessToast(
-                `${agentFunction.function_name} has been successfully triggered.`
-            );
+            SuccessToast(`${agentFunction.name} has been successfully triggered.`);
             closeModal();
         },
         onError: () => {
             console.log('Error Response');
-            // setSubmittingForm(false);
             ErrorToast('Error while manually triggering Agent Function. Try Again!');
         }
     });
     const handleTrigger = async () => {
         if (agentFunction.num_parameters) {
             const isError = validateInputField();
-            if (isError) return;
+            if (isError) {
+                return;
+            }
         }
+        const updatedParams = params
+            .map((param) => {
+                if (param.data_type === 'group') {
+                    return param.parameters;
+                }
+                return param;
+            })
+            .flat();
         await agentMutation.mutateAsync({
             agentId,
             agentFunction: {
                 function_name: agentFunction.function_name,
-                parameter: params
+                parameters: updatedParams
             }
         });
     };
@@ -59,7 +67,10 @@ const AgentManualTriggerModalView = ({
         let isError = false;
         const errIndex: Array<number> = [];
         params.map((param: IParameter, index: number) => {
-            if (!param.optional && !param.value) {
+            if (param.data_type === 'group') {
+                errIndex.push(index);
+                isError = !validateInputFieldForGroup(param);
+            } else if (!param.optional && !param.value) {
                 errIndex.push(index);
                 isError = true;
             }
@@ -69,12 +80,24 @@ const AgentManualTriggerModalView = ({
     }
 
     const handleInputChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
-        index: number
+        value: string,
+        index: number,
+        isGroupParams: boolean = false,
+        groupIndex: number = 0
     ) => {
-        e.preventDefault();
         const updatedParams = [...params];
-        updatedParams[index] = { ...updatedParams[index], value: e.target.value };
+        if (isGroupParams && updatedParams.length) {
+            const group = updatedParams[groupIndex];
+            if (group && group.parameters && group.parameters[index]) {
+                group.parameters[index] = {
+                    ...group.parameters[index],
+                    value
+                };
+            }
+            updatedParams[groupIndex] = group;
+        } else {
+            updatedParams[index] = { ...updatedParams[index], value };
+        }
         setParams(updatedParams);
         const newErrorIndex = errorParamIndex.filter(
             (errIndex: number) => errIndex != index
@@ -87,9 +110,7 @@ const AgentManualTriggerModalView = ({
             <span className={'px-5 py-2 text-base font-medium'}>Manual Trigger</span>
             <Separator />
             <div className={'flex flex-col gap-2 px-5 py-4'}>
-                <span className={'text-lg '}>
-                    {agentFunction.function_name} Function
-                </span>
+                <span className={'text-lg '}>{agentFunction.name} Function</span>
                 <span className={'text-sm text-brand-Black-300/80'}>
                     {agentFunction.description}
                 </span>
@@ -98,7 +119,7 @@ const AgentManualTriggerModalView = ({
                     agentFunction.parameters.length ? (
                         agentFunction.parameters.map(
                             (param: IParameter, index: number) => {
-                                return (
+                                return param.data_type !== 'group' ? (
                                     <div key={index} className={'flex flex-col gap-1'}>
                                         <span>
                                             {param.description}{' '}
@@ -117,7 +138,7 @@ const AgentManualTriggerModalView = ({
                                         <Input
                                             value={params[index].value}
                                             onChange={(e) =>
-                                                handleInputChange(e, index)
+                                                handleInputChange(e.target.value, index)
                                             }
                                         />
                                         {errorParamIndex.length &&
@@ -129,6 +150,22 @@ const AgentManualTriggerModalView = ({
                                             <></>
                                         )}
                                     </div>
+                                ) : (
+                                    <GroupParams
+                                        isError={errorParamIndex.includes(index)}
+                                        param={param}
+                                        handleOnChange={(
+                                            groupParamVal: string,
+                                            groupParamIndex: number
+                                        ) => {
+                                            handleInputChange(
+                                                groupParamVal,
+                                                groupParamIndex,
+                                                true,
+                                                index
+                                            );
+                                        }}
+                                    />
                                 );
                             }
                         )
@@ -144,6 +181,104 @@ const AgentManualTriggerModalView = ({
                         Trigger
                     </Button>
                 </div>
+            </div>
+        </div>
+    );
+};
+
+const GroupParams = ({
+    isError,
+    param,
+    handleOnChange
+}: {
+    isError: boolean;
+    param: IParameter;
+    handleOnChange: (val: string, index: number) => void;
+}) => {
+    const [parameter, setParameter] = useState(param);
+
+    function checkForErrMsg(index: number) {
+        if (parameter.optional) {
+            return (
+                checkIfParameterIsRequired(index) && !parameter.parameters![index].value
+            );
+        }
+        return (
+            checkIfParameterIsRequired(index) &&
+            !parameter.parameters![index].value &&
+            isError
+        );
+    }
+
+    function checkIfParameterIsRequired(index: number) {
+        if (parameter.optional) {
+            const isAnyFieldFilled =
+                parameter.parameters?.some(
+                    (param) =>
+                        param.value !== '' &&
+                        param.value !== undefined &&
+                        param.value !== null
+                ) || false;
+            return isAnyFieldFilled ? !parameter.parameters![index].optional : false;
+        } else {
+            return !parameter.parameters![index].optional;
+        }
+    }
+
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement>,
+        index: number
+    ) => {
+        const updatedParam = { ...parameter };
+        updatedParam.parameters![index] = {
+            ...parameter.parameters![index],
+            value: e.target.value
+        };
+        setParameter({ ...updatedParam });
+        handleOnChange(e.target.value, index);
+    };
+    return (
+        <div className={'flex flex-col'}>
+            <span>
+                {parameter.description}{' '}
+                {parameter.optional ? (
+                    <></>
+                ) : (
+                    <span className={'text-lg text-red-500'}>*</span>
+                )}
+            </span>
+            <div className={'flex flex-row gap-4'}>
+                {parameter.parameters?.length &&
+                    parameter.parameters?.map((param, index) => {
+                        return (
+                            <div
+                                key={`${param.name}-${index}`}
+                                className={'flex flex-col gap-1'}
+                            >
+                                <div
+                                    className={
+                                        'flex flex-row items-start gap-1 text-sm'
+                                    }
+                                >
+                                    {param.description}{' '}
+                                    {checkIfParameterIsRequired(index) ? (
+                                        <span className={'text-red-500'}>*</span>
+                                    ) : (
+                                        <></>
+                                    )}
+                                </div>
+                                <Input
+                                    value={parameter.parameters![index].value}
+                                    onChange={(e) => handleInputChange(e, index)}
+                                />
+                                {checkForErrMsg(index) && (
+                                    <span className={'text-xs text-red-500'}>
+                                        This field is required.
+                                    </span>
+                                )}
+                            </div>
+                        );
+                    })}
             </div>
         </div>
     );

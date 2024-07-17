@@ -22,7 +22,7 @@ class EventTriggerDTO(BaseModel):
 
 class Action(BaseModel):
     function_name: str
-    parameter: list[SubParameter]
+    parameters: list[SubParameter]
 
 
 class TriggerCreateDTO(BaseModel):

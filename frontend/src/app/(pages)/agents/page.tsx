@@ -95,19 +95,23 @@ export default function AgentsPage() {
                 <SkeletonLoadingForAgentsPage />
             ) : (
                 <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6">
-                    {filteredAgents.map((agent: IAgent, index) => (
-                        <AgentCard
-                            agentName={agent?.name || 'NA'}
-                            agentID={agent?.id}
-                            agentRole={'null'}
-                            templateID={agent?.template_id}
-                            totalTrigger={0}
-                            lastActive={agent?.last_active || 'NA'}
-                            functionCount={0}
-                            key={index}
-                            refetchData={refetch}
-                        />
-                    ))}
+                    {Array.isArray(filteredAgents) && filteredAgents.length ? (
+                        filteredAgents.map((agent: IAgent, index) => (
+                            <AgentCard
+                                agentName={agent?.name || 'NA'}
+                                agentID={agent?.id || ''}
+                                agentRole={'null'}
+                                templateID={agent?.template_id || ''}
+                                totalTrigger={0}
+                                lastActive={agent?.last_active || 'NA'}
+                                functionCount={0}
+                                key={index}
+                                refetchData={refetch}
+                            />
+                        ))
+                    ) : (
+                        <span>No Agents Found.</span>
+                    )}
                 </div>
             )}
         </>

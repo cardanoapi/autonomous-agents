@@ -14,7 +14,7 @@ export default function AgentsDelegationDialogContent({
             title="Delegate to DRep"
             description="Select agents for delegation."
             handleClose={handleClose}
-            triggerType={'Delegation'}
+            triggerType={'stakeDelegation'}
             functionId={dRepId}
         />
     );

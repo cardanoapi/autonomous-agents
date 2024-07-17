@@ -96,7 +96,6 @@ export class AgentTransactionBuilder {
                         dataHash: newConstitutionDataHash,
                     },
                     refundAccount: rewardAddress,
-                    deposit: 50000000000,
                 },
             ],
         }
@@ -113,9 +112,27 @@ export class AgentTransactionBuilder {
         }
         return this.kuber.signTx(req, this.agentWalletDetails.stake_signing_key)
     }
+
+    stakeDeRegistration() {
+        const req = {
+            inputs: this.agentWalletDetails.agent_address,
+            outputs: {
+                address: this.agentWalletDetails.agent_address,
+                value: '10A',
+                addChange: true,
+            },
+            certificates: [
+                Kuber.generateCert(
+                    'deregisterstake',
+                    this.agentWalletDetails.stake_verification_key_hash
+                ),
+            ],
+        }
+        return this.kuber.signTx(req, this.agentWalletDetails.stake_signing_key)
+    }
+
     createInfoGovAction(anchorUrl?: string, anchorDataHash?: string) {
         const infoProposal = {
-            deposit: 50000000000,
             refundAccount: {
                 network: 'Testnet',
                 credential: {
@@ -154,7 +171,7 @@ export class AgentTransactionBuilder {
         return this.kuber.signTx(req, this.agentWalletDetails.stake_signing_key)
     }
 
-    abstainDelegations() {
+    abstainDelegation() {
         const req = {
             certificates: [
                 Kuber.generateCert(

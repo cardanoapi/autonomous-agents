@@ -15,7 +15,7 @@ Resources:
 
 """
 
-from backend.app.asgi import get_application
+from backend.app.asgi import get_application, get_test_application
 
 
-__all__ = ("get_application",)
+__all__ = ("get_application", "get_test_application")

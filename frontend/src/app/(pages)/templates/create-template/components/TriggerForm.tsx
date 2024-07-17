@@ -46,6 +46,7 @@ export default function TriggerForm({
     );
     const [probability, setProbability] = useState<string>('100');
     const [triggerType, setTriggerType] = useState('CRON');
+    const [selectedTab, setSelectedTab] = useState('CRON');
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -69,7 +70,7 @@ export default function TriggerForm({
             setCronParameters([newParam]);
             return;
         }
-        const newParameters: IParameter[] = cronParameters.filter(
+        const newParameters: IParameter[] = cronParameters?.filter(
             (item) => item.name !== name
         );
         newParameters.push(newParam);
@@ -87,7 +88,7 @@ export default function TriggerForm({
     }
 
     return (
-        <Card className="flex h-full flex-col gap-y-4 bg-brand-Azure-400 ">
+        <Card className="flex h-full flex-col gap-y-4 bg-brand-Azure-400 !px-4 !py-3">
             <form
                 className="flex w-full flex-col gap-y-4 2xl:gap-y-6"
                 onSubmit={handleSubmit}
@@ -100,11 +101,11 @@ export default function TriggerForm({
                 </div>
                 <div className="mt-4 grid w-full grid-cols-2 gap-x-6 gap-y-4">
                     {parameters?.map((parameter, index) => {
-                        console.log(parameter);
                         return (
                             <div key={index} className="flex flex-col gap-y-2">
                                 <label className="h3">{parameter.description}</label>
                                 <Input
+                                    disabled={selectedTab === 'EVENT'}
                                     onChange={(e) =>
                                         updateCronParameters(
                                             parameter.name,
@@ -121,20 +122,25 @@ export default function TriggerForm({
                     })}
                 </div>
                 <TriggerTab
+                    setSelectedTab={setSelectedTab}
                     setTriggerType={setTriggerType}
                     onChange={updateCronExpression}
                     defaultCron={cronExpression}
                     previousSelectedOption={defaultSelected}
                     previousConfiguredSettings={previousConfiguredSettings}
                 />
-                <div className={'flex flex-col gap-4'}>
-                    <span>Probability</span>
-                    <ProbabilityInput
-                        onInputChange={(probability: string) =>
-                            setProbability(probability)
-                        }
-                    />
-                </div>
+                {selectedTab === 'EVENT' ? (
+                    <></>
+                ) : (
+                    <div className={'flex flex-col gap-4'}>
+                        <span>Probability</span>
+                        <ProbabilityInput
+                            onInputChange={(probability: string) =>
+                                setProbability(probability)
+                            }
+                        />
+                    </div>
+                )}
                 <div className="flex justify-center">
                     <Button
                         variant="primary"

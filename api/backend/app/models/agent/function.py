@@ -10,4 +10,4 @@ class ActionParameters(BaseModel):
 
 class AgentFunction(BaseModel):
     function_name: str
-    parameter: Optional[List[ActionParameters]]
+    parameters: Optional[List[ActionParameters]]

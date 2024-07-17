@@ -2,13 +2,15 @@
 
 import { useState } from 'react';
 
+import { MapFunctionNameAndViewName } from '@consts';
 import { useQuery } from '@tanstack/react-query';
-import { Copy } from 'lucide-react';
-import { OctagonAlert } from 'lucide-react';
+import { Copy, OctagonAlert } from 'lucide-react';
 
 import { IAgent } from '@app/app/api/agents';
-import { IAgentTriggerHistory } from '@app/app/api/triggerHistory';
-import { fetchAllTriggerHistory } from '@app/app/api/triggerHistory';
+import {
+    IAgentTriggerHistory,
+    fetchAllTriggerHistory
+} from '@app/app/api/triggerHistory';
 import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import parseTimestamp from '@app/utils/dateAndTimeUtils';
@@ -114,7 +116,7 @@ const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
                                 />
                             )
                         )
-                    ) : loadingLogs === false ? (
+                    ) : !loadingLogs ? (
                         <div className="flex gap-2 text-gray-500">
                             Trigger History Logs for{' '}
                             {statusPlaceholder === 'None' ? '' : `${statusPlaceholder}`}{' '}
@@ -160,13 +162,14 @@ export const AgentLogCard = ({
             <div className={'flex flex-col items-start gap-1'}>
                 <div className={'flex flex-row items-center gap-1'}>
                     <span className={'text-sm font-medium'}>
-                        {history.functionName}
+                        {MapFunctionNameAndViewName[history.functionName] ||
+                            history.functionName}
                     </span>
                     <span className={'rounded bg-blue-200 p-1 text-[8px]'}>
                         {history.triggerType || 'CRON'}
                     </span>
                 </div>
-                <span className={'text-xs '}>{history.message || 'No message'}</span>
+                <span className={'text-xs '}>{history.message}</span>
                 {history.txHash && <TxHashComponent txHash={history.txHash} />}
             </div>
             <div
@@ -186,6 +189,10 @@ export const AgentLogCard = ({
 };
 
 const TxHashComponent = ({ txHash }: { txHash: string }) => {
+    const handleOnClickCopy = () => {
+        navigator.clipboard.writeText(txHash);
+        SuccessToast('Transaction Hash Copied!');
+    };
     return (
         <>
             <br />
@@ -196,10 +203,7 @@ const TxHashComponent = ({ txHash }: { txHash: string }) => {
             >
                 <h1>TxHash :</h1>
                 <span
-                    onClick={() => {
-                        navigator.clipboard.writeText(txHash);
-                        SuccessToast('Transaction Hash Copied!');
-                    }}
+                    onClick={handleOnClickCopy}
                     className={
                         'cursor-pointer text-xs text-brand-Black-300/90 hover:!text-brand-Black-300/60 ' +
                         'w-[120px] truncate sm:w-[200px] lg:w-[350px]'
@@ -210,10 +214,7 @@ const TxHashComponent = ({ txHash }: { txHash: string }) => {
                 <Copy
                     color="#A1A1A1"
                     className=" h-4 w-4 hover:cursor-pointer"
-                    onClick={() => {
-                        navigator.clipboard.writeText(txHash);
-                        SuccessToast('Transaction Hash Copied!');
-                    }}
+                    onClick={handleOnClickCopy}
                 />
             </div>
         </>

@@ -76,7 +76,7 @@ export default function TemplateCard({ template, templateTrigger }: ITemplateCar
                 </CardContent>
             </Card>
             <Dialog open={dialogOpen}>
-                <DialogContent disableBG={true}>
+                <DialogContent disableBG={false} defaultCross={true}>
                     <ConfirmationBox
                         title="Confirm Delete"
                         msg="Are you sure you want to delete this Template? This process cannot be undone!"

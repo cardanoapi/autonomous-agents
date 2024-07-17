@@ -11,12 +11,10 @@ import { baseAPIurl } from './config';
 type TriggerType = 'CRON' | 'MANUAL' | 'EVENT';
 
 axios.interceptors.request.use((request) => {
-    //console.log('Request data:', request);
     return request;
 });
 
 axios.interceptors.response.use((response) => {
-    //console.log('Response data:', response);
     return response;
 });
 
@@ -40,8 +38,7 @@ export const fetchTemplates = async (): Promise<ITemplate[]> => {
     if (!res.ok) {
         throw new Error('Templates Fetch Operation failed: Network Error');
     }
-    const data = await res.json();
-    return data;
+    return await res.json();
 };
 
 export const fetchTemplatebyID = async (templateID: string): Promise<ITemplate> => {
@@ -49,8 +46,7 @@ export const fetchTemplatebyID = async (templateID: string): Promise<ITemplate> 
     if (!res.ok) {
         throw new Error('Templates Fetch Operation failed: Network Error');
     }
-    const data = await res.json();
-    return data;
+    return await res.json();
 };
 
 export const postTemplateData = async (
@@ -65,14 +61,14 @@ export const postTemplateData = async (
                 item.type === 'CRON'
                     ? {
                           function_name: item.label,
-                          parameter: item?.cronParameters?.map((param) => ({
+                          parameters: item?.cronParameters?.map((param) => ({
                               name: param.name,
                               value: param.value
                           }))
                       }
                     : {
-                          function_name: 'Vote',
-                          parameter: []
+                          function_name: 'voteOnProposal',
+                          parameters: []
                       },
 
             data:
