@@ -31,7 +31,7 @@ function createTask(action: Action, frequency: string, probability: number) {
                 message: '',
             })
         } else {
-            triggerHandler.triggerAndLogAction(action, 'CRON')
+            triggerHandler.setTriggerOnQueue(action, 'CRON')
         }
     })
 }

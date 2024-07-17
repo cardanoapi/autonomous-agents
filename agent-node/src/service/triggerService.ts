@@ -69,12 +69,28 @@ export async function triggerAction(
         case 'voteOnProposal':
             body = transactionBuilder.voteOnProposal(
                 getParameterValue(parameter, 'proposal') || '',
-                getParameterValue(parameter, 'anchorUrl') || '',
-                getParameterValue(parameter, 'anchorHash') || ''
+                getParameterValue(parameter, 'anchor_url') || '',
+                getParameterValue(parameter, 'anchor_datahash') || ''
             )
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 if (err && err.message.includes('GovActionsDoNotExist')) {
                     throw new Error('Governance Action Proposal doesnot exist')
+                } else if (err && err.message.includes('VotersDoNotExist')) {
+                    const drepRegisterBody =
+                        transactionBuilder.dRepRegistration()
+                    managerInterface
+                        .buildTx(drepRegisterBody, true)
+                        .then(() => {
+                            return managerInterface
+                                .buildTx(body, true)
+                                .catch((err: Error) => {
+                                    throw err
+                                })
+                        })
+                        .catch((err: Error) => {
+                            console.log('DrepRegisterErrorDuringVote : ', err)
+                            throw err
+                        })
                 } else {
                     throw err
                 }
@@ -130,13 +146,14 @@ export async function triggerAction(
         case 'stakeDeRegistration':
             body = transactionBuilder.stakeDeRegistration()
             return managerInterface.buildTx(body, true).catch((err: Error) => {
-                console.log('Stake De Registration Error : ', err)
-                throw err
-                // if (err && err.message.includes('Drep  is not registered ')) {
-                //     throw new Error('Drep is not registered.')
-                // } else {
-                //     throw err
-                // }
+                if (
+                    err &&
+                    err.message.includes('Stake address is not registered')
+                ) {
+                    throw new Error('Stake Address is not registered.')
+                } else {
+                    throw err
+                }
             })
         case 'abstainDelegation':
             body = transactionBuilder.abstainDelegation()

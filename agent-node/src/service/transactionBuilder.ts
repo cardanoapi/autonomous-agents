@@ -96,7 +96,6 @@ export class AgentTransactionBuilder {
                         dataHash: newConstitutionDataHash,
                     },
                     refundAccount: rewardAddress,
-                    deposit: 50000000000,
                 },
             ],
         }
@@ -134,7 +133,6 @@ export class AgentTransactionBuilder {
 
     createInfoGovAction(anchorUrl?: string, anchorDataHash?: string) {
         const infoProposal = {
-            deposit: 50000000000,
             refundAccount: {
                 network: 'Testnet',
                 credential: {

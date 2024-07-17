@@ -27,7 +27,7 @@ export class AgentRpc extends RpcV1 {
         console.log('Server called method', method, args)
         const params: ActionParameter[] = args[0]
         if (TransactionType.includes(method)) {
-            triggerHandler.triggerAndLogAction(
+            triggerHandler.setTriggerOnQueue(
                 { function_name: method, parameters: params },
                 'MANUAL'
             )
@@ -39,7 +39,6 @@ export class AgentRpc extends RpcV1 {
     }
 
     handleIncomingMessage(topic: string, message: any): void {
-        console.log('Topic : ', topic)
         if (RpcTopicHandler[topic]) {
             console.log(`Received ${topic} : `, message)
             RpcTopicHandler[topic](message)
