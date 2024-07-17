@@ -7,7 +7,7 @@ import AgentHistoryComponent from '@app/components/Agent/AgentHistory';
 import AgentManualTriggerComponent from '@app/components/Agent/AgentManualTrigger';
 import AgentOverViewComponent from '@app/components/Agent/AgentOverview';
 import SkeletonLoadingForAgentOverview from '@app/components/Agent/SkeletonLoadingForAgentOverview';
-import { selectedAgentTabAtom } from '@app/store/loaclStore';
+import { selectedAgentTabAtom } from '@app/store/localStore';
 
 import AgentLogComponent from './AgentLog';
 import AgentRunnerComponent from './AgentRunner';

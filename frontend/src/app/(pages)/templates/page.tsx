@@ -19,7 +19,7 @@ import {
 import { SearchField } from '@app/components/atoms/SearchField';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
-import { templateCreatedAtom } from '@app/store/loaclStore';
+import { templateCreatedAtom } from '@app/store/localStore';
 
 import TemplatesContainer from './TemplatesContainer';
 

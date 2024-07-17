@@ -23,7 +23,7 @@ import { ErrorToast } from '@app/components/molecules/CustomToasts';
 import MultipleSelector, { IOption } from '@app/components/molecules/MultiSearchSelect';
 import SelectedCard from '@app/components/molecules/SelectedCard';
 import { SubmitButton } from '@app/components/molecules/SubmitButton';
-import { agentCreatedAtom } from '@app/store/loaclStore';
+import { agentCreatedAtom } from '@app/store/localStore';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 export default function CreateAgentForm() {

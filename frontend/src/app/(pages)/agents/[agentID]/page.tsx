@@ -16,7 +16,7 @@ import {
     BreadcrumbList,
     BreadcrumbSeparator
 } from '@app/components/atoms/Breadcrumb';
-import { currentAgentNameAtom, selectedAgentTabAtom } from '@app/store/loaclStore';
+import { currentAgentNameAtom, selectedAgentTabAtom } from '@app/store/localStore';
 
 export default function AgentPageById() {
     const [, setCurrentAgentName] = useAtom(currentAgentNameAtom);

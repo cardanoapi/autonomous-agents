@@ -16,3 +16,5 @@ export const selectedAgentTabAtom = atom<AgentTabType>('Overview');
 export const currentAgentNameAtom = atom('Agent Profile');
 
 export const walletApiAtom = atom<CIP30Instance | null>(null);
+
+export const walletStakeAddressAtom = atom<string | null>(null);

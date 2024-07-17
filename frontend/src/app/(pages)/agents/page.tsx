@@ -20,7 +20,7 @@ import { SearchField } from '@app/components/atoms/SearchField';
 import AgentCard from '@app/components/molecules/AgentCard';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
-import { agentCreatedAtom } from '@app/store/loaclStore';
+import { agentCreatedAtom } from '@app/store/localStore';
 
 export default function AgentsPage() {
     const [agentCreated, setAgentCreated] = useAtom(agentCreatedAtom);
