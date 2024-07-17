@@ -34,8 +34,11 @@ export default function MyAgentPage() {
 
     if (walletApi === null) {
         return (
-            <div className="text-brand-Gray-300">
-                Active Wallet Connection Missing! Please connect your Wallet.
+            <div className="mt-[30%] flex h-full items-center justify-center text-brand-Gray-300">
+                <div className="text-center">
+                    <p>Active Wallet Connection Missing!</p>
+                    <p>Please connect your Wallet . . .</p>
+                </div>
             </div>
         );
     }
