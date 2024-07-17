@@ -27,5 +27,7 @@ async def create_empty_agent_for_user(userAddress: str):
             transaction=transaction, template_data=empty_template_data
         )
 
-    empty_agent_data = AgentCreateDTO(userAddress=userAddress, name="Empty Agent", template_id=empty_template["id"])
+    empty_agent_data = AgentCreateDTO(
+        userAddress=userAddress, name="Empty Agent", template_id=empty_template["id"], instance=1
+    )
     await agent_repository.save_agent(empty_agent_data)
