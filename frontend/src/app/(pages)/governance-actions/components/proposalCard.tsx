@@ -32,9 +32,9 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
 
     return (
         <>
-            <div className="boxShadow flex w-full flex-col justify-between rounded-[20px]">
+            <div className="flex w-full flex-col justify-between bg-transparent">
                 <div
-                    className={`flex h-full w-full flex-col gap-5 rounded-t-[20px]  ${isDataMissing ? 'shadow-bg-red-100 bg-red-100/40' : 'bg-brand-White-200'}  px-6 pb-6 pt-10`}
+                    className={`flex h-full w-full flex-col gap-5 rounded-t-xl  ${isDataMissing ? 'shadow-bg-red-100 bg-red-100/40' : 'bg-brand-White-200'}  px-6 pb-6 pt-10`}
                 >
                     <p
                         className={`line-clamp-2 text-[18px]  font-semibold leading-[24px] ${isDataMissing && 'text-red-600'}`}
@@ -93,10 +93,11 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                         </div>
                     </div>
                 </div>
-                <div className="flex w-full rounded-b-[20px] bg-white p-6">
+                <div className="flex w-full rounded-b-2xl bg-white p-6">
                     <Button
                         onClick={toggleDialog}
-                        className="w-full rounded-[100px] bg-brand-primaryBlue hover:bg-brand-navy hover:shadow-lg"
+                        className="w-full rounded-[100px]"
+                        variant={'primary'}
                     >
                         Vote
                     </Button>
