@@ -196,3 +196,19 @@ class AgentRepository:
         # Encode the 5-bit array into a Bech32 address with HRP "drep"
         drep_id_bech32 = bech32_encode("drep", words, Encoding.BECH32)
         return drep_id_bech32, drep_id.hex()
+
+    async def retrieve_agent_by_user_address(self, user_address: str) -> Optional[AgentResponse]:
+        agent = await self.db.prisma.agent.find_first(where={"userAddress": user_address})
+
+        if agent is None:
+            return None
+        else:
+            agent_response = AgentResponse(
+                id=agent.id,
+                name=agent.name,
+                template_id=agent.template_id,
+                instance=agent.instance,
+                index=agent.index,
+                last_active=agent.last_active,
+            )
+            return agent_response

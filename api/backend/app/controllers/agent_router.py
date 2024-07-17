@@ -2,7 +2,7 @@ from http import HTTPStatus
 from typing import List
 
 from classy_fastapi import Routable, get, post, put, delete
-from fastapi import HTTPException, Query, Request, Depends
+from fastapi import HTTPException, Query, Depends
 
 from backend.app.models.agent.agent_dto import AgentCreateDTO, AgentUpdateDTO
 from backend.app.models.agent.function import AgentFunction
@@ -60,3 +60,8 @@ class AgentRouter(Routable):
     @post("/agents/{agent_id}/trigger", status_code=HTTPStatus.OK)
     async def trigger_agent_action(self, agent_id: str, action: AgentFunction):
         await self.agent_service.trigger_agent_action(agent_id, action)
+
+    @get("/my-agent", response_model=AgentResponseWithWalletDetails)
+    async def get_agent(self, user: dict = Depends(verify_cookie)):
+        agent = await self.agent_service.get_agent_by_user_address(user.address)
+        return agent

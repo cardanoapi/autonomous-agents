@@ -108,3 +108,21 @@ class AgentService:
     def raise_exception_if_agent_not_found(self, agent):
         if agent is None or False:
             raise HTTPException(status_code=404, content="Agent not found")
+
+    async def get_agent_by_user_address(self, user_address: str) -> AgentResponseWithWalletDetails:
+        agent = await self.agent_repository.retrieve_agent_by_user_address(user_address=user_address)
+        self.raise_exception_if_agent_not_found(agent)
+        agent_with_keys = await self.agent_repository.retreive_agent_key(agent.id)
+        utxo = 0
+        async with httpx.AsyncClient() as client:
+            response = await client.get(f"{settings.KUBER_URL}/utxo?address={agent_with_keys.agent_address}")
+            transactions = response.json()
+            for transaction in transactions:
+                utxo = float(transaction.get("value", {}).get("lovelace", "0"))
+        agent_configurations = await self.trigger_service.list_triggers_by_agent_id(agent.id)
+        return AgentResponseWithWalletDetails(
+            **agent.dict(),
+            agent_address=agent_with_keys.agent_address,
+            wallet_amount=utxo / (10**6),
+            agent_configurations=agent_configurations,
+        )
