@@ -8,7 +8,7 @@ class KafkaService:
     def __init__(
         self,
     ):
-        if not settings.KAFKA_ENABLED:
+        if settings.KAFKA_ENABLED:
             self.producer = AIOKafkaProducer(bootstrap_servers=settings.KAFKA_BROKERS)
 
     async def start(self):
