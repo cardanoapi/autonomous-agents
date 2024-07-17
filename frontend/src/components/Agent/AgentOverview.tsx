@@ -33,6 +33,7 @@ const AgentOverViewComponent = ({ agent }: { agent?: IAgent }) => {
         mutationFn: (data: IAgentUpdateReqDto) => updateAgentData(data),
         onSuccess: () => {
             queryClient.refetchQueries({ queryKey: [`agent${agent?.id}`] });
+            queryClient.refetchQueries({ queryKey: ['myAgent'] });
             SuccessToast('Agent successfully updated.');
         },
         onError: (error: any) => {
