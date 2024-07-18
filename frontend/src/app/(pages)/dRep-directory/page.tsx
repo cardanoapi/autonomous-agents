@@ -41,7 +41,11 @@ export default function DRepDirectory() {
     if (isLoading && !dRepList && initialLoad.current) {
         initialLoad.current = false;
 
-        return <Loader />;
+        return (
+            <div className="flex h-proposalEmptyListHeight items-center justify-center">
+                <Loader />
+            </div>
+        );
     }
 
     return (
