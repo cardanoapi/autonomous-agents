@@ -1,6 +1,6 @@
 from backend.config.database import prisma_connection
 from datetime import datetime, timezone
-from backend.app.utils.extras import create_empty_agent_for_user
+from backend.app.utils.extras import create_empty_agent_for_user, create_empty_agent_for_user_if_does_not_exist
 
 
 class UserRepository:
@@ -11,6 +11,7 @@ class UserRepository:
         # If user with the address already exists return the user
         user = await self.db.prisma.user.find_unique(where={"address": user_address})
         if user:
+            await create_empty_agent_for_user_if_does_not_exist(user_address)
             return user
 
         user_data_dict = {

@@ -200,7 +200,7 @@ class AgentRepository:
         return drep_id_bech32, drep_id.hex()
 
     async def retrieve_agent_by_user_address(self, user_address: str) -> Optional[AgentResponse]:
-        agent = await self.db.prisma.agent.find_first(where={"userAddress": user_address})
+        agent = await self.db.prisma.agent.find_first(where={"userAddress": user_address, "deleted_at": None})
 
         if agent is None:
             return None
