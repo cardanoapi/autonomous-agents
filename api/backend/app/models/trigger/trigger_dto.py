@@ -12,7 +12,7 @@ class CronTriggerDTO(BaseModel):
 
 class SubParameter(BaseModel):
     name: str
-    value: str
+    value: Optional[str]
 
 
 class EventTriggerDTO(BaseModel):
