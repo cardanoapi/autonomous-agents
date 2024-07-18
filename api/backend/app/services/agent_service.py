@@ -151,6 +151,6 @@ class AgentService:
             raise HTTPException(status_code=403, content="Forbidden Request")
 
     async def is_superadmin(self, userAddress: str):
-        user_is_super_admin = self.user_reposiotry.is_super_admin(userAddress)
+        user_is_super_admin = await self.user_reposiotry.is_super_admin(userAddress)
         if user_is_super_admin == False:
             raise HTTPException(status_code=403, content="Forbidden Request")

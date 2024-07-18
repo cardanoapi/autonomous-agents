@@ -20,7 +20,7 @@ class TemplateRouter(Routable):
     @post("/templates")
     async def create_template(self, template_data: TemplateCreateDto, user: dict = Depends(verify_cookie)):
         template_data.userAddress = user.address
-        template = await self.template_service.create_template(template_data)
+        template = await self.template_service.create_template(template_data, user.address)
         return template
 
     @get("/templates", response_model=List[TemplateResponseWithConfigurations])
@@ -42,7 +42,7 @@ class TemplateRouter(Routable):
         self, template_id: str, template_data: TemplateEditDto, user: dict = Depends(verify_cookie)
     ):
         template_data.userAddress = user.address
-        update_template = await self.template_service.update_template(template_id, template_data)
+        update_template = await self.template_service.update_template(template_id, template_data, user.address)
         return update_template
 
     @delete("/templates/{template_id}", status_code=HTTPStatus.NO_CONTENT)
