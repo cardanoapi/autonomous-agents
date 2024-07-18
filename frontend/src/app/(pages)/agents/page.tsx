@@ -17,13 +17,15 @@ import {
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
+import { cn } from '@app/components/lib/utils';
 import AgentCard from '@app/components/molecules/AgentCard';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
-import { agentCreatedAtom } from '@app/store/localStore';
+import { agentCreatedAtom, userRoleAtom } from '@app/store/localStore';
 
 export default function AgentsPage() {
     const [agentCreated, setAgentCreated] = useAtom(agentCreatedAtom);
+    const [currentUserRole] = useAtom(userRoleAtom);
 
     const {
         data: agents,
@@ -88,7 +90,13 @@ export default function AgentsPage() {
                     </DropdownMenu>
                 </div>
                 <Link href="/agents/create-agent">
-                    <Button variant="primary" className="h-[36px] w-[145px]">
+                    <Button
+                        variant="primary"
+                        className={cn(
+                            'h-[36px] w-[145px]',
+                            currentUserRole === 'Super-Admin' ? '' : '!hidden'
+                        )}
+                    >
                         Create Agent
                     </Button>
                 </Link>
@@ -109,6 +117,7 @@ export default function AgentsPage() {
                                 functionCount={0}
                                 key={index}
                                 refetchData={refetch}
+                                enableEdit={currentUserRole === 'Super-Admin'}
                             />
                         ))
                     ) : (

@@ -5,10 +5,11 @@ import { usePathname } from 'next/navigation';
 import { PATHS } from '@consts';
 import { useAtom } from 'jotai';
 
-import { currentAgentNameAtom } from '@app/store/localStore';
+import { currentAgentNameAtom, userRoleAtom } from '@app/store/localStore';
 
 export default function TopNav() {
     const [currentAgentName] = useAtom(currentAgentNameAtom);
+    const [currentUserRole] = useAtom(userRoleAtom);
     const path: string = usePathname();
 
     const PageTitles: { [key: string]: string } = {
@@ -47,7 +48,7 @@ export default function TopNav() {
                     <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>*/}
-            Admin
+            {currentUserRole}
         </div>
     );
 }
