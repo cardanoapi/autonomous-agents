@@ -15,43 +15,63 @@ export interface ITrigger {
     triggerType: TriggerType
 }
 
-class TriggerActionHandler {
+export class TriggerActionHandler {
     triggerQueue: Array<ITrigger> = []
     txHash = ''
+    managerInterface: ManagerInterface
     private timeOut: any
 
+    constructor(managerInterface: ManagerInterface) {
+        this.managerInterface = managerInterface
+    }
+
+    onTxsConfirmed(txsHash: Buffer[]) {
+        console.log(
+            'Received txs',
+            txsHash.map((tx) => tx.toString('hex'))
+        )
+        txsHash.forEach((tx: any) => {
+            const txHash = Buffer.from(tx, 'utf-8').toString('hex')
+            if (txHash === this.txHash) {
+                console.log('Pending Tx Confirmed :', txHash)
+                this.clearTimeoutAndTrigger()
+            }
+        })
+    }
+
     setTimeOut() {
-        console.log('Timout initialized : ', this.triggerQueue)
+        console.log(
+            'Timout initialized of 80 second... , TriggerQueue ',
+            this.triggerQueue
+        )
         this.timeOut = setTimeout(() => {
             if (this.triggerQueue.length) {
                 this.triggerQueue = removeRedundantTrigger(this.triggerQueue)
             }
-            const trigger = this.triggerQueue.pop()
+            const trigger = this.triggerQueue.shift()
             if (trigger) {
                 this.triggerAndLogAction(trigger)
             } else {
-                console.log('No Task Available')
+                console.log('SetTimeOut: Task Queue is empty')
             }
-            console.log('Timeout starting')
         }, 80000)
     }
 
     clearTimeoutAndTrigger() {
         if (this.timeOut) {
             clearTimeout(this.timeOut)
+            this.timeOut = null
         }
-        const trigger = this.triggerQueue.pop()
+        const trigger = this.triggerQueue.shift()
         if (trigger) {
             this.triggerAndLogAction(trigger)
         } else {
-            console.log('No Task to trigger.')
+            console.log('ClearTimeoutAndTrigger : Task Queue is empty')
         }
-        this.setTimeOut()
     }
 
     triggerAndLogAction(trigger: ITrigger) {
         const { action, triggerType } = trigger
-        const managerInterface = ManagerInterface.getInstance()
         const result: ILog = {
             function_name: action.function_name,
             triggerType: triggerType,
@@ -59,16 +79,22 @@ class TriggerActionHandler {
             message: '',
             success: true,
         }
-        triggerAction(action['function_name'], action['parameters'])
+        triggerAction(
+            this,
+            this.managerInterface,
+            action['function_name'],
+            action['parameters'],
+            triggerType
+        )
             .then((res) => {
                 console.log('Tx Hash of res is : ', res)
                 if (res) {
                     result.txHash = res.hash
                     this.txHash = res.hash
-                    this.setTimeOut()
                 } else {
-                    throw new Error('Something went wrong')
+                    result.triggerType = ''
                 }
+                this.setTimeOut()
             })
             .catch((e) => {
                 console.log('Tx Error : ', e)
@@ -77,7 +103,9 @@ class TriggerActionHandler {
                 this.clearTimeoutAndTrigger()
             })
             .finally(() => {
-                managerInterface?.logTx(result)
+                if (result.triggerType !== '' && result.message !== 'Skip') {
+                    this.managerInterface.logTx(result)
+                }
             })
     }
 
@@ -85,22 +113,21 @@ class TriggerActionHandler {
         if (this.timeOut) {
             this.triggerQueue.push({ action, triggerType })
         } else {
+            this.setTimeOut()
             this.triggerAndLogAction({ action, triggerType })
         }
     }
 }
 
 function removeRedundantTrigger(triggerQueue: Array<ITrigger>) {
-    const lastTrigger = triggerQueue.at(-1)
-    const secondLastTrigger = triggerQueue.at(-2)
+    const firstTrigger = triggerQueue.at(0)
+    const secondTrigger = triggerQueue.at(1)
     if (
-        lastTrigger?.triggerType === secondLastTrigger?.triggerType &&
-        lastTrigger?.action.function_name ===
-            secondLastTrigger?.action.function_name
+        firstTrigger?.triggerType === secondTrigger?.triggerType &&
+        firstTrigger?.action.function_name ===
+            secondTrigger?.action.function_name
     ) {
-        triggerQueue.pop()
+        triggerQueue.shift()
     }
     return triggerQueue
 }
-
-export const triggerHandler = new TriggerActionHandler()

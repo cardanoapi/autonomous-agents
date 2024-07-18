@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 class ActionParameters(BaseModel):
     name: str
-    value: str
+    value: Optional[str]
 
 
 class AgentFunction(BaseModel):

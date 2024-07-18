@@ -106,7 +106,7 @@ export class AgentTransactionBuilder {
             certificates: [
                 Kuber.generateCert(
                     'registerstake',
-                    this.agentWalletDetails.payment_verification_key_hash
+                    this.agentWalletDetails.stake_verification_key_hash
                 ),
             ],
         }

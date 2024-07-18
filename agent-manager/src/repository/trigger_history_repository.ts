@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 const prisma = new PrismaClient()
 
-type TriggerType = 'CRON' | 'MANUAL' | 'EVENT'
+type TriggerType = 'CRON' | 'MANUAL' | 'EVENT' | 'INTERNAL'
 
 export async function saveTriggerHistory(
     agentId: string,
