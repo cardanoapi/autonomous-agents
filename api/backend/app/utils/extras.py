@@ -31,3 +31,10 @@ async def create_empty_agent_for_user(userAddress: str):
         userAddress=userAddress, name="Empty Agent", template_id=empty_template["id"], instance=1
     )
     await agent_repository.save_agent(empty_agent_data)
+
+
+async def create_empty_agent_for_user_if_does_not_exist(userAddress: str):
+    agent_repository = AgentRepository()
+    agent = await agent_repository.retrieve_agent_by_user_address(userAddress)
+    if agent is None:
+        await create_empty_agent_for_user(userAddress)
