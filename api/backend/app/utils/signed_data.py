@@ -84,6 +84,7 @@ def verify_signed_data(hex_signature, hex_key):
     signatures_signature = extract_signature_from_signature(hex_signature)
     signature_payload_cosSign1_fromat = convert_payload_to_cosSign1_format(hex_signature)
     public_key = extract_public_key_from_key(hex_key)
+
     return verify_ed25529_signature(
         signatures_signature, binascii.hexlify(signature_payload_cosSign1_fromat).decode(), public_key
     )
