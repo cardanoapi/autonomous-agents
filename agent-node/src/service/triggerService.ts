@@ -1,6 +1,5 @@
 import { ManagerInterface } from './ManagerInterfaceService'
 import { AgentTransactionBuilder } from './transactionBuilder'
-import { triggerHandler } from './TriggerActionHandler'
 
 export interface ActionParameter {
     name: string
@@ -35,12 +34,13 @@ function getParameterValue(
 }
 
 export async function triggerAction(
+    triggerHandler: any,
+    managerInterface: ManagerInterface,
     function_name: string,
     parameters: ActionParameter[],
     triggerType: TriggerType
 ): Promise<any> {
     const transactionBuilder = AgentTransactionBuilder.getInstance()
-    const managerInterface = ManagerInterface.getInstance()
     let body: any
     if (!managerInterface) {
         console.error('Manager Interface Instance not Found')
@@ -65,8 +65,22 @@ export async function triggerAction(
                 getParameterValue(parameters, 'drep') || 'abstain'
             )
             return managerInterface.buildTx(body, true).catch((err: Error) => {
-                console.log('error is : ', err)
-                throw err
+                if (err && err.message.includes('StakeKeyNotRegisteredDELEG')) {
+                    triggerHandler.setTriggerOnQueue(
+                        { function_name: 'registerStake', parameters: [] },
+                        ''
+                    )
+                    triggerHandler.setTriggerOnQueue(
+                        {
+                            function_name: 'stakeDelegation',
+                            parameters: parameters,
+                        },
+                        triggerType
+                    )
+                    throw new Error('Skip')
+                } else {
+                    throw err
+                }
             })
         case 'voteOnProposal':
             body = transactionBuilder.voteOnProposal(
@@ -89,6 +103,7 @@ export async function triggerAction(
                         },
                         triggerType
                     )
+                    throw new Error('Skip')
                 } else {
                     throw err
                 }
