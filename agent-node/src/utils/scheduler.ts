@@ -1,8 +1,8 @@
 import cron, { ScheduledTask } from 'node-cron'
 import { Action, Configuration } from '../service/triggerService'
-import { triggerHandler } from '../service/TriggerActionHandler'
 import { ManagerInterface } from '../service/ManagerInterfaceService'
 import { AgentTransactionBuilder } from '../service/transactionBuilder'
+import { TriggerActionHandler } from '../service/TriggerActionHandler'
 
 let scheduledTasks: ScheduledTask[] = []
 
@@ -14,8 +14,13 @@ function clearScheduledTasks() {
     scheduledTasks = []
 }
 
-function createTask(action: Action, frequency: string, probability: number) {
-    const managerInterface = ManagerInterface.getInstance()
+function createTask(
+    triggerHandler: TriggerActionHandler,
+    manager: ManagerInterface,
+    action: Action,
+    frequency: string,
+    probability: number
+) {
     const transactionBuilder = AgentTransactionBuilder.getInstance()
 
     return cron.schedule(frequency, () => {
@@ -23,7 +28,7 @@ function createTask(action: Action, frequency: string, probability: number) {
             Math.random() > probability ||
             !transactionBuilder?.agentWalletDetails
         ) {
-            managerInterface?.logTx({
+            manager.logTx({
                 function_name: action.function_name,
                 triggerType: 'CRON',
                 trigger: false,
@@ -36,14 +41,24 @@ function createTask(action: Action, frequency: string, probability: number) {
     })
 }
 
-export function scheduleFunctions(configurations: Configuration[]) {
+export function scheduleFunctions(
+    triggerHandler: TriggerActionHandler,
+    manager: ManagerInterface,
+    configurations: Configuration[]
+) {
     clearScheduledTasks()
 
     configurations.forEach((config) => {
         const { data, action, type } = config
         if (action && type === 'CRON') {
             const { frequency, probability } = data
-            const task = createTask(action, frequency, probability)
+            const task = createTask(
+                triggerHandler,
+                manager,
+                action,
+                frequency,
+                probability
+            )
             scheduledTasks.push(task)
         }
     })

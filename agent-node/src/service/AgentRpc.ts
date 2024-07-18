@@ -1,50 +1,42 @@
 import { RpcV1 } from 'libcardano/network/Rpc'
 
-import { ActionParameter } from './triggerService'
-import { triggerHandler } from './TriggerActionHandler'
-import { RpcTopicHandler } from '../utils/agent'
-
-const TransactionType = [
-    'voteOnProposal',
-    'transferADA',
-    'stakeDelegation',
-    'createInfoGovAction',
-    'proposalNewConstitution',
-    'dRepRegistration',
-    'dRepDeRegistration',
-    'registerStake',
-    'abstainDelegation',
-    'noConfidence',
-    'stakeDeRegistration',
-]
+// const TransactionType = [
+//     'voteOnProposal',
+//     'transferADA',
+//     'stakeDelegation',
+//     'createInfoGovAction',
+//     'proposalNewConstitution',
+//     'dRepRegistration',
+//     'dRepDeRegistration',
+//     'registerStake',
+//     'abstainDelegation',
+//     'noConfidence',
+//     'stakeDeRegistration',
+// ]
 
 const agentId = process.env.AGENT_ID || ''
 
 const getAgentId = () => agentId
 
+type AgentEventType = 'methodCall' | 'event'
 export class AgentRpc extends RpcV1 {
+    handlers: Record<AgentEventType, any> = {
+        methodCall: () => {},
+        event: () => {},
+    }
     handleMethodCall(method: string, args: any[]) {
-        console.log('Server called method', method, args)
-        const params: ActionParameter[] = args[0]
-        if (TransactionType.includes(method)) {
-            triggerHandler.setTriggerOnQueue(
-                { function_name: method, parameters: params },
-                'MANUAL'
-            )
-        }
+        this.handlers['methodCall'](method, args)
     }
-
+    on(
+        eventType: 'methodCall',
+        handler: (method: string, args: any[]) => any
+    ): void
+    on(eventType: 'event', handler: (topic: string, message: any) => void): void
+    on(eventType: AgentEventType, handler: any): void {
+        this.handlers[eventType] = handler
+    }
     onEvent(topic: string, message: any): void {
-        this.handleIncomingMessage(topic, message)
-    }
-
-    handleIncomingMessage(topic: string, message: any): void {
-        if (RpcTopicHandler[topic]) {
-            console.log(`Received ${topic} : `, message)
-            RpcTopicHandler[topic](message)
-        } else {
-            console.warn('Unknown event type received :', topic)
-        }
+        this.handlers['event'](topic, message)
     }
 
     getId(): string {

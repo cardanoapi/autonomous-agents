@@ -6,6 +6,8 @@ import { cborxBackend } from 'libcardano/lib/cbor'
 import { WsClientPipe } from './service/WsClientPipe'
 import { AgentRpc } from './service/AgentRpc'
 import { ManagerInterface } from './service/ManagerInterfaceService'
+import { TriggerActionHandler } from './service/TriggerActionHandler'
+import { RpcTopicHandler } from './utils/agent'
 
 configDotenv()
 const wsUrl = process.env.WS_URL || 'ws://localhost:3001'
@@ -27,7 +29,19 @@ function connectToManagerWebSocket() {
     const rpcChannel = new AgentRpc(
         new CborDuplex(clientPipe, cborxBackend(true))
     )
-    ManagerInterface.setInstance(rpcChannel)
+    const managerInterface = new ManagerInterface(rpcChannel)
+    const triggerHandler = new TriggerActionHandler(managerInterface)
+
+    rpcChannel.on('methodCall', (method, args) => {
+        triggerHandler.setTriggerOnQueue(
+            { function_name: method, parameters: args[0] },
+            'MANUAL'
+        )
+    })
+    const topicHandler = new RpcTopicHandler(triggerHandler, managerInterface)
+    rpcChannel.on('event', (topic, message) => {
+        topicHandler.handleEvent(topic, message)
+    })
 
     ws.on('open', () => {
         interval = setInterval(() => {

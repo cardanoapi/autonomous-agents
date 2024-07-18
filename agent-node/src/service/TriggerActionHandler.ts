@@ -15,13 +15,32 @@ export interface ITrigger {
     triggerType: TriggerType
 }
 
-class TriggerActionHandler {
+export class TriggerActionHandler {
     triggerQueue: Array<ITrigger> = []
     txHash = ''
+    managerInterface: ManagerInterface
     private timeOut: any
 
+    constructor(managerInterface: ManagerInterface) {
+        this.managerInterface = managerInterface
+    }
+
+    onTxsConfirmed(txsHash: Buffer[]) {
+        console.log(
+            'Received txs',
+            txsHash.map((tx) => tx.toString('hex'))
+        )
+        txsHash.forEach((tx: any) => {
+            const txHash = Buffer.from(tx, 'utf-8').toString('hex')
+            if (txHash === this.txHash) {
+                console.log('Pending Tx Confirmed :', txHash)
+                this.clearTimeoutAndTrigger()
+            }
+        })
+    }
+
     setTimeOut() {
-        console.log('Timout initialized : ', this.triggerQueue)
+        console.log('Timout initialized of 80 second: ', this.triggerQueue)
         this.timeOut = setTimeout(() => {
             if (this.triggerQueue.length) {
                 this.triggerQueue = removeRedundantTrigger(this.triggerQueue)
@@ -40,7 +59,7 @@ class TriggerActionHandler {
             clearTimeout(this.timeOut)
             this.timeOut = null
         }
-        const trigger = this.triggerQueue.pop()
+        const trigger = this.triggerQueue.shift()
         if (trigger) {
             this.triggerAndLogAction(trigger)
         } else {
@@ -50,7 +69,6 @@ class TriggerActionHandler {
 
     triggerAndLogAction(trigger: ITrigger) {
         const { action, triggerType } = trigger
-        const managerInterface = ManagerInterface.getInstance()
         const result: ILog = {
             function_name: action.function_name,
             triggerType: triggerType,
@@ -59,6 +77,8 @@ class TriggerActionHandler {
             success: true,
         }
         triggerAction(
+            this,
+            this.managerInterface,
             action['function_name'],
             action['parameters'],
             triggerType
@@ -80,8 +100,8 @@ class TriggerActionHandler {
                 this.clearTimeoutAndTrigger()
             })
             .finally(() => {
-                if (triggerType !== '') {
-                    managerInterface?.logTx(result)
+                if (triggerType !== '' && result.message !== 'Skip') {
+                    this.managerInterface.logTx(result)
                 }
             })
     }
@@ -97,8 +117,8 @@ class TriggerActionHandler {
 }
 
 function removeRedundantTrigger(triggerQueue: Array<ITrigger>) {
-    const firstTrigger = triggerQueue.at(-1)
-    const secondTrigger = triggerQueue.at(-2)
+    const firstTrigger = triggerQueue.at(0)
+    const secondTrigger = triggerQueue.at(1)
     if (
         firstTrigger?.triggerType === secondTrigger?.triggerType &&
         firstTrigger?.action.function_name ===
@@ -108,5 +128,3 @@ function removeRedundantTrigger(triggerQueue: Array<ITrigger>) {
     }
     return triggerQueue
 }
-
-export const triggerHandler = new TriggerActionHandler()
