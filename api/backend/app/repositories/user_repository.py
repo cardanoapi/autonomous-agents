@@ -24,3 +24,9 @@ class UserRepository:
         await create_empty_agent_for_user(user_address)
 
         return user
+
+    async def is_super_admin(self, user_address: str) -> bool:
+        user = await self.db.prisma.user.find_unique(where={"address": user_address})
+        if user:
+            return user.isSuperUser
+        return False

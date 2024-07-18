@@ -44,8 +44,7 @@ class AgentRouter(Routable):
 
     @put("/agents/{agent_id}", status_code=HTTPStatus.OK)
     async def update_agent(self, agent_id: str, agent_data: AgentUpdateDTO, user: dict = Depends(verify_cookie)):
-        agent_data.userAddress = user.address
-        updated_agent = await self.agent_service.update_agent(agent_id, agent_data)
+        updated_agent = await self.agent_service.update_agent(agent_id, agent_data, userAddress=user.address)
         return updated_agent
 
     @get("/agents/online", status_code=HTTPStatus.OK)

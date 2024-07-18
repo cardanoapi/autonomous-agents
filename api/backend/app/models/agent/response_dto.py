@@ -13,6 +13,7 @@ class AgentResponse(BaseModel):
     instance: int
     index: int
     last_active: Optional[datetime]
+    user_address: Optional[str]
 
 
 class AgentResponseWithAgentConfigurations(AgentResponse):

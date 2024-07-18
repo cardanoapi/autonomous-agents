@@ -18,6 +18,7 @@ from backend.app.services.template_trigger_service import TemplateTriggerService
 from backend.app.services.trigger_service import TriggerService
 from backend.config import settings
 from backend.app.exceptions import HTTPException
+from backend.app.repositories.user_repository import UserRepository
 
 
 class AgentService:
@@ -32,6 +33,7 @@ class AgentService:
         self.template_trigger_service = template_trigger_service
         self.trigger_service = trigger_service
         self.kafka_service = kafka_service
+        self.user_reposiotry = UserRepository()
 
     async def create_agent(self, agent_data: AgentCreateDTO):
         agent = await self.agent_repository.save_agent(agent_data)
@@ -72,12 +74,22 @@ class AgentService:
             agent_configurations=agent_configurations,
         )
 
-    async def update_agent(self, agent_id: str, agent_data: AgentUpdateDTO) -> AgentResponseWithAgentConfigurations:
+    async def update_agent(
+        self, agent_id: str, agent_data: AgentUpdateDTO, userAddress: str
+    ) -> AgentResponseWithAgentConfigurations:
+
         existing_agent = await self.agent_repository.retrieve_agent(agent_id)
         self.raise_exception_if_agent_not_found(existing_agent)
+        await self.is_authorized(userAddress, existing_agent)
+
+        user_is_super_admin = await self.user_reposiotry.is_super_admin(userAddress)
+        if existing_agent.user_address != userAddress and user_is_super_admin == False:
+            raise HTTPException(status_code=403, content="Forbidden Request")
+
         updated_triggers = await self.trigger_service.update_configurations_for_agent(
             agent_id, agent_data.agent_configurations
         )
+
         existing_agent = await self.agent_repository.modify_agent(agent_id, agent_data)
         self.raise_exception_if_agent_not_found(existing_agent)
         return AgentResponseWithAgentConfigurations(**existing_agent.dict(), agent_configurations=updated_triggers)
@@ -86,8 +98,13 @@ class AgentService:
         return await self.agent_repository.get_online_agents_count()
 
     async def delete_agent(self, agent_id: str, user_address: str) -> str:
-        agent = await self.agent_repository.remove_agent(agent_id, user_address)
-        self.raise_exception_if_agent_not_found(agent)
+
+        existing_agent = await self.agent_repository.retrieve_agent(agent_id)
+        self.raise_exception_if_agent_not_found(existing_agent)
+        await self.is_superadmin(user_address)
+
+        await self.agent_repository.remove_agent(agent_id)
+
         await self.kafka_service.publish_message(
             "Agent_Trigger",
             json.dumps({"method": "Agent_Deletion", "parameters": []}),
@@ -126,3 +143,14 @@ class AgentService:
             wallet_amount=utxo / (10**6),
             agent_configurations=agent_configurations,
         )
+
+    async def is_authorized(self, userAddress: str, existing_agent: AgentResponse):
+        # Checks if agent belongs to user or user is super admin
+        user_is_super_admin = await self.user_reposiotry.is_super_admin(userAddress)
+        if existing_agent.user_address != userAddress and user_is_super_admin == False:
+            raise HTTPException(status_code=403, content="Forbidden Request")
+
+    async def is_superadmin(self, userAddress: str):
+        user_is_super_admin = self.user_reposiotry.is_super_admin(userAddress)
+        if user_is_super_admin == False:
+            raise HTTPException(status_code=403, content="Forbidden Request")
