@@ -10,6 +10,7 @@ from backend.app.repositories.template_trigger_repository import (
 )
 from backend.app.services.template_trigger_service import TemplateTriggerService
 from backend.config.database import prisma_connection
+from backend.app.repositories.user_repository import UserRepository
 
 
 class TemplateService:
@@ -20,8 +21,11 @@ class TemplateService:
     ):
         self.template_repository = template_repository
         self.template_trigger_service = template_trigger_service
+        self.user_repository = UserRepository()
 
-    async def create_template(self, template_data):
+    async def create_template(self, template_data, userAddress: str):
+
+        await self.is_superadmin(userAddress)
         # creating the instance of prisma transaction for template and template trigger creation
         async with prisma_connection.prisma.tx() as transaction:
             template = await self.template_repository.save_template(transaction, template_data)
@@ -63,8 +67,11 @@ class TemplateService:
         return TemplateResponseWithConfigurations(**template.dict(), template_configurations=template_configurations)
 
     async def update_template(
-        self, template_id: str, template_data: TemplateEditDto
+        self, template_id: str, template_data: TemplateEditDto, userAddress: str
     ) -> TemplateResponseWithConfigurations:
+
+        await self.is_superadmin(userAddress)
+
         updating_template_detail = TemplateEditDto(
             name=template_data.name, description=template_data.description, userAddress=template_data.userAddress
         )
@@ -78,10 +85,19 @@ class TemplateService:
         )
 
     async def delete_template(self, template_id: str, userAddress: str) -> str:
-        template = await self.template_repository.remove_template(template_id, userAddress)
+
+        await self.is_superadmin(userAddress)
+
+        template = await self.template_repository.remove_template(template_id)
         self.raise_exception_if_template_not_found(template)
         return template_id
 
     def raise_exception_if_template_not_found(self, template):
         if template is None or False:
             raise HTTPException(status_code=404, content="Template not Found")
+
+    async def is_superadmin(self, userAddress: str):
+        user_is_super_admin = await self.user_repository.is_super_admin(userAddress)
+        print(f"{userAddress} - {user_is_super_admin}")
+        if user_is_super_admin == False:
+            raise HTTPException(status_code=403, content="Forbidden Request")

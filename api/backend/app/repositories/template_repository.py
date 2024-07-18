@@ -9,6 +9,7 @@ from backend.app.models import TemplateCreateDto, TemplateResponse
 from backend.app.models.template.template_dto import TemplateEditDto
 from backend.config.database import prisma_connection
 from backend.config.logger import logger
+from fastapi import HTTPException
 
 
 class TemplateRepository:
@@ -48,9 +49,7 @@ class TemplateRepository:
         return template
 
     async def modify_template(self, template_id: str, template_data: TemplateEditDto):
-        template = await self.db.prisma.template.find_first(
-            where={"id": template_id, "userAddress": template_data.userAddress}
-        )
+        template = await self.db.prisma.template.find_first(where={"id": template_id})
         if template is None or template.deleted_at is not None:
             return None
 
@@ -65,8 +64,8 @@ class TemplateRepository:
         }
         return template_response
 
-    async def remove_template(self, template_id: str, user_address: str) -> bool:
-        template = await self.db.prisma.template.find_first(where={"id": template_id, "userAddress": user_address})
+    async def remove_template(self, template_id: str) -> bool:
+        template = await self.db.prisma.template.find_first(where={"id": template_id})
         if template is None:
             return None
         elif template.deleted_at is not None:
