@@ -100,13 +100,14 @@ export class TriggerActionHandler {
                 this.clearTimeoutAndTrigger()
             })
             .finally(() => {
-                if (triggerType !== '' && result.message !== 'Skip') {
+                if (result.triggerType !== '' && result.message !== 'Skip') {
                     this.managerInterface.logTx(result)
                 }
             })
     }
 
     setTriggerOnQueue(action: Action, triggerType: TriggerType) {
+        console.log('Trigger info:', action.function_name, triggerType)
         if (this.timeOut) {
             this.triggerQueue.push({ action, triggerType })
         } else {

@@ -23,7 +23,7 @@ export interface Configuration {
     action: Action
 }
 
-export type TriggerType = 'MANUAL' | 'EVENT' | 'CRON' | ''
+export type TriggerType = 'MANUAL' | 'EVENT' | 'CRON' | 'INTERNAL' | ''
 
 function getParameterValue(
     parameters: ActionParameter[] = [],
@@ -68,7 +68,7 @@ export async function triggerAction(
                 if (err && err.message.includes('StakeKeyNotRegisteredDELEG')) {
                     triggerHandler.setTriggerOnQueue(
                         { function_name: 'registerStake', parameters: [] },
-                        ''
+                        'INTERNAL'
                     )
                     triggerHandler.setTriggerOnQueue(
                         {
@@ -94,7 +94,7 @@ export async function triggerAction(
                 } else if (err && err.message.includes('VotersDoNotExist')) {
                     triggerHandler.setTriggerOnQueue(
                         { function_name: 'dRepRegistration', parameters: [] },
-                        ''
+                        'INTERNAL'
                     )
                     triggerHandler.setTriggerOnQueue(
                         {

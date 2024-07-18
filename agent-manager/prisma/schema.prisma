@@ -75,4 +75,5 @@ enum TriggerType {
   CRON
   MANUAL
   EVENT
+  INTERNAL
 }
