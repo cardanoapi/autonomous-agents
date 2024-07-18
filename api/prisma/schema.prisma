@@ -91,4 +91,5 @@ model User {
   deleted_at DateTime?
   Agent      Agent[]
   Template   Template[]
+  isSuperUser Boolean @default(false)
 }
