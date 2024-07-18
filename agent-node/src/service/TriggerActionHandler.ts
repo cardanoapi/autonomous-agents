@@ -40,7 +40,10 @@ export class TriggerActionHandler {
     }
 
     setTimeOut() {
-        console.log('Timout initialized of 80 second: ', this.triggerQueue)
+        console.log(
+            'Timout initialized of 80 second... , TriggerQueue ',
+            this.triggerQueue
+        )
         this.timeOut = setTimeout(() => {
             if (this.triggerQueue.length) {
                 this.triggerQueue = removeRedundantTrigger(this.triggerQueue)
@@ -107,7 +110,6 @@ export class TriggerActionHandler {
     }
 
     setTriggerOnQueue(action: Action, triggerType: TriggerType) {
-        console.log('Trigger info:', action.function_name, triggerType)
         if (this.timeOut) {
             this.triggerQueue.push({ action, triggerType })
         } else {
