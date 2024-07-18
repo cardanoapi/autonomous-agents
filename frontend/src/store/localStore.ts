@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 import { CIP30Instance } from 'kuber-client/types';
 
 export const agentCreatedAtom = atom(false);
@@ -18,3 +19,5 @@ export const currentAgentNameAtom = atom('Agent Profile');
 export const walletApiAtom = atom<CIP30Instance | null>(null);
 
 export const walletStakeAddressAtom = atom<string | null>(null);
+
+export const userRoleAtom = atomWithStorage<string>('userRole', 'Viewer');

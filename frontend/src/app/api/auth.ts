@@ -9,7 +9,19 @@ export interface ISignedData {
     key: string;
 }
 
-export const SendLoginRequest = async (signedData: ISignedData) => {
+export interface IUserResponse {
+    address: string;
+    created_at: string;
+    is_superUser: boolean;
+}
+
+export const SendLoginRequest = async (
+    signedData: ISignedData
+): Promise<IUserResponse> => {
+    if (!signedData) {
+        throw new Error('Signed data is null');
+    }
+
     try {
         const response = await axios.post(`${baseAPIurl}/login`, signedData, {
             headers: {
@@ -17,7 +29,10 @@ export const SendLoginRequest = async (signedData: ISignedData) => {
             },
             withCredentials: true
         });
-        console.log(response.data);
+
+        if (!response || !response.data) {
+            throw new Error('No response or response data');
+        }
         return response.data;
     } catch (error) {
         console.error('Error Logging in User', error);

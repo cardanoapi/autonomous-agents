@@ -13,6 +13,10 @@ export default function SideNavLink({ Prop }: { Prop: ISideNavItem }) {
         (currentPath.includes(Prop.href) && Prop.href.length > 2) ||
         (Prop.href.length === 1 && currentPath === '/');
 
+    if (Prop.hidden) {
+        return <></>;
+    }
+
     return (
         <Link href={Prop.href}>
             <div

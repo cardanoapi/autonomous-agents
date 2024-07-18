@@ -12,15 +12,21 @@ import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 import { Card, CardContent, CardDescription, CardTitle } from '../atoms/Card';
 import { Dialog, DialogContent } from '../atoms/Dialog';
 import TemplateIcon from '../icons/TemplatesIcon';
+import { cn } from '../lib/utils';
 import ConfirmationBox from './ConfirmationBox';
 import { SuccessToast } from './CustomToasts';
 
 export interface ITemplateCard {
     template: ITemplate;
     templateTrigger: string;
+    enableEdit?: boolean;
 }
 
-export default function TemplateCard({ template, templateTrigger }: ITemplateCard) {
+export default function TemplateCard({
+    template,
+    templateTrigger,
+    enableEdit = false
+}: ITemplateCard) {
     const router = useRouter();
 
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -45,7 +51,12 @@ export default function TemplateCard({ template, templateTrigger }: ITemplateCar
                                 {Truncate(template.name, 17)}
                             </CardTitle>
                         </div>
-                        <div className={'flex flex-row gap-1'}>
+                        <div
+                            className={cn(
+                                'flex flex-row gap-1',
+                                enableEdit ? '' : 'hidden'
+                            )}
+                        >
                             <Edit
                                 color="#A1A1A1"
                                 className={

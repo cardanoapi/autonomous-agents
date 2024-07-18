@@ -17,7 +17,11 @@ import Logo from '@app/components/icons/Logo';
 import LogsIcon from '@app/components/icons/LogsIcon';
 import TemplateIcon from '@app/components/icons/TemplatesIcon';
 import SideNavLink from '@app/components/layout/SideNavLink';
-import { walletApiAtom, walletStakeAddressAtom } from '@app/store/localStore';
+import {
+    userRoleAtom,
+    walletApiAtom,
+    walletStakeAddressAtom
+} from '@app/store/localStore';
 
 import WalletSignInDialog from '../Auth/WalletSignInDialog';
 import { Button } from '../atoms/Button';
@@ -30,50 +34,53 @@ export interface ISideNavItem {
     title: string;
     href: string;
     icon: any;
+    hidden?: boolean;
 }
-
-const SideNavItems: ISideNavItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/',
-        icon: DashBoardIcon
-    },
-    {
-        title: 'Agents',
-        href: '/agents',
-        icon: AgentsIcon
-    },
-    {
-        title: 'Templates',
-        href: '/templates',
-        icon: TemplateIcon
-    },
-    {
-        title: 'DRep Directory',
-        href: PATHS.dRepDirectory,
-        icon: Boxes
-    },
-    {
-        title: 'Governance Actions',
-        href: PATHS.governanceActions,
-        icon: GovernanceActionIcon
-    },
-    {
-        title: 'Logs',
-        href: '/logs',
-        icon: LogsIcon
-    },
-    {
-        title: 'My Agent',
-        href: '/my-agent',
-        icon: MyAgentIcon
-    }
-];
 
 export default function SideNav() {
     const [walletApi, setWalletApi] = useAtom(walletApiAtom);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [walletStakeAddress, setWalletStakeAddress] = useAtom(walletStakeAddressAtom);
+    const [currentUserRole, setCurrentUserRole] = useAtom(userRoleAtom);
+
+    const SideNavItems: ISideNavItem[] = [
+        {
+            title: 'Dashboard',
+            href: '/',
+            icon: DashBoardIcon
+        },
+        {
+            title: 'Agents',
+            href: '/agents',
+            icon: AgentsIcon
+        },
+        {
+            title: 'Templates',
+            href: '/templates',
+            icon: TemplateIcon
+        },
+        {
+            title: 'DRep Directory',
+            href: PATHS.dRepDirectory,
+            icon: Boxes
+        },
+        {
+            title: 'Governance Actions',
+            href: PATHS.governanceActions,
+            icon: GovernanceActionIcon
+        },
+        {
+            title: 'Logs',
+            href: '/logs',
+            icon: LogsIcon
+        },
+        {
+            title: 'My Agent',
+            href: '/my-agent',
+            icon: MyAgentIcon,
+            hidden: currentUserRole === 'Super-Admin'
+        }
+    ];
 
     const router = useRouter();
 
@@ -88,6 +95,7 @@ export default function SideNav() {
         localStorage.removeItem('wallet_stake_address');
         SendLogoutRequest();
         SuccessToast('Wallet Disconnected');
+        setCurrentUserRole('Viewer');
         router.push('/');
     }
 

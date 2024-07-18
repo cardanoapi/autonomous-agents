@@ -20,6 +20,7 @@ import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 import { useModal } from '../Modals/context';
 import { Card, CardContent, CardTitle } from '../atoms/Card';
 import { Dialog, DialogContent } from '../atoms/Dialog';
+import { cn } from '../lib/utils';
 import ConfirmationBox from './ConfirmationBox';
 import { ErrorToast, SuccessToast } from './CustomToasts';
 
@@ -31,6 +32,7 @@ export interface IAgentCard {
     functionCount: number;
     lastActive: string | number;
     totalTrigger: number;
+    enableEdit?: boolean;
     refetchData?: () => void;
 }
 
@@ -40,6 +42,7 @@ export default function AgentCard({
     agentRole,
     templateID,
     refetchData,
+    enableEdit = false,
     lastActive = ''
 }: IAgentCard) {
     const router = useRouter();
@@ -135,25 +138,27 @@ export default function AgentCard({
                 <div className="flex items-center justify-between">
                     <div className="card-h2">{Truncate(agentName, 7)}</div>
                     <div className="flex gap-x-2">
-                        <PlayIcon
-                            color="#A1A1A1"
-                            className="hidden hover:cursor-pointer group-hover:flex"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                openModal('AgentRunnerView', {
-                                    agentId: agentID,
-                                    refetchData: refetchData
-                                });
-                            }}
-                        />
-                        <Trash2
-                            color="#A1A1A1"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setDialogOpen(true);
-                            }}
-                            className="hidden hover:cursor-pointer group-hover:flex"
-                        />
+                        <div className={cn(enableEdit ? 'flex' : 'hidden')}>
+                            <PlayIcon
+                                color="#A1A1A1"
+                                className="hidden hover:cursor-pointer group-hover:flex"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    openModal('AgentRunnerView', {
+                                        agentId: agentID,
+                                        refetchData: refetchData
+                                    });
+                                }}
+                            />
+                            <Trash2
+                                color="#A1A1A1"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setDialogOpen(true);
+                                }}
+                                className="hidden hover:cursor-pointer group-hover:flex"
+                            />
+                        </div>
                         {isActiveWithinLast33Seconds ? (
                             <Badge variant={'success'}>Online</Badge>
                         ) : (

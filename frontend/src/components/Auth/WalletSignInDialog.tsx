@@ -14,7 +14,11 @@ import { OctagonAlert, Wallet } from 'lucide-react';
 import { X } from 'lucide-react';
 
 import { Dialog, DialogContent } from '@app/components/atoms/Dialog';
-import { walletApiAtom, walletStakeAddressAtom } from '@app/store/localStore';
+import {
+    userRoleAtom,
+    walletApiAtom,
+    walletStakeAddressAtom
+} from '@app/store/localStore';
 import { generateSignedData } from '@app/utils/auth';
 
 import { Button } from '../atoms/Button';
@@ -55,6 +59,7 @@ export default function WalletSignInDialog({
     const [, setWalletStakeAddress] = useAtom(walletStakeAddressAtom);
     const [walletProviders, setWalletProviders] = useState<CIP30Provider[]>([]);
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+    const [, setCurrentUserRole] = useAtom(userRoleAtom);
 
     const router = useRouter();
 
@@ -71,6 +76,9 @@ export default function WalletSignInDialog({
             console.log(signedData);
 
             const response = await SendLoginRequest(signedData);
+            response.is_superUser
+                ? setCurrentUserRole('Super-Admin')
+                : setCurrentUserRole('Admin');
             if (response) {
                 onComplete();
                 setConnectingWallet(false);
