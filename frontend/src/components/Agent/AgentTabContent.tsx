@@ -14,24 +14,28 @@ import AgentRunnerComponent from './AgentRunner';
 
 const AgentTabContent = ({
     agent,
-    agentLoading
+    agentLoading,
+    enableEdit
 }: {
     agent?: IAgent;
     agentLoading?: boolean;
+    enableEdit?: boolean;
 }) => {
     const [selectedAgentTab] = useAtom(selectedAgentTabAtom);
 
     function getAgentSelectedTabComponent() {
         if (selectedAgentTab === 'Overview')
-            return <AgentOverViewComponent agent={agent} />;
+            return <AgentOverViewComponent agent={agent} enableEdit={enableEdit} />;
         else if (selectedAgentTab === 'History')
             return <AgentHistoryComponent agent={agent} />;
         else if (selectedAgentTab === 'Logs')
             return <AgentLogComponent agent={agent} />;
-        else if (selectedAgentTab === 'Manual Trigger')
-            return <AgentManualTriggerComponent agent={agent} />;
-        else if (selectedAgentTab === 'Agent Runner')
-            return <AgentRunnerComponent agent={agent} />;
+        else if (enableEdit) {
+            if (selectedAgentTab === 'Manual Trigger')
+                return <AgentManualTriggerComponent agent={agent} />;
+            else if (selectedAgentTab === 'Agent Runner')
+                return <AgentRunnerComponent agent={agent} />;
+        }
     }
 
     return (

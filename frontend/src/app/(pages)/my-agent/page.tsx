@@ -52,8 +52,12 @@ export default function MyAgentPage() {
                 </BreadcrumbList>
             </Breadcrumb>
             <div className={'flex h-full min-h-[600px] w-full gap-4 '}>
-                <AgentTabSection />
-                <AgentTabContent agent={agent} agentLoading={agentLoading} />
+                <AgentTabSection enableEdit={true} />
+                <AgentTabContent
+                    agent={agent}
+                    agentLoading={agentLoading}
+                    enableEdit={true}
+                />
             </div>
         </div>
     );

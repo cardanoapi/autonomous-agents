@@ -16,10 +16,15 @@ import {
     BreadcrumbList,
     BreadcrumbSeparator
 } from '@app/components/atoms/Breadcrumb';
-import { currentAgentNameAtom, selectedAgentTabAtom } from '@app/store/localStore';
+import {
+    adminAccessAtom,
+    currentAgentNameAtom,
+    selectedAgentTabAtom
+} from '@app/store/localStore';
 
 export default function AgentPageById() {
     const [, setCurrentAgentName] = useAtom(currentAgentNameAtom);
+    const [adminAccess] = useAtom(adminAccessAtom);
     const [selectedTab] = useAtom(selectedAgentTabAtom);
     useEffect(() => {
         setCurrentAgentName(agent?.name || '');
@@ -51,8 +56,12 @@ export default function AgentPageById() {
                 </BreadcrumbList>
             </Breadcrumb>
             <div className={'flex h-full min-h-[600px] w-full gap-4 '}>
-                <AgentTabSection />
-                <AgentTabContent agent={agent} agentLoading={agentLoading} />
+                <AgentTabSection enableEdit={adminAccess} />
+                <AgentTabContent
+                    agent={agent}
+                    agentLoading={agentLoading}
+                    enableEdit={adminAccess}
+                />
             </div>
         </div>
     );
