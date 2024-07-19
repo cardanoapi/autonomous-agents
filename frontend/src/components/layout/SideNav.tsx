@@ -73,14 +73,15 @@ export default function SideNav() {
             title: 'Logs',
             href: '/logs',
             icon: LogsIcon
-        },
-        {
-            title: 'My Agent',
-            href: '/my-agent',
-            icon: MyAgentIcon,
-            hidden: adminAccess
         }
     ];
+
+    const MyAgentSideNavItem: ISideNavItem = {
+        title: 'My Agent',
+        href: '/my-agent',
+        icon: MyAgentIcon,
+        hidden: adminAccess
+    };
 
     const router = useRouter();
 
@@ -123,17 +124,19 @@ export default function SideNav() {
                     </div>
                 </Link>
                 <div className=" flex w-full flex-grow flex-col justify-between">
-                    <div className=" mt-6 flex flex-col gap-y-4 px-2">
+                    <div className="mt-6 flex flex-col gap-y-4 px-2">
                         {SideNavItems.map((Prop, index) => (
                             <SideNavLink key={index} Prop={Prop} />
                         ))}
                     </div>
                     {walletApi !== null ? (
-                        <CurrentWalletDiv
-                            address={walletStakeAddress || ''}
-                            className="m-2"
-                            onDisconnect={handleDisconnect}
-                        />
+                        <div className="flex flex-col gap-x-2 gap-y-4 px-2 pb-2">
+                            <SideNavLink key={1} Prop={MyAgentSideNavItem} />
+                            <CurrentWalletDiv
+                                address={walletStakeAddress || ''}
+                                onDisconnect={handleDisconnect}
+                            />
+                        </div>
                     ) : (
                         <Button
                             className="m-2"
