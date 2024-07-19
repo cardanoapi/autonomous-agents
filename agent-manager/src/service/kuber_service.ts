@@ -65,27 +65,24 @@ class Kuber {
                 throw Error(`Kubær API call : ` + e.message)
             })
             .then((res) => {
-                if ('status' in res && res.status === 200) {
+                if (res.status === 200) {
                     return res
                 } else {
-                    return (
-                        'text' in res &&
-                        res.text().then((txt) => {
-                            let json: any
-                            try {
-                                json = JSON.parse(txt)
-                            } catch (e) {
-                                return Promise.reject(Error(`KubærApi [Status ${res.status}] : ${txt}`))
-                            }
-                            if (json) {
-                                return Promise.reject(
-                                    Error(`KubærApi [Status ${res.status}] : ${json.message ? json.message : txt}`)
-                                )
-                            } else {
-                                return Promise.reject(Error(`KubærApi [Status ${res.status}] : ${txt}`))
-                            }
-                        })
-                    )
+                    return res.text().then((txt) => {
+                        let json: any
+                        try {
+                            json = JSON.parse(txt)
+                        } catch (e) {
+                            return Promise.reject(Error(`KubærApi [Status ${res.status}] : ${txt}`))
+                        }
+                        if (json) {
+                            return Promise.reject(
+                                Error(`KubærApi [Status ${res.status}] : ${json.message ? json.message : txt}`)
+                            )
+                        } else {
+                            return Promise.reject(Error(`KubærApi [Status ${res.status}] : ${txt}`))
+                        }
+                    })
                 }
             })
     }
