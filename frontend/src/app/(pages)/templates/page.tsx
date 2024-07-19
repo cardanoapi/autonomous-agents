@@ -8,7 +8,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
 import { ITemplate, fetchTemplates } from '@app/app/api/templates';
-import WalletSignInDialog from '@app/components/Auth/WalletSignInDialog';
 import { Button } from '@app/components/atoms/Button';
 import {
     DropdownMenu,
@@ -59,7 +58,6 @@ export default function TemplatesPage() {
 
     return (
         <>
-            <WalletSignInDialog />
             <div className="flex justify-between">
                 <div className="flex items-center justify-center gap-x-4">
                     <span className="h1-new">Templates({templates?.length})</span>

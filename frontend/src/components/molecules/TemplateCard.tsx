@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 
 import { useMutation } from '@tanstack/react-query';
 import { Edit, Trash2 } from 'lucide-react';
+import { Eye } from 'lucide-react';
 
 import { ITemplate, deleteTemplatebyID } from '@app/app/api/templates';
 import { Truncate } from '@app/utils/common/extra';
@@ -51,28 +52,41 @@ export default function TemplateCard({
                                 {Truncate(template.name, 17)}
                             </CardTitle>
                         </div>
-                        <div
-                            className={cn(
-                                'flex flex-row gap-1',
-                                enableEdit ? '' : 'hidden'
+                        <div className={cn('flex flex-row gap-1')}>
+                            {enableEdit ? (
+                                <>
+                                    <Edit
+                                        color="#A1A1A1"
+                                        className={
+                                            'hidden hover:cursor-pointer group-hover:flex'
+                                        }
+                                        onClick={() =>
+                                            router.push(
+                                                `/templates/${template.id}/edit`
+                                            )
+                                        }
+                                    />
+                                    <Trash2
+                                        stroke="#A1A1A1"
+                                        onClick={() => {
+                                            setDialogOpen(true);
+                                        }}
+                                        className="hidden hover:cursor-pointer group-hover:flex"
+                                    />
+                                </>
+                            ) : (
+                                <>
+                                    <Eye
+                                        stroke="#A1A1A1"
+                                        className="hidden hover:cursor-pointer group-hover:flex"
+                                        onClick={() =>
+                                            router.push(
+                                                `/templates/${template.id}/edit`
+                                            )
+                                        }
+                                    />
+                                </>
                             )}
-                        >
-                            <Edit
-                                color="#A1A1A1"
-                                className={
-                                    'hidden hover:cursor-pointer group-hover:flex'
-                                }
-                                onClick={() =>
-                                    router.push(`/templates/${template.id}/edit`)
-                                }
-                            />
-                            <Trash2
-                                stroke="#A1A1A1"
-                                onClick={() => {
-                                    setDialogOpen(true);
-                                }}
-                                className="hidden hover:cursor-pointer group-hover:flex"
-                            />
                         </div>
                     </div>
                     <CardDescription className="card-description1 mt-2">
