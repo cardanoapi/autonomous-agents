@@ -62,9 +62,6 @@ jobs:
       max-parallel: 1
 
     runs-on: ubuntu-latest
-    env:
-      SERVICE_NAME: ${{ matrix.service }}
-      GITHUB_REPOSITORY: ${{ github.repository }}
 
     steps:
       - name: Deploy built Image
@@ -76,6 +73,8 @@ jobs:
           key: ${{ secrets.BASTION_SSH_KEY }}
           port: ${{ secrets.BASTION_SSH_PORT }}
           script: |
+            SERVICE_NAME=$(echo ${{ matrix.service }} | tr '-' '_')
+            GITHUB_REPOSITORY= ${{github.repository}}
             REPO_NAME="${GITHUB_REPOSITORY##*/}"
             IMAGE_NAME="${{ vars.DOCKER_REGISTRY_HOST }}/${{ vars.DOCKER_IMAGE_PREFIX }}/${REPO_NAME}-${SERVICE_NAME}"
             
