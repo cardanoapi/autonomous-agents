@@ -21,11 +21,11 @@ import { cn } from '@app/components/lib/utils';
 import AgentCard from '@app/components/molecules/AgentCard';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
-import { agentCreatedAtom, userRoleAtom } from '@app/store/localStore';
+import { adminAccessAtom, agentCreatedAtom } from '@app/store/localStore';
 
 export default function AgentsPage() {
     const [agentCreated, setAgentCreated] = useAtom(agentCreatedAtom);
-    const [currentUserRole] = useAtom(userRoleAtom);
+    const [adminAccess] = useAtom(adminAccessAtom);
 
     const {
         data: agents,
@@ -94,7 +94,7 @@ export default function AgentsPage() {
                         variant="primary"
                         className={cn(
                             'h-[36px] w-[145px]',
-                            currentUserRole === 'Super-Admin' ? '' : '!hidden'
+                            adminAccess ? '' : '!hidden'
                         )}
                     >
                         Create Agent
@@ -117,7 +117,7 @@ export default function AgentsPage() {
                                 functionCount={0}
                                 key={index}
                                 refetchData={refetch}
-                                enableEdit={currentUserRole === 'Super-Admin'}
+                                enableEdit={adminAccess}
                             />
                         ))
                     ) : (

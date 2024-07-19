@@ -15,7 +15,7 @@ import { X } from 'lucide-react';
 
 import { Dialog, DialogContent } from '@app/components/atoms/Dialog';
 import {
-    userRoleAtom,
+    adminAccessAtom,
     walletApiAtom,
     walletStakeAddressAtom
 } from '@app/store/localStore';
@@ -59,7 +59,7 @@ export default function WalletSignInDialog({
     const [, setWalletStakeAddress] = useAtom(walletStakeAddressAtom);
     const [walletProviders, setWalletProviders] = useState<CIP30Provider[]>([]);
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-    const [, setCurrentUserRole] = useAtom(userRoleAtom);
+    const [, setAdminAcess] = useAtom(adminAccessAtom);
 
     const router = useRouter();
 
@@ -76,9 +76,7 @@ export default function WalletSignInDialog({
             console.log(signedData);
 
             const response = await SendLoginRequest(signedData);
-            response.is_superUser
-                ? setCurrentUserRole('Super-Admin')
-                : setCurrentUserRole('Admin');
+            response.is_superUser ? setAdminAcess(true) : setAdminAcess(false);
             if (response) {
                 onComplete();
                 setConnectingWallet(false);

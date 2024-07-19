@@ -20,4 +20,4 @@ export const walletApiAtom = atom<CIP30Instance | null>(null);
 
 export const walletStakeAddressAtom = atom<string | null>(null);
 
-export const userRoleAtom = atomWithStorage<string>('userRole', 'Viewer');
+export const adminAccessAtom = atomWithStorage<boolean>('adminAccess', false);

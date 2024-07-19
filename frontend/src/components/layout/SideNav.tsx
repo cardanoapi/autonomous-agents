@@ -18,7 +18,7 @@ import LogsIcon from '@app/components/icons/LogsIcon';
 import TemplateIcon from '@app/components/icons/TemplatesIcon';
 import SideNavLink from '@app/components/layout/SideNavLink';
 import {
-    userRoleAtom,
+    adminAccessAtom,
     walletApiAtom,
     walletStakeAddressAtom
 } from '@app/store/localStore';
@@ -41,7 +41,7 @@ export default function SideNav() {
     const [walletApi, setWalletApi] = useAtom(walletApiAtom);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [walletStakeAddress, setWalletStakeAddress] = useAtom(walletStakeAddressAtom);
-    const [currentUserRole, setCurrentUserRole] = useAtom(userRoleAtom);
+    const [adminAccess, setAdminAcess] = useAtom(adminAccessAtom);
 
     const SideNavItems: ISideNavItem[] = [
         {
@@ -78,7 +78,7 @@ export default function SideNav() {
             title: 'My Agent',
             href: '/my-agent',
             icon: MyAgentIcon,
-            hidden: currentUserRole === 'Super-Admin'
+            hidden: adminAccess
         }
     ];
 
@@ -95,7 +95,7 @@ export default function SideNav() {
         localStorage.removeItem('wallet_stake_address');
         SendLogoutRequest();
         SuccessToast('Wallet Disconnected');
-        setCurrentUserRole('Viewer');
+        setAdminAcess(false);
         router.push('/');
     }
 
