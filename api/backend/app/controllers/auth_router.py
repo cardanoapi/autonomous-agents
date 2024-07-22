@@ -5,6 +5,7 @@ from backend.app.services.user_service import UserService
 from backend.app.auth.jwt_token import generate_jwt_token_using_user_address
 from fastapi.responses import JSONResponse
 from fastapi import Response, HTTPException
+from backend.app.models.user.response_dto import UserResponse
 import os
 import json
 
@@ -35,12 +36,12 @@ class AuthRouter(Routable):
             # Generate JWT Token using user Address
             token = generate_jwt_token_using_user_address(user.address)
 
-            response = JSONResponse(
-                content={"address": user.address, "created_at": str(user.created_at), "is_superUser": user.isSuperUser}
+            user_response = UserResponse(
+                address=user.address, created_at=user.created_at, is_superUser=user.isSuperUser
             )
+            response = JSONResponse(content=user_response.json())
 
             # Cookie configs
-
             response.set_cookie(
                 key="access_token",
                 value=token,
