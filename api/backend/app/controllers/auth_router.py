@@ -4,7 +4,7 @@ from backend.app.utils.signed_data import verify_signed_data, extract_signed_add
 from backend.app.services.user_service import UserService
 from backend.app.auth.jwt_token import generate_jwt_token_using_user_address
 from fastapi.responses import JSONResponse
-from fastapi import Response, HTTPException
+from fastapi import Response, HTTPException, Request
 from backend.app.models.user.response_dto import UserResponse
 from backend.app.models.user.user_dto import SignatureDataDto, UserCreateDto
 import os
@@ -53,11 +53,9 @@ class AuthRouter(Routable):
             raise HTTPException(status_code=401, detail="Invalid signature")
 
     @post("/logout")
-    async def logout_user(self, response: Response):
-        try:
-            response = JSONResponse(content={"status": "logged out"})
-            response.delete_cookie("access_token")
-            return response
-        except Exception as e:
-            print(e)
-            return {"Status": "Failed", "Info": "Error while logging out"}
+    async def logout_user(self, response: Response, request: Request):
+        if request.cookies.get("access_token") is None:
+            raise HTTPException(status_code=401, detail="No access token found")
+        response = JSONResponse(content={"status": "logged out"})
+        response.delete_cookie("access_token")
+        return response
