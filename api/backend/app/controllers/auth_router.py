@@ -6,13 +6,8 @@ from backend.app.auth.jwt_token import generate_jwt_token_using_user_address
 from fastapi.responses import JSONResponse
 from fastapi import Response, HTTPException
 from backend.app.models.user.response_dto import UserResponse
+from backend.app.models.user.user_dto import SignatureDataDto
 import os
-import json
-
-
-class SignatureDataDto(BaseModel):
-    signature: str
-    key: str
 
 
 class AuthRouter(Routable):
