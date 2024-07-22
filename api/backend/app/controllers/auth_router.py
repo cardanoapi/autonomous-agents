@@ -12,9 +12,9 @@ import os
 
 class AuthRouter(Routable):
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, user_service: UserService = UserService(), *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.user_service = UserService()
+        self.user_service = user_service
         current_environment = os.environ.get("NODE_ENV")
         self.secure = True if current_environment == "production" else False
         self.domain = "api.agents.cardanoapi.io" if current_environment == "production" else "localhost"
