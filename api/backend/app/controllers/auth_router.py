@@ -6,7 +6,7 @@ from backend.app.auth.jwt_token import generate_jwt_token_using_user_address
 from fastapi.responses import JSONResponse
 from fastapi import Response, HTTPException
 from backend.app.models.user.response_dto import UserResponse
-from backend.app.models.user.user_dto import SignatureDataDto
+from backend.app.models.user.user_dto import SignatureDataDto, UserCreateDto
 import os
 
 
@@ -26,15 +26,16 @@ class AuthRouter(Routable):
 
             # Extract Signed Address and Creates a user using the address , if user with address already exists ,returns the user.
             signed_address = extract_signed_address_from_signature_header(hex_signature=signed_data.signature)
-            user = await self.user_service.create_user(user_address=signed_address)
+            user = await self.user_service.create_user(UserCreateDto(address=signed_address, isSuperUser=False))
 
             # Generate JWT Token using user Address
             token = generate_jwt_token_using_user_address(user.address)
 
             user_response = UserResponse(
-                address=user.address, created_at=user.created_at, is_superUser=user.isSuperUser
+                address=user.address, created_at=str(user.created_at), is_superUser=user.isSuperUser
             )
-            response = JSONResponse(content=user_response.json())
+            print(user_response.json())
+            response = JSONResponse(content=user_response.dict())
 
             # Cookie configs
             response.set_cookie(
