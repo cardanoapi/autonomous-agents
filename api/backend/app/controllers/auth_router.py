@@ -32,7 +32,7 @@ class AuthRouter(Routable):
             token = generate_jwt_token_using_user_address(user.address)
 
             user_response = UserResponse(
-                address=user.address, created_at=str(user.created_at), is_superUser=user.isSuperUser
+                address=user.address, created_at=str(user.created_at), isSuperUser=user.isSuperUser
             )
             print(user_response.json())
             response = JSONResponse(content=user_response.dict())

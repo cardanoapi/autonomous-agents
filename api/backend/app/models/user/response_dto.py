@@ -5,4 +5,4 @@ from datetime import datetime
 class UserResponse(BaseModel):
     address: str
     created_at: str | datetime
-    is_superUser: bool
+    isSuperUser: bool

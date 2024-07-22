@@ -12,7 +12,7 @@ export interface ISignedData {
 export interface IUserResponse {
     address: string;
     created_at: string;
-    is_superUser: boolean;
+    isSuperUser: boolean;
 }
 
 export const SendLoginRequest = async (

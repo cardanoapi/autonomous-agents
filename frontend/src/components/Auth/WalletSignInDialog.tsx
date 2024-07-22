@@ -76,7 +76,7 @@ export default function WalletSignInDialog({
             console.log(signedData);
 
             const response = await SendLoginRequest(signedData);
-            response.is_superUser ? setAdminAcess(true) : setAdminAcess(false);
+            response.isSuperUser ? setAdminAcess(true) : setAdminAcess(false);
             if (response) {
                 onComplete();
                 setConnectingWallet(false);
