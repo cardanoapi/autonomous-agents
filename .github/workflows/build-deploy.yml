@@ -77,7 +77,6 @@ jobs:
           port: ${{ secrets.BASTION_SSH_PORT }}
           script: |
             SERVICE_NAME=$(echo ${{ matrix.service }})
-            FORMATTED_SERVICE_NAME=$(echo ${{ matrix.service }} | tr '-' '_')
             GITHUB_REPOSITORY="${{ github.repository }}"
             REPO_NAME="${GITHUB_REPOSITORY##*/}"
             IMAGE_NAME="${{ vars.DOCKER_REGISTRY_HOST }}/${{ vars.DOCKER_IMAGE_PREFIX }}/${REPO_NAME}-${SERVICE_NAME}"
@@ -90,6 +89,6 @@ jobs:
               DOCKER_HOST="${{ vars.PROD_HOST }}"
               DOCKER_STACK="${{ vars.PROD_STACK }}"
             fi
-            echo docker --host "$DOCKER_HOST" service update --image $IMAGE_NAME:$DEPLOY_TAG ${DOCKER_STACK}_${FORMATTED_SERVICE_NAME}
-            docker --host "$DOCKER_HOST" service update --image $IMAGE_NAME:$DEPLOY_TAG ${DOCKER_STACK}_${FORMATTED_SERVICE_NAME}
+            echo docker --host "$DOCKER_HOST" service update --image $IMAGE_NAME:$DEPLOY_TAG ${DOCKER_STACK}_${SERVICE_NAME}
+            docker --host "$DOCKER_HOST" service update --image $IMAGE_NAME:$DEPLOY_TAG ${DOCKER_STACK}_${SERVICE_NAME}
 
