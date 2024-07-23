@@ -17,16 +17,6 @@ logger = logging.getLogger(__name__)
 class TestAuth:
 
     @pytest.fixture
-    def user_service(self):
-        user_service = MagicMock(spec=UserService)
-        user_service.create_user = AsyncMock(
-            side_effect=lambda user_data: UserResponse(
-                address=user_data.address, created_at=datetime.now(timezone.utc), isSuperUser=user_data.isSuperUser
-            )
-        )
-        return user_service
-
-    @pytest.fixture
     def auth_router(self, user_service):
         return AuthRouter(user_service)
 
