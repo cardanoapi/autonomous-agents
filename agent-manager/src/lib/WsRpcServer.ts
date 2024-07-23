@@ -45,13 +45,19 @@ export abstract class WsRpcServer extends RpcV1Server {
 
     private setupServer() {
         this.server.on('connection', async (ws: WebSocket, req) => {
-            const conn_id = await this.validateConnection(req)
+            const conn_id = req.url?.slice(1) || ''
             if (this.activeConnections[conn_id]) {
                 ws.close(1000, `Connection for id ${conn_id} is already active`)
                 return
             }
             this.addConnection(conn_id, new CborDuplex(new WsClientPipe(ws), cborxBackend(true)))
-            this.onReady(this.activeConnections[conn_id])
+            try {
+                await this.validateConnection(req)
+                this.onReady(this.activeConnections[conn_id])
+            } catch (err) {
+                console.error(err)
+                this.disconnect(conn_id, err.message)
+            }
         })
     }
 }

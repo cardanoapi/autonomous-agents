@@ -1,5 +1,5 @@
-import { PrismaClient } from '@prisma/client'
 import { JsonValue } from '@prisma/client/runtime/library'
+import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -52,7 +52,7 @@ export async function fetchAgentConfiguration(agentId: string): Promise<{
         }
     } catch (error) {
         console.log(`Error fetching agent configuration: ${error}`)
-        return { instanceCount: null, configurations: [] }
+        throw error
     }
 }
 
@@ -63,6 +63,6 @@ export async function updateLastActiveTimestamp(agentId: string): Promise<void> 
             data: { last_active: new Date() },
         })
     } catch (error) {
-        console.log(`Error updating last active timestamp for agent ${agentId}: ${error}`)
+        console.error(`Error updating last active timestamp for agent ${agentId}: ${error}`)
     }
 }

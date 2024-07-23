@@ -19,7 +19,7 @@ export class AgentManagerRPC extends WsRpcServer {
             if (exists) {
                 return agentId
             } else {
-                throw Error('Agent is not found ' + agentId)
+                throw Error(`Agent with id ${agentId} doesn't exist`)
             }
         } else {
             throw Error('Invalid websocket connection')
@@ -61,12 +61,18 @@ export class AgentManagerRPC extends WsRpcServer {
         const agentKeysPromise = fetch(addressApiUrl)
             .then((response) => response.json())
             .then((data) => client.emit('agent_keys', data))
-            .catch((err) => console.error(err))
-        const agentConfigsPromise = fetchAgentConfiguration(client.getId()).then((config) => {
-            client.emit('initial_config', config)
-        })
+            .catch((error) => {
+                throw error
+            })
+        const agentConfigsPromise = fetchAgentConfiguration(client.getId())
+            .then((config) => {
+                client.emit('initial_config', config)
+            })
+            .catch((error) => {
+                throw error
+            })
         Promise.all([agentKeysPromise, agentConfigsPromise]).catch((err: Error) => {
-            console.error(err)
+            console.error('Error:', err)
             this.disconnect(client.getId(), err.message)
         })
     }
