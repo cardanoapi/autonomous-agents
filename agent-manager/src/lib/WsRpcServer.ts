@@ -54,7 +54,7 @@ export abstract class WsRpcServer extends RpcV1Server {
             try {
                 await this.validateConnection(req)
                 this.onReady(this.activeConnections[conn_id])
-            } catch (err) {
+            } catch (err: any) {
                 console.error(err)
                 this.disconnect(conn_id, err.message)
             }
