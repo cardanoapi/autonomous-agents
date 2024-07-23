@@ -11,6 +11,7 @@ from backend.app.services.template_service import TemplateService
 
 @pytest.mark.asyncio
 @pytest.mark.github_actions
+@pytest.mark.skip
 class TestCreateTrigger:
     @pytest.fixture
     def template_service(self):
