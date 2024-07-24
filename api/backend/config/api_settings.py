@@ -3,6 +3,10 @@ import os
 
 
 class APISettings(BaseSettings):
-    ENVIRONMENT: str = os.environ.get("APP_ENV", "production")
-    SECURE: bool = True if ENVIRONMENT == "productiongit " else False
-    JWT_SECRET_KEY: str = os.environ.get("JWT_SECRET_KEY", "")
+    APP_ENV: str = "production"
+    SECURE: bool = None
+    JWT_SECRET_KEY: str = ""
+
+    def __init__(self, **values):
+        super().__init__(**values)
+        self.SECURE = True if self.APP_ENV == "production" else False
