@@ -126,6 +126,12 @@ export default function WalletSignInDialog({
                     if (walletStakeAddress === storedWalletStakeAddress) {
                         setWalletApi(enabledApi);
                         setWalletStakeAddress(walletStakeAddress);
+                    } else {
+                        setWalletApi(null);
+                        setAdminAcess(false);
+                        Cookies.remove('access_token');
+                        localStorage.removeItem('wallet_stake_address');
+                        localStorage.removeItem('wallet_provider');
                     }
                 }
             }
