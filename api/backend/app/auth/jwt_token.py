@@ -1,8 +1,11 @@
 import jwt
 import os
 
+from backend.config.api_settings import APISettings
 
-jwt_secret_key = os.environ.get("JWT_SECRET_KEY")
+settings = APISettings()
+
+jwt_secret_key = settings.JWT_SECRET_KEY
 
 
 def generate_jwt_token_using_user_address(user_address: str):

@@ -1,5 +1,4 @@
 from classy_fastapi import Routable, post, get
-from pydantic import BaseModel
 from backend.app.utils.signed_data import verify_signed_data, extract_signed_address_from_signature_header
 from backend.app.services.user_service import UserService
 from backend.app.auth.jwt_token import generate_jwt_token_using_user_address
@@ -7,6 +6,7 @@ from fastapi.responses import JSONResponse
 from fastapi import Response, HTTPException, Request
 from backend.app.models.user.response_dto import UserResponse
 from backend.app.models.user.user_dto import SignatureDataDto, UserCreateDto
+from backend.config.api_settings import APISettings
 import os
 
 
@@ -15,12 +15,10 @@ class AuthRouter(Routable):
     def __init__(self, user_service: UserService = UserService(), *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.user_service = user_service
-        current_environment = os.environ.get("NODE_ENV")
-        self.secure = True if current_environment == "production" else False
-        self.domain = "api.agents.cardanoapi.io" if current_environment == "production" else "localhost"
+        self.settings = APISettings()
 
     @post("/login")
-    async def login_user(self, signed_data: SignatureDataDto):
+    async def login_user(self, signed_data: SignatureDataDto, request: Request):
         valid_data = verify_signed_data(hex_signature=signed_data.signature, hex_key=signed_data.key)
         if valid_data:
 
@@ -34,7 +32,6 @@ class AuthRouter(Routable):
             user_response = UserResponse(
                 address=user.address, created_at=str(user.created_at), isSuperUser=user.isSuperUser
             )
-            print(user_response.json())
             response = JSONResponse(content=user_response.dict())
 
             # Cookie configs
@@ -42,9 +39,9 @@ class AuthRouter(Routable):
                 key="access_token",
                 value=token,
                 samesite="lax",
-                secure=self.secure,
+                secure=self.settings.SECURE,
                 expires=60 * 60 * 24,
-                domain=self.domain,
+                domain=request.url.hostname,
                 path="/",
             )
 
