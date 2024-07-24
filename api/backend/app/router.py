@@ -53,4 +53,4 @@ root_api_router.include_router(
 root_api_router.include_router(trigger_history_router.TriggerHistory().router, tags=["Trigger History"])
 
 # for authentication
-root_api_router.include_router(auth_router.AuthRouter().router, tags=["Authentication"])
+root_api_router.include_router(auth_router.AuthRouter().router, tags=["Authentication"], prefix="/auth")

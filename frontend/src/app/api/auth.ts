@@ -23,7 +23,7 @@ export const SendLoginRequest = async (
     }
 
     try {
-        const response = await axios.post(`${baseAPIurl}/login`, signedData, {
+        const response = await axios.post(`${baseAPIurl}/auth/login`, signedData, {
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -43,7 +43,7 @@ export const SendLoginRequest = async (
 export const SendLogoutRequest = async () => {
     try {
         const response = await axios.post(
-            `${baseAPIurl}/logout`,
+            `${baseAPIurl}/auth/logout`,
             {},
             {
                 withCredentials: true
