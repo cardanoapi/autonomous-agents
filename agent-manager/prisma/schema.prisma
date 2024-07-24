@@ -18,6 +18,8 @@ model Agent {
   created_at  DateTime
   updated_at  DateTime
   deleted_at  DateTime? // Soft deletion field
+  owner       User?     @relation(fields: [userAddress], references: [address])
+  userAddress      String?
 }
 
 model Trigger {
@@ -49,11 +51,13 @@ model Template {
   created_at  DateTime
   updated_at  DateTime
   deleted_at  DateTime?
+  owner       User?      @relation(fields: [userAddress], references: [address])
+  userAddress      String?
 }
 
 // schema.prisma
 model TriggerHistory {
-  id           String    @id
+  id           String      @id
   agentId      String
   functionName String
   status       Boolean
@@ -61,7 +65,7 @@ model TriggerHistory {
   message      String
   timestamp    DateTime?
   txHash       String?
-  triggerType  TriggerType?
+  triggerType  TriggerType
 }
 
 model FunctionDetail {
@@ -75,5 +79,14 @@ enum TriggerType {
   CRON
   MANUAL
   EVENT
-  INTERNAL
+}
+
+model User {
+  address    String     @id
+  created_at DateTime
+  updated_at DateTime
+  deleted_at DateTime?
+  Agent      Agent[]
+  Template   Template[]
+  isSuperUser Boolean @default(false)
 }
