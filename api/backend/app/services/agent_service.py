@@ -82,10 +82,6 @@ class AgentService:
         self.raise_exception_if_agent_not_found(existing_agent)
         await self.is_authorized(userAddress, existing_agent)
 
-        user_is_super_admin = await self.user_reposiotry.is_super_admin(userAddress)
-        if existing_agent.user_address != userAddress and user_is_super_admin == False:
-            raise HTTPException(status_code=403, content="Forbidden Request")
-
         updated_triggers = await self.trigger_service.update_configurations_for_agent(
             agent_id, agent_data.agent_configurations
         )
