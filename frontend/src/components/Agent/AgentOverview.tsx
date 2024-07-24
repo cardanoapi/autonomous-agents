@@ -17,10 +17,17 @@ import TextDisplayField from '@app/components/molecules/TextDisplayField';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { Button } from '../atoms/Button';
+import { cn } from '../lib/utils';
 import { ScrollArea } from '../shadcn/ui/scroll-area';
 import AgentFunctionsDetailComponent from './AgentFunctionsDetail';
 
-const AgentOverViewComponent = ({ agent }: { agent?: IAgent }) => {
+const AgentOverViewComponent = ({
+    agent,
+    enableEdit
+}: {
+    agent?: IAgent;
+    enableEdit?: boolean;
+}) => {
     const [isEditing, setIsEditing] = useState(false);
     const [agentName, setAgentName] = useState(agent?.name || '');
     const [agentConfigurations, setAgentConfigurations] = useState<
@@ -33,6 +40,7 @@ const AgentOverViewComponent = ({ agent }: { agent?: IAgent }) => {
         mutationFn: (data: IAgentUpdateReqDto) => updateAgentData(data),
         onSuccess: () => {
             queryClient.refetchQueries({ queryKey: [`agent${agent?.id}`] });
+            queryClient.refetchQueries({ queryKey: ['myAgent'] });
             SuccessToast('Agent successfully updated.');
         },
         onError: (error: any) => {
@@ -101,7 +109,7 @@ const AgentOverViewComponent = ({ agent }: { agent?: IAgent }) => {
                     <></>
                 ) : (
                     <Edit
-                        className={'cursor-pointer'}
+                        className={cn('cursor-pointer', enableEdit ? '' : '!hidden')}
                         onClick={handleClickEditButton}
                     />
                 )}

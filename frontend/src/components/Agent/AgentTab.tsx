@@ -2,18 +2,23 @@
 
 import AgentTabItem from './AgentTabItem';
 
-const AgentTabType = ['Overview', 'History', 'Logs', 'Manual Trigger', 'Agent Runner'];
+const adminAgentTabType = [
+    'Overview',
+    'History',
+    'Logs',
+    'Manual Trigger',
+    'Agent Runner'
+];
+const normalAgentTabType = ['Overview', 'History', 'Logs'];
 
-const AgentTabSection = () => {
+const AgentTabSection = ({ enableEdit = false }: { enableEdit?: boolean }) => {
+    const tabs = enableEdit ? adminAgentTabType : normalAgentTabType;
+
     return (
-        <div
-            className={
-                'flex min-h-full min-w-[200px] flex-col gap-2 rounded-lg bg-white py-6'
-            }
-        >
-            {AgentTabType.map((item, index) => {
-                return <AgentTabItem key={index} item={item} />;
-            })}
+        <div className="flex min-h-full min-w-[200px] flex-col gap-2 rounded-lg bg-white py-6">
+            {tabs.map((item, index) => (
+                <AgentTabItem key={index} item={item} />
+            ))}
         </div>
     );
 };

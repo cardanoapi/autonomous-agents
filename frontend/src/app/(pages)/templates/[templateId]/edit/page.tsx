@@ -11,13 +11,16 @@ import {
     updateTemplateData
 } from '@api/templates';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useAtom } from 'jotai';
 import { ChevronLeft, Plus } from 'lucide-react';
 
 import { Button } from '@app/components/atoms/Button';
+import { cn } from '@app/components/lib/utils';
 import { ErrorToast, SuccessToast } from '@app/components/molecules/CustomToasts';
 import TemplateConfigurations from '@app/components/molecules/TemplateConfigurations';
 import UpdateTemplateFunctionModal from '@app/components/molecules/UpdateTemplateFunctionModal';
 import { Dialog, DialogContent } from '@app/components/shadcn/dialog';
+import { adminAccessAtom } from '@app/store/localStore';
 
 const EditTemplateCard = () => {
     const params = useParams();
@@ -44,6 +47,8 @@ const EditTemplateCard = () => {
     const [templateConfigurations, setTemplateConfigurations] = useState<
         Array<ITemplateConfiguration>
     >([]);
+    const [adminAccess] = useAtom(adminAccessAtom);
+
     const [templateDetails, setTemplateDetails] = useState<{
         name: string;
         description: string;
@@ -118,6 +123,7 @@ const EditTemplateCard = () => {
                             className={
                                 'w-11/12 rounded border border-brand-Black-100/80 px-2 py-1'
                             }
+                            disabled={!adminAccess}
                         />
                     </div>
                     <div className={'flex flex-col gap-1'}>
@@ -132,6 +138,7 @@ const EditTemplateCard = () => {
                                     description: e.target.value
                                 })
                             }
+                            disabled={!adminAccess}
                             type="text"
                             className={
                                 'w-11/12 rounded border border-brand-Black-100/80 px-2 py-1'
@@ -142,7 +149,10 @@ const EditTemplateCard = () => {
                 <div className={'flex items-center gap-4'}>
                     <span className={'font-medium'}>Template Functions</span>
                     <div
-                        className={'cursor-pointer rounded p-1 hover:bg-gray-200'}
+                        className={cn(
+                            'cursor-pointer rounded p-1 hover:bg-gray-200',
+                            adminAccess ? '' : 'hidden'
+                        )}
                         onClick={() => setOpenDialog(true)}
                     >
                         <Plus />
@@ -176,7 +186,7 @@ const EditTemplateCard = () => {
                     </DialogContent>
                 </Dialog>
 
-                <div className={'flex justify-end'}>
+                <div className={cn('flex justify-end', adminAccess ? '' : '!hidden')}>
                     <Button onClick={() => handleOnClickUpdate()}>Update</Button>
                 </div>
             </div>

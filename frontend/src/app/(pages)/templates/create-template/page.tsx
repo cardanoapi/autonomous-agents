@@ -24,7 +24,7 @@ import { ErrorToast } from '@app/components/molecules/CustomToasts';
 import MultipleSelector from '@app/components/molecules/MultiSearchSelect';
 import SelectedCard from '@app/components/molecules/SelectedCard';
 import { SubmitButton } from '@app/components/molecules/SubmitButton';
-import { templateCreatedAtom } from '@app/store/loaclStore';
+import { templateCreatedAtom } from '@app/store/localStore';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import TriggerForm from './components/TriggerForm';

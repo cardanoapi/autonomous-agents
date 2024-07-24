@@ -72,12 +72,12 @@ export default function RootLayout({
                         <ReactQueryProvider>
                             <Toaster />
                             <div className="flex h-full w-full  bg-gradient-to-r from-[#F8F9FC] via-[#F5F5FC] to-[#E9EAF8]">
-                                <div className="hidden min-h-screen w-[275px] min-w-[275px] lg:flex ">
+                                <div className="hidden min-h-screen w-[275px] min-w-[275px] overflow-hidden lg:flex">
                                     <SideNav />
                                 </div>
                                 <div className="max-h-screen flex-grow flex-col overflow-y-auto overflow-x-clip px-[34px] pt-[3%] 2xl:px-[45px]">
                                     <TopNav />
-                                    <div className="mt-10 h-full">{children}</div>
+                                    <div className="mt-10">{children}</div>
                                 </div>
                             </div>
                             <ModalContainer />

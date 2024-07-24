@@ -9,13 +9,17 @@ import { Edit, Trash2 } from 'lucide-react';
 import UpdateTemplateFunctionModal from '@app/components/molecules/UpdateTemplateFunctionModal';
 import { Dialog, DialogContent } from '@app/components/shadcn/dialog';
 
+import { cn } from '../lib/utils';
+
 const TemplateConfigurations = ({
     templateConfigurations,
     onDeleteConfig,
-    handleUpdateTemplateConfig
+    handleUpdateTemplateConfig,
+    enableEdit = false
 }: {
     templateConfigurations: Array<ITemplateConfiguration>;
     onDeleteConfig: (args: string) => void;
+    enableEdit?: boolean;
     handleUpdateTemplateConfig: (
         updatedTemplateConfig: ITemplateConfiguration,
         updatedTemplateConfigIndex: number
@@ -48,7 +52,12 @@ const TemplateConfigurations = ({
                                     : 1}
                             </span>
 
-                            <div className={'absolute right-2 top-2 flex gap-1'}>
+                            <div
+                                className={cn(
+                                    'absolute right-2 top-2 flex gap-1',
+                                    enableEdit ? '' : 'hidden'
+                                )}
+                            >
                                 {config.type === 'CRON' && (
                                     <Edit
                                         color="#A1A1A1"

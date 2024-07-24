@@ -16,9 +16,10 @@ import {
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
+import { cn } from '@app/components/lib/utils';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
-import { templateCreatedAtom } from '@app/store/loaclStore';
+import { adminAccessAtom, templateCreatedAtom } from '@app/store/localStore';
 
 import TemplatesContainer from './TemplatesContainer';
 
@@ -30,6 +31,8 @@ export default function TemplatesPage() {
 
     const [templateCreated, setTemplateCreated] = useAtom(templateCreatedAtom);
     const [filteredTemplates, setFilteredTemplates] = useState<ITemplate[]>([]);
+    const [adminAccess] = useAtom(adminAccessAtom);
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
     useEffect(() => {
@@ -40,7 +43,7 @@ export default function TemplatesPage() {
     }, [templateCreated, setTemplateCreated]);
 
     useEffect(() => {
-        if (templates) {
+        if (templates.length !== 0) {
             setFilteredTemplates(templates);
         }
     }, [templates]);
@@ -54,7 +57,7 @@ export default function TemplatesPage() {
     }
 
     return (
-        <div>
+        <>
             <div className="flex justify-between">
                 <div className="flex items-center justify-center gap-x-4">
                     <span className="h1-new">Templates({templates?.length})</span>
@@ -76,7 +79,13 @@ export default function TemplatesPage() {
                     </DropdownMenu>
                 </div>
                 <Link href="/templates/create-template">
-                    <Button variant="primary" className="h-[36px] w-[145px]">
+                    <Button
+                        variant="primary"
+                        className={cn(
+                            'h-[36px] w-[145px]',
+                            adminAccess ? '' : '!hidden'
+                        )}
+                    >
                         Create Template
                     </Button>
                 </Link>
@@ -96,7 +105,7 @@ export default function TemplatesPage() {
                     )}
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 

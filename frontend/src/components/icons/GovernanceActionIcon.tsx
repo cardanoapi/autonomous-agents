@@ -1,5 +1,3 @@
-'use-client';
-
 import React from 'react';
 
 export default function GovernanceActionIcon(props: React.SVGAttributes<any>) {
@@ -10,6 +8,8 @@ export default function GovernanceActionIcon(props: React.SVGAttributes<any>) {
             viewBox="0 0 20 20"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            stroke="currentColor"
+            strokeWidth="1"
             {...props}
         >
             <path

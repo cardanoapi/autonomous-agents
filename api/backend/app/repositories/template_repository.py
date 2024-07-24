@@ -9,6 +9,7 @@ from backend.app.models import TemplateCreateDto, TemplateResponse
 from backend.app.models.template.template_dto import TemplateEditDto
 from backend.config.database import prisma_connection
 from backend.config.logger import logger
+from fastapi import HTTPException
 
 
 class TemplateRepository:
@@ -26,6 +27,7 @@ class TemplateRepository:
             "description": template_data.description,
             "created_at": datetime.now(timezone.utc),
             "updated_at": datetime.now(timezone.utc),
+            "userAddress": template_data.userAddress,
         }
         # Use the transaction object for creating the template
         template = await transaction.template.create(data=template_data_dict)

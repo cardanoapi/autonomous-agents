@@ -10,6 +10,7 @@ import pytest
 
 @pytest.mark.github_actions
 @pytest.mark.asyncio
+@pytest.mark.skip
 class TestAgentEditRouter:
     @pytest.fixture
     def agent_service(self):

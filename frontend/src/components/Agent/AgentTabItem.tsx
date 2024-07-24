@@ -3,7 +3,7 @@
 import { useAtom } from 'jotai/index';
 
 import { cn } from '@app/components/lib/utils';
-import { selectedAgentTabAtom } from '@app/store/loaclStore';
+import { selectedAgentTabAtom } from '@app/store/localStore';
 
 const AgentTabItem = ({ item }: { item: any }) => {
     const [selectedTab, setSelectedTab] = useAtom(selectedAgentTabAtom);

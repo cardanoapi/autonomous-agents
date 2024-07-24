@@ -5,17 +5,11 @@ import { usePathname } from 'next/navigation';
 import { PATHS } from '@consts';
 import { useAtom } from 'jotai';
 
-import { currentAgentNameAtom } from '@app/store/loaclStore';
-
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from '../atoms/DropDownMenu';
+import { adminAccessAtom, currentAgentNameAtom } from '@app/store/localStore';
 
 export default function TopNav() {
     const [currentAgentName] = useAtom(currentAgentNameAtom);
+    const [adminAcesss] = useAtom(adminAccessAtom);
     const path: string = usePathname();
 
     const PageTitles: { [key: string]: string } = {
@@ -46,14 +40,7 @@ export default function TopNav() {
     return (
         <div className="flex w-[full] items-center justify-between text-sm">
             <span className="h1">{getPageTitle()}</span>
-            <DropdownMenu>
-                <DropdownMenuTrigger>Admin</DropdownMenuTrigger>
-                <DropdownMenuContent>
-                    <DropdownMenuItem>Settings</DropdownMenuItem>
-                    <DropdownMenuItem>Privacy</DropdownMenuItem>
-                    <DropdownMenuItem>Logout</DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
+            {adminAcesss && 'Admin'}
         </div>
     );
 }
