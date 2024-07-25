@@ -25,7 +25,7 @@ export interface ICronTrigger {
 }
 
 export interface IEventTrigger {
-    event: string;
+    event: 'VoteEvent';
     parameters?: Array<ISubParameter>;
 }
 
