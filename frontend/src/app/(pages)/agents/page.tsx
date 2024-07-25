@@ -20,10 +20,15 @@ import { cn } from '@app/components/lib/utils';
 import AgentCard from '@app/components/molecules/AgentCard';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
-import { adminAccessAtom, agentCreatedAtom } from '@app/store/localStore';
+import {
+    adminAccessAtom,
+    agentCreatedAtom,
+    walletApiAtom
+} from '@app/store/localStore';
 
 export default function AgentsPage() {
     const [agentCreated, setAgentCreated] = useAtom(agentCreatedAtom);
+    const [walletApi] = useAtom(walletApiAtom);
     const [adminAccess] = useAtom(adminAccessAtom);
 
     const {
@@ -92,7 +97,7 @@ export default function AgentsPage() {
                         variant="primary"
                         className={cn(
                             'h-[36px] w-[145px]',
-                            adminAccess ? '' : '!hidden'
+                            walletApi && adminAccess ? '' : '!hidden'
                         )}
                     >
                         Create Agent

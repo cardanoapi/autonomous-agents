@@ -9,6 +9,7 @@ import { SendLogoutRequest } from '@api/auth';
 import { PATHS } from '@consts';
 import { Typography } from '@mui/material';
 import { useAtom } from 'jotai';
+import Cookies from 'js-cookie';
 import { Boxes } from 'lucide-react';
 
 import DashBoardIcon from '@app/components/icons/DashboardIcon';
@@ -17,11 +18,9 @@ import Logo from '@app/components/icons/Logo';
 import LogsIcon from '@app/components/icons/LogsIcon';
 import TemplateIcon from '@app/components/icons/TemplatesIcon';
 import SideNavLink from '@app/components/layout/SideNavLink';
-import {
-    adminAccessAtom,
-    walletApiAtom,
-    walletStakeAddressAtom
-} from '@app/store/localStore';
+import { adminAccessAtom, savedWalletAtom, walletApiAtom } from '@app/store/localStore';
+import { listProviders } from '@app/utils/wallet';
+import { getStakeAddress } from '@app/utils/wallet';
 
 import WalletSignInDialog from '../Auth/WalletSignInDialog';
 import { Button } from '../atoms/Button';
@@ -40,8 +39,8 @@ export interface ISideNavItem {
 export default function SideNav() {
     const [walletApi, setWalletApi] = useAtom(walletApiAtom);
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [walletStakeAddress, setWalletStakeAddress] = useAtom(walletStakeAddressAtom);
     const [adminAccess, setAdminAcess] = useAtom(adminAccessAtom);
+    const [savedWallet, setSavedWallet] = useAtom(savedWalletAtom);
 
     const SideNavItems: ISideNavItem[] = [
         {
@@ -85,20 +84,71 @@ export default function SideNav() {
 
     const router = useRouter();
 
-    function toggleDialog() {
+    async function toggleDialog() {
         dialogOpen ? setDialogOpen(false) : setDialogOpen(true);
+    }
+
+    async function conenctWallet() {
+        const prevWalletConnected = await enablePrevWallet();
+        if (!prevWalletConnected) {
+            setSavedWallet({ name: null, stakeAddress: null, connected: false });
+            toggleDialog();
+        }
     }
 
     function handleDisconnect() {
         setWalletApi(null);
-        setWalletStakeAddress(null);
-        localStorage.removeItem('wallet_provider');
-        localStorage.removeItem('wallet_stake_address');
+        setSavedWallet({ name: null, stakeAddress: null, connected: false });
         SendLogoutRequest();
-        SuccessToast('Wallet Disconnected');
         setAdminAcess(false);
+        SuccessToast('Wallet Disconnected');
         router.push('/');
     }
+
+    async function enablePrevWallet() {
+        const accessToken = Cookies.get('access_token');
+
+        //console.log(savedWallet)
+
+        //console.log(savedWallet.name , savedWallet.stakeAddress , accessToken)
+        //console.log(accessToken)
+        if (savedWallet.name && savedWallet.stakeAddress && accessToken) {
+            const wallet = listProviders().find(
+                (wallet) => wallet.name === savedWallet.name
+            );
+
+            if (wallet) {
+                const enabledApi = await wallet.enable();
+                const walletStakeAddress = await getStakeAddress(enabledApi);
+
+                if (
+                    walletStakeAddress &&
+                    walletStakeAddress === savedWallet.stakeAddress
+                ) {
+                    console.log(walletStakeAddress);
+                    console.log(savedWallet.stakeAddress);
+                    setSavedWallet({
+                        name: wallet.name,
+                        stakeAddress: walletStakeAddress,
+                        connected: true
+                    });
+                    setWalletApi(enabledApi);
+                    console.log('Enabled previous wallet');
+                    return true;
+                }
+            }
+        }
+        console.log('Failed to enable previous wallet');
+        setSavedWallet({ name: null, stakeAddress: null, connected: false });
+        setAdminAcess(false);
+        setWalletApi(null);
+        return false;
+    }
+
+    // useEffect(()=> {
+    //    console.log(savedWalletAtom)
+    //   enablePrevWallet()
+    // }, []);
 
     return (
         <>
@@ -129,18 +179,18 @@ export default function SideNav() {
                             <SideNavLink key={index} Prop={Prop} />
                         ))}
                     </div>
-                    {walletApi !== null ? (
+                    {walletApi !== null && savedWallet.connected ? (
                         <div className="flex flex-col gap-x-2 gap-y-4 px-2 pb-2">
                             <SideNavLink key={1} Prop={MyAgentSideNavItem} />
                             <CurrentWalletDiv
-                                address={walletStakeAddress || ''}
+                                address={savedWallet.stakeAddress || ''}
                                 onDisconnect={handleDisconnect}
                             />
                         </div>
                     ) : (
                         <Button
                             className="m-2"
-                            onClick={toggleDialog}
+                            onClick={conenctWallet}
                             variant={'primary'}
                         >
                             Connect Wallet

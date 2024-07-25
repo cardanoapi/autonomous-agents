@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -8,42 +8,18 @@ import { useRouter } from 'next/navigation';
 
 import { SendLoginRequest } from '@api/auth';
 import { useAtom } from 'jotai';
-import Cookies from 'js-cookie';
 import { CIP30Provider } from 'kuber-client/types';
 import { OctagonAlert, Wallet } from 'lucide-react';
 import { X } from 'lucide-react';
 
 import { Dialog, DialogContent } from '@app/components/atoms/Dialog';
-import {
-    adminAccessAtom,
-    walletApiAtom,
-    walletStakeAddressAtom
-} from '@app/store/localStore';
+import { adminAccessAtom, savedWalletAtom, walletApiAtom } from '@app/store/localStore';
 import { generateSignedData } from '@app/utils/auth';
+import { getStakeAddress, listProviders } from '@app/utils/wallet';
 
 import { Button } from '../atoms/Button';
 import { cn } from '../lib/utils';
 import { ErrorToast, SuccessToast } from '../molecules/CustomToasts';
-
-function listProviders(): CIP30Provider[] {
-    const pluginMap = new Map();
-    //@ts-ignore
-    if (!window.cardano) {
-        return [];
-    }
-    //@ts-ignore
-    Object.keys(window.cardano).forEach((x) => {
-        //@ts-ignore
-        const plugin: CIP30Provider = window.cardano[x];
-        //@ts-ignore
-        if (plugin.enable && plugin.name) {
-            pluginMap.set(plugin.name, plugin);
-        }
-    });
-    const providers = Array.from(pluginMap.values());
-    // yoroi doesn't work (remove this after yoroi works)
-    return providers.filter((x) => x.name != 'yoroi');
-}
 
 export default function WalletSignInDialog({
     refDialogOpen = false,
@@ -54,18 +30,18 @@ export default function WalletSignInDialog({
     onComplete?: any;
     onClose?: any;
 }) {
-    //to do save to atom WalletAPI
+    // related to local storage and previous wallet
     const [, setWalletApi] = useAtom(walletApiAtom);
-    const [, setWalletStakeAddress] = useAtom(walletStakeAddressAtom);
-    const [walletProviders, setWalletProviders] = useState<CIP30Provider[]>([]);
-    const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+    const [, setSavedWallet] = useAtom(savedWalletAtom);
     const [, setAdminAcess] = useAtom(adminAccessAtom);
 
-    const router = useRouter();
+    const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
     const [currentSelectedWalletProvider, setCurrentSelectedWalletProvider] =
         useState<CIP30Provider | null>(null);
     const [connectingWallet, setConnectingWallet] = useState<boolean>(false);
+
+    const router = useRouter();
 
     async function enableWallet(wallet: CIP30Provider, disabletoast: boolean = false) {
         console.log(`Enabling ${wallet.name}`);
@@ -73,23 +49,26 @@ export default function WalletSignInDialog({
         try {
             const enabledApi = await wallet.enable();
             const signedData = await generateSignedData(enabledApi);
-            console.log(signedData);
-
             const response = await SendLoginRequest(signedData);
+
             response.isSuperUser ? setAdminAcess(true) : setAdminAcess(false);
+
             if (response) {
                 onComplete();
-                setConnectingWallet(false);
-                const rewardAddresses = await enabledApi.getRewardAddresses();
-                const walletStakeAddress =
-                    rewardAddresses.length > 0 ? rewardAddresses[0] : null;
-                setWalletApi(enabledApi);
-                setWalletStakeAddress(walletStakeAddress);
-                localStorage.setItem('wallet_provider', wallet.name);
-                walletStakeAddress
-                    ? localStorage.setItem('wallet_stake_address', walletStakeAddress)
-                    : {};
-                router.push('/');
+
+                const walletStakeAddress = await getStakeAddress(enabledApi);
+
+                if (walletStakeAddress) {
+                    setWalletApi(enabledApi);
+                    setSavedWallet({
+                        name: wallet.name,
+                        stakeAddress: walletStakeAddress,
+                        connected: true
+                    });
+                    setConnectingWallet(false);
+
+                    router.push('/');
+                }
             }
             if (!disabletoast) {
                 setDialogOpen(false);
@@ -98,47 +77,9 @@ export default function WalletSignInDialog({
         } catch (error: any) {
             ErrorToast('Unable to Sign In. Please try again');
             setConnectingWallet(false);
-            localStorage.removeItem('wallet');
+            setSavedWallet({ name: null, stakeAddress: null, connected: false });
         }
     }
-
-    useEffect(() => {
-        const wallets = listProviders();
-        setWalletProviders(wallets);
-
-        async function enablePrevWallet() {
-            // Check and enable previous session wallet if conditions meet.
-            const storedWalletProvider = localStorage.getItem('wallet_provider');
-            const storedWalletStakeAddress =
-                localStorage.getItem('wallet_stake_address');
-            const accessToken = Cookies.get('access_token');
-
-            if (storedWalletProvider && storedWalletStakeAddress && accessToken) {
-                const wallet = wallets.find(
-                    (wallet) => wallet.name === storedWalletProvider
-                );
-                if (wallet) {
-                    const enabledApi = await wallet.enable();
-                    const rewardAddresses = await enabledApi.getRewardAddresses();
-                    const walletStakeAddress =
-                        rewardAddresses.length > 0 ? rewardAddresses[0] : null;
-
-                    if (walletStakeAddress === storedWalletStakeAddress) {
-                        setWalletApi(enabledApi);
-                        setWalletStakeAddress(walletStakeAddress);
-                    } else {
-                        setWalletApi(null);
-                        setAdminAcess(false);
-                        Cookies.remove('access_token');
-                        localStorage.removeItem('wallet_stake_address');
-                        localStorage.removeItem('wallet_provider');
-                    }
-                }
-            }
-        }
-
-        enablePrevWallet();
-    }, []);
 
     const textHiglight = 'text-blue-500';
     return (
@@ -162,8 +103,8 @@ export default function WalletSignInDialog({
                             </span>
                         </div>
                         <div className="flex items-center justify-center gap-x-4">
-                            {walletProviders.length > 0 ? (
-                                walletProviders.map((wallet: CIP30Provider, index) => (
+                            {listProviders().length > 0 ? (
+                                listProviders().map((wallet: CIP30Provider, index) => (
                                     <div className="basix-1/4 disabled" key={index}>
                                         <WalletProviderDiv
                                             wallet={wallet}
@@ -205,7 +146,7 @@ export default function WalletSignInDialog({
                                 }}
                                 disabled={
                                     connectingWallet ||
-                                    walletProviders.length === 0 ||
+                                    listProviders().length === 0 ||
                                     currentSelectedWalletProvider === null
                                 }
                             >

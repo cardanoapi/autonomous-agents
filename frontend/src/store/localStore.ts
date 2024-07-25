@@ -2,6 +2,12 @@ import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { CIP30Instance } from 'kuber-client/types';
 
+interface IWalletInfo {
+    name: string | null;
+    stakeAddress: string | null;
+    connected: boolean;
+}
+
 export const agentCreatedAtom = atom(false);
 
 export const templateCreatedAtom = atom(false);
@@ -18,6 +24,10 @@ export const currentAgentNameAtom = atom('Agent Profile');
 
 export const walletApiAtom = atom<CIP30Instance | null>(null);
 
-export const walletStakeAddressAtom = atom<string | null>(null);
-
 export const adminAccessAtom = atomWithStorage<boolean>('adminAccess', false);
+
+export const savedWalletAtom = atomWithStorage<IWalletInfo>('savedWallet', {
+    name: null,
+    stakeAddress: null,
+    connected: false
+});

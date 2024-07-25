@@ -19,7 +19,11 @@ import { SearchField } from '@app/components/atoms/SearchField';
 import { cn } from '@app/components/lib/utils';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
-import { adminAccessAtom, templateCreatedAtom } from '@app/store/localStore';
+import {
+    adminAccessAtom,
+    templateCreatedAtom,
+    walletApiAtom
+} from '@app/store/localStore';
 
 import TemplatesContainer from './TemplatesContainer';
 
@@ -32,6 +36,7 @@ export default function TemplatesPage() {
     const [templateCreated, setTemplateCreated] = useAtom(templateCreatedAtom);
     const [filteredTemplates, setFilteredTemplates] = useState<ITemplate[]>([]);
     const [adminAccess] = useAtom(adminAccessAtom);
+    const [walletApi] = useAtom(walletApiAtom);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
@@ -83,7 +88,7 @@ export default function TemplatesPage() {
                         variant="primary"
                         className={cn(
                             'h-[36px] w-[145px]',
-                            adminAccess ? '' : '!hidden'
+                            walletApi && adminAccess ? '' : '!hidden'
                         )}
                     >
                         Create Template

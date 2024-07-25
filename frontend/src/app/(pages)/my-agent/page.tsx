@@ -2,9 +2,12 @@
 
 import { useEffect } from 'react';
 
+import { useRouter } from 'next/navigation';
+
 import { IAgent, fetchMyAgent } from '@api/agents';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
+import Cookies from 'js-cookie';
 
 import AgentTabSection from '@app/components/Agent/AgentTab';
 import AgentTabContent from '@app/components/Agent/AgentTabContent';
@@ -15,8 +18,11 @@ import {
     BreadcrumbSeparator
 } from '@app/components/atoms/Breadcrumb';
 import { walletApiAtom } from '@app/store/localStore';
-import { currentAgentNameAtom } from '@app/store/localStore';
-import { selectedAgentTabAtom } from '@app/store/localStore';
+import {
+    adminAccessAtom,
+    currentAgentNameAtom,
+    selectedAgentTabAtom
+} from '@app/store/localStore';
 
 export default function MyAgentPage() {
     const { data: agent, isLoading: agentLoading } = useQuery<IAgent>({
@@ -25,6 +31,7 @@ export default function MyAgentPage() {
     });
 
     const [, setCurrentAgentName] = useAtom(currentAgentNameAtom);
+    const [adminAccess] = useAtom(adminAccessAtom);
     const [selectedTab] = useAtom(selectedAgentTabAtom);
     useEffect(() => {
         setCurrentAgentName(agent?.name || '');
@@ -32,16 +39,14 @@ export default function MyAgentPage() {
 
     const [walletApi] = useAtom(walletApiAtom);
 
-    if (walletApi === null) {
-        return (
-            <div className="mt-[30%] flex h-full items-center justify-center text-brand-Gray-300">
-                <div className="text-center">
-                    <p>Active Wallet Connection Missing!</p>
-                    <p>Please connect your Wallet . . .</p>
-                </div>
-            </div>
-        );
-    }
+    const router = useRouter();
+
+    useEffect(() => {
+        if (Cookies.get('access_token') === null || walletApi === null || adminAccess) {
+            router.push('/');
+        }
+    }, []);
+
     return (
         <div className={'flex flex-col gap-4'}>
             <Breadcrumb>
