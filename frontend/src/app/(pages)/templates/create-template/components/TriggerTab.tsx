@@ -53,14 +53,16 @@ export default function TriggerTab({
     previousSelectedOption,
     previousConfiguredSettings,
     setTriggerType,
-    setSelectedTab
+    setSelectedTab,
+    onlyCronTriggerTab
 }: {
     onChange?: any;
     defaultCron?: any;
     previousSelectedOption?: string;
-    previousConfiguredSettings?: any;
+    previousConfiguredSettings?: IInputSetting[];
     setTriggerType?: any;
     setSelectedTab?: React.Dispatch<React.SetStateAction<string>>;
+    onlyCronTriggerTab?: boolean;
 }) {
     const [cron, setCron] = useState<string[]>(
         defaultCron || ['*', '*', '*', '*', '*']
@@ -74,6 +76,8 @@ export default function TriggerTab({
     const [defaultSelected, setDefaultSelected] = useState(
         previousSelectedOption || 'Minute-option-one'
     );
+
+    const defaultSelectedCronTab = previousSelectedOption?.split('-')[0] || 'Minute';
 
     const initialSettings: IInputSetting[] = [
         { name: 'Minute-option-two', value: 1 },
@@ -121,17 +125,24 @@ export default function TriggerTab({
 
     return (
         <Tabs defaultValue="Cron">
-            <TabsList className="mb-4 w-full justify-start gap-6 rounded-none border-b-[1px] pl-0">
-                <TabsTrigger value="Cron" onClick={() => setSelectedTab?.('CRON')}>
-                    Cron Trigger
-                </TabsTrigger>
-                <TabsTrigger value="Event" onClick={() => setSelectedTab?.('EVENT')}>
-                    Event Trigger
-                </TabsTrigger>
-            </TabsList>
+            {onlyCronTriggerTab ? (
+                <></>
+            ) : (
+                <TabsList className="mb-4 w-full justify-start gap-6 rounded-none border-b-[1px] pl-0">
+                    <TabsTrigger value="Cron" onClick={() => setSelectedTab?.('CRON')}>
+                        Cron Trigger
+                    </TabsTrigger>
+                    <TabsTrigger
+                        value="Event"
+                        onClick={() => setSelectedTab?.('EVENT')}
+                    >
+                        Event Trigger
+                    </TabsTrigger>
+                </TabsList>
+            )}
             <Card className="border-brand-gray-100 min-h-[160px] w-full border-[1px] bg-white p-0 pb-5">
                 <TabsContent value="Cron">
-                    <Tabs defaultValue="Minute">
+                    <Tabs defaultValue={defaultSelectedCronTab}>
                         <TabsList className=" w-full justify-start gap-6 rounded-none border-b-[1px] bg-brand-Azure-400 pl-4">
                             <TabsTrigger value="Minute">Minute</TabsTrigger>
                             <TabsTrigger value="Hour">Hour</TabsTrigger>

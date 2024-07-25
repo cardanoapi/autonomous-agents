@@ -1,7 +1,3 @@
-from typing import List
-
-from pydantic import BaseModel
-
 functions_metadata = {
     "DRep": [
         {

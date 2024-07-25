@@ -19,3 +19,51 @@ export default function parseTimestamp(timestamp: string) {
 
 export const formatDisplayDate = (date: string | Date, outputFormat = 'do MMM yyyy') =>
     format(new Date(date), outputFormat).toString();
+
+export function determineCronTabAndSection(cronExpression: string) {
+    const parts = cronExpression.split(' ');
+
+    const [minute, hour, day, month, year] = parts;
+
+    const determineSection = (field: string, tab: string) => {
+        if (field === '*') {
+            return {
+                tab: `${tab}-option-one`,
+                values: [{ name: `${tab}-option-one`, value: 1 }]
+            };
+        } else if (field.includes('/')) {
+            return {
+                tab: `${tab}-option-two`,
+                values: [{ name: `${tab}-option-two`, value: field.split('/')[1] }]
+            };
+        } else if (field.includes('-')) {
+            const values = field.split('-').map((item, index) => ({
+                name: `${tab}-option-three-${index === 0 ? 'start' : 'end'}`,
+                value: item
+            }));
+            return { tab: `${tab}-option-three`, values };
+        }
+    };
+
+    const checkIfDoesNotBelongsToSection = (field: string) => {
+        return !(field.includes('*') || field.includes('-'));
+    };
+
+    if (
+        checkIfDoesNotBelongsToSection(minute) &&
+        checkIfDoesNotBelongsToSection(hour) &&
+        checkIfDoesNotBelongsToSection(day) &&
+        checkIfDoesNotBelongsToSection(month)
+    ) {
+        return determineSection(year, 'Year');
+    } else if (
+        checkIfDoesNotBelongsToSection(minute) &&
+        checkIfDoesNotBelongsToSection(hour)
+    ) {
+        return determineSection(day, 'Day');
+    } else if (checkIfDoesNotBelongsToSection(minute)) {
+        return determineSection(hour, 'Hour');
+    } else {
+        return determineSection(minute, 'Minute');
+    }
+}

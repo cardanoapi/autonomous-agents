@@ -5,17 +5,26 @@ import { useEffect } from 'react';
 
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
+import { cn } from '@app/components/lib/utils';
+
 export function CustomCombobox({
     defaultValue,
     itemsList,
-    onSelect
+    onSelect,
+    className
 }: {
     defaultValue?: string;
     itemsList: Array<string>;
     onSelect: (arg: string) => void;
+    className?: string;
 }) {
     const [open, setOpen] = React.useState(false);
     const [value, setValue] = React.useState(defaultValue || '');
+
+    useEffect(() => {
+        defaultValue && setValue(defaultValue);
+    }, [defaultValue]);
+
     useEffect(() => {
         value && onSelect(value);
     }, [value]);
@@ -23,7 +32,10 @@ export function CustomCombobox({
     return (
         <div
             onClick={() => setOpen(!open)}
-            className={'relative w-[300px] cursor-pointer border-b border-gray-600'}
+            className={cn(
+                'relative w-[300px] cursor-pointer border-b border-gray-600',
+                className
+            )}
         >
             <div className={'flex flex-row justify-between'}>
                 <span>{value ? value : ' Select Function Name'}</span>

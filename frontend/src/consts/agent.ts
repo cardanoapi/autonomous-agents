@@ -5,16 +5,16 @@ export const AGENT_TRIGGER = {
         function_name: 'stakeDelegation',
         parameters: [
             {
-                name: 'stakeholder',
-                description: 'The stakeholder delegating their ADA',
-                optional: false,
-                data_type: 'string'
+                name: 'drep',
+                description: 'Drep',
+                optional: true,
+                data_type: 'Drep Hash'
             },
             {
-                name: 'amount',
-                description: 'The amount of ADA to delegate',
-                optional: false,
-                data_type: 'number'
+                name: 'pool',
+                description: 'Stake Pool',
+                optional: true,
+                data_type: 'Drep Hash'
             }
         ]
     },
