@@ -74,8 +74,10 @@ class TriggerHistoryService:
 
         if agent_id is not None:
             agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
-            if agent is None or agent.last_active is None:
-                raise HTTPException(status_code=400, content=f"Agent with {agent_id} does not exist")
+            if agent is None:
+                raise HTTPException(status_code=404, content=f"Agent with {agent_id} does not exist")
+            elif agent.last_active is None:
+                raise HTTPException(status_code=404, content=f"Trigger History for agent {agent_id} does not exist")
             else:
                 query["agentId"] = agent_id
 
