@@ -67,19 +67,17 @@ const AgentFunctionsDetailComponent = ({
                                 </span>
                                 {isEditing && (
                                     <div className={'to-2 absolute right-2 flex gap-1'}>
-                                        {config.type === 'CRON' && (
-                                            <Edit
-                                                color="#A1A1A1"
-                                                className={
-                                                    'hidden h-4 w-4 cursor-pointer group-hover:block'
-                                                }
-                                                onClick={() => {
-                                                    setAgentConfigIndex(index);
-                                                    setOpenDialog(true);
-                                                }}
-                                            />
-                                        )}
-
+                                        <Edit
+                                            color="#A1A1A1"
+                                            className={
+                                                'hidden h-4 w-4 cursor-pointer group-hover:block'
+                                            }
+                                            onClick={() => {
+                                                setAddNewConfigBtnClicked(false);
+                                                setAgentConfigIndex(index);
+                                                setOpenDialog(true);
+                                            }}
+                                        />
                                         <Trash2
                                             color="#A1A1A1"
                                             onClick={(e) => {

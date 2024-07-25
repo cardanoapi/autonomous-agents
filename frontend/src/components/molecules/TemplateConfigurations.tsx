@@ -58,7 +58,7 @@ const TemplateConfigurations = ({
                                     enableEdit ? '' : 'hidden'
                                 )}
                             >
-                                {config.type === 'CRON' && (
+
                                     <Edit
                                         color="#A1A1A1"
                                         className={
@@ -69,7 +69,7 @@ const TemplateConfigurations = ({
                                             setTemplateConfigIndex(index);
                                         }}
                                     />
-                                )}
+
                                 <Trash2
                                     color="#A1A1A1"
                                     onClick={() => {
