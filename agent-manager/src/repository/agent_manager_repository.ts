@@ -14,6 +14,10 @@ export async function checkIfAgentExistsInDB(agentId: string): Promise<boolean> 
         .then((agents: any) => {
             return !!agents
         })
+        .catch((error) => {
+            console.error(error)
+            return false
+        })
 }
 
 export async function fetchAgentConfiguration(agentId: string): Promise<{
