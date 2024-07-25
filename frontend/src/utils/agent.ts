@@ -33,6 +33,30 @@ export function getConfiguredAgentTrigger(
     }
 }
 
+export function getFunctionParameters(function_name: AgentTriggerFunctionType) {
+    const parameter = AGENT_TRIGGER[function_name]?.parameters;
+    return parameter?.map((param) => ({
+        name: param.name,
+        description: param.description,
+        value: ''
+    }));
+}
+
+export function validateInputField(params: Array<IParameter>) {
+    let isError = false;
+    const errIndex: Array<number> = [];
+    params.map((param: IParameter, index: number) => {
+        if (param.data_type === 'group') {
+            isError = !validateInputFieldForGroup(param);
+            isError && errIndex.push(index);
+        } else if (!param.optional && !param.value) {
+            errIndex.push(index);
+            isError = true;
+        }
+    });
+    return { isError, errIndex };
+}
+
 export function validateInputFieldForGroup(param: IParameter) {
     if (!param.parameters?.length) {
         return false;
