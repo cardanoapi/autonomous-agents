@@ -34,7 +34,7 @@ export const fetchSuccessfullTriggersbyAgentID = async (agentID: string) => {
 
 export const fetchUnSuccessfullTriggersbyAgentID = async (agentID: string) => {
     const res = await fetch(
-        `${baseAPIurl}/transaction-counts/${agentID}/?success=false`
+        `${baseAPIurl}/transaction-counts/${agentID}?success=false`
     );
     if (!res.ok) {
         throw new Error('Trigger Fetch Failed: Network Error');
