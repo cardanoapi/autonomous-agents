@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -235,7 +234,7 @@ function WalletProviderDiv({
             )}
             onClick={() => onClick?.(wallet)}
         >
-            <Image src={wallet.icon} alt={wallet.name} width={48} height={48} />
+            <img src={wallet.icon} alt={wallet.name} width={48} height={48} />
         </div>
     );
 }
