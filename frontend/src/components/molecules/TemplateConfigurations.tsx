@@ -58,17 +58,16 @@ const TemplateConfigurations = ({
                                     enableEdit ? '' : 'hidden'
                                 )}
                             >
-
-                                    <Edit
-                                        color="#A1A1A1"
-                                        className={
-                                            ' hidden h-4 w-4 cursor-pointer group-hover:block'
-                                        }
-                                        onClick={() => {
-                                            setOpenDialog(true);
-                                            setTemplateConfigIndex(index);
-                                        }}
-                                    />
+                                <Edit
+                                    color="#A1A1A1"
+                                    className={
+                                        ' hidden h-4 w-4 cursor-pointer group-hover:block'
+                                    }
+                                    onClick={() => {
+                                        setOpenDialog(true);
+                                        setTemplateConfigIndex(index);
+                                    }}
+                                />
 
                                 <Trash2
                                     color="#A1A1A1"

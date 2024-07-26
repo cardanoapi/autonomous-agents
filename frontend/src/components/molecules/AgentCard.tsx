@@ -3,22 +3,20 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { PlayIcon, Trash2 } from 'lucide-react';
+import { FileText, PlayIcon, Trash2 } from 'lucide-react';
 
 import { IAgent, deleteAgentbyID, fetchAgentbyID } from '@app/app/api/agents';
 import { ITemplate, fetchTemplatebyID } from '@app/app/api/templates';
 import {
-    ITrigger,
-    fetchSuccessfullTriggersbyAgentID,
-    fetchUnSuccessfullTriggersbyAgentID,
-    fetchtriggersbyTemplateID
+    ITransactionsCount,
+    fetchTransactionsCountByAgentID
 } from '@app/app/api/trigger';
 import { Badge } from '@app/components/atoms/Badge';
 import { Truncate } from '@app/utils/common/extra';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { useModal } from '../Modals/context';
-import { Card, CardContent, CardTitle } from '../atoms/Card';
+import { Card, CardContent } from '../atoms/Card';
 import { Dialog, DialogContent } from '../atoms/Dialog';
 import { cn } from '../lib/utils';
 import ConfirmationBox from './ConfirmationBox';
@@ -27,7 +25,6 @@ import { ErrorToast, SuccessToast } from './CustomToasts';
 export interface IAgentCard {
     agentName: string;
     agentID?: string;
-    agentRole: string;
     templateID?: string;
     functionCount: number;
     lastActive: string | number;
@@ -39,9 +36,9 @@ export interface IAgentCard {
 export default function AgentCard({
     agentName,
     agentID,
-    agentRole,
     templateID,
     refetchData,
+    functionCount,
     enableEdit = false,
     lastActive = ''
 }: IAgentCard) {
@@ -59,19 +56,9 @@ export default function AgentCard({
         queryFn: () => fetchAgentbyID(agentID || '')
     });
 
-    const { data: templateTriggers = [] } = useQuery<ITrigger[]>({
-        queryKey: [`triggers${templateID}`],
-        queryFn: () => fetchtriggersbyTemplateID(templateID || '')
-    });
-
-    const { data: successfullTransactions = {} } = useQuery<{ string: string }[]>({
-        queryKey: [`sucessfullTransactions${agentID}`],
-        queryFn: () => fetchSuccessfullTriggersbyAgentID(agentID || '')
-    });
-
-    const { data: unsuccessfullTransactions = {} } = useQuery({
-        queryKey: [`unsucessfullTransactions${agentID}`],
-        queryFn: () => fetchUnSuccessfullTriggersbyAgentID(agentID || '')
+    const { data: transactions_count } = useQuery<ITransactionsCount>({
+        queryKey: [`Transactions${agentID}`],
+        queryFn: () => fetchTransactionsCountByAgentID(agentID || '')
     });
 
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -166,7 +153,6 @@ export default function AgentCard({
                         )}
                     </div>
                 </div>
-                <CardTitle className="!card-h3">{agentRole}</CardTitle>
                 <div className="mt-5 flex flex-col gap-y-2 text-brand-Gray-200">
                     <CardContent className="flex flex-col gap-y-2">
                         <span className="card-h4">
@@ -177,10 +163,7 @@ export default function AgentCard({
                         </span>
                         <span>
                             Total Functions :
-                            <span className="text-active">
-                                {' '}
-                                {templateTriggers?.length}
-                            </span>
+                            <span className="text-active">{functionCount}</span>
                         </span>
                         <span>
                             No of Instance :
@@ -193,14 +176,10 @@ export default function AgentCard({
                             Last Active :
                             <span className="text-active"> {formatedLastActive}</span>
                         </span>
-                        <span>
-                            Total Transactions :
-                            <span>
-                                {' '}
-                                {Object.keys(successfullTransactions).length +
-                                    Object.keys(unsuccessfullTransactions).length}
-                            </span>
-                        </span>
+                        <div className={'flex flex-row gap-2'}>
+                            <FileText className={'h-5 w-5'} /> :
+                            <span>{transactions_count?.totalTransactions} </span>
+                        </div>
                     </CardContent>
                 </div>
             </Card>

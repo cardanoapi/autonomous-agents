@@ -24,14 +24,19 @@ export function convertCRONExpressionToReadableForm(cronExpression: string) {
     if (!cronExpression) {
         return '';
     }
-    const { tab, values } = determineCronTabAndSection(cronExpression);
-    const timeUnit = tab.split('-')[0];
-    if (tab.includes('-option-one')) {
-        return `Every 1 ${timeUnit}`;
-    } else if (tab.includes('-option-two')) {
-        return `Every ${values[0].value} ${timeUnit}`;
+    const response = determineCronTabAndSection(cronExpression);
+    if (response) {
+        const { tab, values } = response;
+        const timeUnit = tab.split('-')[0];
+        if (tab.includes('-option-one')) {
+            return `Every 1 ${timeUnit}`;
+        } else if (tab.includes('-option-two')) {
+            return `Every ${values[0].value} ${timeUnit}`;
+        } else {
+            return `Between every ${values[0].value} ${timeUnit} and ${values[1].value} ${timeUnit} `;
+        }
     } else {
-        return `Between every ${values[0].value} ${timeUnit} and ${values[1].value} ${timeUnit} `;
+        return '';
     }
 }
 
