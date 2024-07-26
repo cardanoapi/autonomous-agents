@@ -8,13 +8,13 @@ import { useAtom } from 'jotai';
 import {
     adminAccessAtom,
     currentAgentNameAtom,
-    walletApiAtom
+    walletConnectedAtom
 } from '@app/store/localStore';
 
 export default function TopNav() {
     const [currentAgentName] = useAtom(currentAgentNameAtom);
     const [adminAcesss] = useAtom(adminAccessAtom);
-    const [walletApi] = useAtom(walletApiAtom);
+    const [walletConnected] = useAtom(walletConnectedAtom);
     const path: string = usePathname();
 
     const PageTitles: { [key: string]: string } = {
@@ -45,7 +45,7 @@ export default function TopNav() {
     return (
         <div className="flex w-[full] items-center justify-between text-sm">
             <span className="h1">{getPageTitle()}</span>
-            {walletApi && adminAcesss && 'Admin'}
+            {walletConnected && adminAcesss && 'Admin'}
         </div>
     );
 }

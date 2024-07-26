@@ -17,7 +17,7 @@ import {
     BreadcrumbList,
     BreadcrumbSeparator
 } from '@app/components/atoms/Breadcrumb';
-import { walletApiAtom } from '@app/store/localStore';
+import { walletConnectedAtom } from '@app/store/localStore';
 import {
     adminAccessAtom,
     currentAgentNameAtom,
@@ -37,12 +37,16 @@ export default function MyAgentPage() {
         setCurrentAgentName(agent?.name || '');
     });
 
-    const [walletApi] = useAtom(walletApiAtom);
+    const [walletConnected] = useAtom(walletConnectedAtom);
 
     const router = useRouter();
 
     useEffect(() => {
-        if (Cookies.get('access_token') === null || walletApi === null || adminAccess) {
+        if (
+            Cookies.get('access_token') === null ||
+            walletConnected === null ||
+            adminAccess
+        ) {
             router.push('/');
         }
     }, []);

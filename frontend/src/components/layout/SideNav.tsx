@@ -19,7 +19,12 @@ import Logo from '@app/components/icons/Logo';
 import LogsIcon from '@app/components/icons/LogsIcon';
 import TemplateIcon from '@app/components/icons/TemplatesIcon';
 import SideNavLink from '@app/components/layout/SideNavLink';
-import { adminAccessAtom, savedWalletAtom, walletApiAtom } from '@app/store/localStore';
+import {
+    adminAccessAtom,
+    savedWalletAtom,
+    walletApiAtom,
+    walletConnectedAtom
+} from '@app/store/localStore';
 import { listProviders } from '@app/utils/wallet';
 import { getStakeAddress } from '@app/utils/wallet';
 
@@ -42,6 +47,7 @@ export default function SideNav() {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [adminAccess, setAdminAcess] = useAtom(adminAccessAtom);
     const [savedWallet, setSavedWallet] = useAtom(savedWalletAtom);
+    const [walletConnected, setWalletConencted] = useAtom(walletConnectedAtom);
 
     const SideNavItems: ISideNavItem[] = [
         {
@@ -92,14 +98,15 @@ export default function SideNav() {
     async function conenctWallet() {
         const prevWalletConnected = await enablePrevWallet();
         if (!prevWalletConnected) {
-            setSavedWallet({ name: null, stakeAddress: null, connected: false });
+            setSavedWallet({ name: null, stakeAddress: null });
             toggleDialog();
         }
     }
 
     function handleDisconnect() {
         setWalletApi(null);
-        setSavedWallet({ name: null, stakeAddress: null, connected: false });
+        setSavedWallet({ name: null, stakeAddress: null });
+        setWalletConencted(false);
         SendLogoutRequest();
         setAdminAcess(false);
         SuccessToast('Wallet Disconnected');
@@ -130,17 +137,18 @@ export default function SideNav() {
                     console.log(savedWallet.stakeAddress);
                     setSavedWallet({
                         name: wallet.name,
-                        stakeAddress: walletStakeAddress,
-                        connected: true
+                        stakeAddress: walletStakeAddress
                     });
                     setWalletApi(enabledApi);
+                    setWalletConencted(true);
                     console.log('Enabled previous wallet');
                     return true;
                 }
             }
         }
         console.log('Failed to enable previous wallet');
-        setSavedWallet({ name: null, stakeAddress: null, connected: false });
+        setSavedWallet({ name: null, stakeAddress: null });
+        setWalletConencted(false);
         setAdminAcess(false);
         setWalletApi(null);
         return false;
@@ -180,7 +188,7 @@ export default function SideNav() {
                             <SideNavLink key={index} Prop={Prop} />
                         ))}
                     </div>
-                    {walletApi !== null && savedWallet.connected ? (
+                    {walletApi !== null && walletConnected ? (
                         <div className="flex flex-col gap-x-2 gap-y-4 px-2 pb-2">
                             <SideNavLink key={1} Prop={MyAgentSideNavItem} />
                             <CurrentWalletDiv

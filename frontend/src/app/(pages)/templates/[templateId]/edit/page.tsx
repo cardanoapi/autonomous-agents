@@ -20,7 +20,7 @@ import { ErrorToast, SuccessToast } from '@app/components/molecules/CustomToasts
 import TemplateConfigurations from '@app/components/molecules/TemplateConfigurations';
 import UpdateTemplateFunctionModal from '@app/components/molecules/UpdateTemplateFunctionModal';
 import { Dialog, DialogContent } from '@app/components/shadcn/dialog';
-import { adminAccessAtom } from '@app/store/localStore';
+import { adminAccessAtom, walletConnectedAtom } from '@app/store/localStore';
 
 const EditTemplateCard = () => {
     const params = useParams();
@@ -48,6 +48,7 @@ const EditTemplateCard = () => {
         Array<ITemplateConfiguration>
     >([]);
     const [adminAccess] = useAtom(adminAccessAtom);
+    const [walletConnected] = useAtom(walletConnectedAtom);
 
     const [templateDetails, setTemplateDetails] = useState<{
         name: string;
@@ -123,7 +124,7 @@ const EditTemplateCard = () => {
                             className={
                                 'w-11/12 rounded border border-brand-Black-100/80 px-2 py-1'
                             }
-                            disabled={!adminAccess}
+                            disabled={!adminAccess || !walletConnected}
                         />
                     </div>
                     <div className={'flex flex-col gap-1'}>
@@ -138,7 +139,7 @@ const EditTemplateCard = () => {
                                     description: e.target.value
                                 })
                             }
-                            disabled={!adminAccess}
+                            disabled={!adminAccess || !walletConnected}
                             type="text"
                             className={
                                 'w-11/12 rounded border border-brand-Black-100/80 px-2 py-1'
@@ -151,7 +152,7 @@ const EditTemplateCard = () => {
                     <div
                         className={cn(
                             'cursor-pointer rounded p-1 hover:bg-gray-200',
-                            adminAccess ? '' : 'hidden'
+                            adminAccess && walletConnected ? '' : 'hidden'
                         )}
                         onClick={() => setOpenDialog(true)}
                     >
@@ -186,7 +187,12 @@ const EditTemplateCard = () => {
                     </DialogContent>
                 </Dialog>
 
-                <div className={cn('flex justify-end', adminAccess ? '' : '!hidden')}>
+                <div
+                    className={cn(
+                        'flex justify-end',
+                        adminAccess && walletConnected ? '' : '!hidden'
+                    )}
+                >
                     <Button onClick={() => handleOnClickUpdate()}>Update</Button>
                 </div>
             </div>

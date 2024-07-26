@@ -36,7 +36,7 @@ export default function TemplatesPage() {
     const [templateCreated, setTemplateCreated] = useAtom(templateCreatedAtom);
     const [filteredTemplates, setFilteredTemplates] = useState<ITemplate[]>([]);
     const [adminAccess] = useAtom(adminAccessAtom);
-    const [walletApi] = useAtom(walletApiAtom);
+    const [walletConnected] = useAtom(walletApiAtom);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
@@ -88,7 +88,7 @@ export default function TemplatesPage() {
                         variant="primary"
                         className={cn(
                             'h-[36px] w-[145px]',
-                            walletApi && adminAccess ? '' : '!hidden'
+                            walletConnected && adminAccess ? '' : '!hidden'
                         )}
                     >
                         Create Template

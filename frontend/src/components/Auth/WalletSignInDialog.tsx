@@ -13,7 +13,12 @@ import { OctagonAlert, Wallet } from 'lucide-react';
 import { X } from 'lucide-react';
 
 import { Dialog, DialogContent } from '@app/components/atoms/Dialog';
-import { adminAccessAtom, savedWalletAtom, walletApiAtom } from '@app/store/localStore';
+import {
+    adminAccessAtom,
+    savedWalletAtom,
+    walletApiAtom,
+    walletConnectedAtom
+} from '@app/store/localStore';
 import { generateSignedData } from '@app/utils/auth';
 import { getStakeAddress, listProviders } from '@app/utils/wallet';
 
@@ -34,6 +39,7 @@ export default function WalletSignInDialog({
     const [, setWalletApi] = useAtom(walletApiAtom);
     const [, setSavedWallet] = useAtom(savedWalletAtom);
     const [, setAdminAcess] = useAtom(adminAccessAtom);
+    const [, setWalletConencted] = useAtom(walletConnectedAtom);
 
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
@@ -62,9 +68,9 @@ export default function WalletSignInDialog({
                     setWalletApi(enabledApi);
                     setSavedWallet({
                         name: wallet.name,
-                        stakeAddress: walletStakeAddress,
-                        connected: true
+                        stakeAddress: walletStakeAddress
                     });
+                    setWalletConencted(true);
                     setConnectingWallet(false);
 
                     router.push('/');
@@ -77,7 +83,8 @@ export default function WalletSignInDialog({
         } catch (error: any) {
             ErrorToast('Unable to Sign In. Please try again');
             setConnectingWallet(false);
-            setSavedWallet({ name: null, stakeAddress: null, connected: false });
+            setSavedWallet({ name: null, stakeAddress: null });
+            setWalletConencted(false);
         }
     }
 

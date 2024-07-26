@@ -19,12 +19,14 @@ import {
 import {
     adminAccessAtom,
     currentAgentNameAtom,
-    selectedAgentTabAtom
+    selectedAgentTabAtom,
+    walletConnectedAtom
 } from '@app/store/localStore';
 
 export default function AgentPageById() {
     const [, setCurrentAgentName] = useAtom(currentAgentNameAtom);
     const [adminAccess] = useAtom(adminAccessAtom);
+    const [walletConnected] = useAtom(walletConnectedAtom);
     const [selectedTab] = useAtom(selectedAgentTabAtom);
     useEffect(() => {
         setCurrentAgentName(agent?.name || '');
@@ -56,11 +58,11 @@ export default function AgentPageById() {
                 </BreadcrumbList>
             </Breadcrumb>
             <div className={'flex h-full min-h-[600px] w-full gap-4 '}>
-                <AgentTabSection enableEdit={adminAccess} />
+                <AgentTabSection enableEdit={adminAccess && walletConnected} />
                 <AgentTabContent
                     agent={agent}
                     agentLoading={agentLoading}
-                    enableEdit={adminAccess}
+                    enableEdit={adminAccess && walletConnected}
                 />
             </div>
         </div>

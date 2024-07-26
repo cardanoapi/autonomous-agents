@@ -5,7 +5,6 @@ import { CIP30Instance } from 'kuber-client/types';
 interface IWalletInfo {
     name: string | null;
     stakeAddress: string | null;
-    connected: boolean;
 }
 
 export const agentCreatedAtom = atom(false);
@@ -28,6 +27,7 @@ export const adminAccessAtom = atomWithStorage<boolean>('adminAccess', false);
 
 export const savedWalletAtom = atomWithStorage<IWalletInfo>('savedWallet', {
     name: null,
-    stakeAddress: null,
-    connected: false
+    stakeAddress: null
 });
+
+export const walletConnectedAtom = atom<boolean>(false);

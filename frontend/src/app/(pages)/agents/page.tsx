@@ -23,13 +23,15 @@ import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import {
     adminAccessAtom,
     agentCreatedAtom,
-    walletApiAtom
+    walletApiAtom,
+    walletConnectedAtom
 } from '@app/store/localStore';
 
 export default function AgentsPage() {
     const [agentCreated, setAgentCreated] = useAtom(agentCreatedAtom);
     const [walletApi] = useAtom(walletApiAtom);
     const [adminAccess] = useAtom(adminAccessAtom);
+    const [walletConnected] = useAtom(walletConnectedAtom);
 
     const {
         data: agents,
@@ -120,7 +122,7 @@ export default function AgentsPage() {
                                 functionCount={0}
                                 key={index}
                                 refetchData={refetch}
-                                enableEdit={adminAccess}
+                                enableEdit={adminAccess && walletConnected}
                             />
                         ))
                     ) : (
