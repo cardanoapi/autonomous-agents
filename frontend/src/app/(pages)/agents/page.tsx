@@ -108,11 +108,10 @@ export default function AgentsPage() {
                             <AgentCard
                                 agentName={agent?.name || 'NA'}
                                 agentID={agent?.id || ''}
-                                agentRole={'null'}
+                                functionCount={agent?.total_functions || 0}
                                 templateID={agent?.template_id || ''}
                                 totalTrigger={0}
                                 lastActive={agent?.last_active || 'NA'}
-                                functionCount={0}
                                 key={index}
                                 refetchData={refetch}
                                 enableEdit={adminAccess}

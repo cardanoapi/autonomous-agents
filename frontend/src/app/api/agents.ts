@@ -54,6 +54,7 @@ export interface IAgent {
     agent_address?: string;
     wallet_amount?: string;
     agent_configurations?: Array<IAgentConfiguration>;
+    total_functions?: number;
 }
 
 export const fetchAgents = async (): Promise<IAgent[]> => {

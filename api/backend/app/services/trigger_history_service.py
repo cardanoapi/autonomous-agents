@@ -10,7 +10,6 @@ from backend.app.repositories.trigger_history_repository import TriggerHistoryRe
 from backend.config.database import prisma_connection
 from backend.app.utils.extras import calculate_change_rate
 
-
 from datetime import datetime, timezone
 
 
@@ -64,44 +63,30 @@ class TriggerHistoryService:
     ) -> Page[TriggerHistoryDto]:
         return await self.trigger_history_repo.get_all_triggers_history(agent_id, function_name, status, success)
 
-    async def count_number_of_executed_transactions(self, success: bool, agent_id: Optional[str] = None):
-        end_time = datetime.now()
-        start_time = end_time - timedelta(days=1)
-        query = {
-            "timestamp": {"gte": start_time, "lte": end_time},
-            "success": success,
-        }
+    async def count_number_of_executed_transactions(self, agent_id: Optional[str] = None):
+        query = {}
 
         if agent_id is not None:
             agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
-            if agent is None or agent.last_active is None:
-                raise HTTPException(status_code=400, content=f"Agent with {agent_id} does not exist")
+            if agent is None:
+                raise HTTPException(status_code=404, content=f"Agent with {agent_id} does not exist")
             else:
                 query["agentId"] = agent_id
 
-        # Initialize a dictionary to store transaction counts for each minute
-        transaction_counts = defaultdict(int)
-
-        # Query transactions within the specified time range
         transactions = await self.trigger_history_repo.get_trigger_history_by_query(query)
+        total_txs = len(transactions)
+        successful_txs = len([tx for tx in transactions if tx.success])
+        skipped_txs = len([tx for tx in transactions if not tx.status])
+        unsuccessful_txs = total_txs - successful_txs
+        unskipped_txs = total_txs - skipped_txs
 
-        # Count transactions for each minute
-        for transaction in transactions:
-            minute_str = transaction.timestamp.strftime("%Y-%m-%d %H:%M:%S")
-            transaction_counts[minute_str] += 1
-
-        # Fill in minutes with zero transactions
-        current_minute = start_time
-        while current_minute <= end_time:
-            minute_str = current_minute.strftime("%Y-%m-%d %H:%M:%S")
-            if minute_str not in transaction_counts:
-                transaction_counts[minute_str] = 0
-            current_minute += timedelta(minutes=1)
-
-        # Sort the dictionary by keys
-        sorted_transaction_counts = dict(sorted(transaction_counts.items()))
-
-        return sorted_transaction_counts
+        return {
+            "total_transactions": total_txs,
+            "successful_transactions": successful_txs,
+            "unsuccessful_transactions": unsuccessful_txs,
+            "skipped_transactions": skipped_txs,
+            "unskipped_transactions": unskipped_txs,
+        }
 
     async def calculate_trigger_metric(self, function_name: list[str], agent_id: str):
 

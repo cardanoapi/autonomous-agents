@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 
 import { useMutation } from '@tanstack/react-query';
-import { validateInputField } from '@utils';
+import { validateInputFieldForGroup } from '@utils';
 
 import { manualTriggerForAgent } from '@app/app/api/agents';
-import { IFunction } from '@app/app/api/functions';
-import FunctionParameters from '@app/components/Agent/FunctionParameters';
+import { IFunction, IParameter } from '@app/app/api/functions';
+import GroupParams from '@app/components/Agent/GroupParameters';
 import { Button } from '@app/components/atoms/Button';
+import { Input } from '@app/components/atoms/Input';
 import { ErrorToast, SuccessToast } from '@app/components/molecules/CustomToasts';
 import { Separator } from '@app/components/shadcn/ui/separator';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
@@ -22,9 +23,8 @@ const AgentManualTriggerModalView = ({
 }) => {
     const { closeModal } = useModal();
 
+    const [params, setParams] = useState(agentFunction.parameters ?? []);
     const [errorParamIndex, setErrorParamIndex] = useState<Array<number>>([]);
-
-    const params = agentFunction.parameters ?? [];
 
     const agentMutation = useMutation({
         mutationFn: (data: { agentId: string; agentFunction: any }) =>
@@ -40,12 +40,10 @@ const AgentManualTriggerModalView = ({
             ErrorToast('Error while manually triggering Agent Function. Try Again!');
         }
     });
-
     const handleTrigger = async () => {
-        if (agentFunction.num_parameters && agentFunction.parameters) {
-            const { isError, errIndex } = validateInputField(agentFunction.parameters);
+        if (agentFunction.num_parameters) {
+            const isError = validateInputField();
             if (isError) {
-                setErrorParamIndex(errIndex);
                 return;
             }
         }
@@ -66,6 +64,48 @@ const AgentManualTriggerModalView = ({
         });
     };
 
+    function validateInputField() {
+        let isError = false;
+        const errIndex: Array<number> = [];
+        params.map((param: IParameter, index: number) => {
+            if (param.data_type === 'group') {
+                errIndex.push(index);
+                isError = !validateInputFieldForGroup(param);
+            } else if (!param.optional && !param.value) {
+                errIndex.push(index);
+                isError = true;
+            }
+        });
+        setErrorParamIndex(errIndex);
+        return isError;
+    }
+
+    const handleInputChange = (
+        value: string,
+        index: number,
+        isGroupParams: boolean = false,
+        groupIndex: number = 0
+    ) => {
+        const updatedParams = [...params];
+        if (isGroupParams && updatedParams.length) {
+            const group = updatedParams[groupIndex];
+            if (group && group.parameters && group.parameters[index]) {
+                group.parameters[index] = {
+                    ...group.parameters[index],
+                    value
+                };
+            }
+            updatedParams[groupIndex] = group;
+        } else {
+            updatedParams[index] = { ...updatedParams[index], value };
+        }
+        setParams(updatedParams);
+        const newErrorIndex = errorParamIndex.filter(
+            (errIndex: number) => errIndex != index
+        );
+        setErrorParamIndex(newErrorIndex);
+    };
+
     return (
         <div className={'flex h-full w-full flex-col'}>
             <span className={'px-5 py-2 text-base font-medium'}>Manual Trigger</span>
@@ -78,11 +118,58 @@ const AgentManualTriggerModalView = ({
                 <div className={'my-3 flex flex-wrap gap-4'}>
                     {Array.isArray(agentFunction.parameters) &&
                     agentFunction.parameters.length ? (
-                        <FunctionParameters
-                            key={agentFunction.function_name}
-                            parameters={agentFunction.parameters}
-                            errorIndex={errorParamIndex}
-                        />
+                        agentFunction.parameters.map(
+                            (param: IParameter, index: number) => {
+                                return param.data_type !== 'group' ? (
+                                    <div key={index} className={'flex flex-col gap-1'}>
+                                        <span>
+                                            {param.description}{' '}
+                                            {param.optional ? (
+                                                <></>
+                                            ) : (
+                                                <span
+                                                    className={
+                                                        'mt-2 text-lg text-red-500'
+                                                    }
+                                                >
+                                                    *
+                                                </span>
+                                            )}
+                                        </span>
+                                        <Input
+                                            value={params[index].value}
+                                            onChange={(e) =>
+                                                handleInputChange(e.target.value, index)
+                                            }
+                                        />
+                                        {errorParamIndex.length &&
+                                        errorParamIndex.includes(index) ? (
+                                            <span className={'text-sm text-red-500'}>
+                                                This field is required.
+                                            </span>
+                                        ) : (
+                                            <></>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <GroupParams
+                                        isError={errorParamIndex.includes(index)}
+                                        param={param}
+                                        handleOnChange={(
+                                            groupParamVal: string,
+                                            groupParamIndex: number
+                                        ) => {
+                                            handleInputChange(
+                                                groupParamVal,
+                                                groupParamIndex,
+                                                true,
+                                                index
+                                            );
+                                        }}
+                                    />
+                                );
+                            }
+                        )
                     ) : (
                         <></>
                     )}
