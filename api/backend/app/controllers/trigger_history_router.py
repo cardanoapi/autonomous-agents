@@ -37,14 +37,12 @@ class TriggerHistory(Routable):
         return await self.trigger_history_service.get_all_trigger_history(agent_id, function_name, status, success)
 
     @get("/transaction-counts", response_model=dict)
-    async def get_transaction_counts_success(self, success: bool = Query(True)):
-        return await self.trigger_history_service.count_number_of_executed_transactions(success)
+    async def get_transaction_counts_success(self):
+        return await self.trigger_history_service.count_number_of_executed_transactions()
 
     @get("/transaction-counts/{agent_id}", response_model=dict)
-    async def get_transaction_counts_success_agent_id(self, agent_id: str, success: bool = Query(True)):
-        return await self.trigger_history_service.count_number_of_executed_transactions(
-            success=success, agent_id=agent_id
-        )
+    async def get_transaction_counts_agent_id(self, agent_id: str):
+        return await self.trigger_history_service.count_number_of_executed_transactions(agent_id=agent_id)
 
     @get("/trigger-metric", response_model=dict)
     async def get_trigger_metric(

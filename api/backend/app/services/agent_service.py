@@ -53,7 +53,12 @@ class AgentService:
         return await self.agent_repository.retreive_agent_key(agent_id)
 
     async def list_agents(self, page: int, limit: int) -> List[AgentResponse]:
-        return await self.agent_repository.retrieve_agents(page, limit)
+        agents = await self.agent_repository.retrieve_agents(page, limit)
+        updated_agents = []
+        for agent in agents:
+            agent_triggers_number = len(await self.trigger_service.list_triggers_by_agent_id(agent.id))
+            updated_agents.append(AgentResponse(**agent.dict(), total_functions=agent_triggers_number))
+        return updated_agents
 
     async def get_agent(self, agent_id: str) -> AgentResponseWithWalletDetails:
         agent = await self.agent_repository.retrieve_agent(agent_id)
