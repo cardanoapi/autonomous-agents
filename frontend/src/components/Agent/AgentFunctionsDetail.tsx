@@ -7,6 +7,7 @@ import { Edit, Plus, Trash2 } from 'lucide-react';
 import { IAgentConfiguration, ICronTrigger } from '@app/app/api/agents';
 import UpdateAgentFunctionModal from '@app/components/molecules/UpdateAgentFunctionModal';
 import { Dialog, DialogContent } from '@app/components/shadcn/dialog';
+import { convertCRONExpressionToReadableForm } from '@app/utils/dateAndTimeUtils';
 
 const AgentFunctionsDetailComponent = ({
     onClickSave,
@@ -65,6 +66,19 @@ const AgentFunctionsDetailComponent = ({
                                         ? (config.data as ICronTrigger).probability
                                         : 1}
                                 </span>
+                                {config.type === 'CRON' ? (
+                                    <span className={'text-sm text-gray-700'}>
+                                        CRON Expression :{' '}
+                                        {(config.data as ICronTrigger)?.frequency
+                                            ? convertCRONExpressionToReadableForm(
+                                                  (config.data as ICronTrigger)
+                                                      .frequency
+                                              )
+                                            : ''}
+                                    </span>
+                                ) : (
+                                    <></>
+                                )}
                                 {isEditing && (
                                     <div className={'to-2 absolute right-2 flex gap-1'}>
                                         <Edit
