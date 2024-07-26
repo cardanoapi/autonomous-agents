@@ -23,13 +23,11 @@ import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import {
     adminAccessAtom,
     agentCreatedAtom,
-    walletApiAtom,
     walletConnectedAtom
 } from '@app/store/localStore';
 
 export default function AgentsPage() {
     const [agentCreated, setAgentCreated] = useAtom(agentCreatedAtom);
-    const [walletApi] = useAtom(walletApiAtom);
     const [adminAccess] = useAtom(adminAccessAtom);
     const [walletConnected] = useAtom(walletConnectedAtom);
 
@@ -99,7 +97,7 @@ export default function AgentsPage() {
                         variant="primary"
                         className={cn(
                             'h-[36px] w-[145px]',
-                            walletApi && adminAccess ? '' : '!hidden'
+                            walletConnected && adminAccess ? '' : '!hidden'
                         )}
                     >
                         Create Agent
