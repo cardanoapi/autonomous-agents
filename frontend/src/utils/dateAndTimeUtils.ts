@@ -20,6 +20,21 @@ export default function parseTimestamp(timestamp: string) {
 export const formatDisplayDate = (date: string | Date, outputFormat = 'do MMM yyyy') =>
     format(new Date(date), outputFormat).toString();
 
+export function convertCRONExpressionToReadableForm(cronExpression: string) {
+    if (!cronExpression) {
+        return '';
+    }
+    const { tab, values } = determineCronTabAndSection(cronExpression);
+    const timeUnit = tab.split('-')[0];
+    if (tab.includes('-option-one')) {
+        return `Every 1 ${timeUnit}`;
+    } else if (tab.includes('-option-two')) {
+        return `Every ${values[0].value} ${timeUnit}`;
+    } else {
+        return `Between every ${values[0].value} ${timeUnit} and ${values[1].value} ${timeUnit} `;
+    }
+}
+
 export function determineCronTabAndSection(cronExpression: string) {
     const parts = cronExpression.split(' ');
 
