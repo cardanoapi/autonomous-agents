@@ -67,3 +67,17 @@ export function determineCronTabAndSection(cronExpression: string) {
         return determineSection(minute, 'Minute');
     }
 }
+
+export function formatTimestamp(timestamp: string) {
+    const date = new Date(timestamp);
+    const timeString = date.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    const dateString = date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    return `${timeString} ${dateString}`;
+}
