@@ -2,13 +2,7 @@
 
 import AgentTabItem from './AgentTabItem';
 
-const adminTabs = [
-    'Overview',
-    'History',
-    'Logs',
-    'Manual Trigger',
-    'Agent Runner'
-];
+const adminTabs = ['Overview', 'History', 'Logs', 'Manual Trigger', 'Agent Runner'];
 const normalTabs = ['Overview', 'History', 'Logs'];
 
 const AgentTabSection = ({ showAllTabs = false }: { showAllTabs?: boolean }) => {
