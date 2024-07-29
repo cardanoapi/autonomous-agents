@@ -1,4 +1,5 @@
 # agent_service.py
+from datetime import datetime, UTC, timedelta
 import json
 from typing import List
 
@@ -19,6 +20,14 @@ from backend.app.services.trigger_service import TriggerService
 from backend.config import settings
 from backend.app.exceptions import HTTPException
 from backend.app.repositories.user_repository import UserRepository
+
+
+def check_if_agent_is_online(last_active: datetime) -> bool:
+    threshold_time = timedelta(seconds=5)
+    time_diff = datetime.now(UTC) - last_active
+    if time_diff <= threshold_time:
+        return True
+    return False
 
 
 class AgentService:
@@ -56,8 +65,11 @@ class AgentService:
         agents = await self.agent_repository.retrieve_agents(page, limit)
         updated_agents = []
         for agent in agents:
+            is_online = check_if_agent_is_online(agent.last_active)
             agent_triggers_number = len(await self.trigger_service.list_triggers_by_agent_id(agent.id))
-            updated_agents.append(AgentResponse(**agent.dict(), total_functions=agent_triggers_number))
+            updated_agents.append(
+                AgentResponse(**agent.dict(), total_functions=agent_triggers_number, is_active=is_online)
+            )
         return updated_agents
 
     async def get_agent(self, agent_id: str) -> AgentResponseWithWalletDetails:
