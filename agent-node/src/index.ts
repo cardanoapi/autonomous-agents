@@ -46,7 +46,7 @@ function connectToManagerWebSocket() {
     ws.on('open', () => {
         interval = setInterval(() => {
             rpcChannel.emit('active_connection', 'Ping')
-        }, 10000)
+        }, 5000)
         rpcChannel.emit('hello', 'I am connected')
     })
 
