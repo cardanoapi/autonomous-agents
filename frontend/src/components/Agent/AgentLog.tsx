@@ -13,7 +13,7 @@ import {
 } from '@app/app/api/triggerHistory';
 import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
-import parseTimestamp from '@app/utils/dateAndTimeUtils';
+import { formatTimestamp } from '@app/utils/dateAndTimeUtils';
 
 import AgentFunctionsDropDown from '../Common/AgentFunctionsDropDown';
 import { Badge } from '../atoms/Badge';
@@ -178,11 +178,7 @@ export const AgentLogCard = ({
                 }
             >
                 <Badge variant={getBadgeVariant()}>{getAgentExecutionStatus()}</Badge>
-                <span className={'text-xs'}>
-                    {parseTimestamp(
-                        history?.timestamp || '2024-06-18T07:07:00.283000+00:00'
-                    )}
-                </span>
+                <span className={'text-xs'}>{formatTimestamp(history.timestamp)}</span>
             </div>
         </div>
     );
