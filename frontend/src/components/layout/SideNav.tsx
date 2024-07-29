@@ -129,6 +129,7 @@ export default function SideNav() {
                             <CurrentWalletDiv
                                 address={currentConnectedWallet.address || ''}
                                 onDisconnect={handleDisconnect}
+                                iconSrc={currentConnectedWallet.icon}
                             />
                         </div>
                     ) : (
@@ -149,11 +150,13 @@ export default function SideNav() {
 function CurrentWalletDiv({
     address,
     className,
-    onDisconnect
+    onDisconnect,
+    iconSrc
 }: {
     address: string;
     className?: string;
     onDisconnect?: any;
+    iconSrc?: string;
 }) {
     return (
         <div
@@ -162,7 +165,10 @@ function CurrentWalletDiv({
                 className
             )}
         >
-            <div className="h3 text-brand-Blue-200">Connected Wallet</div>
+            <div className="flex items-center gap-2">
+                <img src={iconSrc} height={32} width={32}></img>
+                <div className="h3 text-brand-Blue-200">Connected Wallet</div>
+            </div>
             <div>
                 <Typography className="break-all text-xs text-brand-Black-200">
                     {address}
