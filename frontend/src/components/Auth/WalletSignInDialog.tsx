@@ -1,13 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { SendLoginRequest } from '@api/auth';
 import { useAtom } from 'jotai';
-import Cookies from 'js-cookie';
 import { CIP30Provider } from 'kuber-client/types';
 import { OctagonAlert, Wallet } from 'lucide-react';
 import { X } from 'lucide-react';
@@ -56,7 +55,6 @@ export default function WalletSignInDialog({
     //to do save to atom WalletAPI
     const [, setWalletApi] = useAtom(walletApiAtom);
     const [, setWalletStakeAddress] = useAtom(walletStakeAddressAtom);
-    const [walletProviders, setWalletProviders] = useState<CIP30Provider[]>([]);
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
     const [, setAdminAcess] = useAtom(adminAccessAtom);
 
@@ -101,38 +99,6 @@ export default function WalletSignInDialog({
         }
     }
 
-    useEffect(() => {
-        const wallets = listProviders();
-        setWalletProviders(wallets);
-
-        async function enablePrevWallet() {
-            // Check and enable previous session wallet if conditions meet.
-            const storedWalletProvider = localStorage.getItem('wallet_provider');
-            const storedWalletStakeAddress =
-                localStorage.getItem('wallet_stake_address');
-            const accessToken = Cookies.get('access_token');
-
-            if (storedWalletProvider && storedWalletStakeAddress && accessToken) {
-                const wallet = wallets.find(
-                    (wallet) => wallet.name === storedWalletProvider
-                );
-                if (wallet) {
-                    const enabledApi = await wallet.enable();
-                    const rewardAddresses = await enabledApi.getRewardAddresses();
-                    const walletStakeAddress =
-                        rewardAddresses.length > 0 ? rewardAddresses[0] : null;
-
-                    if (walletStakeAddress === storedWalletStakeAddress) {
-                        setWalletApi(enabledApi);
-                        setWalletStakeAddress(walletStakeAddress);
-                    }
-                }
-            }
-        }
-
-        enablePrevWallet();
-    }, []);
-
     const textHiglight = 'text-blue-500';
     return (
         <div>
@@ -155,8 +121,8 @@ export default function WalletSignInDialog({
                             </span>
                         </div>
                         <div className="flex items-center justify-center gap-x-4">
-                            {walletProviders.length > 0 ? (
-                                walletProviders.map((wallet: CIP30Provider, index) => (
+                            {listProviders().length > 0 ? (
+                                listProviders().map((wallet: CIP30Provider, index) => (
                                     <div className="basix-1/4 disabled" key={index}>
                                         <WalletProviderDiv
                                             wallet={wallet}
@@ -198,7 +164,7 @@ export default function WalletSignInDialog({
                                 }}
                                 disabled={
                                     connectingWallet ||
-                                    walletProviders.length === 0 ||
+                                    listProviders().length === 0 ||
                                     currentSelectedWalletProvider === null
                                 }
                             >
