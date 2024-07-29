@@ -6,14 +6,14 @@ import { type VariantProps, cva } from 'class-variance-authority';
 import { cn } from '@app/components/lib/utils';
 
 const buttonVariants = cva(
-    'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-slate-950 dark:focus-visible:ring-slate-300',
+    'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:!border-[1px] disabled:cursor-not-allowed disabled:opacity-50 dark:ring-offset-slate-950 dark:focus-visible:ring-slate-300',
     {
         variants: {
             variant: {
                 default:
                     'bg-slate-900 text-slate-50 hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90',
                 primary:
-                    'bg-brand-Blue-200 text-white hover:bg-brand-Blue-300 active:border-[0.5px] active:border-rounded',
+                    'bg-brand-Blue-200 text-white hover:bg-brand-Blue-300 active:border-[0.5px] active:border-rounded ',
                 secondary: 'bg-brand-Black-100 text-white hover:bg-[#D9D9D9]',
                 destructive:
                     'bg-red-500 text-slate-50 hover:bg-red-500/90 dark:bg-red-900 dark:text-slate-50 active:border-[0.5px] dark:hover:bg-red-900/90',
