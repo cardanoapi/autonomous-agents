@@ -22,27 +22,27 @@ import { ErrorToast, SuccessToast } from '../molecules/CustomToasts';
 
 declare global {
     interface Window {
-        cardano: Record<string, CIP30Provider>;
+        cardano: any;
     }
 }
+
 function listProviders(): CIP30Provider[] {
-    const pluginMap = new Map<string, CIP30Provider>();
+    const pluginMap = new Map();
 
     if (typeof window === 'undefined' || !window.cardano) {
         return [];
     }
 
-    Object.keys(window.cardano).forEach((key) => {
-        const plugin = window.cardano[key];
+    Object.keys(window.cardano).forEach((x) => {
+        const plugin: CIP30Provider = window.cardano[x];
 
-        if (plugin.name) {
+        if (plugin && typeof plugin.enable === 'function' && plugin.name) {
             pluginMap.set(plugin.name, plugin);
         }
     });
-
     const providers = Array.from(pluginMap.values());
-    // Exclude Yoroi until it works
-    return providers.filter((provider) => provider.name !== 'yoroi');
+    // yoroi doesn't work (remove this after yoroi works)
+    return providers.filter((x) => x.name != 'yoroi');
 }
 
 export default function WalletSignInDialog({
