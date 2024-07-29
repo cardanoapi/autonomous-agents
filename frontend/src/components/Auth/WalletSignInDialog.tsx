@@ -6,17 +6,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { SendLoginRequest } from '@api/auth';
+import { getStakeAddress } from '@utils';
 import { useAtom } from 'jotai';
 import { CIP30Provider } from 'kuber-client/types';
 import { OctagonAlert, Wallet } from 'lucide-react';
 import { X } from 'lucide-react';
 
 import { Dialog, DialogContent } from '@app/components/atoms/Dialog';
-import {
-    adminAccessAtom,
-    walletApiAtom,
-    walletStakeAddressAtom
-} from '@app/store/localStore';
+import { adminAccessAtom, currentConnectedWalletAtom } from '@app/store/localStore';
 import { generateSignedData } from '@app/utils/auth';
 
 import { Button } from '../atoms/Button';
@@ -53,8 +50,7 @@ export default function WalletSignInDialog({
     onClose?: any;
 }) {
     //to do save to atom WalletAPI
-    const [, setWalletApi] = useAtom(walletApiAtom);
-    const [, setWalletStakeAddress] = useAtom(walletStakeAddressAtom);
+    const [, setCurrentConnectedWallet] = useAtom(currentConnectedWalletAtom);
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
     const [, setAdminAcess] = useAtom(adminAccessAtom);
 
@@ -68,24 +64,25 @@ export default function WalletSignInDialog({
         console.log(`Enabling ${wallet.name}`);
         setConnectingWallet(true);
         try {
-            const enabledApi = await wallet.enable();
-            const signedData = await generateSignedData(enabledApi);
+            const enabledWalletApi = await wallet.enable();
+            const signedData = await generateSignedData(enabledWalletApi);
             console.log(signedData);
 
             const response = await SendLoginRequest(signedData);
-            response.isSuperUser ? setAdminAcess(true) : setAdminAcess(false);
+
             if (response) {
+                response.isSuperUser ? setAdminAcess(true) : setAdminAcess(false);
+                const stakeAddress = await getStakeAddress(enabledWalletApi);
+
+                setCurrentConnectedWallet({
+                    api: enabledWalletApi,
+                    provider: wallet.name,
+                    address: stakeAddress,
+                    icon: wallet.icon
+                });
+
                 onComplete();
                 setConnectingWallet(false);
-                const rewardAddresses = await enabledApi.getRewardAddresses();
-                const walletStakeAddress =
-                    rewardAddresses.length > 0 ? rewardAddresses[0] : null;
-                setWalletApi(enabledApi);
-                setWalletStakeAddress(walletStakeAddress);
-                localStorage.setItem('wallet_provider', wallet.name);
-                walletStakeAddress
-                    ? localStorage.setItem('wallet_stake_address', walletStakeAddress)
-                    : {};
                 router.push('/');
             }
             if (!disabletoast) {
@@ -95,7 +92,7 @@ export default function WalletSignInDialog({
         } catch (error: any) {
             ErrorToast('Unable to Sign In. Please try again');
             setConnectingWallet(false);
-            localStorage.removeItem('wallet');
+            setCurrentConnectedWallet(null);
         }
     }
 
