@@ -14,7 +14,6 @@ import {
     BreadcrumbList,
     BreadcrumbSeparator
 } from '@app/components/atoms/Breadcrumb';
-import { walletApiAtom } from '@app/store/localStore';
 import { currentAgentNameAtom } from '@app/store/localStore';
 import { selectedAgentTabAtom } from '@app/store/localStore';
 
@@ -30,18 +29,6 @@ export default function MyAgentPage() {
         setCurrentAgentName(agent?.name || '');
     });
 
-    const [walletApi] = useAtom(walletApiAtom);
-
-    if (walletApi === null) {
-        return (
-            <div className="mt-[30%] flex h-full items-center justify-center text-brand-Gray-300">
-                <div className="text-center">
-                    <p>Active Wallet Connection Missing!</p>
-                    <p>Please connect your Wallet . . .</p>
-                </div>
-            </div>
-        );
-    }
     return (
         <div className={'flex flex-col gap-4'}>
             <Breadcrumb>
@@ -52,7 +39,7 @@ export default function MyAgentPage() {
                 </BreadcrumbList>
             </Breadcrumb>
             <div className={'flex h-full min-h-[600px] w-full gap-4 '}>
-                <AgentTabSection enableEdit={true} />
+                <AgentTabSection showAllTabs={true} />
                 <AgentTabContent
                     agent={agent}
                     agentLoading={agentLoading}

@@ -17,11 +17,7 @@ import Logo from '@app/components/icons/Logo';
 import LogsIcon from '@app/components/icons/LogsIcon';
 import TemplateIcon from '@app/components/icons/TemplatesIcon';
 import SideNavLink from '@app/components/layout/SideNavLink';
-import {
-    adminAccessAtom,
-    walletApiAtom,
-    walletStakeAddressAtom
-} from '@app/store/localStore';
+import { adminAccessAtom, currentConnectedWalletAtom } from '@app/store/localStore';
 
 import WalletSignInDialog from '../Auth/WalletSignInDialog';
 import { Button } from '../atoms/Button';
@@ -38,9 +34,10 @@ export interface ISideNavItem {
 }
 
 export default function SideNav() {
-    const [walletApi, setWalletApi] = useAtom(walletApiAtom);
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [walletStakeAddress, setWalletStakeAddress] = useAtom(walletStakeAddressAtom);
+    const [currentConnectedWallet, setCurrentConnectedWallet] = useAtom(
+        currentConnectedWalletAtom
+    );
     const [adminAccess, setAdminAcess] = useAtom(adminAccessAtom);
 
     const SideNavItems: ISideNavItem[] = [
@@ -90,13 +87,10 @@ export default function SideNav() {
     }
 
     function handleDisconnect() {
-        setWalletApi(null);
-        setWalletStakeAddress(null);
-        localStorage.removeItem('wallet_provider');
-        localStorage.removeItem('wallet_stake_address');
+        setAdminAcess(false);
+        setCurrentConnectedWallet(null);
         SendLogoutRequest();
         SuccessToast('Wallet Disconnected');
-        setAdminAcess(false);
         router.push('/');
     }
 
@@ -129,12 +123,13 @@ export default function SideNav() {
                             <SideNavLink key={index} Prop={Prop} />
                         ))}
                     </div>
-                    {walletApi !== null ? (
+                    {currentConnectedWallet !== null ? (
                         <div className="flex flex-col gap-x-2 gap-y-4 px-2 pb-2">
                             <SideNavLink key={1} Prop={MyAgentSideNavItem} />
                             <CurrentWalletDiv
-                                address={walletStakeAddress || ''}
+                                address={currentConnectedWallet.address || ''}
                                 onDisconnect={handleDisconnect}
+                                iconSrc={currentConnectedWallet.icon}
                             />
                         </div>
                     ) : (
@@ -155,11 +150,13 @@ export default function SideNav() {
 function CurrentWalletDiv({
     address,
     className,
-    onDisconnect
+    onDisconnect,
+    iconSrc
 }: {
     address: string;
     className?: string;
     onDisconnect?: any;
+    iconSrc?: string;
 }) {
     return (
         <div
@@ -168,7 +165,10 @@ function CurrentWalletDiv({
                 className
             )}
         >
-            <div className="h3 text-brand-Blue-200">Connected Wallet</div>
+            <div className="flex items-center gap-2">
+                <img src={iconSrc} height={32} width={32}></img>
+                <div className="h3 text-brand-Blue-200">Connected Wallet</div>
+            </div>
             <div>
                 <Typography className="break-all text-xs text-brand-Black-200">
                     {address}

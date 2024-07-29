@@ -56,7 +56,7 @@ export default function AgentPageById() {
                 </BreadcrumbList>
             </Breadcrumb>
             <div className={'flex h-full min-h-[600px] w-full gap-4 '}>
-                <AgentTabSection enableEdit={adminAccess} />
+                <AgentTabSection showAllTabs={adminAccess} />
                 <AgentTabContent
                     agent={agent}
                     agentLoading={agentLoading}
