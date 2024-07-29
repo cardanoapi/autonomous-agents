@@ -20,24 +20,29 @@ import { Button } from '../atoms/Button';
 import { cn } from '../lib/utils';
 import { ErrorToast, SuccessToast } from '../molecules/CustomToasts';
 
+declare global {
+    interface Window {
+        cardano: Record<string, CIP30Provider>;
+    }
+}
 function listProviders(): CIP30Provider[] {
-    const pluginMap = new Map();
-    //@ts-ignore
-    if (!window.cardano) {
+    const pluginMap = new Map<string, CIP30Provider>();
+
+    if (typeof window === 'undefined' || !window.cardano) {
         return [];
     }
-    //@ts-ignore
-    Object.keys(window.cardano).forEach((x) => {
-        //@ts-ignore
-        const plugin: CIP30Provider = window.cardano[x];
-        //@ts-ignore
-        if (plugin.enable && plugin.name) {
+
+    Object.keys(window.cardano).forEach((key) => {
+        const plugin = window.cardano[key];
+
+        if (plugin.name) {
             pluginMap.set(plugin.name, plugin);
         }
     });
+
     const providers = Array.from(pluginMap.values());
-    // yoroi doesn't work (remove this after yoroi works)
-    return providers.filter((x) => x.name != 'yoroi');
+    // Exclude Yoroi until it works
+    return providers.filter((provider) => provider.name !== 'yoroi');
 }
 
 export default function WalletSignInDialog({
