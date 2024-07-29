@@ -14,7 +14,7 @@ export async function checkIfAgentExistsInDB(agentId: string): Promise<boolean> 
         .then((agents: any) => {
             return !!agents
         })
-        .catch((error) => {
+        .catch((error: any) => {
             console.error(error)
             return false
         })
@@ -54,7 +54,7 @@ export async function fetchAgentConfiguration(agentId: string): Promise<{
         } else {
             return { instanceCount: null, configurations: [] }
         }
-    } catch (error) {
+    } catch (error: any) {
         console.log(`Error fetching agent configuration: ${error}`)
         throw error
     }
@@ -66,7 +66,7 @@ export async function updateLastActiveTimestamp(agentId: string): Promise<void> 
             where: { id: agentId },
             data: { last_active: new Date() },
         })
-    } catch (error) {
+    } catch (error: any) {
         console.error(`Error updating last active timestamp for agent ${agentId}: ${error}`)
     }
 }
