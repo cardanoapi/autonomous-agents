@@ -4,10 +4,10 @@ import { useEffect } from 'react';
 
 import { useParams, useRouter } from 'next/navigation';
 
+import { IAgent, fetchAgentbyID } from '@api/agents';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
-import { IAgent, fetchAgentbyID } from '@app/app/api/agents';
 import AgentTabSection from '@app/components/Agent/AgentTab';
 import AgentTabContent from '@app/components/Agent/AgentTabContent';
 import {

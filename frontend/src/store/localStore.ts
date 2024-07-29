@@ -1,3 +1,4 @@
+import { IAgent } from '@api/agents';
 import { atom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { CIP30Instance } from 'kuber-client/types';
@@ -27,3 +28,7 @@ export const adminAccessAtom = atomWithStorage<boolean>('adminAccess', false);
 
 export const currentConnectedWalletAtom =
     atomWithStorage<ICurrentConnectedWallet | null>('currentWallet', null);
+
+export const agentWithActiveStatus = atom<Record<string, boolean> | null>(null);
+
+export const agentsAtom = atom<Record<string, IAgent> | null>(null);
