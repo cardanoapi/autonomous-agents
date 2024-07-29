@@ -98,7 +98,10 @@ export default function TemplatesPage() {
                         isLoading ? (
                             <TemplatesSkeleton />
                         ) : (
-                            <TemplatesContainer templates={filteredTemplates} />
+                            <TemplatesContainer
+                                templates={filteredTemplates}
+                                enableEdit={adminAccess}
+                            />
                         )
                     ) : (
                         <span>No Templates Found</span>
