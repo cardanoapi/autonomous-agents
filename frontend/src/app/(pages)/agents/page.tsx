@@ -103,10 +103,10 @@ export default function AgentsPage() {
             </div>
             <AgentsContainer agentsList={otherAgents} enableEdit={adminAccess} />
             {currentConnectedWallet && myAgents.length > 0 && (
-                <>
-                    <div className="h1-new my-8">My Agents</div>
+                <div className="my-8">
+                    <div className="h1-new">My Agents</div>
                     <AgentsContainer agentsList={myAgents} enableEdit={true} />
-                </>
+                </div>
             )}
             {otherAgents.length == 0 && myAgents.length == 0 && (
                 <span>No Any Agents Found</span>
