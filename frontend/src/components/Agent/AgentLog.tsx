@@ -15,9 +15,9 @@ import {
 import AgentAvatar from '@app/components/Agent/AgentAvatar';
 import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
-import { formatTimestamp } from '@app/utils/dateAndTimeUtils';
 import { agentsAtom } from '@app/store/localStore';
 import { Truncate } from '@app/utils/common/extra';
+import { formatTimestamp } from '@app/utils/dateAndTimeUtils';
 
 import AgentFunctionsDropDown from '../Common/AgentFunctionsDropDown';
 import { Badge } from '../atoms/Badge';
@@ -166,7 +166,7 @@ export const AgentLogCard = ({
                 className
             )}
         >
-            <div className={'row flex flex items-start gap-8 '}>
+            <div className={'row flex  items-start gap-8 '}>
                 {globalLog && (
                     <div className={'flex items-center gap-3 sm:min-w-[200px]'}>
                         <AgentAvatar
@@ -179,7 +179,10 @@ export const AgentLogCard = ({
                         <div className="card-h2 flex flex-col ">
                             <span className={'text-sm leading-normal'}>
                                 {Truncate(
-                                    agents ? agents[history.agentId].name : '',
+                                    (agents &&
+                                        agents[history.agentId] &&
+                                        agents[history.agentId].name) ||
+                                        '',
                                     20
                                 )}
                             </span>
