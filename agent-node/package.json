@@ -6,11 +6,12 @@
         "build": "tsc",
         "start": "ts-node src/index.ts",
         "dev": "ts-node src/index.ts",
-        "test": "echo \"Error: no test specified\" && exit 1",
+        "test": "ts-node src/test.ts",
         "format:check": "prettier --check .",
         "lint:check": "eslint .",
         "format:write": "prettier --write .",
         "lint:fix": "eslint --fix ."
+        
     },
     "keywords": [],
     "author": "Roshan Gyawali",
