@@ -13,7 +13,7 @@ class AgentResponse(BaseModel):
     instance: int
     index: int
     last_active: Optional[datetime]
-    user_address: Optional[str]
+    userAddress: Optional[str]
     total_functions: Optional[int]
     is_active: Optional[bool]
 

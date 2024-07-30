@@ -64,7 +64,7 @@ class AgentRepository:
                 instance=agent.instance,
                 index=agent.index,
                 last_active=agent.last_active,
-                user_address=agent.userAddress,
+                userAddress=agent.userAddress,
             )
             return agent_response
 
@@ -212,6 +212,6 @@ class AgentRepository:
                 instance=agent.instance,
                 index=agent.index,
                 last_active=agent.last_active,
-                user_address=agent.userAddress,
+                userAddress=agent.userAddress,
             )
             return agent_response
