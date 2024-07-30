@@ -15,6 +15,7 @@ class AgentResponse(BaseModel):
     last_active: Optional[datetime]
     user_address: Optional[str]
     total_functions: Optional[int]
+    is_active: Optional[bool]
 
 
 class AgentResponseWithAgentConfigurations(AgentResponse):

@@ -157,10 +157,11 @@ export default function LogsPage() {
                                             history={history}
                                             key={index}
                                             className="bg-white"
+                                            globalLog
                                         />
                                     )
                                 )
-                            ) : loadingLogs === false ? (
+                            ) : !loadingLogs ? (
                                 <div className="flex gap-2 text-gray-500">
                                     Trigger History Logs for{' '}
                                     {statusPlaceholder === 'None'

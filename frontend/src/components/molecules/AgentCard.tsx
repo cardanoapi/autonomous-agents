@@ -11,14 +11,14 @@ import {
     ITransactionsCount,
     fetchTransactionsCountByAgentID
 } from '@app/app/api/trigger';
-import { Badge } from '@app/components/atoms/Badge';
+import AgentAvatar from '@app/components/Agent/AgentAvatar';
+import { cn } from '@app/components/lib/utils';
 import { Truncate } from '@app/utils/common/extra';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { useModal } from '../Modals/context';
 import { Card, CardContent } from '../atoms/Card';
 import { Dialog, DialogContent } from '../atoms/Dialog';
-import { cn } from '../lib/utils';
 import ConfirmationBox from './ConfirmationBox';
 import { ErrorToast, SuccessToast } from './CustomToasts';
 
@@ -30,17 +30,17 @@ export interface IAgentCard {
     lastActive: string | number;
     totalTrigger: number;
     enableEdit?: boolean;
-    refetchData?: () => void;
+    isActive?: boolean;
 }
 
 export default function AgentCard({
     agentName,
     agentID,
     templateID,
-    refetchData,
     functionCount,
     enableEdit = false,
-    lastActive = ''
+    lastActive = '',
+    isActive = false
 }: IAgentCard) {
     const router = useRouter();
 
@@ -75,9 +75,6 @@ export default function AgentCard({
             ErrorToast('Agent Delete Failed. Try Again!');
         }
     });
-
-    const [isActiveWithinLast33Seconds, setIsActiveWithinLast33Seconds] =
-        useState(false);
     const [formatedLastActive, setFormatedLastActive] = useState<string | number>('');
 
     function getLastActiveMsg(lastActive: string | number): string {
@@ -95,9 +92,6 @@ export default function AgentCard({
             const diffInDays = Math.floor(diffInHours / 24);
 
             if (diffInSeconds <= 60) {
-                if (diffInSeconds <= 33) {
-                    setIsActiveWithinLast33Seconds(true);
-                }
                 return `${diffInSeconds} second${diffInSeconds > 1 ? 's' : ''} ago`;
             } else if (diffInDays >= 1) {
                 return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
@@ -120,39 +114,53 @@ export default function AgentCard({
                 onClick={() => {
                     router.push(`/agents/${agentID}`);
                 }}
-                className="hover-transition-primary group min-h-[260px] min-w-[260px] cursor-pointer rounded-xl p-6 transition-all"
+                className="hover-transition-primary group relative min-h-[250px] min-w-[260px] cursor-pointer rounded-xl px-6 py-3 transition-all"
             >
-                <div className="flex items-center justify-between">
-                    <div className="card-h2">{Truncate(agentName, 7)}</div>
-                    <div className="flex gap-x-2">
-                        <div className={cn(enableEdit ? 'flex' : 'hidden')}>
-                            <PlayIcon
-                                color="#A1A1A1"
-                                className="hidden hover:cursor-pointer group-hover:flex"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    openModal('AgentRunnerView', {
-                                        agentId: agentID,
-                                        refetchData: refetchData
-                                    });
-                                }}
-                            />
-                            <Trash2
-                                color="#A1A1A1"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setDialogOpen(true);
-                                }}
-                                className="hidden hover:cursor-pointer group-hover:flex"
-                            />
-                        </div>
-                        {isActiveWithinLast33Seconds ? (
-                            <Badge variant={'success'}>Online</Badge>
-                        ) : (
-                            <Badge variant={'destructive'}>Offline</Badge>
-                        )}
+                <div
+                    className={cn(
+                        'absolute right-3 justify-end gap-1',
+                        enableEdit ? 'flex' : 'hidden'
+                    )}
+                >
+                    <PlayIcon
+                        color="#A1A1A1"
+                        className="hidden hover:cursor-pointer group-hover:flex"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            openModal('AgentRunnerView', {
+                                agentId: agentID
+                            });
+                        }}
+                    />
+                    <Trash2
+                        color="#A1A1A1"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setDialogOpen(true);
+                        }}
+                        className="hidden  hover:cursor-pointer group-hover:flex"
+                    />
+                </div>
+                <div className={'flex items-center gap-3 py-3'}>
+                    <AgentAvatar
+                        hash={agentID || ''}
+                        size={40}
+                        isActive={isActive || false}
+                    />
+                    <div className="card-h2 flex flex-col">
+                        <span className={'leading-normal'}>
+                            {Truncate(agentName, 20)}
+                        </span>
+                        <span
+                            className={
+                                'text-[10px] leading-normal text-brand-Black-300/80'
+                            }
+                        >
+                            {Truncate(agentID || '', 25)}
+                        </span>
                     </div>
                 </div>
+                <div className="flex items-center justify-between"></div>
                 <div className="mt-5 flex flex-col gap-y-2 text-brand-Gray-200">
                     <CardContent className="flex flex-col gap-y-2">
                         <span className="card-h4">

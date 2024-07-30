@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import { useMutation } from '@tanstack/react-query';
 import { validateInputFieldForGroup } from '@utils';
+import { useAtom } from 'jotai';
 
 import { manualTriggerForAgent } from '@app/app/api/agents';
 import { IFunction, IParameter } from '@app/app/api/functions';
@@ -10,6 +11,7 @@ import { Button } from '@app/components/atoms/Button';
 import { Input } from '@app/components/atoms/Input';
 import { ErrorToast, SuccessToast } from '@app/components/molecules/CustomToasts';
 import { Separator } from '@app/components/shadcn/ui/separator';
+import { agentsAtom } from '@app/store/localStore';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { useModal } from '../context';
@@ -22,6 +24,7 @@ const AgentManualTriggerModalView = ({
     agentFunction: IFunction;
 }) => {
     const { closeModal } = useModal();
+    const [agents] = useAtom(agentsAtom);
 
     const [params, setParams] = useState(agentFunction.parameters ?? []);
     const [errorParamIndex, setErrorParamIndex] = useState<Array<number>>([]);
@@ -178,7 +181,11 @@ const AgentManualTriggerModalView = ({
                     <Button variant={'destructive'} onClick={() => closeModal()}>
                         Cancel
                     </Button>
-                    <Button variant={'primary'} onClick={handleTrigger}>
+                    <Button
+                        disabled={agents ? !agents[agentId].is_active : false}
+                        variant={'primary'}
+                        onClick={handleTrigger}
+                    >
                         Trigger
                     </Button>
                 </div>

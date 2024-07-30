@@ -79,7 +79,7 @@ class AgentRepository:
     async def get_online_agents_count(self):
         try:
             # Calculate the threshold for last active time (e.g., 10 seconds ago)
-            threshold_time = datetime.now(UTC) - timedelta(seconds=10)
+            threshold_time = datetime.now(UTC) - timedelta(seconds=5)
 
             # Query the database for online agents
             online_agents_count = await self.db.prisma.agent.count(where={"last_active": {"gte": threshold_time}})

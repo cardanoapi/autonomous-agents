@@ -105,7 +105,6 @@
     @apply !ring-0 !ring-offset-0  focus:ring-0 focus:ring-offset-0;
 }
 
-
 .without-focus-visible {
-    @apply focus-visible:!ring-0 focus-visible:!outline-none active:!border-none focus-visible:!ring-offset-0;
+    @apply focus-visible:!outline-none focus-visible:!ring-0 focus-visible:!ring-offset-0 active:!border-none;
 }

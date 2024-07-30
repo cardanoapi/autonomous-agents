@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import { MapFunctionNameAndViewName } from '@consts';
 import { useQuery } from '@tanstack/react-query';
+import { useAtom } from 'jotai';
 import { Copy, OctagonAlert } from 'lucide-react';
 
 import { IAgent } from '@app/app/api/agents';
@@ -11,9 +12,12 @@ import {
     IAgentTriggerHistory,
     fetchAllTriggerHistory
 } from '@app/app/api/triggerHistory';
+import AgentAvatar from '@app/components/Agent/AgentAvatar';
 import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import { formatTimestamp } from '@app/utils/dateAndTimeUtils';
+import { agentsAtom } from '@app/store/localStore';
+import { Truncate } from '@app/utils/common/extra';
 
 import AgentFunctionsDropDown from '../Common/AgentFunctionsDropDown';
 import { Badge } from '../atoms/Badge';
@@ -134,11 +138,14 @@ const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
 
 export const AgentLogCard = ({
     history,
-    className
+    className,
+    globalLog = false
 }: {
     history: IAgentTriggerHistory;
     className?: string;
+    globalLog?: boolean;
 }) => {
+    const [agents] = useAtom(agentsAtom);
     function getAgentExecutionStatus() {
         if (!history.status) return 'Skipped';
         else if (history.success) return 'Success';
@@ -159,18 +166,48 @@ export const AgentLogCard = ({
                 className
             )}
         >
-            <div className={'flex flex-col items-start gap-1'}>
-                <div className={'flex flex-row items-center gap-1'}>
-                    <span className={'text-sm font-medium'}>
-                        {MapFunctionNameAndViewName[history.functionName] ||
-                            history.functionName}
-                    </span>
-                    <span className={'rounded bg-blue-200 p-1 text-[8px]'}>
-                        {history.triggerType || 'CRON'}
-                    </span>
+            <div className={'row flex flex items-start gap-8 '}>
+                {globalLog && (
+                    <div className={'flex items-center gap-3 sm:min-w-[200px]'}>
+                        <AgentAvatar
+                            activeStatus={false}
+                            hash={history.agentId}
+                            size={20}
+                            isActive={false}
+                            isLink
+                        />
+                        <div className="card-h2 flex flex-col ">
+                            <span className={'text-sm leading-normal'}>
+                                {Truncate(
+                                    agents ? agents[history.agentId].name : '',
+                                    20
+                                )}
+                            </span>
+                            <span
+                                className={
+                                    'text-[10px] leading-normal text-brand-Black-300/80'
+                                }
+                            >
+                                {Truncate(history.agentId || '', 25)}
+                            </span>
+                        </div>
+                    </div>
+                )}
+                <div className={'flex flex-col items-start gap-2'}>
+                    <div className={'flex flex-row items-center gap-1'}>
+                        <span className={'text-sm font-medium'}>
+                            {MapFunctionNameAndViewName[history.functionName] ||
+                                history.functionName}
+                        </span>
+                        <span className={'rounded bg-blue-200 p-1 text-[8px]'}>
+                            {history.triggerType || 'CRON'}
+                        </span>
+                    </div>
+                    {history.message && (
+                        <span className={'text-xs'}>{history.message}</span>
+                    )}
+                    {history.txHash && <TxHashComponent txHash={history.txHash} />}
                 </div>
-                <span className={'text-xs '}>{history.message}</span>
-                {history.txHash && <TxHashComponent txHash={history.txHash} />}
             </div>
             <div
                 className={
@@ -191,7 +228,6 @@ const TxHashComponent = ({ txHash }: { txHash: string }) => {
     };
     return (
         <>
-            <br />
             <div
                 className={
                     'flex flex-row items-center gap-1 truncate text-sm font-medium '

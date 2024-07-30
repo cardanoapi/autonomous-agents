@@ -4,10 +4,9 @@ import { useEffect, useState } from 'react';
 
 import Link from 'next/link';
 
-import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
-import { IAgent, fetchAgents } from '@app/app/api/agents';
+import { IAgent } from '@app/app/api/agents';
 import { Button } from '@app/components/atoms/Button';
 import {
     DropdownMenu,
@@ -19,25 +18,19 @@ import { SearchField } from '@app/components/atoms/SearchField';
 import { cn } from '@app/components/lib/utils';
 import AgentCard from '@app/components/molecules/AgentCard';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
-import { Skeleton } from '@app/components/shadcn/ui/skeleton';
-import { adminAccessAtom, agentCreatedAtom } from '@app/store/localStore';
+import { adminAccessAtom, agentCreatedAtom, agentsAtom } from '@app/store/localStore';
 
 export default function AgentsPage() {
     const [agentCreated, setAgentCreated] = useAtom(agentCreatedAtom);
     const [adminAccess] = useAtom(adminAccessAtom);
 
-    const {
-        data: agents,
-        isLoading,
-        refetch
-    } = useQuery<IAgent[]>({
-        queryKey: ['agents'],
-        queryFn: fetchAgents,
-        refetchOnWindowFocus: true,
-        refetchOnMount: 'always',
-        refetchInterval: 20000,
-        refetchIntervalInBackground: true
-    });
+    const [agentsMap] = useAtom(agentsAtom);
+    const [agents, setAgents] = useState<IAgent[]>([]);
+    useEffect(() => {
+        if (agentsMap) {
+            setAgents(Object.values(agentsMap));
+        }
+    }, [agentsMap]);
 
     const [filteredAgents, setFilteredAgents] = useState<IAgent[]>([]);
 
@@ -99,41 +92,41 @@ export default function AgentsPage() {
                     </Button>
                 </Link>
             </div>
-            {isLoading ? (
-                <SkeletonLoadingForAgentsPage />
-            ) : (
-                <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6">
-                    {Array.isArray(filteredAgents) && filteredAgents.length ? (
-                        filteredAgents.map((agent: IAgent, index) => (
-                            <AgentCard
-                                agentName={agent?.name || 'NA'}
-                                agentID={agent?.id || ''}
-                                functionCount={agent?.total_functions || 0}
-                                templateID={agent?.template_id || ''}
-                                totalTrigger={0}
-                                lastActive={agent?.last_active || 'NA'}
-                                key={index}
-                                refetchData={refetch}
-                                enableEdit={adminAccess}
-                            />
-                        ))
-                    ) : (
-                        <span>No Agents Found.</span>
-                    )}
-                </div>
-            )}
+            {/*{isLoading ? (*/}
+            {/*    <SkeletonLoadingForAgentsPage />*/}
+            {/*) : (*/}
+            <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6">
+                {Array.isArray(filteredAgents) && filteredAgents.length ? (
+                    filteredAgents.map((agent: IAgent, index) => (
+                        <AgentCard
+                            agentName={agent?.name || 'NA'}
+                            agentID={agent?.id || ''}
+                            functionCount={agent?.total_functions || 0}
+                            templateID={agent?.template_id || ''}
+                            totalTrigger={0}
+                            lastActive={agent?.last_active || 'NA'}
+                            key={index}
+                            enableEdit={adminAccess}
+                            isActive={agent?.is_active}
+                        />
+                    ))
+                ) : (
+                    <span>No Agents Found.</span>
+                )}
+            </div>
+            {/*)}*/}
         </>
     );
 }
 
-const SkeletonLoadingForAgentsPage = () => {
-    return (
-        <div className={'mt-12 flex flex-wrap gap-8'}>
-            {Array(8)
-                .fill(undefined)
-                .map((_, index) => (
-                    <Skeleton className={'h-[240px] w-[240px]'} key={index} />
-                ))}
-        </div>
-    );
-};
+// const SkeletonLoadingForAgentsPage = () => {
+//     return (
+//         <div className={'mt-12 flex flex-wrap gap-8'}>
+//             {Array(8)
+//                 .fill(undefined)
+//                 .map((_, index) => (
+//                     <Skeleton className={'h-[240px] w-[240px]'} key={index} />
+//                 ))}
+//         </div>
+//     );
+// };
