@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useParams, useRouter } from 'next/navigation';
 
@@ -19,6 +19,7 @@ import {
 import {
     adminAccessAtom,
     currentAgentNameAtom,
+    currentConnectedWalletAtom,
     selectedAgentTabAtom
 } from '@app/store/localStore';
 
@@ -26,10 +27,7 @@ export default function AgentPageById() {
     const [, setCurrentAgentName] = useAtom(currentAgentNameAtom);
     const [adminAccess] = useAtom(adminAccessAtom);
     const [selectedTab] = useAtom(selectedAgentTabAtom);
-    useEffect(() => {
-        setCurrentAgentName(agent?.name || '');
-    });
-
+    const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
     const params = useParams();
     const router = useRouter();
     const agentID = params.agentID as string;
@@ -38,6 +36,17 @@ export default function AgentPageById() {
         queryKey: [`agent${agentID}`],
         queryFn: () => fetchAgentbyID(agentID)
     });
+
+    const [agentOwnerIsUser, setAgentOwnerIsUser] = useState(false);
+    useEffect(() => {
+        if (agent) {
+            setCurrentAgentName(agent?.name || '');
+            console.log(agent.userAddress, currentConnectedWallet?.address);
+            agent.userAddress === currentConnectedWallet?.address
+                ? setAgentOwnerIsUser(true)
+                : setAgentOwnerIsUser(false);
+        }
+    }, [agent]);
 
     return (
         <div className={'flex flex-col gap-4'}>
@@ -56,11 +65,11 @@ export default function AgentPageById() {
                 </BreadcrumbList>
             </Breadcrumb>
             <div className={'flex h-full min-h-[600px] w-full gap-4 '}>
-                <AgentTabSection showAllTabs={adminAccess} />
+                <AgentTabSection showAllTabs={adminAccess || agentOwnerIsUser} />
                 <AgentTabContent
                     agent={agent}
                     agentLoading={agentLoading}
-                    enableEdit={adminAccess}
+                    enableEdit={adminAccess || agentOwnerIsUser}
                 />
             </div>
         </div>
