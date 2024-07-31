@@ -77,7 +77,7 @@ class AgentService:
     async def get_agent(self, agent_id: str) -> AgentResponseWithWalletDetails:
         agent = await self.agent_repository.retrieve_agent(agent_id)
         self.raise_exception_if_agent_not_found(agent)
-        response = await self.return_agent_with_wallet_detials(agent)
+        response = await self.return_agent_with_wallet_details(agent)
         return response
 
     async def update_agent(
@@ -131,7 +131,7 @@ class AgentService:
     async def get_agent_by_user_address(self, user_address: str) -> AgentResponseWithWalletDetails:
         agent = await self.agent_repository.retrieve_agent_by_user_address(user_address=user_address)
         self.raise_exception_if_agent_not_found(agent)
-        response = await self.return_agent_with_wallet_detials
+        response = await self.return_agent_with_wallet_details(agent)
         return response
 
     async def is_authorized(self, userAddress: str, existing_agent: AgentResponse):
@@ -145,7 +145,7 @@ class AgentService:
         if user_is_super_admin == False:
             raise HTTPException(status_code=403, content="Forbidden Request")
 
-    async def return_agent_with_wallet_detials(self, agent: AgentResponse):
+    async def return_agent_with_wallet_details(self, agent: AgentResponse):
         agent_with_keys = await self.agent_repository.retreive_agent_key(agent.id)
         utxo = 0
         async with httpx.AsyncClient() as client:
