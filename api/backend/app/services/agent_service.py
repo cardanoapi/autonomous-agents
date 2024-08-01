@@ -77,21 +77,8 @@ class AgentService:
     async def get_agent(self, agent_id: str) -> AgentResponseWithWalletDetails:
         agent = await self.agent_repository.retrieve_agent(agent_id)
         self.raise_exception_if_agent_not_found(agent)
-        agent_with_keys = await self.agent_repository.retreive_agent_key(agent_id)
-        utxo = 0
-        async with httpx.AsyncClient() as client:
-            response = await client.get(f"{settings.KUBER_URL}/utxo?address={agent_with_keys.agent_address}")
-            transactions = response.json()
-            if isinstance(transactions, list):
-                for transaction in transactions:
-                    utxo = float(transaction.get("value", {}).get("lovelace", "0"))
-        agent_configurations = await self.trigger_service.list_triggers_by_agent_id(agent_id)
-        return AgentResponseWithWalletDetails(
-            **agent.dict(),
-            agent_address=agent_with_keys.agent_address,
-            wallet_amount=utxo / (10**6),
-            agent_configurations=agent_configurations,
-        )
+        response = await self.return_agent_with_wallet_details(agent)
+        return response
 
     async def update_agent(
         self, agent_id: str, agent_data: AgentUpdateDTO, userAddress: str
@@ -144,20 +131,8 @@ class AgentService:
     async def get_agent_by_user_address(self, user_address: str) -> AgentResponseWithWalletDetails:
         agent = await self.agent_repository.retrieve_agent_by_user_address(user_address=user_address)
         self.raise_exception_if_agent_not_found(agent)
-        agent_with_keys = await self.agent_repository.retreive_agent_key(agent.id)
-        utxo = 0
-        async with httpx.AsyncClient() as client:
-            response = await client.get(f"{settings.KUBER_URL}/utxo?address={agent_with_keys.agent_address}")
-            transactions = response.json()
-            for transaction in transactions:
-                utxo = float(transaction.get("value", {}).get("lovelace", "0"))
-        agent_configurations = await self.trigger_service.list_triggers_by_agent_id(agent.id)
-        return AgentResponseWithWalletDetails(
-            **agent.dict(),
-            agent_address=agent_with_keys.agent_address,
-            wallet_amount=utxo / (10**6),
-            agent_configurations=agent_configurations,
-        )
+        response = await self.return_agent_with_wallet_details(agent)
+        return response
 
     async def is_authorized(self, userAddress: str, existing_agent: AgentResponse):
         # Checks if agent belongs to user or user is super admin
@@ -169,3 +144,20 @@ class AgentService:
         user_is_super_admin = await self.user_reposiotry.is_super_admin(userAddress)
         if user_is_super_admin == False:
             raise HTTPException(status_code=403, content="Forbidden Request")
+
+    async def return_agent_with_wallet_details(self, agent: AgentResponse):
+        agent_with_keys = await self.agent_repository.retreive_agent_key(agent.id)
+        utxo = 0
+        async with httpx.AsyncClient() as client:
+            response = await client.get(f"{settings.KUBER_URL}/utxo?address={agent_with_keys.agent_address}")
+            transactions = response.json()
+            if isinstance(transactions, list):
+                for transaction in transactions:
+                    utxo = float(transaction.get("value", {}).get("lovelace", "0"))
+        agent_configurations = await self.trigger_service.list_triggers_by_agent_id(agent.id)
+        return AgentResponseWithWalletDetails(
+            **agent.dict(),
+            agent_address=agent_with_keys.agent_address,
+            wallet_amount=utxo / (10**6),
+            agent_configurations=agent_configurations,
+        )
