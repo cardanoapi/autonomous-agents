@@ -162,7 +162,7 @@ class AgentService:
     async def is_authorized(self, userAddress: str, existing_agent: AgentResponse):
         # Checks if agent belongs to user or user is super admin
         user_is_super_admin = await self.user_reposiotry.is_super_admin(userAddress)
-        if existing_agent.user_address != userAddress and user_is_super_admin == False:
+        if existing_agent.userAddress != userAddress and user_is_super_admin == False:
             raise HTTPException(status_code=403, content="Forbidden Request")
 
     async def is_superadmin(self, userAddress: str):

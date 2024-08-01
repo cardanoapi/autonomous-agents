@@ -15,9 +15,9 @@ import {
 import AgentAvatar from '@app/components/Agent/AgentAvatar';
 import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
-import { formatTimestamp } from '@app/utils/dateAndTimeUtils';
 import { agentsAtom } from '@app/store/localStore';
 import { Truncate } from '@app/utils/common/extra';
+import { formatTimestamp } from '@app/utils/dateAndTimeUtils';
 
 import AgentFunctionsDropDown from '../Common/AgentFunctionsDropDown';
 import { Badge } from '../atoms/Badge';

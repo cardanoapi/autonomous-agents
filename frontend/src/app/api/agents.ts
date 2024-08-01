@@ -56,6 +56,7 @@ export interface IAgent {
     agent_configurations?: Array<IAgentConfiguration>;
     total_functions?: number;
     is_active?: boolean;
+    userAddress?: string;
 }
 
 export const fetchAgents = async (): Promise<IAgent[]> => {

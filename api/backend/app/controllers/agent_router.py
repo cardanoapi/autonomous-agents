@@ -33,7 +33,7 @@ class AgentRouter(Routable):
     async def list_agents(
         self,
         page: int = Query(default=1, ge=1),
-        limit: int = Query(default=10, le=10),
+        limit: int = Query(default=50, le=10),
     ):
         agents = await self.agent_service.list_agents(page, limit)
         return agents

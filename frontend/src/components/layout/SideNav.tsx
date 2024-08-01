@@ -22,7 +22,6 @@ import { adminAccessAtom, currentConnectedWalletAtom } from '@app/store/localSto
 import WalletSignInDialog from '../Auth/WalletSignInDialog';
 import { Button } from '../atoms/Button';
 import AgentsIcon from '../icons/AgentsIcon';
-import MyAgentIcon from '../icons/MyAgentIcon';
 import { cn } from '../lib/utils';
 import { SuccessToast } from '../molecules/CustomToasts';
 
@@ -38,7 +37,7 @@ export default function SideNav() {
     const [currentConnectedWallet, setCurrentConnectedWallet] = useAtom(
         currentConnectedWalletAtom
     );
-    const [adminAccess, setAdminAcess] = useAtom(adminAccessAtom);
+    const [, setAdminAcess] = useAtom(adminAccessAtom);
 
     const SideNavItems: ISideNavItem[] = [
         {
@@ -72,13 +71,6 @@ export default function SideNav() {
             icon: LogsIcon
         }
     ];
-
-    const MyAgentSideNavItem: ISideNavItem = {
-        title: 'My Agent',
-        href: '/my-agent',
-        icon: MyAgentIcon,
-        hidden: adminAccess
-    };
 
     const router = useRouter();
 
@@ -125,7 +117,6 @@ export default function SideNav() {
                     </div>
                     {currentConnectedWallet !== null ? (
                         <div className="flex flex-col gap-x-2 gap-y-4 px-2 pb-2">
-                            <SideNavLink key={1} Prop={MyAgentSideNavItem} />
                             <CurrentWalletDiv
                                 address={currentConnectedWallet.address || ''}
                                 onDisconnect={handleDisconnect}
