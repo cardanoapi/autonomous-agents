@@ -1,6 +1,7 @@
 from backend.config.database import prisma_connection
-from fastapi_pagination import Page, paginate
+from fastapi_pagination import Page
 from backend.app.models.trigger_history.trigger_history_dto import TriggerHistoryDto
+import math
 
 
 class TriggerHistoryRepository:
@@ -28,7 +29,7 @@ class TriggerHistoryRepository:
             "total": total,
             "page": page,
             "size": size,
-            "pages": total / size,
+            "pages": math.ceil(total / size),
         }
         return formated_results
 
