@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -9,6 +9,7 @@ import { SendLogoutRequest } from '@api/auth';
 import { PATHS } from '@consts';
 import { Typography } from '@mui/material';
 import { useAtom } from 'jotai';
+import cookie from 'js-cookie';
 import { Boxes } from 'lucide-react';
 
 import DashBoardIcon from '@app/components/icons/DashboardIcon';
@@ -85,6 +86,14 @@ export default function SideNav() {
         SuccessToast('Wallet Disconnected');
         router.push('/');
     }
+
+    useEffect(() => {
+        const access_token = cookie.get('access_token');
+        if (access_token === null || access_token === undefined) {
+            setAdminAcess(false);
+            setCurrentConnectedWallet(null);
+        }
+    }, []);
 
     return (
         <>
