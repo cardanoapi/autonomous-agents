@@ -8,6 +8,7 @@ from backend.app.models.user.response_dto import UserResponse
 from backend.app.models.user.user_dto import SignatureDataDto, UserCreateDto
 from backend.config.api_settings import APISettings
 import os
+from datetime import datetime, timedelta, timezone
 
 
 class AuthRouter(Routable):
@@ -40,7 +41,7 @@ class AuthRouter(Routable):
                 value=token,
                 samesite="lax",
                 secure=self.settings.SECURE,
-                expires=None,
+                expires=datetime.now(timezone.utc) + timedelta(15),
                 domain=request.url.hostname,
                 path="/",
             )
