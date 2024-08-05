@@ -40,7 +40,7 @@ class AuthRouter(Routable):
                 value=token,
                 samesite="lax",
                 secure=self.settings.SECURE,
-                expires=60 * 60 * 24,
+                expires=None,
                 domain=request.url.hostname,
                 path="/",
             )
