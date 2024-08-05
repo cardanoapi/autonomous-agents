@@ -33,8 +33,12 @@ class TriggerHistory(Routable):
         function_name: Optional[list[str]] = Query(None),
         status: Optional[bool] = None,
         success: Optional[bool] = None,
+        page: int = Query(default=1),
+        size: int = Query(default=50),
     ):
-        return await self.trigger_history_service.get_all_trigger_history(agent_id, function_name, status, success)
+        return await self.trigger_history_service.get_all_trigger_history(
+            agent_id, function_name, status, success, page, size
+        )
 
     @get("/transaction-counts", response_model=dict)
     async def get_transaction_counts_success(self):

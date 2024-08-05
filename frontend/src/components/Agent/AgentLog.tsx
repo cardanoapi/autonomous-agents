@@ -166,7 +166,7 @@ export const AgentLogCard = ({
                 className
             )}
         >
-            <div className={'row flex flex items-start gap-8 '}>
+            <div className={'row flex  items-start gap-8 '}>
                 {globalLog && (
                     <div className={'flex items-center gap-3 sm:min-w-[200px]'}>
                         <AgentAvatar
@@ -179,7 +179,10 @@ export const AgentLogCard = ({
                         <div className="card-h2 flex flex-col ">
                             <span className={'text-sm leading-normal'}>
                                 {Truncate(
-                                    agents ? agents[history.agentId].name : '',
+                                    (agents &&
+                                        agents[history.agentId] &&
+                                        agents[history.agentId].name) ||
+                                        '',
                                     20
                                 )}
                             </span>
