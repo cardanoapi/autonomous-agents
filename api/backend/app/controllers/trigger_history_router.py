@@ -52,6 +52,6 @@ class TriggerHistory(Routable):
     async def get_trigger_metric(
         self, function_name: Optional[list[str]] = Query(None), agent_id: Optional[str] = None
     ):
-        return await self.trigger_history_service.calculate_trigger_metric(
+        return await self.trigger_history_service.calculate_trigger_metric_by_query(
             function_name=function_name, agent_id=agent_id
         )
