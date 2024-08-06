@@ -1,10 +1,10 @@
 import pytest
 import uuid
 from models.template.template_dto import TemplateCreateDto, TemplateEditDto
+from test_cases.data.agent_function import generateDemoTransferAda
 
 
 @pytest.fixture(scope="session")
-@pytest.mark.order(1)
 def create_template_fixture(autonomous_agent_api, admin_login_cookie):
     template_name = str(uuid.uuid4())
     template_description = "Template Generated using Integration Test"
@@ -34,7 +34,9 @@ def edit_template_fixture(
     template_edit_data = TemplateEditDto(
         name=new_template_name,
         description=new_template_description,
-        template_configurations=[],
+        template_configurations=[
+            generateDemoTransferAda(template_id=template.get("id"))
+        ],
     ).model_dump()
 
     response = autonomous_agent_api.edit_template(
