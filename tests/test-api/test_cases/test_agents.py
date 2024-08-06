@@ -21,5 +21,12 @@ def test_edit_admin_agent(create_admin_agent_fixture, edit_admin_agent_fixture):
     ) != edit_admin_agent_fixture.json().get("name")
 
 
+def test_run_agent_logs(run_admin_agent_fixture, autonomous_agent_api):
+    agent_id = run_admin_agent_fixture.json().get("id")
+    response = autonomous_agent_api.get_trigger_history_by_agent_id(agent_id)
+    logs = response.json().get("items")
+    assert len(logs) > 0
+
+
 def test_delete_admin_agent(delete_admin_agent_fixture):
     assert delete_admin_agent_fixture.status_code == 204

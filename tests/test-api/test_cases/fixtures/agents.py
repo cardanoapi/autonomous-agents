@@ -4,6 +4,7 @@ import pytest
 import subprocess
 import time
 import os
+from test_cases.data.agent_function import generate_demo_transfer_ada_trigger_format
 
 
 @pytest.fixture(scope="session")
@@ -31,25 +32,26 @@ def edit_admin_agent_fixture(
     body = AgentUpdateDTO(
         name=new_agent_name,
         template_id=template_id,
-        agent_configurations=[],
+        agent_configurations=[
+            generate_demo_transfer_ada_trigger_format(
+                create_admin_agent_fixture.json().get("id")
+            )
+        ],
     ).model_dump()
     response = autonomous_agent_api.edit_agent(
         body=body,
         headers={"Cookie": admin_login_cookie},
         agentID=create_admin_agent_fixture.json().get("id"),
     )
-    print("edit admin agent fixture")
-    print(response.json())
     return response
 
 
-@pytest.fixture
-@pytest.mark.skip
-async def run_admin_agent_fixture(edit_admin_agent):
+@pytest.fixture(scope="session")
+def run_admin_agent_fixture(edit_admin_agent_fixture):
     """
-    This fixture runs admin agent for 130 seconds using the agent-node.
+    This fixture runs admin agent for 180 seconds using the agent-node.
     """
-    agent_id = edit_admin_agent.json().get("id")
+    agent_id = edit_admin_agent_fixture.json().get("id")
     project_path = "../../agent-node"
     env = os.environ.copy()
     env["AGENT_ID"] = agent_id
@@ -62,21 +64,23 @@ async def run_admin_agent_fixture(edit_admin_agent):
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
         )
-        time.sleep(130)
+        runtime = os.getenv("AGENT_RUN_TIMEOUT", 180)
+        runtime = 180 if isinstance(runtime, int) else 180
+        time.sleep(runtime)
         process.terminate()
     except Exception as e:
         print("Error while running admin agent:", e)
         return False
-        return edit_admin_agent
+    return edit_admin_agent_fixture
 
 
 @pytest.fixture(scope="session")
 def delete_admin_agent_fixture(
-    edit_admin_agent_fixture, autonomous_agent_api, admin_login_cookie
+    run_admin_agent_fixture, autonomous_agent_api, admin_login_cookie
 ):
     response = autonomous_agent_api.delete_agent(
         headers={"Cookie": admin_login_cookie},
-        agentID=edit_admin_agent_fixture.json().get("id"),
+        agentID=run_admin_agent_fixture.json().get("id"),
     )
     assert response.status_code == 204
     return response

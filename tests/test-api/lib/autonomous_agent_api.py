@@ -133,6 +133,12 @@ class AutonomousAgentApi:
     def delete_template(self, template_id, headers: dict | None = None) -> Response:
         return self._delete(f"/templates/{template_id}", headers=headers)
 
+    def get_trigger_history_by_agent_id(
+        self,
+        agent_id,
+    ) -> Response:
+        return self._get(f"/trigger-history?agent_id={agent_id}")
+
     def login_user(self, body: Any) -> Response:
         return self._request(method="POST", endpoint="/auth/login", body=body)
 

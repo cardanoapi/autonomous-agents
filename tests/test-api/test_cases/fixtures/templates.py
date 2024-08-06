@@ -1,7 +1,9 @@
 import pytest
 import uuid
 from models.template.template_dto import TemplateCreateDto, TemplateEditDto
-from test_cases.data.agent_function import generateDemoTransferAda
+from test_cases.data.agent_function import (
+    generate_demo_transfer_ada_trgger_response_fromat,
+)
 
 
 @pytest.fixture(scope="session")
@@ -35,7 +37,9 @@ def edit_template_fixture(
         name=new_template_name,
         description=new_template_description,
         template_configurations=[
-            generateDemoTransferAda(template_id=template.get("id"))
+            generate_demo_transfer_ada_trgger_response_fromat(
+                template_id=template.get("id")
+            )
         ],
     ).model_dump()
 
