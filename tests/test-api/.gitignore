@@ -1,0 +1,10 @@
+#Environment Files
+.env
+
+# pytest artifacts
+__pycache__/
+.pytest_cache/
+./pytest_cache
+
+# Logs and databases
+*.log
