@@ -92,8 +92,9 @@ const config = {
                 }
             },
             height: {
-                agentComponentHeight: 'calc-(100%-30px)',
-                proposalEmptyListHeight: 'calc(100vh - 260px)'
+                agentComponentHeight: 'calc-(100% - 30px)',
+                proposalEmptyListHeight: 'calc(100vh - 260px)',
+                modalHeight: 'calc(100% - 45px)'
             },
             keyframes: {
                 'accordion-down': {
