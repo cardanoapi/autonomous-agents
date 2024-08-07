@@ -49,7 +49,7 @@ def edit_admin_agent_fixture(
 @pytest.fixture(scope="session")
 def run_admin_agent_fixture(edit_admin_agent_fixture):
     """
-    This fixture runs admin agent for 180 seconds using the agent-node.
+    This fixture runs admin agent for given seconds using the agent-node. defaults to 180 seconds
     """
     agent_id = edit_admin_agent_fixture.json().get("id")
     project_path = "../../agent-node"
@@ -66,7 +66,7 @@ def run_admin_agent_fixture(edit_admin_agent_fixture):
             stderr=subprocess.STDOUT,
         )
         runtime = os.getenv("AGENT_RUN_TIMEOUT", 180)
-        runtime = 180 if isinstance(runtime, int) else 180
+        runtime = runtime if isinstance(runtime, int) else 180
         time.sleep(runtime)
         process.terminate()
     except Exception as e:
