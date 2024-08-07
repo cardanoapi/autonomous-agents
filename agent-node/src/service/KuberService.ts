@@ -68,7 +68,7 @@ export class Kuber {
         if (stakePrivateKey) {
             selections.push({
                 type: 'PaymentSigningKeyShelley_ed25519',
-                description: 'Payment Signing Key',
+                description: 'Stake Signing Key',
                 cborHex: stakePrivateKey,
             })
         }

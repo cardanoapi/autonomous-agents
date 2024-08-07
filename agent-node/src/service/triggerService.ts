@@ -33,6 +33,24 @@ function getParameterValue(
     return param ? param.value : ''
 }
 
+function mergeObjectsValueIntoSingleObject(
+    values: Array<Record<string, string>>,
+    recordString1: string,
+    recordString2: string,
+    recordString2Type: 'string' | 'number'
+) {
+    const objectsMap = new Map()
+    values.forEach((val) =>
+        objectsMap.set(
+            val[recordString1],
+            recordString2Type === 'number'
+                ? +val[recordString2]
+                : val[recordString2]
+        )
+    )
+    return Object.fromEntries(objectsMap)
+}
+
 export async function triggerAction(
     triggerHandler: any,
     managerInterface: ManagerInterface,
@@ -42,6 +60,21 @@ export async function triggerAction(
 ): Promise<any> {
     const transactionBuilder = AgentTransactionBuilder.getInstance()
     let body: any
+    let anchor: any
+    let anchorUrl: any
+    let anchorDataHash: any
+    let proposal: any
+    let newConstitution: any
+    let newConstitutionDataHAsh: any
+    let newConstitutionUrl: any
+    let quorum: any
+    let quorumDenominator: any
+    let quorumNumerator: any
+    let withdrawal: any
+    let removingCommittee: any
+    let addingCommittee: any
+    let guardRailScript: any
+
     if (!managerInterface) {
         console.error('Manager Interface Instance not Found')
         process.exit(1)
@@ -83,10 +116,14 @@ export async function triggerAction(
                 }
             })
         case 'voteOnProposal':
+            proposal = getParameterValue(parameters, 'proposal') || ''
+            anchor = getParameterValue(parameters, 'anchor') || []
+            anchorUrl = getParameterValue(anchor, 'url') || ''
+            anchorDataHash = getParameterValue(anchor, 'dataHash') || ''
             body = transactionBuilder.voteOnProposal(
-                getParameterValue(parameters, 'proposal') || '',
-                getParameterValue(parameters, 'anchor_url') || '',
-                getParameterValue(parameters, 'anchor_datahash') || ''
+                proposal,
+                anchorUrl,
+                anchorDataHash
             )
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 if (err && err.message.includes('GovActionsDoNotExist')) {
@@ -110,18 +147,85 @@ export async function triggerAction(
             })
         case 'createInfoGovAction':
             body = transactionBuilder.createInfoGovAction(
-                getParameterValue(parameters, 'anchor_url'),
-                getParameterValue(parameters, 'anchor_datahash')
+                getParameterValue(parameters, 'url'),
+                getParameterValue(parameters, 'dataHash')
             )
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 throw err
             })
         case 'proposalNewConstitution':
+            anchor = getParameterValue(parameters, 'anchor') || []
+            anchorUrl = getParameterValue(anchor, 'url')
+            anchorDataHash = getParameterValue(anchor, 'dataHash')
+            newConstitution =
+                getParameterValue(parameters, 'newConstitution') || []
+            newConstitutionUrl = getParameterValue(newConstitution, 'url')
+            newConstitutionDataHAsh = getParameterValue(
+                newConstitution,
+                'dataHash'
+            )
+            guardRailScript =
+                getParameterValue(parameters, 'guardrailScript') || undefined
             body = transactionBuilder.proposalNewConstitution(
-                getParameterValue(parameters, 'anchor_url'),
-                getParameterValue(parameters, 'anchor_dataHash'),
-                getParameterValue(parameters, 'newConstitution_url'),
-                getParameterValue(parameters, 'newConstitution_dataHash')
+                anchorUrl,
+                anchorDataHash,
+                newConstitutionUrl,
+                newConstitutionDataHAsh,
+                guardRailScript
+            )
+            return managerInterface.buildTx(body, true).catch((err: Error) => {
+                throw err
+            })
+
+        case 'noConfidence':
+            anchor = getParameterValue(parameters, 'anchor') || []
+            anchorUrl = getParameterValue(anchor, 'url')
+            anchorDataHash = getParameterValue(anchor, 'dataHash')
+            body = transactionBuilder.noConfidence(anchorUrl, anchorDataHash)
+            return managerInterface.buildTx(body, true).catch((err: Error) => {
+                throw err
+            })
+
+        case 'treasuryWithdrawal':
+            anchor = getParameterValue(parameters, 'anchor') || []
+            anchorUrl = getParameterValue(anchor, 'url')
+            anchorDataHash = getParameterValue(anchor, 'dataHash')
+            withdrawal = mergeObjectsValueIntoSingleObject(
+                getParameterValue(parameters, 'withdrawal'),
+                'stakeAddress',
+                'amount',
+                'number'
+            )
+            body = transactionBuilder.treasuryWithdrawal(
+                anchorUrl,
+                anchorDataHash,
+                withdrawal
+            )
+            return managerInterface.buildTx(body, true).catch((err: Error) => {
+                throw err
+            })
+
+        case 'updateCommittee':
+            anchor = getParameterValue(parameters, 'anchor') || []
+            anchorUrl = getParameterValue(anchor, 'url')
+            anchorDataHash = getParameterValue(anchor, 'dataHash')
+            quorum = getParameterValue(parameters, 'quorum')
+            quorumNumerator = getParameterValue(quorum, 'numerator') || 0
+            quorumDenominator = getParameterValue(quorum, 'numerator') || 0
+            removingCommittee = getParameterValue(parameters, 'remove') || []
+            addingCommittee = mergeObjectsValueIntoSingleObject(
+                getParameterValue(parameters, 'add'),
+                'credential',
+                'active_epoch',
+                'number'
+            )
+            body = transactionBuilder.updateCommittee(
+                anchorUrl,
+                anchorDataHash,
+                +quorumNumerator,
+                +quorumDenominator,
+                addingCommittee,
+                removingCommittee
             )
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 throw err
@@ -170,11 +274,6 @@ export async function triggerAction(
             })
         case 'abstainDelegation':
             body = transactionBuilder.abstainDelegation()
-            return managerInterface.buildTx(body, true).catch((err: Error) => {
-                throw err
-            })
-        case 'noConfidence':
-            body = transactionBuilder.noConfidence()
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 throw err
             })
