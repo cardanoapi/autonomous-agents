@@ -23,7 +23,7 @@ class CardanoFaucet:
 
         return CardanoFaucet(api_key, base_url)
 
-    def retrieve_funds(self, address: str, tx_type: str = "default"):
+    def load_funds(self, address: str, tx_type: str = "default"):
         endpoint = f"{self.base_url}/send-money"
         params = {"address": address, "api_key": self.api_key, "type": tx_type}
         response = requests.get(endpoint, params=params)

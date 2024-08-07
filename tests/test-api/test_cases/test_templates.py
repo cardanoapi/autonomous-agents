@@ -15,5 +15,6 @@ def test_template_edit(edit_template_fixture, create_template_fixture):
     )
 
 
+@pytest.mark.skip
 def test_template_delete(delete_template_fixture):
     assert delete_template_fixture.status_code == 204

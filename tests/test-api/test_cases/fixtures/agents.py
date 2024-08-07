@@ -4,7 +4,8 @@ import pytest
 import subprocess
 import time
 import os
-from test_cases.data.agent_function import generate_demo_transfer_ada_trigger_format
+from test_cases.data.agent_function import transfer_ada_cron_function
+from lib.faucet_api import CardanoFaucet
 
 
 @pytest.fixture(scope="session")
@@ -24,17 +25,37 @@ def create_admin_agent_fixture(
 
 
 @pytest.fixture(scope="session")
+def load_funds_to_agent_address(create_admin_agent_fixture, autonomous_agent_api):
+    agent_response = autonomous_agent_api.get_agent(
+        create_admin_agent_fixture.json().get("id")
+    )
+    cardano_faucet = CardanoFaucet(os.environ.get("CARDANO_FAUCET_API_KEY"))
+    response = cardano_faucet.load_funds(agent_response.json().get("agent_address"))
+    time.sleep(100)  # it takes some time to load funds from the faucet
+    return response
+
+
+@pytest.fixture(scope="session")
 def edit_admin_agent_fixture(
     create_admin_agent_fixture, autonomous_agent_api, admin_login_cookie
 ):
     new_agent_name = str(uuid.uuid4())
     template_id = create_admin_agent_fixture.json().get("template_id")
+    # default address for sancho net facuet , if reciever address is not set
+    reciever_address = os.environ.get(
+        "TRANSFER_ADA_RECIEVER_ADDRESS",
+        "addr_test1vz0ua2vyk7r4vufmpqh5v44awg8xff26hxlwyrt3uc67maqtql3kl",
+    )
+    agent_id = create_admin_agent_fixture.json().get("id")
     body = AgentUpdateDTO(
         name=new_agent_name,
         template_id=template_id,
         agent_configurations=[
-            generate_demo_transfer_ada_trigger_format(
-                create_admin_agent_fixture.json().get("id")
+            transfer_ada_cron_function(
+                agent_id=agent_id,
+                reciever_address=reciever_address,
+                value=33331,
+                probability=1,
             )
         ],
     ).model_dump()
@@ -47,10 +68,12 @@ def edit_admin_agent_fixture(
 
 
 @pytest.fixture(scope="session")
-def run_admin_agent_fixture(edit_admin_agent_fixture):
+def run_admin_agent_fixture(edit_admin_agent_fixture, load_funds_to_agent_address):
     """
     This fixture runs admin agent for given seconds using the agent-node. defaults to 180 seconds
     """
+    assert load_funds_to_agent_address.status_code == 200
+
     agent_id = edit_admin_agent_fixture.json().get("id")
     project_path = "../../agent-node"
     env = os.environ.copy()
