@@ -1,6 +1,6 @@
 'use client';
 
-import { IAgentTrigger } from '@models/types';
+import { AgentTriggerFunctionType } from '@models/types';
 import axios from 'axios';
 import { z } from 'zod';
 
@@ -148,7 +148,10 @@ export const fetchAgentbyID = async (agentID: string): Promise<IAgent> => {
     }
 };
 
-interface AgentTriggerRequestData extends IAgentTrigger {}
+export interface AgentTriggerRequestData {
+    function_name: AgentTriggerFunctionType;
+    parameters: Array<any>;
+}
 
 export const manualTriggerForAgent = async (
     agentId: string,
