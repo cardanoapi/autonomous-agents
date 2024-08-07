@@ -54,6 +54,7 @@ def run_admin_agent_fixture(edit_admin_agent_fixture):
     agent_id = edit_admin_agent_fixture.json().get("id")
     project_path = "../../agent-node"
     env = os.environ.copy()
+    env["WS_URL"] = env.get("AGENT_MANAGER_WS_URL")
     env["AGENT_ID"] = agent_id
     try:
         subprocess.run(["yarn", "install"], cwd=project_path, env=env, check=True)

@@ -140,7 +140,7 @@ class AutonomousAgentApi:
         return self._get(f"/trigger-history?agent_id={agent_id}")
 
     def login_user(self, body: Any) -> Response:
-        return self._request(method="POST", endpoint="/auth/login", body=body)
+        return self._post("/auth/login", body=body)
 
     def logout_user(self, headers: dict | None = None) -> Response:
-        return self._request(method="POST", endpoint="/auth/logout", headers=headers)
+        return self._post("/auth/logout", headers=headers)
