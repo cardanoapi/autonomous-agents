@@ -29,16 +29,5 @@ def test_run_agent_logs(run_admin_agent_fixture, autonomous_agent_api):
     assert len(logs) > 0
 
 
-@pytest.mark.skip
 def test_delete_admin_agent(delete_admin_agent_fixture):
     assert delete_admin_agent_fixture.status_code == 204
-
-
-@pytest.mark.skip
-def test_load_funds():
-    cardano_faucet = CardanoFaucet.from_env()
-    response = cardano_faucet.retrieve_funds(
-        address="addr_test1qz0l996a60yxhs663uljwjghcfyvrk0ys25jmu4ehzjnwqpp4ak4rx05tv02wcequkvve06wf5uvsshxfaf7x2q09fvqz4kfck"
-    )
-    logger.info(response)
-    assert response.status_code == 200
