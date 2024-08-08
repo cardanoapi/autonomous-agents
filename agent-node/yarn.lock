@@ -2170,10 +2170,10 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-libcardano@^0.1.0:
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/libcardano/-/libcardano-0.1.5.tgz#292f506608b95c82d64558e4f6c7dce9e919795d"
-  integrity sha512-CmS4dhyfIvM/7aJtBvVT/dyjrQd9j3pupolGe2I0zXsOGn8MHp8Uko7fjDZiQbwiVc6DIGB6ZnQR65Jk0AXgcg==
+libcardano@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/libcardano/-/libcardano-1.0.0.tgz#84b4de447509c9f51462f35decb4af1aefc44bec"
+  integrity sha512-0QsfYcBQhB71kZJY5Cw5lfnkaulePefD8Qo1V0rPejmj0St+e5AdePse5CDSP2nLtBmconekTSBTdeTW+yOtAw==
   dependencies:
     "@cardano-sdk/crypto" "^0.1.22"
     "@emurgo/cardano-serialization-lib-nodejs" "^11.5.0"

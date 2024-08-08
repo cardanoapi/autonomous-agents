@@ -1,22 +1,37 @@
 import { AgentWalletDetails } from '../types/types'
 import { ManagerInterface } from './../service/ManagerInterfaceService'
 import { getHandlers } from './AgentFunctions'
-import { Builtins, DelegationTarget, FunctionContext, Key, OffchainData, Wallet } from './BaseFunction'
+import {
+    Builtins,
+    DelegationTarget,
+    FunctionContext,
+    Key,
+    OffchainData,
+    Wallet,
+} from './BaseFunction'
+import { TxListener } from './TxListener'
+
 export interface CallLog {
-    function: string,
-    arguments: any[],
+    function: string
+    arguments: any[]
     return?: any
-    error?:Error
+    error?: Error
 }
 export class Executor {
     wallet: any
     rpcInterface: ManagerInterface
-    functions: {[key: string]: Function}
-    functionContext:FunctionContext
-    constructor(wallet: any, rpcInterface: ManagerInterface) {
+    functions: { [key: string]: Function }
+    functionContext: FunctionContext
+    txListener: TxListener
+    constructor(
+        wallet: any,
+        rpcInterface: ManagerInterface,
+        txListener: TxListener
+    ) {
         this.wallet = wallet
-        this.functions=getHandlers()
+        this.functions = getHandlers()
         this.rpcInterface = rpcInterface
+        this.txListener = txListener
         this.functionContext = {
             wallet: wallet,
             kuber: {
@@ -28,31 +43,38 @@ export class Executor {
                 },
             },
             builtins: this.getBuiltins(wallet),
-
         }
     }
-    makeWallet(walletDetails:AgentWalletDetails):Wallet{
-        const paymentKey:Key={
+    makeWallet(walletDetails: AgentWalletDetails): Wallet {
+        const paymentKey: Key = {
             private: walletDetails.payment_signing_key,
             public: walletDetails.payment_signing_key,
-            pubKeyHash:walletDetails.payment_verification_key_hash,
-            signRaw:(data:Buffer)=>{throw new Error ("Key.signRaw is not implemented")},
-            verify: (signature:Buffer)=>{throw new Error ("Key.signRaw is not implemented")}
+            pubKeyHash: walletDetails.payment_verification_key_hash,
+            signRaw: (data: Buffer): Buffer => {
+                throw new Error('Key.signRaw is not implemented')
+            },
+            verify: (signature: Buffer): Buffer => {
+                throw new Error('Key.signRaw is not implemented')
+            },
         }
-        const stakeKey:Key = {
+        const stakeKey: Key = {
             private: walletDetails.stake_signing_key,
             public: walletDetails.payment_signing_key,
-            pubKeyHash:walletDetails.stake_verification_key_hash,
-            signRaw:(data:Buffer)=>{throw new Error ("Key.signRaw is not implemented")},
-            verify: (signature:Buffer)=>{throw new Error ("Key.signRaw is not implemented")}
+            pubKeyHash: walletDetails.stake_verification_key_hash,
+            signRaw: (data: Buffer): Buffer => {
+                throw new Error('Key.signRaw is not implemented')
+            },
+            verify: (signature: Buffer): Buffer => {
+                throw new Error('Key.signRaw is not implemented')
+            },
         }
-        console.log("Received wallet details",walletDetails)
+        console.log('Received wallet details', walletDetails)
         return {
             address: walletDetails.agent_address,
             paymentKey: paymentKey,
             stakeKey: stakeKey,
             drepId: walletDetails.drep_id,
-            buildAndSubmit:(spec:any,stakeSigning?:boolean)=>{
+            buildAndSubmit: (spec: any, stakeSigning?: boolean) => {
                 spec.selections = [
                     walletDetails.agent_address,
                     {
@@ -70,13 +92,14 @@ export class Executor {
                 }
                 return this.rpcInterface.buildTx(spec, true)
             },
-            
-            signTx:(txRaw:Buffer,stakeSigning?:boolean)=>{throw new Error ("Key.signRaw is not implemented")}
-        }
 
+            signTx: (txRaw: Buffer, stakeSigning?: boolean): Buffer => {
+                throw new Error('Key.signRaw is not implemented')
+            },
+        }
     }
-    remakeContext(agent_wallet:AgentWalletDetails){
-        const wallet=this.makeWallet(agent_wallet)
+    remakeContext(agent_wallet: AgentWalletDetails) {
+        const wallet = this.makeWallet(agent_wallet)
         this.functionContext = {
             wallet: wallet,
             kuber: {
@@ -88,53 +111,47 @@ export class Executor {
                 },
             },
             builtins: this.getBuiltins(wallet),
-
         }
     }
 
-    makeProxy<T>(context:T):{proxy:T,callLog:CallLog[]} {
-
-        const callLog:CallLog[]=[]
+    makeProxy<T>(context: T): { proxy: T; callLog: CallLog[] } {
+        const callLog: CallLog[] = []
         // Step 2: Define the handler
-        
+
         const handler = {
-            get(target:any, property:any, receiver:any) {
+            get(target: any, property: any, receiver: any) {
                 const origMethod = target[property]
                 if (typeof origMethod === 'function') {
-                    return function (...args:any) {
-                        const onSuccess=(result:any)=>{
+                    return function (...args: any) {
+                        const onSuccess = (result: any) => {
                             callLog.push({
-                                "function": property,
-                                "arguments": args,
-                                "return": result
+                                function: property,
+                                arguments: args,
+                                return: result,
                             })
                             return result
                         }
-                        const onError=(err:any)=>{
+                        const onError = (err: any) => {
                             callLog.push({
-                                "function": property,
-                                "arguments": args,
-                                "error": err
+                                function: property,
+                                arguments: args,
+                                error: err,
                             })
                             throw err // Re-throw error after logging
                         }
                         try {
                             // Call the original method with the correct `this` context
-                            //@ts-ignore
+                            //@ts-expect-error
                             const result = origMethod.apply(this, args)
-                            
 
                             // If the result is a Promise, handle its resolution and rejection
                             if (result instanceof Promise) {
-                                return result
-                                    .then(onSuccess)
-                                    .catch(onError)
+                                return result.then(onSuccess).catch(onError)
                             } else {
                                 // If the result is not a Promise, just log it directly
                                 return onSuccess(result)
-                                
                             }
-                        } catch (error:any) {
+                        } catch (error: any) {
                             onError(error)
                         }
                     }.bind(receiver) // Ensure `this` is bound correctly
@@ -144,13 +161,11 @@ export class Executor {
         }
 
         return {
-            proxy:new Proxy(context, handler),
-            callLog:callLog
-        } 
-
+            proxy: new Proxy(context, handler),
+            callLog: callLog,
+        }
     }
-    getBuiltins(wallet: Wallet):Builtins {
-
+    getBuiltins(wallet: Wallet): Builtins {
         const stake = (type: string) => {
             return () => {
                 return wallet.buildAndSubmit({
@@ -170,7 +185,7 @@ export class Executor {
                     certificates: [
                         {
                             type: 'registerdrep',
-                            key:  wallet.stakeKey.pubKeyHash,
+                            key: wallet.stakeKey.pubKeyHash,
                             anchor: anchor,
                         },
                     ],
@@ -179,9 +194,6 @@ export class Executor {
             dRepDeRegistration: stake('deRegisterDrep'),
             registerStake: stake('registerstake'),
             stakeDeRegistration: stake('deregisterstake'),
-            waitTxConfirmation(txid,count,timeout){
-
-            },
             abstainDelegation: (target: DelegationTarget) => {
                 if (typeof target !== 'object') {
                     target = {
@@ -192,7 +204,7 @@ export class Executor {
                     certificates: [
                         {
                             type: 'delegate',
-                            key:  wallet.stakeKey.pubKeyHash,
+                            key: wallet.stakeKey.pubKeyHash,
                             ...target,
                         },
                     ],
@@ -200,7 +212,7 @@ export class Executor {
             },
 
             // Vote functions
-            //@ts-ignore
+            //@ts-expect-error
             voteOnProposal: (
                 proposal: string,
                 vote: boolean | undefined | string,
@@ -210,13 +222,21 @@ export class Executor {
                     vote: [
                         {
                             proposal: proposal,
-                            voter:  wallet.stakeKey.pubKeyHash,
+                            voter: wallet.stakeKey.pubKeyHash,
                             role: 'drep',
                             vote: vote,
                             anchor: anchor,
                         },
                     ],
                 })
+            },
+
+            waitTxConfirmation: (
+                txId: string,
+                confirmation: number,
+                timeout: number
+            ) => {
+                this.txListener.addListener(txId, confirmation, timeout)
             },
 
             // Others
@@ -233,52 +253,51 @@ export class Executor {
                     ],
                 })
             },
-        }
+        } as Builtins
     }
-    
-    dospatchLog(log:CallLog[]){
-        console.log("callLog",log)
 
+    dispatchLog(log: CallLog[]) {
+        console.log('callLog', log)
     }
 
     invokeFunction(name: string, ...args: any) {
         const f: any = this.functions[name]
-        if(f===undefined){
-            this.dospatchLog([
+        if (f === undefined) {
+            this.dispatchLog([
                 {
                     function: name,
                     arguments: args,
-                    error:new  Error("Function not defined")
-                }])
-            return 
+                    error: new Error('Function not defined'),
+                },
+            ])
+            return
         }
-        const newContext = {...this.functionContext}
-        const builtinsProxy=this.makeProxy(newContext.builtins)
-        newContext.builtins=builtinsProxy.proxy
-        
-        try{
-            const result:any=f(newContext,...args)
-            if( result instanceof Promise){
-                result.catch(e=>{
-                    //ignore
-                }).finally(()=>{
-                    this.dospatchLog(builtinsProxy.callLog)
-                })
-            }
-        }
-        catch(err:any){
-                //this means that there was error in function execution setup.
-                // there won't be any promise or result returned.
-                builtinsProxy.callLog.unshift(
-                    {
-                        function: name,
-                        arguments: args,
-                        error: err
-                    })
-                this.dospatchLog( builtinsProxy.callLog)
-        }
-    }
-    newBlock(block){
+        const newContext = { ...this.functionContext }
+        const builtinsProxy = this.makeProxy(newContext.builtins)
+        newContext.builtins = builtinsProxy.proxy
 
+        try {
+            const result: any = f(newContext, ...args)
+            console.log('Result is : ', result)
+            if (result instanceof Promise) {
+                result
+                    .catch((e) => {
+                        //ignore
+                    })
+                    .finally(() => {
+                        this.dispatchLog(builtinsProxy.callLog)
+                    })
+            }
+        } catch (err: any) {
+            //this means that there was error in function execution setup.
+            // there won't be any promise or result returned.
+            builtinsProxy.callLog.unshift({
+                function: name,
+                arguments: args,
+                error: err,
+            })
+            this.dispatchLog(builtinsProxy.callLog)
+        }
     }
+    // newBlock(block) {}
 }

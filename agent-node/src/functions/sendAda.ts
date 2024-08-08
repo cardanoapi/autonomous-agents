@@ -1,9 +1,10 @@
-import { FunctionContext } from "../executor/BaseFunction"
+import { FunctionContext } from '../executor/BaseFunction'
 
 export default async function handler(
-    context:FunctionContext,
-    receiverAddress:string,
-    value:number|string|Record<string,any>){
+    context: FunctionContext,
+    receiverAddress: string,
+    value: number | string | Record<string, any>
+) {
     const req = {
         outputs: {
             address: receiverAddress,

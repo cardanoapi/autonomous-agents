@@ -9,6 +9,7 @@ import { ManagerInterface } from './service/ManagerInterfaceService'
 import { TriggerActionHandler } from './service/TriggerActionHandler'
 import { RpcTopicHandler } from './utils/agent'
 import { Executor } from './executor/Executor'
+import { TxListener } from './executor/TxListener'
 
 configDotenv()
 const wsUrl = process.env.WS_URL || 'ws://localhost:3001'
@@ -31,15 +32,19 @@ function connectToManagerWebSocket() {
     )
     const managerInterface = new ManagerInterface(rpcChannel)
     const triggerHandler = new TriggerActionHandler(managerInterface)
-    let executor = new Executor(null,managerInterface)
-
+    const txListener = new TxListener()
+    const executor = new Executor(null, managerInterface, txListener)
 
     rpcChannel.on('methodCall', (method, args) => {
-        executor.invokeFunction(method,...args)
+        executor.invokeFunction(method, ...args)
     })
-    const topicHandler = new RpcTopicHandler(triggerHandler, managerInterface)
+    const topicHandler = new RpcTopicHandler(
+        triggerHandler,
+        managerInterface,
+        txListener
+    )
     rpcChannel.on('event', (topic, message) => {
-        if(topic=='agent_keys'){
+        if (topic == 'agent_keys') {
             executor.remakeContext(message)
         }
         topicHandler.handleEvent(topic, message)

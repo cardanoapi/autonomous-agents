@@ -1,8 +1,10 @@
-import { FunctionContext } from "../executor/BaseFunction"
+import { FunctionContext } from '../executor/BaseFunction'
 
 export default async function handler(
-    context:FunctionContext,
-    proposal: string,anchor:Record<string,string>){
+    context: FunctionContext,
+    proposal: string,
+    anchor: Record<string, string>
+) {
     const req = {
         vote: {
             voter: context.wallet.drepId,
@@ -11,12 +13,11 @@ export default async function handler(
             vote: true,
             anchor: {
                 url: anchor?.url || 'https://bit.ly/3zCH2HL',
-                dataHash: anchor?.dataHash || '1111111111111111111111111111111111111111111111111111111111111111',
+                dataHash:
+                    anchor?.dataHash ||
+                    '1111111111111111111111111111111111111111111111111111111111111111',
             },
         },
     }
-    return await context.wallet.buildAndSubmit(req).catch(e=>{
-        
-    })
-
+    return await context.wallet.buildAndSubmit(req).catch((e) => {})
 }

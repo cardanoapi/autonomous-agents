@@ -5,6 +5,8 @@ import { parseRawBlockBody } from 'libcardano/cardano/ledger-serialization/trans
 import { AgentTransactionBuilder } from '../service/transactionBuilder'
 import { TriggerActionHandler } from '../service/TriggerActionHandler'
 import { ManagerInterface } from '../service/ManagerInterfaceService'
+import { BlockEvent } from 'libcardano/types'
+import { TxListener } from '../executor/TxListener'
 
 export function checkIfAgentWithTriggerTypeExists(
     configurations: Configuration[]
@@ -34,15 +36,17 @@ export function createActionDtoForEventTrigger(tx: any, index: number): Action {
 export class RpcTopicHandler {
     triggerHandler: TriggerActionHandler
     managerInterface: ManagerInterface
+    txListener: TxListener
     constructor(
         triggerHandler: TriggerActionHandler,
-        managerInterface: ManagerInterface
+        managerInterface: ManagerInterface,
+        txListener: TxListener
     ) {
         this.managerInterface = managerInterface
         this.triggerHandler = triggerHandler
+        this.txListener = txListener
     }
     handleEvent(eventName: string, message: any) {
-
         const handler = (this as any)[eventName]
         if (handler === undefined || eventName === 'constructor') {
             console.error('Unknown event type', eventName, 'received')
@@ -50,13 +54,16 @@ export class RpcTopicHandler {
             handler.bind(this)(message) // Ensure the correct `this` context
         }
     }
-    extend_block(block: any) {
-        console.log('extend_block',"block="+block.headerHash.toString('hex'),"slotNo="+block.slotNo,"blockNo="+block.blockNo)
+
+    extend_block(block: BlockEvent) {
+        console.log(
+            'extend_block',
+            'block=' + block.headerHash.toString('hex'),
+            'slotNo=' + block.slotNo,
+            'blockNo=' + block.blockNo
+        )
         const transactions = parseRawBlockBody(block.body)
-        transactions.length &&
-            this.triggerHandler.onTxsConfirmed(
-                transactions.map((tx) => tx.hash)
-            )
+        this.txListener.onBlock({ ...block, body: transactions })
         if (
             globalState.eventTriggerTypeDetails.eventType &&
             transactions.length

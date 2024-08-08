@@ -1,12 +1,8 @@
+import { FunctionContext } from '../executor/BaseFunction'
 
-import { FunctionContext } from "../executor/BaseFunction"
+export function myTest() {}
 
-export function myTest(){
-
-}
-
-export default async function handler(context:FunctionContext,){
-
+export default async function handler(context: FunctionContext) {
     const req = {
         certificates: [
             {
@@ -17,15 +13,22 @@ export default async function handler(context:FunctionContext,){
                     dataHash:
                         '1111111111111111111111111111111111111111111111111111111111111111',
                 },
-            }
+            },
         ],
     }
-    await context.builtins.waitTxConfirmation(txId,2);
+    console.log('ssssssss')
+    await context.builtins.waitTxConfirmation(
+        'shshshhshshshhshshshhshshhshshhshshhsh',
+        2,
+        50
+    )
+    console.log('second')
 
-
-    return await context.wallet.buildAndSubmit(req).then(v=>console.log("then",v)).catch(e=>{
-        console.error("erro",e)
-        throw e
-    })
+    return await context.wallet
+        .buildAndSubmit(req)
+        .then((v) => console.log('then', v))
+        .catch((e) => {
+            console.error('error', e)
+            throw e
+        })
 }
-
