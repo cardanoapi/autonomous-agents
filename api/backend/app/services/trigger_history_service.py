@@ -121,15 +121,25 @@ class TriggerHistoryService:
     ) -> str:
         if time_interval not in ["last_hour", "last_24_hours", "last_7_days"]:
             raise ValueError("Invalid time interval. Must be 'last_hour', 'last_24_hours', or 'last_7_days'.")
+
         time_intervals = {
             "last_hour": "NOW() - INTERVAL '60 minutes'",
             "last_24_hours": "NOW() - INTERVAL '24 hours'",
             "last_7_days": "NOW() - INTERVAL '7 days'",
         }
+
+        # Determine the appropriate unit for date_trunc
+        if time_interval == "last_hour":
+            unit = "minute"
+        elif time_interval == "last_24_hours":
+            unit = "hour"
+        else:
+            unit = "day"
+
         # Base query
         query = f"""
             SELECT
-                date_trunc('minute', "timestamp") AS minute,
+                date_trunc('{unit}', "timestamp") AS {unit},
                 "functionName",
                 COUNT(*) AS successful_triggers
             FROM
@@ -139,20 +149,24 @@ class TriggerHistoryService:
                 AND success = true
                 AND "timestamp" >= {time_intervals[time_interval]}
         """
-        # Add Agend id filter and function filter if required
+
+        # Add Agent ID filter if required
         if agent_id:
             query += f" AND \"agentId\" = '{agent_id}'"
+
+        # Add Function Name filter if required
         if function_name:
             function_names = ", ".join([f"'{fn}'" for fn in function_name])
             query += f' AND "functionName" IN ({function_names})'
 
         # Add group by and order by clauses
-        query += """
+        query += f"""
             GROUP BY
-                minute, "functionName"
+                {unit}, "functionName"
             ORDER BY
-                minute DESC, "functionName";
+                {unit} DESC, "functionName";
         """
+
         return query
 
     async def get_fluctuation_rate(self, agent_id: Optional[str] = None, function_name: Optional[List[str]] = None):
