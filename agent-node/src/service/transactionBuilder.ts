@@ -25,6 +25,7 @@ export class AgentTransactionBuilder {
             ? AgentTransactionBuilder.agentTxBuilderInstance
             : null
     }
+
     transferADA(receiverAddress: string, ADA = 10) {
         const req = {
             outputs: {
@@ -74,11 +75,89 @@ export class AgentTransactionBuilder {
         return this.kuber.signTx(req, this.agentWalletDetails.stake_signing_key)
     }
 
+    noConfidence(anchorUrl: string, anchorDataHash: string) {
+        const rewardAddress = this.kuber.rewardAddressBech32(
+            0,
+            this.agentWalletDetails.stake_verification_key_hash
+        )
+        const infoProposal = {
+            refundAccount: rewardAddress,
+            anchor: {
+                url: anchorUrl || 'https://bit.ly/3zCH2HL',
+                dataHash:
+                    anchorDataHash ||
+                    '1111111111111111111111111111111111111111111111111111111111111111',
+            },
+        }
+        return this.kuber.signTx({
+            proposals: [infoProposal],
+        })
+    }
+
+    treasuryWithdrawal(
+        anchorUrl: string,
+        anchorDataHash: string,
+        withdrawal: Record<string, number>
+    ) {
+        const rewardAddress = this.kuber.rewardAddressBech32(
+            0,
+            this.agentWalletDetails.stake_verification_key_hash
+        )
+        const infoProposal = {
+            refundAccount: rewardAddress,
+            anchor: {
+                url: anchorUrl || 'https://bit.ly/3zCH2HL',
+                dataHash:
+                    anchorDataHash ||
+                    '1111111111111111111111111111111111111111111111111111111111111111',
+            },
+            withdraw: withdrawal,
+        }
+        return this.kuber.signTx({
+            proposals: [infoProposal],
+        })
+    }
+
+    updateCommittee(
+        anchorUrl: string,
+        anchorDataHash: string,
+        qourumNumerator: number,
+        qourumDenominator: number,
+        addingCommittee: Record<string, number>,
+        removingCommittee: Array<string>
+    ) {
+        const rewardAddress = this.kuber.rewardAddressBech32(
+            0,
+            this.agentWalletDetails.stake_verification_key_hash
+        )
+        const infoProposal = {
+            refundAccount: rewardAddress,
+            anchor: {
+                url: anchorUrl || 'https://bit.ly/3zCH2HL',
+                dataHash:
+                    anchorDataHash ||
+                    '1111111111111111111111111111111111111111111111111111111111111111',
+            },
+            updatecommittee: {
+                add: addingCommittee,
+                remove: removingCommittee,
+                qourum: {
+                    numerator: qourumNumerator,
+                    denominator: qourumDenominator,
+                },
+            },
+        }
+        return this.kuber.signTx({
+            proposals: [infoProposal],
+        })
+    }
+
     proposalNewConstitution(
         anchorUrl: string,
         anchorDataHash: string,
         newConstitutionUrl: string,
-        newConstitutionDataHash: string
+        newConstitutionDataHash: string,
+        guardRailScript: string | undefined
     ) {
         const rewardAddress = this.kuber.rewardAddressBech32(
             0,
@@ -96,11 +175,13 @@ export class AgentTransactionBuilder {
                         dataHash: newConstitutionDataHash,
                     },
                     refundAccount: rewardAddress,
+                    guardrailscript: guardRailScript,
                 },
             ],
         }
         return this.kuber.signTx(req, this.agentWalletDetails.stake_signing_key)
     }
+
     registerStake() {
         const req = {
             certificates: [
@@ -182,26 +263,5 @@ export class AgentTransactionBuilder {
             ],
         }
         return this.kuber.signTx(req, this.agentWalletDetails.stake_signing_key)
-    }
-
-    noConfidence() {
-        const noConfidenceProposal = {
-            refundAccount: {
-                network: 'Testnet',
-                credential: {
-                    'key hash':
-                        this.agentWalletDetails.stake_verification_key_hash ||
-                        'db1bc3c3f99ce68977ceaf27ab4dd917123ef9e73f85c304236eab23',
-                },
-            },
-            anchor: {
-                url: 'https://bit.ly/3zCH2HL',
-                dataHash:
-                    '1111111111111111111111111111111111111111111111111111111111111111',
-            },
-        }
-        return this.kuber.signTx({
-            proposals: [noConfidenceProposal],
-        })
     }
 }

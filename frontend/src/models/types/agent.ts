@@ -3,7 +3,11 @@ export type AgentTriggerFunctionType =
     | 'transferADA'
     | 'stakeDelegation'
     | 'createInfoGovAction'
-    | 'proposalNewConstitution';
+    | 'proposalNewConstitution'
+    | 'treasuryWithdrawal'
+    | 'noConfidence'
+    | 'updateCommittee'
+    | '';
 
 interface IParameter {
     name: string;

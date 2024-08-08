@@ -101,11 +101,14 @@ export const MapFunctionNameAndViewName: Record<string, string> = {
     createInfoGovAction: 'Info Action Proposal',
     proposalNewConstitution: 'Proposal New Constitution',
     dRepRegistration: 'Drep Registration',
-    dRepDeRegistration: 'Drep deRegistration',
+    dRepDeRegistration: 'Drep DeRegistration',
     registerStake: 'Stake Registration',
+    stakeDeRegistration: 'Stake DeRegistration',
     abstainDelegation: 'Abstain Delegation',
-    noConfidence: 'No Confidence'
-} as Record<AgentTriggerFunctionType, string>;
+    noConfidence: 'No Confidence',
+    updateCommittee: 'Update Committee',
+    treasuryWithdrawal: 'Treasury Withdrawal'
+} as Record<string, string>;
 
 export const AgentFunctions = [
     {

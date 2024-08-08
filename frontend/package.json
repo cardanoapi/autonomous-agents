@@ -112,6 +112,7 @@
         "swiper": "^11.0.5",
         "tailwind-merge": "^2.2.2",
         "tailwindcss-animate": "^1.0.7",
+        "usehooks-ts": "^3.1.0",
         "uuid": "^9.0.1",
         "vanilla-cookieconsent": "^3.0.0",
         "zod": "^3.23.4"

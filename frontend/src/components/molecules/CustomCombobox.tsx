@@ -11,14 +11,16 @@ export function CustomCombobox({
     defaultValue,
     itemsList,
     onSelect,
-    className
+    className,
+    isOpen = false
 }: {
     defaultValue?: string;
     itemsList: Array<string>;
     onSelect: (arg: string) => void;
     className?: string;
+    isOpen?: boolean;
 }) {
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = React.useState(isOpen);
     const [value, setValue] = React.useState(defaultValue || '');
 
     useEffect(() => {
