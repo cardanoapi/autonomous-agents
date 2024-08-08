@@ -68,7 +68,7 @@ export class Executor {
                 throw new Error('Key.signRaw is not implemented')
             },
         }
-        console.log('Received wallet details', walletDetails)
+        console.log('Account keys received : address =>', walletDetails.agent_address)
         return {
             address: walletDetails.agent_address,
             paymentKey: paymentKey,
@@ -107,7 +107,7 @@ export class Executor {
                     return this.rpcInterface.buildTx(spec, false)
                 },
                 buildAndSubmit: (spec: any) => {
-                    return this.rpcInterface.buildTx(spec, false)
+                    return this.rpcInterface.buildTx(spec, true)
                 },
             },
             builtins: this.getBuiltins(wallet),
@@ -212,7 +212,6 @@ export class Executor {
             },
 
             // Vote functions
-            //@ts-expect-error
             voteOnProposal: (
                 proposal: string,
                 vote: boolean | undefined | string,
@@ -231,12 +230,12 @@ export class Executor {
                 })
             },
 
-            waitTxConfirmation: (
+            waitTxConfirmation: async (
                 txId: string,
                 confirmation: number,
                 timeout: number
-            ) => {
-                this.txListener.addListener(txId, confirmation, timeout)
+            ): Promise<unknown> => {
+                return await this.txListener.addListener(txId, confirmation, timeout)
             },
 
             // Others
@@ -256,48 +255,45 @@ export class Executor {
         } as Builtins
     }
 
-    dispatchLog(log: CallLog[]) {
-        console.log('callLog', log)
-    }
 
-    invokeFunction(name: string, ...args: any) {
+
+    invokeFunction(name: string, ...args: any):Promise<CallLog[]> {
         const f: any = this.functions[name]
+        const log : CallLog = {
+            function: name,
+            arguments: args,
+        }
         if (f === undefined) {
-            this.dispatchLog([
-                {
-                    function: name,
-                    arguments: args,
-                    error: new Error('Function not defined'),
-                },
-            ])
-            return
+            log.error=new Error('Function not defined')
+            return Promise.resolve([log])
+
         }
         const newContext = { ...this.functionContext }
         const builtinsProxy = this.makeProxy(newContext.builtins)
         newContext.builtins = builtinsProxy.proxy
+        builtinsProxy.callLog.push(log)
 
         try {
             const result: any = f(newContext, ...args)
-            console.log('Result is : ', result)
             if (result instanceof Promise) {
-                result
+                return result.then(v=>{
+                    log.return=v
+                })
                     .catch((e) => {
-                        //ignore
+                        log.error=e
                     })
-                    .finally(() => {
-                        this.dispatchLog(builtinsProxy.callLog)
+                    .then(() => {
+                        return Promise.resolve(builtinsProxy.callLog)
                     })
+            }else{
+                log.return=result
             }
         } catch (err: any) {
             //this means that there was error in function execution setup.
             // there won't be any promise or result returned.
-            builtinsProxy.callLog.unshift({
-                function: name,
-                arguments: args,
-                error: err,
-            })
-            this.dispatchLog(builtinsProxy.callLog)
+            log.error=err
         }
+        return Promise.resolve(builtinsProxy.callLog)
     }
     // newBlock(block) {}
 }

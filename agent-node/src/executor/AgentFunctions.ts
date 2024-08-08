@@ -22,8 +22,6 @@ function loadHandlersSync(directory: string): { [key: string]: Function } {
 
     // Get the list of files in the directory
     const files = fs.readdirSync(directory)
-    console.log('Function files:', JSON.stringify(files))
-
     // Process each file
     files.forEach((file) => {
         // Get the file name without the extension
@@ -41,7 +39,6 @@ function loadHandlersSync(directory: string): { [key: string]: Function } {
                 if (typeof handler === 'function') {
                     handlers[baseFileName] = handler
                 }
-                console.log(module)
             } catch (error) {
                 console.error(
                     `Failed to load handler from file ${filePath}:`,
@@ -50,7 +47,7 @@ function loadHandlersSync(directory: string): { [key: string]: Function } {
             }
         }
     })
-    console.log(handlers)
+    console.log("Discovered Functions  :",Object.keys(handlers))
     return handlers
 }
 

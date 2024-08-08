@@ -16,9 +16,8 @@ export default async function handler(context: FunctionContext) {
             },
         ],
     }
-    console.log('ssssssss')
     await context.builtins.waitTxConfirmation(
-        'shshshhshshshhshshshhshshhshshhshshhsh',
+        '1111111111111111111111111111111111111111111111111111111111111111',
         2,
         50
     )

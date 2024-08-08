@@ -56,13 +56,14 @@ export class RpcTopicHandler {
     }
 
     extend_block(block: BlockEvent) {
-        console.log(
-            'extend_block',
-            'block=' + block.headerHash.toString('hex'),
-            'slotNo=' + block.slotNo,
-            'blockNo=' + block.blockNo
-        )
         const transactions = parseRawBlockBody(block.body)
+        console.log(
+          '[ New Block ]',
+          'block=' + block.headerHash.toString('hex'),
+          'slotNo=' + block.slotNo,
+          'blockNo=' + block.blockNo,
+          "txCount="+transactions.length
+        )
         this.txListener.onBlock({ ...block, body: transactions })
         if (
             globalState.eventTriggerTypeDetails.eventType &&

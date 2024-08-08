@@ -46,7 +46,7 @@ export interface Builtins {
     waitTxConfirmation: (
         txId: string,
         confirmation: number,
-        timeout: number
+        timeoutMs: number
     ) => Promise<unknown>
     dRepRegistration: (anchor?: OffchainData) => Promise<any>
     dRepDeRegistration: () => Promise<any>

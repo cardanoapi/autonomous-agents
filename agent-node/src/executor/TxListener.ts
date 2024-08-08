@@ -49,7 +49,6 @@ export class TxListener {
 
     onRollback() {}
     addListener(txId: string, confirmation_count: number, timeout: number) {
-        console.log('addListener: ', txId, confirmation_count, timeout)
         return new Promise((resolve, reject) => {
             const txMatched = this.blocks.some((block) => {
                 return block.body.some((tx) => {

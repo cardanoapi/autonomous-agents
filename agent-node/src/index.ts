@@ -36,7 +36,13 @@ function connectToManagerWebSocket() {
     const executor = new Executor(null, managerInterface, txListener)
 
     rpcChannel.on('methodCall', (method, args) => {
-        executor.invokeFunction(method, ...args)
+        executor.invokeFunction(method, ...args).then(result=>{
+            result.forEach((log:any)=>{
+                log.error=log.error && log.error.message
+            })
+            console.log("Method call log",result)
+        })
+
     })
     const topicHandler = new RpcTopicHandler(
         triggerHandler,

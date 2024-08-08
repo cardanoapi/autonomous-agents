@@ -18,14 +18,13 @@ class Kuber {
 
     async buildTx(txSpec: any, submit?: boolean): Promise<any> {
         const KuberAPIKey = process.env.KUBER_API_KEY
-        if (!KuberAPIKey) {
-            console.error('No Api Key provided.')
-            process.exit(1)
-        }
-        return this.call('POST', `api/v1/tx${submit ? '?submit=true' : ''}`, JSON.stringify(txSpec), {
+        const headers: HeadersInit={
             'content-type': 'application/json',
-            'api-key': `${KuberAPIKey}`,
-        })
+        }
+        if (KuberAPIKey) {
+            headers['api-key']=KuberAPIKey
+        }
+        return this.call('POST', `api/v1/tx${submit ? '?submit=true' : ''}`, JSON.stringify(txSpec),headers)
             .then((res) => {
                 console.log('response is : ', res)
                 return res.text()
