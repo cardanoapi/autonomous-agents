@@ -8,6 +8,7 @@ import { AgentRpc } from './service/AgentRpc'
 import { ManagerInterface } from './service/ManagerInterfaceService'
 import { TriggerActionHandler } from './service/TriggerActionHandler'
 import { RpcTopicHandler } from './utils/agent'
+import { Executor } from './executor/Executor'
 
 configDotenv()
 const wsUrl = process.env.WS_URL || 'ws://localhost:3001'
@@ -21,7 +22,6 @@ let ws: WebSocket | null = null
 let reconnectAttempts = 0
 const maxReconnectAttempts = 3
 let isReconnecting = false
-
 function connectToManagerWebSocket() {
     let interval: NodeJS.Timeout | number
     ws = new WebSocket(`${wsUrl}/${agentId}`)
@@ -31,15 +31,17 @@ function connectToManagerWebSocket() {
     )
     const managerInterface = new ManagerInterface(rpcChannel)
     const triggerHandler = new TriggerActionHandler(managerInterface)
+    let executor = new Executor(null,managerInterface)
+
 
     rpcChannel.on('methodCall', (method, args) => {
-        triggerHandler.setTriggerOnQueue(
-            { function_name: method, parameters: args[0] },
-            'MANUAL'
-        )
+        executor.invokeFunction(method,...args)
     })
     const topicHandler = new RpcTopicHandler(triggerHandler, managerInterface)
     rpcChannel.on('event', (topic, message) => {
+        if(topic=='agent_keys'){
+            executor.remakeContext(message)
+        }
         topicHandler.handleEvent(topic, message)
     })
 

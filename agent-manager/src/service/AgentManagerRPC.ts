@@ -72,7 +72,7 @@ export class AgentManagerRPC extends WsRpcServer {
                 throw error
             })
         Promise.all([agentKeysPromise, agentConfigsPromise]).catch((err: Error) => {
-            console.error('Error:', err)
+            console.error('AgentManagerRPC.onReady Error:', err)
             this.disconnect(client.getId(), err.message)
         })
     }

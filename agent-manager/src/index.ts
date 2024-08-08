@@ -25,6 +25,7 @@ const server = app.listen(port, async () => {
         )
         manager.broadcast('extend_block', block)
     })
+    blockchain.on()
 
     await initKafkaConsumers(manager)
 })

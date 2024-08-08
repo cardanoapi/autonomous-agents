@@ -1,18 +1,17 @@
 export interface Key{
-    private: Buffer
-    public: Buffer
-    pubKeyHash():Buffer
+    private: string
+    public: string
+    pubKeyHash:string
     signRaw(data:Buffer):Buffer
     verify(signature:Buffer): Buffer
-
 }
 export interface Wallet{
         address: string,
         paymentKey: Key,
         stakeKey: Key
-        stakeAddress():string
-        drepId(): string
-        buildAndSubmit(spec:any):Promise<any>
+        // stakeAddress():string
+        drepId: string
+        buildAndSubmit(spec:any,stakeSigning?:boolean):Promise<any>
         signTx(txRaw:Buffer,stakeSigning?:boolean):Buffer
 }
 
@@ -40,34 +39,36 @@ export interface Builtins {
   registerStake(): Promise<TxInfo>;
   stakeDeRegistration(): Promise<TxInfo>;
   abstainDelegation(target:DelegationTarget): Promise<TxInfo>;
-
-  // Vote functions
-  voteOnProposal(proposal: string, anchor?: OffchainData): Promise<TxInfo>;
-
-  // Proposal functions
-  proposalNewConstitution(anchor: OffchainData, newConstitution: OffchainData): Promise<TxInfo>;
-  createInfoGovAction(anchor: OffchainData): Promise<TxInfo>;
-
-
-  treasuryWithdrawal(withdrawal: Array<{
-          stakeAddress: string;
-          amount: number;
-      }>, anchor: OffchainData): Promise<TxInfo>;
-  noConfidence(anchor:OffchainData): Promise<TxInfo>;
-
-  updateCommittee(anchor: OffchainData, quorum: {
-      numerator: number;
-      denominator: number;
-  }, add?: Array<{
-      stakeAddress: string;
-      activeEpoch: number;
-  }>, remove?: Array<string>): Promise<TxInfo>;
-
+  waitTxConfirmation(txId:string,confirmation:number,timeout:number):Promise<void>;
+  //
+  // // Vote functions
+  // voteOnProposal(proposal: string, anchor?: OffchainData): Promise<TxInfo>;
+  //
+  // // Proposal functions
+  // proposalNewConstitution(anchor: OffchainData, newConstitution: OffchainData): Promise<TxInfo>;
+  // createInfoGovAction(anchor: OffchainData): Promise<TxInfo>;
+  //
+  //
+  // treasuryWithdrawal(withdrawal: Array<{
+  //         stakeAddress: string;
+  //         amount: number;
+  //     }>, anchor: OffchainData): Promise<TxInfo>;
+  // noConfidence(anchor:OffchainData): Promise<TxInfo>;
+  //
+  //
+  //
+  // updateCommittee(anchor: OffchainData, quorum: {
+  //     numerator: number;
+  //     denominator: number;
+  // }, add?: Array<{
+  //     stakeAddress: string;
+  //     activeEpoch: number;
+  // }>, remove?: Array<string>): Promise<TxInfo>;
+  //
 
   // Others
   transferADA(address: string, amount: string|number|Record<string,any>): Promise<TxInfo>;
 }
-
 export interface FunctionContext {
         wallet: Wallet,
         kuber: KuberApi,

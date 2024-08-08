@@ -1,4 +1,4 @@
-import { FunctionContext } from "./BaseFunction"
+import { FunctionContext } from "../executor/BaseFunction"
 
 export default async function handler(
     context:FunctionContext,

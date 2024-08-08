@@ -1,8 +1,12 @@
 
-import { FunctionContext } from "./BaseFunction"
+import { FunctionContext } from "../executor/BaseFunction"
 
-export default async function handler(
-    context:FunctionContext,){
+export function myTest(){
+
+}
+
+export default async function handler(context:FunctionContext,){
+
     const req = {
         certificates: [
             {
@@ -16,6 +20,12 @@ export default async function handler(
             }
         ],
     }
-    return await context.wallet.buildAndSubmit(req)
+    await context.builtins.waitTxConfirmation(txId,2);
+
+
+    return await context.wallet.buildAndSubmit(req).then(v=>console.log("then",v)).catch(e=>{
+        console.error("erro",e)
+        throw e
+    })
 }
 

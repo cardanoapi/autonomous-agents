@@ -1,19 +1,82 @@
+import { AgentWalletDetails } from '../types/types'
 import { ManagerInterface } from './../service/ManagerInterfaceService'
-import { Builtins, DelegationTarget, FunctionContext, OffchainData, Wallet } from './BaseFunction'
-interface CallLog {
+import { getHandlers } from './AgentFunctions'
+import { Builtins, DelegationTarget, FunctionContext, Key, OffchainData, Wallet } from './BaseFunction'
+export interface CallLog {
     function: string,
     arguments: any[],
     return?: any
     error?:Error
 }
-class Executor {
+export class Executor {
     wallet: any
     rpcInterface: ManagerInterface
-    functions: any = {}
+    functions: {[key: string]: Function}
     functionContext:FunctionContext
     constructor(wallet: any, rpcInterface: ManagerInterface) {
         this.wallet = wallet
+        this.functions=getHandlers()
         this.rpcInterface = rpcInterface
+        this.functionContext = {
+            wallet: wallet,
+            kuber: {
+                buildTx: (spec: any) => {
+                    return this.rpcInterface.buildTx(spec, false)
+                },
+                buildAndSubmit: (spec: any) => {
+                    return this.rpcInterface.buildTx(spec, false)
+                },
+            },
+            builtins: this.getBuiltins(wallet),
+
+        }
+    }
+    makeWallet(walletDetails:AgentWalletDetails):Wallet{
+        const paymentKey:Key={
+            private: walletDetails.payment_signing_key,
+            public: walletDetails.payment_signing_key,
+            pubKeyHash:walletDetails.payment_verification_key_hash,
+            signRaw:(data:Buffer)=>{throw new Error ("Key.signRaw is not implemented")},
+            verify: (signature:Buffer)=>{throw new Error ("Key.signRaw is not implemented")}
+        }
+        const stakeKey:Key = {
+            private: walletDetails.stake_signing_key,
+            public: walletDetails.payment_signing_key,
+            pubKeyHash:walletDetails.stake_verification_key_hash,
+            signRaw:(data:Buffer)=>{throw new Error ("Key.signRaw is not implemented")},
+            verify: (signature:Buffer)=>{throw new Error ("Key.signRaw is not implemented")}
+        }
+        console.log("Received wallet details",walletDetails)
+        return {
+            address: walletDetails.agent_address,
+            paymentKey: paymentKey,
+            stakeKey: stakeKey,
+            drepId: walletDetails.drep_id,
+            buildAndSubmit:(spec:any,stakeSigning?:boolean)=>{
+                spec.selections = [
+                    walletDetails.agent_address,
+                    {
+                        type: 'Signingkey PaymentKey',
+                        description: '',
+                        cborHex: paymentKey.private,
+                    },
+                ]
+                if (stakeSigning) {
+                    spec.selections.push({
+                        type: 'Signingkey PaymentKey',
+                        description: '',
+                        cborHex: stakeKey.private,
+                    })
+                }
+                return this.rpcInterface.buildTx(spec, true)
+            },
+            
+            signTx:(txRaw:Buffer,stakeSigning?:boolean)=>{throw new Error ("Key.signRaw is not implemented")}
+        }
+
+    }
+    remakeContext(agent_wallet:AgentWalletDetails){
+        const wallet=this.makeWallet(agent_wallet)
         this.functionContext = {
             wallet: wallet,
             kuber: {
@@ -57,6 +120,7 @@ class Executor {
                         }
                         try {
                             // Call the original method with the correct `this` context
+                            //@ts-ignore
                             const result = origMethod.apply(this, args)
                             
 
@@ -86,31 +150,14 @@ class Executor {
 
     }
     getBuiltins(wallet: Wallet):Builtins {
-        const kuberWrapper = (spec: any, stake_key = false) => {
-            spec.selections = [
-                wallet.address,
-                {
-                    type: 'Signingkey PaymentKey',
-                    description: '',
-                    cborHex: wallet.paymentKey.private,
-                },
-            ]
-            if (stake_key) {
-                spec.selections.push({
-                    type: 'Signingkey PaymentKey',
-                    description: '',
-                    cborHex: wallet.stakeKey.private,
-                })
-            }
-            return this.rpcInterface.buildTx(spec, true)
-        }
+
         const stake = (type: string) => {
             return () => {
-                return kuberWrapper({
+                return wallet.buildAndSubmit({
                     certificates: [
                         {
                             type: type,
-                            key: wallet.stakeAddress,
+                            key: wallet.stakeKey.pubKeyHash,
                         },
                     ],
                 })
@@ -119,31 +166,33 @@ class Executor {
         return {
             // DRep functions
             dRepRegistration: (anchor?: OffchainData) => {
-                return kuberWrapper({
+                return wallet.buildAndSubmit({
                     certificates: [
                         {
                             type: 'registerdrep',
-                            key: wallet.stakeAddress,
+                            key:  wallet.stakeKey.pubKeyHash,
                             anchor: anchor,
                         },
                     ],
                 })
             },
-            dRepDeRegistration: stake('dregisterdrep'),
+            dRepDeRegistration: stake('deRegisterDrep'),
             registerStake: stake('registerstake'),
-            stakeDeRegistration: stake('dregisterstake'),
+            stakeDeRegistration: stake('deregisterstake'),
+            waitTxConfirmation(txid,count,timeout){
 
+            },
             abstainDelegation: (target: DelegationTarget) => {
                 if (typeof target !== 'object') {
                     target = {
                         drep: target,
                     }
                 }
-                return kuberWrapper({
+                return wallet.buildAndSubmit({
                     certificates: [
                         {
                             type: 'delegate',
-                            key: wallet.stakeAddress,
+                            key:  wallet.stakeKey.pubKeyHash,
                             ...target,
                         },
                     ],
@@ -157,10 +206,11 @@ class Executor {
                 vote: boolean | undefined | string,
                 anchor?: OffchainData
             ) => {
-                return kuberWrapper({
+                return wallet.buildAndSubmit({
                     vote: [
                         {
-                            voter: wallet.stakeAddress,
+                            proposal: proposal,
+                            voter:  wallet.stakeKey.pubKeyHash,
                             role: 'drep',
                             vote: vote,
                             anchor: anchor,
@@ -174,7 +224,7 @@ class Executor {
                 address: string,
                 amount: string | number | Record<string, any>
             ) => {
-                return kuberWrapper({
+                return wallet.buildAndSubmit({
                     output: [
                         {
                             address: address,
@@ -186,23 +236,49 @@ class Executor {
         }
     }
     
-    executeFunction(name: string, ...args: any) {
+    dospatchLog(log:CallLog[]){
+        console.log("callLog",log)
+
+    }
+
+    invokeFunction(name: string, ...args: any) {
         const f: any = this.functions[name]
+        if(f===undefined){
+            this.dospatchLog([
+                {
+                    function: name,
+                    arguments: args,
+                    error:new  Error("Function not defined")
+                }])
+            return 
+        }
         const newContext = {...this.functionContext}
         const builtinsProxy=this.makeProxy(newContext.builtins)
         newContext.builtins=builtinsProxy.proxy
         
         try{
             const result:any=f(newContext,...args)
-            console.log("CallResult",result)
+            if( result instanceof Promise){
+                result.catch(e=>{
+                    //ignore
+                }).finally(()=>{
+                    this.dospatchLog(builtinsProxy.callLog)
+                })
+            }
         }
-        catch(err){
-                //donothing
-                console.error("FunctionCall failed",err)
-        }finally{
-            console.log("FunctionCall",builtinsProxy.callLog)
+        catch(err:any){
+                //this means that there was error in function execution setup.
+                // there won't be any promise or result returned.
+                builtinsProxy.callLog.unshift(
+                    {
+                        function: name,
+                        arguments: args,
+                        error: err
+                    })
+                this.dospatchLog( builtinsProxy.callLog)
         }
     }
+    newBlock(block){
 
-    getFunction(fName: string): any {}
+    }
 }
