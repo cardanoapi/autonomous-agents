@@ -50,6 +50,7 @@ export class TxListener {
     onRollback() {}
     addListener(txId: string, confirmation_count: number, timeout: number) {
         return new Promise((resolve, reject) => {
+            console.log(`AddListener started with timeout of ${timeout}ms`)
             const txMatched = this.blocks.some((block) => {
                 return block.body.some((tx) => {
                     return tx.hash.toString('hex') === txId

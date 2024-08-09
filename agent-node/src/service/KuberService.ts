@@ -8,9 +8,10 @@ type CertificateType =
     | 'deregisterstake'
 
 export type TxSubmitResponse = {
-    cbor: string
-    txId: string
-    lockInfo?: any
+    cborHex: string
+    hash: string
+    description: string
+    type: string
 }
 
 export class Kuber {

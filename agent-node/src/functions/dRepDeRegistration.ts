@@ -2,22 +2,18 @@ import { FunctionContext } from '../executor/BaseFunction'
 
 export default async function handler(context: FunctionContext) {
     const req = {
+        inputs: context.wallet.address,
         certificates: [
             {
-                type: 'registerdrep',
+                type: 'deregisterdrep',
                 key: context.wallet.stakeKey.pubKeyHash,
-                anchor: {
-                    url: 'https://bit.ly/3zCH2HL',
-                    dataHash:
-                        '1111111111111111111111111111111111111111111111111111111111111111',
-                },
             },
         ],
     }
 
     return await context.wallet
         .buildAndSubmit(req, true)
-        .then((v) => console.log('drepRegistration', v))
+        .then((v) => console.log('drepDeRegistration', v))
         .catch((e) => {
             console.error('error', e)
             throw e

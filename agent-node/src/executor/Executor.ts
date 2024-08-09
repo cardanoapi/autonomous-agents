@@ -44,6 +44,9 @@ export class Executor {
         }
     }
     makeWallet(walletDetails: AgentWalletDetails): Wallet {
+        const txSubmissionHold: any[] = []
+        let txHash: string | null = null
+        let isProcessing: boolean = false
         const paymentKey: Key = {
             private: walletDetails.payment_signing_key,
             public: walletDetails.payment_signing_key,
@@ -76,19 +79,81 @@ export class Executor {
                 spec.selections = [
                     walletDetails.agent_address,
                     {
-                        type: 'Signingkey PaymentKey',
-                        description: '',
+                        type: 'PaymentSigningKeyShelley_ed25519',
+                        description: 'Payment Signing Key',
                         cborHex: paymentKey.private,
                     },
                 ]
                 if (stakeSigning) {
                     spec.selections.push({
-                        type: 'Signingkey PaymentKey',
-                        description: '',
+                        type: 'PaymentSigningKeyShelley_ed25519',
+                        description: 'Stake Signing Key',
                         cborHex: stakeKey.private,
                     })
                 }
-                return this.rpcInterface.buildTx(spec, true)
+                return new Promise((resolve, reject) => {
+                    txSubmissionHold.push({ request: spec, resolve, reject })
+                    console.log('Queue is : ', txSubmissionHold)
+                    if (!isProcessing) {
+                        processQueue(this.rpcInterface, this.txListener)
+                    }
+                })
+                async function processQueue(
+                    rpcInterface: ManagerInterface,
+                    txListener: TxListener
+                ) {
+                    isProcessing = true
+                    while (txSubmissionHold.length > 0) {
+                        const { request, resolve, reject } =
+                            txSubmissionHold.shift()
+                        try {
+                            const res = await rpcInterface.buildTx(
+                                request,
+                                true
+                            )
+                            await txListener.addListener(res.hash, 0, 800000)
+                            console.log(
+                                'Tx matched :',
+                                res.hash,
+                                txSubmissionHold
+                            )
+                            resolve(res)
+                        } catch (error) {
+                            reject(error)
+                        }
+                    }
+                    isProcessing = false
+                }
+                // async function buildAndSubmitTx(
+                //     rpcInterface: ManagerInterface,
+                //     txListener: TxListener,
+                //     spec: any
+                // ) {
+                //     try {
+                //         const res = await rpcInterface.buildTx(spec, true)
+                //         await txListener.addListener(res.hash, 0, 800000)
+                //         console.log('Tx matched :', res.hash, txSubmissionHold)
+                //         return res
+                //     } catch (err) {
+                //         throw err
+                //     }
+                // }
+
+                // try {
+                //     return buildAndSubmitTx(
+                //         this.rpcInterface,
+                //         this.txListener,
+                //         txSubmissionHold[0]
+                //     )
+                //         .then((res: TxSubmitResponse) => {
+                //             return res
+                //         })
+                //         .catch((err) => {
+                //             throw err
+                //         })
+                // } catch (err) {
+                //     throw err
+                // }
             },
 
             signTx: (txRaw: Buffer, stakeSigning?: boolean): Buffer => {
@@ -184,6 +249,7 @@ export class Executor {
         if (f === undefined) {
             log.error=new Error('Function not defined')
             return Promise.resolve([log])
+
         }
 
         const newContext = { ...this.functionContext }
