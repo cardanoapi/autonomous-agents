@@ -57,6 +57,8 @@ export interface Builtins {
         anchor?: OffchainData
     ) => Promise<void>
     abstainDelegation: (target: DelegationTarget) => Promise<any>
+    callWebhook:(url:string,data:Record<any,any>|any[]|string)=>Promise<any>
+
     // DRep functions
     // dRepRegistration(anchor?: OffchainData): Promise<any>
     // dRepDeRegistration(): Promise<any>

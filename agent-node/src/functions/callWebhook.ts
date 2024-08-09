@@ -1,10 +1,10 @@
 import axios from 'axios'
 import { FunctionContext } from '../executor/BaseFunction'
 
-export default async function handler(
+export default async function builtin(
     context: FunctionContext,
-    url: any,
-    data: any
+    url: string,
+    data: Record<any, any>|any[]|string
 ) {
-    axios.post(url, data)
+    return axios.post(url, typeof  data == "string"? data:JSON.stringify(data))
 }

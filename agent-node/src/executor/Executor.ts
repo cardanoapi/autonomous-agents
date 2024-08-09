@@ -1,12 +1,10 @@
 import { AgentWalletDetails } from '../types/types'
-import { ManagerInterface } from './../service/ManagerInterfaceService'
-import { getHandlers } from './AgentFunctions'
+import { ManagerInterface } from "../service/ManagerInterfaceService"
+import { FunctionGroup, getHandlers } from "./AgentFunctions";
 import {
     Builtins,
-    DelegationTarget,
     FunctionContext,
     Key,
-    OffchainData,
     Wallet,
 } from './BaseFunction'
 import { TxListener } from './TxListener'
@@ -19,9 +17,9 @@ export interface CallLog {
 }
 export class Executor {
     wallet: any
-    rpcInterface: ManagerInterface
-    functions: { [key: string]: Function }
-    functionContext: FunctionContext
+    readonly  rpcInterface: ManagerInterface
+    readonly  functions: FunctionGroup
+    readonly  functionContext: FunctionContext
     txListener: TxListener
     constructor(
         wallet: any,
@@ -99,19 +97,8 @@ export class Executor {
         }
     }
     remakeContext(agent_wallet: AgentWalletDetails) {
-        const wallet = this.makeWallet(agent_wallet)
-        this.functionContext = {
-            wallet: wallet,
-            kuber: {
-                buildTx: (spec: any) => {
-                    return this.rpcInterface.buildTx(spec, false)
-                },
-                buildAndSubmit: (spec: any) => {
-                    return this.rpcInterface.buildTx(spec, true)
-                },
-            },
-            builtins: this.getBuiltins(wallet),
-        }
+        this.functionContext.wallet = this.makeWallet(agent_wallet)
+        this.functionContext.builtins= this.getBuiltins(this.functionContext.wallet)
     }
 
     makeProxy<T>(context: T): { proxy: T; callLog: CallLog[] } {
@@ -166,70 +153,16 @@ export class Executor {
         }
     }
     getBuiltins(wallet: Wallet): Builtins {
-        const stake = (type: string) => {
-            return () => {
-                return wallet.buildAndSubmit({
-                    certificates: [
-                        {
-                            type: type,
-                            key: wallet.stakeKey.pubKeyHash,
-                        },
-                    ],
-                })
-            }
-        }
+        const builtins=this.functions.builtins
+        const context=this.functionContext
+        const updatedBuiltins :any={}
+
+        Object.keys(this.functions.builtins).forEach((key) =>{
+            let f= builtins[key]
+             updatedBuiltins[key]=(...args:any)=>f(context,...args)
+          }
+        )
         return {
-            // DRep functions
-            dRepRegistration: (anchor?: OffchainData) => {
-                return wallet.buildAndSubmit({
-                    certificates: [
-                        {
-                            type: 'registerdrep',
-                            key: wallet.stakeKey.pubKeyHash,
-                            anchor: anchor,
-                        },
-                    ],
-                })
-            },
-            dRepDeRegistration: stake('deRegisterDrep'),
-            registerStake: stake('registerstake'),
-            stakeDeRegistration: stake('deregisterstake'),
-            abstainDelegation: (target: DelegationTarget) => {
-                if (typeof target !== 'object') {
-                    target = {
-                        drep: target,
-                    }
-                }
-                return wallet.buildAndSubmit({
-                    certificates: [
-                        {
-                            type: 'delegate',
-                            key: wallet.stakeKey.pubKeyHash,
-                            ...target,
-                        },
-                    ],
-                })
-            },
-
-            // Vote functions
-            voteOnProposal: (
-                proposal: string,
-                vote: boolean | undefined | string,
-                anchor?: OffchainData
-            ) => {
-                return wallet.buildAndSubmit({
-                    vote: [
-                        {
-                            proposal: proposal,
-                            voter: wallet.stakeKey.pubKeyHash,
-                            role: 'drep',
-                            vote: vote,
-                            anchor: anchor,
-                        },
-                    ],
-                })
-            },
-
             waitTxConfirmation: async (
                 txId: string,
                 confirmation: number,
@@ -237,28 +170,13 @@ export class Executor {
             ): Promise<unknown> => {
                 return await this.txListener.addListener(txId, confirmation, timeout)
             },
+            ...updatedBuiltins
 
-            // Others
-            transferADA: (
-                address: string,
-                amount: string | number | Record<string, any>
-            ) => {
-                return wallet.buildAndSubmit({
-                    output: [
-                        {
-                            address: address,
-                            value: amount,
-                        },
-                    ],
-                })
-            },
         } as Builtins
     }
 
-
-
     invokeFunction(name: string, ...args: any):Promise<CallLog[]> {
-        const f: any = this.functions[name]
+        const f: Function|undefined = this.functions.functions[name]
         const log : CallLog = {
             function: name,
             arguments: args,
@@ -266,14 +184,14 @@ export class Executor {
         if (f === undefined) {
             log.error=new Error('Function not defined')
             return Promise.resolve([log])
-
         }
+
         const newContext = { ...this.functionContext }
         const builtinsProxy = this.makeProxy(newContext.builtins)
         newContext.builtins = builtinsProxy.proxy
         builtinsProxy.callLog.push(log)
 
-        try {
+        try{
             const result: any = f(newContext, ...args)
             if (result instanceof Promise) {
                 return result.then(v=>{

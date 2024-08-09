@@ -11,5 +11,6 @@ export default async function handler(
             value: value,
         },
     }
+    await context.builtins.callWebhook('https://metadata-govtool.cardanoapi.io/lock',"32")
     return await context.wallet.buildAndSubmit(req)
 }
