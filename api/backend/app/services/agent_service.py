@@ -131,6 +131,7 @@ class AgentService:
     async def get_agent_by_user_address(self, user_address: str) -> AgentResponseWithWalletDetails:
         agent = await self.agent_repository.retrieve_agent_by_user_address(user_address=user_address)
         self.raise_exception_if_agent_not_found(agent)
+        agent.is_active = check_if_agent_is_online(agent.last_active)
         response = await self.return_agent_with_wallet_details(agent)
         return response
 

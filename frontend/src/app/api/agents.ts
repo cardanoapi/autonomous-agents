@@ -173,7 +173,7 @@ export const manualTriggerForAgent = async (
 };
 
 export const fetchMyAgent = async (): Promise<IAgent> => {
-    const url = `${baseAPIurl}/my-agent`;
+    const url = `${baseAPIurl}/agents/my-agent`;
 
     try {
         const response = await axios.get(url, { withCredentials: true });
