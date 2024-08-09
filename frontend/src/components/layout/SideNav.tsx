@@ -12,7 +12,7 @@ import { Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import cookie from 'js-cookie';
-import { Boxes, Wallet } from 'lucide-react';
+import { Boxes } from 'lucide-react';
 
 import DashBoardIcon from '@app/components/icons/DashboardIcon';
 import GovernanceActionIcon from '@app/components/icons/GovernanceActionIcon';
@@ -26,7 +26,6 @@ import AgentAvatar from '../Agent/AgentAvatar';
 import WalletSignInDialog from '../Auth/WalletSignInDialog';
 import { Button } from '../atoms/Button';
 import AgentsIcon from '../icons/AgentsIcon';
-import MyAgentIcon from '../icons/MyAgentIcon';
 import { cn } from '../lib/utils';
 import { SuccessToast } from '../molecules/CustomToasts';
 import { Skeleton } from '../shadcn/ui/skeleton';
