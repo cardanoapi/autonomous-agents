@@ -5,12 +5,14 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import { IAgent, fetchMyAgent } from '@api/agents';
 import { SendLogoutRequest } from '@api/auth';
 import { PATHS } from '@consts';
 import { Typography } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import cookie from 'js-cookie';
-import { Boxes } from 'lucide-react';
+import { Boxes, Wallet } from 'lucide-react';
 
 import DashBoardIcon from '@app/components/icons/DashboardIcon';
 import GovernanceActionIcon from '@app/components/icons/GovernanceActionIcon';
@@ -20,11 +22,14 @@ import TemplateIcon from '@app/components/icons/TemplatesIcon';
 import SideNavLink from '@app/components/layout/SideNavLink';
 import { adminAccessAtom, currentConnectedWalletAtom } from '@app/store/localStore';
 
+import AgentAvatar from '../Agent/AgentAvatar';
 import WalletSignInDialog from '../Auth/WalletSignInDialog';
 import { Button } from '../atoms/Button';
 import AgentsIcon from '../icons/AgentsIcon';
+import MyAgentIcon from '../icons/MyAgentIcon';
 import { cn } from '../lib/utils';
 import { SuccessToast } from '../molecules/CustomToasts';
+import { Skeleton } from '../shadcn/ui/skeleton';
 
 export interface ISideNavItem {
     title: string;
@@ -38,7 +43,19 @@ export default function SideNav() {
     const [currentConnectedWallet, setCurrentConnectedWallet] = useAtom(
         currentConnectedWalletAtom
     );
-    const [, setAdminAcess] = useAtom(adminAccessAtom);
+    const [adminAccess, setAdminAccess] = useAtom(adminAccessAtom);
+
+    const { data: myAgent } = useQuery({
+        queryKey: ['myAgent'],
+        queryFn: async () => {
+            if (currentConnectedWallet && adminAccess === false) {
+                const agent = await fetchMyAgent();
+                return agent;
+            }
+            return null;
+        },
+        refetchInterval: 5000
+    });
 
     const SideNavItems: ISideNavItem[] = [
         {
@@ -80,7 +97,7 @@ export default function SideNav() {
     }
 
     function handleDisconnect() {
-        setAdminAcess(false);
+        setAdminAccess(false);
         setCurrentConnectedWallet(null);
         SendLogoutRequest();
         SuccessToast('Wallet Disconnected');
@@ -90,7 +107,7 @@ export default function SideNav() {
     useEffect(() => {
         const access_token = cookie.get('access_token');
         if (access_token === null || access_token === undefined) {
-            setAdminAcess(false);
+            setAdminAccess(false);
             setCurrentConnectedWallet(null);
         }
     }, []);
@@ -125,12 +142,23 @@ export default function SideNav() {
                         ))}
                     </div>
                     {currentConnectedWallet !== null ? (
-                        <div className="flex flex-col gap-x-2 gap-y-4 px-2 pb-2">
-                            <CurrentWalletDiv
-                                address={currentConnectedWallet.address || ''}
-                                onDisconnect={handleDisconnect}
-                                iconSrc={currentConnectedWallet.icon}
-                            />
+                        <div className="mt-6 flex flex-col gap-y-4 px-2">
+                            {/* Show My Agent Card if only user is not admin  */}
+                            <div className="flex flex-col gap-x-2 gap-y-4 px-2 pb-2">
+                                {adminAccess === false && (
+                                    <MyAgentCard
+                                        agent={myAgent}
+                                        onClick={() => {
+                                            router.push(`/agents/${myAgent?.id}`);
+                                        }}
+                                    />
+                                )}
+                                <CurrentWalletDiv
+                                    address={currentConnectedWallet.address || ''}
+                                    onDisconnect={handleDisconnect}
+                                    iconSrc={currentConnectedWallet.icon}
+                                />
+                            </div>
                         </div>
                     ) : (
                         <Button
@@ -174,7 +202,7 @@ function CurrentWalletDiv({
                     {address}
                 </Typography>
                 <span
-                    className="flex cursor-pointer justify-end text-xs text-brand-navy"
+                    className="flex cursor-pointer justify-end text-xs text-brand-navy hover:text-brand-Blue-200"
                     onClick={onDisconnect}
                 >
                     Disconnect
@@ -183,3 +211,48 @@ function CurrentWalletDiv({
         </div>
     );
 }
+
+function MyAgentCard({
+    agent,
+    onClick = {}
+}: {
+    agent: IAgent | null | undefined;
+    onClick?: any;
+}) {
+    if (!agent) return <MyAgentSkeleton />;
+    return (
+        <div
+            className="flex items-center gap-x-4 gap-y-2 rounded-lg border-2 border-brand-Gray-400 p-2 hover:cursor-pointer hover:bg-gray-100"
+            onClick={onClick}
+        >
+            <div className="flex items-center">
+                <AgentAvatar
+                    hash={agent.id}
+                    size={32}
+                    isActive={agent.is_active || false}
+                    isLink={false}
+                />
+            </div>
+            <div className="flex flex-col">
+                <span className="h3 text-brand-Blue-200">My Agent</span>
+                <span className="break-all text-xs text-brand-Black-200">
+                    {agent.name}
+                </span>
+            </div>
+        </div>
+    );
+}
+
+const MyAgentSkeleton = () => {
+    return (
+        <div className="flex items-center gap-x-4 gap-y-2 rounded-lg border-2 border-brand-Gray-400 p-2 hover:cursor-pointer">
+            <div className="flex items-center">
+                <Skeleton className="h-10 w-10 rounded-full" />
+            </div>
+            <div className="flex flex-col gap-y-2">
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-4 w-32" />
+            </div>
+        </div>
+    );
+};
