@@ -1,12 +1,7 @@
 import { AgentWalletDetails } from '../types/types'
-import { ManagerInterface } from "../service/ManagerInterfaceService"
-import { FunctionGroup, getHandlers } from "./AgentFunctions";
-import {
-    Builtins,
-    FunctionContext,
-    Key,
-    Wallet,
-} from './BaseFunction'
+import { ManagerInterface } from '../service/ManagerInterfaceService'
+import { FunctionGroup, getHandlers } from './AgentFunctions'
+import { Builtins, FunctionContext, Key, Wallet } from './BaseFunction'
 import { TxListener } from './TxListener'
 
 export interface CallLog {
@@ -17,9 +12,9 @@ export interface CallLog {
 }
 export class Executor {
     wallet: any
-    readonly  rpcInterface: ManagerInterface
-    readonly  functions: FunctionGroup
-    readonly  functionContext: FunctionContext
+    readonly rpcInterface: ManagerInterface
+    readonly functions: FunctionGroup
+    readonly functionContext: FunctionContext
     txListener: TxListener
     constructor(
         wallet: any,
@@ -69,7 +64,10 @@ export class Executor {
                 throw new Error('Key.signRaw is not implemented')
             },
         }
-        console.log('Account keys received : address =>', walletDetails.agent_address)
+        console.log(
+            'Account keys received : address =>',
+            walletDetails.agent_address
+        )
         return {
             address: walletDetails.agent_address,
             paymentKey: paymentKey,
@@ -111,49 +109,19 @@ export class Executor {
                                 request,
                                 true
                             )
+                            resolve(res)
                             await txListener.addListener(res.hash, 0, 800000)
                             console.log(
                                 'Tx matched :',
                                 res.hash,
                                 txSubmissionHold
                             )
-                            resolve(res)
                         } catch (error) {
                             reject(error)
                         }
                     }
                     isProcessing = false
                 }
-                // async function buildAndSubmitTx(
-                //     rpcInterface: ManagerInterface,
-                //     txListener: TxListener,
-                //     spec: any
-                // ) {
-                //     try {
-                //         const res = await rpcInterface.buildTx(spec, true)
-                //         await txListener.addListener(res.hash, 0, 800000)
-                //         console.log('Tx matched :', res.hash, txSubmissionHold)
-                //         return res
-                //     } catch (err) {
-                //         throw err
-                //     }
-                // }
-
-                // try {
-                //     return buildAndSubmitTx(
-                //         this.rpcInterface,
-                //         this.txListener,
-                //         txSubmissionHold[0]
-                //     )
-                //         .then((res: TxSubmitResponse) => {
-                //             return res
-                //         })
-                //         .catch((err) => {
-                //             throw err
-                //         })
-                // } catch (err) {
-                //     throw err
-                // }
             },
 
             signTx: (txRaw: Buffer, stakeSigning?: boolean): Buffer => {
@@ -163,7 +131,9 @@ export class Executor {
     }
     remakeContext(agent_wallet: AgentWalletDetails) {
         this.functionContext.wallet = this.makeWallet(agent_wallet)
-        this.functionContext.builtins= this.getBuiltins(this.functionContext.wallet)
+        this.functionContext.builtins = this.getBuiltins(
+            this.functionContext.wallet
+        )
     }
 
     makeProxy<T>(context: T): { proxy: T; callLog: CallLog[] } {
@@ -218,38 +188,39 @@ export class Executor {
         }
     }
     getBuiltins(wallet: Wallet): Builtins {
-        const builtins=this.functions.builtins
-        const context=this.functionContext
-        const updatedBuiltins :any={}
+        const builtins = this.functions.builtins
+        const context = this.functionContext
+        const updatedBuiltins: any = {}
 
-        Object.keys(this.functions.builtins).forEach((key) =>{
-            let f= builtins[key]
-             updatedBuiltins[key]=(...args:any)=>f(context,...args)
-          }
-        )
+        Object.keys(this.functions.builtins).forEach((key) => {
+            let f = builtins[key]
+            updatedBuiltins[key] = (...args: any) => f(context, ...args)
+        })
         return {
             waitTxConfirmation: async (
                 txId: string,
                 confirmation: number,
                 timeout: number
             ): Promise<unknown> => {
-                return await this.txListener.addListener(txId, confirmation, timeout)
+                return await this.txListener.addListener(
+                    txId,
+                    confirmation,
+                    timeout
+                )
             },
-            ...updatedBuiltins
-
+            ...updatedBuiltins,
         } as Builtins
     }
 
-    invokeFunction(name: string, ...args: any):Promise<CallLog[]> {
-        const f: Function|undefined = this.functions.functions[name]
-        const log : CallLog = {
+    invokeFunction(name: string, ...args: any): Promise<CallLog[]> {
+        const f: Function | undefined = this.functions.functions[name]
+        const log: CallLog = {
             function: name,
             arguments: args,
         }
         if (f === undefined) {
-            log.error=new Error('Function not defined')
+            log.error = new Error('Function not defined')
             return Promise.resolve([log])
-
         }
 
         const newContext = { ...this.functionContext }
@@ -257,25 +228,26 @@ export class Executor {
         newContext.builtins = builtinsProxy.proxy
         builtinsProxy.callLog.push(log)
 
-        try{
+        try {
             const result: any = f(newContext, ...args)
             if (result instanceof Promise) {
-                return result.then(v=>{
-                    log.return=v
-                })
+                return result
+                    .then((v) => {
+                        log.return = v
+                    })
                     .catch((e) => {
-                        log.error=e
+                        log.error = e
                     })
                     .then(() => {
                         return Promise.resolve(builtinsProxy.callLog)
                     })
-            }else{
-                log.return=result
+            } else {
+                log.return = result
             }
         } catch (err: any) {
             //this means that there was error in function execution setup.
             // there won't be any promise or result returned.
-            log.error=err
+            log.error = err
         }
         return Promise.resolve(builtinsProxy.callLog)
     }
