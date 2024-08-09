@@ -61,14 +61,14 @@ const DashboardCards = () => {
         queryKey: ['proposalMetric'],
         queryFn: () =>
             fecthTriggerHistoryMetric([
-                'Info Action Proposal',
-                'Proposal New Constitution'
+                'createInfoGovAction',
+                'proposalNewConstitution'
             ])
     });
 
     const { data: voteMetric } = useQuery({
-        queryKey: ['Vote'],
-        queryFn: () => fecthTriggerHistoryMetric(['Vote'])
+        queryKey: ['voteOnProposal'],
+        queryFn: () => fecthTriggerHistoryMetric(['voteOnProposal'])
     });
 
     return (
