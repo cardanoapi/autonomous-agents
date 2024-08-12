@@ -23,7 +23,7 @@ class AutonomousAgentApi:
     ) -> Response:
         endpoint = endpoint if endpoint.startswith("/") else f"/{endpoint}"
         full_url = self._base_url + endpoint
-        full_url_with_parms = full_url + "/" + param if param else full_url
+        full_url_with_parms = full_url + param if param else full_url
 
         response = self._session.request(
             method=method, url=full_url_with_parms, json=body, headers=headers
@@ -138,11 +138,11 @@ class AutonomousAgentApi:
     def delete_template(self, template_id, headers: dict | None = None) -> Response:
         return self._delete(f"/templates/{template_id}", headers=headers)
 
-    def get_trigger_history_by_agent_id(
+    def get_trigger_history(
         self,
-        agent_id,
+        param: str | None = None,
     ) -> Response:
-        return self._get(f"/trigger-history?agent_id={agent_id}")
+        return self._get(f"/trigger-history", param=param)
 
     def login_user(self, body: Any) -> Response:
         return self._post("/auth/login", body=body)

@@ -13,4 +13,5 @@ __pycache__/
 allure-report/
 allure-results/
 .allure-report
-.alluer-results
+.allure-results
+.allure-results/

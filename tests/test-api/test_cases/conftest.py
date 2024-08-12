@@ -5,8 +5,8 @@ from lib.autonomous_agent_api import AutonomousAgentApi
 import pytest
 
 from test_cases.fixtures.auth import *
-from test_cases.fixtures.templates import *
-from test_cases.fixtures.agents import *
+from test_cases.fixtures.template import *
+from test_cases.fixtures.agent import *
 
 
 @pytest.fixture(scope="session")

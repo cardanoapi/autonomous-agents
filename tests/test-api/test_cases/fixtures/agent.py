@@ -1,21 +1,22 @@
-from models.agent.agent_dto import AgentCreateDTO, AgentUpdateDTO
+import os
 import uuid
+import time
 import pytest
 import subprocess
-import time
-import os
+from models.agent.agent_dto import AgentCreateDTO, AgentUpdateDTO
+from lib.faucet_api import CardanoFaucet
 from test_cases.data.agent_function import (
     transfer_ada_cron_function,
     vote_event_function,
+    info_action_manual_trigger,
 )
-from lib.faucet_api import CardanoFaucet
-from test_cases.data.agent_function import info_action_manual_trigger
 
 
 @pytest.fixture(scope="session")
 def create_admin_agent_fixture(
     admin_login_cookie, autonomous_agent_api, edit_template_fixture
 ):
+    """Fixture to create an admin agent."""
     new_agent_name = str(uuid.uuid4())
     template_id = edit_template_fixture.json().get("id")
     body = AgentCreateDTO(
@@ -30,13 +31,16 @@ def create_admin_agent_fixture(
 
 @pytest.fixture(scope="session")
 def load_funds_to_agent_address(create_admin_agent_fixture, autonomous_agent_api):
+    """Fixture to load funds into the agent's address."""
     agent_response = autonomous_agent_api.get_agent(
         create_admin_agent_fixture.json().get("id")
     )
     cardano_faucet = CardanoFaucet(os.environ.get("CARDANO_FAUCET_API_KEY"))
-    for i in range(2):  # loading funds twice.
+
+    for _ in range(2):  # Load funds twice.
         response = cardano_faucet.load_funds(agent_response.json().get("agent_address"))
-        time.sleep(60)  # wait for funds transfer cooldown.
+        time.sleep(60)  # Wait for funds transfer cooldown.
+
     return response
 
 
@@ -44,32 +48,35 @@ def load_funds_to_agent_address(create_admin_agent_fixture, autonomous_agent_api
 def edit_admin_agent_fixture(
     create_admin_agent_fixture, autonomous_agent_api, admin_login_cookie
 ):
+    """Fixture to edit the created admin agent."""
     new_agent_name = str(uuid.uuid4())
     template_id = create_admin_agent_fixture.json().get("template_id")
-    # default address for sancho net facuet , if reciever address is not set
-    reciever_address = os.environ.get(
+    receiver_address = os.environ.get(
         "TRANSFER_ADA_RECIEVER_ADDRESS",
         "addr_test1vz0ua2vyk7r4vufmpqh5v44awg8xff26hxlwyrt3uc67maqtql3kl",
     )
     agent_id = create_admin_agent_fixture.json().get("id")
+
     body = AgentUpdateDTO(
         name=new_agent_name,
         template_id=template_id,
         agent_configurations=[
             transfer_ada_cron_function(
                 agent_id=agent_id,
-                reciever_address=reciever_address,
+                reciever_address=receiver_address,
                 value=20000,
                 probability=1,
             ),
             vote_event_function(agent_id=agent_id),
         ],
     ).model_dump()
+
     response = autonomous_agent_api.edit_agent(
         body=body,
         headers={"Cookie": admin_login_cookie},
-        agentID=create_admin_agent_fixture.json().get("id"),
+        agentID=agent_id,
     )
+
     return response
 
 
@@ -81,7 +88,7 @@ def run_admin_agent_fixture(
     admin_login_cookie,
 ):
     """
-    This fixture runs admin agent for given seconds using the agent-node. defaults to 180 seconds
+    Fixture to run the admin agent for a specified duration using the agent-node.
     """
     assert load_funds_to_agent_address.status_code == 200
 
@@ -90,9 +97,9 @@ def run_admin_agent_fixture(
     env = os.environ.copy()
     env["WS_URL"] = env.get("AGENT_MANAGER_WS_URL")
     env["AGENT_ID"] = agent_id
-    try:
 
-        # run agent-node with yarn and env variables
+    try:
+        # Run agent-node with yarn and environment variables
         subprocess.run(["yarn", "install"], cwd=project_path, env=env, check=True)
         process = subprocess.Popen(
             ["yarn", "start"],
@@ -101,7 +108,7 @@ def run_admin_agent_fixture(
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
         )
-        time.sleep(10)
+        time.sleep(10)  # Wait for the agent to start
 
         # Execute create gov info action manual trigger
         response = autonomous_agent_api.agent_manual_trigger(
@@ -111,15 +118,17 @@ def run_admin_agent_fixture(
         )
         assert response.status_code == 200
 
-        # let agent run for some give time then terminate the sub process
-        runtime = os.getenv("AGENT_RUN_TIMEOUT", 320)
-        runtime = runtime if isinstance(runtime, int) else 180
+        # Let agent run for a given time then terminate the subprocess
+        runtime = int(
+            os.getenv("AGENT_RUN_TIMEOUT", 120)
+        )  # Default to 320 seconds if not set
         time.sleep(runtime)
         process.terminate()
 
     except Exception as e:
         print("Error while running admin agent:", e)
         return False
+
     return edit_admin_agent_fixture
 
 
@@ -127,6 +136,7 @@ def run_admin_agent_fixture(
 def delete_admin_agent_fixture(
     run_admin_agent_fixture, autonomous_agent_api, admin_login_cookie
 ):
+    """Fixture to delete the admin agent after running tests."""
     response = autonomous_agent_api.delete_agent(
         headers={"Cookie": admin_login_cookie},
         agentID=run_admin_agent_fixture.json().get("id"),
