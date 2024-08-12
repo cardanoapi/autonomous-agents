@@ -12,11 +12,12 @@ def assert_successful_log(logs, function_name, trigger_type, message):
     ), message
 
 
-@allure.suite("Agent Function Execution")
+@allure.parent_suite("Agent Function Execution")
 class TestAgentFunctionExecution:
 
     @allure.sub_suite("CRON")
     @allure.title("Test Cron Transfer ADA Logs")
+    @allure.feature("Transfer Ada Cron Function")
     def test_cron_transfer_ada_logs(
         self, run_admin_agent_fixture, autonomous_agent_api
     ):
@@ -37,6 +38,7 @@ class TestAgentFunctionExecution:
 
     @allure.sub_suite("MANUAL")
     @allure.title("Test Manual Info Action Proposal Logs")
+    @allure.feature("Create Gov Info Action Function")
     def test_manual_info_action_proposal_logs(
         self, run_admin_agent_fixture, autonomous_agent_api
     ):
@@ -57,6 +59,7 @@ class TestAgentFunctionExecution:
 
     @allure.sub_suite("EVENT")
     @allure.title("Test Event Vote Logs")
+    @allure.feature("Vote Event Function")
     def test_event_vote_logs(self, run_admin_agent_fixture, autonomous_agent_api):
         agent_id = run_admin_agent_fixture.json().get("id")
         logs = (
