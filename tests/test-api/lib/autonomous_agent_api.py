@@ -114,6 +114,11 @@ class AutonomousAgentApi:
     def my_agent(self, headers: dict | None = None) -> Response:
         return self._get("/my-agent", headers=headers)
 
+    def agent_manual_trigger(
+        self, agentID: str, headers: dict | None = None, body: Any | None = None
+    ) -> Response:
+        return self._post(f"/agents/{agentID}/trigger", headers=headers, body=body)
+
     def templates_list(self, headers: dict | None = None) -> Response:
         return self._get("/templates", headers=headers)
 

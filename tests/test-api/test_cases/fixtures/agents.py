@@ -4,8 +4,12 @@ import pytest
 import subprocess
 import time
 import os
-from test_cases.data.agent_function import transfer_ada_cron_function
+from test_cases.data.agent_function import (
+    transfer_ada_cron_function,
+    vote_event_function,
+)
 from lib.faucet_api import CardanoFaucet
+from test_cases.data.agent_function import info_action_manual_trigger
 
 
 @pytest.fixture(scope="session")
@@ -30,8 +34,9 @@ def load_funds_to_agent_address(create_admin_agent_fixture, autonomous_agent_api
         create_admin_agent_fixture.json().get("id")
     )
     cardano_faucet = CardanoFaucet(os.environ.get("CARDANO_FAUCET_API_KEY"))
-    response = cardano_faucet.load_funds(agent_response.json().get("agent_address"))
-    time.sleep(100)  # it takes some time to load funds from the faucet
+    for i in range(2):  # loading funds twice.
+        response = cardano_faucet.load_funds(agent_response.json().get("agent_address"))
+        time.sleep(60)  # wait for funds transfer cooldown.
     return response
 
 
@@ -54,9 +59,10 @@ def edit_admin_agent_fixture(
             transfer_ada_cron_function(
                 agent_id=agent_id,
                 reciever_address=reciever_address,
-                value=33331,
+                value=20000,
                 probability=1,
-            )
+            ),
+            vote_event_function(agent_id=agent_id),
         ],
     ).model_dump()
     response = autonomous_agent_api.edit_agent(
@@ -68,7 +74,12 @@ def edit_admin_agent_fixture(
 
 
 @pytest.fixture(scope="session")
-def run_admin_agent_fixture(edit_admin_agent_fixture, load_funds_to_agent_address):
+def run_admin_agent_fixture(
+    edit_admin_agent_fixture,
+    load_funds_to_agent_address,
+    autonomous_agent_api,
+    admin_login_cookie,
+):
     """
     This fixture runs admin agent for given seconds using the agent-node. defaults to 180 seconds
     """
@@ -80,6 +91,8 @@ def run_admin_agent_fixture(edit_admin_agent_fixture, load_funds_to_agent_addres
     env["WS_URL"] = env.get("AGENT_MANAGER_WS_URL")
     env["AGENT_ID"] = agent_id
     try:
+
+        # run agent-node with yarn and env variables
         subprocess.run(["yarn", "install"], cwd=project_path, env=env, check=True)
         process = subprocess.Popen(
             ["yarn", "start"],
@@ -88,10 +101,22 @@ def run_admin_agent_fixture(edit_admin_agent_fixture, load_funds_to_agent_addres
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
         )
-        runtime = os.getenv("AGENT_RUN_TIMEOUT", 180)
+        time.sleep(10)
+
+        # Execute create gov info action manual trigger
+        response = autonomous_agent_api.agent_manual_trigger(
+            agentID=agent_id,
+            body=info_action_manual_trigger().model_dump(),
+            headers={"Cookie": admin_login_cookie},
+        )
+        assert response.status_code == 200
+
+        # let agent run for some give time then terminate the sub process
+        runtime = os.getenv("AGENT_RUN_TIMEOUT", 320)
         runtime = runtime if isinstance(runtime, int) else 180
         time.sleep(runtime)
         process.terminate()
+
     except Exception as e:
         print("Error while running admin agent:", e)
         return False

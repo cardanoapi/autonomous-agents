@@ -8,3 +8,9 @@ __pycache__/
 
 # Logs and databases
 *.log
+
+# Allure report and results 
+allure-report/
+allure-results/
+.allure-report
+.alluer-results
