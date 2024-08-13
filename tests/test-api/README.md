@@ -3,9 +3,11 @@
 
 The test is responsible for following things
 
-- Perform user/ admin authentication tests.
-- Perform Agents/Template CRUD Operation tests.
+- Perform User & Admin authentication tests.
+- Perform Agents & Template Managment tests.
 - Run Agent using Agent Node.
+- Run Test Scenerio to Load Ada from faucet and refund it. (Cron Trigger)
+- Run Test Scenerio to Create an Info Action Proposal and vote on it. (Manual & Event Trigger)
 
 
 
@@ -37,6 +39,9 @@ To run the tests, you will need to add the following environment variables to yo
 
 `AGENT_RUN_TIMEOUT`
 
+`CARDANO_FAUCET_BASE_URL`
+
+`CARDANO_FAUCET_API_KEY`
 
 
 ## Running Tests
@@ -50,9 +55,18 @@ To run tests, run the following command inside tests/test-api
 ```bash
   pytest 
 ```
+## To Generate Allure Test report
 
+To generate allure tests you need to run pytest with allure for which you need to  have the Allure CLI tool installed. For installation [refer here.](https://allurereport.org/docs/install/)
 
-## Edge Cases and Special Condition
+```bash
+  poetry shell 
+```
+```bash
+  pytest -alluredir allure-result
+```
+```bash
+  allure serve ./allure-result
+```
 
-The agent that gets generated during the test session is generated using admin. When the test is running the agent for certain period of time via agent-node, another user with admin privilege can delete the running agent which can lead to faliure of Trigger History Logs test.
-
+To presist test case data between test sessions [refer here.](https://allurereport.org/docs/history-and-retries/)
