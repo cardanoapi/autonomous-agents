@@ -108,8 +108,7 @@ def run_admin_agent_fixture(
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
         )
-        time.sleep(10)  # Wait for the agent to start
-
+        time.sleep(5)  # Wait for the agent to start
         # Execute create gov info action manual trigger
         response = autonomous_agent_api.agent_manual_trigger(
             agentID=agent_id,

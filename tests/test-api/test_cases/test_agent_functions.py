@@ -54,7 +54,7 @@ class TestAgentFunctionExecution:
             logs,
             function_name="createInfoGovAction",
             trigger_type="MANUAL",
-            message="No successful 'infoAction' log found",
+            message="No successful 'create infoAction proposal' log found",
         )
 
     @allure.sub_suite("EVENT")
