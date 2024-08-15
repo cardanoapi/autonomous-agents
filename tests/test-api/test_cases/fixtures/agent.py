@@ -126,7 +126,6 @@ def run_admin_agent_fixture(
 
     except Exception as e:
         print("Error while running admin agent:", e)
-        return False
 
     return edit_admin_agent_fixture
 
