@@ -1,0 +1,15 @@
+warning " > ts-node@10.9.2" has unmet peer dependency "@types/node@*".
+warning " > typescript-eslint@7.16.0" has incorrect peer dependency "eslint@^8.56.0".
+warning "typescript-eslint > @typescript-eslint/eslint-plugin@7.16.0" has incorrect peer dependency "eslint@^8.56.0".
+warning "typescript-eslint > @typescript-eslint/parser@7.16.0" has incorrect peer dependency "eslint@^8.56.0".
+warning "typescript-eslint > @typescript-eslint/utils@7.16.0" has incorrect peer dependency "eslint@^8.56.0".
+warning "typescript-eslint > @typescript-eslint/eslint-plugin > @typescript-eslint/type-utils@7.16.0" has incorrect peer dependency "eslint@^8.56.0".
+warning Workspaces can only be enabled in private projects.
+warning Error running install script for optional dependency: "/home/runner/work/autonomous-agents/autonomous-agents/agent-node/node_modules/snappy: Command failed.
+Exit code: 127
+Command: prebuild-install || node-gyp rebuild
+Arguments: 
+Directory: /home/runner/work/autonomous-agents/autonomous-agents/agent-node/node_modules/snappy
+Output:
+prebuild-install WARN install No prebuilt binaries found (target=18.18.2 runtime=node arch=x64 libc= platform=linux)
+/bin/sh: 1: node-gyp: not found"
