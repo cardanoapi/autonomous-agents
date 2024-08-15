@@ -1,15 +1,22 @@
 import allure
 
-
 def assert_successful_log(logs, function_name, trigger_type, message):
     """Helper function to assert a successful log entry with specific criteria."""
-    assert any(
-        log["functionName"] == function_name
-        and log["triggerType"] == trigger_type
-        and log["status"] == True
-        and log["success"] == True
-        for log in logs
-    ), message
+    try:
+        assert any(
+            log["functionName"] == function_name
+            and log["triggerType"] == trigger_type
+            and log["status"] == True
+            and log["success"] == True
+            for log in logs
+        ), message
+    except AssertionError:
+        allure.attach(
+            str(logs),
+            name="Logs",
+            attachment_type=allure.attachment_type.JSON
+        )
+        raise
 
 
 @allure.parent_suite("Agent Function Execution")
