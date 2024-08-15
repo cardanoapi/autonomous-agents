@@ -1,5 +1,4 @@
 import allure
-from models.template.template_dto import TemplateCreateDto, TemplateEditDto
 
 
 @allure.parent_suite("Template Management")

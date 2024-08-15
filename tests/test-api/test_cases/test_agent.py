@@ -1,7 +1,4 @@
 import allure
-import pytest
-from utils.logger import logger
-from test_cases.data.agent_function import info_action_manual_trigger
 
 
 @allure.parent_suite("Agent Management")

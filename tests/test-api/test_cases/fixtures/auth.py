@@ -1,5 +1,4 @@
 from test_cases.data.cardano import admin_signed_data, user_signed_data
-from utils.logger import logger
 import pytest
 
 
