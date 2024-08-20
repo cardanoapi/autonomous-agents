@@ -25,23 +25,26 @@ Run this command inside tests/test-api
 
 To run the tests, you will need to add the following environment variables to your .env file
 
-`BASE_API_URL`
+```bash
+BASE_API_URL
 
-`USER_KEY`
+USER_KEY
 
-`USER_SIGNATURE`
+USER_SIGNATURE
 
-`ADMIN_KEY`
+ADMIN_KEY
 
-`ADMIN_SIGNATURE`
+ADMIN_SIGNATURE
 
-`AGENT_MANAGER_WS_URL`
+AGENT_MANAGER_WS_URL
 
-`AGENT_RUN_TIMEOUT`
+AGENT_RUN_TIMEOUT
 
-`CARDANO_FAUCET_BASE_URL`
+CARDANO_FAUCET_BASE_URL
 
-`CARDANO_FAUCET_API_KEY`
+CARDANO_FAUCET_API_KEY`
+
+```
 
 
 ## Running Tests
@@ -50,9 +53,7 @@ To run tests, run the following command inside tests/test-api
 
 ```bash
   poetry shell
-```
-
-```bash
+  
   pytest 
 ```
 ## To Generate Allure Test report
@@ -61,11 +62,9 @@ To generate allure tests you need to run pytest with allure for which you need t
 
 ```bash
   poetry shell 
-```
-```bash
+
   pytest -alluredir allure-result
-```
-```bash
+  
   allure serve ./allure-result
 ```
 
