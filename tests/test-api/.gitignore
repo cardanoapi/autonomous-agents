@@ -1,0 +1,14 @@
+#Environment Files
+.env
+
+# pytest artifacts
+__pycache__/
+.pytest_cache/
+./pytest_cache
+
+# Logs and databases
+*.log
+
+# Allure report and results 
+allure-report/
+allure-result/

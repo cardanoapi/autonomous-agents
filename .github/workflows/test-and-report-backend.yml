@@ -1,0 +1,100 @@
+name: Backend Allure Test and Deploy
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+      - test
+  workflow_dispatch:
+
+jobs:
+  backend_tests:
+    name: Backend Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12.2
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+
+      - name: Install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.18
+        
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Run Backend Test
+        working-directory: tests/test-api
+        run: |
+          poetry install
+          poetry run pytest --alluredir allure-results
+        continue-on-error: true
+        env :
+            BASE_API_URL: ${{ vars.BASE_API_URL }}
+            USER_KEY : ${{ secrets.USER_KEY }}
+            USER_SIGNATURE : ${{ secrets.USER_SIGNATURE }}
+            ADMIN_KEY : ${{ secrets.ADMIN_KEY }}
+            ADMIN_SIGNATURE : ${{ secrets.ADMIN_SIGNATURE }}
+            AGENT_MANAGER_WS_URL : ${{ vars.AGENT_MANAGER_WS_URL }}
+            AGENT_RUN_TIMOUT : ${{ vars.AGENT_RUN_TIMOUT }}
+            CARDANO_FAUCET_BASE_URL : ${{ vars.CARDANO_FAUCET_BASE_URL }}
+            CARDANO_FAUCET_API_KEY : ${{ secrets.CARDANO_FAUCET_API_KEY }}
+
+      - name: Upload results
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-results
+          path: tests/test-api/allure-results
+
+  build_and_deploy_report:
+    runs-on: ubuntu-latest
+    needs: backend_tests
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download results
+        uses: actions/download-artifact@v3
+        with:
+          name: allure-results
+          path: allure-results
+
+      - name: Load test report history
+        uses: actions/checkout@v3
+        if: always()
+        continue-on-error: true
+        with:
+            ref: gh-pages
+            path: gh-pages
+  
+
+      - name: Allure Report action from marketplace
+        uses: simple-elf/allure-report-action@v1.7
+        with:
+            gh_pages: gh-pages/test_backend_allure_report
+            allure_results: allure-results
+            allure_history: allure-history
+            report_url : https://cardanoapi.github.io/autonomous-agents/test_backend_allure_report
+
+      - name: Deploy report to Github Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+              github_token: ${{ secrets.GITHUB_TOKEN }}
+              publish_dir: allure-history
+              publish_branch: gh-pages
+              destination_dir: test_backend_allure_report
+
