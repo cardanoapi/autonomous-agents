@@ -77,14 +77,14 @@ def delete_template_fixture(
     edit_template_fixture,
     admin_login_cookie,
 ):
-    """Fixture to delete a template after editing."""
-    assert delete_admin_agent_fixture.status_code == 204
 
     # Delete template via API
     response = autonomous_agent_api.delete_template(
         template_id=edit_template_fixture.json().get("id"),
         headers={"Cookie": admin_login_cookie},
     )
+    """Fixture to delete a template after editing."""
+    assert delete_admin_agent_fixture.status_code == 204
 
     # Validate response
     assert response.status_code == 204
