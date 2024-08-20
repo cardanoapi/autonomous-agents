@@ -9,7 +9,7 @@ from backend.app.models import TriggerResponse
 class AgentCreateDTO(BaseModel):
     userAddress: Optional[str] = None
     name: str = Field(..., description="Name of Agent", min_length=1)
-    template_id: str
+    template_id: Optional[str]
     instance: int
 
 
