@@ -40,7 +40,7 @@
         "@types/swagger-jsdoc": "^6.0.4",
         "@types/uuid": "^9.0.8",
         "@types/ws": "^8.5.10",
-        "eslint": "9.x",
+        "eslint": "8",
         "eslint-config-prettier": "^9.1.0",
         "globals": "^15.4.0",
         "prettier": "^3.3.1",
