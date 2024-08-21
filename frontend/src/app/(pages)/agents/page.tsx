@@ -8,12 +8,6 @@ import { useAtom } from 'jotai';
 
 import { IAgent } from '@app/app/api/agents';
 import { Button } from '@app/components/atoms/Button';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
 import { cn } from '@app/components/lib/utils';
 import AgentCard from '@app/components/molecules/AgentCard';
@@ -78,16 +72,6 @@ export default function AgentsPage() {
                         className="h-10 min-w-[290px]"
                         onSearch={handleSearch}
                     ></SearchField>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger border={true} className="h-10">
-                            Template
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuItem>Oldest</DropdownMenuItem>
-                            <DropdownMenuItem>Newest</DropdownMenuItem>
-                            <DropdownMenuItem>Most Active</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
                 </div>
                 <Link href="/agents/create-agent">
                     <Button
