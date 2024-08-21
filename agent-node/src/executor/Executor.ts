@@ -40,7 +40,7 @@ export class Executor {
     }
     makeWallet(walletDetails: AgentWalletDetails): Wallet {
         const txSubmissionHold: any[] = []
-        let txHash: string | null = null
+        const txHash: string | null = null
         let isProcessing: boolean = false
         const paymentKey: Key = {
             private: walletDetails.payment_signing_key,
@@ -110,12 +110,19 @@ export class Executor {
                                 true
                             )
                             resolve(res)
-                            await txListener.addListener(res.hash, 0, 800000)
-                            console.log(
-                                'Tx matched :',
-                                res.hash,
-                                txSubmissionHold
-                            )
+                            await txListener
+                                .addListener(res.hash, 0, 80000)
+                                .then(() => {
+                                    console.log(
+                                        'Tx matched :',
+                                        res.hash,
+                                        txSubmissionHold
+                                    )
+                                })
+                                .catch((e) => {
+                                    console.error('TXListener Error: ', e)
+                                    return
+                                })
                         } catch (error) {
                             reject(error)
                         }
@@ -193,7 +200,7 @@ export class Executor {
         const updatedBuiltins: any = {}
 
         Object.keys(this.functions.builtins).forEach((key) => {
-            let f = builtins[key]
+            const f = builtins[key]
             updatedBuiltins[key] = (...args: any) => f(context, ...args)
         })
         return {
