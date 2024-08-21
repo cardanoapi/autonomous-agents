@@ -1,4 +1,8 @@
-import { Action, Configuration } from '../service/triggerService'
+import {
+    Action,
+    ActionParameter,
+    Configuration,
+} from '../service/triggerService'
 import { globalState } from '../constants/global'
 import { scheduleFunctions } from './scheduler'
 import { parseRawBlockBody } from 'libcardano/cardano/ledger-serialization/transaction'
@@ -7,6 +11,14 @@ import { TriggerActionHandler } from '../service/TriggerActionHandler'
 import { ManagerInterface } from '../service/ManagerInterfaceService'
 import { BlockEvent } from 'libcardano/types'
 import { TxListener } from '../executor/TxListener'
+
+export function getParameterValue(
+    parameters: ActionParameter[] = [],
+    name: string
+): any {
+    const param = parameters.find((param) => param && param.name === name)
+    return param ? param.value : ''
+}
 
 export function checkIfAgentWithTriggerTypeExists(
     configurations: Configuration[]
@@ -58,11 +70,11 @@ export class RpcTopicHandler {
     extend_block(block: BlockEvent) {
         const transactions = parseRawBlockBody(block.body)
         console.log(
-          '[ New Block ]',
-          'block=' + block.headerHash.toString('hex'),
-          'slotNo=' + block.slotNo,
-          'blockNo=' + block.blockNo,
-          "txCount="+transactions.length
+            '[ New Block ]',
+            'block=' + block.headerHash.toString('hex'),
+            'slotNo=' + block.slotNo,
+            'blockNo=' + block.blockNo,
+            'txCount=' + transactions.length
         )
         this.txListener.onBlock({ ...block, body: transactions })
         if (

@@ -5,8 +5,8 @@ export interface FunctionHolder {
     [key: string]: Function
 }
 export interface FunctionGroup {
-    functions:FunctionHolder,
-    builtins:FunctionHolder
+    functions: FunctionHolder
+    builtins: FunctionHolder
 }
 // Helper function to require modules with extensions automatically
 function requireModule(filePath: string) {
@@ -28,7 +28,6 @@ function loadHandlersSync(directory: string): FunctionGroup {
     const handlers: FunctionHolder = {}
     const builtins: FunctionHolder = {}
 
-
     // Get the list of files in the directory
     const files = fs.readdirSync(directory)
     // Process each file
@@ -48,7 +47,7 @@ function loadHandlersSync(directory: string): FunctionGroup {
                 if (typeof handler === 'function') {
                     handlers[baseFileName] = handler
                 }
-                if(module.builtin || handler.name == 'builtin'){
+                if (module.builtin || handler.name == 'builtin') {
                     builtins[baseFileName] = module.builtin || module.default
                 }
             } catch (error) {
@@ -59,12 +58,12 @@ function loadHandlersSync(directory: string): FunctionGroup {
             }
         }
     })
-    console.log("Discovered Functions  :",Object.keys(handlers))
-    console.log("Discovered builtins  :",Object.keys(builtins))
+    console.log('Discovered Functions  :', Object.keys(handlers))
+    console.log('Discovered builtins  :', Object.keys(builtins))
 
     return {
         functions: handlers,
-        builtins:builtins
+        builtins: builtins,
     }
 }
 
@@ -73,6 +72,6 @@ const relativeDirectoryPath = '../functions'
 const directoryPath = path.resolve(__dirname, relativeDirectoryPath)
 
 // Export the function
-export function getHandlers() :FunctionGroup {
+export function getHandlers(): FunctionGroup {
     return loadHandlersSync(directoryPath)
 }

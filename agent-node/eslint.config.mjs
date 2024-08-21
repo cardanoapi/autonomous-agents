@@ -21,11 +21,4 @@ export default [
         },
     },
     eslintConfigPrettier,
-    {
-        overrideConfig: {
-            linterOptions: {
-                reportUnusedDisableDirectives: 'error',
-            },
-        },
-    },
 ]
