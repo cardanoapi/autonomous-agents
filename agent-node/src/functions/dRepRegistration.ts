@@ -17,7 +17,10 @@ export default async function handler(context: FunctionContext) {
 
     return await context.wallet
         .buildAndSubmit(req, true)
-        .then((v) => console.log('drepRegistration', v))
+        .then((v) => {
+            console.log('drepRegistration', v)
+            return v
+        })
         .catch((e) => {
             console.error('error', e)
             throw e

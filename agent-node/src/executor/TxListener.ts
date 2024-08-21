@@ -78,8 +78,8 @@ export class TxListener {
                 }
             } else {
                 setTimeout(() => {
-                    reject(new Error(`Rejected after ${timeout} ms`))
                     delete this.pendingTxs[txId]
+                    reject(new Error(`Rejected after ${timeout} ms`))
                 }, timeout)
                 this.pendingTxs[txId] = {
                     resolve,

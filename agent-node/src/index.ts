@@ -6,7 +6,7 @@ import { cborxBackend } from 'libcardano/lib/cbor'
 import { WsClientPipe } from './service/WsClientPipe'
 import { AgentRpc } from './service/AgentRpc'
 import { ManagerInterface } from './service/ManagerInterfaceService'
-import { TriggerActionHandler } from './service/TriggerActionHandler'
+import { ILog, TriggerActionHandler } from './service/TriggerActionHandler'
 import { RpcTopicHandler } from './utils/agent'
 import { Executor } from './executor/Executor'
 import { TxListener } from './executor/TxListener'
@@ -36,13 +36,26 @@ function connectToManagerWebSocket() {
     const executor = new Executor(null, managerInterface, txListener)
 
     rpcChannel.on('methodCall', (method, args) => {
-        executor.invokeFunction(method, ...args).then(result=>{
-            result.forEach((log:any)=>{
-                log.error=log.error && log.error.message
+        executor.invokeFunction(method, ...args).then((result) => {
+            result.forEach((log: any) => {
+                const txLog: ILog = {
+                    function_name: log.function,
+                    triggerType: 'MANUAL',
+                    trigger: true,
+                    success: true,
+                    message: '',
+                }
+                if (log.return) {
+                    txLog.txHash = log.return.hash
+                } else {
+                    txLog.message =
+                        log.error && (log.error.message ?? log.error)
+                    txLog.success = false
+                }
+                managerInterface.logTx(txLog)
             })
-            console.log("Method call log",result)
+            console.log('Method call log', result)
         })
-
     })
     const topicHandler = new RpcTopicHandler(
         triggerHandler,

@@ -8,9 +8,14 @@ export default async function handler(
     const req = {
         outputs: {
             address: receiverAddress,
-            value: value,
+            value: `${value}A`,
         },
     }
-    await context.builtins.callWebhook('https://metadata-govtool.cardanoapi.io/lock',"32")
-    return await context.wallet.buildAndSubmit(req)
+    return await context.wallet
+        .buildAndSubmit(req)
+        .then((v) => v)
+        .catch((err) => {
+            console.log('Transfer ADA Error : ', err)
+            throw err
+        })
 }
