@@ -213,6 +213,7 @@ export default function AgentCard({
                             failed={parseInt(
                                 transactions_count?.unSuccessfulTransactions || '0'
                             )}
+                            className="!h-24 !w-24"
                         />
                     </div>
                     <div className="w-full">

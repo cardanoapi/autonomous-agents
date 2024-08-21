@@ -78,7 +78,7 @@ export default function TransactionPieChart({
     }, [success, skipped, failed]);
 
     return (
-        <Card className={`h-28 w-28 ${className}`}>
+        <Card className={`${className}`}>
             <ChartContainer
                 config={chartConfig}
                 className="mx-auto aspect-square max-h-[250px]"
@@ -92,7 +92,7 @@ export default function TransactionPieChart({
                         data={chartData}
                         dataKey="total"
                         nameKey="status"
-                        innerRadius={20}
+                        innerRadius={15}
                         strokeWidth={5}
                     />
                 </PieChart>
