@@ -48,7 +48,8 @@ export default function CustomLineChart({
     renderXaxis = true,
     renderYaxis = true,
     smoothStroke = true,
-    xaxisInterval = 0
+    xaxisInterval = 0,
+    showOnlyTransaction = false
 }: {
     chartData?: ILineChartData[];
     className?: string;
@@ -63,6 +64,7 @@ export default function CustomLineChart({
     renderYaxis?: boolean;
     smoothStroke?: boolean;
     xaxisInterval?: number;
+    showOnlyTransaction?: boolean;
 }) {
     const uniqueId = uuidv4(); // Generate a unique ID for this chart instance
 
@@ -112,7 +114,9 @@ export default function CustomLineChart({
                 )}
                 {renderToolTip && (
                     <Tooltip
-                        content={<CustomTooltip />}
+                        content={
+                            <CustomTooltip showOnlyTransaction={showOnlyTransaction} />
+                        }
                         cursor={{ strokeDasharray: 5, stroke: '#1C63E7' }}
                     />
                 )}
