@@ -32,7 +32,7 @@ export default function Home() {
     >([]);
 
     const [currentChartFilterOption, setCurrentChartFilterOption] =
-        useState<IChartFilterOption>(chartFilterOptions[1]);
+        useState<IChartFilterOption>(chartFilterOptions[2]);
 
     useEffect(() => {
         if (triggerHistoryMetric !== undefined) {

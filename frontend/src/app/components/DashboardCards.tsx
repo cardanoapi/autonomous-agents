@@ -99,7 +99,7 @@ const DashboardCards = () => {
                 graphData={
                     proposalMetric !== undefined
                         ? convertArraytoGraphDataFormat(
-                              proposalMetric.last_24hour_successful_triggers.toReversed() ||
+                              proposalMetric.last_week_successful_triggers.toReversed() ||
                                   [],
                               6
                           )
@@ -114,7 +114,7 @@ const DashboardCards = () => {
                 graphData={
                     voteMetric !== undefined
                         ? convertArraytoGraphDataFormat(
-                              voteMetric.last_24hour_successful_triggers.toReversed() ||
+                              voteMetric.last_week_successful_triggers.toReversed() ||
                                   [],
                               6
                           )
