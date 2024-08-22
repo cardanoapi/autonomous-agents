@@ -94,6 +94,7 @@ export default function TransactionPieChart({
                         nameKey="status"
                         innerRadius={15}
                         strokeWidth={5}
+                        isAnimationActive={false}
                     />
                 </PieChart>
             </ChartContainer>

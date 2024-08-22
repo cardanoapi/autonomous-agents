@@ -49,7 +49,9 @@ export default function CustomLineChart({
     renderYaxis = true,
     smoothStroke = true,
     xaxisInterval = 0,
-    showOnlyTransaction = false
+    showOnlyTransaction = false,
+    positionYToolTip,
+    positionXToolTip
 }: {
     chartData?: ILineChartData[];
     className?: string;
@@ -65,6 +67,8 @@ export default function CustomLineChart({
     smoothStroke?: boolean;
     xaxisInterval?: number;
     showOnlyTransaction?: boolean;
+    positionYToolTip?: number;
+    positionXToolTip?: number;
 }) {
     const uniqueId = uuidv4(); // Generate a unique ID for this chart instance
 
@@ -118,6 +122,7 @@ export default function CustomLineChart({
                             <CustomTooltip showOnlyTransaction={showOnlyTransaction} />
                         }
                         cursor={{ strokeDasharray: 5, stroke: '#1C63E7' }}
+                        position={{ y: positionYToolTip, x: positionXToolTip }}
                     />
                 )}
                 <Area

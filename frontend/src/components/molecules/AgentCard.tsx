@@ -222,7 +222,7 @@ export default function AgentCard({
                                 triggerHistoryMetric?.last_week_successful_triggers ||
                                     [],
                                 'Days'
-                            )}
+                            ).toReversed()}
                             renderLines={false}
                             renderXaxis={false}
                             renderYaxis={false}
@@ -234,6 +234,8 @@ export default function AgentCard({
                             fillGradiant={true}
                             className="pl-6"
                             showOnlyTransaction={true}
+                            positionYToolTip={0}
+                            positionXToolTip={0}
                         />
                     </div>
                 </div>
