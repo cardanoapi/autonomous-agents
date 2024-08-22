@@ -117,7 +117,7 @@ const AgentsContainer = ({
     enableDelete: boolean;
 }) => {
     return (
-        <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6">
+        <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3  2xl:grid-cols-4 5xl:grid-cols-5 ">
             {Array.isArray(agentsList) && agentsList.length ? (
                 agentsList.map((agent: IAgent, index) => (
                     <AgentCard
