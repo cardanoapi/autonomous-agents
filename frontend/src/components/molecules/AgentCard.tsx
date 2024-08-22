@@ -34,6 +34,7 @@ export interface IAgentCard {
     lastActive: string | number;
     totalTrigger: number;
     enableEdit?: boolean;
+    enableDelete?: boolean;
     isActive?: boolean;
 }
 
@@ -43,6 +44,7 @@ export default function AgentCard({
     templateID,
     functionCount,
     enableEdit = false,
+    enableDelete = false,
     lastActive = '',
     isActive = false
 }: IAgentCard) {
@@ -148,7 +150,10 @@ export default function AgentCard({
                                 e.stopPropagation();
                                 setDialogOpen(true);
                             }}
-                            className="hidden  hover:cursor-pointer group-hover:flex"
+                            className={cn(
+                                'hidden  hover:cursor-pointer group-hover:flex',
+                                !enableDelete ? '!hidden' : ''
+                            )}
                         />
                     </div>
                     <div className={'flex items-center gap-3'}>

@@ -85,11 +85,19 @@ export default function AgentsPage() {
                     </Button>
                 </Link>
             </div>
-            <AgentsContainer agentsList={otherAgents} enableEdit={adminAccess} />
+            <AgentsContainer
+                agentsList={otherAgents}
+                enableEdit={adminAccess}
+                enableDelete={adminAccess}
+            />
             {currentConnectedWallet && myAgents.length > 0 && (
                 <div className="my-8">
                     <div className="h1-new">My Agents</div>
-                    <AgentsContainer agentsList={myAgents} enableEdit={true} />
+                    <AgentsContainer
+                        agentsList={myAgents}
+                        enableEdit={true}
+                        enableDelete={adminAccess}
+                    />
                 </div>
             )}
             {otherAgents.length == 0 && myAgents.length == 0 && (
@@ -101,10 +109,12 @@ export default function AgentsPage() {
 
 const AgentsContainer = ({
     agentsList,
-    enableEdit
+    enableEdit,
+    enableDelete
 }: {
     agentsList: IAgent[];
     enableEdit: boolean;
+    enableDelete: boolean;
 }) => {
     return (
         <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6">
@@ -119,6 +129,7 @@ const AgentsContainer = ({
                         lastActive={agent?.last_active || 'NA'}
                         key={index}
                         enableEdit={enableEdit}
+                        enableDelete={enableDelete}
                         isActive={agent?.is_active}
                     />
                 ))
