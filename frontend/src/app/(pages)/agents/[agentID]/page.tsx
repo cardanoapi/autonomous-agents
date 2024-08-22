@@ -59,7 +59,7 @@ export default function AgentPageById() {
                         Agents
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
-                    <BreadcrumbItem>Agent Profile</BreadcrumbItem>
+                    <BreadcrumbItem>{agent?.name || 'Agent Profile'}</BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>{selectedTab}</BreadcrumbItem>
                 </BreadcrumbList>
