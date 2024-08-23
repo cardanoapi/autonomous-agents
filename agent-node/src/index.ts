@@ -21,8 +21,9 @@ if (!agentId) {
 
 let ws: WebSocket | null = null
 let reconnectAttempts = 0
-const maxReconnectAttempts = 3
+const maxReconnectAttempts = 2
 let isReconnecting = false
+let hasConnectedBefore = false
 function connectToManagerWebSocket() {
     let interval: NodeJS.Timeout | number
     ws = new WebSocket(`${wsUrl}/${agentId}`)
@@ -69,6 +70,7 @@ function connectToManagerWebSocket() {
     })
 
     ws.on('open', () => {
+        hasConnectedBefore = true
         interval = setInterval(() => {
             rpcChannel.emit('active_connection', 'Ping')
         }, 5000)
@@ -95,23 +97,34 @@ function connectToManagerWebSocket() {
 }
 
 function attemptReconnect() {
-    if (maxReconnectAttempts >= reconnectAttempts) {
-        if (isReconnecting) {
-            return
-        }
-        isReconnecting = true
-        reconnectAttempts++
-        console.log(
-            `Attempting to reconnect... (${reconnectAttempts}/${maxReconnectAttempts})`
-        )
-        console.log('Waiting for 10 seconds before reconnecting')
+    if (hasConnectedBefore) {
+        console.log('Waiting for 10 seconds before reconnecting again')
         setTimeout(() => {
             connectToManagerWebSocket()
             isReconnecting = false
         }, 10000)
     } else {
-        console.error('Max reconnect attempts reached. Exiting application.')
-        process.exit(1)
+        if (maxReconnectAttempts >= reconnectAttempts) {
+            if (isReconnecting) {
+                return
+            }
+            isReconnecting = true
+            reconnectAttempts++
+            setTimeout(() => {
+                connectToManagerWebSocket()
+                isReconnecting = false
+                console.log(
+                    `Attempting to reconnect... (${reconnectAttempts}/${maxReconnectAttempts})`
+                )
+            }, 10000)
+            maxReconnectAttempts >= reconnectAttempts &&
+                console.log('Waiting for 10 seconds before reconnecting')
+        } else {
+            console.error(
+                'Max reconnect attempts reached. Exiting application.'
+            )
+            process.exit(1)
+        }
     }
 }
 
