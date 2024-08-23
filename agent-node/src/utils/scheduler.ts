@@ -1,8 +1,8 @@
 import cron, { ScheduledTask } from 'node-cron'
 import { Action, Configuration } from '../service/triggerService'
 import { ManagerInterface } from '../service/ManagerInterfaceService'
-import { AgentTransactionBuilder } from '../service/transactionBuilder'
-import { TriggerActionHandler } from '../service/TriggerActionHandler'
+import { ILog } from '../service/TriggerActionHandler'
+import { Executor } from '../executor/Executor'
 
 let scheduledTasks: ScheduledTask[] = []
 
@@ -15,19 +15,14 @@ function clearScheduledTasks() {
 }
 
 function createTask(
-    triggerHandler: TriggerActionHandler,
+    executor: Executor,
     manager: ManagerInterface,
     action: Action,
     frequency: string,
     probability: number
 ) {
-    const transactionBuilder = AgentTransactionBuilder.getInstance()
-
     return cron.schedule(frequency, () => {
-        if (
-            Math.random() > probability ||
-            !transactionBuilder?.agentWalletDetails
-        ) {
+        if (Math.random() > probability) {
             manager.logTx({
                 function_name: action.function_name,
                 triggerType: 'CRON',
@@ -36,14 +31,37 @@ function createTask(
                 message: '',
             })
         } else {
-            triggerHandler.setTriggerOnQueue(action, 'CRON')
+            executor
+                .invokeFunction(
+                    action.function_name,
+                    ...(action.parameters as any)
+                )
+                .then((result) => {
+                    result.forEach((log: any) => {
+                        const txLog: ILog = {
+                            function_name: log.function,
+                            triggerType: 'CRON',
+                            trigger: true,
+                            success: true,
+                            message: '',
+                        }
+                        if (log.return) {
+                            txLog.txHash = log.return.hash
+                        } else {
+                            txLog.message =
+                                log.error && (log.error.message ?? log.error)
+                            txLog.success = false
+                        }
+                        manager.logTx(txLog)
+                    })
+                })
         }
     })
 }
 
 export function scheduleFunctions(
-    triggerHandler: TriggerActionHandler,
     manager: ManagerInterface,
+    executor: Executor,
     configurations: Configuration[]
 ) {
     clearScheduledTasks()
@@ -53,7 +71,7 @@ export function scheduleFunctions(
         if (action && type === 'CRON') {
             const { frequency, probability } = data
             const task = createTask(
-                triggerHandler,
+                executor,
                 manager,
                 action,
                 frequency,

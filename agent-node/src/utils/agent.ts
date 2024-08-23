@@ -6,11 +6,11 @@ import {
 import { globalState } from '../constants/global'
 import { scheduleFunctions } from './scheduler'
 import { parseRawBlockBody } from 'libcardano/cardano/ledger-serialization/transaction'
-import { AgentTransactionBuilder } from '../service/transactionBuilder'
-import { TriggerActionHandler } from '../service/TriggerActionHandler'
+import { ILog } from '../service/TriggerActionHandler'
 import { ManagerInterface } from '../service/ManagerInterfaceService'
 import { BlockEvent } from 'libcardano/types'
 import { TxListener } from '../executor/TxListener'
+import { Executor } from '../executor/Executor'
 
 export function getParameterValue(
     parameters: ActionParameter[] = [],
@@ -20,10 +20,10 @@ export function getParameterValue(
     return param ? param.value : ''
 }
 
-export function checkIfAgentWithTriggerTypeExists(
+export function checkIfAgentWithEventTriggerTypeExists(
     configurations: Configuration[]
 ) {
-    configurations.map((config) => {
+    configurations.forEach((config) => {
         if (config.type === 'EVENT') {
             globalState.eventTriggerTypeDetails = {
                 eventType: true,
@@ -46,17 +46,17 @@ export function createActionDtoForEventTrigger(tx: any, index: number): Action {
 }
 
 export class RpcTopicHandler {
-    triggerHandler: TriggerActionHandler
     managerInterface: ManagerInterface
     txListener: TxListener
+    executor: Executor
     constructor(
-        triggerHandler: TriggerActionHandler,
         managerInterface: ManagerInterface,
-        txListener: TxListener
+        txListener: TxListener,
+        executor: Executor
     ) {
         this.managerInterface = managerInterface
-        this.triggerHandler = triggerHandler
         this.txListener = txListener
+        this.executor = executor
     }
     handleEvent(eventName: string, message: any) {
         const handler = (this as any)[eventName]
@@ -85,10 +85,33 @@ export class RpcTopicHandler {
                 if (Array.isArray(tx.body.proposalProcedures)) {
                     tx.body.proposalProcedures.forEach(
                         (proposal: any, index: number) => {
-                            this.triggerHandler.setTriggerOnQueue(
-                                createActionDtoForEventTrigger(tx, index),
-                                'EVENT'
-                            )
+                            const { function_name, parameters } =
+                                createActionDtoForEventTrigger(tx, index)
+                            this.executor
+                                .invokeFunction(
+                                    function_name,
+                                    ...(parameters as any)
+                                )
+                                .then((result) => {
+                                    result.forEach((log: any) => {
+                                        const txLog: ILog = {
+                                            function_name: log.function,
+                                            triggerType: 'EVENT',
+                                            trigger: true,
+                                            success: true,
+                                            message: '',
+                                        }
+                                        if (log.return) {
+                                            txLog.txHash = log.return.hash
+                                        } else {
+                                            txLog.message =
+                                                log.error &&
+                                                (log.error.message ?? log.error)
+                                            txLog.success = false
+                                        }
+                                        this.managerInterface.logTx(txLog)
+                                    })
+                                })
                         }
                     )
                 }
@@ -97,23 +120,14 @@ export class RpcTopicHandler {
     }
     initial_config(message: any) {
         const { configurations } = message
-        checkIfAgentWithTriggerTypeExists(configurations)
-        scheduleFunctions(
-            this.triggerHandler,
-            this.managerInterface,
-            configurations
-        )
+        checkIfAgentWithEventTriggerTypeExists(configurations)
+        scheduleFunctions(this.managerInterface, this.executor, configurations)
     }
     config_updated(message: any) {
         const { configurations } = message
-        checkIfAgentWithTriggerTypeExists(configurations)
-        scheduleFunctions(
-            this.triggerHandler,
-            this.managerInterface,
-            configurations
-        )
+        checkIfAgentWithEventTriggerTypeExists(configurations)
+        scheduleFunctions(this.managerInterface, this.executor, configurations)
     }
-    agent_keys(message: any) {
-        AgentTransactionBuilder.setInstance(message)
-    }
+
+    agent_keys(message: any) {}
 }
