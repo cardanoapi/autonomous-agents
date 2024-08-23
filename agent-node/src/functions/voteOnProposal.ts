@@ -3,22 +3,24 @@ import drepRegistration from './dRepRegistration'
 
 export default async function handler(
     context: FunctionContext,
-    proposal: string,
+    proposal: Record<string, any>,
     anchorObj: Record<string, any>
 ) {
-    const anchor = anchorObj.value || undefined
+    const anchor = anchorObj.value ? anchorObj.value : undefined
     const req = {
         vote: {
             voter: context.wallet.drepId,
             role: 'drep',
-            proposal,
+            proposal: proposal.value,
             vote: true,
-            anchor: {
-                url: anchor?.url || 'https://bit.ly/3zCH2HL',
-                dataHash:
-                    anchor?.dataHash ||
-                    '1111111111111111111111111111111111111111111111111111111111111111',
-            },
+            anchor:
+                anchorObj.value.url && anchor.value.dataHash
+                    ? anchorObj.value
+                    : {
+                          url: 'https://bit.ly/3zCH2HL',
+                          dataHash:
+                              '1111111111111111111111111111111111111111111111111111111111111111',
+                      },
         },
     }
     return await context.wallet

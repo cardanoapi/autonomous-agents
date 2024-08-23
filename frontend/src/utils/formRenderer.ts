@@ -137,10 +137,7 @@ export function extractAnswerFromObject(param: IParameter) {
 }
 
 export function extractAnswerFromInput(param: IParameter) {
-    if (param.type === 'number') {
-        return +param.value;
-    }
-    return param.value;
+    return { name: param.id, value: param.value };
 }
 
 export function extractAnswerFromFunction(param: IParameter) {

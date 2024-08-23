@@ -6,7 +6,7 @@ import { cborxBackend } from 'libcardano/lib/cbor'
 import { WsClientPipe } from './service/WsClientPipe'
 import { AgentRpc } from './service/AgentRpc'
 import { ManagerInterface } from './service/ManagerInterfaceService'
-import { ILog, TriggerActionHandler } from './service/TriggerActionHandler'
+import { ILog } from './service/TriggerActionHandler'
 import { RpcTopicHandler } from './utils/agent'
 import { Executor } from './executor/Executor'
 import { TxListener } from './executor/TxListener'
@@ -31,7 +31,6 @@ function connectToManagerWebSocket() {
         new CborDuplex(clientPipe, cborxBackend(true))
     )
     const managerInterface = new ManagerInterface(rpcChannel)
-    const triggerHandler = new TriggerActionHandler(managerInterface)
     const txListener = new TxListener()
     const executor = new Executor(null, managerInterface, txListener)
 
@@ -58,9 +57,9 @@ function connectToManagerWebSocket() {
         })
     })
     const topicHandler = new RpcTopicHandler(
-        triggerHandler,
         managerInterface,
-        txListener
+        txListener,
+        executor
     )
     rpcChannel.on('event', (topic, message) => {
         if (topic == 'agent_keys') {

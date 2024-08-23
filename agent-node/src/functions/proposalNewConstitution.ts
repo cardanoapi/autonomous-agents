@@ -5,7 +5,7 @@ export default async function handler(
     context: FunctionContext,
     anchorObj: any,
     newConstitutionObj: any,
-    guardRailScript: string
+    guardRailScript: any
 ) {
     const rewardAddress = rewardAddressBech32(
         0,
@@ -19,7 +19,9 @@ export default async function handler(
                 anchor: anchor,
                 newConstitution: newConstitution,
                 refundAccount: rewardAddress,
-                guardrailscript: guardRailScript ? guardRailScript : undefined,
+                guardrailscript: guardRailScript.value
+                    ? guardRailScript.value
+                    : undefined,
             },
         ],
     }
