@@ -18,13 +18,12 @@ import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { adminAccessAtom, templateCreatedAtom } from '@app/store/localStore';
 
 export default function TemplatesPage() {
-    const { data: templates = [], isLoading } = useQuery<ITemplate[]>({
+    const { data: templates = [], isLoading: isLoading } = useQuery<ITemplate[]>({
         queryKey: ['templates'],
         queryFn: fetchTemplates
     });
 
     const [templateCreated, setTemplateCreated] = useAtom(templateCreatedAtom);
-    const [filteredTemplates, setFilteredTemplates] = useState<ITemplate[]>([]);
     const [adminAccess] = useAtom(adminAccessAtom);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -35,20 +34,6 @@ export default function TemplatesPage() {
             setTemplateCreated(false);
         }
     }, [templateCreated, setTemplateCreated]);
-
-    useEffect(() => {
-        if (templates.length !== 0) {
-            setFilteredTemplates(templates);
-        }
-    }, [templates]);
-
-    function handleSearch(templateName: string) {
-        const newTemplates =
-            templates?.filter((template) =>
-                template.name.toLowerCase().includes(templateName.toLowerCase())
-            ) || [];
-        setFilteredTemplates(newTemplates);
-    }
 
     const containerClass =
         'grid grid-cols-1 gap-5 sm:grid-cols-2  lg:grid-cols-3 xl:grid-cols-4 4xl:grid-cols-5';
@@ -62,7 +47,6 @@ export default function TemplatesPage() {
                         variant="secondary"
                         className="h-10 min-w-[420px]"
                         placeholder="Search Templates"
-                        onSearch={handleSearch}
                     />
                 </div>
                 <Link href="/templates/create-template">
@@ -101,7 +85,7 @@ export default function TemplatesPage() {
                         <div className={containerClass}>
                             <TemplateSkeletonContainer />
                         </div>
-                    ) : filteredTemplates.length > 0 ? (
+                    ) : templates.length > 0 ? (
                         <div className={containerClass}>
                             {templates.map((template: ITemplate, index: number) => (
                                 <TemplateCard
