@@ -141,7 +141,7 @@ export const fetchAgentbyID = async (agentID: string): Promise<IAgent> => {
     const url = `${baseAPIurl}/agent/${agentID}`;
 
     try {
-        const response = await axios.get(url, { withCredentials: true });
+        const response = await axios.get(url);
         return response.data;
     } catch (error) {
         throw new Error('Agent Fetch Operation failed: Network Error');
