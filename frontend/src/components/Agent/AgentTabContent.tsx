@@ -40,7 +40,7 @@ const AgentTabContent = ({
 
     return (
         <div className={'max-h-[650px] flex-1 rounded-lg bg-white px-9 py-6'}>
-            {agentLoading ? (
+            {agentLoading && selectedAgentTab === 'Overview' ? (
                 <SkeletonLoadingForAgentOverview />
             ) : (
                 getAgentSelectedTabComponent()

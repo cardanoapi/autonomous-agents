@@ -10,7 +10,7 @@ import {
     fetchAllTriggerHistory
 } from '@app/app/api/triggerHistory';
 import { EmptyLogsPlaceholder } from '@app/components/Agent/AgentLog';
-import { AgentLogCard } from '@app/components/Agent/AgentLog';
+import { AgentLogCard, AgentLogCardSkeleton } from '@app/components/Agent/AgentLog';
 import AgentFunctionsDropDown from '@app/components/Common/AgentFunctionsDropDown';
 import { Badge } from '@app/components/atoms/Badge';
 import {
@@ -171,17 +171,24 @@ export default function LogsPage() {
                         className={'flex flex-col gap-y-2 overflow-y-auto pr-4'}
                         style={{ maxHeight: 'calc(100vh - 350px)' }}
                     >
-                        {LogsHistory?.items.length > 0 &&
+                        {loadingLogs ? (
+                            Array.from({ length: 50 }).map((_, index) => (
+                                <AgentLogCardSkeleton key={index} />
+                            ))
+                        ) : LogsHistory?.items.length > 0 ? (
                             LogsHistory.items.map(
                                 (history: IAgentTriggerHistory, index: number) => (
                                     <AgentLogCard
                                         history={history}
                                         key={index}
                                         className="bg-white"
-                                        globalLog={true}
+                                        globalLog
                                     />
                                 )
-                            )}
+                            )
+                        ) : (
+                            <EmptyLogsPlaceholder />
+                        )}
                     </ScrollArea>
                 </div>
                 {!loadingLogs && LogsHistory?.items.length === 0 && (
