@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 
 import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { useQuery } from '@tanstack/react-query';
-import { OctagonAlert } from 'lucide-react';
 
 import {
     IAgentTriggerHistory,
     fetchAllTriggerHistory
 } from '@app/app/api/triggerHistory';
+import { EmptyLogsPlaceholder } from '@app/components/Agent/AgentLog';
 import { AgentLogCard } from '@app/components/Agent/AgentLog';
 import AgentFunctionsDropDown from '@app/components/Common/AgentFunctionsDropDown';
 import { Badge } from '@app/components/atoms/Badge';
@@ -19,7 +19,7 @@ import PaginationBtns from '@app/components/molecules/PaginationBtns';
 export default function LogsPage() {
     //Related to Log query
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const [currentResponseSize, setCurrentResponseSize] = useState<number>(8);
+    const [currentResponseSize, setCurrentResponseSize] = useState<number>(50);
     const [currentStatus, setCurrentStatus] = useState<string>('None');
     const [currentSuccess, setCurrentSucccess] = useState<string>('None');
     const [currentFunction, setCurrentFunction] = useState('None');
@@ -101,9 +101,9 @@ export default function LogsPage() {
         setCurrentPage(1);
     }
 
-    return (
-        <div>
-            <div className="flex items-center justify-between">
+    const TopNav = () => {
+        return (
+            <div className="flex items-center justify-between ">
                 <div className="flex gap-2">
                     <SearchField
                         placeholder="Enter Agent ID"
@@ -144,13 +144,19 @@ export default function LogsPage() {
                     upperLimit={totalPages}
                 />
             </div>
+        );
+    };
+
+    return (
+        <div style={{ height: 'calc(100vh - 200px)' }} className="flex flex-col">
+            <TopNav />
             <div className="mt-8">
                 <div className={'flex h-full w-full flex-col gap-10'}>
                     <ScrollArea
                         className={'h-agentComponentHeight overflow-y-auto pr-4'}
                     >
                         <div className="grid grid-cols-1 gap-2">
-                            {LogsHistory?.items.length > 0 ? (
+                            {LogsHistory?.items.length > 0 &&
                                 LogsHistory.items.map(
                                     (history: IAgentTriggerHistory, index: number) => (
                                         <AgentLogCard
@@ -160,25 +166,14 @@ export default function LogsPage() {
                                             globalLog
                                         />
                                     )
-                                )
-                            ) : !loadingLogs ? (
-                                <div className="flex gap-2 text-gray-500">
-                                    Trigger History Logs for{' '}
-                                    {statusPlaceholder === 'None'
-                                        ? ''
-                                        : `${statusPlaceholder}`}{' '}
-                                    {currentFunction === 'None'
-                                        ? ''
-                                        : `${currentFunction}`}{' '}
-                                    are empty <OctagonAlert />
-                                </div>
-                            ) : (
-                                ''
-                            )}
+                                )}
                         </div>
                     </ScrollArea>
                 </div>
             </div>
+            {!loadingLogs && LogsHistory?.items.length === 0 && (
+                <EmptyLogsPlaceholder />
+            )}
         </div>
     );
 }

@@ -110,7 +110,7 @@ const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
             </div>
             <ScrollArea className={'h-agentComponentHeight overflow-y-auto pr-4'}>
                 <div className="grid grid-cols-1 gap-2">
-                    {LogsHistory?.items.length > 0 ? (
+                    {LogsHistory?.items.length > 0 &&
                         LogsHistory.items.map(
                             (history: IAgentTriggerHistory, index: number) => (
                                 <AgentLogCard
@@ -119,19 +119,12 @@ const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
                                     className="bg-gray-100"
                                 />
                             )
-                        )
-                    ) : !loadingLogs ? (
-                        <div className="flex gap-2 text-gray-500">
-                            Trigger History Logs for{' '}
-                            {statusPlaceholder === 'None' ? '' : `${statusPlaceholder}`}{' '}
-                            {currentFunction === 'None' ? '' : `${currentFunction}`} are
-                            empty <OctagonAlert />
-                        </div>
-                    ) : (
-                        ''
-                    )}
+                        )}
                 </div>
             </ScrollArea>
+            {!loadingLogs && LogsHistory?.items.length === 0 && (
+                <EmptyLogsPlaceholder />
+            )}
         </div>
     );
 };
@@ -257,3 +250,17 @@ const TxHashComponent = ({ txHash }: { txHash: string }) => {
 };
 
 export default AgentLogComponent;
+
+export const EmptyLogsPlaceholder = () => {
+    return (
+        <div className="flex h-full w-full items-center justify-center rounded border-[4px] border-dashed border-gray-200 bg-slate-50">
+            <div className="flex flex-col items-center gap-2">
+                <span className="flex items-center justify-center gap-2 text-2xl text-gray-300">
+                    <OctagonAlert className="h-8 w-8" />
+                    Trigger History is Empty.
+                </span>
+                <span className="text-xl text-gray-300">No trigger logs found !</span>
+            </div>
+        </div>
+    );
+};
