@@ -14,6 +14,7 @@ import { cn } from '@app/components/lib/utils';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import TemplateCard from '@app/components/molecules/TemplateCard';
 import { TemplateCardSkeleton } from '@app/components/molecules/TemplateCard';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { adminAccessAtom, templateCreatedAtom } from '@app/store/localStore';
 
 export default function TemplatesPage() {
@@ -52,14 +53,14 @@ export default function TemplatesPage() {
     const containerClass =
         'grid grid-cols-1 gap-5 sm:grid-cols-2  lg:grid-cols-3 xl:grid-cols-4 4xl:grid-cols-5';
 
-    return (
-        <>
+    const TopNav = () => {
+        return (
             <div className="flex justify-between">
                 <div className="flex items-center justify-center gap-x-4">
                     <span className="h1-new">Templates({templates?.length})</span>
                     <SearchField
                         variant="secondary"
-                        className="h-10 min-w-[240px]"
+                        className="h-10 min-w-[420px]"
                         placeholder="Search Templates"
                         onSearch={handleSearch}
                     />
@@ -76,6 +77,23 @@ export default function TemplatesPage() {
                     </Button>
                 </Link>
             </div>
+        );
+    };
+
+    const TopNavSkeleton = () => {
+        return (
+            <div className="flex justify-between p-2">
+                <div className="flex items-center gap-x-4">
+                    <Skeleton className="h-8 w-[140px]" />
+                    <Skeleton className="h-10 min-w-[420px]" />
+                </div>
+            </div>
+        );
+    };
+
+    return (
+        <>
+            {isLoading ? <TopNavSkeleton /> : <TopNav />}
 
             <div className="flex flex-col gap-y-[80px] pb-10 pt-10">
                 <div className="mt-2 flex flex-col gap-y-5">
