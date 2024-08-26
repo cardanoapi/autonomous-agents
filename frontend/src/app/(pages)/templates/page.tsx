@@ -9,12 +9,6 @@ import { useAtom } from 'jotai';
 
 import { ITemplate, fetchTemplates } from '@app/app/api/templates';
 import { Button } from '@app/components/atoms/Button';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
 import { cn } from '@app/components/lib/utils';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
@@ -67,16 +61,6 @@ export default function TemplatesPage() {
                         placeholder="Search Templates"
                         onSearch={handleSearch}
                     />
-                    <DropdownMenu>
-                        <DropdownMenuTrigger border={true}>
-                            Function
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-white">
-                            <DropdownMenuItem>Send Ada</DropdownMenuItem>
-                            <DropdownMenuItem>Vote Proposal</DropdownMenuItem>
-                            <DropdownMenuItem>Others</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
                 </div>
                 <Link href="/templates/create-template">
                     <Button
@@ -93,7 +77,6 @@ export default function TemplatesPage() {
 
             <div className="flex flex-col gap-y-[80px] pb-10 pt-10">
                 <div className="mt-2 flex flex-col gap-y-5">
-                    <span className="h5 inline-block">My Templates</span>
                     {filteredTemplates.length ? (
                         isLoading ? (
                             <TemplatesSkeleton />
