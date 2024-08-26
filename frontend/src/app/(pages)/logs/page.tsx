@@ -13,6 +13,12 @@ import { EmptyLogsPlaceholder } from '@app/components/Agent/AgentLog';
 import { AgentLogCard } from '@app/components/Agent/AgentLog';
 import AgentFunctionsDropDown from '@app/components/Common/AgentFunctionsDropDown';
 import { Badge } from '@app/components/atoms/Badge';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
 import PaginationBtns from '@app/components/molecules/PaginationBtns';
 
@@ -48,7 +54,14 @@ export default function LogsPage() {
 
     useEffect(() => {
         refetchLogsHistory();
-    }, [currentPage, currentFunction, currentStatus, currentSuccess, currentAgentID]);
+    }, [
+        currentPage,
+        currentFunction,
+        currentStatus,
+        currentSuccess,
+        currentAgentID,
+        currentResponseSize
+    ]);
 
     useEffect(() => {
         LogsHistory ? setTotalPages(LogsHistory.pages) : {};
@@ -56,20 +69,6 @@ export default function LogsPage() {
             setCurrentPage(1);
         }
     }, [LogsHistory]);
-
-    useEffect(() => {
-        // For Dynamic Pagination Response Count
-        function updateResponseSize() {
-            const clientHeight = window.innerHeight;
-            const calculatedResponseSize = Math.floor(clientHeight / 100);
-            setCurrentResponseSize(calculatedResponseSize);
-        }
-        updateResponseSize();
-        window.addEventListener('resize', updateResponseSize);
-        return () => {
-            window.removeEventListener('resize', updateResponseSize);
-        };
-    }, []);
 
     function handleStatusChange(status: string) {
         if (status === statusPlaceholder) {
@@ -102,6 +101,8 @@ export default function LogsPage() {
     }
 
     const TopNav = () => {
+        const rowOptions = [10, 30, 50, 100];
+
         return (
             <div className="flex items-center justify-between ">
                 <div className="flex gap-2">
@@ -134,8 +135,62 @@ export default function LogsPage() {
                         ))}
                     </div>
                 </div>
+                <div className="flex pr-4">
+                    <span>Row per pages :</span>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger>
+                            <span className="ml-1 w-6">{currentResponseSize}</span>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="!min-w-0">
+                            {rowOptions.map((row: number, index) => (
+                                <DropdownMenuItem
+                                    key={index}
+                                    onClick={() => {
+                                        setCurrentResponseSize(row);
+                                    }}
+                                >
+                                    {row}
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </div>
+        );
+    };
+
+    return (
+        <div
+            style={{ height: 'calc(100vh - 200px)' }}
+            className="flex flex-col justify-between"
+        >
+            <div>
+                <TopNav />
+                <div className="mt-8">
+                    <ScrollArea
+                        className={'flex flex-col gap-y-2 overflow-y-auto pr-4'}
+                        style={{ maxHeight: 'calc(100vh - 350px)' }}
+                    >
+                        {LogsHistory?.items.length > 0 &&
+                            LogsHistory.items.map(
+                                (history: IAgentTriggerHistory, index: number) => (
+                                    <AgentLogCard
+                                        history={history}
+                                        key={index}
+                                        className="bg-white"
+                                        globalLog={true}
+                                    />
+                                )
+                            )}
+                    </ScrollArea>
+                </div>
+                {!loadingLogs && LogsHistory?.items.length === 0 && (
+                    <EmptyLogsPlaceholder />
+                )}
+            </div>
+            <div className="flex flex-row-reverse">
                 <PaginationBtns
-                    className="pr-4"
+                    className="flex justify-center justify-self-end pr-2"
                     onPaginate={(val: number) => {
                         const newVal = currentPage + val;
                         setCurrentPage(newVal);
@@ -144,36 +199,6 @@ export default function LogsPage() {
                     upperLimit={totalPages}
                 />
             </div>
-        );
-    };
-
-    return (
-        <div style={{ height: 'calc(100vh - 200px)' }} className="flex flex-col">
-            <TopNav />
-            <div className="mt-8">
-                <div className={'flex h-full w-full flex-col gap-10'}>
-                    <ScrollArea
-                        className={'h-agentComponentHeight overflow-y-auto pr-4'}
-                    >
-                        <div className="grid grid-cols-1 gap-2">
-                            {LogsHistory?.items.length > 0 &&
-                                LogsHistory.items.map(
-                                    (history: IAgentTriggerHistory, index: number) => (
-                                        <AgentLogCard
-                                            history={history}
-                                            key={index}
-                                            className="bg-white"
-                                            globalLog
-                                        />
-                                    )
-                                )}
-                        </div>
-                    </ScrollArea>
-                </div>
-            </div>
-            {!loadingLogs && LogsHistory?.items.length === 0 && (
-                <EmptyLogsPlaceholder />
-            )}
         </div>
     );
 }
