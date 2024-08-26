@@ -342,16 +342,18 @@ export const AgentCardSkeleton = ({ className }: { className?: string }) => {
                     <Skeleton className="h-14 w-14 rounded-full" />
                     <div className="flex flex-col gap-[2px]">
                         <Skeleton className="h-5 w-24" />
-                        <Skeleton className="mt-1 h-3 w-36" />
+                        <Skeleton className="mt-1 h-4 w-36" />
                     </div>
                 </div>
 
-                <div className="mt-5 flex flex-col text-brand-Gray-200">
+                <div className="mt-7 flex flex-col text-brand-Gray-200">
                     <CardContent className="ml-2 flex flex-col gap-y-[10px]">
                         <Skeleton className="h-4 w-36" />
                         <Skeleton className="h-4 w-32" />
                         <Skeleton className="h-4 w-28" />
-                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-4 w-44" />
+                        <Skeleton className="h-4 w-44" />
                     </CardContent>
                 </div>
             </div>
