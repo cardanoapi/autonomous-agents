@@ -14,6 +14,7 @@ import { Card, CardContent, CardDescription, CardTitle } from '../atoms/Card';
 import { Dialog, DialogContent } from '../atoms/Dialog';
 import TemplateIcon from '../icons/TemplatesIcon';
 import { cn } from '../lib/utils';
+import { Skeleton } from '../shadcn/ui/skeleton';
 import ConfirmationBox from './ConfirmationBox';
 import { SuccessToast } from './CustomToasts';
 
@@ -116,3 +117,25 @@ export default function TemplateCard({ template, enableEdit = false }: ITemplate
         </>
     );
 }
+
+export const TemplateCardSkeleton = () => {
+    return (
+        <Card className="group flex min-h-[157px] min-w-[271px] flex-col justify-between gap-y-0 p-4 pb-6 pr-4">
+            <div>
+                <div className="flex justify-between">
+                    <div className="flex items-center gap-x-2">
+                        <Skeleton className="h-8 w-8 rounded-full bg-gray-300" />
+                        <div className="h-6 w-24 rounded-md bg-gray-300" />
+                    </div>
+                </div>
+                <div className="mt-2">
+                    <Skeleton className="h-4 w-full rounded-md bg-gray-300" />
+                </div>
+            </div>
+            <div className="gap flex flex-col gap-y-2">
+                <Skeleton className="h-4 w-32 rounded-md bg-gray-300" />
+                <Skeleton className="h-4 w-24 rounded-md bg-gray-300" />
+            </div>
+        </Card>
+    );
+};

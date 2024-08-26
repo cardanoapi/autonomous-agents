@@ -12,10 +12,9 @@ import { Button } from '@app/components/atoms/Button';
 import { SearchField } from '@app/components/atoms/SearchField';
 import { cn } from '@app/components/lib/utils';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
-import { Skeleton } from '@app/components/shadcn/ui/skeleton';
+import TemplateCard from '@app/components/molecules/TemplateCard';
+import { TemplateCardSkeleton } from '@app/components/molecules/TemplateCard';
 import { adminAccessAtom, templateCreatedAtom } from '@app/store/localStore';
-
-import TemplatesContainer from './TemplatesContainer';
 
 export default function TemplatesPage() {
     const { data: templates = [], isLoading } = useQuery<ITemplate[]>({
@@ -50,6 +49,9 @@ export default function TemplatesPage() {
         setFilteredTemplates(newTemplates);
     }
 
+    const containerClass =
+        'grid grid-cols-1 gap-5 sm:grid-cols-2  lg:grid-cols-3 xl:grid-cols-4 4xl:grid-cols-5';
+
     return (
         <>
             <div className="flex justify-between">
@@ -77,15 +79,20 @@ export default function TemplatesPage() {
 
             <div className="flex flex-col gap-y-[80px] pb-10 pt-10">
                 <div className="mt-2 flex flex-col gap-y-5">
-                    {filteredTemplates.length ? (
-                        isLoading ? (
-                            <TemplatesSkeleton />
-                        ) : (
-                            <TemplatesContainer
-                                templates={filteredTemplates}
-                                enableEdit={adminAccess}
-                            />
-                        )
+                    {isLoading ? (
+                        <div className={containerClass}>
+                            <TemplateSkeletonContainer />
+                        </div>
+                    ) : filteredTemplates.length > 0 ? (
+                        <div className={containerClass}>
+                            {templates.map((template: ITemplate, index: number) => (
+                                <TemplateCard
+                                    template={template}
+                                    key={index}
+                                    enableEdit={adminAccess}
+                                />
+                            ))}
+                        </div>
                     ) : (
                         <span>No Templates Found</span>
                     )}
@@ -95,19 +102,14 @@ export default function TemplatesPage() {
     );
 }
 
-const TemplatesSkeleton = () => {
+const TemplateSkeletonContainer = () => {
     return (
-        <div className={'flex flex-row flex-wrap gap-4'}>
-            {Array(4)
+        <>
+            {Array(10)
                 .fill(undefined)
                 .map((_, index: number) => {
-                    return (
-                        <Skeleton
-                            key={index}
-                            className={'h-[160px] w-[280px] rounded-lg'}
-                        />
-                    );
+                    return <TemplateCardSkeleton key={index} />;
                 })}
-        </div>
+        </>
     );
 };
