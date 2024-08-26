@@ -31,6 +31,10 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
         setOpenDialog(false);
     };
 
+    if (agent?.is_active === false || agent?.is_active === null) {
+        return <AgentOfflinePlaceholder />;
+    }
+
     return (
         <div className={'flex h-full w-full flex-col gap-10'}>
             <div className={'flex items-center gap-3'}>
@@ -93,3 +97,17 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
 };
 
 export default AgentManualTriggerComponent;
+
+const AgentOfflinePlaceholder: React.FC = () => (
+    <div className="flex h-full w-full items-center justify-center rounded border-[4px] border-dashed border-gray-200 bg-slate-50">
+        <div className="flex flex-col items-center gap-2">
+            <span className="flex items-center justify-center gap-2 text-2xl text-gray-300">
+                <AgentsIcon className="mb-1 h-8 w-8" />
+                Agent is Offline.
+            </span>
+            <span className="text-xl text-gray-300">
+                Start the Agent to trigger Functions manually.
+            </span>
+        </div>
+    </div>
+);
