@@ -19,15 +19,10 @@ import { SuccessToast } from './CustomToasts';
 
 export interface ITemplateCard {
     template: ITemplate;
-    templateTrigger: string;
     enableEdit?: boolean;
 }
 
-export default function TemplateCard({
-    template,
-    templateTrigger,
-    enableEdit = false
-}: ITemplateCard) {
+export default function TemplateCard({ template, enableEdit = false }: ITemplateCard) {
     const router = useRouter();
 
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -95,7 +90,8 @@ export default function TemplateCard({
                 </div>
                 <CardContent className="gap flex flex-col gap-y-2">
                     <span className="card-h4">
-                        Total Triggers: {templateTrigger.length}
+                        Total Functions :{' '}
+                        {template?.template_configurations?.length || 0}
                     </span>
                     <span className="card-h4 p-0">{template.id}</span>
                 </CardContent>
