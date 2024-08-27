@@ -114,7 +114,10 @@ export default function Home() {
                             </DropdownMenu>
                         )}
                     </div>
-                    <div className="mt-2 h-[355px] 2xl:h-[500px] 4xl:h-[600px]">
+                    <div
+                        className="mt-2 h-[355px] 2xl:h-[500px] 4xl:h-[600px]"
+                        style={{}}
+                    >
                         {isLoading ? (
                             <div className="h-full w-full pl-8 pt-6">
                                 <Skeleton className="h-full w-full" />
