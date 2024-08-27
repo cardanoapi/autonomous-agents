@@ -29,7 +29,7 @@ interface IDataSource {
     placeholder: string;
     timeUnit: string;
     chartData: ILineChartData[];
-    numberOfxAxisInterval: number;
+    xAxisInterval: number;
 }
 
 export default function Home() {
@@ -49,7 +49,7 @@ export default function Home() {
                 triggerHistoryMetric?.last_hour_successful_triggers || [],
                 'Mins'
             ),
-            numberOfxAxisInterval: 5
+            xAxisInterval: 5
         },
         {
             placeholder: 'Last 24 Hours',
@@ -58,7 +58,7 @@ export default function Home() {
                 triggerHistoryMetric?.last_24hour_successful_triggers || [],
                 'Hours'
             ),
-            numberOfxAxisInterval: 8
+            xAxisInterval: 2
         },
         {
             placeholder: 'Last 7 Days',
@@ -67,7 +67,7 @@ export default function Home() {
                 triggerHistoryMetric?.last_week_successful_triggers || [],
                 'Days'
             ),
-            numberOfxAxisInterval: 7
+            xAxisInterval: 0
         }
     ];
 
@@ -127,7 +127,7 @@ export default function Home() {
                                     }
                                     xaxisInterval={
                                         dataSources[currentChartFilterOption]
-                                            .numberOfxAxisInterval
+                                            .xAxisInterval
                                     }
                                 />
                                 <div className="mt-2 text-center">
