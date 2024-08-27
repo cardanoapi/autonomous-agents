@@ -124,7 +124,7 @@ export const TemplateCardSkeleton = () => {
             <div>
                 <div className="flex justify-between">
                     <div className="flex items-center gap-x-2">
-                        <Skeleton className="h-8 w-8 rounded-full bg-gray-300" />
+                        <Skeleton className="h-6 w-6  bg-gray-300" />
                         <div className="h-6 w-24 rounded-md bg-gray-300" />
                     </div>
                 </div>

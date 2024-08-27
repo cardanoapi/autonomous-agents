@@ -66,7 +66,7 @@ export default function TemplatesPage() {
 
     const TopNavSkeleton = () => {
         return (
-            <div className="flex justify-between p-2">
+            <div className="flex justify-between ">
                 <div className="flex items-center gap-x-4">
                     <Skeleton className="h-8 w-[140px]" />
                     <Skeleton className="h-10 min-w-[420px]" />
