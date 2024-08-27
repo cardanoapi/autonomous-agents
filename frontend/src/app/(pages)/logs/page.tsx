@@ -23,17 +23,19 @@ import { SearchField } from '@app/components/atoms/SearchField';
 import PaginationBtns from '@app/components/molecules/PaginationBtns';
 
 export default function LogsPage() {
-    //Related to Log query
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const [currentResponseSize, setCurrentResponseSize] = useState<number>(50);
-    const [currentStatus, setCurrentStatus] = useState<string>('None');
-    const [currentSuccess, setCurrentSucccess] = useState<string>('None');
-    const [currentFunction, setCurrentFunction] = useState('None');
-    const [currentAgentID, setCurrentAgentID] = useState('None');
-    const [totalPages, setTotalPages] = useState<number>(1);
+    // Object to store all state related to the query
+    const [logQueryState, setLogQueryState] = useState({
+        currentPage: 1,
+        currentResponseSize: 50,
+        currentStatus: 'None',
+        currentSuccess: 'None',
+        currentFunction: 'None',
+        currentAgentID: 'None',
+        totalPages: 1,
+        statusPlaceholder: 'None'
+    });
 
     const statusOptions = ['Success', 'Skipped', 'Failed'];
-    const [statusPlaceholder, setStatusPlaceholder] = useState('None');
 
     const {
         data: LogsHistory,
@@ -42,12 +44,12 @@ export default function LogsPage() {
     } = useQuery({
         queryKey: [
             'LogsHistory',
-            currentPage,
-            currentResponseSize,
-            currentAgentID,
-            currentFunction,
-            currentStatus,
-            currentSuccess
+            logQueryState.currentPage,
+            logQueryState.currentResponseSize,
+            logQueryState.currentAgentID,
+            logQueryState.currentFunction,
+            logQueryState.currentStatus,
+            logQueryState.currentSuccess
         ],
         queryFn: fetchAllTriggerHistory
     });
@@ -55,49 +57,66 @@ export default function LogsPage() {
     useEffect(() => {
         refetchLogsHistory();
     }, [
-        currentPage,
-        currentFunction,
-        currentStatus,
-        currentSuccess,
-        currentAgentID,
-        currentResponseSize
+        logQueryState.currentPage,
+        logQueryState.currentFunction,
+        logQueryState.currentStatus,
+        logQueryState.currentSuccess,
+        logQueryState.currentAgentID,
+        logQueryState.currentResponseSize
     ]);
 
     useEffect(() => {
-        LogsHistory ? setTotalPages(LogsHistory.pages) : {};
-        if (LogsHistory && LogsHistory.pages < currentPage) {
-            setCurrentPage(1);
+        if (LogsHistory) {
+            setLogQueryState((prevState) => ({
+                ...prevState,
+                totalPages: LogsHistory.pages
+            }));
+            if (LogsHistory.pages < logQueryState.currentPage) {
+                setLogQueryState((prevState) => ({
+                    ...prevState,
+                    currentPage: 1
+                }));
+            }
         }
     }, [LogsHistory]);
 
     function handleStatusChange(status: string) {
-        if (status === statusPlaceholder) {
-            setStatusPlaceholder('None');
-            setCurrentStatus('None');
-            setCurrentSucccess('None');
+        if (status === logQueryState.statusPlaceholder) {
+            setLogQueryState((prevState) => ({
+                ...prevState,
+                statusPlaceholder: 'None',
+                currentStatus: 'None',
+                currentSuccess: 'None'
+            }));
             refetchLogsHistory();
             return;
         }
+
+        let newStatus = 'None';
+        let newSuccess = 'None';
+
         switch (status) {
-            case 'None':
-                setCurrentStatus('None');
-                setCurrentSucccess('None');
-                break;
             case 'Success':
-                setCurrentStatus('True');
-                setCurrentSucccess('True');
+                newStatus = 'True';
+                newSuccess = 'True';
                 break;
             case 'Skipped':
-                setCurrentStatus('False');
-                setCurrentSucccess('False');
+                newStatus = 'False';
+                newSuccess = 'False';
                 break;
             case 'Failed':
-                setCurrentStatus('True');
-                setCurrentSucccess('False');
+                newStatus = 'True';
+                newSuccess = 'False';
                 break;
         }
-        setStatusPlaceholder(status);
-        setCurrentPage(1);
+
+        setLogQueryState((prevState) => ({
+            ...prevState,
+            statusPlaceholder: status,
+            currentStatus: newStatus,
+            currentSuccess: newSuccess,
+            currentPage: 1
+        }));
     }
 
     const TopNav = () => {
@@ -110,12 +129,18 @@ export default function LogsPage() {
                         placeholder="Enter Agent ID"
                         variant="secondary"
                         onSearch={(val: string) => {
-                            setCurrentAgentID(val);
+                            setLogQueryState((prevState) => ({
+                                ...prevState,
+                                currentAgentID: val
+                            }));
                         }}
                     />
                     <AgentFunctionsDropDown
                         onChange={(strValue: string) => {
-                            setCurrentFunction(strValue);
+                            setLogQueryState((prevState) => ({
+                                ...prevState,
+                                currentFunction: strValue
+                            }));
                         }}
                     />
                     <div className="flex justify-center gap-2">
@@ -123,7 +148,7 @@ export default function LogsPage() {
                             <Badge
                                 key={index}
                                 variant={
-                                    statusPlaceholder === status
+                                    logQueryState.statusPlaceholder === status
                                         ? 'successPrimary'
                                         : 'primary'
                                 }
@@ -139,14 +164,19 @@ export default function LogsPage() {
                     <span>Row per pages :</span>
                     <DropdownMenu>
                         <DropdownMenuTrigger>
-                            <span className="ml-1 w-6">{currentResponseSize}</span>
+                            <span className="ml-1 w-6">
+                                {logQueryState.currentResponseSize}
+                            </span>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="!min-w-0">
                             {rowOptions.map((row: number, index) => (
                                 <DropdownMenuItem
                                     key={index}
                                     onClick={() => {
-                                        setCurrentResponseSize(row);
+                                        setLogQueryState((prevState) => ({
+                                            ...prevState,
+                                            currentResponseSize: row
+                                        }));
                                     }}
                                 >
                                     {row}
@@ -171,39 +201,40 @@ export default function LogsPage() {
                         className={'flex flex-col gap-y-2 overflow-y-auto pr-4'}
                         style={{ maxHeight: 'calc(100vh - 350px)' }}
                     >
-                        {loadingLogs ? (
-                            Array.from({ length: 50 }).map((_, index) => (
-                                <AgentLogCardSkeleton key={index} />
-                            ))
-                        ) : LogsHistory?.items.length > 0 ? (
-                            LogsHistory.items.map(
-                                (history: IAgentTriggerHistory, index: number) => (
-                                    <AgentLogCard
-                                        history={history}
-                                        key={index}
-                                        className="bg-white"
-                                        globalLog
-                                    />
-                                )
-                            )
-                        ) : (
-                            <EmptyLogsPlaceholder />
-                        )}
+                        {loadingLogs
+                            ? Array.from({ length: 50 }).map((_, index) => (
+                                  <AgentLogCardSkeleton key={index} />
+                              ))
+                            : LogsHistory?.items.length > 0 &&
+                              LogsHistory.items.map(
+                                  (history: IAgentTriggerHistory, index: number) => (
+                                      <AgentLogCard
+                                          history={history}
+                                          key={index}
+                                          className="bg-white"
+                                          globalLog
+                                      />
+                                  )
+                              )}
                     </ScrollArea>
                 </div>
                 {!loadingLogs && LogsHistory?.items.length === 0 && (
-                    <EmptyLogsPlaceholder />
+                    <div style={{ height: 'calc(100vh - 350px)' }}>
+                        <EmptyLogsPlaceholder />
+                    </div>
                 )}
             </div>
             <div className="flex flex-row-reverse">
                 <PaginationBtns
                     className="flex justify-center justify-self-end pr-2"
                     onPaginate={(val: number) => {
-                        const newVal = currentPage + val;
-                        setCurrentPage(newVal);
+                        setLogQueryState((prevState) => ({
+                            ...prevState,
+                            currentPage: prevState.currentPage + val
+                        }));
                     }}
-                    refCurrentPage={currentPage}
-                    upperLimit={totalPages}
+                    refCurrentPage={logQueryState.currentPage}
+                    upperLimit={logQueryState.totalPages}
                 />
             </div>
         </div>
