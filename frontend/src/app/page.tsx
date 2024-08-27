@@ -129,6 +129,7 @@ export default function Home() {
                                         dataSources[currentChartFilterOption]
                                             .xAxisInterval
                                     }
+                                    className="pt-10"
                                 />
                                 <div className="mt-2 text-center">
                                     Time (

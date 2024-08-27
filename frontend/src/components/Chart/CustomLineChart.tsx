@@ -76,7 +76,7 @@ export default function CustomLineChart({
         <ResponsiveContainer width="100%" height="100%" className={className}>
             <AreaChart
                 data={chartData || demoCustomLineChartData}
-                margin={{ top: 40, right: 20, left: 0, bottom: 0 }}
+                margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
             >
                 <defs>
                     <linearGradient
@@ -146,7 +146,6 @@ export default function CustomLineChart({
                         stroke="#A2A3A5"
                         interval={xaxisInterval}
                         reversed={true}
-                        padding={{ right: 5 }}
                     ></XAxis>
                 )}
             </AreaChart>
