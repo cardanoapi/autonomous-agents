@@ -55,7 +55,7 @@ const AgentTabContent = ({
     );
 };
 
-const DefaultSkeleton = () => {
+export const DefaultSkeleton = () => {
     return <Skeleton className="h-full w-full"></Skeleton>;
 };
 export default AgentTabContent;

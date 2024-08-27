@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import Head from 'next/head';
 
@@ -8,9 +8,12 @@ import { fecthTriggerHistoryMetric } from '@api/triggerHistoryMetric';
 import { useQuery } from '@tanstack/react-query';
 
 import { convertDictToGraphDataFormat } from '@app/components/Chart/ChartFilter';
-import { IChartFilterOption } from '@app/components/Chart/ChartFilter';
-import { chartFilterOptions } from '@app/components/Chart/ChartFilter';
+import {
+    IChartFilterOption,
+    chartFilterOptions
+} from '@app/components/Chart/ChartFilter';
 import CustomLineChart from '@app/components/Chart/CustomLineChart';
+import { ILineChartData } from '@app/components/Chart/CustomLineChart';
 import { Card } from '@app/components/atoms/Card';
 import {
     DropdownMenu,
@@ -18,43 +21,55 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
 import DashboardCards from './components/DashboardCards';
 
+interface IDataSource {
+    placeholder: string;
+    timeUnit: string;
+    chartData: ILineChartData[];
+    numberOfxAxisInterval: number;
+}
+
 export default function Home() {
-    const { data: triggerHistoryMetric } = useQuery({
+    const { data: triggerHistoryMetric, isLoading: isLoading } = useQuery({
         queryKey: ['TriggerHistoyMetric'],
-        queryFn: () => fecthTriggerHistoryMetric([])
+        queryFn: () => fecthTriggerHistoryMetric([]),
+        refetchInterval: 60000
     });
 
-    const [chartDataSource, setChartDataSource] = useState<
-        { count: number; values: Record<string, number> }[]
-    >([]);
+    const [currentChartFilterOption, setCurrentChartFilterOption] = useState<number>(2);
 
-    const [currentChartFilterOption, setCurrentChartFilterOption] =
-        useState<IChartFilterOption>(chartFilterOptions[2]);
-
-    useEffect(() => {
-        if (triggerHistoryMetric !== undefined) {
-            switch (currentChartFilterOption.placeholder) {
-                case 'Last Hour':
-                    setChartDataSource(
-                        triggerHistoryMetric.last_hour_successful_triggers
-                    );
-                    break;
-                case 'Last 24 Hours':
-                    setChartDataSource(
-                        triggerHistoryMetric.last_24hour_successful_triggers
-                    );
-                    break;
-                case 'Last 7 Days':
-                    setChartDataSource(
-                        triggerHistoryMetric.last_week_successful_triggers
-                    );
-                    break;
-            }
+    const dataSources: IDataSource[] = [
+        {
+            placeholder: 'Last Hour',
+            timeUnit: 'Mins',
+            chartData: convertDictToGraphDataFormat(
+                triggerHistoryMetric?.last_hour_successful_triggers || [],
+                'Mins'
+            ),
+            numberOfxAxisInterval: 5
+        },
+        {
+            placeholder: 'Last 24 Hours',
+            timeUnit: 'Hours',
+            chartData: convertDictToGraphDataFormat(
+                triggerHistoryMetric?.last_24hour_successful_triggers || [],
+                'Hours'
+            ),
+            numberOfxAxisInterval: 8
+        },
+        {
+            placeholder: 'Last 7 Days',
+            timeUnit: 'Days',
+            chartData: convertDictToGraphDataFormat(
+                triggerHistoryMetric?.last_week_successful_triggers || [],
+                'Days'
+            ),
+            numberOfxAxisInterval: 7
         }
-    }, [currentChartFilterOption, triggerHistoryMetric]);
+    ];
 
     return (
         <>
@@ -71,48 +86,56 @@ export default function Home() {
                 <div className="mt-5 w-full pr-6">
                     <div className="flex justify-between">
                         <span className="title-1">Transactions</span>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger
-                                border={true}
-                                className="flex min-w-40 justify-between"
-                            >
-                                {currentChartFilterOption.placeholder}
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="bg-white">
-                                {chartFilterOptions.map(
-                                    (item: IChartFilterOption, index) => (
-                                        <DropdownMenuItem
-                                            onClick={() => {
-                                                setCurrentChartFilterOption({
-                                                    placeholder: item.placeholder,
-                                                    unit: item.unit,
-                                                    xaxisInterval: item.xaxisInterval
-                                                });
-                                            }}
-                                            key={index}
-                                        >
-                                            {item.placeholder}
-                                        </DropdownMenuItem>
-                                    )
-                                )}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+
+                        {isLoading ? (
+                            <Skeleton className="h-8 w-40" />
+                        ) : (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger
+                                    border={true}
+                                    className="flex min-w-40 justify-between"
+                                >
+                                    {dataSources[currentChartFilterOption].placeholder}
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="bg-white">
+                                    {chartFilterOptions.map(
+                                        (item: IChartFilterOption, index) => (
+                                            <DropdownMenuItem
+                                                key={index}
+                                                onClick={() =>
+                                                    setCurrentChartFilterOption(index)
+                                                }
+                                            >
+                                                {item.placeholder}
+                                            </DropdownMenuItem>
+                                        )
+                                    )}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        )}
                     </div>
                     <div className="mt-2 h-[355px] 2xl:h-[500px] 4xl:h-[600px]">
-                        <CustomLineChart
-                            chartData={
-                                triggerHistoryMetric !== undefined
-                                    ? convertDictToGraphDataFormat(
-                                          chartDataSource || [],
-                                          currentChartFilterOption.unit
-                                      )
-                                    : []
-                            }
-                            xaxisInterval={currentChartFilterOption.xaxisInterval}
-                        />
-                        <div className="mt-2 text-center">
-                            Time ({currentChartFilterOption.unit})
-                        </div>
+                        {isLoading ? (
+                            <div className="h-full w-full pl-8 pt-6">
+                                <Skeleton className="h-full w-full" />
+                            </div>
+                        ) : (
+                            <>
+                                <CustomLineChart
+                                    chartData={
+                                        dataSources[currentChartFilterOption].chartData
+                                    }
+                                    xaxisInterval={
+                                        dataSources[currentChartFilterOption]
+                                            .numberOfxAxisInterval
+                                    }
+                                />
+                                <div className="mt-2 text-center">
+                                    Time (
+                                    {dataSources[currentChartFilterOption].timeUnit})
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </Card>
