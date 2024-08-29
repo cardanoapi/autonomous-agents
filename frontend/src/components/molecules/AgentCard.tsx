@@ -7,7 +7,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { formatDatetoHumanReadable } from '@utils';
 import { PlayIcon, Trash2 } from 'lucide-react';
 
-import { deleteAgentbyID, fetchAgentbyID } from '@app/app/api/agents';
+import { deleteAgentbyID } from '@app/app/api/agents';
 import { ITemplate, fetchTemplatebyID } from '@app/app/api/templates';
 import {
     ITransactionsCount,
@@ -84,10 +84,10 @@ export default function AgentCard({
         queryFn: () => fecthTriggerHistoryMetric([], agentID)
     });
 
-    const { data: currentAgent } = useQuery({
+    /*const { data: currentAgent } = useQuery({
         queryKey: [`currentAgent/${agentID}`],
         queryFn: () => fetchAgentbyID(agentID || '')
-    });
+    });*/
 
     function handleAgentRun(e: any) {
         e.stopPropagation();
@@ -107,10 +107,10 @@ export default function AgentCard({
     }
 
     const agentDetails: IAgentDetail[] = [
-        {
+        /*{
             placeholder: 'No of Instance',
             value: currentAgent?.instance || 0
-        },
+        }, */
         {
             placeholder: 'Total Functions',
             value: functionCount
@@ -125,19 +125,21 @@ export default function AgentCard({
         {
             placeholder: 'Successfull Triggers',
             value: transactions_count?.successfulTransactions || 0
-        },
+        }
+        /*
         {
             placeholder: 'Unsuccessfull Triggers',
             value: transactions_count?.unSuccessfulTransactions || 0
-        }
+        }*/
     ];
 
     function renderAgentDetails(agentDetails: IAgentDetail[]) {
         return (
             <div className="flex flex-col gap-y-2">
                 {agentDetails.map(({ placeholder, value }, index) => (
-                    <span key={index}>
-                        {placeholder} : <span className="text-active">{value}</span>
+                    <span key={index} className="!text-xs">
+                        {placeholder} :{' '}
+                        <span className="text-active text-xs">{value}</span>
                     </span>
                 ))}
             </div>
@@ -150,7 +152,7 @@ export default function AgentCard({
                 onClick={() => {
                     router.push(`/agents/${agentID}`);
                 }}
-                className="hover-transition-primary group relative flex min-h-[250px] min-w-[260px] cursor-pointer flex-col justify-between !gap-y-4 rounded-xl p-6 transition-all"
+                className="hover-transition-primary group relative flex  min-h-[247px] min-w-[261px] cursor-pointer flex-col !gap-y-6 rounded-xl p-6 transition-all "
             >
                 <AgentCardControls
                     enableRun={enableEdit}
@@ -165,13 +167,13 @@ export default function AgentCard({
                     isActive={isActive}
                 />
 
-                <CardContent className="mt-5 flex flex-col gap-y-2">
+                <CardContent className="flex flex-col gap-y-2">
                     {templateID && (
-                        <span className="card-h4">
+                        <span className="flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-center">
                             Template:{' '}
-                            <span className="gray-background ml-1">
-                                {template?.name || 'Template Not Found'}
-                            </span>
+                            <div className="gray-background ml-1 overflow-hidden text-ellipsis whitespace-nowrap text-xs">
+                                {template?.name || 'Template Missing'}
+                            </div>
                         </span>
                     )}
 
@@ -183,7 +185,7 @@ export default function AgentCard({
                             transactions_count={transactions_count}
                         />
                     ) : (
-                        <div className="pb-10">
+                        <div className="pb-0">
                             {renderAgentDetails(agentTriggerDetails)}
                         </div>
                     )}
@@ -216,7 +218,7 @@ const AgentCardControls = ({
     return (
         <div
             className={cn(
-                'absolute right-3 justify-end gap-1',
+                'absolute right-3 justify-end gap-1 bg-white',
                 enableRun ? 'flex' : 'hidden'
             )}
         >
@@ -250,8 +252,18 @@ const AgentCardTitle = ({
         <div className={'flex items-center gap-3'}>
             <AgentAvatar hash={agentID || ''} size={40} isActive={isActive || false} />
             <div className="card-h2 flex flex-col">
-                <span className={'leading-normal'}>{Truncate(agentName, 20)}</span>
-                <span className={'text-[10px] leading-normal text-brand-Black-300/80'}>
+                <span
+                    className={
+                        'overflow-hidden text-ellipsis !whitespace-nowrap !text-sm leading-normal'
+                    }
+                >
+                    {agentName}
+                </span>
+                <span
+                    className={
+                        'overflow-hidden !whitespace-nowrap text-[8px] leading-normal text-brand-Black-300/80'
+                    }
+                >
                     {Truncate(agentID || '', 25)}
                 </span>
             </div>
@@ -333,27 +345,25 @@ export const AgentCardSkeleton = ({ className }: { className?: string }) => {
     return (
         <Card
             className={cn(
-                'flex min-h-[320px] min-w-[260px] flex-col justify-between gap-y-4 rounded-xl p-6',
+                'mmin-w-[261px] flex min-h-[247px] flex-col justify-between gap-y-4 rounded-xl p-6',
                 className
             )}
         >
             <div>
                 <div className="flex items-center gap-2">
-                    <Skeleton className="h-14 w-14 rounded-full" />
+                    <Skeleton className="h-12 w-12 rounded-full" />
                     <div className="flex flex-col gap-[2px]">
-                        <Skeleton className="h-5 w-24" />
-                        <Skeleton className="mt-1 h-4 w-36" />
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="mt-1 h-3 w-36" />
                     </div>
                 </div>
 
-                <div className="mt-7 flex flex-col text-brand-Gray-200">
+                <div className="mt-5 flex flex-col text-brand-Gray-200">
                     <CardContent className="ml-2 flex flex-col gap-y-[10px]">
                         <Skeleton className="h-4 w-36" />
-                        <Skeleton className="h-4 w-32" />
                         <Skeleton className="h-4 w-28" />
                         <Skeleton className="h-4 w-32" />
-                        <Skeleton className="h-4 w-44" />
-                        <Skeleton className="h-4 w-44" />
+                        <Skeleton className="h-4 w-28" />
                     </CardContent>
                 </div>
             </div>

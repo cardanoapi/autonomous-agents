@@ -13,6 +13,7 @@ import { SearchField } from '@app/components/atoms/SearchField';
 import { cn } from '@app/components/lib/utils';
 import AgentCard, { AgentCardSkeleton } from '@app/components/molecules/AgentCard';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
+import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import {
     adminAccessAtom,
@@ -66,24 +67,29 @@ export default function AgentsPage() {
                 />
             )}
 
-            <AgentsContainer
-                agentsList={filteredAgents}
-                enableEdit={adminAccess}
-                enableDelete={adminAccess}
-                loadingAgents={isLoading}
-            />
+            <ScrollArea
+                className="mt-12 max-h-[calc(100vh-250px)] overflow-y-auto pr-4"
+                scrollHideDelay={200}
+            >
+                <AgentsContainer
+                    agentsList={filteredAgents}
+                    enableEdit={adminAccess}
+                    enableDelete={adminAccess}
+                    loadingAgents={isLoading}
+                />
 
-            {currentConnectedWallet && !isLoading && myAgents.length > 0 && (
-                <div className="my-8">
-                    <span className="h1-new">My Agents</span>
-                    <AgentsContainer
-                        agentsList={myAgents}
-                        enableEdit={true}
-                        enableDelete={adminAccess}
-                        loadingAgents={false}
-                    />
-                </div>
-            )}
+                {currentConnectedWallet && !isLoading && myAgents.length > 0 && (
+                    <div className="my-8">
+                        <span className="h1-new mb-4 inline-flex">My Agents</span>
+                        <AgentsContainer
+                            agentsList={myAgents}
+                            enableEdit={true}
+                            enableDelete={adminAccess}
+                            loadingAgents={false}
+                        />
+                    </div>
+                )}
+            </ScrollArea>
         </>
     );
 }
@@ -101,36 +107,29 @@ const AgentsContainer: React.FC<AgentsContainerProps> = ({
     enableDelete,
     loadingAgents = false
 }) => {
-    if (loadingAgents) {
-        return (
-            <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 2xl:grid-cols-4 5xl:grid-cols-5">
-                {Array.from({ length: 10 }).map((_, index) => (
-                    <AgentCardSkeleton key={index} />
-                ))}
-            </div>
-        );
+    if (agentsList.length === 0 && !loadingAgents) {
+        return <div>No Agents Found</div>;
     }
-
-    if (!agentsList.length) {
-        return null;
-    }
-
     return (
-        <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 2xl:grid-cols-4 5xl:grid-cols-5">
-            {agentsList.map((agent) => (
-                <AgentCard
-                    key={agent.id}
-                    agentName={agent.name || 'NA'}
-                    agentID={agent.id || ''}
-                    functionCount={agent.total_functions || 0}
-                    templateID={agent.template_id}
-                    totalTrigger={0}
-                    lastActive={agent.last_active || 'NA'}
-                    enableEdit={enableEdit}
-                    enableDelete={enableDelete}
-                    isActive={agent.is_active}
-                />
-            ))}
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6">
+            {loadingAgents
+                ? Array.from({ length: 10 }).map((_, index) => (
+                      <AgentCardSkeleton key={index} />
+                  ))
+                : agentsList.map((agent) => (
+                      <AgentCard
+                          key={agent.id}
+                          agentName={agent.name || 'NA'}
+                          agentID={agent.id || ''}
+                          functionCount={agent.total_functions || 0}
+                          templateID={agent.template_id}
+                          totalTrigger={0}
+                          lastActive={agent.last_active || 'NA'}
+                          enableEdit={enableEdit}
+                          enableDelete={enableDelete}
+                          isActive={agent.is_active}
+                      />
+                  ))}
         </div>
     );
 };
