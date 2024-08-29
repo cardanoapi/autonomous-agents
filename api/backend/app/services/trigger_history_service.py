@@ -100,20 +100,32 @@ class TriggerHistoryService:
     def process_chart_data(self, raw_data: List[Dict[str, Any]], max_range: int) -> List[Dict[str, Any]]:
         result = [{"count": 0, "values": {}} for _ in range(max_range)]
         now = datetime.now(timezone.utc)
+
         for item in raw_data:
             timestamp_str = item.get("minute") or item.get("hour") or item.get("day")
             if timestamp_str:
                 timestamp = datetime.fromisoformat(timestamp_str).replace(tzinfo=timezone.utc)
+
                 if max_range == 60:  # Last hour
-                    index = int((now - timestamp).total_seconds() / 60) % 60
+                    seconds_diff = int((now - timestamp).total_seconds() / 60)
+                    index = seconds_diff % 60 if seconds_diff < 60 else 59
                 elif max_range == 24:  # Last 24 hours
-                    index = int((now - timestamp).total_seconds() / 3600) % 24
+                    hours_diff = int((now - timestamp).total_seconds() / 3600)
+                    index = hours_diff % 24 if hours_diff < 24 else 23
                 elif max_range == 7:  # Last 7 days
-                    index = (now.date() - timestamp.date()).days % 7
+                    days_diff = (now.date() - timestamp.date()).days
+                    index = days_diff % 7 if days_diff < 7 else 6
                 else:
                     continue
-                result[index]["count"] += item["successful_triggers"]
-                result[index]["values"][item.get("functionName", "Unknown")] = item["successful_triggers"]
+
+                if 0 <= index < max_range:
+                    result[index]["count"] += item["successful_triggers"]
+                    function_name = item.get("functionName", "Unknown")
+                    if function_name in result[index]["values"]:
+                        result[index]["values"][function_name] += item["successful_triggers"]
+                    else:
+                        result[index]["values"][function_name] = item["successful_triggers"]
+
         return result
 
     def build_query(
