@@ -100,6 +100,9 @@ const config = {
                 agentsList: 'calc(100vh - 210px)',
                 logsList: 'calc(100vh - 260px)'
             },
+            maxWidth: {
+                agentComponentWidth: 'calc(100% - 230px)'
+            },
             keyframes: {
                 'accordion-down': {
                     from: { height: '0' },

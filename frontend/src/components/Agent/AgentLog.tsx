@@ -109,7 +109,7 @@ const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
                     ))}
                 </div>
             </div>
-            <ScrollArea className={'h-agentComponentHeight overflow-y-auto pr-4'}>
+            <ScrollArea className={'max-h-agentComponentHeight overflow-y-auto pr-4'}>
                 <div className="grid grid-cols-1 gap-2">
                     {loadingLogs
                         ? Array.from({ length: 50 }).map((_, index) => (
@@ -128,7 +128,9 @@ const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
                 </div>
             </ScrollArea>
             {!loadingLogs && LogsHistory?.items.length === 0 && (
-                <EmptyLogsPlaceholder />
+                <div className="flex flex-grow bg-black">
+                    <EmptyLogsPlaceholder />
+                </div>
             )}
         </div>
     );

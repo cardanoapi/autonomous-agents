@@ -40,7 +40,11 @@ const AgentTabContent = ({
     }
     //Logs and History tab have their own Skeleton handled inside the component
     return (
-        <div className={'max-h-[650px] flex-1 rounded-lg bg-white px-9 py-6'}>
+        <div
+            className={
+                'max-h-[650px] max-w-agentComponentWidth flex-1 rounded-lg bg-white px-9 py-6'
+            }
+        >
             {agentLoading ? (
                 selectedAgentTab === 'Overview' ? (
                     <SkeletonLoadingForAgentOverview />
