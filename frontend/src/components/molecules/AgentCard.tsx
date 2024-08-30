@@ -152,7 +152,7 @@ export default function AgentCard({
                 onClick={() => {
                     router.push(`/agents/${agentID}`);
                 }}
-                className="hover-transition-primary group relative flex  min-h-[247px] min-w-[261px] cursor-pointer flex-col !gap-y-6 rounded-xl p-6 transition-all "
+                className="hover-transition-primary group relative flex  min-h-[247px] min-w-[261px] cursor-pointer flex-col !gap-y-6 rounded-xl pl-5 pt-4 transition-all "
             >
                 <AgentCardControls
                     enableRun={enableEdit}
@@ -345,7 +345,7 @@ export const AgentCardSkeleton = ({ className }: { className?: string }) => {
     return (
         <Card
             className={cn(
-                'mmin-w-[261px] flex min-h-[247px] flex-col justify-between gap-y-4 rounded-xl p-6',
+                'mmin-w-[261px] flex min-h-[247px] flex-col justify-between gap-y-4 rounded-xl pl-5 pt-4',
                 className
             )}
         >
@@ -358,7 +358,7 @@ export const AgentCardSkeleton = ({ className }: { className?: string }) => {
                     </div>
                 </div>
 
-                <div className="mt-5 flex flex-col text-brand-Gray-200">
+                <div className="mt-6 flex flex-col text-brand-Gray-200">
                     <CardContent className="ml-2 flex flex-col gap-y-[10px]">
                         <Skeleton className="h-4 w-36" />
                         <Skeleton className="h-4 w-28" />

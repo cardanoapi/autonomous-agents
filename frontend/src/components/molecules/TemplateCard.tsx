@@ -76,12 +76,12 @@ function TemplateCardContent({
     const TriggersDiv = () => {
         return (
             <div className="flex items-center gap-1">
-                <div>Triggers :</div>
+                <div className="text-xs">Triggers :</div>
                 <div className="flex gap-1">
                     {templateTriggerNames.map((templateName: string) => (
                         <span
                             key={templateName}
-                            className="card-h4 rounded bg-gray-100 p-1"
+                            className="rounded-md bg-gray-100 px-2 py-[1px] text-center text-[8px] tracking-widest"
                         >
                             {templateName}
                         </span>
@@ -103,11 +103,11 @@ function TemplateCardContent({
                     onEdit={onEdit}
                     onDelete={onDelete}
                 />
-                <CardDescription className="card-description1 mt-2 overflow-hidden">
+                <CardDescription className="card-description1 mt-2 overflow-hidden text-xs">
                     {Truncate(template.description, 60)}
                 </CardDescription>
             </div>
-            <CardContent className="gap mt-1 flex flex-col gap-y-2">
+            <CardContent className="mt-2 flex flex-col gap-y-1">
                 <span className="card-h4">
                     Functions : {template?.template_configurations?.length || 0}
                 </span>
@@ -125,7 +125,7 @@ function TemplateCardHeader({ templateName, enableDelete, onDelete }: any) {
         <div className="relative z-10 flex justify-between">
             <div className="flex items-center gap-x-2 overflow-hidden">
                 <TemplateIcon fill="#1C63E7" />
-                <span className="inline-flex !overflow-hidden text-ellipsis whitespace-nowrap">
+                <span className="inline-flex !overflow-hidden text-ellipsis whitespace-nowrap text-base font-medium">
                     {templateName}
                 </span>
             </div>
@@ -173,7 +173,7 @@ export const TemplateCardSkeleton = () => {
                 <div className="mt-2 flex flex-col gap-y-1">
                     <Skeleton className="h-4 w-full rounded-md bg-gray-300" />
                     <Skeleton className="h-4 w-24 rounded-md" />
-                    <div className="gap mt-[1px] flex flex-col gap-y-3">
+                    <div className="mt-[1px] flex flex-col gap-y-2">
                         <Skeleton className="h-4 w-24 rounded-md bg-gray-300" />
                         <Skeleton className="h-4 w-20 rounded-md bg-gray-300" />
                     </div>

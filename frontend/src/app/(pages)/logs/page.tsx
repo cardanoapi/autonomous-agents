@@ -161,7 +161,7 @@ export default function LogsPage() {
                     </div>
                 </div>
                 <div className="flex pr-4">
-                    <span>Row per pages :</span>
+                    <span>Rows per page :</span>
                     <DropdownMenu>
                         <DropdownMenuTrigger>
                             <span className="ml-1 w-6">
@@ -190,17 +190,11 @@ export default function LogsPage() {
     };
 
     return (
-        <div
-            style={{ height: 'calc(100vh - 200px)' }}
-            className="flex flex-col justify-between"
-        >
-            <div>
+        <div style={{ height: 'calc(100vh - 200px)' }} className="flex flex-col">
+            <div className="flex flex-grow flex-col">
                 <TopNav />
-                <div className="mt-8">
-                    <ScrollArea
-                        className={'flex flex-col gap-y-2 overflow-y-auto pr-4'}
-                        style={{ maxHeight: 'calc(100vh - 350px)' }}
-                    >
+                <div className="mt-8 flex-grow">
+                    <ScrollArea className="flex max-h-logsList flex-col gap-y-2 overflow-y-auto pr-4">
                         {loadingLogs
                             ? Array.from({ length: 50 }).map((_, index) => (
                                   <AgentLogCardSkeleton key={index} />
@@ -219,14 +213,14 @@ export default function LogsPage() {
                     </ScrollArea>
                 </div>
                 {!loadingLogs && LogsHistory?.items.length === 0 && (
-                    <div style={{ height: 'calc(100vh - 350px)' }}>
+                    <div className="h-full max-h-logsList items-center justify-center">
                         <EmptyLogsPlaceholder />
                     </div>
                 )}
             </div>
-            <div className="flex flex-row-reverse">
+            <div className="flex flex-row-reverse pt-4">
                 <PaginationBtns
-                    className="flex justify-center justify-self-end pr-2"
+                    className="flex justify-center pr-2"
                     onPaginate={(val: number) => {
                         setLogQueryState((prevState) => ({
                             ...prevState,

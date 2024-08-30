@@ -68,7 +68,7 @@ export default function AgentsPage() {
             )}
 
             <ScrollArea
-                className="mt-12 max-h-[calc(100vh-250px)] overflow-y-auto pr-4"
+                className="mt-12 max-h-agentsList overflow-y-auto pr-4"
                 scrollHideDelay={200}
             >
                 <AgentsContainer
@@ -111,7 +111,7 @@ const AgentsContainer: React.FC<AgentsContainerProps> = ({
         return <div>No Agents Found</div>;
     }
     return (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 4xl:grid-cols-5 5xl:grid-cols-6">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 3xl:pr-12 4xl:grid-cols-5 5xl:grid-cols-6">
             {loadingAgents
                 ? Array.from({ length: 10 }).map((_, index) => (
                       <AgentCardSkeleton key={index} />
