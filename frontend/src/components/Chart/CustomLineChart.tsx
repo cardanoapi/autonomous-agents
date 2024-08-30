@@ -22,19 +22,6 @@ export interface ILineChartData {
     toolTipFooter?: React.ReactNode;
 }
 
-export const demoCustomLineChartData: ILineChartData[] = [
-    { name: 'A', amt: 0 },
-    { name: 'B', amt: 0 },
-    { name: 'C', amt: 0 },
-    { name: 'D', amt: 0 },
-    { name: 'E', amt: 0 },
-    { name: 'F', amt: 0 },
-    { name: 'G', amt: 0 },
-    { name: 'H', amt: 0 },
-    { name: 'I', amt: 0 },
-    { name: 'J', amt: 0 }
-];
-
 export default function CustomLineChart({
     chartData,
     className,
@@ -73,11 +60,8 @@ export default function CustomLineChart({
     const uniqueId = uuidv4(); // Generate a unique ID for this chart instance
 
     return (
-        <ResponsiveContainer width="100%" height="100%" className={className}>
-            <AreaChart
-                data={chartData || demoCustomLineChartData}
-                margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-            >
+        <ResponsiveContainer>
+            <AreaChart data={chartData} className={className}>
                 <defs>
                     <linearGradient
                         id={`colorUv-${uniqueId}`}
