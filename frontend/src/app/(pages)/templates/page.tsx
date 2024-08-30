@@ -15,7 +15,11 @@ import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import TemplateCard from '@app/components/molecules/TemplateCard';
 import { TemplateCardSkeleton } from '@app/components/molecules/TemplateCard';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
-import { adminAccessAtom, templateCreatedAtom } from '@app/store/localStore';
+import {
+    adminAccessAtom,
+    currentConnectedWalletAtom,
+    templateCreatedAtom
+} from '@app/store/localStore';
 
 export default function TemplatesPage() {
     const { data: templates = [], isLoading: isLoading } = useQuery<ITemplate[]>({
@@ -25,7 +29,7 @@ export default function TemplatesPage() {
 
     const [templateCreated, setTemplateCreated] = useAtom(templateCreatedAtom);
     const [adminAccess] = useAtom(adminAccessAtom);
-
+    const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
     useEffect(() => {
@@ -46,7 +50,7 @@ export default function TemplatesPage() {
                     <SearchField
                         variant="secondary"
                         className="h-10 min-w-[420px]"
-                        placeholder="Search Templates"
+                        placeholder="Search Templates "
                     />
                 </div>
                 <Link href="/templates/create-template">
@@ -91,7 +95,10 @@ export default function TemplatesPage() {
                                 <TemplateCard
                                     template={template}
                                     key={index}
-                                    enableEdit={adminAccess}
+                                    enableDelete={
+                                        adminAccess === true &&
+                                        currentConnectedWallet !== null
+                                    }
                                 />
                             ))}
                         </div>
