@@ -1,80 +1,102 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 
-import { getProposalList } from '@api/governanceActions';
+import { fetchProposals } from '@api/proposals';
 import { QUERY_KEYS } from '@consts';
-import { ProposalListSort } from '@models/types/proposal';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 
 import DataActionBar from '@app/app/components/DataActionBar';
 import Loader from '@app/app/components/Loader';
+import { Tabs, TabsList, TabsTrigger } from '@app/components/molecules/Tabs';
+import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 
 import ProposalCard from './components/proposalCard';
 
 function GovernanceAction() {
-    const [searchInput, setSearchInput] = useState('');
+    const { ref } = useInView();
+    //proposal types = all | internal
+    const [searchParams, setSearchParams] = useState({
+        page: 1,
+        pageSize: 10,
+        proposal_type: 'all',
+        sort: 'NewestCreated'
+    });
 
-    const { ref, inView } = useInView();
+    const { data, isLoading } = useQuery({
+        queryKey: [QUERY_KEYS.useGetInfoProposalListKey, searchParams],
+        queryFn: () => fetchProposals(searchParams)
+    });
 
-    useEffect(() => {
-        if (inView && hasNextPage && !isFetchingNextPage) {
-            fetchNextPage();
-        }
-    }, [inView]);
-
-    const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-        useInfiniteQuery({
-            queryKey: [QUERY_KEYS.useGetInfoProposalListKey, searchInput],
-            queryFn: ({ pageParam = 0 }) =>
-                getProposalList({
-                    searchPhrase: searchInput,
-                    page: pageParam,
-                    sorting: ProposalListSort.NewestCreated
-                }),
-            getNextPageParam: (lastPage) => {
-                return lastPage.pageSize * lastPage.page + lastPage.pageSize <
-                    lastPage.total
-                    ? lastPage.page + 1
-                    : undefined;
-            },
-            initialPageParam: 0
-        });
-
-    const proposalList = useMemo(
-        () => data?.pages.flatMap((page) => page.elements),
-        [data]
-    );
-
-    const handleSearch = (searchValue: string) => {
-        setSearchInput(searchValue);
-    };
+    function toggleProposalType(value: string) {
+        setSearchParams((prevParams: any) => ({
+            ...prevParams,
+            proposal_type: value
+        }));
+    }
 
     return (
         <div className="flex w-full flex-col gap-10 pb-10">
-            <DataActionBar
-                onSearch={handleSearch}
-                placeholder="Search Governance Action "
-            />
-            {isLoading && !proposalList ? (
-                <div className="flex h-proposalEmptyListHeight items-center justify-center">
-                    <Loader />
+            <div className="flex items-center">
+                <div className="flex gap-2">
+                    <DataActionBar
+                        onSearch={() => {}}
+                        placeholder="Search Governance Action"
+                    />
+
+                    <ProposalFilterTab onClick={toggleProposalType} />
                 </div>
-            ) : (
-                <div className="grid w-full grid-flow-row grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-                    {proposalList?.map((proposal) => (
-                        <ProposalCard key={proposal.id} proposal={proposal} />
-                    ))}
-                </div>
-            )}
-            {hasNextPage && (
-                <div className="my-10" ref={ref}>
-                    <Loader />
-                </div>
-            )}
+            </div>
+            <ScrollArea className="h-[calc(100vh-280px)]">
+                {isLoading ? (
+                    <div className="flex h-proposalEmptyListHeight items-center justify-center">
+                        <Loader />
+                    </div>
+                ) : (
+                    <div className="grid w-full grid-flow-row grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+                        {data?.items?.map((proposal: any) => (
+                            <ProposalCard key={proposal.id} proposal={proposal} />
+                        ))}
+                    </div>
+                )}
+                <div ref={ref} />
+            </ScrollArea>
         </div>
     );
 }
 
 export default GovernanceAction;
+
+interface ProposalFilterTabProps {
+    onClick?: (value: string) => void;
+}
+
+const ProposalFilterTab = ({ onClick }: ProposalFilterTabProps) => {
+    const handleClick = (value: string) => () => {
+        if (onClick) {
+            onClick(value);
+        }
+    };
+    const triggerClassName = 'text-base border-gray-200 border-[1px] !h-full';
+    return (
+        <Tabs defaultValue="all" className="!m-0 !p-0">
+            <TabsList className="!h-full !p-0">
+                <TabsTrigger
+                    value="all"
+                    className={triggerClassName}
+                    onClick={handleClick('all')}
+                >
+                    All Gov Actions
+                </TabsTrigger>
+                <TabsTrigger
+                    value="internal"
+                    className={triggerClassName}
+                    onClick={handleClick('internal')}
+                >
+                    Internal Only
+                </TabsTrigger>
+            </TabsList>
+        </Tabs>
+    );
+};

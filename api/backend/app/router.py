@@ -19,6 +19,7 @@ from backend.app.controllers import (
     function_router,
     trigger_history_router,
     auth_router,
+    proposal_router,
 )
 
 root_api_router = APIRouter(prefix="/api")
@@ -54,3 +55,6 @@ root_api_router.include_router(trigger_history_router.TriggerHistory().router, t
 
 # for authentication
 root_api_router.include_router(auth_router.AuthRouter().router, tags=["Authentication"], prefix="/auth")
+
+
+root_api_router.include_router(proposal_router.ProposalRouter().router, tags=["Porposal Router"])
