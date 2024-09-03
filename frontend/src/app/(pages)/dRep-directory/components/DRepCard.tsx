@@ -12,16 +12,8 @@ import toast from 'react-hot-toast';
 import AppDialog from '@app/app/components/AppDialog';
 import { Badge } from '@app/components/atoms/Badge';
 import { Button } from '@app/components/atoms/Button';
-import { cn } from '@app/components/lib/utils';
 
 import AgentsDelegationDialogContent from './AgentsDelegationDialogContent';
-
-const statusColor: Record<DRepStatus, string> = {
-    Active: '!bg-green-600',
-    Inactive: '!bg-red-600',
-    Retired: '!bg-slate-600',
-    Yourself: '!bg-blue-600'
-};
 
 interface DRepCardProps {
     dRep: IDRep;
@@ -30,7 +22,7 @@ interface DRepCardProps {
 const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
     const { isOpen, toggleDialog } = useAppDialog();
 
-    const isDataMissing = dRep.dRepName === null;
+    const isDataMissing = dRep.dRepName === null || dRep.dRepName === undefined;
 
     const formattedVotingPower = useMemo(() => {
         return convertLovelaceToAda(dRep.votingPower).toLocaleString('en-Us');
@@ -41,6 +33,14 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
         toast.success('Copied to clipboard');
     };
 
+    function getBadgeVariant(status: string) {
+        if (status === 'Active') return 'success';
+        if (status === 'Inactive') return 'default';
+        if (status === 'Retired') return 'outline';
+
+        return 'default';
+    }
+
     return (
         <>
             <div
@@ -48,14 +48,17 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
             >
                 <div className="flex space-x-4 sm:space-x-6 lg:space-x-12 xl:space-x-20">
                     <div className="flex flex-col space-y-2">
-                        <TypographyH2
-                            className={`font-semibold ${isDataMissing && 'text-red-500'}`}
-                        >
-                            {isDataMissing ? 'Data Missing' : dRep.dRepName}
-                        </TypographyH2>
+                        <div className="flex gap-2">
+                            <TypographyH2 className={`font-semibold ${isDataMissing}`}>
+                                {isDataMissing ? 'Data Missing' : dRep.dRepName}
+                            </TypographyH2>
+                            <Badge variant={getBadgeVariant(dRep.status)}>
+                                {dRep.status}
+                            </Badge>
+                        </div>
                         <div className="flex items-center text-brand-navy">
                             <p className="w-24 truncate text-sm font-medium xl:w-80">
-                                {dRep.drepId}
+                                DrepID : {dRep.drepId}
                             </p>
                             <CopyIcon
                                 onClick={handleCopyDRepId}
@@ -71,30 +74,21 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                             ₳ {formattedVotingPower}
                         </p>
                     </div>
-
-                    <div className="flex w-32 flex-col items-center space-y-2">
-                        <p className="text-sm text-gray-800">Status</p>
-                        <Badge
-                            className={cn(
-                                statusColor[dRep.status],
-                                'flex min-w-20 justify-center py-[6px] !text-white'
-                            )}
-                            variant="default"
-                        >
-                            {dRep.status}
-                        </Badge>
-                    </div>
                 </div>
-
-                {dRep.status === DRepStatus.Active && (
-                    <Button
-                        onClick={toggleDialog}
-                        className="rounded-3xl bg-brand-Blue-200"
-                        variant={'primary'}
-                    >
-                        Delegate
+                <div className="flex gap-2">
+                    <Button className="rounded-3xl" variant={'cool'}>
+                        View details
                     </Button>
-                )}
+                    {dRep.status === DRepStatus.Active && (
+                        <Button
+                            onClick={toggleDialog}
+                            className="rounded-3xl bg-brand-Blue-200 !px-6"
+                            variant={'primary'}
+                        >
+                            Delegate
+                        </Button>
+                    )}
+                </div>
             </div>
 
             {/* Dialogs */}

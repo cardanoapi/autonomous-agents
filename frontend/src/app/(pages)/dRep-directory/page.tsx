@@ -8,6 +8,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import DataActionBar from '@app/app/components/DataActionBar';
 import Loader from '@app/app/components/Loader';
 import { Button } from '@app/components/atoms/Button';
+import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 import { QUERY_KEYS } from '@app/consts/queryKeys';
 
 import DRepCard from './components/DRepCard';
@@ -53,21 +54,26 @@ export default function DRepDirectory() {
             <DataActionBar onSearch={handleSearch} placeholder="Search Drep" />
 
             {/* DRep list */}
-            <div className="flex flex-col space-y-4">
-                {dRepList?.map((dRep) => <DRepCard key={dRep.drepId} dRep={dRep} />)}
-            </div>
 
-            {hasNextPage && !isFetchingNextPage && (
-                <div className="flex justify-center">
-                    <Button
-                        onClick={() => fetchNextPage()}
-                        className="w-fit rounded-3xl text-blue-900"
-                        variant="outline"
-                    >
-                        Show more
-                    </Button>
+            <ScrollArea className="h-[calc(100vh-280px)]">
+                <div className="flex flex-col space-y-4">
+                    {dRepList?.map((dRep) => (
+                        <DRepCard key={dRep.drepId} dRep={dRep} />
+                    ))}
                 </div>
-            )}
+
+                {hasNextPage && !isFetchingNextPage && (
+                    <div className="flex justify-center">
+                        <Button
+                            onClick={() => fetchNextPage()}
+                            className="w-fit rounded-3xl text-blue-900"
+                            variant="outline"
+                        >
+                            Show more
+                        </Button>
+                    </div>
+                )}
+            </ScrollArea>
         </div>
     );
 }
