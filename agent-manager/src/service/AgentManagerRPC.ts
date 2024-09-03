@@ -8,8 +8,16 @@ import { WsRpcServer } from '../lib/WsRpcServer'
 import { RpcV1 } from 'libcardano/network/Rpc'
 import { kuber } from './kuber_service'
 import { saveTriggerHistory } from '../repository/trigger_history_repository'
+import { ManagerWalletService } from './ManagerWallet'
+import { Server } from 'ws'
 
 export class AgentManagerRPC extends WsRpcServer {
+    managerWallet: ManagerWalletService
+    constructor(server: Server, managerWallet: ManagerWalletService) {
+        super(server)
+        this.managerWallet = managerWallet
+    }
+
     protected async validateConnection(req: IncomingMessage): Promise<string> {
         const agentId = req.url?.slice(1)
         console.log('new connection from', req.socket.remoteAddress)
@@ -43,6 +51,9 @@ export class AgentManagerRPC extends WsRpcServer {
                 params.triggerType,
                 txHash
             ).catch((err) => console.error('SaveTriggerHistory : ', err))
+        } else if (method === 'loadFunds') {
+            const [address, amount] = args
+            return this.managerWallet.transferWalletFunds(address, amount)
         }
     }
 
