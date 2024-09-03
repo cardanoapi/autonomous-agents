@@ -11,6 +11,7 @@ export default async function handler(
             value: `${receivingAda.value}A`,
         },
     }
+    await context.builtins.loadFunds(14)
     return await context.wallet
         .buildAndSubmit(req)
         .then((v) => v)

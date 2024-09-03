@@ -61,6 +61,7 @@ export interface Builtins {
         url: string,
         data: Record<any, any> | any[] | string
     ) => Promise<any>
+    loadFunds: (amount: number) => Promise<any>
 
     // DRep functions
     // dRepRegistration(anchor?: OffchainData): Promise<any>

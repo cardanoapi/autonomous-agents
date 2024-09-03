@@ -212,6 +212,12 @@ export class Executor {
                     timeout
                 )
             },
+            loadFunds: async (amount: number): Promise<any> => {
+                return await this.rpcInterface.loadFunds(
+                    context.wallet.address,
+                    amount
+                )
+            },
             ...updatedBuiltins,
         } as Builtins
     }

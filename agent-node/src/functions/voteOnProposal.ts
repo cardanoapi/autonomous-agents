@@ -1,5 +1,4 @@
 import { FunctionContext } from '../executor/BaseFunction'
-import drepRegistration from './dRepRegistration'
 
 export default async function handler(
     context: FunctionContext,
@@ -28,11 +27,12 @@ export default async function handler(
         .then((v) => v)
         .catch(async (e) => {
             if (e.includes('VotersDoNotExist')) {
-                await drepRegistration(context)
-                    .then((v) => v)
-                    .catch((e) => {
-                        throw e
-                    })
+                await context.builtins.dRepRegistration()
+                // await drepRegistration(context)
+                //     .then((v) => v)
+                //     .catch((e) => {
+                //         throw e
+                //     })
                 return context.wallet
                     .buildAndSubmit(req, true)
                     .then((v) => v)
