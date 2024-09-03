@@ -12,6 +12,7 @@ import Loader from '@app/app/components/Loader';
 import { Tabs, TabsList, TabsTrigger } from '@app/components/molecules/Tabs';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 
+import EmptyGovActionPlaceholder from './components/EmptyGovActionPlaceholder';
 import ProposalCard from './components/proposalCard';
 
 function GovernanceAction() {
@@ -48,7 +49,7 @@ function GovernanceAction() {
                     <ProposalFilterTab onClick={toggleProposalType} />
                 </div>
             </div>
-            <ScrollArea className="h-[calc(100vh-280px)]">
+            <ScrollArea className="h-govActionsPageHeight">
                 {isLoading ? (
                     <div className="flex h-proposalEmptyListHeight items-center justify-center">
                         <Loader />
@@ -59,6 +60,9 @@ function GovernanceAction() {
                             <ProposalCard key={proposal.id} proposal={proposal} />
                         ))}
                     </div>
+                )}
+                {!isLoading && data?.items?.length == 0 && (
+                    <EmptyGovActionPlaceholder className="h-govActionsPageHeight" />
                 )}
                 <div ref={ref} />
             </ScrollArea>
