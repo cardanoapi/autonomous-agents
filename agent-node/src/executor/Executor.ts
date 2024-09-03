@@ -8,7 +8,7 @@ export interface CallLog {
     function: string
     arguments: any[]
     return?: any
-    error?: Error
+    error?: Error | string
 }
 export class Executor {
     wallet: any
@@ -152,20 +152,17 @@ export class Executor {
                 const origMethod = target[property]
                 if (typeof origMethod === 'function') {
                     return function (...args: any) {
+                        const log: CallLog = {
+                            function: property,
+                            arguments: args,
+                        }
+                        callLog.push(log)
                         const onSuccess = (result: any) => {
-                            callLog.push({
-                                function: property,
-                                arguments: args,
-                                return: result,
-                            })
+                            log.return=result
                             return result
                         }
                         const onError = (err: any) => {
-                            callLog.push({
-                                function: property,
-                                arguments: args,
-                                error: err,
-                            })
+                            log.error=err
                             throw err // Re-throw error after logging
                         }
                         try {

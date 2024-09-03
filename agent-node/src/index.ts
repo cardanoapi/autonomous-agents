@@ -47,7 +47,7 @@ function connectToManagerWebSocket() {
                 }
                 if (log.return) {
                     txLog.txHash = log.return.hash
-                } else {
+                } else if (log.error) {
                     txLog.message =
                         log.error && (log.error.message ?? log.error)
                     txLog.success = false
