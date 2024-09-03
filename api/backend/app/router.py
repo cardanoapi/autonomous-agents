@@ -8,6 +8,7 @@ Resources:
 
 from fastapi import APIRouter
 
+from backend.app.controllers.internal import proposal_router, drep_router
 from backend.app.controllers import (
     ready,
     demo,
@@ -19,7 +20,6 @@ from backend.app.controllers import (
     function_router,
     trigger_history_router,
     auth_router,
-    proposal_router,
 )
 
 root_api_router = APIRouter(prefix="/api")
@@ -58,3 +58,5 @@ root_api_router.include_router(auth_router.AuthRouter().router, tags=["Authentic
 
 
 root_api_router.include_router(proposal_router.ProposalRouter().router, tags=["Porposal Router"])
+
+root_api_router.include_router(drep_router.DrepRouter().router, tags=["Drep Router"])

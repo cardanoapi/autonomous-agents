@@ -1,47 +1,39 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useState } from 'react';
 
-import { getDRepList } from '@api/dRepDirectory';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { fetchDreps } from '@api/dreps';
+import { useQuery } from '@tanstack/react-query';
 
 import DataActionBar from '@app/app/components/DataActionBar';
 import Loader from '@app/app/components/Loader';
-import { Button } from '@app/components/atoms/Button';
+import { Tabs, TabsList, TabsTrigger } from '@app/components/molecules/Tabs';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 import { QUERY_KEYS } from '@app/consts/queryKeys';
 
 import DRepCard from './components/DRepCard';
 
 export default function DRepDirectory() {
-    const initialLoad = useRef(true);
-    const [searchInput, setSearchInput] = useState('');
+    const [queryParams, setQueryParams] = useState({
+        page: 1,
+        pageSize: 10,
+        drep_type: 'all'
+    });
 
-    const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } =
-        useInfiniteQuery({
-            queryKey: [QUERY_KEYS.useGetDRepListKey, searchInput],
-            queryFn: ({ pageParam = 0 }) =>
-                getDRepList({ searchPhrase: searchInput, page: pageParam }),
-            getNextPageParam: (lastPage) => {
-                return lastPage.page + 1 < lastPage.total
-                    ? lastPage.page + 1
-                    : undefined;
-            },
-            initialPageParam: 0
-        });
-
-    const dRepList = useMemo(
-        () => data?.pages.flatMap((page) => page.elements),
-        [data]
-    );
+    const { data, isLoading } = useQuery({
+        queryKey: [QUERY_KEYS.useGetDRepListKey, queryParams],
+        queryFn: () => fetchDreps({ ...queryParams })
+    });
 
     const handleSearch = (searchValue: string) => {
-        setSearchInput(searchValue);
+        setQueryParams({ ...queryParams, drep_type: searchValue }); // Reset to page 1 on new search
     };
 
-    if (isLoading && !dRepList && initialLoad.current) {
-        initialLoad.current = false;
+    const handleFilterChange = (filter: string) => {
+        setQueryParams({ ...queryParams, drep_type: filter, page: 1 }); // Reset to page 1 on filter change
+    };
 
+    if (isLoading) {
         return (
             <div className="flex h-proposalEmptyListHeight items-center justify-center">
                 <Loader />
@@ -51,29 +43,53 @@ export default function DRepDirectory() {
 
     return (
         <div className="flex flex-col space-y-12 pb-12">
-            <DataActionBar onSearch={handleSearch} placeholder="Search Drep" />
+            <div className="flex gap-2">
+                <DataActionBar
+                    onSearch={handleSearch}
+                    placeholder="Search DRep"
+                    className="!w-[500px]"
+                />
+                <DrepFilterTab onClick={handleFilterChange} />
+            </div>
 
             {/* DRep list */}
-
-            <ScrollArea className="h-[calc(100vh-280px)]">
+            <ScrollArea className="h-[calc(100vh-280px)] pr-4">
                 <div className="flex flex-col space-y-4">
-                    {dRepList?.map((dRep) => (
-                        <DRepCard key={dRep.drepId} dRep={dRep} />
-                    ))}
+                    {!isLoading &&
+                        data?.items?.map((dRep) => (
+                            <DRepCard key={dRep.drepId} dRep={dRep} />
+                        ))}
                 </div>
-
-                {hasNextPage && !isFetchingNextPage && (
-                    <div className="flex justify-center">
-                        <Button
-                            onClick={() => fetchNextPage()}
-                            className="w-fit rounded-3xl text-blue-900"
-                            variant="outline"
-                        >
-                            Show more
-                        </Button>
-                    </div>
-                )}
             </ScrollArea>
         </div>
     );
 }
+
+const DrepFilterTab = ({ onClick }: { onClick?: (value: string) => void }) => {
+    const handleClick = (value: string) => () => {
+        if (onClick) {
+            onClick(value);
+        }
+    };
+    const triggerClassName = 'text-base border-gray-200 border-[1px] !h-full';
+    return (
+        <Tabs defaultValue="all" className="!m-0 !p-0">
+            <TabsList className="!h-full !p-0">
+                <TabsTrigger
+                    value="all"
+                    className={triggerClassName}
+                    onClick={handleClick('all')}
+                >
+                    All Dreps
+                </TabsTrigger>
+                <TabsTrigger
+                    value="internal"
+                    className={triggerClassName}
+                    onClick={handleClick('internal')}
+                >
+                    Internal Only
+                </TabsTrigger>
+            </TabsList>
+        </Tabs>
+    );
+};
