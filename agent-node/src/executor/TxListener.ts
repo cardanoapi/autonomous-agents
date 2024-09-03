@@ -12,29 +12,41 @@ interface IPendingTx {
     block: DecodedBlock | null
 }
 
-function checkAndResolvePendingTx(pendingTxs: Record<string, IPendingTx>) {
-    const deletionTxs: Array<string> = []
+function checkAndResolvePendingTx(
+    pendingTxs: Record<string, Array<IPendingTx>>
+) {
     Object.keys(pendingTxs).forEach((key) => {
-        const tx = pendingTxs[key]
-        if (tx.index === tx.destinationIndex) {
-            deletionTxs.push(key)
-            tx.block && tx.resolve(tx.block)
-        }
-        tx.index = tx.index + 1
+        const txs = pendingTxs[key]
+        txs.map((tx) => {
+            if (tx.block) {
+                if (tx.index === tx.destinationIndex) {
+                    tx.resolve(tx.block)
+                } else {
+                    tx.index = tx.index + 1
+                    return tx
+                }
+            } else return tx
+        }).filter((tx) => tx)
     })
-    deletionTxs.forEach((txId) => delete pendingTxs[txId])
+    Object.keys(pendingTxs).forEach((key) => {
+        if (!pendingTxs[key].length) {
+            delete pendingTxs[key]
+        }
+    })
 }
 
 export class TxListener {
     MAX_BLOCK_COUNT = 10
     blocks: Array<DecodedBlock> = [] // maintain last 10 blocks
-    pendingTxs: Record<string, IPendingTx> = {}
+    pendingTxs: Record<string, Array<IPendingTx>> = {}
     onBlock(block: DecodedBlock) {
         if (Object.keys(this.pendingTxs).length) {
             block.body.forEach((tx) => {
                 const txId = tx.hash.toString('hex')
                 if (this.pendingTxs[txId]) {
-                    this.pendingTxs[txId].block = block
+                    this.pendingTxs[txId].forEach((pendingTx) => {
+                        pendingTx.block = block
+                    })
                 }
             })
         }
@@ -51,6 +63,7 @@ export class TxListener {
     addListener(txId: string, confirmation_count: number, timeout: number) {
         return new Promise((resolve, reject) => {
             console.log(`AddListener started with timeout of ${timeout}ms`)
+            !this.pendingTxs[txId] && (this.pendingTxs[txId] = [])
             const txMatched = this.blocks.some((block) => {
                 return block.body.some((tx) => {
                     return tx.hash.toString('hex') === txId
@@ -66,14 +79,15 @@ export class TxListener {
                     txMatchedIndex + confirmation_count >
                     this.MAX_BLOCK_COUNT
                 ) {
-                    this.pendingTxs[txId] = {
+                    this.pendingTxs[txId].push({
                         resolve,
                         index: 0,
                         destinationIndex:
                             confirmation_count - (10 - txMatchedIndex),
                         block: this.blocks[txMatchedIndex],
-                    }
+                    })
                 } else {
+                    delete this.pendingTxs[txId]
                     resolve(this.blocks[txMatchedIndex])
                 }
             } else {
@@ -81,12 +95,12 @@ export class TxListener {
                     delete this.pendingTxs[txId]
                     reject(new Error(`Rejected after ${timeout} ms`))
                 }, timeout)
-                this.pendingTxs[txId] = {
+                this.pendingTxs[txId].push({
                     resolve,
                     index: 0,
                     destinationIndex: confirmation_count,
                     block: null,
-                }
+                })
             }
         })
     }

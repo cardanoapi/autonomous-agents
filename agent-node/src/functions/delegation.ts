@@ -4,19 +4,16 @@ export default async function handler(
     context: FunctionContext,
     delegation: any
 ) {
-    let certificateType = ''
     let drep = ''
-    if (typeof delegation.value === 'string') {
-        certificateType = delegation.value
-        drep = context.wallet.drepId
+    if (typeof delegation === 'string') {
+        drep = delegation
     } else {
-        certificateType = 'delegate'
-        drep = delegation.value.drep
+        drep = delegation.drep || delegation.pool
     }
     const req = {
         certificates: [
             {
-                type: certificateType,
+                type: 'delegate',
                 key: context.wallet.paymentKey.pubKeyHash,
                 drep: drep,
             },

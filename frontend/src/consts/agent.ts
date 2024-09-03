@@ -1,8 +1,8 @@
 import { AgentTriggerFunctionType, IAgentTrigger } from '@models/types';
 
 export const AGENT_TRIGGER = {
-    stakeDelegation: {
-        function_name: 'stakeDelegation',
+    delegation: {
+        function_name: 'delegation',
         parameters: [
             {
                 name: 'drep',
@@ -97,7 +97,7 @@ export const AGENT_TRIGGER = {
 export const MapFunctionNameAndViewName: Record<string, string> = {
     transferADA: 'Transfer Ada',
     voteOnProposal: 'Vote',
-    stakeDelegation: 'Stake Delegation',
+    delegation: 'Stake Delegation',
     createInfoGovAction: 'Info Action Proposal',
     proposalNewConstitution: 'Proposal New Constitution',
     dRepRegistration: 'Drep Registration',

@@ -111,7 +111,7 @@ export class Executor {
                             )
                             resolve(res)
                             await txListener
-                                .addListener(res.hash, 0, 80000)
+                                .addListener(res.hash, 2, 80000)
                                 .then(() => {
                                     console.log(
                                         'Tx matched :',
@@ -158,11 +158,11 @@ export class Executor {
                         }
                         callLog.push(log)
                         const onSuccess = (result: any) => {
-                            log.return=result
+                            log.return = result
                             return result
                         }
                         const onError = (err: any) => {
-                            log.error=err
+                            log.error = err
                             throw err // Re-throw error after logging
                         }
                         try {
@@ -239,7 +239,10 @@ export class Executor {
         builtinsProxy.callLog.push(log)
 
         try {
-            const result: any = f(newContext, ...args)
+            const result: any = f(
+                newContext,
+                ...args.map((arg: any) => arg.value)
+            )
             if (result instanceof Promise) {
                 return result
                     .then((v) => {

@@ -1,8 +1,8 @@
 import cron, { ScheduledTask } from 'node-cron'
 import { Action, Configuration } from '../service/triggerService'
 import { ManagerInterface } from '../service/ManagerInterfaceService'
-import { ILog } from '../service/TriggerActionHandler'
 import { Executor } from '../executor/Executor'
+import { saveTxLog } from './agent'
 
 let scheduledTasks: ScheduledTask[] = []
 
@@ -37,23 +37,7 @@ function createTask(
                     ...(action.parameters as any)
                 )
                 .then((result) => {
-                    result.forEach((log: any) => {
-                        const txLog: ILog = {
-                            function_name: log.function,
-                            triggerType: 'CRON',
-                            trigger: true,
-                            success: true,
-                            message: '',
-                        }
-                        if (log.return) {
-                            txLog.txHash = log.return.hash
-                        } else {
-                            txLog.message =
-                                log.error && (log.error.message ?? log.error)
-                            txLog.success = false
-                        }
-                        manager.logTx(txLog)
-                    })
+                    saveTxLog(result, manager, 'CRON')
                 })
         }
     })

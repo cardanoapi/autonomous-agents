@@ -1,6 +1,6 @@
 import { FunctionContext } from '../executor/BaseFunction'
 
-export default async function handler(context: FunctionContext) {
+export default async function builtin(context: FunctionContext) {
     const req = {
         certificates: [
             {

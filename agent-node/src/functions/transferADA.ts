@@ -2,16 +2,15 @@ import { FunctionContext } from '../executor/BaseFunction'
 
 export default async function handler(
     context: FunctionContext,
-    receiverAddress: Record<string, any>,
-    receivingAda: Record<string, any>
+    receiverAddress: string,
+    receivingAda: number
 ) {
     const req = {
         outputs: {
-            address: receiverAddress.value,
-            value: `${receivingAda.value}A`,
+            address: receiverAddress,
+            value: `${receivingAda}A`,
         },
     }
-    await context.builtins.loadFunds(14)
     return await context.wallet
         .buildAndSubmit(req)
         .then((v) => v)
