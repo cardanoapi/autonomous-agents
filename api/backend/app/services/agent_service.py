@@ -155,7 +155,7 @@ class AgentService:
             transactions = response.json()
             if isinstance(transactions, list):
                 for transaction in transactions:
-                    utxo = float(transaction.get("value", {}).get("lovelace", "0"))
+                    utxo = utxo + float(transaction.get("value", {}).get("lovelace", "0"))
         agent_configurations = await self.trigger_service.list_triggers_by_agent_id(agent.id)
         return AgentResponseWithWalletDetails(
             **agent.dict(),
