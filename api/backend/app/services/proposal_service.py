@@ -38,7 +38,9 @@ class ProposalService:
 
     async def get_external_proposals(self, page: int, pageSize: int, sort: str):
         async with aiohttp.ClientSession() as session:
-            async with session.get(f"{self.gov_action_api}?page={page}&pageSize={pageSize}&sort={sort}") as response:
+            async with session.get(
+                f"{self.gov_action_api}/proposal/list?page={page}&pageSize={pageSize}&sort={sort}"
+            ) as response:
                 response_json = await response.json()
                 return Page(
                     items=response_json["elements"],
@@ -49,7 +51,7 @@ class ProposalService:
                 )
 
     async def _fetch_proposal_data(self, session: aiohttp.ClientSession, tx_hash: str):
-        async with session.get(f"{self.gov_action_api}?search={tx_hash}") as response:
+        async with session.get(f"{self.gov_action_api}/proposal/list?search={tx_hash}") as response:
             if response.status == 200:
                 data = await response.json()
                 if "elements" in data and data["elements"]:
