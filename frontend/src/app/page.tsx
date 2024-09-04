@@ -79,7 +79,7 @@ export default function Home() {
             <div className="w-full overflow-y-auto">
                 <DashboardCards />
             </div>
-            <Card className="mt-8 flex flex-row gap-y-8 py-4 pb-16 pr-12 pt-2 2xl:mt-12 5xl:mt-16">
+            <Card className="mt-8 flex flex-row gap-y-8 px-4 py-4 pb-12 pt-2 2xl:mt-12 5xl:mt-16 ">
                 <span className="h4 rotate-180 text-center [writing-mode:vertical-lr]">
                     Transaction Volume
                 </span>
@@ -114,7 +114,7 @@ export default function Home() {
                             </DropdownMenu>
                         )}
                     </div>
-                    <div className="mt-2 h-[355px] max-h-[calc(100vh-500px)] 2xl:h-[500px] 4xl:h-[600px]">
+                    <div className="mt-2 h-[calc(100vh-460px)] min-h-[400px] pt-4 5xl:h-[calc(100vh-520px)]">
                         {isLoading ? (
                             <div className="h-full w-full pl-8 pt-6">
                                 <Skeleton className="h-full w-full" />
@@ -129,7 +129,6 @@ export default function Home() {
                                         dataSources[currentChartFilterOption]
                                             .xAxisInterval
                                     }
-                                    className="pt-8"
                                 />
                                 <div className="mt-2 text-center">
                                     Time (

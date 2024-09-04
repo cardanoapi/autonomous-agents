@@ -76,7 +76,7 @@ export default function CustomLineChart({
                             stopOpacity={1}
                         />
                         <stop
-                            offset="90%"
+                            offset="100%"
                             stopColor={strokeCoverColor}
                             stopOpacity={0}
                         />
