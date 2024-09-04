@@ -100,24 +100,39 @@ class TriggerHistoryService:
     def process_chart_data(self, raw_data: List[Dict[str, Any]], max_range: int) -> List[Dict[str, Any]]:
         result = [{"count": 0, "values": {}} for _ in range(max_range)]
         now = datetime.now(timezone.utc)
+
         for item in raw_data:
             timestamp_str = item.get("minute") or item.get("hour") or item.get("day")
             if timestamp_str:
                 timestamp = datetime.fromisoformat(timestamp_str).replace(tzinfo=timezone.utc)
+
                 if max_range == 60:  # Last hour
-                    index = int((now - timestamp).total_seconds() / 60) % 60
+                    seconds_diff = int((now - timestamp).total_seconds() // 60)
+                    index = min(max_range - 1, seconds_diff)
                 elif max_range == 24:  # Last 24 hours
-                    index = int((now - timestamp).total_seconds() / 3600) % 24
+                    hours_diff = int((now - timestamp).total_seconds() // 3600)
+                    index = min(max_range - 1, hours_diff)
                 elif max_range == 7:  # Last 7 days
-                    index = (now.date() - timestamp.date()).days % 7
+                    days_diff = (now.date() - timestamp.date()).days
+                    index = min(max_range - 1, days_diff)
                 else:
                     continue
-                result[index]["count"] += item["successful_triggers"]
-                result[index]["values"][item.get("functionName", "Unknown")] = item["successful_triggers"]
+
+                if 0 <= index < max_range:
+                    result[index]["count"] += item["successful_triggers"]
+                    function_name = item.get("functionName", "Unknown")
+                    if function_name in result[index]["values"]:
+                        result[index]["values"][function_name] += item["successful_triggers"]
+                    else:
+                        result[index]["values"][function_name] = item["successful_triggers"]
+
         return result
 
     def build_query(
-        self, time_interval: str, agent_id: Optional[str] = None, function_name: Optional[List[str]] = None
+        self,
+        time_interval: str,
+        agent_id: Optional[str] = None,
+        function_name: Optional[List[str]] = None,
     ) -> str:
         if time_interval not in ["last_hour", "last_24_hours", "last_7_days"]:
             raise ValueError("Invalid time interval. Must be 'last_hour', 'last_24_hours', or 'last_7_days'.")
@@ -172,7 +187,10 @@ class TriggerHistoryService:
     async def get_fluctuation_rate(self, agent_id: Optional[str] = None, function_name: Optional[List[str]] = None):
         now = datetime.now(timezone.utc)
         start_of_today = now - timedelta(
-            hours=now.hour, minutes=now.minute, seconds=now.second, microseconds=now.microsecond
+            hours=now.hour,
+            minutes=now.minute,
+            seconds=now.second,
+            microseconds=now.microsecond,
         )
         start_of_yesterday = start_of_today - timedelta(days=1)
 
@@ -191,7 +209,10 @@ class TriggerHistoryService:
 
         # Fetch successful triggers from the last day (excluding today)
         last_day_successful_triggers = await self.db.prisma.triggerhistory.count(
-            where={**base_filter, "timestamp": {"gt": start_of_yesterday, "lt": start_of_today}}
+            where={
+                **base_filter,
+                "timestamp": {"gt": start_of_yesterday, "lt": start_of_today},
+            }
         )
 
         # Fetch successful triggers from today
