@@ -190,11 +190,11 @@ export default function LogsPage() {
     };
 
     return (
-        <div style={{ height: 'calc(100vh - 200px)' }} className="flex flex-col">
+        <div className="flex flex-col justify-between ">
             <div className="flex flex-grow flex-col">
                 <TopNav />
                 <div className="mt-8 flex-grow">
-                    <ScrollArea className="flex max-h-logsList flex-col gap-y-2 overflow-y-auto pr-4">
+                    <ScrollArea className="flex h-logsPageHeight max-h-logsList flex-col gap-y-2 overflow-y-auto p-4">
                         {loadingLogs
                             ? Array.from({ length: 50 }).map((_, index) => (
                                   <AgentLogCardSkeleton key={index} />
@@ -210,13 +210,13 @@ export default function LogsPage() {
                                       />
                                   )
                               )}
+                        {!loadingLogs && LogsHistory?.items.length === 0 && (
+                            <div className="h-full max-h-logsList items-center justify-center">
+                                <EmptyLogsPlaceholder />
+                            </div>
+                        )}
                     </ScrollArea>
                 </div>
-                {!loadingLogs && LogsHistory?.items.length === 0 && (
-                    <div className="h-full max-h-logsList items-center justify-center">
-                        <EmptyLogsPlaceholder />
-                    </div>
-                )}
             </div>
             <div className="flex flex-row-reverse pt-4">
                 <PaginationBtns

@@ -94,7 +94,8 @@ const config = {
             height: {
                 agentComponentHeight: 'calc(100% - 30px)',
                 proposalEmptyListHeight: 'calc(100vh - 260px)',
-                modalHeight: 'calc(100% - 45px)'
+                modalHeight: 'calc(100% - 45px)',
+                logsPageHeight: 'calc(100vh - 200px)'
             },
             maxHeight: {
                 agentsList: 'calc(100vh - 210px)',
