@@ -126,6 +126,14 @@ class TriggerHistoryService:
                     else:
                         result[index]["values"][function_name] = item["successful_triggers"]
 
+                if 0 <= index < max_range:
+                    result[index]["count"] += item["successful_triggers"]
+                    function_name = item.get("functionName", "Unknown")
+                    if function_name in result[index]["values"]:
+                        result[index]["values"][function_name] += item["successful_triggers"]
+                    else:
+                        result[index]["values"][function_name] = item["successful_triggers"]
+
         return result
 
     def build_query(
