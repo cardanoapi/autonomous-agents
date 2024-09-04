@@ -72,7 +72,7 @@ export default function RootLayout({
                         <ReactQueryProvider>
                             <Toaster />
                             <div className="flex h-full w-full  bg-gradient-to-r from-[#F8F9FC] via-[#F5F5FC] to-[#E9EAF8]">
-                                <div className="hidden h-screen min-w-[256px] overflow-hidden lg:flex 3xl:min-w-[290px]">
+                                <div className="hidden h-screen min-w-[256px] max-w-[256px] overflow-hidden lg:flex 3xl:min-w-[290px] 3xl:max-w-[290px]">
                                     <SideNav />
                                 </div>
                                 <div className="max-h-screen flex-grow flex-col overflow-y-auto overflow-x-clip px-[24px] pt-[3%] 2xl:px-[45px] ">
