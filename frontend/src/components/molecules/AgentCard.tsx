@@ -146,6 +146,9 @@ export default function AgentCard({
         );
     }
 
+    const templateStatus = templateID
+        ? { text: template?.name || 'Template Missing' }
+        : { text: 'Template not Used' };
     return (
         <>
             <Card
@@ -168,14 +171,12 @@ export default function AgentCard({
                 />
 
                 <CardContent className="flex flex-col gap-y-2">
-                    {templateID && (
-                        <span className="flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-center">
-                            Template:{' '}
-                            <div className="gray-background ml-1 overflow-hidden text-ellipsis whitespace-nowrap text-xs">
-                                {template?.name || 'Template Missing'}
-                            </div>
-                        </span>
-                    )}
+                    <span className="flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-center">
+                        Template:{' '}
+                        <div className="gray-background ml-1 overflow-hidden text-ellipsis whitespace-nowrap text-xs">
+                            {templateStatus.text}
+                        </div>
+                    </span>
 
                     {renderAgentDetails(agentDetails)}
 
