@@ -19,7 +19,7 @@ interface IDrepFilterOption {
 }
 const DrepFilterOptions: IDrepFilterOption[] = [
     {
-        placeholder: 'Internal only',
+        placeholder: 'Internal Only',
         value: 'internal'
     },
     {
