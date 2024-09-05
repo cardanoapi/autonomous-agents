@@ -6,12 +6,11 @@ import { fetchDreps } from '@api/dreps';
 import { useQuery } from '@tanstack/react-query';
 
 import DataActionBar from '@app/app/components/DataActionBar';
-import Loader from '@app/app/components/Loader';
 import { Tabs, TabsList, TabsTrigger } from '@app/components/molecules/Tabs';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 import { QUERY_KEYS } from '@app/consts/queryKeys';
 
-import DRepCard from './components/DRepCard';
+import DRepCard, { DRepCardSkeleton } from './components/DRepCard';
 
 interface IDrepFilterOption {
     placeholder: string;
@@ -48,14 +47,6 @@ export default function DRepDirectory() {
         setQueryParams({ ...queryParams, drep_type: filter, page: 1 });
     };
 
-    if (isLoading) {
-        return (
-            <div className="flex h-proposalEmptyListHeight items-center justify-center">
-                <Loader />
-            </div>
-        );
-    }
-
     return (
         <div className="flex flex-col space-y-12 pb-12">
             <div className="flex gap-2">
@@ -77,6 +68,10 @@ export default function DRepDirectory() {
                     {!isLoading &&
                         data?.items?.map((dRep) => (
                             <DRepCard key={dRep.drepId} dRep={dRep} />
+                        ))}
+                    {isLoading &&
+                        Array.from({ length: 10 }).map((_, i) => (
+                            <DRepCardSkeleton key={i} />
                         ))}
                 </div>
             </ScrollArea>

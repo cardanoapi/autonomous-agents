@@ -14,6 +14,7 @@ import toast from 'react-hot-toast';
 import AppDialog from '@app/app/components/AppDialog';
 import { Badge } from '@app/components/atoms/Badge';
 import { Button } from '@app/components/atoms/Button';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
 import AgentsDelegationDialogContent from './AgentsDelegationDialogContent';
 import DrepDetailDialogContent from './DrepDetailDialogContent';
@@ -152,6 +153,51 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                 <DrepDetailDialogContent dRep={dRep} />
             </AppDialog>
         </>
+    );
+};
+
+export const DRepCardSkeleton = () => {
+    return (
+        <div className="shadow-xs flex w-full items-center justify-between rounded-lg  bg-white p-4">
+            <div className="flex space-x-4 sm:space-x-6 lg:space-x-12 xl:space-x-20">
+                <div className="flex flex-col space-y-2">
+                    <div className="flex items-center gap-2">
+                        <Skeleton className="h-6 w-36" />{' '}
+                        {/* Placeholder for dRepName */}
+                        <Skeleton className="h-5 w-16" /> {/* Placeholder for Badge */}
+                    </div>
+                    <div className="flex items-center text-brand-navy">
+                        <Skeleton className="h-4 w-48 xl:w-80" />{' '}
+                        {/* Placeholder for dRepId */}
+                        <Skeleton className="ml-2 h-5 w-5" />{' '}
+                        {/* Placeholder for CopyIcon */}
+                    </div>
+                </div>
+                <div>
+                    <div className="flex w-32 flex-col items-center space-y-2">
+                        <Skeleton className="h-4 w-24" />{' '}
+                        {/* Placeholder for "Voting Power" label */}
+                        <Skeleton className="h-5 w-20" />{' '}
+                        {/* Placeholder for Voting Power value */}
+                    </div>
+                </div>
+                <div className="flex flex-col space-y-2">
+                    <Skeleton className="h-4 w-36" /> {/* Placeholder for Agent Name */}
+                    <div className="flex items-center">
+                        <Skeleton className="h-4 w-48 xl:w-80" />{' '}
+                        {/* Placeholder for AgentID */}
+                        <Skeleton className="ml-2 h-5 w-5" />{' '}
+                        {/* Placeholder for CopyIcon */}
+                    </div>
+                </div>
+            </div>
+            <div className="flex gap-2">
+                <Skeleton className="h-8 w-24 rounded-3xl" />{' '}
+                {/* Placeholder for View details button */}
+                <Skeleton className="h-8 w-24 rounded-3xl" />{' '}
+                {/* Placeholder for Delegate button */}
+            </div>
+        </div>
     );
 };
 
