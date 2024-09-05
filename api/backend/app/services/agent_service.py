@@ -95,6 +95,7 @@ class AgentService:
 
         existing_agent = await self.agent_repository.modify_agent(agent_id, agent_data)
         self.raise_exception_if_agent_not_found(existing_agent)
+        await self.kafka_service.publish_message("trigger_config_updates", "config_updated", key=agent_id)
         return AgentResponseWithAgentConfigurations(**existing_agent.dict(), agent_configurations=updated_triggers)
 
     async def get_active_agents_count(self):
