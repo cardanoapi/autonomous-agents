@@ -97,14 +97,18 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                     </div>
                     {dRep.agentId && dRep.agentName && (
                         <div className="flex cursor-pointer flex-col space-y-2">
-                            <p
-                                className="text-sm text-gray-800 hover:text-brand-Blue-200"
-                                onClick={handleAgentRedirect}
-                            >
-                                {dRep.agentName || ''}
+                            <p className="text-sm font-medium text-gray-800">
+                                Agent Name:
+                                <span
+                                    className="hover:text-brand-Blue-200"
+                                    onClick={handleAgentRedirect}
+                                >
+                                    {' '}
+                                    {dRep.agentName || ''}
+                                </span>
                             </p>
                             <div className="-2 flex">
-                                <p className=" w-24 truncate text-ellipsis text-nowrap text-sm font-medium xl:w-80 ">
+                                <p className=" w-24 truncate text-ellipsis text-nowrap text-sm  xl:w-80 ">
                                     AgentID : {dRep.agentId || ''}
                                 </p>
                                 <CopyIcon
