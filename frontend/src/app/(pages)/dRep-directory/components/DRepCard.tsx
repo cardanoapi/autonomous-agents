@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
@@ -16,6 +16,7 @@ import { Badge } from '@app/components/atoms/Badge';
 import { Button } from '@app/components/atoms/Button';
 
 import AgentsDelegationDialogContent from './AgentsDelegationDialogContent';
+import DrepDetailDialogContent from './DrepDetailDialogContent';
 
 interface DRepCardProps {
     dRep: IDRepInternal;
@@ -23,6 +24,8 @@ interface DRepCardProps {
 
 const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
     const { isOpen, toggleDialog } = useAppDialog();
+
+    const [isDrepDetialsOpen, setIsDrepDetialsOpen] = useState(false);
 
     const isDataMissing = dRep.dRepName === null || dRep.dRepName === undefined;
 
@@ -46,6 +49,10 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
         if (status === 'Retired') return 'outline';
 
         return 'default';
+    }
+
+    function toggleDrepDetailDialog() {
+        setIsDrepDetialsOpen(!isDrepDetialsOpen);
     }
 
     function handleAgentRedirect() {
@@ -96,7 +103,7 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                             >
                                 {dRep.agentName || ''}
                             </p>
-                            <div className="flex gap-2">
+                            <div className="-2 flex">
                                 <p className=" w-24 truncate text-ellipsis text-nowrap text-sm font-medium xl:w-80 ">
                                     AgentID : {dRep.agentId || ''}
                                 </p>
@@ -110,7 +117,11 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                     )}
                 </div>
                 <div className="flex gap-2">
-                    <Button className="rounded-3xl" variant={'cool'}>
+                    <Button
+                        className="rounded-3xl"
+                        variant={'cool'}
+                        onClick={() => setIsDrepDetialsOpen(!isDrepDetialsOpen)}
+                    >
                         View details
                     </Button>
                     {dRep.status === DRepStatus.Active && (
@@ -131,6 +142,10 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                     dRepId={dRep.drepId}
                     handleClose={toggleDialog}
                 />
+            </AppDialog>
+
+            <AppDialog isOpen={isDrepDetialsOpen} toggleDialog={toggleDrepDetailDialog}>
+                <DrepDetailDialogContent dRep={dRep} />
             </AppDialog>
         </>
     );
