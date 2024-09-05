@@ -42,6 +42,7 @@ export interface IAgentUpdateReqDto {
     agentName?: string;
     templateId?: string;
     agentConfigurations?: Array<IAgentConfiguration>;
+    instance?: number;
 }
 
 export interface IAgent {
@@ -105,6 +106,7 @@ export const updateAgentData = async (formData: IAgentUpdateReqDto) => {
             {
                 name: formData.agentName,
                 template_id: formData.templateId,
+                instance: formData.instance,
                 agent_configurations: formData.agentConfigurations
             },
             {

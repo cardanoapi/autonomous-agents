@@ -30,6 +30,7 @@ const AgentOverViewComponent = ({
 }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [agentName, setAgentName] = useState(agent?.name || '');
+    const [agentInstance, setAgentInstance] = useState(agent?.instance || 0);
     const [agentConfigurations, setAgentConfigurations] = useState<
         Array<IAgentConfiguration>
     >(agent?.agent_configurations || []);
@@ -81,6 +82,7 @@ const AgentOverViewComponent = ({
             .mutateAsync({
                 agentId: agent?.id,
                 agentName: agentName,
+                instance: agentInstance,
                 agentConfigurations: updatedAgentConfigs
             })
             .then((res) => {
@@ -143,6 +145,19 @@ const AgentOverViewComponent = ({
                             agentConfigurations={agentConfigurations}
                             isEditing={true}
                         />
+                        <div className={'flex flex-col gap-2'}>
+                            <h1 className={'text-sm font-medium'}>Agent Instance</h1>
+                            <input
+                                type={'number'}
+                                value={agentInstance}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                    setAgentInstance(+e.target.value)
+                                }
+                                className={
+                                    's w-fit rounded border-0 border-b border-gray-300 px-4 py-2 outline-0'
+                                }
+                            />
+                        </div>
                         <div className={'flex justify-end'}>
                             <Button
                                 onClick={() => handleClickUpdate()}
