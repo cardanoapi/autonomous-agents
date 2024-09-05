@@ -38,3 +38,9 @@ export enum GovernanceActionFilter {
     TreasuryWithdrawals = 'Treasury Withdrawal',
     InfoAction = 'Info Action'
 }
+
+/* This interface is an extension of IProposal. It adds the agentId and agentName for potential internal proposals. Use this instead */
+export interface IProposalInternal extends IProposal {
+    agentId: string;
+    agentName: string;
+}

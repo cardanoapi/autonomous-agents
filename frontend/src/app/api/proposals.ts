@@ -1,9 +1,9 @@
-import { IProposal } from '@models/types/proposal';
+import { IProposalInternal } from '@models/types/proposal';
 
 import { baseAPIurl } from './config';
 
 interface IProposalResponse {
-    items: IProposal[];
+    items: IProposalInternal[];
     total: number;
     page: number;
     pageSize: number;

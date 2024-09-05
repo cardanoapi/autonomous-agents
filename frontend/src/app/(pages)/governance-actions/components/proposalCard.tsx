@@ -1,5 +1,7 @@
+import { useRouter } from 'next/navigation';
+
 import { useAppDialog } from '@hooks';
-import { GovernanceActionFilter, IProposal } from '@models/types/proposal';
+import { GovernanceActionFilter, IProposalInternal } from '@models/types/proposal';
 import { Typography } from '@mui/material';
 import { CopyIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -11,7 +13,7 @@ import { formatDisplayDate } from '@app/utils/dateAndTimeUtils';
 import AgentsVoteDialogContent from './AgentsVoteDialogContent';
 
 interface ProposalCardProps {
-    proposal: IProposal;
+    proposal: IProposalInternal;
 }
 const formatProposalType = (type: string) => {
     const proposalFilterKeys = Object.keys(GovernanceActionFilter);
@@ -27,7 +29,18 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
 
     const handleCopyGovernanceActionId = () => {
         navigator.clipboard.writeText(proposalId);
-        toast.success('Copied to clipboard');
+        toast.success('Proposal ID Copied');
+    };
+
+    const handleCopyAgentId = () => {
+        navigator.clipboard.writeText(proposal.agentId);
+        toast.success('Agent ID Copied');
+    };
+
+    const router = useRouter();
+
+    const handleAgentRedirect = () => {
+        router.push(`/agents/${proposal.agentId}`);
     };
 
     return (
@@ -51,13 +64,48 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                             </p>
                         </div>
                     )}
-                    <div className="flex flex-col gap-1">
-                        <p className="text-xs font-medium text-brand-Gray-50">
-                            Governance Action Type
-                        </p>
-                        <p className=" w-fit rounded-[100px] bg-brand-lightBlue px-[18px] py-[6px] text-xs  text-brand-Black-300">
-                            {formatProposalType(proposal.type)}
-                        </p>
+                    <div className="rounded-lg border border-gray-200 p-4 shadow-sm">
+                        <div className="flex flex-col gap-2">
+                            {proposal.agentName && (
+                                <p className="cursor-pointer text-sm font-semibold text-gray-700">
+                                    Agent Name :{' '}
+                                    <span
+                                        className="hover:text-brand-Blue-200"
+                                        onClick={handleAgentRedirect}
+                                    >
+                                        {proposal.agentName}
+                                    </span>
+                                </p>
+                            )}
+
+                            {proposal.agentId && (
+                                <>
+                                    <p className="flex text-sm text-gray-600">
+                                        Agent ID: {proposal.agentId}
+                                        <CopyIcon
+                                            size={20}
+                                            onClick={handleCopyAgentId}
+                                        />
+                                    </p>
+                                </>
+                            )}
+
+                            <p className="mt-2 text-xs font-medium text-gray-500">
+                                Governance Action Type
+                            </p>
+
+                            <div className="mt-1 flex gap-2">
+                                <span className="rounded-full bg-blue-100 px-4 py-1 text-xs text-blue-700">
+                                    {formatProposalType(proposal.type)}
+                                </span>
+
+                                {proposal.agentId && proposal.agentName && (
+                                    <span className="rounded-full bg-blue-100 px-4 py-1 text-xs text-blue-700">
+                                        Internal Proposal
+                                    </span>
+                                )}
+                            </div>
+                        </div>
                     </div>
 
                     <div className="rounded-xl border border-brand-lightBlue text-xs ">

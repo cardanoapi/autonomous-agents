@@ -26,7 +26,10 @@ class ProposalService:
             for proposal in internal_proposals:
                 proposal_data = await self._fetch_proposal_data(session, proposal.txHash)
                 if proposal_data:
-                    results.append(proposal_data)
+                    agent = await self.db.prisma.agent.find_unique(
+                        where={"id": proposal.agentId},
+                    )
+                    results.append(proposal_data | {"agentId": proposal.agentId, "agentName": agent.name})
 
         return Page(
             items=results,
