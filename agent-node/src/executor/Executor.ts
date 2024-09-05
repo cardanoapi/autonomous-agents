@@ -111,7 +111,7 @@ export class Executor {
                             )
                             resolve(res)
                             await txListener
-                                .addListener(res.hash, 2, 80000)
+                                .addListener(res.hash, 0, 80000)
                                 .then(() => {
                                     console.log(
                                         'Tx matched :',

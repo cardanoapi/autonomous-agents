@@ -1,67 +1,69 @@
 import cron, { ScheduledTask } from 'node-cron'
 import { Action, Configuration } from '../service/triggerService'
 import { ManagerInterface } from '../service/ManagerInterfaceService'
-import { Executor } from '../executor/Executor'
-import { saveTxLog } from './agent'
+import { AgentRunner } from '../index'
 
-let scheduledTasks: ScheduledTask[] = []
-
-function clearScheduledTasks() {
+export function clearScheduledTasks(scheduledTasks: ScheduledTask[]) {
     scheduledTasks.forEach((task) => {
         task.stop()
     })
-
-    scheduledTasks = []
+    scheduledTasks.length = 0
 }
 
 function createTask(
-    executor: Executor,
+    agentRunner: AgentRunner,
     manager: ManagerInterface,
     action: Action,
     frequency: string,
-    probability: number
+    probability: number,
+    instanceIndex: number
 ) {
-    return cron.schedule(frequency, () => {
-        if (Math.random() > probability) {
-            manager.logTx({
-                function_name: action.function_name,
-                triggerType: 'CRON',
-                trigger: false,
-                success: false,
-                message: '',
-            })
-        } else {
-            executor
-                .invokeFunction(
+    return cron.schedule(
+        frequency,
+        () => {
+            if (Math.random() > probability) {
+                manager.logTx({
+                    function_name: action.function_name,
+                    triggerType: 'CRON',
+                    trigger: false,
+                    success: false,
+                    message: '',
+                })
+            } else {
+                agentRunner.invokeFunction(
+                    'CRON',
                     action.function_name,
                     ...(action.parameters as any)
                 )
-                .then((result) => {
-                    saveTxLog(result, manager, 'CRON')
-                })
+            }
+        },
+        {
+            name: `agent-instance-#${instanceIndex}`,
         }
-    })
+    )
 }
 
 export function scheduleFunctions(
     manager: ManagerInterface,
-    executor: Executor,
-    configurations: Configuration[]
+    runner: AgentRunner,
+    configurations: Configuration[],
+    instanceIndex: number,
+    scheduledTasks: ScheduledTask[]
 ) {
-    clearScheduledTasks()
-
     configurations.forEach((config) => {
         const { data, action, type } = config
         if (action && type === 'CRON') {
             const { frequency, probability } = data
             const task = createTask(
-                executor,
+                runner,
                 manager,
                 action,
                 frequency,
-                probability
+                probability,
+                instanceIndex
             )
             scheduledTasks.push(task)
         }
+        scheduledTasks.forEach((task) => task.start())
     })
 }

@@ -10,6 +10,9 @@ import { Executor } from './executor/Executor'
 import { TxListener } from './executor/TxListener'
 import { RpcTopicHandler } from './service/RpcTopicHandler'
 import { saveTxLog } from './utils/agent'
+import { TriggerType } from './service/triggerService'
+import { AgentWalletDetails } from './types/types'
+import { ScheduledTask } from 'node-cron'
 
 configDotenv()
 const wsUrl = process.env.WS_URL || 'ws://localhost:3001'
@@ -24,8 +27,29 @@ let reconnectAttempts = 0
 const maxReconnectAttempts = 2
 let isReconnecting = false
 let hasConnectedBefore = false
+
+export class AgentRunner {
+    executor: Executor
+    managerInterface: ManagerInterface
+    constructor(managerInterface: ManagerInterface, txListener: TxListener) {
+        this.managerInterface = managerInterface
+        this.executor = new Executor(null, managerInterface, txListener)
+    }
+
+    invokeFunction(triggerType: TriggerType, method: string, ...args: any) {
+        this.executor.invokeFunction(method, ...args).then((result) => {
+            saveTxLog(result, this.managerInterface, triggerType)
+        })
+    }
+
+    remakeContext(agent_wallet: AgentWalletDetails) {
+        this.executor.remakeContext(agent_wallet)
+    }
+}
+
 function connectToManagerWebSocket() {
     let interval: NodeJS.Timeout | number
+    let scheduledTasks: ScheduledTask[] = []
     ws = new WebSocket(`${wsUrl}/${agentId}`)
     const clientPipe = new WsClientPipe(ws)
     const rpcChannel = new AgentRpc(
@@ -33,23 +57,32 @@ function connectToManagerWebSocket() {
     )
     const managerInterface = new ManagerInterface(rpcChannel)
     const txListener = new TxListener()
-    const executor = new Executor(null, managerInterface, txListener)
+
+    let agentRunners: Array<AgentRunner> = []
 
     rpcChannel.on('methodCall', (method, args) => {
-        executor.invokeFunction(method, ...args).then((result) => {
-            saveTxLog(result, managerInterface, 'MANUAL')
+        console.log('RUnners are: ', agentRunners)
+        agentRunners.forEach((runner) => {
+            runner.invokeFunction('MANUAL', method, ...args)
         })
     })
-    const topicHandler = new RpcTopicHandler(
-        managerInterface,
-        txListener,
-        executor
-    )
+
+    const topicHandler = new RpcTopicHandler(managerInterface, txListener)
     rpcChannel.on('event', (topic, message) => {
-        if (topic == 'agent_keys') {
-            executor.remakeContext(message)
+        if (topic == 'instance_count') {
+            Array(message)
+                .fill('')
+                .forEach((item, index) => {
+                    agentRunners.push(
+                        new AgentRunner(managerInterface, txListener)
+                    )
+                })
+        } else if (topic == 'agent_keys') {
+            agentRunners.forEach((runner) => {
+                runner.remakeContext(message)
+            })
         }
-        topicHandler.handleEvent(topic, message)
+        topicHandler.handleEvent(topic, message, agentRunners, scheduledTasks)
     })
 
     ws.on('open', () => {
