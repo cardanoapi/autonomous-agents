@@ -1,9 +1,9 @@
-import { IDRep } from '@models/types';
+import { IDRepInternal } from '@models/types';
 
 import { baseAPIurl } from './config';
 
 interface IDrepResponse {
-    items: IDRep[];
+    items: IDRepInternal[];
     total: number;
     page: number;
     pageSize: number;

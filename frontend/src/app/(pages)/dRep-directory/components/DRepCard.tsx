@@ -2,8 +2,10 @@
 
 import { useMemo } from 'react';
 
+import { useRouter } from 'next/navigation';
+
 import { useAppDialog } from '@hooks';
-import { DRepStatus, IDRep } from '@models/types';
+import { DRepStatus, IDRepInternal } from '@models/types';
 import { TypographyH2 } from '@typography';
 import { convertLovelaceToAda } from '@utils';
 import { CopyIcon } from 'lucide-react';
@@ -16,7 +18,7 @@ import { Button } from '@app/components/atoms/Button';
 import AgentsDelegationDialogContent from './AgentsDelegationDialogContent';
 
 interface DRepCardProps {
-    dRep: IDRep;
+    dRep: IDRepInternal;
 }
 
 const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
@@ -30,7 +32,12 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
 
     const handleCopyDRepId = () => {
         navigator.clipboard.writeText(dRep.drepId);
-        toast.success('Copied to clipboard');
+        toast.success('Drep ID copied');
+    };
+
+    const handleCopyAgentId = () => {
+        navigator.clipboard.writeText(dRep.agentId || '');
+        toast.success('Agent ID copied');
     };
 
     function getBadgeVariant(status: string) {
@@ -40,6 +47,12 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
 
         return 'default';
     }
+
+    function handleAgentRedirect() {
+        router.push(`/agents/${dRep.agentId}`);
+    }
+
+    const router = useRouter();
 
     return (
         <>
@@ -67,13 +80,34 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                             />
                         </div>
                     </div>
-
-                    <div className="flex w-32 flex-col items-center space-y-2">
-                        <p className="text-sm text-gray-800">Voting Power</p>
-                        <p className="font-semibold text-gray-600">
-                            ₳ {formattedVotingPower}
-                        </p>
+                    <div>
+                        <div className="flex w-32 flex-col items-center space-y-2">
+                            <p className="text-sm text-gray-800">Voting Power</p>
+                            <p className="font-semibold text-gray-600">
+                                ₳ {formattedVotingPower}
+                            </p>
+                        </div>
                     </div>
+                    {dRep.agentId && dRep.agentName && (
+                        <div className="flex cursor-pointer flex-col space-y-2">
+                            <p
+                                className="text-sm text-gray-800 hover:text-brand-Blue-200"
+                                onClick={handleAgentRedirect}
+                            >
+                                {dRep.agentName || ''}
+                            </p>
+                            <div className="flex gap-2">
+                                <p className=" w-24 truncate text-ellipsis text-nowrap text-sm font-medium xl:w-80 ">
+                                    AgentID : {dRep.agentId || ''}
+                                </p>
+                                <CopyIcon
+                                    onClick={handleCopyAgentId}
+                                    className="ml-2 cursor-pointer "
+                                    size={20}
+                                />
+                            </div>
+                        </div>
+                    )}
                 </div>
                 <div className="flex gap-2">
                     <Button className="rounded-3xl" variant={'cool'}>

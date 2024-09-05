@@ -13,11 +13,26 @@ import { QUERY_KEYS } from '@app/consts/queryKeys';
 
 import DRepCard from './components/DRepCard';
 
+interface IDrepFilterOption {
+    placeholder: string;
+    value: string;
+}
+const DrepFilterOptions: IDrepFilterOption[] = [
+    {
+        placeholder: 'Internal only',
+        value: 'internal'
+    },
+    {
+        placeholder: 'All DReps',
+        value: 'all'
+    }
+];
+
 export default function DRepDirectory() {
     const [queryParams, setQueryParams] = useState({
         page: 1,
         pageSize: 10,
-        drep_type: 'all'
+        drep_type: 'internal'
     });
 
     const { data, isLoading } = useQuery({
@@ -26,11 +41,11 @@ export default function DRepDirectory() {
     });
 
     const handleSearch = (searchValue: string) => {
-        setQueryParams({ ...queryParams, drep_type: searchValue }); // Reset to page 1 on new search
+        setQueryParams({ ...queryParams, drep_type: searchValue });
     };
 
     const handleFilterChange = (filter: string) => {
-        setQueryParams({ ...queryParams, drep_type: filter, page: 1 }); // Reset to page 1 on filter change
+        setQueryParams({ ...queryParams, drep_type: filter, page: 1 });
     };
 
     if (isLoading) {
@@ -49,7 +64,11 @@ export default function DRepDirectory() {
                     placeholder="Search DRep"
                     className="!w-[500px]"
                 />
-                <DrepFilterTab onClick={handleFilterChange} />
+                <DrepFilterTab
+                    onClick={handleFilterChange}
+                    taboptions={DrepFilterOptions}
+                    defaultValue={DrepFilterOptions[0].value}
+                />
             </div>
 
             {/* DRep list */}
@@ -65,7 +84,15 @@ export default function DRepDirectory() {
     );
 }
 
-const DrepFilterTab = ({ onClick }: { onClick?: (value: string) => void }) => {
+const DrepFilterTab = ({
+    taboptions,
+    onClick,
+    defaultValue
+}: {
+    taboptions: IDrepFilterOption[];
+    onClick?: (value: string) => void;
+    defaultValue: string;
+}) => {
     const handleClick = (value: string) => () => {
         if (onClick) {
             onClick(value);
@@ -73,22 +100,18 @@ const DrepFilterTab = ({ onClick }: { onClick?: (value: string) => void }) => {
     };
     const triggerClassName = 'text-base border-gray-200 border-[1px] !h-full';
     return (
-        <Tabs defaultValue="all" className="!m-0 !p-0">
+        <Tabs defaultValue={defaultValue} className="!m-0 !p-0">
             <TabsList className="!h-full !p-0">
-                <TabsTrigger
-                    value="all"
-                    className={triggerClassName}
-                    onClick={handleClick('all')}
-                >
-                    All Dreps
-                </TabsTrigger>
-                <TabsTrigger
-                    value="internal"
-                    className={triggerClassName}
-                    onClick={handleClick('internal')}
-                >
-                    Internal Only
-                </TabsTrigger>
+                {taboptions.map((option) => (
+                    <TabsTrigger
+                        key={option.value}
+                        value={option.value}
+                        className={triggerClassName}
+                        onClick={handleClick(option.value)}
+                    >
+                        {option.placeholder}
+                    </TabsTrigger>
+                ))}
             </TabsList>
         </Tabs>
     );

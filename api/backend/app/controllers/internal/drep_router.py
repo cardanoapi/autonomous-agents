@@ -30,7 +30,9 @@ class DrepRouter(Routable):
                         response_json = await response.json()
                         if len(response_json["elements"]) > 0:
                             if agentDetails.drep_id == response_json["elements"][0]["drepId"]:
-                                result.append(response_json["elements"][0])
+                                result.append(
+                                    response_json["elements"][0] | {"agentId": agent.id, "agentName": agent.name}
+                                )
             return Page(items=result, total=len(result), page=page, size=pageSize, pages=1)
 
         else:
