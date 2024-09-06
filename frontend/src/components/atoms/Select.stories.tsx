@@ -15,29 +15,26 @@ const meta = {
     parameters: {
         layout: 'centered'
     },
-
     tags: ['autodocs'],
-
     argTypes: {}
 } satisfies Meta<typeof Select>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
 export const Primary: Story = {
-    args: {
-        children: (
-            <>
-                <SelectTrigger className="w-[297px] ">
-                    <SelectValue placeholder="Select Agent Role"></SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectItem value="1">Send Ada</SelectItem>
-                        <SelectItem value="2">Vote on Proppsal</SelectItem>
-                        <SelectItem value="3">Create Propsal</SelectItem>
-                    </SelectGroup>
-                </SelectContent>
-            </>
-        )
-    }
+    render: () => (
+        <Select>
+            <SelectTrigger className="w-[297px]">
+                <SelectValue placeholder="Select Agent Role" />
+            </SelectTrigger>
+            <SelectContent>
+                <SelectGroup>
+                    <SelectItem value="1">Send Ada</SelectItem>
+                    <SelectItem value="2">Vote on Proposal</SelectItem>
+                    <SelectItem value="3">Create Proposal</SelectItem>
+                </SelectGroup>
+            </SelectContent>
+        </Select>
+    )
 };

@@ -11,7 +11,7 @@ interface AgentSelectorProps {
 export default function AgentSelector({ agent, handleSelect }: AgentSelectorProps) {
     const { data: template } = useQuery<ITemplate>({
         queryKey: [`template${agent.template_id}`],
-        queryFn: () => fetchTemplatebyID(agent.template_id)
+        queryFn: () => fetchTemplatebyID(agent.template_id || '')
     });
     return (
         <div className="flex items-center gap-4 rounded-lg border p-2 ">

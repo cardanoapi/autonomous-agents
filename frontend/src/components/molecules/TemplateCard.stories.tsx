@@ -30,7 +30,6 @@ export const Primary: Story = {
             name: 'Send Ada Template',
             description: 'Send Ada to Eco Charity every 3 Days',
             id: 'qerqwer'
-        },
-        templateTrigger: 'Cron Trigger'
+        }
     }
 };
