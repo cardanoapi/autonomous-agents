@@ -60,7 +60,7 @@ export default function GovernanceAction() {
     };
 
     const handlePaginationChange = (page: number) => {
-        setSearchParams((prev) => ({ ...prev, page }));
+        setSearchParams((prev) => ({ ...prev, page: prev.page + page }));
     };
 
     const rowOptions = [10, 15, 20, 30];
