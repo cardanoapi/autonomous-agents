@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { fetchProposals } from '@api/proposals';
 import { QUERY_KEYS } from '@consts';
@@ -8,6 +8,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 
 import DataActionBar from '@app/app/components/DataActionBar';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@app/components/atoms/DropDownMenu';
+import PaginationBtns from '@app/components/molecules/PaginationBtns';
 import { Tabs, TabsList, TabsTrigger } from '@app/components/molecules/Tabs';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 
@@ -20,14 +27,8 @@ interface IProposalFilterOption {
 }
 
 const proposalFilterOptions: IProposalFilterOption[] = [
-    {
-        placeholder: 'Internal Only',
-        value: 'internal'
-    },
-    {
-        placeholder: 'All Gov Actions',
-        value: 'all'
-    }
+    { placeholder: 'Internal Only', value: 'internal' },
+    { placeholder: 'All Gov Actions', value: 'all' }
 ];
 
 export default function GovernanceAction() {
@@ -40,50 +41,100 @@ export default function GovernanceAction() {
         sort: 'NewestCreated'
     });
 
-    const { data, isLoading } = useQuery({
-        queryKey: [QUERY_KEYS.useGetInfoProposalListKey, searchParams],
+    const queryKey = useMemo(
+        () => [QUERY_KEYS.useGetInfoProposalListKey, searchParams],
+        [searchParams]
+    );
+
+    const { data, isFetching } = useQuery({
+        queryKey,
         queryFn: () => fetchProposals(searchParams)
     });
 
     const handleSearch = (searchValue: string) => {
-        setSearchParams({ ...searchParams, proposal_type: searchValue });
+        setSearchParams((prev) => ({ ...prev, proposal_type: searchValue, page: 1 }));
     };
 
     const handleFilterChange = (filter: string) => {
-        setSearchParams({ ...searchParams, proposal_type: filter, page: 1 });
+        setSearchParams((prev) => ({ ...prev, proposal_type: filter, page: 1 }));
     };
+
+    const handlePaginationChange = (page: number) => {
+        setSearchParams((prev) => ({ ...prev, page }));
+    };
+
+    const rowOptions = [10, 15, 20, 30];
+    const [totalPage, setTotalPage] = useState(1);
+
+    useEffect(() => {
+        if (data) {
+            setTotalPage(Math.max(Math.ceil(data.total / searchParams.pageSize), 1));
+        }
+    }, [data, searchParams.pageSize]);
 
     return (
         <div className="flex w-full flex-col gap-10 pb-10">
-            <div className="flex gap-2">
-                <DataActionBar
-                    onSearch={handleSearch}
-                    placeholder="Search Governance Action"
-                    className="!w-[500px]"
-                />
-                <ProposalFilterTab
-                    onClick={handleFilterChange}
-                    taboptions={proposalFilterOptions}
-                    defaultValue={proposalFilterOptions[0].value}
-                />
+            <div className="flex justify-between">
+                <div className="flex gap-2">
+                    <DataActionBar
+                        onSearch={handleSearch}
+                        placeholder="Search Governance Action"
+                        className="!w-[500px]"
+                    />
+                    <ProposalFilterTab
+                        onClick={handleFilterChange}
+                        taboptions={proposalFilterOptions}
+                        defaultValue={proposalFilterOptions[0].value}
+                    />
+                </div>
+                <div>
+                    <DropdownMenu>
+                        <span>Proposals per Page: </span>
+                        <DropdownMenuTrigger className="inline-flex">
+                            {searchParams.pageSize}
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="min-w-0">
+                            {rowOptions.map((row) => (
+                                <DropdownMenuItem
+                                    key={row}
+                                    onClick={() =>
+                                        setSearchParams((prev) => ({
+                                            ...prev,
+                                            pageSize: row,
+                                            page: 1
+                                        }))
+                                    }
+                                >
+                                    {row}
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </div>
-
             <ScrollArea className="h-govActionsPageHeight">
                 <div className="grid w-full grid-flow-row grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-                    {!isLoading &&
+                    {!isFetching &&
                         data?.items?.map((proposal: any) => (
                             <ProposalCard key={proposal.id} proposal={proposal} />
                         ))}
-                    {isLoading &&
+                    {isFetching &&
                         Array(10)
                             .fill(0)
                             .map((_, index) => <ProposalCardSkeleton key={index} />)}
                 </div>
-                {!isLoading && data?.items?.length === 0 && (
+                {!isFetching && data?.items?.length === 0 && (
                     <EmptyGovActionPlaceholder className="h-govActionsPageHeight" />
                 )}
                 <div ref={ref} />
             </ScrollArea>
+            <div className="flex flex-row-reverse">
+                <PaginationBtns
+                    upperLimit={totalPage}
+                    onPaginate={handlePaginationChange}
+                    refCurrentPage={searchParams.page}
+                />
+            </div>
         </div>
     );
 }
@@ -97,12 +148,8 @@ const ProposalFilterTab = ({
     onClick?: (value: string) => void;
     defaultValue: string;
 }) => {
-    const handleClick = (value: string) => () => {
-        if (onClick) {
-            onClick(value);
-        }
-    };
     const triggerClassName = 'text-base border-gray-200 border-[1px] !h-full';
+
     return (
         <Tabs defaultValue={defaultValue} className="!m-0 !p-0">
             <TabsList className="!h-full !p-0">
@@ -111,7 +158,7 @@ const ProposalFilterTab = ({
                         key={option.value}
                         value={option.value}
                         className={triggerClassName}
-                        onClick={handleClick(option.value)}
+                        onClick={() => onClick?.(option.value)}
                     >
                         {option.placeholder}
                     </TabsTrigger>
