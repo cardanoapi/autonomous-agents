@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 
 import AppDialog from '@app/app/components/AppDialog';
 import { Button } from '@app/components/atoms/Button';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { formatDisplayDate } from '@app/utils/dateAndTimeUtils';
 
 import AgentsVoteDialogContent from './AgentsVoteDialogContent';
@@ -79,15 +80,14 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                             )}
 
                             {proposal.agentId && (
-                                <>
-                                    <p className="flex text-sm text-gray-600">
-                                        Agent ID: {proposal.agentId}
-                                        <CopyIcon
-                                            size={20}
-                                            onClick={handleCopyAgentId}
-                                        />
+                                <div className="flex justify-between ">
+                                    <p className="inline-flex w-[90%] text-sm text-gray-600">
+                                        <span className="overflow-hidden text-ellipsis text-nowrap">
+                                            Agent ID: {proposal.agentId}
+                                        </span>
                                     </p>
-                                </>
+                                    <CopyIcon size={20} onClick={handleCopyAgentId} />
+                                </div>
                             )}
 
                             <p className="mt-2 text-xs font-medium text-gray-500">
@@ -163,3 +163,52 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
 };
 
 export default ProposalCard;
+
+export const ProposalCardSkeleton: React.FC = () => {
+    return (
+        <div className="flex w-full flex-col justify-between bg-transparent">
+            <div className="flex h-full w-full flex-col gap-5 rounded-t-xl bg-brand-White-200 px-6 pb-6 pt-10">
+                {/* Title Skeleton */}
+                <Skeleton className="h-6 w-3/4 rounded" />
+
+                {/* Abstract Skeleton */}
+                <div className="flex flex-col gap-1">
+                    <Skeleton className="h-4 w-1/4 rounded" />
+                    <Skeleton className="h-5 w-full rounded" />
+                </div>
+
+                {/* Agent Details Skeleton */}
+                <div className="rounded-lg border border-gray-200 p-4 shadow-sm">
+                    <div className="flex flex-col gap-2">
+                        <Skeleton className="h-5 w-1/2 rounded" />
+                        <Skeleton className="h-5 w-full rounded" />
+                    </div>
+                </div>
+
+                {/* Date Section Skeleton */}
+                <div className="rounded-xl border border-brand-lightBlue text-xs">
+                    <div className="space-x-1 bg-brand-lightBlue bg-opacity-50 py-[6px] text-center">
+                        <Skeleton className="h-4 w-1/4 rounded" />
+                    </div>
+                    <div className="space-x-1 py-[6px] text-center">
+                        <Skeleton className="h-4 w-1/4 rounded" />
+                    </div>
+                </div>
+
+                {/* Governance Action Id Skeleton */}
+                <div className="flex flex-col gap-1">
+                    <Skeleton className="h-4 w-1/3 rounded" />
+                    <div className="flex justify-between gap-2">
+                        <Skeleton className="h-5 w-3/4 rounded" />
+                        <Skeleton className="h-5 w-5 rounded" />
+                    </div>
+                </div>
+            </div>
+
+            {/* Button Skeleton */}
+            <div className="flex w-full rounded-b-2xl bg-white p-6">
+                <Skeleton className="h-10 w-full rounded-[100px]" />
+            </div>
+        </div>
+    );
+};

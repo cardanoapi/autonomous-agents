@@ -8,12 +8,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 
 import DataActionBar from '@app/app/components/DataActionBar';
-import Loader from '@app/app/components/Loader';
 import { Tabs, TabsList, TabsTrigger } from '@app/components/molecules/Tabs';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 
 import EmptyGovActionPlaceholder from './components/EmptyGovActionPlaceholder';
-import ProposalCard from './components/proposalCard';
+import ProposalCard, { ProposalCardSkeleton } from './components/proposalCard';
 
 interface IProposalFilterOption {
     placeholder: string;
@@ -54,14 +53,6 @@ export default function GovernanceAction() {
         setSearchParams({ ...searchParams, proposal_type: filter, page: 1 });
     };
 
-    if (isLoading) {
-        return (
-            <div className="flex h-proposalEmptyListHeight items-center justify-center">
-                <Loader />
-            </div>
-        );
-    }
-
     return (
         <div className="flex w-full flex-col gap-10 pb-10">
             <div className="flex gap-2">
@@ -83,6 +74,10 @@ export default function GovernanceAction() {
                         data?.items?.map((proposal: any) => (
                             <ProposalCard key={proposal.id} proposal={proposal} />
                         ))}
+                    {isLoading &&
+                        Array(10)
+                            .fill(0)
+                            .map((_, index) => <ProposalCardSkeleton key={index} />)}
                 </div>
                 {!isLoading && data?.items?.length === 0 && (
                     <EmptyGovActionPlaceholder className="h-govActionsPageHeight" />
