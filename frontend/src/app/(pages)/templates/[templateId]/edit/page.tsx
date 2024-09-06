@@ -29,7 +29,7 @@ const EditTemplateCard = () => {
 
     const { data: template } = useQuery<ITemplate>({
         queryKey: [`template${templateId}`],
-        queryFn: () => fetchTemplatebyID(templateId)
+        queryFn: () => fetchTemplatebyID(templateId || '')
     });
 
     const updateTemplate = useMutation({
