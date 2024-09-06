@@ -18,7 +18,7 @@ export const agentDeletedAtom = atom(false);
 
 export const templateDeletedAtom = atom(false);
 
-type AgentTabType = 'Overview' | 'History';
+type AgentTabType = 'Overview' | 'History' | 'Manual Trigger' | 'Agent Runner' | 'Logs';
 
 export const selectedAgentTabAtom = atom<AgentTabType>('Overview');
 

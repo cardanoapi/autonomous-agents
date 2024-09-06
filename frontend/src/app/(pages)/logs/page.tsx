@@ -4,30 +4,38 @@ import { useEffect, useState } from 'react';
 
 import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { useQuery } from '@tanstack/react-query';
-import { OctagonAlert } from 'lucide-react';
 
 import {
     IAgentTriggerHistory,
     fetchAllTriggerHistory
 } from '@app/app/api/triggerHistory';
-import { AgentLogCard } from '@app/components/Agent/AgentLog';
+import { EmptyLogsPlaceholder } from '@app/components/Agent/AgentLog';
+import { AgentLogCard, AgentLogCardSkeleton } from '@app/components/Agent/AgentLog';
 import AgentFunctionsDropDown from '@app/components/Common/AgentFunctionsDropDown';
 import { Badge } from '@app/components/atoms/Badge';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
 import PaginationBtns from '@app/components/molecules/PaginationBtns';
 
 export default function LogsPage() {
-    //Related to Log query
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const [currentResponseSize, setCurrentResponseSize] = useState<number>(8);
-    const [currentStatus, setCurrentStatus] = useState<string>('None');
-    const [currentSuccess, setCurrentSucccess] = useState<string>('None');
-    const [currentFunction, setCurrentFunction] = useState('None');
-    const [currentAgentID, setCurrentAgentID] = useState('None');
-    const [totalPages, setTotalPages] = useState<number>(1);
+    // Object to store all state related to the query
+    const [logQueryState, setLogQueryState] = useState({
+        currentPage: 1,
+        currentResponseSize: 50,
+        currentStatus: 'None',
+        currentSuccess: 'None',
+        currentFunction: 'None',
+        currentAgentID: 'None',
+        totalPages: 1,
+        statusPlaceholder: 'None'
+    });
 
     const statusOptions = ['Success', 'Skipped', 'Failed'];
-    const [statusPlaceholder, setStatusPlaceholder] = useState('None');
 
     const {
         data: LogsHistory,
@@ -36,85 +44,103 @@ export default function LogsPage() {
     } = useQuery({
         queryKey: [
             'LogsHistory',
-            currentPage,
-            currentResponseSize,
-            currentAgentID,
-            currentFunction,
-            currentStatus,
-            currentSuccess
+            logQueryState.currentPage,
+            logQueryState.currentResponseSize,
+            logQueryState.currentAgentID,
+            logQueryState.currentFunction,
+            logQueryState.currentStatus,
+            logQueryState.currentSuccess
         ],
         queryFn: fetchAllTriggerHistory
     });
 
     useEffect(() => {
         refetchLogsHistory();
-    }, [currentPage, currentFunction, currentStatus, currentSuccess, currentAgentID]);
+    }, [
+        logQueryState.currentPage,
+        logQueryState.currentFunction,
+        logQueryState.currentStatus,
+        logQueryState.currentSuccess,
+        logQueryState.currentAgentID,
+        logQueryState.currentResponseSize
+    ]);
 
     useEffect(() => {
-        LogsHistory ? setTotalPages(LogsHistory.pages) : {};
-        if (LogsHistory && LogsHistory.pages < currentPage) {
-            setCurrentPage(1);
+        if (LogsHistory) {
+            setLogQueryState((prevState) => ({
+                ...prevState,
+                totalPages: LogsHistory.pages
+            }));
+            if (LogsHistory.pages < logQueryState.currentPage) {
+                setLogQueryState((prevState) => ({
+                    ...prevState,
+                    currentPage: 1
+                }));
+            }
         }
     }, [LogsHistory]);
 
-    useEffect(() => {
-        // For Dynamic Pagination Response Count
-        function updateResponseSize() {
-            const clientHeight = window.innerHeight;
-            const calculatedResponseSize = Math.floor(clientHeight / 100);
-            setCurrentResponseSize(calculatedResponseSize);
-        }
-        updateResponseSize();
-        window.addEventListener('resize', updateResponseSize);
-        return () => {
-            window.removeEventListener('resize', updateResponseSize);
-        };
-    }, []);
-
     function handleStatusChange(status: string) {
-        if (status === statusPlaceholder) {
-            setStatusPlaceholder('None');
-            setCurrentStatus('None');
-            setCurrentSucccess('None');
+        if (status === logQueryState.statusPlaceholder) {
+            setLogQueryState((prevState) => ({
+                ...prevState,
+                statusPlaceholder: 'None',
+                currentStatus: 'None',
+                currentSuccess: 'None'
+            }));
             refetchLogsHistory();
             return;
         }
+
+        let newStatus = 'None';
+        let newSuccess = 'None';
+
         switch (status) {
-            case 'None':
-                setCurrentStatus('None');
-                setCurrentSucccess('None');
-                break;
             case 'Success':
-                setCurrentStatus('True');
-                setCurrentSucccess('True');
+                newStatus = 'True';
+                newSuccess = 'True';
                 break;
             case 'Skipped':
-                setCurrentStatus('False');
-                setCurrentSucccess('False');
+                newStatus = 'False';
+                newSuccess = 'False';
                 break;
             case 'Failed':
-                setCurrentStatus('True');
-                setCurrentSucccess('False');
+                newStatus = 'True';
+                newSuccess = 'False';
                 break;
         }
-        setStatusPlaceholder(status);
-        setCurrentPage(1);
+
+        setLogQueryState((prevState) => ({
+            ...prevState,
+            statusPlaceholder: status,
+            currentStatus: newStatus,
+            currentSuccess: newSuccess,
+            currentPage: 1
+        }));
     }
 
-    return (
-        <div>
-            <div className="flex items-center justify-between">
+    const TopNav = () => {
+        const rowOptions = [10, 30, 50, 100];
+
+        return (
+            <div className="flex items-center justify-between ">
                 <div className="flex gap-2">
                     <SearchField
                         placeholder="Enter Agent ID"
                         variant="secondary"
                         onSearch={(val: string) => {
-                            setCurrentAgentID(val);
+                            setLogQueryState((prevState) => ({
+                                ...prevState,
+                                currentAgentID: val
+                            }));
                         }}
                     />
                     <AgentFunctionsDropDown
                         onChange={(strValue: string) => {
-                            setCurrentFunction(strValue);
+                            setLogQueryState((prevState) => ({
+                                ...prevState,
+                                currentFunction: strValue
+                            }));
                         }}
                     />
                     <div className="flex justify-center gap-2">
@@ -122,7 +148,7 @@ export default function LogsPage() {
                             <Badge
                                 key={index}
                                 variant={
-                                    statusPlaceholder === status
+                                    logQueryState.statusPlaceholder === status
                                         ? 'successPrimary'
                                         : 'primary'
                                 }
@@ -134,50 +160,76 @@ export default function LogsPage() {
                         ))}
                     </div>
                 </div>
-                <PaginationBtns
-                    className="pr-4"
-                    onPaginate={(val: number) => {
-                        const newVal = currentPage + val;
-                        setCurrentPage(newVal);
-                    }}
-                    refCurrentPage={currentPage}
-                    upperLimit={totalPages}
-                />
+                <div className="flex pr-4">
+                    <span>Rows per page :</span>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger>
+                            <span className="ml-1 w-6">
+                                {logQueryState.currentResponseSize}
+                            </span>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="!min-w-0">
+                            {rowOptions.map((row: number, index) => (
+                                <DropdownMenuItem
+                                    key={index}
+                                    onClick={() => {
+                                        setLogQueryState((prevState) => ({
+                                            ...prevState,
+                                            currentResponseSize: row
+                                        }));
+                                    }}
+                                >
+                                    {row}
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </div>
-            <div className="mt-8">
-                <div className={'flex h-full w-full flex-col gap-10'}>
-                    <ScrollArea
-                        className={'h-agentComponentHeight overflow-y-auto pr-4'}
-                    >
-                        <div className="grid grid-cols-1 gap-2">
-                            {LogsHistory?.items.length > 0 ? (
-                                LogsHistory.items.map(
-                                    (history: IAgentTriggerHistory, index: number) => (
-                                        <AgentLogCard
-                                            history={history}
-                                            key={index}
-                                            className="bg-white"
-                                            globalLog
-                                        />
-                                    )
-                                )
-                            ) : !loadingLogs ? (
-                                <div className="flex gap-2 text-gray-500">
-                                    Trigger History Logs for{' '}
-                                    {statusPlaceholder === 'None'
-                                        ? ''
-                                        : `${statusPlaceholder}`}{' '}
-                                    {currentFunction === 'None'
-                                        ? ''
-                                        : `${currentFunction}`}{' '}
-                                    are empty <OctagonAlert />
-                                </div>
-                            ) : (
-                                ''
-                            )}
-                        </div>
+        );
+    };
+
+    return (
+        <div className="flex flex-col justify-between ">
+            <div className="flex flex-grow flex-col">
+                <TopNav />
+                <div className="mt-8 flex-grow">
+                    <ScrollArea className="flex h-logsPageHeight max-h-logsList flex-col gap-y-2 overflow-y-auto p-4">
+                        {loadingLogs
+                            ? Array.from({ length: 50 }).map((_, index) => (
+                                  <AgentLogCardSkeleton key={index} />
+                              ))
+                            : LogsHistory?.items.length > 0 &&
+                              LogsHistory.items.map(
+                                  (history: IAgentTriggerHistory, index: number) => (
+                                      <AgentLogCard
+                                          history={history}
+                                          key={index}
+                                          className="bg-white"
+                                          globalLog
+                                      />
+                                  )
+                              )}
+                        {!loadingLogs && LogsHistory?.items.length === 0 && (
+                            <div className="h-full max-h-logsList items-center justify-center">
+                                <EmptyLogsPlaceholder />
+                            </div>
+                        )}
                     </ScrollArea>
                 </div>
+            </div>
+            <div className="flex flex-row-reverse pt-4">
+                <PaginationBtns
+                    className="flex justify-center pr-2"
+                    onPaginate={(val: number) => {
+                        setLogQueryState((prevState) => ({
+                            ...prevState,
+                            currentPage: prevState.currentPage + val
+                        }));
+                    }}
+                    refCurrentPage={logQueryState.currentPage}
+                    upperLimit={logQueryState.totalPages}
+                />
             </div>
         </div>
     );

@@ -77,6 +77,7 @@ class AgentService:
     async def get_agent(self, agent_id: str) -> AgentResponseWithWalletDetails:
         agent = await self.agent_repository.retrieve_agent(agent_id)
         self.raise_exception_if_agent_not_found(agent)
+        agent.is_active = check_if_agent_is_online(agent.last_active)
         response = await self.return_agent_with_wallet_details(agent)
         return response
 

@@ -9,6 +9,7 @@ import AgentOverViewComponent from '@app/components/Agent/AgentOverview';
 import SkeletonLoadingForAgentOverview from '@app/components/Agent/SkeletonLoadingForAgentOverview';
 import { selectedAgentTabAtom } from '@app/store/localStore';
 
+import { Skeleton } from '../shadcn/ui/skeleton';
 import AgentLogComponent from './AgentLog';
 import AgentRunnerComponent from './AgentRunner';
 
@@ -37,11 +38,20 @@ const AgentTabContent = ({
                 return <AgentRunnerComponent agent={agent} />;
         }
     }
-
+    //Logs and History tab have their own Skeleton handled inside the component
     return (
-        <div className={'max-h-[650px] flex-1 rounded-lg bg-white px-9 py-6'}>
+        <div
+            className={
+                'max-h-[650px] max-w-agentComponentWidth flex-1 rounded-lg bg-white px-9 py-6'
+            }
+        >
             {agentLoading ? (
-                <SkeletonLoadingForAgentOverview />
+                selectedAgentTab === 'Overview' ? (
+                    <SkeletonLoadingForAgentOverview />
+                ) : selectedAgentTab === 'Manual Trigger' ||
+                  selectedAgentTab === 'Agent Runner' ? (
+                    <DefaultSkeleton />
+                ) : null
             ) : (
                 getAgentSelectedTabComponent()
             )}
@@ -49,4 +59,7 @@ const AgentTabContent = ({
     );
 };
 
+export const DefaultSkeleton = () => {
+    return <Skeleton className="h-full w-full"></Skeleton>;
+};
 export default AgentTabContent;

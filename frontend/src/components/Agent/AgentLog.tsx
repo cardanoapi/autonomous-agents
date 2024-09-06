@@ -23,6 +23,7 @@ import AgentFunctionsDropDown from '../Common/AgentFunctionsDropDown';
 import { Badge } from '../atoms/Badge';
 import { cn } from '../lib/utils';
 import { ScrollArea } from '../shadcn/ui/scroll-area';
+import { Skeleton } from '../shadcn/ui/skeleton';
 
 const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
     const statusOptions = ['Success', 'Skipped', 'Failed'];
@@ -108,30 +109,29 @@ const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
                     ))}
                 </div>
             </div>
-            <ScrollArea className={'h-agentComponentHeight overflow-y-auto pr-4'}>
+            <ScrollArea className={'max-h-agentComponentHeight overflow-y-auto pr-4'}>
                 <div className="grid grid-cols-1 gap-2">
-                    {LogsHistory?.items.length > 0 ? (
-                        LogsHistory.items.map(
-                            (history: IAgentTriggerHistory, index: number) => (
-                                <AgentLogCard
-                                    history={history}
-                                    key={index}
-                                    className="bg-gray-100"
-                                />
-                            )
-                        )
-                    ) : !loadingLogs ? (
-                        <div className="flex gap-2 text-gray-500">
-                            Trigger History Logs for{' '}
-                            {statusPlaceholder === 'None' ? '' : `${statusPlaceholder}`}{' '}
-                            {currentFunction === 'None' ? '' : `${currentFunction}`} are
-                            empty <OctagonAlert />
-                        </div>
-                    ) : (
-                        ''
-                    )}
+                    {loadingLogs
+                        ? Array.from({ length: 50 }).map((_, index) => (
+                              <AgentLogCardSkeleton key={index} />
+                          ))
+                        : LogsHistory?.items.length > 0 &&
+                          LogsHistory.items.map(
+                              (history: IAgentTriggerHistory, index: number) => (
+                                  <AgentLogCard
+                                      history={history}
+                                      key={index}
+                                      className="bg-gray-100"
+                                  />
+                              )
+                          )}
                 </div>
             </ScrollArea>
+            {!loadingLogs && LogsHistory?.items.length === 0 && (
+                <div className="flex flex-grow bg-black">
+                    <EmptyLogsPlaceholder />
+                </div>
+            )}
         </div>
     );
 };
@@ -257,3 +257,41 @@ const TxHashComponent = ({ txHash }: { txHash: string }) => {
 };
 
 export default AgentLogComponent;
+
+export const EmptyLogsPlaceholder = () => {
+    return (
+        <div className="flex h-full w-full items-center justify-center rounded border-[4px] border-dashed border-gray-200 bg-slate-50">
+            <div className="flex flex-col items-center gap-2">
+                <span className="flex items-center justify-center gap-2 text-2xl text-gray-300">
+                    <OctagonAlert className="h-8 w-8" />
+                    Trigger History is Empty.
+                </span>
+                <span className="text-xl text-gray-300">No trigger logs found !</span>
+            </div>
+        </div>
+    );
+};
+
+export const AgentLogCardSkeleton = () => {
+    return (
+        <div className="flex h-fit flex-row justify-between gap-4 rounded-lg bg-gray-100 px-3 py-3 drop-shadow-sm hover:bg-gray-200">
+            <div className="flex items-start gap-8">
+                <div className="flex items-center gap-3 sm:min-w-[200px]">
+                    <Skeleton className="h-8 w-8 rounded-full" />
+                    <div className="flex flex-col">
+                        <Skeleton className="h-4 w-32 rounded" />
+                        <Skeleton className="mt-1 h-3 w-48 rounded" />
+                    </div>
+                </div>
+                <div className="flex flex-col items-start gap-2">
+                    <Skeleton className="h-4 w-40 rounded" />
+                    <Skeleton className="mt-1 h-3 w-64 rounded" />
+                </div>
+            </div>
+            <div className="flex min-w-fit flex-col items-end justify-start gap-1 md:min-w-[200px]">
+                <Skeleton className="h-4 w-24 rounded" />
+                <Skeleton className="mt-1 h-3 w-20 rounded" />
+            </div>
+        </div>
+    );
+};

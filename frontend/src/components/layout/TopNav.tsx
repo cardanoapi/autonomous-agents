@@ -45,9 +45,9 @@ export default function TopNav() {
 
     const PageTitles: { [key: string]: string } = {
         '/': 'Dashboard',
-        '/agents': 'Agents Page',
+        '/agents': 'Agents Directory',
         '/agents/create-agent': 'Agent Form',
-        '/templates': 'Template page',
+        '/templates': 'Templates Directory',
         '/templates/create-template': 'Template Form',
         [PATHS.dRepDirectory]: 'DRep Directory',
         [PATHS.governanceActions]: 'Governance Actions',

@@ -47,7 +47,7 @@ export interface IAgentUpdateReqDto {
 export interface IAgent {
     id: string;
     name: string;
-    template_id: string;
+    template_id?: string;
     instance: number;
     index: number;
     last_active: string;
@@ -141,7 +141,7 @@ export const fetchAgentbyID = async (agentID: string): Promise<IAgent> => {
     const url = `${baseAPIurl}/agent/${agentID}`;
 
     try {
-        const response = await axios.get(url, { withCredentials: true });
+        const response = await axios.get(url);
         return response.data;
     } catch (error) {
         throw new Error('Agent Fetch Operation failed: Network Error');
