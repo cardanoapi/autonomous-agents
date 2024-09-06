@@ -45,7 +45,8 @@ export function createActionDtoForEventTrigger(tx: any, index: number): Action {
 export function saveTxLog(
     callLogs: CallLog[],
     managerInterface: ManagerInterface,
-    triggerType: TriggerType
+    triggerType: TriggerType,
+    instanceIndex: number
 ) {
     callLogs.reverse().forEach((log: any, index) => {
         const txLog: ILog = {
@@ -54,6 +55,7 @@ export function saveTxLog(
             trigger: true,
             success: true,
             message: '',
+            instanceIndex: instanceIndex,
         }
         if (log.return) {
             txLog.txHash = log.return.hash

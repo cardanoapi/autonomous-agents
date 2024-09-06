@@ -52,9 +52,10 @@ export class RpcTopicHandler {
                         (proposal: any, index: number) => {
                             const { function_name, parameters } =
                                 createActionDtoForEventTrigger(tx, index)
-                            agentRunners.forEach((runner) => {
+                            agentRunners.forEach((runner, index) => {
                                 runner.invokeFunction(
                                     'EVENT',
+                                    index,
                                     function_name,
                                     ...(parameters as any)
                                 )

@@ -28,10 +28,12 @@ function createTask(
                     trigger: false,
                     success: false,
                     message: '',
+                    instanceIndex: instanceIndex,
                 })
             } else {
                 agentRunner.invokeFunction(
                     'CRON',
+                    instanceIndex,
                     action.function_name,
                     ...(action.parameters as any)
                 )

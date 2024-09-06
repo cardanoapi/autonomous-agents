@@ -12,6 +12,7 @@ export interface IAgentTriggerHistory {
     timestamp: string;
     triggerType: string;
     txHash: string;
+    instanceIndex: number;
 }
 
 export const fetchAgentTriggerHistoryById = async (

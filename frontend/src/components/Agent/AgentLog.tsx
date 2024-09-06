@@ -185,6 +185,7 @@ export const AgentLogCard = ({
                                         '',
                                     20
                                 )}
+                                &nbsp; #{history.instanceIndex}
                             </span>
                             <span
                                 className={
@@ -194,6 +195,13 @@ export const AgentLogCard = ({
                                 {Truncate(history.agentId || '', 25)}
                             </span>
                         </div>
+                    </div>
+                )}
+                {!globalLog && (
+                    <div>
+                        <span className={'text-sm font-medium'}>
+                            #{history.instanceIndex}
+                        </span>
                     </div>
                 )}
                 <div className={'flex flex-col items-start gap-2'}>

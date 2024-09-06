@@ -7,9 +7,19 @@ import {
 import { WsRpcServer } from '../lib/WsRpcServer'
 import { RpcV1 } from 'libcardano/network/Rpc'
 import { kuber } from './kuber_service'
-import { saveTriggerHistory } from '../repository/trigger_history_repository'
+import { saveTriggerHistory, TriggerType } from '../repository/trigger_history_repository'
 import { ManagerWalletService } from './ManagerWallet'
 import { Server } from 'ws'
+
+export interface ILog {
+    function_name: string
+    message: string
+    txHash?: string
+    triggerType: TriggerType
+    trigger: boolean
+    success: boolean
+    instanceIndex: number
+}
 
 export class AgentManagerRPC extends WsRpcServer {
     managerWallet: ManagerWalletService
@@ -40,7 +50,7 @@ export class AgentManagerRPC extends WsRpcServer {
             const [body, submit] = args
             return kuber.buildTx(body, submit)
         } else if (method == 'logEvent') {
-            const params = args[0]
+            const params: ILog = args[0]
             const txHash = params.txHash ? params.txHash : ''
             saveTriggerHistory(
                 connection_id,
@@ -49,7 +59,8 @@ export class AgentManagerRPC extends WsRpcServer {
                 params.success,
                 params.message,
                 params.triggerType,
-                txHash
+                txHash,
+                params.instanceIndex
             ).catch((err) => console.error('SaveTriggerHistory : ', err))
         } else if (method === 'loadFunds') {
             const [address, amount] = args

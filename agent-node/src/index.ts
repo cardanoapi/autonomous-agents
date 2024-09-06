@@ -36,9 +36,14 @@ export class AgentRunner {
         this.executor = new Executor(null, managerInterface, txListener)
     }
 
-    invokeFunction(triggerType: TriggerType, method: string, ...args: any) {
+    invokeFunction(
+        triggerType: TriggerType,
+        instanceIndex: number,
+        method: string,
+        ...args: any
+    ) {
         this.executor.invokeFunction(method, ...args).then((result) => {
-            saveTxLog(result, this.managerInterface, triggerType)
+            saveTxLog(result, this.managerInterface, triggerType, instanceIndex)
         })
     }
 
@@ -62,8 +67,8 @@ function connectToManagerWebSocket() {
 
     rpcChannel.on('methodCall', (method, args) => {
         console.log('RUnners are: ', agentRunners)
-        agentRunners.forEach((runner) => {
-            runner.invokeFunction('MANUAL', method, ...args)
+        agentRunners.forEach((runner, index) => {
+            runner.invokeFunction('MANUAL', index, method, ...args)
         })
     })
 
