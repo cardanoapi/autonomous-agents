@@ -1,4 +1,7 @@
 class Kuber {
+    MAX_CONCURRENT_CALLS = 8
+    active_calls = 0
+    call_queue: Array<any> = []
     providerUrl: string
     constructor(providerUrl: string) {
         if (providerUrl.endsWith('/')) {
@@ -18,21 +21,57 @@ class Kuber {
 
     async buildTx(txSpec: any, submit?: boolean): Promise<any> {
         const KuberAPIKey = process.env.KUBER_API_KEY
-        const headers: HeadersInit={
+        const headers: HeadersInit = {
             'content-type': 'application/json',
         }
         if (KuberAPIKey) {
-            headers['api-key']=KuberAPIKey
+            headers['api-key'] = KuberAPIKey
         }
-        return this.call('POST', `api/v1/tx${submit ? '?submit=true' : ''}`, JSON.stringify(txSpec),headers)
-            .then((res) => {
-                console.log('response is : ', res)
-                return res.text()
+        // const buildTxCall = this.call(
+        //     'POST',
+        //     `api/v1/tx${submit ? '?submit=true' : ''}`,
+        //     JSON.stringify(txSpec),
+        //     headers
+        // )
+        return new Promise((resolve, reject) => {
+            this.call_queue.push({
+                body: [`api/v1/tx${submit ? '?submit=true' : ''}`, JSON.stringify(txSpec), headers],
+                resolve,
+                reject,
             })
-            .then((str) => {
-                console.log('Kuber Call Response : ', str)
-                return Kuber.parseJson(str)
-            })
+            this.handleApiCallQueue()
+        })
+        // return this.call('POST', `api/v1/tx${submit ? '?submit=true' : ''}`, JSON.stringify(txSpec), headers)
+        //     .then((res) => {
+        //         console.log('response is : ', res)
+        //         return res.text()
+        //     })
+        //     .then((str) => {
+        //         console.log('Kuber Call Response : ', str)
+        //         return Kuber.parseJson(str)
+        //     })
+    }
+
+    handleApiCallQueue() {
+        if (this.active_calls < this.MAX_CONCURRENT_CALLS && this.call_queue.length) {
+            const { body, resolve, reject } = this.call_queue.shift()
+            this.active_calls++
+            this.call('POST', ...body)
+                .then((res) => {
+                    console.log('response is : ', res)
+                    return res.text()
+                })
+                .then((str) => {
+                    console.log('Kuber Call Response : ', str)
+                    resolve(Kuber.parseJson(str))
+                })
+                .catch(reject)
+                .finally(() => {
+                    this.active_calls--
+                    this.handleApiCallQueue()
+                })
+        }
+        console.log('CALL QUEUE: ', this.active_calls, this.call_queue)
     }
 
     async getScriptPolicy(policy: Record<string, any>): Promise<string> {
