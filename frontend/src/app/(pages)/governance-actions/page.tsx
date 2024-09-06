@@ -73,8 +73,8 @@ export default function GovernanceAction() {
     }, [data, searchParams.pageSize]);
 
     return (
-        <div className="flex w-full flex-col gap-10 pb-10">
-            <div className="flex justify-between">
+        <div className="flex h-defaultPageHeightwithoutTopNav w-full flex-col gap-10">
+            <div className="flex items-center justify-between">
                 <div className="flex gap-2">
                     <DataActionBar
                         onSearch={handleSearch}
@@ -112,7 +112,7 @@ export default function GovernanceAction() {
                     </DropdownMenu>
                 </div>
             </div>
-            <ScrollArea className="h-govActionsPageHeight">
+            <ScrollArea className="h-[82%] pr-4">
                 <div className="grid w-full grid-flow-row grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                     {!isFetching &&
                         data?.items?.map((proposal: any) => (
@@ -124,11 +124,11 @@ export default function GovernanceAction() {
                             .map((_, index) => <ProposalCardSkeleton key={index} />)}
                 </div>
                 {!isFetching && data?.items?.length === 0 && (
-                    <EmptyGovActionPlaceholder className="h-govActionsPageHeight" />
+                    <EmptyGovActionPlaceholder className="h-full" />
                 )}
                 <div ref={ref} />
             </ScrollArea>
-            <div className="flex flex-row-reverse">
+            <div className="pagination-btn-position flex flex-row-reverse">
                 <PaginationBtns
                     upperLimit={totalPage}
                     onPaginate={handlePaginationChange}

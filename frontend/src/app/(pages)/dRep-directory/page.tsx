@@ -1,11 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { fetchDreps } from '@api/dreps';
 import { useQuery } from '@tanstack/react-query';
 
 import DataActionBar from '@app/app/components/DataActionBar';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@app/components/atoms/DropDownMenu';
+import PaginationBtns from '@app/components/molecules/PaginationBtns';
 import { Tabs, TabsList, TabsTrigger } from '@app/components/molecules/Tabs';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 import { QUERY_KEYS } from '@app/consts/queryKeys';
@@ -16,6 +23,7 @@ interface IDrepFilterOption {
     placeholder: string;
     value: string;
 }
+
 const DrepFilterOptions: IDrepFilterOption[] = [
     {
         placeholder: 'Internal Only',
@@ -34,47 +42,100 @@ export default function DRepDirectory() {
         drep_type: 'internal'
     });
 
-    const { data, isLoading } = useQuery({
+    const { data, isFetching } = useQuery({
         queryKey: [QUERY_KEYS.useGetDRepListKey, queryParams],
         queryFn: () => fetchDreps({ ...queryParams })
     });
 
     const handleSearch = (searchValue: string) => {
-        setQueryParams({ ...queryParams, drep_type: searchValue });
+        setQueryParams({ ...queryParams, drep_type: searchValue, page: 1 });
     };
 
     const handleFilterChange = (filter: string) => {
         setQueryParams({ ...queryParams, drep_type: filter, page: 1 });
     };
 
+    const handlePaginationChange = (page: number) => {
+        setQueryParams((prevParams) => ({
+            ...prevParams,
+            page: prevParams.page + page
+        }));
+    };
+
+    const rowOptions = [10, 15, 20, 30];
+
+    const [totalPage, setTotalPage] = useState<number>(1);
+    const [rowsFilter, setRowsFilter] = useState<number>(rowOptions[0]);
+
+    useEffect(() => {
+        if (data) {
+            setTotalPage(Math.ceil(data?.total / queryParams.pageSize) || 1);
+            setRowsFilter(queryParams.pageSize);
+        }
+    }, [data, queryParams.pageSize]);
+
     return (
-        <div className="flex flex-col space-y-12 pb-12">
-            <div className="flex gap-2">
-                <DataActionBar
-                    onSearch={handleSearch}
-                    placeholder="Search DRep"
-                    className="!w-[500px]"
-                />
-                <DrepFilterTab
-                    onClick={handleFilterChange}
-                    taboptions={DrepFilterOptions}
-                    defaultValue={DrepFilterOptions[0].value}
-                />
+        <div className="flex h-defaultPageHeightwithoutTopNav flex-col space-y-12">
+            <div className="flex items-center justify-between">
+                <div className="flex gap-2">
+                    <DataActionBar
+                        onSearch={handleSearch}
+                        placeholder="Search DRep"
+                        className="!w-[500px]"
+                    />
+                    <DrepFilterTab
+                        onClick={handleFilterChange}
+                        taboptions={DrepFilterOptions}
+                        defaultValue={DrepFilterOptions[0].value}
+                    />
+                </div>
+                <div>
+                    <DropdownMenu>
+                        <span>Dreps per Page: </span>
+                        <DropdownMenuTrigger className="inline-flex">
+                            {rowsFilter || rowOptions[0]}
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="min-w-0">
+                            {rowOptions.map((row: number) => (
+                                <DropdownMenuItem
+                                    key={row}
+                                    onClick={() =>
+                                        setQueryParams({
+                                            ...queryParams,
+                                            pageSize: row,
+                                            page: 1
+                                        })
+                                    }
+                                >
+                                    {row}
+                                </DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
             </div>
 
             {/* DRep list */}
-            <ScrollArea className="h-[calc(100vh-280px)] pr-4">
+            <ScrollArea className="h-[82%] pr-4">
                 <div className="flex flex-col space-y-4">
-                    {!isLoading &&
+                    {!isFetching &&
                         data?.items?.map((dRep) => (
                             <DRepCard key={dRep.drepId} dRep={dRep} />
                         ))}
-                    {isLoading &&
+                    {isFetching &&
                         Array.from({ length: 10 }).map((_, i) => (
                             <DRepCardSkeleton key={i} />
                         ))}
                 </div>
             </ScrollArea>
+
+            <div className="pagination-btn-position flex flex-row-reverse">
+                <PaginationBtns
+                    upperLimit={totalPage}
+                    onPaginate={handlePaginationChange}
+                    refCurrentPage={queryParams.page}
+                />
+            </div>
         </div>
     );
 }

@@ -95,7 +95,9 @@ const config = {
                 agentComponentHeight: 'calc-(100% - 30px)',
                 proposalEmptyListHeight: 'calc(100vh - 260px)',
                 modalHeight: 'calc(100% - 45px)',
-                govActionsPageHeight: 'calc(100vh - 320px)'
+                govActionsPageHeight: 'calc(100vh - 320px)',
+                dRepsPageHeight: 'calc(100vh - 314px)',
+                defaultPageHeightwithoutTopNav: 'calc(100vh - 140px)'
             },
             keyframes: {
                 'accordion-down': {

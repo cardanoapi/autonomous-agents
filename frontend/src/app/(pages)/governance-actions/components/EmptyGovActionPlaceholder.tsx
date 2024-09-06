@@ -5,7 +5,7 @@ import { cn } from '@app/components/lib/utils';
 export default function EmptyGovActionPlaceholder({
     className
 }: {
-    className: string;
+    className?: string;
 }) {
     return (
         <div
