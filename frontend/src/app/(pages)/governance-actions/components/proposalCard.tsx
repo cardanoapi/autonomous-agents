@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 
 import AppDialog from '@app/app/components/AppDialog';
 import { Button } from '@app/components/atoms/Button';
+import { cn } from '@app/components/lib/utils';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { formatDisplayDate } from '@app/utils/dateAndTimeUtils';
 
@@ -65,7 +66,13 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                             </p>
                         </div>
                     )}
-                    <div className="rounded-lg border border-gray-200 p-4 shadow-sm">
+                    <div
+                        className={cn(
+                            proposal.agentName
+                                ? 'rounded-lg border border-gray-200 p-4 shadow-sm'
+                                : ''
+                        )}
+                    >
                         <div className="flex flex-col gap-2">
                             {proposal.agentName && (
                                 <p className="cursor-pointer text-sm font-semibold text-gray-700">
