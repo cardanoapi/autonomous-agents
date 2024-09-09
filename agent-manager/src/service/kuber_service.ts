@@ -24,15 +24,11 @@ class Kuber {
         const headers: HeadersInit = {
             'content-type': 'application/json',
         }
-        if (KuberAPIKey) {
-            headers['api-key'] = KuberAPIKey
+        if (!KuberAPIKey) {
+            console.error('No Api Key provided.')
+            process.exit(1)
         }
-        // const buildTxCall = this.call(
-        //     'POST',
-        //     `api/v1/tx${submit ? '?submit=true' : ''}`,
-        //     JSON.stringify(txSpec),
-        //     headers
-        // )
+        headers['api-key'] = KuberAPIKey
         return new Promise((resolve, reject) => {
             this.call_queue.push({
                 body: [`api/v1/tx${submit ? '?submit=true' : ''}`, JSON.stringify(txSpec), headers],
@@ -41,15 +37,6 @@ class Kuber {
             })
             this.handleApiCallQueue()
         })
-        // return this.call('POST', `api/v1/tx${submit ? '?submit=true' : ''}`, JSON.stringify(txSpec), headers)
-        //     .then((res) => {
-        //         console.log('response is : ', res)
-        //         return res.text()
-        //     })
-        //     .then((str) => {
-        //         console.log('Kuber Call Response : ', str)
-        //         return Kuber.parseJson(str)
-        //     })
     }
 
     handleApiCallQueue() {
