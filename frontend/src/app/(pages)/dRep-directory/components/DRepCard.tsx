@@ -68,7 +68,7 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
             <div
                 className={`shadow-xs flex w-full items-center justify-between rounded-lg border !border-none bg-white p-4 ${isDataMissing && 'shadow-bg-red-100 bg-red-100/40'}`}
             >
-                <div className="flex space-x-4 sm:space-x-6 lg:space-x-12 xl:space-x-20">
+                <div className="flex space-x-4 sm:space-x-6  xl:space-x-12 2xl:space-x-10 4xl:space-x-20">
                     <div className="flex flex-col space-y-2">
                         <div className="flex gap-2">
                             <TypographyH2 className={`font-semibold ${isDataMissing}`}>
@@ -79,7 +79,7 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                             </Badge>
                         </div>
                         <div className="flex items-center text-brand-navy">
-                            <p className="w-24 truncate text-sm font-medium xl:w-80">
+                            <p className="w-52 truncate text-sm font-medium 2xl:w-48 4xl:w-80">
                                 DrepID : {dRep.drepId}
                             </p>
                             <CopyIcon
@@ -173,7 +173,7 @@ const AgentDetails = ({
                     </span>
                 </p>
                 <div className="-2 flex">
-                    <p className=" w-24 truncate text-ellipsis text-nowrap text-sm  xl:w-80 ">
+                    <p className="w-44 truncate text-sm font-medium 2xl:w-48 4xl:w-80">
                         AgentID : {agentId || ''}
                     </p>
                     <CopyIcon
@@ -190,7 +190,7 @@ const AgentDetails = ({
 export const DRepCardSkeleton = () => {
     return (
         <div className="shadow-xs flex w-full items-center justify-between rounded-lg  bg-white p-4">
-            <div className="flex space-x-4 sm:space-x-6 lg:space-x-12 xl:space-x-20">
+            <div className="flex space-x-4 sm:space-x-6  xl:space-x-12 2xl:space-x-10 4xl:space-x-20">
                 <div className="flex flex-col space-y-2">
                     <div className="flex items-center gap-2">
                         <Skeleton className="h-6 w-36" />{' '}
@@ -198,7 +198,7 @@ export const DRepCardSkeleton = () => {
                         <Skeleton className="h-5 w-16" /> {/* Placeholder for Badge */}
                     </div>
                     <div className="flex items-center text-brand-navy">
-                        <Skeleton className="h-4 w-48 xl:w-80" />{' '}
+                        <Skeleton className="h-4 w-52 truncate text-sm font-medium 2xl:w-48 4xl:w-80" />{' '}
                         {/* Placeholder for dRepId */}
                         <Skeleton className="ml-2 h-5 w-5" />{' '}
                         {/* Placeholder for CopyIcon */}
@@ -215,7 +215,7 @@ export const DRepCardSkeleton = () => {
                 <div className="flex flex-col space-y-2">
                     <Skeleton className="h-4 w-36" /> {/* Placeholder for Agent Name */}
                     <div className="flex items-center">
-                        <Skeleton className="h-4 w-48 xl:w-80" />{' '}
+                        <Skeleton className="h-4 w-44 truncate text-sm font-medium 2xl:w-48 4xl:w-80" />{' '}
                         {/* Placeholder for AgentID */}
                         <Skeleton className="ml-2 h-5 w-5" />{' '}
                         {/* Placeholder for CopyIcon */}
