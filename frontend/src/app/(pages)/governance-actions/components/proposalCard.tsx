@@ -182,7 +182,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
 
 export default ProposalCard;
 
-export const ProposalCardSkeleton: React.FC = () => {
+export const InternalProposalCardSkeleton: React.FC = () => {
     return (
         <div className="flex w-full flex-col justify-between bg-transparent">
             <div className="flex h-full w-full flex-col gap-5 rounded-t-xl bg-brand-White-200 px-6 pb-6 pt-10">
@@ -219,6 +219,46 @@ export const ProposalCardSkeleton: React.FC = () => {
                     <div className="flex justify-between gap-2">
                         <Skeleton className="h-5 w-3/4 rounded" />
                         <Skeleton className="h-5 w-5 rounded" />
+                    </div>
+                </div>
+            </div>
+
+            {/* Button Skeleton */}
+            <div className="flex w-full rounded-b-2xl bg-white p-6">
+                <Skeleton className="h-10 w-full rounded-[100px]" />
+            </div>
+        </div>
+    );
+};
+
+export const ExternalProposalCardSkeleton: React.FC = () => {
+    return (
+        <div className="flex w-full flex-col justify-between bg-transparent">
+            <div className="flex h-full w-full flex-col gap-5 rounded-t-xl bg-brand-White-200 px-6 pb-6 pt-10">
+                {/* Title Skeleton */}
+                <Skeleton className="h-6 w-3/4 rounded" />
+
+                {/* Abstract Skeleton */}
+                <div className="flex flex-col gap-1">
+                    <Skeleton className="h-4 w-1/4 rounded" />
+                    <Skeleton className="h-5 w-full rounded" />
+                </div>
+
+                {/* Proposal Details Skeleton */}
+                <div className="rounded-lg border border-gray-200 p-4 shadow-sm">
+                    <div className="flex flex-col gap-2">
+                        <Skeleton className="h-5 w-1/2 rounded" />
+                        <Skeleton className="h-5 w-full rounded" />
+                    </div>
+                </div>
+
+                {/* Date Section Skeleton */}
+                <div className="rounded-xl border border-brand-lightBlue text-xs">
+                    <div className="space-x-1 bg-brand-lightBlue bg-opacity-50 py-[6px] text-center">
+                        <Skeleton className="h-4 w-1/4 rounded" />
+                    </div>
+                    <div className="space-x-1 py-[6px] text-center">
+                        <Skeleton className="h-4 w-1/4 rounded" />
                     </div>
                 </div>
             </div>

@@ -19,7 +19,10 @@ import { Tabs, TabsList, TabsTrigger } from '@app/components/molecules/Tabs';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 
 import EmptyGovActionPlaceholder from './components/EmptyGovActionPlaceholder';
-import ProposalCard, { ProposalCardSkeleton } from './components/proposalCard';
+import ProposalCard, {
+    ExternalProposalCardSkeleton,
+    InternalProposalCardSkeleton
+} from './components/proposalCard';
 
 interface IProposalFilterOption {
     placeholder: string;
@@ -118,10 +121,21 @@ export default function GovernanceAction() {
                         data?.items?.map((proposal: any) => (
                             <ProposalCard key={proposal.id} proposal={proposal} />
                         ))}
-                    {isFetching &&
-                        Array(10)
-                            .fill(0)
-                            .map((_, index) => <ProposalCardSkeleton key={index} />)}
+                    {isFetching && (
+                        <>
+                            {searchParams.proposal_type === 'internal'
+                                ? Array(10)
+                                      .fill(0)
+                                      .map((_, index) => (
+                                          <InternalProposalCardSkeleton key={index} />
+                                      ))
+                                : Array(10)
+                                      .fill(0)
+                                      .map((_, index) => (
+                                          <ExternalProposalCardSkeleton key={index} />
+                                      ))}
+                        </>
+                    )}
                 </div>
                 {!isFetching && data?.items?.length === 0 && (
                     <EmptyGovActionPlaceholder className="h-full" />
