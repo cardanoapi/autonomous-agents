@@ -95,6 +95,7 @@ class AgentService:
 
         existing_agent = await self.agent_repository.modify_agent(agent_id, agent_data)
         self.raise_exception_if_agent_not_found(existing_agent)
+        await self.kafka_service.publish_message("trigger_config_updates", "config_updated", key=agent_id)
         return AgentResponseWithAgentConfigurations(**existing_agent.dict(), agent_configurations=updated_triggers)
 
     async def get_active_agents_count(self):
@@ -155,7 +156,7 @@ class AgentService:
             transactions = response.json()
             if isinstance(transactions, list):
                 for transaction in transactions:
-                    utxo = float(transaction.get("value", {}).get("lovelace", "0"))
+                    utxo = utxo + float(transaction.get("value", {}).get("lovelace", "0"))
         agent_configurations = await self.trigger_service.list_triggers_by_agent_id(agent.id)
         return AgentResponseWithWalletDetails(
             **agent.dict(),

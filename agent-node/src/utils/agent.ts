@@ -1,15 +1,26 @@
-import { Action, Configuration } from '../service/triggerService'
+import {
+    Action,
+    ActionParameter,
+    Configuration,
+    TriggerType,
+} from '../service/triggerService'
 import { globalState } from '../constants/global'
-import { scheduleFunctions } from './scheduler'
-import { parseRawBlockBody } from 'libcardano/cardano/ledger-serialization/transaction'
-import { AgentTransactionBuilder } from '../service/transactionBuilder'
-import { TriggerActionHandler } from '../service/TriggerActionHandler'
 import { ManagerInterface } from '../service/ManagerInterfaceService'
+import { CallLog } from '../executor/Executor'
+import { ILog } from '../service/TriggerActionHandler'
 
-export function checkIfAgentWithTriggerTypeExists(
+export function getParameterValue(
+    parameters: ActionParameter[] = [],
+    name: string
+): any {
+    const param = parameters.find((param) => param && param.name === name)
+    return param ? param.value : ''
+}
+
+export function checkIfAgentWithEventTriggerTypeExists(
     configurations: Configuration[]
 ) {
-    configurations.map((config) => {
+    configurations.forEach((config) => {
         if (config.type === 'EVENT') {
             globalState.eventTriggerTypeDetails = {
                 eventType: true,
@@ -31,69 +42,28 @@ export function createActionDtoForEventTrigger(tx: any, index: number): Action {
     }
 }
 
-export class RpcTopicHandler {
-    triggerHandler: TriggerActionHandler
-    managerInterface: ManagerInterface
-    constructor(
-        triggerHandler: TriggerActionHandler,
-        managerInterface: ManagerInterface
-    ) {
-        this.managerInterface = managerInterface
-        this.triggerHandler = triggerHandler
-    }
-    handleEvent(eventName: string, message: any) {
-        console.log(eventName, message)
-
-        const handler = (this as any)[eventName]
-        if (handler === undefined || eventName === 'constructor') {
-            console.error('Unknown event type', eventName, 'received')
-        } else {
-            handler.bind(this)(message) // Ensure the correct `this` context
+export function saveTxLog(
+    callLogs: CallLog[],
+    managerInterface: ManagerInterface,
+    triggerType: TriggerType,
+    instanceIndex: number
+) {
+    callLogs.reverse().forEach((log: any, index) => {
+        const txLog: ILog = {
+            function_name: log.function,
+            triggerType: index + 1 < callLogs.length ? 'INTERNAL' : triggerType,
+            trigger: true,
+            success: true,
+            message: '',
+            instanceIndex: instanceIndex,
         }
-    }
-    extend_block(block: any) {
-        const transactions = parseRawBlockBody(block.body)
-        transactions.length &&
-            this.triggerHandler.onTxsConfirmed(
-                transactions.map((tx) => tx.hash)
-            )
-        if (
-            globalState.eventTriggerTypeDetails.eventType &&
-            transactions.length
-        ) {
-            transactions.forEach((tx: any) => {
-                if (Array.isArray(tx.body.proposalProcedures)) {
-                    tx.body.proposalProcedures.forEach(
-                        (proposal: any, index: number) => {
-                            this.triggerHandler.setTriggerOnQueue(
-                                createActionDtoForEventTrigger(tx, index),
-                                'EVENT'
-                            )
-                        }
-                    )
-                }
-            })
+        if (log.return) {
+            txLog.txHash = log.return.hash
+        } else if (log.error) {
+            txLog.message = log.error && (log.error.message ?? log.error)
+            txLog.success = false
         }
-    }
-    initial_config(message: any) {
-        const { configurations } = message
-        checkIfAgentWithTriggerTypeExists(configurations)
-        scheduleFunctions(
-            this.triggerHandler,
-            this.managerInterface,
-            configurations
-        )
-    }
-    config_updated(message: any) {
-        const { configurations } = message
-        checkIfAgentWithTriggerTypeExists(configurations)
-        scheduleFunctions(
-            this.triggerHandler,
-            this.managerInterface,
-            configurations
-        )
-    }
-    agent_keys(message: any) {
-        AgentTransactionBuilder.setInstance(message)
-    }
+        managerInterface.logTx(txLog)
+    })
+    console.log('Method call log', callLogs)
 }

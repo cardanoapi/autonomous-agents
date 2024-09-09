@@ -50,7 +50,6 @@ class TriggerService:
         ]
         updated_configs = await self.update_agent_multiple_configs(agent_configurations)
         await self.delete_agent_multiple_configs(configs_to_delete)
-        await self.publish_trigger_event(agent_id)
         return updated_configs
 
     async def update_agent_multiple_configs(self, agent_configurations: List[TriggerResponse]):

@@ -1,5 +1,6 @@
 import { ManagerInterface } from './ManagerInterfaceService'
 import { AgentTransactionBuilder } from './transactionBuilder'
+import { getParameterValue } from '../utils/agent'
 
 export interface ActionParameter {
     name: string
@@ -24,14 +25,6 @@ export interface Configuration {
 }
 
 export type TriggerType = 'MANUAL' | 'EVENT' | 'CRON' | 'INTERNAL' | ''
-
-function getParameterValue(
-    parameters: ActionParameter[] = [],
-    name: string
-): any {
-    const param = parameters.find((param) => param.name === name)
-    return param ? param.value : ''
-}
 
 function mergeObjectsValueIntoSingleObject(
     values: Array<Record<string, string>>,

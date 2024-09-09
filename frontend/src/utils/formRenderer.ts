@@ -131,7 +131,9 @@ export function extractAnswerFromList(param: IParameter) {
 }
 
 export function extractAnswerFromObject(param: IParameter) {
-    return param.parameters?.map((param) => ({ name: param.id, value: param.value }));
+    const paramsMap = new Map();
+    param.parameters?.forEach((param) => paramsMap.set(param.id, param.value));
+    return Object.fromEntries(paramsMap);
 }
 
 export function extractAnswerFromInput(param: IParameter) {

@@ -8,6 +8,7 @@ export interface ILog {
     triggerType: TriggerType
     trigger: boolean
     success: boolean
+    instanceIndex: number
 }
 
 export interface ITrigger {

@@ -1,7 +1,7 @@
 export type AgentTriggerFunctionType =
     | 'voteOnProposal'
     | 'transferADA'
-    | 'stakeDelegation'
+    | 'delegation'
     | 'createInfoGovAction'
     | 'proposalNewConstitution'
     | 'treasuryWithdrawal'

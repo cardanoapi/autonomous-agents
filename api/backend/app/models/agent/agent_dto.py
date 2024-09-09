@@ -18,3 +18,4 @@ class AgentUpdateDTO(BaseModel):
     name: Optional[str] = Field(..., description="Name of Agent", min_length=1)
     template_id: Optional[str]
     agent_configurations: Optional[List[TriggerResponse]]
+    instance: Optional[int]
