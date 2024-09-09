@@ -12,6 +12,7 @@ import { CopyIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import AppDialog from '@app/app/components/AppDialog';
+import AgentAvatar from '@app/components/Agent/AgentAvatar';
 import { Badge } from '@app/components/atoms/Badge';
 import { Button } from '@app/components/atoms/Button';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
@@ -97,28 +98,12 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                         </div>
                     </div>
                     {dRep.agentId && dRep.agentName && (
-                        <div className="flex cursor-pointer flex-col space-y-2">
-                            <p className="text-sm font-medium text-gray-800">
-                                Agent Name:
-                                <span
-                                    className="hover:text-brand-Blue-200"
-                                    onClick={handleAgentRedirect}
-                                >
-                                    {' '}
-                                    {dRep.agentName || ''}
-                                </span>
-                            </p>
-                            <div className="-2 flex">
-                                <p className=" w-24 truncate text-ellipsis text-nowrap text-sm  xl:w-80 ">
-                                    AgentID : {dRep.agentId || ''}
-                                </p>
-                                <CopyIcon
-                                    onClick={handleCopyAgentId}
-                                    className="ml-2 cursor-pointer "
-                                    size={20}
-                                />
-                            </div>
-                        </div>
+                        <AgentDetails
+                            handleAgentRedirect={handleAgentRedirect}
+                            agentId={dRep.agentId}
+                            handleCopyAgentId={handleCopyAgentId}
+                            agentName={dRep.agentName}
+                        />
                     )}
                 </div>
                 <div className="flex gap-2">
@@ -153,6 +138,52 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                 <DrepDetailDialogContent dRep={dRep} />
             </AppDialog>
         </>
+    );
+};
+
+const AgentDetails = ({
+    handleAgentRedirect,
+    agentId,
+    handleCopyAgentId,
+    agentName
+}: {
+    handleAgentRedirect: any;
+    agentId: string;
+    agentName: any;
+    handleCopyAgentId: any;
+}) => {
+    return (
+        <div className="flex items-center justify-center gap-2">
+            <div className="flex cursor-pointer" onClick={handleAgentRedirect}>
+                <AgentAvatar
+                    hash={agentId}
+                    size={42}
+                    activeStatus={false}
+                    isActive={false}
+                />
+            </div>
+            <div className="flex cursor-pointer flex-col space-y-2">
+                <p className="text-sm font-medium text-gray-800">
+                    <span
+                        className="hover:text-brand-Blue-200"
+                        onClick={handleAgentRedirect}
+                    >
+                        {' '}
+                        {agentName || ''}
+                    </span>
+                </p>
+                <div className="-2 flex">
+                    <p className=" w-24 truncate text-ellipsis text-nowrap text-sm  xl:w-80 ">
+                        AgentID : {agentId || ''}
+                    </p>
+                    <CopyIcon
+                        onClick={handleCopyAgentId}
+                        className="ml-2 cursor-pointer "
+                        size={20}
+                    />
+                </div>
+            </div>
+        </div>
     );
 };
 
