@@ -31,4 +31,6 @@ export interface IDRep {
 export interface IDRepInternal extends IDRep {
     agentId?: string;
     agentName?: string;
+    latestTxHash?: string;
+    latestRegistrationDate?: string;
 }
