@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { useAppDialog } from '@hooks';
 import { GovernanceActionFilter, IProposalInternal } from '@models/types/proposal';
 import { Typography } from '@mui/material';
-import { CopyIcon } from 'lucide-react';
+import { CopyIcon, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import AppDialog from '@app/app/components/AppDialog';
@@ -45,12 +45,23 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
         router.push(`/agents/${proposal.agentId}`);
     };
 
+    const handleProposalExternalRedirect = () => {
+        window.open(
+            `https://govtool.cardanoapi.io/connected/governance_actions/${proposal.txHash}`,
+            '_blank'
+        );
+    };
+
     return (
         <>
-            <div className="flex w-full flex-col justify-between bg-transparent">
+            <div className="relative flex w-full flex-col justify-between bg-transparent">
                 <div
                     className={`flex h-full w-full flex-col gap-5 rounded-t-xl  ${isDataMissing ? 'shadow-bg-red-100 bg-red-100/40' : 'bg-brand-White-200'}  px-6 pb-6 pt-10`}
                 >
+                    <ExternalLink
+                        className="absolute right-6 top-6 cursor-pointer text-gray-400 hover:text-brand-Blue-200"
+                        onClick={handleProposalExternalRedirect}
+                    />
                     <p
                         className={`line-clamp-2 text-[18px]  font-semibold leading-[24px] ${isDataMissing && 'text-red-600'}`}
                     >
