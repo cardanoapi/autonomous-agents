@@ -187,7 +187,11 @@ const AgentDetails = ({
     );
 };
 
-export const DRepCardSkeleton = () => {
+export const DRepCardSkeleton = ({
+    internalDRep = true
+}: {
+    internalDRep?: boolean;
+}) => {
     return (
         <div className="shadow-xs flex w-full items-center justify-between rounded-lg  bg-white p-4">
             <div className="flex space-x-4 sm:space-x-6  xl:space-x-12 2xl:space-x-10 4xl:space-x-20">
@@ -212,15 +216,18 @@ export const DRepCardSkeleton = () => {
                         {/* Placeholder for Voting Power value */}
                     </div>
                 </div>
-                <div className="flex flex-col space-y-2">
-                    <Skeleton className="h-4 w-36" /> {/* Placeholder for Agent Name */}
-                    <div className="flex items-center">
-                        <Skeleton className="h-4 w-44 truncate text-sm font-medium 2xl:w-48 4xl:w-80" />{' '}
-                        {/* Placeholder for AgentID */}
-                        <Skeleton className="ml-2 h-5 w-5" />{' '}
-                        {/* Placeholder for CopyIcon */}
+                {internalDRep && (
+                    <div className="flex flex-col space-y-2">
+                        <Skeleton className="h-4 w-36" />{' '}
+                        {/* Placeholder for Agent Name */}
+                        <div className="flex items-center">
+                            <Skeleton className="h-4 w-44 truncate text-sm font-medium 2xl:w-48 4xl:w-80" />{' '}
+                            {/* Placeholder for AgentID */}
+                            <Skeleton className="ml-2 h-5 w-5" />{' '}
+                            {/* Placeholder for CopyIcon */}
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
             <div className="flex gap-2">
                 <Skeleton className="h-8 w-24 rounded-3xl" />{' '}

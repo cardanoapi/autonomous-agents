@@ -124,7 +124,10 @@ export default function DRepDirectory() {
                         ))}
                     {isFetching &&
                         Array.from({ length: 10 }).map((_, i) => (
-                            <DRepCardSkeleton key={i} />
+                            <DRepCardSkeleton
+                                key={i}
+                                internalDRep={queryParams.drep_type === 'internal'}
+                            />
                         ))}
                 </div>
             </ScrollArea>
