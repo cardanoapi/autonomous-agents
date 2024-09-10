@@ -7,6 +7,7 @@ export type AgentTriggerFunctionType =
     | 'treasuryWithdrawal'
     | 'noConfidence'
     | 'updateCommittee'
+    | 'stakeDelegation'
     | '';
 
 interface IParameter {

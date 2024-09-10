@@ -107,9 +107,6 @@ const AgentsContainer: React.FC<AgentsContainerProps> = ({
     enableDelete,
     loadingAgents = false
 }) => {
-    if (agentsList.length === 0 && !loadingAgents) {
-        return <div>No Agents Found</div>;
-    }
     return (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 3xl:pr-12 4xl:grid-cols-5 5xl:grid-cols-6">
             {loadingAgents
@@ -126,8 +123,8 @@ const AgentsContainer: React.FC<AgentsContainerProps> = ({
                           totalTrigger={0}
                           lastActive={agent.last_active || 'NA'}
                           enableEdit={enableEdit}
-                          enableDelete={enableDelete}
                           isActive={agent.is_active}
+                          enableDelete={enableDelete}
                       />
                   ))}
         </div>
