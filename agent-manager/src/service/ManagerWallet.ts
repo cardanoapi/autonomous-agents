@@ -3,7 +3,7 @@ import { kuber } from './kuber_service'
 import environments from '../config/environments'
 
 export class ManagerWalletService {
-    walletBalance: number
+    walletBalance: number = 0
 
     constructor() {
         this.fetchManagerWalletBalance()

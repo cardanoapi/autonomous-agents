@@ -54,7 +54,7 @@ export class AgentRunner {
 
 function connectToManagerWebSocket() {
     let interval: NodeJS.Timeout | number
-    let scheduledTasks: ScheduledTask[] = []
+    const scheduledTasks: ScheduledTask[] = []
     ws = new WebSocket(`${wsUrl}/${agentId}`)
     const clientPipe = new WsClientPipe(ws)
     const rpcChannel = new AgentRpc(
@@ -63,7 +63,7 @@ function connectToManagerWebSocket() {
     const managerInterface = new ManagerInterface(rpcChannel)
     const txListener = new TxListener()
 
-    let agentRunners: Array<AgentRunner> = []
+    const agentRunners: Array<AgentRunner> = []
 
     rpcChannel.on('methodCall', (method, args) => {
         console.log('RUnners are: ', agentRunners)

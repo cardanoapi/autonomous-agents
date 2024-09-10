@@ -52,6 +52,7 @@ export async function initKafkaConsumers(manager: AgentManagerRPC) {
                         `Due to deletion,Agent with id ${agentId} is disconnected.`
                     )
                 } else {
+                    console.log(parsedMethodConfig)
                     manager.isActive(agentId) && manager.fireMethod(agentId, method, ...parameters)
                 }
             }
