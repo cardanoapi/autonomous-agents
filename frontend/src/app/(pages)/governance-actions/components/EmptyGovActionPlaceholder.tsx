@@ -10,7 +10,7 @@ export default function EmptyGovActionPlaceholder({
     return (
         <div
             className={cn(
-                'border-Gray-200 flex h-full w-full items-center justify-center rounded-lg bg-brand-Azure-200',
+                'border-Gray-200 flex h-full w-full items-center justify-center rounded-lg',
                 className
             )}
         >

@@ -220,7 +220,7 @@ export default function LogsPage() {
             </div>
             <div className="flex flex-row-reverse pt-4">
                 <PaginationBtns
-                    className="flex justify-center pr-2"
+                    className="pagination-btn-position flex justify-center"
                     onPaginate={(val: number) => {
                         setLogQueryState((prevState) => ({
                             ...prevState,

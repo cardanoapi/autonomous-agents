@@ -116,7 +116,7 @@ export default function DRepDirectory() {
             </div>
 
             {/* DRep list */}
-            <ScrollArea className="h-[82%] pr-4">
+            <ScrollArea className="h-drepListHeight pr-4">
                 <div className="flex flex-col space-y-4">
                     {!isFetching &&
                         data?.items?.map((dRep) => (
