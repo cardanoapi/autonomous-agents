@@ -13,7 +13,19 @@ class ProposalService:
         internal_proposals = await self.db.prisma.triggerhistory.find_many(
             skip=(page - 1) * pageSize,
             take=pageSize,
-            where={"functionName": "createInfoGovAction", "success": True, "status": True},
+            where={
+                "functionName": {
+                    "in": [
+                        "createInfoGovAction",
+                        "proposalNewConstitution",
+                        "treasuryWithdrawal",
+                        "noConfidence",
+                        "updateCommittee",
+                    ]
+                },
+                "success": True,
+                "status": True,
+            },
             order=[{"timestamp": "desc"}],
         )
 
