@@ -60,7 +60,7 @@ export const postTemplateData = async (
             action:
                 item.type === 'CRON'
                     ? {
-                          function_name: item.label,
+                          function_name: item.value,
                           parameters: item?.cronParameters?.map((param) => ({
                               name: param.name,
                               value: param.value
