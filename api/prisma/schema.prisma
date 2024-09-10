@@ -11,17 +11,18 @@ datasource db {
 
 // Agent table model
 model Agent {
-  id          String    @id // UUID
-  name        String
-  instance    BigInt
-  template_id String?  
-  index       BigInt    @default(autoincrement())
-  last_active DateTime?
-  created_at  DateTime
-  updated_at  DateTime
-  deleted_at  DateTime? // Soft deletion field
-  owner       User?     @relation(fields: [userAddress], references: [address])
-  userAddress      String?
+  id             String               @id // UUID
+  name           String
+  instance       BigInt
+  template_id    String?
+  index          BigInt               @default(autoincrement())
+  last_active    DateTime?
+  created_at     DateTime
+  updated_at     DateTime
+  deleted_at     DateTime? // Soft deletion field
+  owner          User?                @relation(fields: [userAddress], references: [address])
+  userAddress    String?
+  wallet_details AgentWalletDetails[]
 }
 
 model Trigger {
@@ -53,22 +54,22 @@ model Template {
   created_at  DateTime
   updated_at  DateTime
   deleted_at  DateTime?
-  owner       User?      @relation(fields: [userAddress], references: [address])
-  userAddress      String?
+  owner       User?     @relation(fields: [userAddress], references: [address])
+  userAddress String?
 }
 
 // schema.prisma
 model TriggerHistory {
-  id           String      @id
-  agentId      String
-  functionName String
-  status       Boolean
-  success      Boolean
-  message      String
-  timestamp    DateTime?
-  txHash       String?
-  triggerType  TriggerType
-  instanceIndex BigInt @default(0)
+  id            String      @id
+  agentId       String
+  functionName  String
+  status        Boolean
+  success       Boolean
+  message       String
+  timestamp     DateTime?
+  txHash        String?
+  triggerType   TriggerType
+  instanceIndex BigInt      @default(0)
 }
 
 model FunctionDetail {
@@ -86,11 +87,20 @@ enum TriggerType {
 }
 
 model User {
-  address    String     @id
-  created_at DateTime
-  updated_at DateTime
-  deleted_at DateTime?
-  Agent      Agent[]
-  Template   Template[]
-  isSuperUser Boolean @default(false)
+  address     String     @id
+  created_at  DateTime
+  updated_at  DateTime
+  deleted_at  DateTime?
+  Agent       Agent[]
+  Template    Template[]
+  isSuperUser Boolean    @default(false)
+}
+
+model AgentWalletDetails {
+  address          String @id
+  agent_id         String
+  instance_index   Int
+  payment_key_hash Bytes  @db.ByteA
+  stake_key_hash   Bytes  @db.ByteA
+  agent            Agent  @relation(fields: [agent_id], references: [id])
 }
