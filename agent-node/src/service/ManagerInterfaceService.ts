@@ -17,4 +17,8 @@ export class ManagerInterface {
     logTx(log_data: ILog): void {
         return this.rpc.fireMethod('logEvent', log_data)
     }
+
+    loadFunds(address: string, txAmt: number): Promise<any> {
+        return this.rpc.callMethod('loadFunds', address, txAmt)
+    }
 }

@@ -9,7 +9,7 @@ from backend.app.models import TriggerResponse
 class AgentResponse(BaseModel):
     id: str
     name: str
-    template_id: str
+    template_id: Optional[str]
     instance: int
     index: int
     last_active: Optional[datetime]

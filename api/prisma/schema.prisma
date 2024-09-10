@@ -14,7 +14,7 @@ model Agent {
   id          String    @id // UUID
   name        String
   instance    BigInt
-  template_id String
+  template_id String?  
   index       BigInt    @default(autoincrement())
   last_active DateTime?
   created_at  DateTime
@@ -68,6 +68,7 @@ model TriggerHistory {
   timestamp    DateTime?
   txHash       String?
   triggerType  TriggerType
+  instanceIndex BigInt @default(0)
 }
 
 model FunctionDetail {

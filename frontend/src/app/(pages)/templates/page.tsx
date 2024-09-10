@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import Link from 'next/link';
 
@@ -9,30 +9,27 @@ import { useAtom } from 'jotai';
 
 import { ITemplate, fetchTemplates } from '@app/app/api/templates';
 import { Button } from '@app/components/atoms/Button';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
 import { cn } from '@app/components/lib/utils';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
+import TemplateCard from '@app/components/molecules/TemplateCard';
+import { TemplateCardSkeleton } from '@app/components/molecules/TemplateCard';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
-import { adminAccessAtom, templateCreatedAtom } from '@app/store/localStore';
-
-import TemplatesContainer from './TemplatesContainer';
+import {
+    adminAccessAtom,
+    currentConnectedWalletAtom,
+    templateCreatedAtom
+} from '@app/store/localStore';
 
 export default function TemplatesPage() {
-    const { data: templates = [], isLoading } = useQuery<ITemplate[]>({
+    const { data: templates = [], isLoading: isLoading } = useQuery<ITemplate[]>({
         queryKey: ['templates'],
         queryFn: fetchTemplates
     });
 
     const [templateCreated, setTemplateCreated] = useAtom(templateCreatedAtom);
-    const [filteredTemplates, setFilteredTemplates] = useState<ITemplate[]>([]);
     const [adminAccess] = useAtom(adminAccessAtom);
-
+    const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
     useEffect(() => {
@@ -42,41 +39,19 @@ export default function TemplatesPage() {
         }
     }, [templateCreated, setTemplateCreated]);
 
-    useEffect(() => {
-        if (templates.length !== 0) {
-            setFilteredTemplates(templates);
-        }
-    }, [templates]);
+    const containerClass =
+        'grid grid-cols-1 gap-5 sm:grid-cols-2  lg:grid-cols-3 xl:grid-cols-4 4xl:grid-cols-5 3xl:pr-12';
 
-    function handleSearch(templateName: string) {
-        const newTemplates =
-            templates?.filter((template) =>
-                template.name.toLowerCase().includes(templateName.toLowerCase())
-            ) || [];
-        setFilteredTemplates(newTemplates);
-    }
-
-    return (
-        <>
+    const TopNav = () => {
+        return (
             <div className="flex justify-between">
                 <div className="flex items-center justify-center gap-x-4">
                     <span className="h1-new">Templates({templates?.length})</span>
                     <SearchField
                         variant="secondary"
-                        className="h-10 min-w-[240px]"
-                        placeholder="Search Templates"
-                        onSearch={handleSearch}
+                        className="h-10 min-w-[420px]"
+                        placeholder="Search Templates "
                     />
-                    <DropdownMenu>
-                        <DropdownMenuTrigger border={true}>
-                            Function
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-white">
-                            <DropdownMenuItem>Send Ada</DropdownMenuItem>
-                            <DropdownMenuItem>Vote Proposal</DropdownMenuItem>
-                            <DropdownMenuItem>Others</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
                 </div>
                 <Link href="/templates/create-template">
                     <Button
@@ -90,19 +65,43 @@ export default function TemplatesPage() {
                     </Button>
                 </Link>
             </div>
+        );
+    };
+
+    const TopNavSkeleton = () => {
+        return (
+            <div className="flex justify-between ">
+                <div className="flex items-center gap-x-4">
+                    <Skeleton className="h-8 w-[140px]" />
+                    <Skeleton className="h-10 min-w-[420px]" />
+                </div>
+            </div>
+        );
+    };
+
+    return (
+        <>
+            {isLoading ? <TopNavSkeleton /> : <TopNav />}
 
             <div className="flex flex-col gap-y-[80px] pb-10 pt-10">
                 <div className="mt-2 flex flex-col gap-y-5">
-                    <span className="h5 inline-block">My Templates</span>
-                    {filteredTemplates.length ? (
-                        isLoading ? (
-                            <TemplatesSkeleton />
-                        ) : (
-                            <TemplatesContainer
-                                templates={filteredTemplates}
-                                enableEdit={adminAccess}
-                            />
-                        )
+                    {isLoading ? (
+                        <div className={containerClass}>
+                            <TemplateSkeletonContainer />
+                        </div>
+                    ) : templates.length > 0 ? (
+                        <div className={containerClass}>
+                            {templates.map((template: ITemplate, index: number) => (
+                                <TemplateCard
+                                    template={template}
+                                    key={index}
+                                    enableDelete={
+                                        adminAccess === true &&
+                                        currentConnectedWallet !== null
+                                    }
+                                />
+                            ))}
+                        </div>
                     ) : (
                         <span>No Templates Found</span>
                     )}
@@ -112,19 +111,14 @@ export default function TemplatesPage() {
     );
 }
 
-const TemplatesSkeleton = () => {
+const TemplateSkeletonContainer = () => {
     return (
-        <div className={'flex flex-row flex-wrap gap-4'}>
-            {Array(4)
+        <>
+            {Array(10)
                 .fill(undefined)
                 .map((_, index: number) => {
-                    return (
-                        <Skeleton
-                            key={index}
-                            className={'h-[160px] w-[280px] rounded-lg'}
-                        />
-                    );
+                    return <TemplateCardSkeleton key={index} />;
                 })}
-        </div>
+        </>
     );
 };

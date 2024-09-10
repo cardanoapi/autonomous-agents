@@ -22,7 +22,7 @@ import AgentFunctionsDropDown from '../Common/AgentFunctionsDropDown';
 
 const AgentHistoryComponent = ({ agent }: { agent?: IAgent }) => {
     const [currentChartFilterOption, setCurrentChartFilterOption] = useState(
-        chartFilterOptions[1]
+        chartFilterOptions[2]
     );
     const [chartDataSource, setChartDataSource] = useState<
         { count: number; values: Record<string, number> }[]

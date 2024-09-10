@@ -13,3 +13,4 @@ class TriggerHistoryDto(BaseModel):
     message: str
     triggerType: Optional[str]
     txHash: Optional[str]
+    instanceIndex: Optional[int]

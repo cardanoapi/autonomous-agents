@@ -66,6 +66,7 @@ model TriggerHistory {
   timestamp    DateTime?
   txHash       String?
   triggerType  TriggerType
+  instanceIndex BigInt @default(0)
 }
 
 model FunctionDetail {

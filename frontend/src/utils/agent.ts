@@ -95,3 +95,27 @@ export function validateInputFieldForGroup(param: IParameter) {
         });
     }
 }
+
+export function formatDatetoHumanReadable(inputDate: string | number): string {
+    if (inputDate === 'NA') {
+        return 'Not activated yet';
+    } else {
+        const lastActiveDate = new Date(inputDate);
+        const currentDate = new Date();
+
+        const diffInSeconds = Math.floor(
+            (Number(currentDate) - Number(lastActiveDate)) / 1000
+        );
+        const diffInMinutes = Math.floor(diffInSeconds / 60);
+        const diffInHours = Math.floor(diffInMinutes / 60);
+        const diffInDays = Math.floor(diffInHours / 24);
+
+        if (diffInDays >= 1) {
+            return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+        } else if (diffInHours >= 1) {
+            return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+        } else if (diffInMinutes >= 1) {
+            return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
+        } else return `${diffInSeconds} second${diffInSeconds > 1 ? 's' : ''} ago`;
+    }
+}

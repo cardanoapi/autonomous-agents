@@ -15,7 +15,7 @@ export async function checkIfAgentExistsInDB(agentId: string): Promise<boolean> 
             return !!agents
         })
         .catch((error: any) => {
-            console.error(error)
+            console.error('checkIfAgentExistsInDB: Unknown error', error)
             return false
         })
 }

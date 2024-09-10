@@ -1,12 +1,15 @@
 import { isEmpty } from 'lodash';
 
+import { IAgent } from '@api/agents';
 import { AgentTriggerFunctionType } from '@models/types';
 import { CircularProgress } from '@mui/material';
+import { useAtom } from 'jotai';
 
 import { AppDialogContent } from '@app/app/components/AppDialog';
 import Loader from '@app/app/components/Loader';
 import { Button } from '@app/components/atoms/Button';
 import { useAgentsAction } from '@app/lib/hooks/useAgentActions';
+import { adminAccessAtom, currentConnectedWalletAtom } from '@app/store/localStore';
 
 import AgentSelector from './AgentSelector';
 import EmptyAgent from './EmptyAgent';
@@ -35,16 +38,29 @@ const AgentsActionDialogContent = ({
         selectedAgentIds
     } = useAgentsAction(triggerType, handleClose, functionId);
 
+    const [adminAccess] = useAtom(adminAccessAtom);
+    const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
+
+    function filterUserOwnedAgents(agents: IAgent[]) {
+        return adminAccess
+            ? agents
+            : agents.filter(
+                  (agent) => agent.userAddress === currentConnectedWallet?.address
+              );
+    }
+
     if (isLoading) return <Loader />;
+
+    const userOwnedAgents = filterUserOwnedAgents(activeAgents);
 
     return (
         <AppDialogContent title={title} description={description}>
             <div className="space-y-2' flex w-full flex-col">
-                {activeAgents.length === 0 ? (
+                {userOwnedAgents.length === 0 ? (
                     <EmptyAgent />
                 ) : (
                     <div className="flex flex-col gap-2">
-                        {activeAgents.map((agent) => (
+                        {userOwnedAgents.map((agent) => (
                             <AgentSelector
                                 key={agent.id}
                                 agent={agent}

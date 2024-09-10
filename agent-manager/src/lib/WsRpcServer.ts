@@ -5,6 +5,7 @@ import { RpcV1Server } from 'libcardano/network/WsRpcServer'
 import { Pipe } from 'libcardano/network/event'
 import { CborDuplex } from 'libcardano/network/ouroboros'
 import { cborxBackend } from 'libcardano/lib/cbor'
+import { fetchAgentConfiguration } from '../repository/agent_manager_repository'
 
 export class WsClientPipe extends Pipe<any, any> {
     ws: WebSocket
@@ -51,6 +52,8 @@ export abstract class WsRpcServer extends RpcV1Server {
                 return
             }
             this.addConnection(conn_id, new CborDuplex(new WsClientPipe(ws), cborxBackend(true)))
+            const { instanceCount } = await fetchAgentConfiguration(conn_id)
+            this.emit(conn_id, 'instance_count', instanceCount)
             try {
                 await this.validateConnection(req)
                 this.onReady(this.activeConnections[conn_id])

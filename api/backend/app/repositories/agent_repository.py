@@ -72,7 +72,11 @@ class AgentRepository:
         agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
         if agent is None or agent.deleted_at is not None:
             return None
-        updated_data = {"name": agent_data.name, "updated_at": datetime.now(timezone.utc)}
+        updated_data = {
+            "name": agent_data.name,
+            "instance": agent_data.instance,
+            "updated_at": datetime.now(timezone.utc),
+        }
         updated_agent = await self.db.prisma.agent.update(where={"id": agent_id}, data=updated_data)
         return updated_agent
 

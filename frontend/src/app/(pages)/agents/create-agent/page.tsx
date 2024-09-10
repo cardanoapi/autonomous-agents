@@ -21,6 +21,7 @@ import { Label } from '@app/components/atoms/label';
 import { cn } from '@app/components/lib/utils';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
 import MultipleSelector, { IOption } from '@app/components/molecules/MultiSearchSelect';
+import { NumberInput } from '@app/components/molecules/NumberInput';
 import SelectedCard from '@app/components/molecules/SelectedCard';
 import { SubmitButton } from '@app/components/molecules/SubmitButton';
 import { agentCreatedAtom } from '@app/store/localStore';
@@ -167,28 +168,28 @@ export default function CreateAgentForm() {
                             })}
                         </div>
 
-                        {/*<FormField*/}
-                        {/*    control={form.control}*/}
-                        {/*    name="numberOfAgents"*/}
-                        {/*    render={({ field }) => (*/}
-                        {/*        <FormItem>*/}
-                        {/*            <Label className="inline-flex">*/}
-                        {/*                Number of Agents*/}
-                        {/*            </Label>*/}
-                        {/*            <FormControl>*/}
-                        {/*                <NumberInput*/}
-                        {/*                    className="h-[38px] w-[138px]"*/}
-                        {/*                    {...field}*/}
-                        {/*                    type="number"*/}
-                        {/*                    onChange={(e) =>*/}
-                        {/*                        field.onChange(parseInt(e.target.value))*/}
-                        {/*                    }*/}
-                        {/*                    min={1}*/}
-                        {/*                />*/}
-                        {/*            </FormControl>*/}
-                        {/*        </FormItem>*/}
-                        {/*    )}*/}
-                        {/*/>*/}
+                        <FormField
+                            control={form.control}
+                            name="numberOfAgents"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <Label className="inline-flex">
+                                        Number of Agents
+                                    </Label>
+                                    <FormControl>
+                                        <NumberInput
+                                            className="h-[38px] w-[138px]"
+                                            {...field}
+                                            type="number"
+                                            onChange={(e) =>
+                                                field.onChange(parseInt(e.target.value))
+                                            }
+                                            min={1}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
                     </div>
                     <SubmitButton disabled={submittingForm} />
                 </Card>

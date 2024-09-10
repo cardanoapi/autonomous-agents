@@ -92,12 +92,20 @@ const config = {
                 }
             },
             height: {
-                agentComponentHeight: 'calc-(100% - 30px)',
+                agentComponentHeight: 'calc(100% - 30px)',
                 proposalEmptyListHeight: 'calc(100vh - 260px)',
                 modalHeight: 'calc(100% - 45px)',
                 govActionsPageHeight: 'calc(100vh - 320px)',
                 dRepsPageHeight: 'calc(100vh - 314px)',
-                defaultPageHeightwithoutTopNav: 'calc(100vh - 140px)'
+                defaultPageHeightwithoutTopNav: 'calc(100vh - 140px)',
+                logsPageHeight: 'calc(100vh - 200px)'
+            },
+            maxHeight: {
+                agentsList: 'calc(100vh - 210px)',
+                logsList: 'calc(100vh - 260px)'
+            },
+            maxWidth: {
+                agentComponentWidth: 'calc(100% - 230px)'
             },
             keyframes: {
                 'accordion-down': {

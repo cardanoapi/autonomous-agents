@@ -18,7 +18,7 @@ export default function OverViewTemplatesCard({
 }: IOverViewTemplatesCard) {
     return (
         <OverViewCard title={title} value={totalTemplates}>
-            <div className="flex w-full items-center gap-x-14">
+            <div className="flex w-full items-center gap-x-8 4xl:gap-x-16">
                 <div className="flex items-center gap-x-2">
                     <TemplateIcon fill="#1C63E7" fontSize={6} />
                     <div className="card-h5 ">{defaultTemplates}</div>

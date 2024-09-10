@@ -50,7 +50,7 @@ const PaginationBtns: React.FC<PaginationBtnsProps> = ({
             </div>
             <span className="text-center text-base ">
                 {refCurrentPage ? refCurrentPage : currentPage}
-                {upperLimit ? `/${upperLimit}` : ''}
+                {upperLimit ? ` /${upperLimit}` : ''}
             </span>
             <div
                 className={cn(

@@ -3,6 +3,7 @@ import { WebSocket } from 'ws'
 import { initKafkaConsumers } from './service/kafka_message_consumer'
 import { AgentManagerRPC } from './service/AgentManagerRPC'
 import { createBlockchainInstance } from './service/BlockchainService'
+import { ManagerWalletService } from './service/ManagerWallet'
 
 const app = express()
 const port = 3001
@@ -13,7 +14,8 @@ const server = app.listen(port, async () => {
     const blockchain = createBlockchainInstance()
 
     const wss = new WebSocket.Server({ server })
-    const manager = new AgentManagerRPC(wss)
+    const managerWallet = new ManagerWalletService()
+    const manager = new AgentManagerRPC(wss, managerWallet)
 
     setInterval(() => {
         console.log('Connection count:', manager.server.clients.size)
@@ -25,7 +27,6 @@ const server = app.listen(port, async () => {
         )
         manager.broadcast('extend_block', block)
     })
-
     await initKafkaConsumers(manager)
 })
 server.on('error', (e) => {

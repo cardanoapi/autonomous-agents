@@ -1,10 +1,18 @@
 class Kuber {
+    MAX_CONCURRENT_CALLS = 8
+    active_calls = 0
+    call_queue: Array<any> = []
     providerUrl: string
-    constructor(providerUrl: string) {
-        if (providerUrl.endsWith('/')) {
-            this.providerUrl = providerUrl
-        } else {
-            this.providerUrl = providerUrl + '/'
+
+    constructor() {
+        const kuberUrl = process.env.KUBER_BASE_URL
+        if (!kuberUrl) {
+            console.log('Kuber Url not provided.')
+            process.exit(1)
+        }
+        this.providerUrl = kuberUrl
+        if (this.providerUrl.endsWith('/') === false) {
+            this.providerUrl = this.providerUrl + '/'
         }
     }
 
@@ -18,22 +26,45 @@ class Kuber {
 
     async buildTx(txSpec: any, submit?: boolean): Promise<any> {
         const KuberAPIKey = process.env.KUBER_API_KEY
+        const headers: HeadersInit = {
+            'content-type': 'application/json',
+        }
         if (!KuberAPIKey) {
             console.error('No Api Key provided.')
             process.exit(1)
         }
-        return this.call('POST', `api/v1/tx${submit ? '?submit=true' : ''}`, JSON.stringify(txSpec), {
-            'content-type': 'application/json',
-            'api-key': `${KuberAPIKey}`,
+        headers['api-key'] = KuberAPIKey
+        return new Promise((resolve, reject) => {
+            this.call_queue.push({
+                body: ['POST', `api/v1/tx${submit ? '?submit=true' : ''}`, JSON.stringify(txSpec), headers],
+                resolve,
+                reject,
+            })
+            this.handleApiCallQueue()
         })
-            .then((res) => {
-                console.log('response is : ', res)
-                return res.text()
-            })
-            .then((str) => {
-                console.log('Kuber Call Response : ', str)
-                return Kuber.parseJson(str)
-            })
+    }
+
+    private handleApiCallQueue = () => {
+        if (this.active_calls < this.MAX_CONCURRENT_CALLS && this.call_queue.length) {
+            const { body, resolve, reject } = this.call_queue.shift()
+            this.active_calls++
+            this.call
+                .apply(this as Kuber, body)
+                .then((res) => {
+                    console.log('response is : ', res)
+                    return res.text()
+                })
+                .then((str) => {
+                    console.log('Kuber Call Response : ', str)
+                    resolve(Kuber.parseJson(str))
+                })
+                .catch(reject)
+                .finally(() => {
+                    this.active_calls--
+                    this.handleApiCallQueue()
+                })
+        }
+        console.log('CALL QUEUE: ', this.active_calls, this.call_queue)
     }
 
     async getScriptPolicy(policy: Record<string, any>): Promise<string> {
@@ -55,6 +86,7 @@ class Kuber {
     }
 
     private async call(method: string, url: string, data: BodyInit, headers?: HeadersInit): Promise<Response> {
+        console.log('call provider url', this.providerUrl)
         return fetch(`${this.providerUrl}${url}`, {
             method,
             body: data,
@@ -88,10 +120,5 @@ class Kuber {
     }
 }
 
-const kuberUrl = process.env.KUBER_BASE_URL
-if (!kuberUrl) {
-    console.log('Kuber Url not provided.')
-    process.exit(1)
-}
-export const kuber = new Kuber(kuberUrl)
+export const kuber = new Kuber()
 export type KuberType = Kuber
