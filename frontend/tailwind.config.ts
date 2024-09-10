@@ -98,13 +98,13 @@ const config = {
                 govActionsPageHeight: 'calc(100vh - 320px)',
                 dRepsPageHeight: 'calc(100vh - 314px)',
                 defaultPageHeightwithoutTopNav: 'calc(100vh - 140px)',
-                logsPageHeight: 'calc(100vh - 320px)',
-                proposalListHeight: 'calc(100vh - 280px)',
+                logsPageHeight: 'calc(100vh - 280px)',
+                proposalListHeight: 'calc(100vh - 260px)',
                 drepListHeight: 'calc(100vh - 280px)'
             },
             maxHeight: {
                 agentsList: 'calc(100vh - 210px)',
-                logsList: 'calc(100vh - 260px)'
+                logsList: 'calc(100vh - 240px)'
             },
             maxWidth: {
                 agentComponentWidth: 'calc(100% - 230px)'

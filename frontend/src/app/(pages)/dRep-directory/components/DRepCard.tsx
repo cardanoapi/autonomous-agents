@@ -15,6 +15,7 @@ import AppDialog from '@app/app/components/AppDialog';
 import AgentAvatar from '@app/components/Agent/AgentAvatar';
 import { Badge } from '@app/components/atoms/Badge';
 import { Button } from '@app/components/atoms/Button';
+import { cn } from '@app/components/lib/utils';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
 import AgentsDelegationDialogContent from './AgentsDelegationDialogContent';
@@ -188,12 +189,19 @@ const AgentDetails = ({
 };
 
 export const DRepCardSkeleton = ({
-    internalDRep = true
+    internalDRep = true,
+    className
 }: {
     internalDRep?: boolean;
+    className?: string;
 }) => {
     return (
-        <div className="shadow-xs flex w-full items-center justify-between rounded-lg  bg-white p-4">
+        <div
+            className={cn(
+                'shadow-xs flex w-full items-center justify-between rounded-lg  bg-white p-4',
+                className
+            )}
+        >
             <div className="flex space-x-4 sm:space-x-6  xl:space-x-12 2xl:space-x-10 4xl:space-x-20">
                 <div className="flex flex-col space-y-2">
                     <div className="flex items-center gap-2">

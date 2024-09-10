@@ -76,7 +76,7 @@ export default function GovernanceAction() {
     }, [data, searchParams.pageSize]);
 
     return (
-        <div className="flex h-defaultPageHeightwithoutTopNav w-full flex-col gap-10">
+        <div className="flex h-defaultPageHeightwithoutTopNav w-full flex-col gap-4">
             <div className="flex items-center justify-between">
                 <div className="flex gap-2">
                     <DataActionBar
@@ -116,7 +116,7 @@ export default function GovernanceAction() {
                 </div>
             </div>
             <ScrollArea className="h-proposalListHeight pr-4">
-                <div className="grid w-full grid-flow-row grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+                <div className="grid w-full grid-flow-row grid-cols-1 gap-8 py-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                     {!isFetching &&
                         data?.items?.map((proposal: any) => (
                             <ProposalCard key={proposal.id} proposal={proposal} />

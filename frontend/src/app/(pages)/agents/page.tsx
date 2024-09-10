@@ -68,7 +68,7 @@ export default function AgentsPage() {
             )}
 
             <ScrollArea
-                className="mt-12 max-h-agentsList overflow-y-auto pr-4"
+                className="mt-5 max-h-agentsList overflow-y-auto py-4 pr-4"
                 scrollHideDelay={200}
             >
                 <AgentsContainer
@@ -79,7 +79,7 @@ export default function AgentsPage() {
                 />
 
                 {currentConnectedWallet && !isLoading && myAgents.length > 0 && (
-                    <div className="my-8">
+                    <div className={cn(filteredAgents.length > 0 && 'my-8')}>
                         <span className="h1-new mb-4 inline-flex">My Agents</span>
                         <AgentsContainer
                             agentsList={myAgents}

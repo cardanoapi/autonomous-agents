@@ -75,7 +75,7 @@ export default function DRepDirectory() {
     }, [data, queryParams.pageSize]);
 
     return (
-        <div className="flex h-defaultPageHeightwithoutTopNav flex-col space-y-12">
+        <div className="!mt-4 flex h-defaultPageHeightwithoutTopNav flex-col space-y-12">
             <div className="flex items-center justify-between">
                 <div className="flex gap-2">
                     <DataActionBar
@@ -116,7 +116,7 @@ export default function DRepDirectory() {
             </div>
 
             {/* DRep list */}
-            <ScrollArea className="h-drepListHeight pr-4">
+            <ScrollArea className="h-drepListHeight pb-4 pr-4">
                 <div className="flex flex-col space-y-4">
                     {!isFetching &&
                         data?.items?.map((dRep) => (

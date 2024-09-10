@@ -83,7 +83,7 @@ export default function TemplatesPage() {
         <>
             {isLoading ? <TopNavSkeleton /> : <TopNav />}
 
-            <div className="flex flex-col gap-y-[80px] pb-10 pt-10">
+            <div className="flex flex-col gap-y-[80px] pb-10 pt-5">
                 <div className="mt-2 flex flex-col gap-y-5">
                     {isLoading ? (
                         <div className={containerClass}>
