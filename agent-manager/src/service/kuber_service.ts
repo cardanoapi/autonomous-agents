@@ -3,11 +3,16 @@ class Kuber {
     active_calls = 0
     call_queue: Array<any> = []
     providerUrl: string
-    constructor(providerUrl: string) {
-        if (providerUrl.endsWith('/')) {
-            this.providerUrl = providerUrl
-        } else {
-            this.providerUrl = providerUrl + '/'
+
+    constructor() {
+        const kuberUrl = process.env.KUBER_BASE_URL
+        if (!kuberUrl) {
+            console.log('Kuber Url not provided.')
+            process.exit(1)
+        }
+        this.providerUrl = kuberUrl
+        if (this.providerUrl.endsWith('/') === false) {
+            this.providerUrl = this.providerUrl + '/'
         }
     }
 
@@ -31,7 +36,7 @@ class Kuber {
         headers['api-key'] = KuberAPIKey
         return new Promise((resolve, reject) => {
             this.call_queue.push({
-                body: [`api/v1/tx${submit ? '?submit=true' : ''}`, JSON.stringify(txSpec), headers],
+                body: ['POST', `api/v1/tx${submit ? '?submit=true' : ''}`, JSON.stringify(txSpec), headers],
                 resolve,
                 reject,
             })
@@ -39,11 +44,12 @@ class Kuber {
         })
     }
 
-    handleApiCallQueue() {
+    private handleApiCallQueue = () => {
         if (this.active_calls < this.MAX_CONCURRENT_CALLS && this.call_queue.length) {
             const { body, resolve, reject } = this.call_queue.shift()
             this.active_calls++
-            this.call('POST', ...body)
+            this.call
+                .apply(this as Kuber, body)
                 .then((res) => {
                     console.log('response is : ', res)
                     return res.text()
@@ -80,6 +86,7 @@ class Kuber {
     }
 
     private async call(method: string, url: string, data: BodyInit, headers?: HeadersInit): Promise<Response> {
+        console.log('call provider url', this.providerUrl)
         return fetch(`${this.providerUrl}${url}`, {
             method,
             body: data,
@@ -113,10 +120,5 @@ class Kuber {
     }
 }
 
-const kuberUrl = process.env.KUBER_BASE_URL
-if (!kuberUrl) {
-    console.log('Kuber Url not provided.')
-    process.exit(1)
-}
-export const kuber = new Kuber(kuberUrl)
+export const kuber = new Kuber()
 export type KuberType = Kuber

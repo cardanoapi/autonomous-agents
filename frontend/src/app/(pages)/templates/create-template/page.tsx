@@ -105,12 +105,17 @@ export default function TemplateForm() {
                     .filter((item: IFunction): any => item.num_parameters != 0)
                     .map((item: IFunction): any => ({
                         label: item.name,
-                        value: item.name,
-                        parameters: item.parameters
+                        value: item.function_name,
+                        parameters: item.parameters,
+                        description: item.description
                     }))
             );
         }
     }, [functions]);
+
+    useEffect(() => {
+        console.log(selected);
+    }, [selected]);
 
     /* Related to saving parameter fromt the dialog popup*/
     function updateSelected({
@@ -164,8 +169,8 @@ export default function TemplateForm() {
                 {selected.map((option: ITemplateOption, index) => {
                     return (
                         <SelectedCard
-                            name={option.value}
-                            description={option.value}
+                            name={option.label}
+                            description={option.description}
                             key={index}
                             handleEdit={() => {
                                 openSelectedOption(option);
@@ -175,6 +180,7 @@ export default function TemplateForm() {
                                 const newTriggers = currentFormTriggers.filter(
                                     (item: any) => item.value != option.value
                                 );
+
                                 form.setValue('triggers', newTriggers);
                                 functionRef.current.handleUnselect(option);
                             }}

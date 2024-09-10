@@ -167,7 +167,7 @@ export class Executor {
                         }
                         try {
                             // Call the original method with the correct `this` context
-                            //@ts-expect-error
+                            //@ts-expect-error ts(2345)
                             const result = origMethod.apply(this, args)
 
                             // If the result is a Promise, handle its resolution and rejection
@@ -223,7 +223,7 @@ export class Executor {
     }
 
     invokeFunction(name: string, ...args: any): Promise<CallLog[]> {
-        const f: Function | undefined = this.functions.functions[name]
+        const f: any | undefined = this.functions.functions[name]
         const log: CallLog = {
             function: name,
             arguments: args,

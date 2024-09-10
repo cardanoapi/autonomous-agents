@@ -25,7 +25,8 @@ export function fetchWalletBalance(address: string) {
     return fetch(url)
         .then((res) => res.json())
         .then((data: any) => {
-            return data.reduce((totalVal, item) => totalVal + item.value.lovelace, 0) / 10 ** 6
+            console.log(data)
+            return data.reduce((totalVal: number, item: any) => totalVal + item.value.lovelace, 0) / 10 ** 6
         })
         .catch((error) => {
             throw error

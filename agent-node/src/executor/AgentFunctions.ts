@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 
 export interface FunctionHolder {
-    [key: string]: Function
+    [key: string]: any
 }
 export interface FunctionGroup {
     functions: FunctionHolder
