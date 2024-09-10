@@ -130,9 +130,9 @@ const DashboardCards = () => {
                     <OverViewGraphCard
                         title="No of Votes"
                         totalValue={
-                            (proposalMetric &&
+                            (voteMetric &&
                                 getTotalValue(
-                                    proposalMetric.last_24hour_successful_triggers
+                                    voteMetric.last_24hour_successful_triggers
                                 )) ||
                             0
                         }
