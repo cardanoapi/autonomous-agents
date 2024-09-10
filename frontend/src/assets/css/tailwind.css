@@ -108,3 +108,8 @@
 .without-focus-visible {
     @apply focus-visible:!outline-none focus-visible:!ring-0 focus-visible:!ring-offset-0 active:!border-none;
 }
+
+
+.pagination-btn-position {
+    @apply absolute bottom-8 right-10
+}

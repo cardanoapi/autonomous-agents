@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 
-import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { useQuery } from '@tanstack/react-query';
 
 import {
@@ -21,6 +20,7 @@ import {
 } from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
 import PaginationBtns from '@app/components/molecules/PaginationBtns';
+import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 
 export default function LogsPage() {
     // Object to store all state related to the query
@@ -160,7 +160,7 @@ export default function LogsPage() {
                         ))}
                     </div>
                 </div>
-                <div className="flex pr-4">
+                <div className="flex">
                     <span>Rows per page :</span>
                     <DropdownMenu>
                         <DropdownMenuTrigger>
@@ -193,11 +193,11 @@ export default function LogsPage() {
         <div className="flex flex-col justify-between ">
             <div className="flex flex-grow flex-col">
                 <TopNav />
-                <div className="mt-8 flex-grow">
-                    <ScrollArea className="flex h-logsPageHeight max-h-logsList flex-col gap-y-2 overflow-y-auto p-4">
+                <div className="mt-6 flex-grow">
+                    <ScrollArea className="flex h-logsPageHeight max-h-logsList flex-col overflow-y-auto pr-4">
                         {loadingLogs
                             ? Array.from({ length: 50 }).map((_, index) => (
-                                  <AgentLogCardSkeleton key={index} />
+                                  <AgentLogCardSkeleton key={index} className="my-2" />
                               ))
                             : LogsHistory?.items.length > 0 &&
                               LogsHistory.items.map(
@@ -205,14 +205,14 @@ export default function LogsPage() {
                                       <AgentLogCard
                                           history={history}
                                           key={index}
-                                          className="bg-white"
+                                          className="my-2 flex bg-white"
                                           globalLog
                                       />
                                   )
                               )}
                         {!loadingLogs && LogsHistory?.items.length === 0 && (
                             <div className="h-full max-h-logsList items-center justify-center">
-                                <EmptyLogsPlaceholder />
+                                <EmptyLogsPlaceholder className="!my-2" />
                             </div>
                         )}
                     </ScrollArea>
@@ -220,7 +220,7 @@ export default function LogsPage() {
             </div>
             <div className="flex flex-row-reverse pt-4">
                 <PaginationBtns
-                    className="flex justify-center pr-2"
+                    className="pagination-btn-position flex justify-center"
                     onPaginate={(val: number) => {
                         setLogQueryState((prevState) => ({
                             ...prevState,

@@ -26,3 +26,11 @@ export interface IDRep {
     references: string[];
     metadataValid: boolean;
 }
+
+/* This is an extended version of Drep, Use this over IDrep  */
+export interface IDRepInternal extends IDRep {
+    agentId?: string;
+    agentName?: string;
+    latestTxHash?: string;
+    latestRegistrationDate?: string;
+}

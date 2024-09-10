@@ -1,36 +1,36 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+
+import { useRouter } from 'next/navigation';
 
 import { useAppDialog } from '@hooks';
-import { DRepStatus, IDRep } from '@models/types';
+import { DRepStatus, IDRepInternal } from '@models/types';
 import { TypographyH2 } from '@typography';
 import { convertLovelaceToAda } from '@utils';
 import { CopyIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import AppDialog from '@app/app/components/AppDialog';
+import AgentAvatar from '@app/components/Agent/AgentAvatar';
 import { Badge } from '@app/components/atoms/Badge';
 import { Button } from '@app/components/atoms/Button';
 import { cn } from '@app/components/lib/utils';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
 import AgentsDelegationDialogContent from './AgentsDelegationDialogContent';
-
-const statusColor: Record<DRepStatus, string> = {
-    Active: '!bg-green-600',
-    Inactive: '!bg-red-600',
-    Retired: '!bg-slate-600',
-    Yourself: '!bg-blue-600'
-};
+import DrepDetailDialogContent from './DrepDetailDialogContent';
 
 interface DRepCardProps {
-    dRep: IDRep;
+    dRep: IDRepInternal;
 }
 
 const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
     const { isOpen, toggleDialog } = useAppDialog();
 
-    const isDataMissing = dRep.dRepName === null;
+    const [isDrepDetialsOpen, setIsDrepDetialsOpen] = useState(false);
+
+    const isDataMissing = dRep.dRepName === null || dRep.dRepName === undefined;
 
     const formattedVotingPower = useMemo(() => {
         return convertLovelaceToAda(dRep.votingPower).toLocaleString('en-Us');
@@ -38,24 +38,50 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
 
     const handleCopyDRepId = () => {
         navigator.clipboard.writeText(dRep.drepId);
-        toast.success('Copied to clipboard');
+        toast.success('Drep ID copied');
     };
+
+    const handleCopyAgentId = () => {
+        navigator.clipboard.writeText(dRep.agentId || '');
+        toast.success('Agent ID copied');
+    };
+
+    function getBadgeVariant(status: string) {
+        if (status === 'Active') return 'success';
+        if (status === 'Inactive') return 'default';
+        if (status === 'Retired') return 'outline';
+
+        return 'default';
+    }
+
+    function toggleDrepDetailDialog() {
+        setIsDrepDetialsOpen(!isDrepDetialsOpen);
+    }
+
+    function handleAgentRedirect() {
+        router.push(`/agents/${dRep.agentId}`);
+    }
+
+    const router = useRouter();
 
     return (
         <>
             <div
                 className={`shadow-xs flex w-full items-center justify-between rounded-lg border !border-none bg-white p-4 ${isDataMissing && 'shadow-bg-red-100 bg-red-100/40'}`}
             >
-                <div className="flex space-x-4 sm:space-x-6 lg:space-x-12 xl:space-x-20">
+                <div className="flex space-x-4 sm:space-x-6  xl:space-x-12 2xl:space-x-10 4xl:space-x-20">
                     <div className="flex flex-col space-y-2">
-                        <TypographyH2
-                            className={`font-semibold ${isDataMissing && 'text-red-500'}`}
-                        >
-                            {isDataMissing ? 'Data Missing' : dRep.dRepName}
-                        </TypographyH2>
+                        <div className="flex gap-2">
+                            <TypographyH2 className={`font-semibold ${isDataMissing}`}>
+                                {isDataMissing ? 'Data Missing' : dRep.dRepName}
+                            </TypographyH2>
+                            <Badge variant={getBadgeVariant(dRep.status)}>
+                                {dRep.status}
+                            </Badge>
+                        </div>
                         <div className="flex items-center text-brand-navy">
-                            <p className="w-24 truncate text-sm font-medium xl:w-80">
-                                {dRep.drepId}
+                            <p className="w-52 truncate text-sm font-medium 2xl:w-48 4xl:w-80">
+                                DrepID : {dRep.drepId}
                             </p>
                             <CopyIcon
                                 onClick={handleCopyDRepId}
@@ -64,37 +90,41 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                             />
                         </div>
                     </div>
-
-                    <div className="flex w-32 flex-col items-center space-y-2">
-                        <p className="text-sm text-gray-800">Voting Power</p>
-                        <p className="font-semibold text-gray-600">
-                            ₳ {formattedVotingPower}
-                        </p>
+                    <div>
+                        <div className="flex w-32 flex-col items-center space-y-2">
+                            <p className="text-sm text-gray-800">Voting Power</p>
+                            <p className="font-semibold text-gray-600">
+                                ₳ {formattedVotingPower}
+                            </p>
+                        </div>
                     </div>
-
-                    <div className="flex w-32 flex-col items-center space-y-2">
-                        <p className="text-sm text-gray-800">Status</p>
-                        <Badge
-                            className={cn(
-                                statusColor[dRep.status],
-                                'flex min-w-20 justify-center py-[6px] !text-white'
-                            )}
-                            variant="default"
-                        >
-                            {dRep.status}
-                        </Badge>
-                    </div>
+                    {dRep.agentId && dRep.agentName && (
+                        <AgentDetails
+                            handleAgentRedirect={handleAgentRedirect}
+                            agentId={dRep.agentId}
+                            handleCopyAgentId={handleCopyAgentId}
+                            agentName={dRep.agentName}
+                        />
+                    )}
                 </div>
-
-                {dRep.status === DRepStatus.Active && (
+                <div className="flex gap-2">
                     <Button
-                        onClick={toggleDialog}
-                        className="rounded-3xl bg-brand-Blue-200"
-                        variant={'primary'}
+                        className="rounded-3xl"
+                        variant={'cool'}
+                        onClick={() => setIsDrepDetialsOpen(!isDrepDetialsOpen)}
                     >
-                        Delegate
+                        View details
                     </Button>
-                )}
+                    {dRep.status === DRepStatus.Active && (
+                        <Button
+                            onClick={toggleDialog}
+                            className="rounded-3xl bg-brand-Blue-200 !px-6"
+                            variant={'primary'}
+                        >
+                            Delegate
+                        </Button>
+                    )}
+                </div>
             </div>
 
             {/* Dialogs */}
@@ -104,7 +134,116 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                     handleClose={toggleDialog}
                 />
             </AppDialog>
+
+            <AppDialog isOpen={isDrepDetialsOpen} toggleDialog={toggleDrepDetailDialog}>
+                <DrepDetailDialogContent dRep={dRep} />
+            </AppDialog>
         </>
+    );
+};
+
+const AgentDetails = ({
+    handleAgentRedirect,
+    agentId,
+    handleCopyAgentId,
+    agentName
+}: {
+    handleAgentRedirect: any;
+    agentId: string;
+    agentName: any;
+    handleCopyAgentId: any;
+}) => {
+    return (
+        <div className="flex items-center justify-center gap-2">
+            <div className="flex cursor-pointer" onClick={handleAgentRedirect}>
+                <AgentAvatar
+                    hash={agentId}
+                    size={42}
+                    activeStatus={false}
+                    isActive={false}
+                />
+            </div>
+            <div className="flex cursor-pointer flex-col space-y-2">
+                <p className="text-sm font-medium text-gray-800">
+                    <span
+                        className="hover:text-brand-Blue-200"
+                        onClick={handleAgentRedirect}
+                    >
+                        {' '}
+                        {agentName || ''}
+                    </span>
+                </p>
+                <div className="-2 flex">
+                    <p className="w-44 truncate text-sm font-medium 2xl:w-48 4xl:w-80">
+                        AgentID : {agentId || ''}
+                    </p>
+                    <CopyIcon
+                        onClick={handleCopyAgentId}
+                        className="ml-2 cursor-pointer "
+                        size={20}
+                    />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export const DRepCardSkeleton = ({
+    internalDRep = true,
+    className
+}: {
+    internalDRep?: boolean;
+    className?: string;
+}) => {
+    return (
+        <div
+            className={cn(
+                'shadow-xs flex w-full items-center justify-between rounded-lg  bg-white p-4',
+                className
+            )}
+        >
+            <div className="flex space-x-4 sm:space-x-6  xl:space-x-12 2xl:space-x-10 4xl:space-x-20">
+                <div className="flex flex-col space-y-2">
+                    <div className="flex items-center gap-2">
+                        <Skeleton className="h-6 w-36" />{' '}
+                        {/* Placeholder for dRepName */}
+                        <Skeleton className="h-5 w-16" /> {/* Placeholder for Badge */}
+                    </div>
+                    <div className="flex items-center text-brand-navy">
+                        <Skeleton className="h-4 w-52 truncate text-sm font-medium 2xl:w-48 4xl:w-80" />{' '}
+                        {/* Placeholder for dRepId */}
+                        <Skeleton className="ml-2 h-5 w-5" />{' '}
+                        {/* Placeholder for CopyIcon */}
+                    </div>
+                </div>
+                <div>
+                    <div className="flex w-32 flex-col items-center space-y-2">
+                        <Skeleton className="h-4 w-24" />{' '}
+                        {/* Placeholder for "Voting Power" label */}
+                        <Skeleton className="h-5 w-20" />{' '}
+                        {/* Placeholder for Voting Power value */}
+                    </div>
+                </div>
+                {internalDRep && (
+                    <div className="flex flex-col space-y-2">
+                        <Skeleton className="h-4 w-36" />{' '}
+                        {/* Placeholder for Agent Name */}
+                        <div className="flex items-center">
+                            <Skeleton className="h-4 w-44 truncate text-sm font-medium 2xl:w-48 4xl:w-80" />{' '}
+                            {/* Placeholder for AgentID */}
+                            <Skeleton className="ml-2 h-5 w-5" />{' '}
+                            {/* Placeholder for CopyIcon */}
+                        </div>
+                    </div>
+                )}
+            </div>
+            <div className="flex gap-2">
+                <Skeleton className="h-8 w-24 rounded-3xl" />{' '}
+                {/* Placeholder for View details button */}
+                <Skeleton className="h-8 w-24 rounded-3xl" />{' '}
+                {/* Placeholder for Delegate button */}
+            </div>
+        </div>
     );
 };
 

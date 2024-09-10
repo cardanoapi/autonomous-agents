@@ -128,7 +128,7 @@ const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
                 </div>
             </ScrollArea>
             {!loadingLogs && LogsHistory?.items.length === 0 && (
-                <div className="flex flex-grow bg-black">
+                <div className="flex flex-grow">
                     <EmptyLogsPlaceholder />
                 </div>
             )}
@@ -266,9 +266,14 @@ const TxHashComponent = ({ txHash }: { txHash: string }) => {
 
 export default AgentLogComponent;
 
-export const EmptyLogsPlaceholder = () => {
+export const EmptyLogsPlaceholder = ({ className }: { className?: string }) => {
     return (
-        <div className="flex h-full w-full items-center justify-center rounded border-[4px] border-dashed border-gray-200 bg-slate-50">
+        <div
+            className={cn(
+                'flex h-full w-full items-center justify-center rounded border-[4px] border-dashed border-gray-200 bg-slate-50',
+                className
+            )}
+        >
             <div className="flex flex-col items-center gap-2">
                 <span className="flex items-center justify-center gap-2 text-2xl text-gray-300">
                     <OctagonAlert className="h-8 w-8" />
@@ -280,9 +285,14 @@ export const EmptyLogsPlaceholder = () => {
     );
 };
 
-export const AgentLogCardSkeleton = () => {
+export const AgentLogCardSkeleton = ({ className }: { className?: string }) => {
     return (
-        <div className="flex h-fit flex-row justify-between gap-4 rounded-lg bg-gray-100 px-3 py-3 drop-shadow-sm hover:bg-gray-200">
+        <div
+            className={cn(
+                'flex h-fit flex-row justify-between gap-4 rounded-lg bg-gray-100 px-3 py-3 drop-shadow-sm hover:bg-gray-200',
+                className
+            )}
+        >
             <div className="flex items-start gap-8">
                 <div className="flex items-center gap-3 sm:min-w-[200px]">
                     <Skeleton className="h-8 w-8 rounded-full" />

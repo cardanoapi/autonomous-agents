@@ -14,11 +14,11 @@ export type GetproposalListArgs = {
     searchPhrase?: string;
 };
 
-interface ProposalResponse {
+export interface ProposalResponse {
     page: number;
     pageSize: number;
     total: number;
-    elements: IProposal[];
+    items: IProposal[];
 }
 
 export const getProposalList = async ({
