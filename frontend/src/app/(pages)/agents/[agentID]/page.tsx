@@ -34,7 +34,8 @@ export default function AgentPageById() {
 
     const { data: agent, isLoading: agentLoading } = useQuery<IAgent>({
         queryKey: [`agent${agentID}`],
-        queryFn: () => fetchAgentbyID(agentID)
+        queryFn: () => fetchAgentbyID(agentID),
+        refetchInterval: 5000
     });
 
     const [agentOwnerIsUser, setAgentOwnerIsUser] = useState(false);
