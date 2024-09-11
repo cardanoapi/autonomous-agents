@@ -8,3 +8,7 @@ export const globalState: {
         function_name: '',
     },
 }
+
+export const globalRootKeyBuffer: { value: Buffer | null } = {
+    value: null,
+}
