@@ -14,7 +14,7 @@ export default async function handler(
         certificates: [
             {
                 type: 'delegate',
-                key: context.wallet.paymentKey.pubKeyHash,
+                key: context.wallet.stakeKey.pubKeyHash,
                 drep: drep,
             },
         ],
