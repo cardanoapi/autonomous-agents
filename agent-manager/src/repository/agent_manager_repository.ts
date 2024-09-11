@@ -23,6 +23,7 @@ export async function checkIfAgentExistsInDB(agentId: string): Promise<boolean> 
 export async function fetchAgentConfiguration(agentId: string): Promise<{
     instanceCount: number | null
     configurations: any[]
+    agentIndex: number | null
 }> {
     try {
         const [agentInstance, agentConfigurations] = await Promise.all([
@@ -41,6 +42,7 @@ export async function fetchAgentConfiguration(agentId: string): Promise<{
         ])
         if (agentInstance != null) {
             const instanceCount = Number(agentInstance.instance)
+            const agentIndex = Number(agentInstance.index)
             const configurationsData = agentConfigurations.map(
                 (config: { id: string; type: string; data: JsonValue; action: JsonValue }) => ({
                     id: config.id,
@@ -50,9 +52,9 @@ export async function fetchAgentConfiguration(agentId: string): Promise<{
                 })
             )
 
-            return { instanceCount, configurations: configurationsData }
+            return { instanceCount, configurations: configurationsData, agentIndex }
         } else {
-            return { instanceCount: null, configurations: [] }
+            return { instanceCount: null, configurations: [], agentIndex: null }
         }
     } catch (error: any) {
         console.log(`Error fetching agent configuration: ${error}`)

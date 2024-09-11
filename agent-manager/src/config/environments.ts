@@ -4,6 +4,7 @@ const environments = {
     sanchonetFaucetApiKey: process.env.SANCHONET_FAUCET_API_KEY || '',
     managerWalletAddress: process.env.MANAGER_WALLET_ADDRESS || '',
     managerWalletSigningKey: process.env.MANAGER_WALLET_SIGNING_KEY || '',
+    agentMnemonic: process.env.AGENT_MNEMONIC || '',
 }
 
 export default environments

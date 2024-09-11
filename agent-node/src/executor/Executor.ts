@@ -147,9 +147,9 @@ export class Executor {
         managerInterface
             .getFaucetBalance(this.functionContext.wallet.address)
             .then((balance) => {
-                if (balance <= 10000) {
+                if (balance <= 0) {
                     this.functionContext.builtins
-                        .loadFunds(1000)
+                        .loadFunds(100000)
                         .then((res) => console.log('Wallet load: ', res))
                         .catch((err) => console.error(err))
                 }
