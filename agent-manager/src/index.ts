@@ -4,6 +4,8 @@ import { initKafkaConsumers } from './service/kafka_message_consumer'
 import { AgentManagerRPC } from './service/AgentManagerRPC'
 import { createBlockchainInstance } from './service/BlockchainService'
 import { ManagerWalletService } from './service/ManagerWallet'
+import { TxListener } from './service/TxListener'
+import { parseRawBlockBody } from 'libcardano/cardano/ledger-serialization/transaction'
 
 const app = express()
 const port = 3001
@@ -14,7 +16,8 @@ const server = app.listen(port, async () => {
     const blockchain = createBlockchainInstance()
 
     const wss = new WebSocket.Server({ server })
-    const managerWallet = new ManagerWalletService()
+    const txListener = new TxListener()
+    const managerWallet = new ManagerWalletService(txListener)
     const manager = new AgentManagerRPC(wss, managerWallet)
 
     setInterval(() => {
@@ -25,6 +28,8 @@ const server = app.listen(port, async () => {
         console.log(
             `[Blockchain] RollForward blockNo=${block.blockNo} hash=${block.headerHash.toString('hex')} slot=${block.slotNo}`
         )
+        const transactions = parseRawBlockBody(block.body)
+        txListener.onBlock({ ...block, body: transactions })
         manager.broadcast('extend_block', block)
     })
     await initKafkaConsumers(manager)

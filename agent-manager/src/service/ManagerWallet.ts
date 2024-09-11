@@ -1,12 +1,17 @@
 import getFaucetAdaForAddress, { fetchWalletBalance } from '../utils/fuacet'
 import { kuber } from './kuber_service'
 import environments from '../config/environments'
+import { TxListener } from './TxListener'
 
 export class ManagerWalletService {
     walletBalance: number = 0
+    beneficiaryQueue = []
+    isBusy = false
+    txListener: TxListener
 
-    constructor() {
+    constructor(txListener: TxListener) {
         this.fetchManagerWalletBalance()
+        this.txListener = txListener
     }
 
     fetchManagerWalletBalance() {
@@ -28,17 +33,51 @@ export class ManagerWalletService {
             .catch((err) => console.error(err))
     }
 
-    transferWalletFunds(address: string, amount: number) {
+    async transferWalletFunds(address: string, amount: number) {
         if (amount > this.walletBalance) {
-            this.loadWalletFunds()
+            await this.loadWalletFunds()
         }
-        const body = {
-            selections: [environments.managerWalletSigningKey, environments.managerWalletAddress],
-            outputs: [{ address, value: `${amount}A` }],
+        if (this.beneficiaryQueue.length && this.isBusy) {
+            return this.beneficiaryQueue[0].request.push({ address, value: `${amount}A` })
         }
-        return kuber.buildTx(body, true).then((res) => {
-            this.walletBalance = this.walletBalance - amount
-            return res
+
+        return new Promise((resolve, reject) => {
+            this.beneficiaryQueue.push({ resolve, reject, request: [{ address, value: `${amount}A` }] })
+            if (!this.isBusy) {
+                this.processTransferQueue()
+            }
         })
+    }
+
+    async processTransferQueue() {
+        this.isBusy = true
+        while (this.beneficiaryQueue.length > 0) {
+            const { resolve, reject, request } = this.beneficiaryQueue.shift()
+            const body = {
+                selections: [environments.managerWalletSigningKey, environments.managerWalletAddress],
+                outputs: request,
+            }
+            try {
+                const res = await kuber.buildTx(body, true)
+                const transferredBalance = request.reduce(
+                    (totalVal: number, item: any) => totalVal + item.value.split('A')[0],
+                    0
+                )
+                this.walletBalance = this.walletBalance - transferredBalance
+                resolve(res)
+                await this.txListener
+                    .addListener(res.hash, 0, 80000)
+                    .then(() => {
+                        console.log('Wallet Balance,Tx matched :', res.hash)
+                    })
+                    .catch((e) => {
+                        console.error('TXListener Error: ', e)
+                        return
+                    })
+            } catch (err) {
+                reject(err)
+            }
+        }
+        this.isBusy = false
     }
 }
