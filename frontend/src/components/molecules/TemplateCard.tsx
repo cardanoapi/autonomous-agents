@@ -135,7 +135,10 @@ function TemplateCardHeader({ templateName, enableDelete, onDelete }: any) {
                         <Trash2
                             stroke="#A1A1A1"
                             className={iconClass}
-                            onClick={onDelete}
+                            onClick={(e) => {
+                                e.stopPropagation(); // Prevent click from triggering the onEdit
+                                onDelete(); // Call the delete handler
+                            }}
                         />
                     </div>
                 ) : null}
