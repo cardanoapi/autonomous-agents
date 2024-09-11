@@ -126,6 +126,7 @@ export default function CustomLineChart({
                         dataKey={'xaxisTick'}
                         tickLine={false}
                         dy={5}
+                        dx={-25}
                         fill="#2196F3"
                         stroke="#A2A3A5"
                         interval={xaxisInterval}
