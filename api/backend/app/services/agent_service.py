@@ -51,7 +51,7 @@ class AgentService:
 
     async def create_agent(self, agent_data: AgentCreateDTO):
         agent = await self.agent_repository.save_agent(agent_data)
-        a = await self.agent_instance_wallet_service.create_wallet(agent)
+        await self.agent_instance_wallet_service.create_wallet(agent)
         template_triggers = await self.template_trigger_service.get_template_trigger(agent.template_id)
 
         # Iterate over each template trigger and create a trigger for the agent
@@ -65,6 +65,7 @@ class AgentService:
         return agent
 
     async def get_agent_key(self, agent_id: str):
+        # return await self.agent_instance_wallet_service.get_wallets(agent_id)
         return await self.agent_repository.retreive_agent_key(agent_id)
 
     async def list_agents(self, page: int, limit: int) -> List[AgentResponse]:
@@ -157,10 +158,10 @@ class AgentService:
             raise HTTPException(status_code=403, content="Forbidden Request")
 
     async def return_agent_with_wallet_details(self, agent: AgentResponse):
-        agent_with_keys = await self.agent_repository.retreive_agent_key(agent.id)
+        wallet = (await self.agent_instance_wallet_service.get_wallets(agent_id=agent.id))[0]
         utxo = 0
         async with httpx.AsyncClient() as client:
-            response = await client.get(f"{settings.KUBER_URL}/utxo?address={agent_with_keys.agent_address}")
+            response = await client.get(f"{settings.KUBER_URL}/utxo?address={wallet.address}")
             transactions = response.json()
             if isinstance(transactions, list):
                 for transaction in transactions:
@@ -168,7 +169,7 @@ class AgentService:
         agent_configurations = await self.trigger_service.list_triggers_by_agent_id(agent.id)
         return AgentResponseWithWalletDetails(
             **agent.dict(),
-            agent_address=agent_with_keys.agent_address,
+            agent_address=wallet.address,
             wallet_amount=utxo / (10**6),
             agent_configurations=agent_configurations,
         )
