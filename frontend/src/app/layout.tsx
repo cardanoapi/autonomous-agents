@@ -46,6 +46,13 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" className="">
+            <head>
+                <script
+                    defer
+                    src="/script.js"
+                    data-website-id="4a162fd2-d6ec-403e-8a69-7927e2f0db3f"
+                ></script>
+            </head>
             <body className={poppins.className}>
                 <ThemeProvider>
                     <CookieConsent />

@@ -158,10 +158,14 @@ class AgentService:
             raise HTTPException(status_code=403, content="Forbidden Request")
 
     async def return_agent_with_wallet_details(self, agent: AgentResponse):
-        wallet = (await self.agent_instance_wallet_service.get_wallets(agent_id=agent.id))[0]
+        wallets = await self.agent_instance_wallet_service.get_wallets(agent_id=agent.id)
+        if len(wallets):
+            address = wallets[0].address
+        else:
+            address = (await self.agent_repository.retreive_agent_key(agent.id)).agent_address
         utxo = 0
         async with httpx.AsyncClient() as client:
-            response = await client.get(f"{settings.KUBER_URL}/utxo?address={wallet.address}")
+            response = await client.get(f"{settings.KUBER_URL}/utxo?address={address}")
             transactions = response.json()
             if isinstance(transactions, list):
                 for transaction in transactions:
@@ -169,7 +173,7 @@ class AgentService:
         agent_configurations = await self.trigger_service.list_triggers_by_agent_id(agent.id)
         return AgentResponseWithWalletDetails(
             **agent.dict(),
-            agent_address=wallet.address,
+            agent_address=address,
             wallet_amount=utxo / (10**6),
             agent_configurations=agent_configurations,
         )
