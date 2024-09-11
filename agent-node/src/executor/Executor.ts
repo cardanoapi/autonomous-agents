@@ -149,7 +149,7 @@ export class Executor {
             .then((balance) => {
                 if (balance <= 0) {
                     this.functionContext.builtins
-                        .loadFunds(100000)
+                        .loadFunds(10000)
                         .then((res) => console.log('Wallet load: ', res))
                         .catch((err) => console.error(err))
                 }
