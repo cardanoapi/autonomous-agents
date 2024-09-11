@@ -5,7 +5,7 @@ import { TxListener } from './TxListener'
 
 export class ManagerWalletService {
     walletBalance: number = 0
-    beneficiaryQueue = []
+    beneficiaryQueue: Array<Record<any, any>> = []
     isBusy = false
     txListener: TxListener
 
@@ -52,30 +52,33 @@ export class ManagerWalletService {
     async processTransferQueue() {
         this.isBusy = true
         while (this.beneficiaryQueue.length > 0) {
-            const { resolve, reject, request } = this.beneficiaryQueue.shift()
-            const body = {
-                selections: [environments.managerWalletSigningKey, environments.managerWalletAddress],
-                outputs: request,
-            }
-            try {
-                const res = await kuber.buildTx(body, true)
-                const transferredBalance = request.reduce(
-                    (totalVal: number, item: any) => totalVal + item.value.split('A')[0],
-                    0
-                )
-                this.walletBalance = this.walletBalance - transferredBalance
-                resolve(res)
-                await this.txListener
-                    .addListener(res.hash, 0, 80000)
-                    .then(() => {
-                        console.log('Wallet Balance,Tx matched :', res.hash)
-                    })
-                    .catch((e) => {
-                        console.error('TXListener Error: ', e)
-                        return
-                    })
-            } catch (err) {
-                reject(err)
+            const beneficiaryData = this.beneficiaryQueue.shift()
+            if (beneficiaryData) {
+                const { resolve, reject, request } = beneficiaryData
+                const body = {
+                    selections: [environments.managerWalletSigningKey, environments.managerWalletAddress],
+                    outputs: request,
+                }
+                try {
+                    const res = await kuber.buildTx(body, true)
+                    const transferredBalance = request.reduce(
+                        (totalVal: number, item: any) => totalVal + item.value.split('A')[0],
+                        0
+                    )
+                    this.walletBalance = this.walletBalance - transferredBalance
+                    resolve(res)
+                    await this.txListener
+                        .addListener(res.hash, 0, 80000)
+                        .then(() => {
+                            console.log('Wallet Balance,Tx matched :', res.hash)
+                        })
+                        .catch((e) => {
+                            console.error('TXListener Error: ', e)
+                            return
+                        })
+                } catch (err) {
+                    reject(err)
+                }
             }
         }
         this.isBusy = false
