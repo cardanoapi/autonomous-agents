@@ -24,6 +24,7 @@ import { adminAccessAtom, currentConnectedWalletAtom } from '@app/store/localSto
 
 import AgentAvatar from '../Agent/AgentAvatar';
 import WalletSignInDialog from '../Auth/WalletSignInDialog';
+import { Badge } from '../atoms/Badge';
 import { Button } from '../atoms/Button';
 import AgentsIcon from '../icons/AgentsIcon';
 import { cn } from '../lib/utils';
@@ -119,21 +120,28 @@ export default function SideNav() {
                 onClose={toggleDialog}
             />
             <nav className="overflow-wrap flex h-full w-full flex-col border-r-[0.5px] bg-white">
-                <Link
-                    href="/"
-                    className="flex flex-row items-center gap-x-2  py-8 pb-6 pl-4  "
-                >
-                    <Logo height={48} width={48} />
-                    <div>
-                        <span className="h3 !bg-gradient-to-t from-zinc-500 to-zinc-900 !bg-clip-text !font-medium !text-transparent">
-                            Autonomous
-                        </span>
-                        <br />
-                        <span className="h2 !bg-gradient-to-t from-zinc-500 to-zinc-900 !bg-clip-text !font-semibold !text-transparent">
-                            Agent Testing
-                        </span>
-                    </div>
-                </Link>
+                <div className="flex flex-col gap-4 py-8 pb-2 pl-3">
+                    <Link href="/" className="flex flex-row items-center gap-x-2   ">
+                        <div className="flex gap-2">
+                            <Logo height={48} width={48} />
+                            <div>
+                                <span className="h3 !bg-gradient-to-t from-zinc-500 to-zinc-900 !bg-clip-text !font-medium !text-transparent">
+                                    Autonomous
+                                </span>
+                                <br />
+                                <span className="h2 !bg-gradient-to-t from-zinc-500 to-zinc-900 !bg-clip-text !font-semibold !text-transparent">
+                                    Agent Testing
+                                </span>
+                            </div>
+                        </div>
+                    </Link>
+                    <Badge
+                        className="w-24 border border-gray-400 text-xs font-medium text-brand-Blue-200"
+                        variant={'outline'}
+                    >
+                        Sanchonet
+                    </Badge>
+                </div>
                 <div className=" flex w-full flex-grow flex-col justify-between">
                     <div className="mt-6 flex flex-col gap-y-4 px-2">
                         {SideNavItems.map((Prop, index) => (
