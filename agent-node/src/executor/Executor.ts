@@ -40,7 +40,6 @@ export class Executor {
     }
     makeWallet(walletDetails: AgentWalletDetails): Wallet {
         const txSubmissionHold: any[] = []
-        const txHash: string | null = null
         let isProcessing: boolean = false
         const paymentKey: Key = {
             private: walletDetails.payment_signing_key,
@@ -79,14 +78,14 @@ export class Executor {
                     {
                         type: 'PaymentSigningKeyShelley_ed25519',
                         description: 'Payment Signing Key',
-                        cborHex: paymentKey.private,
+                        cborHex: '5820' + paymentKey.private,
                     },
                 ]
                 if (stakeSigning) {
                     spec.selections.push({
                         type: 'PaymentSigningKeyShelley_ed25519',
                         description: 'Stake Signing Key',
-                        cborHex: stakeKey.private,
+                        cborHex: '5820' + stakeKey.private,
                     })
                 }
                 return new Promise((resolve, reject) => {
@@ -136,11 +135,29 @@ export class Executor {
             },
         }
     }
-    remakeContext(agent_wallet: AgentWalletDetails) {
+
+    remakeContext(
+        agent_wallet: AgentWalletDetails,
+        managerInterface: ManagerInterface
+    ) {
         this.functionContext.wallet = this.makeWallet(agent_wallet)
         this.functionContext.builtins = this.getBuiltins(
             this.functionContext.wallet
         )
+        managerInterface
+            .getFaucetBalance(this.functionContext.wallet.address)
+            .then((balance) => {
+                if (balance <= 10000) {
+                    this.functionContext.builtins
+                        .loadFunds(1000)
+                        .then((res) => console.log('Wallet load: ', res))
+                        .catch((err) => console.error(err))
+                }
+            })
+            .catch((err) => {
+                console.error('GetBalance : ', err)
+                throw err
+            })
     }
 
     makeProxy<T>(context: T): { proxy: T; callLog: CallLog[] } {

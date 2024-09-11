@@ -21,4 +21,8 @@ export class ManagerInterface {
     loadFunds(address: string, txAmt: number): Promise<any> {
         return this.rpc.callMethod('loadFunds', address, txAmt)
     }
+
+    getFaucetBalance(address: string): Promise<any> {
+        return this.rpc.callMethod('getFaucetBalance', address)
+    }
 }
