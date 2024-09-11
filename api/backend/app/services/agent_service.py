@@ -14,6 +14,7 @@ from backend.app.models import (
 from backend.app.models import AgentCreateDTO, AgentKeyResponse, AgentResponse
 from backend.app.models.agent.function import AgentFunction
 from backend.app.repositories.agent_repository import AgentRepository
+from backend.app.services.agent_instance_wallet_service import AgentInstanceWalletService
 from backend.app.services.kafka_service import KafkaService
 from backend.app.services.template_trigger_service import TemplateTriggerService
 from backend.app.services.trigger_service import TriggerService
@@ -39,15 +40,18 @@ class AgentService:
         template_trigger_service: TemplateTriggerService,
         trigger_service: TriggerService,
         kafka_service: KafkaService,
+        agent_instance_wallet_service: AgentInstanceWalletService,
     ):
         self.agent_repository = agent_repository
         self.template_trigger_service = template_trigger_service
         self.trigger_service = trigger_service
         self.kafka_service = kafka_service
-        self.user_reposiotry = UserRepository()
+        self.user_repository = UserRepository()
+        self.agent_instance_wallet_service = agent_instance_wallet_service
 
     async def create_agent(self, agent_data: AgentCreateDTO):
         agent = await self.agent_repository.save_agent(agent_data)
+        await self.agent_instance_wallet_service.create_wallet(agent)
         template_triggers = await self.template_trigger_service.get_template_trigger(agent.template_id)
 
         # Iterate over each template trigger and create a trigger for the agent
@@ -60,7 +64,8 @@ class AgentService:
             await self.trigger_service.create_trigger(agent.id, trigger_data)
         return agent
 
-    async def get_agent_key(self, agent_id: str) -> AgentKeyResponse:
+    async def get_agent_key(self, agent_id: str):
+        # return await self.agent_instance_wallet_service.get_wallets(agent_id)
         return await self.agent_repository.retreive_agent_key(agent_id)
 
     async def list_agents(self, page: int, limit: int) -> List[AgentResponse]:
@@ -92,7 +97,10 @@ class AgentService:
         updated_triggers = await self.trigger_service.update_configurations_for_agent(
             agent_id, agent_data.agent_configurations
         )
-
+        if existing_agent.instance < agent_data.instance:
+            await self.agent_instance_wallet_service.update_wallet(
+                existing_agent, agent_data.instance - existing_agent.instance
+            )
         existing_agent = await self.agent_repository.modify_agent(agent_id, agent_data)
         self.raise_exception_if_agent_not_found(existing_agent)
         await self.kafka_service.publish_message("trigger_config_updates", "config_updated", key=agent_id)
@@ -108,6 +116,7 @@ class AgentService:
         await self.is_superadmin(user_address)
 
         await self.agent_repository.remove_agent(agent_id)
+        await self.agent_instance_wallet_service.delete_wallet(agent_id)
 
         await self.kafka_service.publish_message(
             "Agent_Trigger",
@@ -139,20 +148,20 @@ class AgentService:
 
     async def is_authorized(self, userAddress: str, existing_agent: AgentResponse):
         # Checks if agent belongs to user or user is super admin
-        user_is_super_admin = await self.user_reposiotry.is_super_admin(userAddress)
+        user_is_super_admin = await self.user_repository.is_super_admin(userAddress)
         if existing_agent.userAddress != userAddress and user_is_super_admin == False:
             raise HTTPException(status_code=403, content="Forbidden Request")
 
     async def is_superadmin(self, userAddress: str):
-        user_is_super_admin = await self.user_reposiotry.is_super_admin(userAddress)
+        user_is_super_admin = await self.user_repository.is_super_admin(userAddress)
         if user_is_super_admin == False:
             raise HTTPException(status_code=403, content="Forbidden Request")
 
     async def return_agent_with_wallet_details(self, agent: AgentResponse):
-        agent_with_keys = await self.agent_repository.retreive_agent_key(agent.id)
+        wallet = (await self.agent_instance_wallet_service.get_wallets(agent_id=agent.id))[0]
         utxo = 0
         async with httpx.AsyncClient() as client:
-            response = await client.get(f"{settings.KUBER_URL}/utxo?address={agent_with_keys.agent_address}")
+            response = await client.get(f"{settings.KUBER_URL}/utxo?address={wallet.address}")
             transactions = response.json()
             if isinstance(transactions, list):
                 for transaction in transactions:
@@ -160,7 +169,7 @@ class AgentService:
         agent_configurations = await self.trigger_service.list_triggers_by_agent_id(agent.id)
         return AgentResponseWithWalletDetails(
             **agent.dict(),
-            agent_address=agent_with_keys.agent_address,
+            agent_address=wallet.address,
             wallet_amount=utxo / (10**6),
             agent_configurations=agent_configurations,
         )

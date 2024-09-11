@@ -142,15 +142,6 @@ class AgentRepository:
         drep_id_bech32, drep_id = self.encode_drep_id(stake_verification_key_dict)
         print(f"dRep ID Bech32 Address: {drep_id_bech32}", "drep_id", drep_id)
 
-        print(
-            "paymentSigningKey:",
-            paymentSigningKey,
-            "payment verification key:",
-            paymentVerificationKey,
-            "stakeVerificationKey",
-            stakeVerificationKey,
-        )
-
         address = pycardano.Address(
             payment_part=paymentVerificationKey.hash(),
             staking_part=stakeVerificationKey.hash(),

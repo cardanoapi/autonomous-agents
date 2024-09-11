@@ -11,7 +11,7 @@ class Kuber {
             process.exit(1)
         }
         this.providerUrl = kuberUrl
-        if (this.providerUrl.endsWith('/') === false) {
+        if (!this.providerUrl.endsWith('/')) {
             this.providerUrl = this.providerUrl + '/'
         }
     }
@@ -22,6 +22,26 @@ class Kuber {
         } catch (e: any) {
             throw `KubærApi response JSON parse failed : ${e.message || e} : ${str}`
         }
+    }
+
+    async getBalance(address: string): Promise<any> {
+        const KuberAPIKey = process.env.KUBER_API_KEY
+        const headers: HeadersInit = {
+            'content-type': 'application/json',
+        }
+        if (!KuberAPIKey) {
+            console.error('No Api Key provided.')
+            process.exit(1)
+        }
+        headers['api-key'] = KuberAPIKey
+        return new Promise((resolve, reject) => {
+            this.call_queue.push({
+                body: ['GET', `api/v3/utxo?address=${address}`, null, headers],
+                resolve,
+                reject,
+            })
+            this.handleApiCallQueue()
+        })
     }
 
     async buildTx(txSpec: any, submit?: boolean): Promise<any> {
@@ -41,6 +61,24 @@ class Kuber {
                 reject,
             })
             this.handleApiCallQueue()
+        })
+    }
+
+    async getScriptPolicy(policy: Record<string, any>): Promise<string> {
+        return this.call('POST', 'api/v1/scriptPolicy', JSON.stringify(policy), {
+            'content-type': 'application/json',
+        }).then((res) => {
+            return res.text()
+        })
+    }
+
+    async calculateMinFee(tx: Buffer): Promise<bigint> {
+        return this.call('POST', 'api/v1/tx/fee', tx, {
+            'content-type': 'application/cbor',
+        }).then((res) => {
+            return res.text().then((txt) => {
+                return BigInt(txt)
+            })
         })
     }
 
@@ -65,24 +103,6 @@ class Kuber {
                 })
         }
         console.log('CALL QUEUE: ', this.active_calls, this.call_queue)
-    }
-
-    async getScriptPolicy(policy: Record<string, any>): Promise<string> {
-        return this.call('POST', 'api/v1/scriptPolicy', JSON.stringify(policy), {
-            'content-type': 'application/json',
-        }).then((res) => {
-            return res.text()
-        })
-    }
-
-    async calculateMinFee(tx: Buffer): Promise<bigint> {
-        return this.call('POST', 'api/v1/tx/fee', tx, {
-            'content-type': 'application/cbor',
-        }).then((res) => {
-            return res.text().then((txt) => {
-                return BigInt(txt)
-            })
-        })
     }
 
     private async call(method: string, url: string, data: BodyInit, headers?: HeadersInit): Promise<Response> {

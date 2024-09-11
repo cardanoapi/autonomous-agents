@@ -6,13 +6,11 @@ import { cborxBackend } from 'libcardano/lib/cbor'
 import { WsClientPipe } from './service/WsClientPipe'
 import { AgentRpc } from './service/AgentRpc'
 import { ManagerInterface } from './service/ManagerInterfaceService'
-import { Executor } from './executor/Executor'
 import { TxListener } from './executor/TxListener'
 import { RpcTopicHandler } from './service/RpcTopicHandler'
-import { saveTxLog } from './utils/agent'
-import { TriggerType } from './service/triggerService'
-import { AgentWalletDetails } from './types/types'
 import { ScheduledTask } from 'node-cron'
+import { globalRootKeyBuffer } from './constants/global'
+import { AgentRunner } from './executor/AgentRunner'
 
 configDotenv()
 const wsUrl = process.env.WS_URL || 'ws://localhost:3001'
@@ -28,30 +26,6 @@ const maxReconnectAttempts = 2
 let isReconnecting = false
 let hasConnectedBefore = false
 
-export class AgentRunner {
-    executor: Executor
-    managerInterface: ManagerInterface
-    constructor(managerInterface: ManagerInterface, txListener: TxListener) {
-        this.managerInterface = managerInterface
-        this.executor = new Executor(null, managerInterface, txListener)
-    }
-
-    invokeFunction(
-        triggerType: TriggerType,
-        instanceIndex: number,
-        method: string,
-        ...args: any
-    ) {
-        this.executor.invokeFunction(method, ...args).then((result) => {
-            saveTxLog(result, this.managerInterface, triggerType, instanceIndex)
-        })
-    }
-
-    remakeContext(agent_wallet: AgentWalletDetails) {
-        this.executor.remakeContext(agent_wallet)
-    }
-}
-
 function connectToManagerWebSocket() {
     let interval: NodeJS.Timeout | number
     const scheduledTasks: ScheduledTask[] = []
@@ -66,7 +40,6 @@ function connectToManagerWebSocket() {
     const agentRunners: Array<AgentRunner> = []
 
     rpcChannel.on('methodCall', (method, args) => {
-        console.log('RUnners are: ', agentRunners)
         agentRunners.forEach((runner, index) => {
             runner.invokeFunction('MANUAL', index, method, ...args)
         })
@@ -75,17 +48,14 @@ function connectToManagerWebSocket() {
     const topicHandler = new RpcTopicHandler(managerInterface, txListener)
     rpcChannel.on('event', (topic, message) => {
         if (topic == 'instance_count') {
-            Array(message)
+            globalRootKeyBuffer.value = message.rootKeyBuffer
+            Array(message.instanceCount)
                 .fill('')
-                .forEach((item, index) => {
-                    agentRunners.push(
-                        new AgentRunner(managerInterface, txListener)
-                    )
+                .forEach(async (item, index) => {
+                    const runner = new AgentRunner(managerInterface, txListener)
+                    await runner.remakeContext(index)
+                    agentRunners.push(runner)
                 })
-        } else if (topic == 'agent_keys') {
-            agentRunners.forEach((runner) => {
-                runner.remakeContext(message)
-            })
         }
         topicHandler.handleEvent(topic, message, agentRunners, scheduledTasks)
     })

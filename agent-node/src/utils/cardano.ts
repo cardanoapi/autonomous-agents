@@ -1,4 +1,6 @@
 import { bech32 } from 'bech32'
+import { HdKey } from 'libcardano'
+import { globalRootKeyBuffer } from '../constants/global'
 
 const KEYHASH_LENGTH = 28
 
@@ -21,4 +23,13 @@ export function rewardAddressBech32(
         bech32.toWords(Buffer.from(rewardAddressRawBytes(networkId, stakevkh))),
         200
     )
+}
+
+export function loadRootKeyFromBuffer() {
+    const rootKeyBuffer = globalRootKeyBuffer.value
+    if (!rootKeyBuffer) {
+        console.error('No RootKeyBuffer Found')
+        process.exit(1)
+    }
+    return HdKey.fromBytes(rootKeyBuffer)
 }

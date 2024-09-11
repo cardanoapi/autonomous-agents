@@ -8,8 +8,8 @@ import {
     checkIfAgentWithEventTriggerTypeExists,
     createActionDtoForEventTrigger,
 } from '../utils/agent'
-import { AgentRunner } from '../index'
 import { ScheduledTask } from 'node-cron'
+import { AgentRunner } from '../executor/AgentRunner'
 
 export class RpcTopicHandler {
     managerInterface: ManagerInterface
@@ -96,13 +96,13 @@ export class RpcTopicHandler {
                 const increasedRunner = instanceCount - agentRunners.length
                 Array(increasedRunner)
                     .fill('')
-                    .forEach((item, index) => {
-                        agentRunners.push(
-                            new AgentRunner(
-                                this.managerInterface,
-                                this.txListener
-                            )
+                    .forEach(async (item, index) => {
+                        const runner = new AgentRunner(
+                            this.managerInterface,
+                            this.txListener
                         )
+                        await runner.remakeContext(agentRunners.length + index)
+                        agentRunners.push(runner)
                     })
             }
         }

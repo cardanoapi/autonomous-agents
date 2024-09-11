@@ -65,6 +65,11 @@ export class AgentManagerRPC extends WsRpcServer {
         } else if (method === 'loadFunds') {
             const [address, amount] = args
             return this.managerWallet.transferWalletFunds(address, amount)
+        } else if (method === 'getFaucetBalance') {
+            const [address] = args
+            return kuber.getBalance(address).then((data) => {
+                return data.reduce((totalVal: number, item: any) => totalVal + item.value.lovelace, 0) / 10 ** 6
+            })
         }
     }
 

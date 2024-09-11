@@ -1,7 +1,7 @@
 import cron, { ScheduledTask } from 'node-cron'
 import { Action, Configuration } from '../service/triggerService'
 import { ManagerInterface } from '../service/ManagerInterfaceService'
-import { AgentRunner } from '../index'
+import { AgentRunner } from '../executor/AgentRunner'
 
 export function clearScheduledTasks(scheduledTasks: ScheduledTask[]) {
     scheduledTasks.forEach((task) => {
