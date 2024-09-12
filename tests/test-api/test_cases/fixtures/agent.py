@@ -69,7 +69,10 @@ def edit_admin_agent_fixture(
             ),
             vote_event_function(agent_id=agent_id),
         ],
+        instance=1,
     ).model_dump()
+
+    print(body)
 
     response = autonomous_agent_api.edit_agent(
         body=body,

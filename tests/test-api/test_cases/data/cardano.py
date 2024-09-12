@@ -16,6 +16,10 @@ def get_signed_data(signature_env_var: str, key_env_var: str) -> SignedData:
 
 
 try:
+
+    print(os.getenv("ADMIN_SIGNATURE"))
+    print(os.getenv("ADMIN_KEY"))
+
     admin_signed_data = get_signed_data("ADMIN_SIGNATURE", "ADMIN_KEY")
     user_signed_data = get_signed_data("USER_SIGNATURE", "USER_KEY")
 except ValueError as e:

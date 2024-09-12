@@ -10,7 +10,7 @@ class AgentCreateDTO(BaseModel):
     userAddress: Optional[str] = None
     name: str = Field(..., description="Name of Agent", min_length=1)
     template_id: Optional[str]
-    instance: int
+    instance: int = Field()
 
 
 class AgentUpdateDTO(BaseModel):
@@ -18,4 +18,4 @@ class AgentUpdateDTO(BaseModel):
     name: Optional[str] = Field(..., description="Name of Agent", min_length=1)
     template_id: Optional[str]
     agent_configurations: Optional[List[TriggerResponse]]
-    instance: Optional[int]
+    instance: int = Field()
