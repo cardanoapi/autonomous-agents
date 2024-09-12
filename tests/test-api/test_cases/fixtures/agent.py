@@ -104,6 +104,7 @@ def run_admin_agent_fixture(
     try:
         # Run agent-node with yarn and environment variables
         subprocess.run(["yarn", "install"], cwd=project_path, env=env, check=True)
+        time.sleep(10)
         process = subprocess.Popen(
             ["yarn", "start"],
             cwd=project_path,
@@ -111,7 +112,7 @@ def run_admin_agent_fixture(
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
         )
-        time.sleep(5)  # Wait for the agent to start
+        time.sleep(20)  # Wait for the agent to start
         # Execute create gov info action manual trigger
         response = autonomous_agent_api.agent_manual_trigger(
             agentID=agent_id,
@@ -122,7 +123,7 @@ def run_admin_agent_fixture(
 
         # Let agent run for a given time then terminate the subprocess
         runtime = int(
-            os.getenv("AGENT_RUN_TIMEOUT", 120)
+            os.getenv("AGENT_RUN_TIMEOUT", 320)
         )  # Default to 320 seconds if not set
         time.sleep(runtime)
         process.terminate()
