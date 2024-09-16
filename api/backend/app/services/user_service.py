@@ -8,3 +8,6 @@ class UserService:
 
     async def create_user(self, UserData: UserCreateDto):
         return await self.user_repository.create_user(UserData)
+
+    async def check_if_user_is_admin(self, user_address):
+        return await self.user_repository.is_super_admin(user_address=user_address)

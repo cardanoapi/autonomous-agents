@@ -3,12 +3,14 @@ from backend.app.utils.signed_data import verify_signed_data, extract_signed_add
 from backend.app.services.user_service import UserService
 from backend.app.auth.jwt_token import generate_jwt_token_using_user_address
 from fastapi.responses import JSONResponse
-from fastapi import Response, HTTPException, Request
+from fastapi import Response, HTTPException, Request, Depends
 from backend.app.models.user.response_dto import UserResponse
 from backend.app.models.user.user_dto import SignatureDataDto, UserCreateDto
 from backend.config.api_settings import APISettings
 import os
 from datetime import datetime, timedelta, timezone
+from backend.app.models.user.user_dto import User
+from backend.app.auth.cookie_dependency import verify_cookie
 
 
 class AuthRouter(Routable):
@@ -39,8 +41,9 @@ class AuthRouter(Routable):
             response.set_cookie(
                 key="access_token",
                 value=token,
-                samesite="lax",
+                samesite=self.settings.SAME_SITE,
                 secure=self.settings.SECURE,
+                httponly=True,
                 expires=datetime.now(timezone.utc) + timedelta(15),
                 domain=request.url.hostname,
                 path="/",
@@ -55,5 +58,20 @@ class AuthRouter(Routable):
         if request.cookies.get("access_token") is None:
             raise HTTPException(status_code=401, detail="No access token found")
         response = JSONResponse(content={"status": "logged out"})
-        response.delete_cookie("access_token")
+        response.set_cookie(
+            key="access_token",
+            value="",
+            expires=datetime.now(timezone.utc),
+            samesite=self.settings.SAME_SITE,
+            httponly=True,
+            secure=self.settings.SECURE,
+            domain=request.url.hostname,
+            path="/",
+        )
         return response
+
+    @post("/status")
+    async def check_user_status(self, request: Request, user: User = Depends(verify_cookie)) -> Response:
+        # no cookie case is handled by verify cookie function . returns a 401
+        is_admin = await self.user_service.check_if_user_is_admin(user.address)
+        return JSONResponse(status_code=200, content={"is_admin": is_admin})
