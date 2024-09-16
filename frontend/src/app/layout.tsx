@@ -22,7 +22,6 @@ import SideNav from '@app/components/layout/SideNav';
 import TopNav from '@app/components/layout/TopNav';
 import ThemeProvider from '@app/shared/hocs/ThemeProvider';
 import ReactQueryProvider from '@app/utils/providers/ReactQueryProvider';
-import CookieConsent from '@app/views/atoms/CookieConsent';
 import NextNProgress from '@app/views/atoms/NextNProgress';
 
 // const inter = Inter({ subsets: ['latin'] });
@@ -55,7 +54,6 @@ export default function RootLayout({
             </head>
             <body className={poppins.className}>
                 <ThemeProvider>
-                    <CookieConsent />
                     <NextNProgress
                         color="#0764EB"
                         startPosition={0}

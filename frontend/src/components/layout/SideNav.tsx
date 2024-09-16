@@ -6,12 +6,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { IAgent, fetchMyAgent } from '@api/agents';
-import { SendLogoutRequest } from '@api/auth';
+import { CheckUserStatus, SendLogoutRequest } from '@api/auth';
 import { PATHS } from '@consts';
 import { Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
-import cookie from 'js-cookie';
 import { Boxes } from 'lucide-react';
 
 import DashBoardIcon from '@app/components/icons/DashboardIcon';
@@ -45,6 +44,14 @@ export default function SideNav() {
     );
     const [adminAccess, setAdminAccess] = useAtom(adminAccessAtom);
 
+    const { data: userStatus } = useQuery({
+        queryKey: ['userSatus'],
+        queryFn: async () => {
+            return CheckUserStatus();
+        },
+        refetchInterval: 30000
+    });
+
     const { data: myAgent } = useQuery({
         queryKey: ['myAgent'],
         queryFn: async () => {
@@ -56,6 +63,25 @@ export default function SideNav() {
         },
         refetchInterval: 5000
     });
+
+    useEffect(() => {
+        if (
+            userStatus === false ||
+            (userStatus && !userStatus.is_admin) ||
+            currentConnectedWallet === null
+        ) {
+            // Remove admin access for unauthenticated users, non-admins, or if wallet info is missing
+            setAdminAccess(false);
+        } else {
+            // Grant admin access if the user is an admin and wallet info is present
+            setAdminAccess(true);
+        }
+        // Reset currentConnectedWallet if userStatus is false
+        if (userStatus === false) {
+            setCurrentConnectedWallet(null);
+        }
+        console.log('executing');
+    }, [userStatus]);
 
     const SideNavItems: ISideNavItem[] = [
         {
@@ -103,14 +129,6 @@ export default function SideNav() {
         SuccessToast('Wallet Disconnected');
         router.push('/');
     }
-
-    useEffect(() => {
-        const access_token = cookie.get('access_token');
-        if (access_token === null || access_token === undefined) {
-            setAdminAccess(false);
-            setCurrentConnectedWallet(null);
-        }
-    }, []);
 
     return (
         <>
