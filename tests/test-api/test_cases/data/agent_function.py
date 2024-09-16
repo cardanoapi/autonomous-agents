@@ -2,12 +2,17 @@ from models.trigger.trigger_dto import (
     CronTriggerDTO,
     SubParameter,
     Action,
-    TriggerCreateDTO,
     EventTriggerDTO,
 )
 from models.template_trigger.response_dto import TemplateTriggerResponse
 from models.agent.agent_dto import TriggerResponse
-from models.agent.function import AgentFunction, ActionParameters
+from models.agent.function import (
+    AgentFunction,
+    ActionParameters,
+    InfoActionParameters,
+    ValueModel,
+)
+from utils.logger import logger
 
 # Default values used across functions
 DEFAULT_FREQUENCY = "* * * * *"
@@ -16,6 +21,7 @@ DEFAULT_RECEIVER_ADDRESS = "1111111111111111111111111111111111"
 DEFAULT_RECEIVING_ADA = "10"
 DEFAULT_URL = "agents.cardanoapi.io"
 DEFAULT_DATA_HASH = "1111111111111111111111111111111111111111111111111111111111111111"
+
 
 # Predefined parameters and actions
 demo_parameters = [
@@ -100,10 +106,19 @@ def info_action_manual_trigger() -> AgentFunction:
     """
     Creates an AgentFunction for a manual info action trigger.
     """
-    url_param = ActionParameters(name="url", value=DEFAULT_URL)
-    data_hash_param = ActionParameters(name="dataHash", value=DEFAULT_DATA_HASH)
-    trigger_param = ActionParameters(name="anchor", value=[url_param, data_hash_param])
+    # Create the ValueModel with url and dataHash
+    value_model = ValueModel(url=DEFAULT_URL, dataHash=DEFAULT_DATA_HASH)
 
-    return AgentFunction(
+    # Use the value_model as the value for InfoActionParameters
+    trigger_param = InfoActionParameters(name="anchor", value=value_model)
+
+    final_obj = AgentFunction(
         function_name="createInfoGovAction", parameters=[trigger_param]
     )
+
+    logger.critical(final_obj)
+    logger.critical("final obj")
+
+    print(final_obj)
+
+    return final_obj

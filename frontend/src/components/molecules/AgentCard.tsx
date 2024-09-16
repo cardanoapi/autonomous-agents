@@ -255,7 +255,7 @@ const AgentCardTitle = ({
             <div className="card-h2 flex flex-col">
                 <span
                     className={
-                        'overflow-hidden text-ellipsis !whitespace-nowrap !text-sm leading-normal'
+                        'w-36 !overflow-hidden text-ellipsis !whitespace-nowrap !text-sm leading-normal'
                     }
                 >
                     {agentName}

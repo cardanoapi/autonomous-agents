@@ -8,6 +8,15 @@ class ActionParameters(BaseModel):
     value: Optional[str] | Any
 
 
+class ValueModel(BaseModel):
+    url: str
+    dataHash: str
+
+
+class InfoActionParameters(ActionParameters):
+    value: ValueModel
+
+
 class AgentFunction(BaseModel):
     function_name: str
     parameters: Optional[List[ActionParameters]]
