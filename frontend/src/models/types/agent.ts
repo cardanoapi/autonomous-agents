@@ -15,7 +15,7 @@ interface IParameter {
     description: string;
     optional: boolean;
     data_type: string;
-    value?: string;
+    value?: any;
 }
 export interface IAgentTrigger {
     function_name: AgentTriggerFunctionType;

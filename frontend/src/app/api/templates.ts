@@ -130,7 +130,6 @@ export const deleteTemplatebyID = async (templateID: string) => {
         const response = await axios.delete(`${baseAPIurl}/templates/${templateID}`, {
             withCredentials: true
         });
-        console.log(response);
         if (response.status === 204) {
             return true;
         } else {

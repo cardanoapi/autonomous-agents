@@ -1,9 +1,9 @@
-import nextPwa from "next-pwa";
-import runtimeCaching from "next-pwa/cache.js";
+import nextPwa from 'next-pwa';
+import runtimeCaching from 'next-pwa/cache.js';
 
-import { withSentryConfig } from "@sentry/nextjs";
+import { withSentryConfig } from '@sentry/nextjs';
 
-import i18nextConfig from "./next-i18next.config.js";
+import i18nextConfig from './next-i18next.config.js';
 
 const i18n = i18nextConfig.i18n;
 

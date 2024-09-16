@@ -42,7 +42,6 @@ export default function AgentPageById() {
     useEffect(() => {
         if (agent) {
             setCurrentAgentName(agent?.name || '');
-            console.log(agent.userAddress, currentConnectedWallet?.address);
             agent.userAddress === currentConnectedWallet?.address
                 ? setAgentOwnerIsUser(true)
                 : setAgentOwnerIsUser(false);

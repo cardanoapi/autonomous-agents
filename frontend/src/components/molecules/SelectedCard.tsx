@@ -7,7 +7,6 @@ export default function SelectedCard({
     handleUnselect = () => {
         console.log('Handle unselect');
     },
-    // handleEdit = () => console.log('Handle Edit'),
     description
 }: {
     name: string;

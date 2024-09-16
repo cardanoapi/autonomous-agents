@@ -23,9 +23,17 @@ const ObjectParameter = ({
 
     useEffect(() => {
         if (errorIndex.includes(paramIndex)) {
-            const errorText = checkIfToFillAnyOneField(parameter)
-                ? 'Please fill any one field'
-                : 'Please fill all required fields.';
+            let errorText = '';
+            if (
+                (parameter.id === 'anchor' || parameter.id === 'newConstitution') &&
+                parameter.parameters![0].errorMsg
+            ) {
+                errorText = parameter.parameters![0].errorMsg;
+            } else {
+                errorText = checkIfToFillAnyOneField(parameter)
+                    ? 'Please fill any one field'
+                    : 'Please fill all required fields.';
+            }
             setErrorMsg(errorText);
         }
     }, [errorIndex]);
@@ -92,7 +100,8 @@ const ObjectParameter = ({
                                     type={param.type === 'number' ? 'number' : 'text'}
                                 />
                             </div>
-                            {errorMsg && !param.value && (
+                            {(param.errorMsg ||
+                                (!param.optional && errorMsg && !param.value)) && (
                                 <span className={'text-xs text-red-500'}>
                                     {errorMsg}
                                 </span>

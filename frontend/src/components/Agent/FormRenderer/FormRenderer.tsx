@@ -45,7 +45,9 @@ const FormRenderer = ({
         }
     });
     const handleTrigger = async () => {
-        const errorIndexes = checkIfRequiredFieldIsEmpty(selectedFunction?.parameters);
+        const errorIndexes = await checkIfRequiredFieldIsEmpty(
+            selectedFunction?.parameters
+        );
         setErrorIndex(errorIndexes);
         if (!errorIndexes.length) {
             const params = extractAnswerFromForm(selectedFunction);
@@ -61,14 +63,16 @@ const FormRenderer = ({
         }
     };
 
-    function checkIfRequiredFieldIsEmpty(params?: Array<IParameter>) {
+    async function checkIfRequiredFieldIsEmpty(params?: Array<IParameter>) {
         const errorIndexes: number[] = [];
-        params?.forEach((param, paramIndex) => {
-            const isParamFieldsValid = validateForDifferentType(param);
-            if (!isParamFieldsValid) {
-                errorIndexes.push(paramIndex);
-            }
-        });
+        await Promise.all(
+            params!.map(async (param, index) => {
+                const isValid = await validateForDifferentType(param);
+                if (!isValid) {
+                    errorIndexes.push(index);
+                }
+            })
+        );
         return errorIndexes;
     }
 

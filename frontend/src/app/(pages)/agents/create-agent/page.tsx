@@ -71,7 +71,6 @@ export default function CreateAgentForm() {
             router.push('/agents');
         },
         onError: () => {
-            console.log('Error Response');
             setSubmittingForm(false);
             ErrorToast('Error while creating Agent. Try Again!');
         }
@@ -131,7 +130,6 @@ export default function CreateAgentForm() {
                                                 ref={multiSelectorRef}
                                                 onChange={(option: IOption) => {
                                                     setSelected([option]);
-                                                    console.log(selected[0]);
                                                     form.setValue(
                                                         'agentTemplate',
                                                         option.value

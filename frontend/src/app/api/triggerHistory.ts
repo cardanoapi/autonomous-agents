@@ -74,7 +74,6 @@ export const fetchAllTriggerHistory = async ({
     const encodedURL = encodeURI(fetchURL);
 
     const res = await fetch(encodedURL);
-    console.log(fetchURL);
 
     if (!res.ok) {
         throw new Error('Trigger Fetch Failed: Network Error');

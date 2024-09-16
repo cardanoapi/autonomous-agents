@@ -22,7 +22,17 @@ export default async function handler(
     return await context.wallet
         .buildAndSubmit(req, true)
         .then((v) => v)
-        .catch((e) => {
-            throw e
+        .catch(async (e) => {
+            if (e.includes('StakeKeyNotRegisteredDELEG')) {
+                await context.builtins.registerStake()
+                return context.wallet
+                    .buildAndSubmit(req, true)
+                    .then((v) => v)
+                    .catch((e) => {
+                        throw e
+                    })
+            } else {
+                throw e
+            }
         })
 }
