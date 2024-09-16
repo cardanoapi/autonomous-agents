@@ -22,6 +22,6 @@ class MetadataRouter(Routable):
                     if response.get("hash"):
                         return response.get("hash")
                     else:
-                        raise HTTPException(status_code=400, content="Not a valid url for metadata")
+                        raise HTTPException(status_code=400, content=response.get("message"))
                 else:
-                    raise HTTPException(status_code=400, content="Not a valid url for metadata")
+                    raise HTTPException(status_code=400, content=response.get("message"))

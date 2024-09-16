@@ -26,10 +26,9 @@ const ObjectParameter = ({
             let errorText = '';
             if (
                 (parameter.id === 'anchor' || parameter.id === 'newConstitution') &&
-                !parameter.parameters![1].value &&
-                parameter.parameters![0].value
+                parameter.parameters![0].errorMsg
             ) {
-                errorText = 'Update URL field with valid URL or fill hash';
+                errorText = parameter.parameters![0].errorMsg;
             } else {
                 errorText = checkIfToFillAnyOneField(parameter)
                     ? 'Please fill any one field'
@@ -101,7 +100,8 @@ const ObjectParameter = ({
                                     type={param.type === 'number' ? 'number' : 'text'}
                                 />
                             </div>
-                            {errorMsg && !param.value && (
+                            {(param.errorMsg ||
+                                (!param.optional && errorMsg && !param.value)) && (
                                 <span className={'text-xs text-red-500'}>
                                     {errorMsg}
                                 </span>

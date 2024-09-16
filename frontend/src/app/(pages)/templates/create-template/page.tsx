@@ -86,7 +86,6 @@ export default function TemplateForm() {
     const [selected, setSelected] = useState<ITemplateOption[]>([]);
 
     function openSelectedOption(option: ITemplateOption) {
-        console.log(option);
         setCurrentDialogForm(option);
         toggleDialog();
     }
@@ -112,10 +111,6 @@ export default function TemplateForm() {
             );
         }
     }, [functions]);
-
-    useEffect(() => {
-        console.log(selected);
-    }, [selected]);
 
     /* Related to saving parameter fromt the dialog popup*/
     function updateSelected({
@@ -158,7 +153,6 @@ export default function TemplateForm() {
     const router = useRouter();
 
     function onSubmit(formData: z.infer<typeof templateFormSchema>) {
-        console.log(formData);
         setSubmittingForm(true);
         templateMutation.mutateAsync(formData);
     }

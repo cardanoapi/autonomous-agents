@@ -1,10 +1,11 @@
 import { baseAPIurl } from './config';
 
 export async function fetchMetadataHash(url: string) {
-    const res = await fetch(`${baseAPIurl}/metadata?metadata_url=${url}`);
+    const encodedUri = encodeURIComponent(url);
+    const res = await fetch(`${baseAPIurl}/metadata?metadata_url=${encodedUri}`);
     if (res.ok) {
         return await res.json();
     } else {
-        throw new Error('Not a valid url');
+        throw new Error(await res.json());
     }
 }

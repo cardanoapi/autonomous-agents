@@ -32,6 +32,7 @@ export interface IParameter {
     parameters?: IParameter[];
     items?: ItemObject[];
     value?: any;
+    errorMsg?: string;
 }
 
 export interface IParameterOption {

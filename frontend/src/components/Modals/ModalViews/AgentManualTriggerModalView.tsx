@@ -39,7 +39,6 @@ const AgentManualTriggerModalView = ({
             closeModal();
         },
         onError: () => {
-            console.log('Error Response');
             ErrorToast('Error while manually triggering Agent Function. Try Again!');
         }
     });
