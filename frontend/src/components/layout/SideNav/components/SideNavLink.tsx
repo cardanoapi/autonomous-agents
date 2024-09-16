@@ -3,8 +3,9 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { cn } from '../lib/utils';
-import { ISideNavItem } from './SideNav';
+import { cn } from '@app/components/lib/utils';
+
+import { ISideNavItem } from '../SideNav';
 
 export default function SideNavLink({ Prop }: { Prop: ISideNavItem }) {
     const currentPath = usePathname();

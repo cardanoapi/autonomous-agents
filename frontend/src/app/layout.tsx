@@ -18,7 +18,7 @@ import 'vanilla-cookieconsent/dist/cookieconsent.css';
 import '@app/assets/css/globals.css';
 import '@app/assets/css/tailwind.css';
 import ModalContainer from '@app/components/Modals/container';
-import SideNav from '@app/components/layout/SideNav';
+import SideNav from '@app/components/layout/SideNav/SideNav';
 import TopNav from '@app/components/layout/TopNav';
 import ThemeProvider from '@app/shared/hocs/ThemeProvider';
 import ReactQueryProvider from '@app/utils/providers/ReactQueryProvider';
