@@ -23,9 +23,18 @@ const ObjectParameter = ({
 
     useEffect(() => {
         if (errorIndex.includes(paramIndex)) {
-            const errorText = checkIfToFillAnyOneField(parameter)
-                ? 'Please fill any one field'
-                : 'Please fill all required fields.';
+            let errorText = '';
+            if (
+                (parameter.id === 'anchor' || parameter.id === 'newConstitution') &&
+                !parameter.parameters![1].value &&
+                parameter.parameters![0].value
+            ) {
+                errorText = 'Update URL field with valid URL or fill hash';
+            } else {
+                errorText = checkIfToFillAnyOneField(parameter)
+                    ? 'Please fill any one field'
+                    : 'Please fill all required fields.';
+            }
             setErrorMsg(errorText);
         }
     }, [errorIndex]);

@@ -150,7 +150,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
                             {
                                 id: 'dataHash',
                                 name: 'Data Hash',
-                                optional: false,
+                                optional: true,
                                 type: 'hash'
                             }
                         ]
@@ -203,7 +203,8 @@ export const AvailableFunctions: IFunctionsDto[] = [
                             {
                                 id: 'dataHash',
                                 name: 'Data Hash',
-                                type: 'hash'
+                                type: 'hash',
+                                optional: true
                             }
                         ]
                     },
@@ -221,7 +222,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
                             {
                                 id: 'dataHash',
                                 name: 'Data Hash',
-                                optional: false,
+                                optional: true,
                                 type: 'hash'
                             }
                         ]
@@ -253,7 +254,8 @@ export const AvailableFunctions: IFunctionsDto[] = [
                             {
                                 id: 'dataHash',
                                 name: 'Data Hash',
-                                type: 'hash'
+                                type: 'hash',
+                                optional: true
                             }
                         ]
                     }
@@ -300,7 +302,8 @@ export const AvailableFunctions: IFunctionsDto[] = [
                             {
                                 id: 'dataHash',
                                 name: 'Data Hash',
-                                type: 'hash'
+                                type: 'hash',
+                                optional: true
                             }
                         ]
                     }
@@ -324,7 +327,8 @@ export const AvailableFunctions: IFunctionsDto[] = [
                             {
                                 id: 'dataHash',
                                 name: 'Data Hash',
-                                type: 'hash'
+                                type: 'hash',
+                                optional: true
                             }
                         ]
                     }
@@ -349,7 +353,8 @@ export const AvailableFunctions: IFunctionsDto[] = [
                             {
                                 id: 'dataHash',
                                 name: 'Data Hash',
-                                type: 'hash'
+                                type: 'hash',
+                                optional: true
                             }
                         ]
                     },
