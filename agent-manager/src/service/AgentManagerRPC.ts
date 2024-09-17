@@ -74,7 +74,7 @@ export class AgentManagerRPC extends WsRpcServer {
         } else if (method === 'saveMetadata') {
             return metaDataService.saveMetadata(...args)
         } else {
-            return 'No such method exists'
+            throw new Error('No such method exists')
         }
     }
 
