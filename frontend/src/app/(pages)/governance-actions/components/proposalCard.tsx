@@ -65,7 +65,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                     <p
                         className={`line-clamp-2 text-[18px]  font-semibold leading-[24px] ${isDataMissing && 'text-red-600'}`}
                     >
-                        {isDataMissing ? 'Data Missing' : proposal.title}
+                        {isDataMissing ? 'Title Missing' : proposal.title}
                     </p>
                     {proposal.abstract !== null && (
                         <div className="flex flex-col gap-1">
