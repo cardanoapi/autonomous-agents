@@ -4,6 +4,8 @@ import { IAgentAction, ICronTrigger, IEventTrigger } from '@api/agents';
 import axios from 'axios';
 import { z } from 'zod';
 
+import { convertToQueryStr } from '@app/utils/common/extra';
+
 import { templateFormSchema } from '../(pages)/templates/create-template/components/schema';
 import { ITemplateOption } from '../(pages)/templates/create-template/page';
 import { baseAPIurl } from './config';
@@ -33,8 +35,16 @@ export interface ITemplate {
     template_configurations?: Array<ITemplateConfiguration>;
 }
 
-export const fetchTemplates = async (): Promise<ITemplate[]> => {
-    const res = await fetch(`${baseAPIurl}/templates`);
+export const fetchTemplates = async (params: {
+    page: number;
+    size: number;
+    search: string;
+}): Promise<ITemplate[]> => {
+    const { page, size, search } = params;
+
+    const queryString = convertToQueryStr(page, size, search);
+
+    const res = await fetch(`${baseAPIurl}/templates/?${queryString}`);
     if (!res.ok) {
         throw new Error('Templates Fetch Operation failed: Network Error');
     }

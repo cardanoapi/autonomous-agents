@@ -4,6 +4,8 @@ import { AgentTriggerFunctionType } from '@models/types';
 import axios from 'axios';
 import { z } from 'zod';
 
+import { convertToQueryStr } from '@app/utils/common/extra';
+
 import { agentFormSchema } from '../(pages)/agents/create-agent/_form/schema';
 import { baseAPIurl } from './config';
 
@@ -67,11 +69,7 @@ export const fetchAgents = async (params: {
 }): Promise<IAgent[]> => {
     const { page, size, search } = params;
 
-    const queryString = new URLSearchParams({
-        page: page.toString(),
-        size: size.toString(),
-        search: search
-    }).toString();
+    const queryString = convertToQueryStr(page, size, search);
 
     const res = await fetch(`${baseAPIurl}/agents?${queryString}`);
     if (!res.ok) {
