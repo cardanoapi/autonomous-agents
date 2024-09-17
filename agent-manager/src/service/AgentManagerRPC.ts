@@ -72,7 +72,8 @@ export class AgentManagerRPC extends WsRpcServer {
                 return data.reduce((totalVal: number, item: any) => totalVal + item.value.lovelace, 0) / 10 ** 6
             })
         } else if (method === 'saveMetadata') {
-            return metaDataService.saveMetadata(...args)
+            const [fileName, content] = args
+            return metaDataService.saveMetadata(fileName, content)
         } else {
             throw new Error('No such method exists')
         }
