@@ -49,9 +49,6 @@ class AgentRepository:
     async def retrieve_agents(self, page: int, size: int, search: str | None) -> List[AgentResponse]:
         skip = (page - 1) * size
         filters = {"deleted_at": None}
-
-        print("repolvl", search)
-
         if search:
             filters["name"] = {"contains": search, "mode": "insensitive"}
 
