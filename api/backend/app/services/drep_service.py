@@ -15,31 +15,34 @@ class DrepService:
         self.metadata_api = APISettings().METADATA_API
 
     async def fetch_internal_dreps(self, page: int, page_size: int):
-        agents = await self.db.prisma.agent.find_many(
-            where={"deleted_at": None}, skip=(page - 1) * page_size, take=page_size, order=[{"last_active": "desc"}]
-        )
-        result = []
-        async with aiohttp.ClientSession() as session:
-            for agent in agents:
-                agent_details = await self.agent_repository.retreive_agent_key(agent.id)
-                drep_dict = {"agentId": agent.id, "agentName": agent.name}
-                async with session.get(f"{self.gov_action_api}/drep/list?search={agent_details.drep_id}") as response:
-                    response_json = await response.json()
-                    if response_json["elements"]:
-                        if agent_details.drep_id == response_json["elements"][0]["drepId"]:
-                            drep_dict = response_json["elements"][0] | drep_dict
-                            # result.append(response_json["elements"][0] | {"agentId": agent.id, "agentName": agent.name})
-                if drep_dict.get("metadataHash") and drep_dict.get("url"):
-                    url = drep_dict.get("url")
-                    metadata_hash = drep_dict.get("metadataHash")
+        async def fetch_internal_dreps(self, page: int, page_size: int):
+            agents = await self.db.prisma.agent.find_many(
+                where={"deleted_at": None}, skip=(page - 1) * page_size, take=page_size, order=[{"last_active": "desc"}]
+            )
+            result = []
+            async with aiohttp.ClientSession() as session:
+                for agent in agents:
+                    agent_details = await self.agent_repository.retreive_agent_key(agent.id)
+                    drep_dict = {}
                     async with session.get(
-                        f"{self.metadata_api}/metadata?url={url}&hash={metadata_hash}"
-                    ) as metadata_resp:
-                        metadata_resp_json = await metadata_resp.json()
-                        if "hash" in metadata_resp_json:
-                            drep_dict["givenName"] = metadata_resp_json["metadata"]["body"]["givenName"]
-                result.append(drep_dict)
-        return result
+                        f"{self.gov_action_api}/drep/list?search={agent_details.drep_id}"
+                    ) as response:
+                        response_json = await response.json()
+                        if response_json["elements"]:
+                            if agent_details.drep_id == response_json["elements"][0]["drepId"]:
+                                drep_dict = response_json["elements"][0]
+                    if drep_dict.get("metadataHash") and drep_dict.get("url"):
+                        url = drep_dict.get("url")
+                        metadata_hash = drep_dict.get("metadataHash")
+                        async with session.get(
+                            f"{self.metadata_api}/metadata?url={url}&hash={metadata_hash}"
+                        ) as metadata_resp:
+                            metadata_resp_json = await metadata_resp.json()
+                            if "hash" in metadata_resp_json:
+                                drep_dict["givenName"] = metadata_resp_json["metadata"]["body"]["givenName"]
+                    if drep_dict:
+                        result.append(drep_dict | {"agentId": agent.id, "agentName": agent.name})
+            return result
 
     async def fetch_external_dreps(self, page: int, page_size: int):
         async with aiohttp.ClientSession() as session:

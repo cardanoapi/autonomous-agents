@@ -58,6 +58,10 @@ export interface IAgent {
     total_functions?: number;
     is_active?: boolean;
     userAddress?: string;
+    drep_id?: string;
+    delegated_drep_id?: string;
+    voting_power?: number;
+    drep_registered?: boolean;
 }
 
 export const fetchAgents = async (): Promise<IAgent[]> => {

@@ -43,7 +43,7 @@ const AgentFunctionsDetailComponent = ({
             <div className={'flex flex-row flex-wrap gap-4 '}>
                 {!agentConfigurations?.length ? (
                     <span className={'text-xs text-brand-Black-300'}>
-                        No Agents Function Found
+                        Click edit button to add functions
                     </span>
                 ) : (
                     agentConfigurations?.map((config, index: number) => {

@@ -42,7 +42,7 @@ const AgentTabContent = ({
     return (
         <div
             className={
-                'h-[550px] max-h-[650px] max-w-agentComponentWidth flex-1 rounded-lg bg-white px-9 py-6 4xl:h-[650px]'
+                'h-[550px] max-h-[650px] max-w-agentComponentWidth flex-1 rounded-lg bg-white px-4 py-6 4xl:h-[650px]'
             }
         >
             {agentLoading ? (

@@ -116,7 +116,7 @@ const AgentOverViewComponent = ({
                 )}
             </div>
             <ScrollArea
-                className={'h-agentComponentHeight w-full overflow-y-auto pr-4 '}
+                className={'h-agentComponentHeight w-full overflow-y-auto pr-6 '}
             >
                 {isEditing ? (
                     <div className={'flex flex-col gap-10'}>
@@ -189,6 +189,8 @@ const AgentOverViewComponent = ({
                             title={'Number of Agents'}
                             content={agent?.instance}
                         />
+                        <DRepStatus agent={agent} />
+                        <DelegationStatus agent={agent} />
                     </div>
                 )}
             </ScrollArea>
@@ -197,3 +199,54 @@ const AgentOverViewComponent = ({
 };
 
 export default AgentOverViewComponent;
+
+const DRepStatus = ({ agent }: { agent?: IAgent }) => {
+    return (
+        <div className={'flex flex-col justify-between gap-2 lg:flex-row'}>
+            <TextDisplayField showCopy title={'DRep Id'} content={agent?.drep_id} />
+            <TextDisplayField
+                title={'DRep Status'}
+                content={
+                    agent?.drep_registered
+                        ? 'Registered as DRep'
+                        : 'Not Registered as DRep'
+                }
+            />
+            {agent?.voting_power ? (
+                <TextDisplayField
+                    title={'Voting Power'}
+                    content={agent?.voting_power}
+                />
+            ) : (
+                <></>
+            )}
+        </div>
+    );
+};
+
+const DelegationStatus = ({ agent }: { agent?: IAgent }) => {
+    return (
+        <div className={'flex flex-col justify-between gap-2 lg:flex-row'}>
+            <TextDisplayField
+                showCopy
+                title={'Stake Address'}
+                content={agent?.drep_id}
+            />
+            <TextDisplayField
+                title={'Stake Delegation Status'}
+                content={
+                    agent?.drep_registered ? 'Stake Delegated' : 'Stake Not Delegated'
+                }
+            />
+            {agent?.delegated_drep_id ? (
+                <TextDisplayField
+                    showCopy
+                    title={'Delegated DRep Id'}
+                    content={agent?.delegated_drep_id}
+                />
+            ) : (
+                <></>
+            )}
+        </div>
+    );
+};
