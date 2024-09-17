@@ -1,17 +1,17 @@
 'use client';
 
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
 
-import * as VanillaCookieConsent from 'vanilla-cookieconsent';
+// import * as VanillaCookieConsent from 'vanilla-cookieconsent';
 
-import pluginConfig from './CookieConsentConfig';
+// import pluginConfig from './CookieConsentConfig';
 
-const CookieConsent = () => {
-    useEffect(() => {
-        VanillaCookieConsent.run(pluginConfig);
-    }, []);
+// // const CookieConsent = () => {
+// //     useEffect(() => {
+// //         VanillaCookieConsent.run(pluginConfig);
+// //     }, []);
 
-    return null;
-};
+// //     return null;
+// // };
 
-export default CookieConsent;
+// //export default CookieConsent;

@@ -49,8 +49,36 @@ export const SendLogoutRequest = async () => {
                 withCredentials: true
             }
         );
-        console.log(response.data);
+        return response;
     } catch (error) {
+        throw error;
+    }
+};
+
+interface IUserStatusResponse {
+    is_admin: boolean;
+}
+
+export const CheckUserStatus = async (): Promise<IUserStatusResponse | false> => {
+    try {
+        const response = await axios.post<IUserStatusResponse>(
+            `${baseAPIurl}/auth/status`,
+            {},
+            {
+                withCredentials: true
+            }
+        );
+
+        if (response.status === 200) {
+            return response.data;
+        } else {
+            return false;
+        }
+    } catch (error: any) {
+        // return false on unauthorized error
+        if (error.response?.status === 401) {
+            return false;
+        }
         throw error;
     }
 };

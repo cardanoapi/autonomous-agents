@@ -53,7 +53,7 @@ async function validateAnchorUrl(param: IParameter) {
         try {
             param.parameters![1].value = await fetchMetadataHash(anchorUrl);
             return true;
-        } catch (err: Error) {
+        } catch (err: any) {
             param.parameters![0].errorMsg = err.message;
             return false;
         }
