@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import Link from 'next/link';
 
@@ -20,6 +20,7 @@ import {
     agentCreatedAtom,
     currentConnectedWalletAtom
 } from '@app/store/localStore';
+import { IQueryParams, debounce } from '@app/utils/query';
 
 export default function AgentsPage() {
     const [agentCreated, setAgentCreated] = useAtom(agentCreatedAtom);
@@ -27,10 +28,16 @@ export default function AgentsPage() {
     const [adminAccess] = useAtom(adminAccessAtom);
     const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
 
+    const [queryParams, setQueryParams] = useState<IQueryParams>({
+        page: 1,
+        size: 50,
+        search: ''
+    });
+
     // Fetching agents directly from the API using useQuery for more responsive loading state management, instead of relying on the Jotai atom.
     const { data: agents, isLoading: isLoading } = useQuery<IAgent[]>({
         queryKey: ['agents'],
-        queryFn: fetchAgents,
+        queryFn: () => fetchAgents(queryParams),
         refetchOnWindowFocus: true,
         refetchOnMount: 'always',
         refetchInterval: 5000,
@@ -56,6 +63,10 @@ export default function AgentsPage() {
             (agent) => agent.userAddress === currentConnectedWallet?.address
         ) || [];
 
+    const handleSearch = debounce((value: string) => {
+        setQueryParams({ page: 1, size: 50, search: value });
+    }, 500);
+
     return (
         <>
             {isLoading ? (
@@ -64,6 +75,7 @@ export default function AgentsPage() {
                 <TopNav
                     numOfAgents={agents?.length || 0}
                     createAgentAccess={adminAccess}
+                    onSearch={(value: string) => handleSearch(value)}
                 />
             )}
 
@@ -133,20 +145,22 @@ const AgentsContainer: React.FC<AgentsContainerProps> = ({
 
 const TopNav = ({
     numOfAgents,
-    createAgentAccess
+    createAgentAccess,
+    onSearch = () => {}
 }: {
     numOfAgents: number;
     createAgentAccess: boolean;
+    onSearch?: any;
 }) => {
     return (
         <div className="flex justify-between">
             <div className="flex items-center gap-x-4">
                 <span className="h1-new">Agents({numOfAgents})</span>
                 <SearchField
-                    placeholder="Search agents"
+                    placeholder="Search Agent Name"
                     variant={'secondary'}
                     className="h-10 min-w-[420px]"
-                    onSearch={() => {}}
+                    onSearch={onSearch}
                 ></SearchField>
             </div>
 

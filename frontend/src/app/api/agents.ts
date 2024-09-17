@@ -60,8 +60,20 @@ export interface IAgent {
     userAddress?: string;
 }
 
-export const fetchAgents = async (): Promise<IAgent[]> => {
-    const res = await fetch(`${baseAPIurl}/agents`);
+export const fetchAgents = async (params: {
+    page: number;
+    size: number;
+    search: string;
+}): Promise<IAgent[]> => {
+    const { page, size, search } = params;
+
+    const queryString = new URLSearchParams({
+        page: page.toString(),
+        size: size.toString(),
+        search: search
+    }).toString();
+
+    const res = await fetch(`${baseAPIurl}/agents?${queryString}`);
     if (!res.ok) {
         throw new Error('Agents Fetch Operation failed: Network Error');
     }
