@@ -28,9 +28,10 @@ class TemplateRouter(Routable):
     async def list_templates(
         self,
         page: int = Query(default=1, ge=1),
-        limit: int = Query(default=10, le=10),
+        size: int = Query(default=50, le=101),
+        search: str | None = None,
     ):
-        template = await self.template_service.list_templates(page, limit)
+        template = await self.template_service.list_templates(page, size, search)
         return template
 
     @get("/templates/{template_id}", response_model=TemplateResponseWithConfigurations)
