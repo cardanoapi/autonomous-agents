@@ -92,12 +92,12 @@ const UpdateAgentFunctionModal = ({
     const handleTriggerTypeSelection = (triggerType: TriggerType) => {
         if (triggerType === 'EVENT') {
             setFunctionList(['voteOnProposal']);
-            const filteredParams = getFunctionParameters(
-                'voteOnProposal' as AgentTriggerFunctionType
-            );
+            // const filteredParams = getFunctionParameters(
+            //     'voteOnProposal' as AgentTriggerFunctionType
+            // );
             setLocalAgentActionConfigurations({
                 function_name: 'voteOnProposal',
-                parameters: filteredParams || []
+                parameters: []
             });
         } else {
             setFunctionList(AgentFunctions.map((item) => item.function_name));
@@ -188,38 +188,46 @@ const UpdateAgentFunctionModal = ({
                         />
                     </div>
                 </div>
-
-                <div className={'flex flex-col gap-1'}>
-                    <span className={'font-medium'}>Parameters</span>
-                    <div className={'grid grid-cols-2 gap-2'}>
-                        {localAgentActionConfigurations?.parameters?.map(
-                            (param, index) => {
-                                return (
-                                    <div className={'flex flex-col gap-2'} key={index}>
-                                        <span
-                                            className={'text-sm text-brand-Black-300'}
+                {triggerType === 'CRON' ? (
+                    <div className={'flex flex-col gap-1'}>
+                        <span className={'font-medium'}>Parameters</span>
+                        <div className={'grid grid-cols-2 gap-2'}>
+                            {localAgentActionConfigurations?.parameters?.map(
+                                (param, index) => {
+                                    return (
+                                        <div
+                                            className={'flex flex-col gap-2'}
+                                            key={index}
                                         >
-                                            {param?.description}
-                                        </span>
-                                        <input
-                                            value={param.value}
-                                            onChange={(e) =>
-                                                handleInputParamsChange(
-                                                    e.target.value,
-                                                    index
-                                                )
-                                            }
-                                            type="text"
-                                            className={
-                                                'w-11/12 rounded border border-brand-Black-100/80 px-2 py-1'
-                                            }
-                                        />
-                                    </div>
-                                );
-                            }
-                        )}
+                                            <span
+                                                className={
+                                                    'text-sm text-brand-Black-300'
+                                                }
+                                            >
+                                                {param?.description}
+                                            </span>
+                                            <input
+                                                value={param.value}
+                                                onChange={(e) =>
+                                                    handleInputParamsChange(
+                                                        e.target.value,
+                                                        index
+                                                    )
+                                                }
+                                                type="text"
+                                                className={
+                                                    'w-11/12 rounded border border-brand-Black-100/80 px-2 py-1'
+                                                }
+                                            />
+                                        </div>
+                                    );
+                                }
+                            )}
+                        </div>
                     </div>
-                </div>
+                ) : (
+                    <></>
+                )}
                 {triggerType === 'CRON' && (
                     <div className={'flex flex-col gap-4'}>
                         <TriggerTab

@@ -14,18 +14,19 @@ const TextDisplayField = ({
     showCopy?: boolean;
 }) => {
     return (
-        <div className={'flex flex-col gap-2'}>
+        <div className={'flex flex-col gap-1'}>
             <h1 className={'text-sm font-medium'}>{title}</h1>
             <div className={'flex items-center gap-1'}>
                 <div
                     className={
-                        'w-fit max-w-[250px] truncate rounded border-0 border-b border-gray-300 px-4 py-2 drop-shadow-md xl:min-w-[360px] xl:max-w-[600px]'
+                        'w-fit max-w-[80px] truncate rounded sm:max-w-[150px] 3xl:max-w-[350px] '
                     }
                 >
                     {content}
                 </div>
                 {showCopy && (
                     <Copy
+                        className={'cursor-pointer'}
                         color="#A1A1A1"
                         onClick={() => {
                             navigator.clipboard.writeText(`${content}` || '');

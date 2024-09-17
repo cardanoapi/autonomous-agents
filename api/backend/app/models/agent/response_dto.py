@@ -25,6 +25,10 @@ class AgentResponseWithAgentConfigurations(AgentResponse):
 class AgentResponseWithWalletDetails(AgentResponseWithAgentConfigurations):
     agent_address: Optional[str]
     wallet_amount: Optional[float]
+    drep_id: Optional[str]
+    delegated_drep_id: Optional[str]
+    voting_power: Optional[float]
+    drep_registered: Optional[bool]
 
 
 class AgentKeyResponse(BaseModel):

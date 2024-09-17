@@ -1,8 +1,10 @@
 # agent_service.py
+import asyncio
 from datetime import datetime, UTC, timedelta
 import json
 from typing import List
 
+import aiohttp
 import httpx
 
 from backend.app.models import (
@@ -18,9 +20,11 @@ from backend.app.services.agent_instance_wallet_service import AgentInstanceWall
 from backend.app.services.kafka_service import KafkaService
 from backend.app.services.template_trigger_service import TemplateTriggerService
 from backend.app.services.trigger_service import TriggerService
+from backend.app.utils import AiohttpClient
 from backend.config import settings
 from backend.app.exceptions import HTTPException
 from backend.app.repositories.user_repository import UserRepository
+from backend.config.api_settings import APISettings
 
 
 def check_if_agent_is_online(last_active: datetime | None) -> bool:
@@ -48,6 +52,7 @@ class AgentService:
         self.kafka_service = kafka_service
         self.user_repository = UserRepository()
         self.agent_instance_wallet_service = agent_instance_wallet_service
+        self.gov_action_api = APISettings().GOV_ACTION_API
 
     async def create_agent(self, agent_data: AgentCreateDTO):
         agent = await self.agent_repository.save_agent(agent_data)
@@ -157,23 +162,49 @@ class AgentService:
         if user_is_super_admin == False:
             raise HTTPException(status_code=403, content="Forbidden Request")
 
+    async def fetch_data(self, url, session):
+        async with session.get(url) as response:
+            try:
+                return await response.json()
+            except:
+                raise HTTPException(status_code=400, content="Error fetching agent Drep details")
+
     async def return_agent_with_wallet_details(self, agent: AgentResponse):
         wallets = await self.agent_instance_wallet_service.get_wallets(agent_id=agent.id)
+        agent_keys = await self.agent_repository.retreive_agent_key(agent.id)
         if len(wallets):
             address = wallets[0].address
         else:
-            address = (await self.agent_repository.retreive_agent_key(agent.id)).agent_address
-        utxo = 0
-        async with httpx.AsyncClient() as client:
-            response = await client.get(f"{settings.KUBER_URL}/utxo?address={address}")
-            transactions = response.json()
-            if isinstance(transactions, list):
-                for transaction in transactions:
-                    utxo = utxo + float(transaction.get("value", {}).get("lovelace", "0"))
-        agent_configurations = await self.trigger_service.list_triggers_by_agent_id(agent.id)
+            address = agent_keys.agent_address
+        async with aiohttp.ClientSession() as session:
+            async with asyncio.TaskGroup() as group:
+                drep_voting_power = group.create_task(
+                    self.fetch_data(f"{self.gov_action_api}/drep/get-voting-power/{agent_keys.drep_id}", session)
+                )
+                agent_configurations = group.create_task(self.trigger_service.list_triggers_by_agent_id(agent.id))
+                wallet_balance = group.create_task(
+                    self.fetch_data(
+                        f"{self.gov_action_api}/ada-holder/get-voting-power/e0{agent_keys.stake_verification_key_hash}",
+                        session,
+                    )
+                )
+                drep_details = group.create_task(
+                    self.fetch_data(f"{self.gov_action_api}/drep/info/{agent_keys.drep_id}", session)
+                )
+                delegated_drep_id = group.create_task(
+                    self.fetch_data(
+                        f"{self.gov_action_api}/ada-holder/get-current-delegation/e0{agent_keys.stake_verification_key_hash}",
+                        session,
+                    )
+                )
+
         return AgentResponseWithWalletDetails(
             **agent.dict(),
             agent_address=address,
-            wallet_amount=utxo / (10**6),
-            agent_configurations=agent_configurations,
+            wallet_amount=wallet_balance.result() / (10**6),
+            agent_configurations=agent_configurations.result(),
+            voting_power=drep_voting_power.result() / (10**6),
+            drep_registered=drep_details.result().get("isRegisteredAsDRep"),
+            delegated_drep_id=delegated_drep_id.result().get("dRepHash", None) if delegated_drep_id.result() else None,
+            drep_id=agent_keys.drep_id,
         )

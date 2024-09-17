@@ -247,7 +247,7 @@ const AgentCardTitle = ({
 }: {
     agentID: string;
     agentName: string;
-    isActive: boolean;
+    isActive?: boolean;
 }) => {
     return (
         <div className={'flex items-center gap-3'}>

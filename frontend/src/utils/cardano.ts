@@ -2,7 +2,7 @@ import { CIP30Instance } from 'kuber-client/types';
 
 export const convertLovelaceToAda = (lovelace?: number) => {
     if (lovelace) {
-        return Number((lovelace / 10e6).toFixed(3));
+        return Number((lovelace / 1e6).toFixed(3));
     }
 
     return '0';
