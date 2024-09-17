@@ -36,6 +36,7 @@ export class Executor {
                 },
             },
             builtins: this.getBuiltins(wallet),
+            agentName: '',
         }
     }
     makeWallet(walletDetails: AgentWalletDetails): Wallet {
@@ -138,12 +139,14 @@ export class Executor {
 
     remakeContext(
         agent_wallet: AgentWalletDetails,
-        managerInterface: ManagerInterface
+        managerInterface: ManagerInterface,
+        agentName: string
     ) {
         this.functionContext.wallet = this.makeWallet(agent_wallet)
         this.functionContext.builtins = this.getBuiltins(
             this.functionContext.wallet
         )
+        this.functionContext.agentName = agentName
         managerInterface
             .getFaucetBalance(this.functionContext.wallet.address)
             .then((balance) => {
@@ -234,6 +237,9 @@ export class Executor {
                     context.wallet.address,
                     amount
                 )
+            },
+            saveMetadata: async (fileName, content) => {
+                return await this.rpcInterface.saveMetadata(fileName, content)
             },
             ...updatedBuiltins,
         } as Builtins

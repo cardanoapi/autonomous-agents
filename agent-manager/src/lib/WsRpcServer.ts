@@ -53,13 +53,13 @@ export abstract class WsRpcServer extends RpcV1Server {
                 return
             }
             this.addConnection(conn_id, new CborDuplex(new WsClientPipe(ws), cborxBackend(true)))
-            const { instanceCount, agentIndex } = await fetchAgentConfiguration(conn_id)
-            if (!agentIndex || !instanceCount) {
+            const { instanceCount, agentIndex, agentName } = await fetchAgentConfiguration(conn_id)
+            if (!agentIndex || !instanceCount || !agentName) {
                 this.disconnect(conn_id, 'No instance found')
                 return
             }
             const rootKeyBuffer = await generateRootKey(agentIndex || 0)
-            this.emit(conn_id, 'instance_count', { instanceCount, rootKeyBuffer })
+            this.emit(conn_id, 'instance_count', { instanceCount, rootKeyBuffer, agentName })
             try {
                 await this.validateConnection(req)
                 this.onReady(this.activeConnections[conn_id])

@@ -9,7 +9,7 @@ import { ManagerInterface } from './service/ManagerInterfaceService'
 import { TxListener } from './executor/TxListener'
 import { RpcTopicHandler } from './service/RpcTopicHandler'
 import { ScheduledTask } from 'node-cron'
-import { globalRootKeyBuffer } from './constants/global'
+import { globalRootKeyBuffer, globalState } from './constants/global'
 import { AgentRunner } from './executor/AgentRunner'
 
 configDotenv()
@@ -49,6 +49,7 @@ function connectToManagerWebSocket() {
     rpcChannel.on('event', (topic, message) => {
         if (topic == 'instance_count') {
             globalRootKeyBuffer.value = message.rootKeyBuffer
+            globalState.agentName = message.agentName
             Array(message.instanceCount)
                 .fill('')
                 .forEach(async (item, index) => {

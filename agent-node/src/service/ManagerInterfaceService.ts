@@ -25,4 +25,8 @@ export class ManagerInterface {
     getFaucetBalance(address: string): Promise<any> {
         return this.rpc.callMethod('getFaucetBalance', address)
     }
+
+    saveMetadata(fileName: string, content: string): Promise<any> {
+        return this.rpc.callMethod('saveMetadata', fileName, content)
+    }
 }

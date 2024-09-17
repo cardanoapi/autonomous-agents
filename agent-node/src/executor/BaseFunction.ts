@@ -62,6 +62,7 @@ export interface Builtins {
         data: Record<any, any> | any[] | string
     ) => Promise<any>
     loadFunds: (amount: number) => Promise<any>
+    saveMetadata: (fileName: string, content: string) => Promise<any>
 
     // DRep functions
     // dRepRegistration(anchor?: OffchainData): Promise<any>
@@ -110,6 +111,7 @@ export interface FunctionContext {
     wallet: Wallet
     kuber: KuberApi
     builtins: Builtins
+    agentName: string
 }
 
 // Create a restricted execution environment

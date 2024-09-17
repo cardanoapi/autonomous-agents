@@ -120,4 +120,5 @@ export class RpcTopicHandler {
     }
 
     agent_keys(message: any) {}
+    instance_count(args: any) {}
 }

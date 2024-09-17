@@ -6,6 +6,7 @@ import { saveTxLog } from '../utils/agent'
 import { loadRootKeyFromBuffer } from '../utils/cardano'
 import { HdWallet } from 'libcardano'
 import { AgentWalletDetails } from '../types/types'
+import { globalState } from '../constants/global'
 
 export class AgentRunner {
     executor: Executor
@@ -42,6 +43,10 @@ export class AgentRunner {
             agent_address: accountWallet.getAddress(0).toBech32(),
             drep_id: accountWallet.stakeKey!.pkh.toString('hex'),
         }
-        this.executor.remakeContext(agentInstanceWallet, this.managerInterface)
+        this.executor.remakeContext(
+            agentInstanceWallet,
+            this.managerInterface,
+            `${globalState.agentName}#${index}`
+        )
     }
 }
