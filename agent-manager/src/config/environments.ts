@@ -5,6 +5,7 @@ const environments = {
     managerWalletAddress: process.env.MANAGER_WALLET_ADDRESS || '',
     managerWalletSigningKey: process.env.MANAGER_WALLET_SIGNING_KEY || '',
     agentMnemonic: process.env.AGENT_MNEMONIC || '',
+    metaDataBaseURL: process.env.METADATA_BASE_URL || 'https://metadata.cardanoapi.io',
 }
 
 export default environments

@@ -24,6 +24,7 @@ export async function fetchAgentConfiguration(agentId: string): Promise<{
     instanceCount: number | null
     configurations: any[]
     agentIndex: number | null
+    agentName: string | null
 }> {
     try {
         const [agentInstance, agentConfigurations] = await Promise.all([
@@ -43,6 +44,7 @@ export async function fetchAgentConfiguration(agentId: string): Promise<{
         if (agentInstance != null) {
             const instanceCount = Number(agentInstance.instance)
             const agentIndex = Number(agentInstance.index)
+            const agentName = agentInstance.name
             const configurationsData = agentConfigurations.map(
                 (config: { id: string; type: string; data: JsonValue; action: JsonValue }) => ({
                     id: config.id,
@@ -52,9 +54,9 @@ export async function fetchAgentConfiguration(agentId: string): Promise<{
                 })
             )
 
-            return { instanceCount, configurations: configurationsData, agentIndex }
+            return { instanceCount, configurations: configurationsData, agentIndex, agentName }
         } else {
-            return { instanceCount: null, configurations: [], agentIndex: null }
+            return { instanceCount: null, configurations: [], agentIndex: null, agentName: null }
         }
     } catch (error: any) {
         console.log(`Error fetching agent configuration: ${error}`)

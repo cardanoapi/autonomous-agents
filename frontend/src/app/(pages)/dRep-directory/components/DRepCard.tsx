@@ -28,12 +28,12 @@ interface DRepCardProps {
 const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
     const { isOpen, toggleDialog } = useAppDialog();
 
-    const [isDrepDetialsOpen, setIsDrepDetialsOpen] = useState(false);
+    const [isDrepDetailsOpen, setIsDrepDetailsOpen] = useState(false);
 
-    const isDataMissing = dRep.dRepName === null || dRep.dRepName === undefined;
+    const isDataMissing = dRep.givenName === undefined;
 
     const formattedVotingPower = useMemo(() => {
-        return convertLovelaceToAda(dRep.votingPower).toLocaleString('en-Us');
+        return convertLovelaceToAda(dRep.votingPower).toLocaleString();
     }, [dRep.votingPower]);
 
     const handleCopyDRepId = () => {
@@ -55,7 +55,7 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
     }
 
     function toggleDrepDetailDialog() {
-        setIsDrepDetialsOpen(!isDrepDetialsOpen);
+        setIsDrepDetailsOpen(!isDrepDetailsOpen);
     }
 
     function handleAgentRedirect() {
@@ -73,7 +73,7 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                     <div className="flex flex-col space-y-2">
                         <div className="flex gap-2">
                             <TypographyH2 className={`font-semibold ${isDataMissing}`}>
-                                {isDataMissing ? 'Data Missing' : dRep.dRepName}
+                                {isDataMissing ? 'Data Missing' : dRep.givenName}
                             </TypographyH2>
                             <Badge variant={getBadgeVariant(dRep.status)}>
                                 {dRep.status}
@@ -111,7 +111,7 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                     <Button
                         className="rounded-3xl"
                         variant={'cool'}
-                        onClick={() => setIsDrepDetialsOpen(!isDrepDetialsOpen)}
+                        onClick={() => setIsDrepDetailsOpen(!isDrepDetailsOpen)}
                     >
                         View details
                     </Button>
@@ -135,7 +135,7 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                 />
             </AppDialog>
 
-            <AppDialog isOpen={isDrepDetialsOpen} toggleDialog={toggleDrepDetailDialog}>
+            <AppDialog isOpen={isDrepDetailsOpen} toggleDialog={toggleDrepDetailDialog}>
                 <DrepDetailDialogContent dRep={dRep} />
             </AppDialog>
         </>

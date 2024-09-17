@@ -21,7 +21,7 @@ export interface IDRep {
     status: DRepStatus;
     type: 'DRep' | 'SoleVoter';
     bio: string;
-    dRepName?: string;
+    givenName?: string;
     email?: string;
     references: string[];
     metadataValid: boolean;
