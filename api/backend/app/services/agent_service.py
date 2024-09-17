@@ -68,8 +68,8 @@ class AgentService:
         # return await self.agent_instance_wallet_service.get_wallets(agent_id)
         return await self.agent_repository.retreive_agent_key(agent_id)
 
-    async def list_agents(self, page: int, limit: int) -> List[AgentResponse]:
-        agents = await self.agent_repository.retrieve_agents(page, limit)
+    async def list_agents(self, page: int, size: int, search: str | None) -> List[AgentResponse]:
+        agents = await self.agent_repository.retrieve_agents(page, size, search)
         updated_agents = []
         for agent in agents:
             is_online = check_if_agent_is_online(agent.last_active)

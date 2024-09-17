@@ -46,9 +46,16 @@ class AgentRepository:
 
         return agent_response
 
-    async def retrieve_agents(self, page: int, limit: int) -> List[AgentResponse]:
-        skip = (page - 1) * limit
-        agents = await self.db.prisma.agent.find_many(where={"deleted_at": None}, skip=skip, take=limit)
+    async def retrieve_agents(self, page: int, size: int, search: str | None) -> List[AgentResponse]:
+        skip = (page - 1) * size
+        filters = {"deleted_at": None}
+
+        print("repolvl", search)
+
+        if search:
+            filters["name"] = {"contains": search, "mode": "insensitive"}
+
+        agents = await self.db.prisma.agent.find_many(where=filters, skip=skip, take=size)
         return agents
 
     async def retrieve_agent(self, agent_id: str) -> Optional[AgentResponse]:
