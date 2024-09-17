@@ -65,14 +65,16 @@ const FormRenderer = ({
 
     async function checkIfRequiredFieldIsEmpty(params?: Array<IParameter>) {
         const errorIndexes: number[] = [];
-        await Promise.all(
-            params!.map(async (param, index) => {
-                const isValid = await validateForDifferentType(param);
-                if (!isValid) {
-                    errorIndexes.push(index);
-                }
-            })
-        );
+        if (params?.length) {
+            await Promise.all(
+                params.map(async (param, index) => {
+                    const isValid = await validateForDifferentType(param);
+                    if (!isValid) {
+                        errorIndexes.push(index);
+                    }
+                })
+            );
+        }
         return errorIndexes;
     }
 

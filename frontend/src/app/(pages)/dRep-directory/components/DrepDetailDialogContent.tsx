@@ -1,7 +1,6 @@
 import { IDRepInternal } from '@models/types';
 import { convertLovelaceToAda } from '@utils';
-import { CopyIcon } from 'lucide-react';
-import { ExternalLink } from 'lucide-react';
+import { CopyIcon, ExternalLink } from 'lucide-react';
 
 import { AppDialogContent } from '@app/app/components/AppDialog';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
@@ -19,17 +18,17 @@ export default function DrepDetailDialogContent({ dRep }: { dRep: IDRepInternal 
     };
 
     return (
-        <AppDialogContent className="pt-0">
+        <AppDialogContent className=" pt-0">
             <div className="mb-4 flex items-center gap-2">
                 <span className="text-lg font-semibold">
-                    {dRep.dRepName || 'Data Missing'}
+                    {dRep.givenName || 'Data Missing'}
                 </span>
                 <ExternalLink
                     className="cursor-pointer text-blue-600"
                     onClick={redirectToGovTool}
                 />
             </div>
-            <div className="space-y-4 rounded-lg border border-gray-200 p-4 shadow-sm">
+            <div className="space-y-4 rounded-lg border border-gray-200 p-4 shadow-sm md:w-[520px]">
                 <div className="flex items-start justify-between">
                     <p className="max-w-xs truncate text-sm font-semibold text-gray-700">
                         Drep ID: {dRep.drepId}
@@ -74,8 +73,7 @@ export default function DrepDetailDialogContent({ dRep }: { dRep: IDRepInternal 
                         </p>
                     </div>
                 )}
-
-                {!dRep.dRepName && (
+                {!dRep.givenName && (
                     <p className="text-sm text-red-600">
                         The data used when this DRep was created has been formatted
                         incorrectly.
@@ -99,19 +97,19 @@ const DRepDetails = ({ dRep }: { dRep: IDRepInternal }) => {
     };
 
     const renderExternalUrl = () => (
-        <p className="flex items-center gap-2 text-sm text-gray-700">
+        <div className="flex items-center gap-2 text-sm text-gray-700">
             External URL:
             {dRep.url ? (
                 <span
                     onClick={openExternalUrl}
-                    className="cursor-pointer truncate text-blue-800"
+                    className=" cursor-pointer truncate text-blue-800"
                 >
                     {dRep.url}
                 </span>
             ) : (
                 <span>No URL available</span>
             )}
-        </p>
+        </div>
     );
 
     const renderLatestTxHash = () => (
@@ -167,11 +165,11 @@ const DRepDetails = ({ dRep }: { dRep: IDRepInternal }) => {
     );
 
     return (
-        <>
+        <div className={'w-full space-y-4'}>
             {renderMetaDataHash()}
             {renderLatestTxHash()}
             {renderExternalUrl()}
             {renderLatestRegistrationDate()}
-        </>
+        </div>
     );
 };

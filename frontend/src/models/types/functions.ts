@@ -195,6 +195,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
                         id: 'anchor',
                         type: 'object',
                         name: 'Anchor',
+                        optional: true,
                         parameters: [
                             {
                                 id: 'url',
@@ -212,7 +213,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
                     {
                         id: 'newConstitution',
                         type: 'object',
-                        optional: false,
+                        optional: true,
                         name: 'Constitution',
                         parameters: [
                             {
@@ -246,6 +247,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
                         id: 'anchor',
                         type: 'object',
                         name: 'Anchor',
+                        optional: true,
                         parameters: [
                             {
                                 id: 'url',
@@ -294,6 +296,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
                         id: 'anchor',
                         type: 'object',
                         name: 'Anchor',
+                        optional: true,
                         parameters: [
                             {
                                 id: 'url',
@@ -319,6 +322,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
                         id: 'anchor',
                         type: 'object',
                         name: 'Anchor',
+                        optional: true,
                         parameters: [
                             {
                                 id: 'url',
@@ -345,6 +349,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
                         id: 'anchor',
                         type: 'object',
                         name: 'Anchor',
+                        optional: true,
                         parameters: [
                             {
                                 id: 'url',
