@@ -22,8 +22,11 @@ export function getConfiguredAgentTrigger(
     }
 
     switch (func) {
-        case 'stakeDelegation':
-            return { ...trigger, parameters: [{ ...trigger.parameters[0], value }] };
+        case 'delegation':
+            return {
+                ...trigger,
+                parameters: [{ ...trigger.parameters[0], value: { drep: value } }]
+            };
 
         case 'voteOnProposal':
             return { ...trigger, parameters: [{ ...trigger.parameters[0], value }] };

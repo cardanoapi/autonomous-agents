@@ -85,9 +85,8 @@ const AgentOverViewComponent = ({
                 instance: agentInstance,
                 agentConfigurations: updatedAgentConfigs
             })
-            .then((res) => {
+            .then(() => {
                 setIsEditing(false);
-                console.log(res);
             });
     };
 

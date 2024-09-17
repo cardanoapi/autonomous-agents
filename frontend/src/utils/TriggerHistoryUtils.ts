@@ -26,8 +26,6 @@ export function calculateTriggerChangeRateforLast24Hours(
         ((last24HourSuccessTransactionsCount - prior24HourSuccessTransactionsCount) /
             prior24HourSuccessTransactionsCount) *
         100;
-    //console.log(`Last 24 hours ${last24HourSuccessTransactionsCount} , Total : ${totalTransactionsCount}`)
-    //console.log(`Change Rate : ${changeRate}`)
     return changeRate;
 }
 

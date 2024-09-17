@@ -1,3 +1,4 @@
+import { fetchMetadataHash } from '@api/metaData';
 import { IFunctionsItem, IParameter } from '@models/types/functions';
 
 export function checkIfToFillAnyOneField(parameter: IParameter) {
@@ -45,7 +46,25 @@ export function validateForListType(param: IParameter) {
     }
 }
 
-export function validateForObjectType(param: IParameter) {
+async function validateAnchorUrl(param: IParameter) {
+    const anchorUrl = param.parameters![0].value;
+    const anchorHash = param.parameters![1].value;
+    if (anchorUrl && !anchorHash) {
+        try {
+            param.parameters![1].value = await fetchMetadataHash(anchorUrl);
+            return true;
+        } catch (err: Error) {
+            param.parameters![0].errorMsg = err.message;
+            return false;
+        }
+    } else return true;
+}
+
+export async function validateForObjectType(param: IParameter) {
+    if (param.id === 'anchor' || param.id === 'newConstitution') {
+        const valid = await validateAnchorUrl(param);
+        if (!valid) return false;
+    }
     if (param.optional) {
         return checkIfAllFieldsAreEmptyOrFilled(param.parameters);
     } else {
@@ -61,12 +80,12 @@ export function validateForObjectType(param: IParameter) {
     }
 }
 
-export function validateForOptionType(param: IParameter) {
+export async function validateForOptionType(param: IParameter) {
     switch (param.type) {
         case 'list':
             return validateForListType(param);
         case 'object':
-            return validateForObjectType(param);
+            return await validateForObjectType(param);
         case 'string':
         case 'hash':
         case 'url':
@@ -84,14 +103,14 @@ export function validateForInputType(parameter: IParameter) {
     );
 }
 
-export function validateForDifferentType(param: IParameter) {
+export async function validateForDifferentType(param: IParameter) {
     switch (param.type) {
         case 'list':
             return validateForListType(param);
         case 'object':
-            return validateForObjectType(param);
+            return await validateForObjectType(param);
         case 'options':
-            return validateForOptionType(param.parameters![0]);
+            return await validateForOptionType(param.parameters![0]);
         case 'string':
         case 'hash':
         case 'url':
