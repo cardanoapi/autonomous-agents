@@ -20,7 +20,7 @@ const TemplatesTopNav = ({
                 <span className="h1-new">Templates({templatesCount})</span>
                 <DataActionBar
                     className="h-10 min-w-[420px]"
-                    placeholder="Search Templates "
+                    placeholder="Search Template Name "
                     onSearch={onSearch}
                 />
             </div>
