@@ -17,7 +17,7 @@ export const useAgentsAction = (
     const [selectedAgentIds, setSelectedAgentIds] = useState<string[]>([]);
     const { data: agents, isLoading } = useQuery<IAgent[]>({
         queryKey: [QUERY_KEYS.useFetchAgentsKey],
-        queryFn: fetchAgents
+        queryFn: async () => fetchAgents({ page: 1, size: 100, search: '' })
     });
 
     const actionMutation = useMutation({
