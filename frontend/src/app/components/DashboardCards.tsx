@@ -40,22 +40,22 @@ function smoothenArray(arr: number[], n: number): number[] {
 const DashboardCards = () => {
     const { data: agents = [], isLoading: isLoadingAgents } = useQuery({
         queryKey: ['agents'],
-        queryFn: fetchAgents
+        queryFn: async () => fetchAgents({ page: 1, size: 50, search: '' })
     });
 
     const { data: activeAgents, isLoading: isLoadingActiveAgents } = useQuery({
         queryKey: ['activeAgentsCount'],
-        queryFn: fetchActiveAgentsCount
+        queryFn: async () => fetchActiveAgentsCount()
     });
 
     const { data: templates = [], isLoading: isLoadingTemplates } = useQuery({
         queryKey: ['templates'],
-        queryFn: fetchTemplates
+        queryFn: async () => fetchTemplates({ page: 1, size: 50, search: '' })
     });
 
     const { data: proposalMetric, isLoading: isLoadingProposalMetric } = useQuery({
         queryKey: ['proposalMetric'],
-        queryFn: () =>
+        queryFn: async () =>
             fecthTriggerHistoryMetric([
                 'createInfoGovAction',
                 'proposalNewConstitution'
@@ -64,7 +64,7 @@ const DashboardCards = () => {
 
     const { data: voteMetric, isLoading: isLoadingVoteMetric } = useQuery({
         queryKey: ['voteOnProposal'],
-        queryFn: () => fecthTriggerHistoryMetric(['voteOnProposal'])
+        queryFn: async () => fecthTriggerHistoryMetric(['voteOnProposal'])
     });
 
     function getTotalValue(arr: { count: number; values: Record<string, number> }[]) {
@@ -92,10 +92,10 @@ const DashboardCards = () => {
                     <OverViewAgentsCard
                         title="No of Agents"
                         totalAgents={agents.length || 'NA'}
-                        activeAgents={activeAgents?.online_agents_count}
+                        activeAgents={activeAgents?.online_agents_count || 0}
                         inactiveAgents={Math.max(
                             0,
-                            agents.length - activeAgents?.online_agents_count
+                            agents.length - activeAgents?.online_agents_count || 0
                         )}
                     />
                     <OverViewTemplatesCard

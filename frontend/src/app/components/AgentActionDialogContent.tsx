@@ -6,7 +6,6 @@ import { CircularProgress } from '@mui/material';
 import { useAtom } from 'jotai';
 
 import { AppDialogContent } from '@app/app/components/AppDialog';
-import Loader from '@app/app/components/Loader';
 import { Button } from '@app/components/atoms/Button';
 import { useAgentsAction } from '@app/lib/hooks/useAgentActions';
 import { adminAccessAtom, currentConnectedWalletAtom } from '@app/store/localStore';
@@ -29,14 +28,8 @@ const AgentsActionDialogContent = ({
     triggerType,
     functionId
 }: AgentsActionDialogContentProps) => {
-    const {
-        activeAgents,
-        isLoading,
-        isSubmitting,
-        handleSelect,
-        handleAction,
-        selectedAgentIds
-    } = useAgentsAction(triggerType, handleClose, functionId);
+    const { activeAgents, isSubmitting, handleSelect, handleAction, selectedAgentIds } =
+        useAgentsAction(triggerType, handleClose, functionId);
 
     const [adminAccess] = useAtom(adminAccessAtom);
     const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
@@ -48,8 +41,6 @@ const AgentsActionDialogContent = ({
                   (agent) => agent.userAddress === currentConnectedWallet?.address
               );
     }
-
-    if (isLoading) return <Loader />;
 
     const userOwnedAgents = filterUserOwnedAgents(activeAgents);
 
