@@ -41,7 +41,8 @@ export default function GovernanceAction() {
         page: 1,
         pageSize: 10,
         proposal_type: 'internal',
-        sort: 'NewestCreated'
+        sort: 'NewestCreated',
+        search: ''
     });
 
     const queryKey = useMemo(
@@ -55,7 +56,7 @@ export default function GovernanceAction() {
     });
 
     const handleSearch = (searchValue: string) => {
-        setSearchParams((prev) => ({ ...prev, proposal_type: searchValue, page: 1 }));
+        setSearchParams((prev) => ({ ...prev, search: searchValue, page: 1 }));
     };
 
     const handleFilterChange = (filter: string) => {

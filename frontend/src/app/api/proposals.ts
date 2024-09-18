@@ -15,12 +15,14 @@ export const fetchProposals = async (params: {
     pageSize: number;
     proposal_type: string;
     sort: string;
+    search: string;
 }): Promise<IProposalResponse> => {
-    const { page, pageSize, proposal_type, sort } = params;
+    const { page, pageSize, proposal_type, sort, search } = params;
     const queryString = new URLSearchParams({
         page: page.toString(),
         pageSize: pageSize.toString(),
         proposal_type: proposal_type,
+        search: search,
         sort
     }).toString();
 
