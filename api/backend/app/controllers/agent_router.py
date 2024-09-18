@@ -33,9 +33,10 @@ class AgentRouter(Routable):
     async def list_agents(
         self,
         page: int = Query(default=1, ge=1),
-        limit: int = Query(default=50, le=10),
+        size: int = Query(default=50, le=101),
+        search: str | None = None,
     ):
-        agents = await self.agent_service.list_agents(page, limit)
+        agents = await self.agent_service.list_agents(page, size, search)
         return agents
 
     @get("/agent/{agent_id}", response_model=AgentResponseWithWalletDetails)

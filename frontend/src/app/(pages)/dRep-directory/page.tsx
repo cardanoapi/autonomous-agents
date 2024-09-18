@@ -39,7 +39,8 @@ export default function DRepDirectory() {
     const [queryParams, setQueryParams] = useState({
         page: 1,
         pageSize: 10,
-        drep_type: 'internal'
+        drep_type: 'internal',
+        search: ''
     });
 
     const { data, isFetching } = useQuery({
@@ -47,8 +48,10 @@ export default function DRepDirectory() {
         queryFn: () => fetchDreps({ ...queryParams })
     });
 
+    const [isFirstFetch, setIsFirstFetch] = useState<boolean>(true);
+
     const handleSearch = (searchValue: string) => {
-        setQueryParams({ ...queryParams, drep_type: searchValue, page: 1 });
+        setQueryParams({ ...queryParams, search: searchValue, page: 1 });
     };
 
     const handleFilterChange = (filter: string) => {
@@ -74,13 +77,17 @@ export default function DRepDirectory() {
         }
     }, [data, queryParams.pageSize]);
 
+    useEffect(() => {
+        isFirstFetch && setIsFirstFetch(false);
+    }, [data]);
+
     return (
         <div className="!mt-4 flex h-defaultPageHeightwithoutTopNav flex-col space-y-12">
             <div className="flex items-center justify-between">
                 <div className="flex gap-2">
                     <DataActionBar
                         onSearch={handleSearch}
-                        placeholder="Search DRep"
+                        placeholder="Search DRep ID"
                         className="!w-[500px]"
                     />
                     <DrepFilterTab

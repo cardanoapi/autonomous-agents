@@ -12,9 +12,14 @@ class ProposalRouter(Routable):
 
     @get("/proposals", response_model=Page)
     async def get_all_proposals(
-        self, page: int = 1, pageSize: int = 10, sort: str = "NewestCreated", proposal_type: str = "all"
+        self,
+        page: int = 1,
+        pageSize: int = 10,
+        sort: str = "NewestCreated",
+        proposal_type: str = "all",
+        search: str | None = None,
     ):
         if proposal_type == "internal":
-            return await self.proposal_service.get_internal_proposals(page, pageSize)
+            return await self.proposal_service.get_internal_proposals(page, pageSize, search)
         else:
-            return await self.proposal_service.get_external_proposals(page, pageSize, sort)
+            return await self.proposal_service.get_external_proposals(page, pageSize, sort, search)

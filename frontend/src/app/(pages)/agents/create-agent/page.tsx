@@ -37,7 +37,7 @@ export default function CreateAgentForm() {
     );
     const { data: templates } = useQuery<ITemplate[]>({
         queryKey: ['templates'],
-        queryFn: fetchTemplates
+        queryFn: () => fetchTemplates({ page: 1, size: 50, search: '' })
     });
 
     useEffect(() => {

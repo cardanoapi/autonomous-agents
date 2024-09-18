@@ -25,7 +25,12 @@ export default function TopNav() {
 
     const { data: agents } = useQuery<IAgent[]>({
         queryKey: ['agents'],
-        queryFn: fetchAgents,
+        queryFn: async () =>
+            fetchAgents({
+                page: 1,
+                size: 100,
+                search: ''
+            }),
         refetchOnWindowFocus: true,
         refetchOnMount: 'always',
         refetchInterval: 5000,

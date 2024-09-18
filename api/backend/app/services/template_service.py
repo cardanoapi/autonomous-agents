@@ -49,9 +49,11 @@ class TemplateService:
 
         return template_response
 
-    async def list_templates(self, page, limit) -> List[TemplateResponseWithConfigurations]:
+    async def list_templates(
+        self, page: int, size: int, search: str | None
+    ) -> List[TemplateResponseWithConfigurations]:
         templates_with_configurations = []
-        templates = await self.template_repository.retrieve_templates(page, limit)
+        templates = await self.template_repository.retrieve_templates(page, size, search)
         for template in templates:
             template_configurations = await self.template_trigger_service.get_template_trigger(template.id)
             updated_template = TemplateResponseWithConfigurations(

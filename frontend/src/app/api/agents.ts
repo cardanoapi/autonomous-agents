@@ -4,6 +4,8 @@ import { AgentTriggerFunctionType } from '@models/types';
 import axios from 'axios';
 import { z } from 'zod';
 
+import { convertToQueryStr } from '@app/utils/common/extra';
+
 import { agentFormSchema } from '../(pages)/agents/create-agent/_form/schema';
 import { baseAPIurl } from './config';
 
@@ -64,8 +66,16 @@ export interface IAgent {
     drep_registered?: boolean;
 }
 
-export const fetchAgents = async (): Promise<IAgent[]> => {
-    const res = await fetch(`${baseAPIurl}/agents`);
+export const fetchAgents = async (params: {
+    page: number;
+    size: number;
+    search: string;
+}): Promise<IAgent[]> => {
+    const { page, size, search } = params;
+
+    const queryString = convertToQueryStr(page, size, search);
+
+    const res = await fetch(`${baseAPIurl}/agents?${queryString}`);
     if (!res.ok) {
         throw new Error('Agents Fetch Operation failed: Network Error');
     }
