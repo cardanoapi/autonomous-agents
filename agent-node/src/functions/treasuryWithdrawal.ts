@@ -2,7 +2,8 @@ import { FunctionContext } from '../executor/BaseFunction'
 
 export default async function handler(
     context: FunctionContext,
-    anchor: Record<string, any>
+    withdrawal: Record<string, any>,
+    anchor: Record<string, string>
 ) {
     const { dataHash, url } = await context.builtins.saveMetadata(
         context.helpers.generateProposalMetadataContent()
@@ -12,12 +13,11 @@ export default async function handler(
     const req = {
         proposals: [
             {
-                refundAccount: context.wallet.rewardAddress,
                 anchor: anchorData,
+                refundAccount: context.wallet.rewardAddress,
+                withdraw: withdrawal,
             },
         ],
     }
-    return await context.wallet.buildAndSubmit(req).catch((e) => {
-        throw e
-    })
+    return await context.wallet.buildAndSubmit(req, false)
 }
