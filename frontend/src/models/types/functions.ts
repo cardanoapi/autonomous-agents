@@ -55,7 +55,29 @@ export const AvailableFunctions: IFunctionsDto[] = [
                 id: 'dRepRegistration',
                 name: 'DRep registration',
                 description:
-                    'This will register you as Decentralized Representative (DRep) on the Cardano network.'
+                    'This will register you as Decentralized Representative (DRep) on the Cardano network.',
+                parameters: [
+                    {
+                        id: 'anchor',
+                        type: 'object',
+                        optional: true,
+                        name: 'Anchor',
+                        parameters: [
+                            {
+                                id: 'url',
+                                name: 'Url',
+                                optional: false,
+                                type: 'url'
+                            },
+                            {
+                                id: 'dataHash',
+                                name: 'Data Hash',
+                                optional: true,
+                                type: 'hash'
+                            }
+                        ]
+                    }
+                ]
             },
             {
                 id: 'dRepDeRegistration',
