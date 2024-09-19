@@ -44,7 +44,7 @@ export const fetchTemplates = async (params: {
 
     const queryString = convertToQueryStr(page, size, search);
 
-    const res = await fetch(`${baseAPIurl}/templates/?${queryString}`);
+    const res = await fetch(`${baseAPIurl}/templates?${queryString}`);
     if (!res.ok) {
         throw new Error('Templates Fetch Operation failed: Network Error');
     }
