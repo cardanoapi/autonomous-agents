@@ -9,7 +9,7 @@ export interface Wallet {
     address: string
     paymentKey: Key
     stakeKey: Key
-    // stakeAddress():string
+    rewardAddress: string
     drepId: string
     buildAndSubmit(spec: any, stakeSigning?: boolean): Promise<any>
     signTx(txRaw: Buffer, stakeSigning?: boolean): Buffer
@@ -62,56 +62,21 @@ export interface Builtins {
         data: Record<any, any> | any[] | string
     ) => Promise<any>
     loadFunds: (amount: number) => Promise<any>
-    saveMetadata: (fileName: string, content: string) => Promise<any>
-
-    // DRep functions
-    // dRepRegistration(anchor?: OffchainData): Promise<any>
-    // dRepDeRegistration(): Promise<any>
-    // registerStake(): Promise<any>
-    // stakeDeRegistration(): Promise<any>
-    // abstainDelegation(target: DelegationTarget): Promise<any>
-    // waitTxConfirmation(
-    //     txId: string,
-    //     confirmation: number,
-    //     timeout: number
-    // ): Promise<any>
-    // transferADA(
-    //     address: string,
-    //     amount: string | number | Record<string, any>
-    // ): Promise<any>
-    //
-    // // Vote functions
-    // voteOnProposal(proposal: string, anchor?: OffchainData): Promise<TxInfo>;
-    //
-    // // Proposal functions
-    // proposalNewConstitution(anchor: OffchainData, newConstitution: OffchainData): Promise<TxInfo>;
-    // createInfoGovAction(anchor: OffchainData): Promise<TxInfo>;
-    //
-    //
-    // treasuryWithdrawal(withdrawal: Array<{
-    //         stakeAddress: string;
-    //         amount: number;
-    //     }>, anchor: OffchainData): Promise<TxInfo>;
-    // noConfidence(anchor:OffchainData): Promise<TxInfo>;
-    //
-    //
-    //
-    // updateCommittee(anchor: OffchainData, quorum: {
-    //     numerator: number;
-    //     denominator: number;
-    // }, add?: Array<{
-    //     stakeAddress: string;
-    //     activeEpoch: number;
-    // }>, remove?: Array<string>): Promise<TxInfo>;
-    //
-
-    // Others
+    saveMetadata: (content: string) => Promise<any>
 }
+
+export interface Helpers {
+    generateProposalMetadataContent: () => string
+    generateDrepMetadataContent: () => string
+    generateVoteMetadataContent: () => string
+}
+
 export interface FunctionContext {
     wallet: Wallet
     kuber: KuberApi
     builtins: Builtins
     agentName: string
+    helpers: Helpers
 }
 
 // Create a restricted execution environment

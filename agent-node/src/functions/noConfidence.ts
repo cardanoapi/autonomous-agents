@@ -1,9 +1,6 @@
 import { FunctionContext } from '../executor/BaseFunction'
 
-export default async function handler(
-    context: FunctionContext,
-    anchor: Record<string, any>
-) {
+export default async function handler(context: FunctionContext, anchor: any) {
     const { dataHash, url } = await context.builtins.saveMetadata(
         context.helpers.generateProposalMetadataContent()
     )
@@ -17,7 +14,5 @@ export default async function handler(
             },
         ],
     }
-    return await context.wallet.buildAndSubmit(req).catch((e) => {
-        throw e
-    })
+    return await context.wallet.buildAndSubmit(req)
 }

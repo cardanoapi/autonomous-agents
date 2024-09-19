@@ -98,7 +98,6 @@ export default function AgentsPage() {
                     enableDelete={adminAccess}
                     loadingAgents={isLoading}
                 />
-
                 {currentConnectedWallet && !isLoading && myAgents.length > 0 && (
                     <div className={cn(otherAgents.length > 0 && 'my-8')}>
                         <span className="h1-new mb-4 inline-flex">My Agents</span>
