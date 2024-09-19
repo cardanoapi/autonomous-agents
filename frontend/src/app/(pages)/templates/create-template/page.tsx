@@ -11,7 +11,6 @@ import { useAtom } from 'jotai';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { templateFormSchema } from '@app/app/(pages)/templates/create-template/components/schema';
 import { IFunction, IParameter, fetchFunctions } from '@app/app/api/functions';
 import { postTemplateData } from '@app/app/api/templates';
 import { Card } from '@app/components/atoms/Card';
@@ -27,7 +26,8 @@ import { SubmitButton } from '@app/components/molecules/SubmitButton';
 import { templateCreatedAtom } from '@app/store/localStore';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
-import TriggerForm from './components/TriggerForm';
+import { templateFormSchema } from './components/Form/TriggerForm';
+import TriggerForm from './components/Form/TriggerForm';
 
 export interface ITemplateOption {
     value: string;

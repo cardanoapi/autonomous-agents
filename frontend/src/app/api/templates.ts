@@ -6,7 +6,7 @@ import { z } from 'zod';
 
 import { convertToQueryStr } from '@app/utils/common/extra';
 
-import { templateFormSchema } from '../(pages)/templates/create-template/components/schema';
+import { templateFormSchemag } from '../(pages)/templates/create-template/components/Form/TriggerForm';
 import { ITemplateOption } from '../(pages)/templates/create-template/page';
 import { baseAPIurl } from './config';
 

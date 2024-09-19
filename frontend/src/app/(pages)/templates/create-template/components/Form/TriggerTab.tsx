@@ -10,8 +10,9 @@ import {
     TabsTrigger
 } from '@app/components/molecules/Tabs';
 
-import CustomCron from './CustomCron';
-import DefaultCron from './DefaultCron';
+import CustomCron from '../Cron/CustomCron';
+import DefaultCron from '../Cron/DefaultCron';
+import CustomEventTabContent from '../Event/EventTab';
 
 export interface ICronSetting {
     placeholder: string;
@@ -54,7 +55,8 @@ export default function TriggerTab({
     previousConfiguredSettings,
     setTriggerType,
     setSelectedTab,
-    onlyCronTriggerTab
+    onlyCronTriggerTab,
+    currentFunctionName
 }: {
     onChange?: any;
     defaultCron?: any;
@@ -63,6 +65,7 @@ export default function TriggerTab({
     setTriggerType?: any;
     setSelectedTab?: React.Dispatch<React.SetStateAction<string>>;
     onlyCronTriggerTab?: boolean;
+    currentFunctionName?: string;
 }) {
     const [cron, setCron] = useState<string[]>(
         defaultCron || ['*', '*', '*', '*', '*']
@@ -163,16 +166,18 @@ export default function TriggerTab({
                                     />
                                 </TabsContent>
                             ))}
-                            <TabsContent value="Custom">
-                                <CustomCron
-                                    customCron={cron}
-                                    onChange={onChangeCustomCron}
-                                />
-                            </TabsContent>
+                            <CustomCronTabContent
+                                cron={cron}
+                                onChangeCustomCron={onChangeCustomCron}
+                            />
                         </div>
                     </Tabs>
                 </TabsContent>
-                <TabsContent value="Event" className={'p-4'}>
+                <CustomEventTabContent
+                    className="p-8"
+                    currentFunctionName={currentFunctionName}
+                />
+                {/* <TabsContent value="Event" className={'p-4'}>
                     <div className={'flex flex-row gap-4'}>
                         <span>Vote on all proposal</span>
                         <input
@@ -183,8 +188,22 @@ export default function TriggerTab({
                             className={'h-5 w-5'}
                         />
                     </div>
-                </TabsContent>
+                </TabsContent> */}
             </Card>
         </Tabs>
     );
 }
+
+const CustomCronTabContent = ({
+    cron,
+    onChangeCustomCron
+}: {
+    cron: string[];
+    onChangeCustomCron: any;
+}) => {
+    return (
+        <TabsContent value="Custom">
+            <CustomCron customCron={cron} onChange={onChangeCustomCron} />
+        </TabsContent>
+    );
+};

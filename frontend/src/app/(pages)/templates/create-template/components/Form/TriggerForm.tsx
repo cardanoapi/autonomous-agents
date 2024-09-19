@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 
 import { X } from 'lucide-react';
+import { z } from 'zod';
 
 import { IParameter } from '@app/app/api/functions';
 import { Button } from '@app/components/atoms/Button';
@@ -12,6 +13,12 @@ import { IOption } from '@app/components/molecules/MultiSearchSelect';
 import ProbabilityInput from '@app/components/molecules/ProbabilityInput';
 
 import TriggerTab from './TriggerTab';
+
+export const templateFormSchema = z.object({
+    name: z.string(),
+    description: z.string().optional().default(''),
+    triggers: z.any()
+});
 
 interface ICronTriggerForm {
     defaultCron?: string[];
@@ -128,6 +135,7 @@ export default function TriggerForm({
                     defaultCron={cronExpression}
                     previousSelectedOption={defaultSelected}
                     previousConfiguredSettings={previousConfiguredSettings}
+                    currentFunctionName={formValues?.label}
                 />
                 {selectedTab === 'EVENT' ? (
                     <></>
