@@ -1,0 +1,80 @@
+openapi: 3.0.0
+info:
+  title: Stake Address API
+  version: 1.0.0
+  description: API for retrieving stake registration and deregistration information by address.
+
+paths:
+  /api/stake-address:
+    get:
+      summary: Retrieve stake address information
+      description: Get the latest stake registration and deregistration for a given stake address.
+      parameters:
+        - name: address
+          in: query
+          required: true
+          description: The stake address in hexadecimal or Bech32 format.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response with stake address data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      registration:
+                        type: object
+                        nullable: true
+                        properties:
+                          id:
+                            type: integer
+                            description: The ID of the registration.
+                          addr_id:
+                            type: integer
+                            description: The address ID.
+                          cert_index:
+                            type: integer
+                            description: The certificate index.
+                          epoch_no:
+                            type: integer
+                            description: The epoch number.
+                          tx_id:
+                            type: integer
+                            description: The transaction ID.
+                          deposit:
+                            type: number
+                            format: decimal
+                            description: The deposit amount (if applicable).
+                      deregistration:
+                        type: object
+                        nullable: true
+                        properties:
+                          id:
+                            type: integer
+                            description: The ID of the deregistration.
+                          addr_id:
+                            type: integer
+                            description: The address ID.
+                          cert_index:
+                            type: integer
+                            description: The certificate index.
+                          epoch_no:
+                            type: integer
+                            description: The epoch number.
+                          tx_id:
+                            type: integer
+                            description: The transaction ID.
+                          redeemer_id:
+                            type: integer
+                            description: The redeemer ID (if applicable).
+        '400':
+          description: Bad Request. The request is missing required parameters or has invalid data.
+        '404':
+          description: Not Found. The stake address does not exist in the database.
+        '500':
+          description: Internal Server Error. An unexpected error occurred while processing the request.
