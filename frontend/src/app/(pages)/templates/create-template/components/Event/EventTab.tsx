@@ -1,18 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-} from '@app/components/atoms/Select';
+import { Pencil, X } from 'lucide-react';
+
 import { cn } from '@app/components/lib/utils';
-import { NumberInput } from '@app/components/molecules/NumberInput';
 import { TabsContent } from '@app/components/molecules/Tabs';
-import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
-import { IFieldMetaData, eventTypes } from './EventTriggerFields';
+import { SelectEventFilter, SelectEventType } from './EventFilters';
+import { IFieldMetaData, eventTypes } from './EventTypes';
+import { eventLabelMap } from './EventTypes';
+import { FilterConfiguration } from './FilterConfiuration';
+
+export interface IConfiguredEventFilter {
+    name: string;
+    value: string | number | null;
+}
+
+export interface IConfiguredEvent {
+    eventName: string;
+    values: IConfiguredEventFilter[];
+    index: number;
+}
 
 const CustomEventTabContent = ({
     className,
@@ -21,91 +28,111 @@ const CustomEventTabContent = ({
     className?: string;
     currentFunctionName?: string;
 }) => {
-    const [savedEvents, setSavedEvents] = useState([]);
-    const [EventType, setEventType] = useState(eventTypes[0]);
+    const [savedData, setSavedData] = useState<IConfiguredEvent[]>([]);
+    const [currentEventType, setCurrentEventType] = useState(eventTypes[0]);
     const [selectedFilter, setSelectedFilter] = useState<IFieldMetaData | null>(null);
 
-    const onEventTypeChange = (eventLabel: string) => {
+    // filter changes and event type changes
+    const handleEventTypeChange = (eventLabel: string) => {
         const selectedEvent = eventTypes.find(
             (item) => item.metaData.value === eventLabel
         );
-        selectedEvent && setEventType(selectedEvent);
+        if (selectedEvent) setCurrentEventType(selectedEvent);
     };
 
-    const onFilterSelect = (filterLabel: string) => {
-        const selectedFilter = EventType?.filters?.find(
-            (item) => item.label === filterLabel
+    const handleFilterSelect = (filterLabel: string) => {
+        const selected = currentEventType?.filters?.find(
+            (filter) => filter.label === filterLabel
         );
-        selectedFilter && setSelectedFilter(selectedFilter);
+        if (selected) setSelectedFilter(selected);
     };
 
-    const renderEventTypesField = () => {
-        return (
-            <Select onValueChange={(value: string) => onEventTypeChange(value)}>
-                <SelectTrigger>
-                    <SelectValue placeholder={EventType.metaData.label} />
-                </SelectTrigger>
-                <SelectContent className="bg-white">
-                    {eventTypes.map((item) => (
-                        <SelectItem
-                            key={item.metaData.value}
-                            value={item.metaData.value}
-                        >
-                            {item.metaData.label}{' '}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
-        );
+    // filter configs
+    const closeFilter = () => setSelectedFilter(null);
+
+    const saveFilter = (data: IConfiguredEventFilter[]) => {
+        if (selectedFilter) {
+            const newData: IConfiguredEvent = {
+                index: savedData.length,
+                eventName: selectedFilter.label,
+                values: data
+            };
+            const newSavedData = [...savedData, newData];
+            setSavedData(newSavedData);
+            console.log(newSavedData);
+        }
+        setSelectedFilter(null);
+        console.log(savedData);
     };
 
-    const renderEventFiltersField = () => {
-        return (
-            <Select onValueChange={(value: string) => onFilterSelect(value)}>
-                <SelectTrigger useAddIcon={true}>
-                    <SelectValue placeholder="Add filter">Add filter</SelectValue>
-                </SelectTrigger>
-                <SelectContent className="bg-white">
-                    {(EventType?.filters || []).map((item) => (
-                        <SelectItem key={item.label} value={item.label}>
-                            {item.label}{' '}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
-        );
-    };
-
-    const renderFilterForm = () => {
-        return null;
+    const handleDelete = (index: number) => {
+        const filteredData = savedData.filter((_, i) => i !== index);
+        const newSavedData = filteredData.map((item, i) => ({
+            ...item,
+            index: i
+        }));
+        setSavedData(newSavedData);
     };
 
     return (
         <TabsContent value="Event" className={cn('p-6', className)}>
             <div className="flex flex-col gap-4">
+                {/* Event Type and Filter Selectors */}
                 <div className="flex gap-4">
-                    <div className="flex w-full flex-col gap-3">
-                        <span className="h4">Event Type</span>
-                        {renderEventTypesField()}
-                    </div>
-                    <div className="flex w-full flex-col gap-3">
-                        <span className="h4">Event Filter</span>
-                        {renderEventFiltersField()}
-                    </div>
+                    <SelectEventType
+                        currentEventType={currentEventType}
+                        onEventTypeChange={handleEventTypeChange}
+                    />
+                    <SelectEventFilter
+                        currentEventType={currentEventType}
+                        onFilterSelect={handleFilterSelect}
+                    />
                 </div>
-                <div className="flex flex-col gap-4">
-                    <span className="h4">Filters</span>
-                    <Skeleton className="ml-4 h-32 w-72"></Skeleton>
-                </div>
-                <div className="mt-4 h-[1px] w-full bg-brand-Gray-100 px-4"></div>
-                <div className="flex items-center justify-center gap-4">
-                    <span className="inline-block">{currentFunctionName}</span>
-                    <Skeleton className="h-8 w-32" />
-                    <NumberInput defaultValue={3} className="pl-2" />
-                </div>
+
+                {/* Filter Configuration */}
+                {selectedFilter && (
+                    <FilterConfiguration
+                        selectedFilter={selectedFilter}
+                        onClose={closeFilter}
+                        onSave={saveFilter}
+                    />
+                )}
+
+                {/* Rendering Saved configs */}
+                {savedData.length > 0 && (
+                    <>
+                        <div className="mt-4 h-[1px] w-full bg-brand-Gray-100 px-4"></div>
+                        {renderSavedEvents(savedData, handleDelete)}
+                    </>
+                )}
             </div>
         </TabsContent>
     );
 };
 
 export default CustomEventTabContent;
+
+const renderSavedEvents = (
+    configuredEvents: IConfiguredEvent[],
+    onDelete: (index: number) => void
+) => {
+    return (
+        <div className="flex flex-col gap-4">
+            {configuredEvents.map((configuredEvent) => (
+                <div className="flex h-12 w-full items-center justify-between rounded-lg bg-gray-200 px-4">
+                    <span key={configuredEvent.eventName} className="h3 inline-flex">
+                        {eventLabelMap.get(configuredEvent.eventName) ||
+                            configuredEvent.eventName}
+                    </span>
+                    <div className="flex items-center gap-2">
+                        <Pencil className="cursor-pointer text-gray-100" />
+                        <X
+                            className="cursor-pointer text-gray-100"
+                            onClick={() => onDelete(configuredEvent.index)}
+                        />
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+};

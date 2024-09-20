@@ -10,12 +10,12 @@ export interface IFieldMetaData {
     value?: any;
 }
 
-export interface IEvent {
+export interface IEventType {
     metaData: IEventMetaData;
     filters?: IFieldMetaData[];
 }
 
-export const eventTypes: IEvent[] = [
+export const eventTypes: IEventType[] = [
     {
         metaData: {
             label: 'Transaction',
@@ -97,3 +97,18 @@ export const eventTypes: IEvent[] = [
         }
     }
 ];
+
+export const eventLabelMap = new Map([
+    ['transaction', 'Tx'],
+    ['block', 'Block'],
+    ['epoch', 'Epoch'],
+    ['Transaction Input', 'Tx Input'],
+    ['Transaction Output', 'Tx Output'],
+    ['Transaction Certificate', 'Tx Cert'],
+    ['Vote Transaction', 'Vote Tx'],
+    ['Proposal Transaction', 'Proposal Tx'],
+    ['Mint Transaction', 'Mint Tx'],
+    ['Transaction Metadata', 'Tx Metadata'],
+    ['Withdrawal Transaction', 'Withdrawal Tx'],
+    ['Transaction Fee', 'Tx Fee']
+]);
