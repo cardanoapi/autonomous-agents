@@ -47,6 +47,11 @@ export interface IAgentUpdateReqDto {
     instance?: number;
 }
 
+export interface IDelegation {
+    pool_id?: string;
+    drep_id?: string;
+}
+
 export interface IAgent {
     id: string;
     name: string;
@@ -63,7 +68,10 @@ export interface IAgent {
     drep_id?: string;
     delegated_drep_id?: string;
     voting_power?: number;
-    drep_registered?: boolean;
+    is_drep_registered?: boolean;
+    is_stake_registered?: boolean;
+    delegation?: IDelegation;
+    stake_last_registered?: string;
 }
 
 export const fetchAgents = async (params: {

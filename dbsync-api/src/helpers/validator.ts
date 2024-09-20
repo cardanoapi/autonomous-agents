@@ -1,7 +1,7 @@
 import { bech32 } from "bech32";
 
 export function convertToHexIfBech32(address: string): string {
-  if (address.includes('stake_')){
+  if (address.includes('stake')){
     const decoded = bech32.decode(address);
     const data = bech32.fromWords(decoded.words);
     return Buffer.from(data).toString('hex');

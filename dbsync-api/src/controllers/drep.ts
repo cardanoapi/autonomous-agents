@@ -6,15 +6,15 @@ import { isHexValue } from "../helpers/validator";
 const router = Router();
 
 const getDrepDetails = async (req: Request, res: Response): Promise<any> => {
-  const address = req.query.address as string;
-  if (!isHexValue(address)){
-    return res.status(400).json({message:'Provide a valid Hex value'})
+  const drepId = req.query.drepId as string;
+  if (!isHexValue(drepId)){
+    return res.status(400).json({message:'Provide a valid Drep ID'})
   }
 
   const result  = await prisma.$queryRaw`
       WITH DRepId AS (
           SELECT
-              decode(${address}, 'hex') AS raw
+              decode(${drepId}, 'hex') AS raw
       ),
            AllRegistrationEntries AS (
                SELECT
@@ -178,7 +178,7 @@ const getDrepDetails = async (req: Request, res: Response): Promise<any> => {
 
           LIMIT 1
           ),
-          DrepDetails AS (SELECT
+    DrepDetails AS (SELECT
           IsRegisteredAsDRep.value as "isRegisteredAsDRep",
           WasRegisteredAsDRep.value as "isRegisteredAsDRep",
           IsRegisteredAsSoleVoter.value as "isRegisteredAsSoleVoter",
@@ -208,10 +208,10 @@ const getDrepDetails = async (req: Request, res: Response): Promise<any> => {
       SELECT
           json_build_object(
                   'drep_details',( SELECT row_to_json(DrepDetails) FROM DrepDetails)
-          ) AS result;
+          ) as result;
   ` as Record<string,any>[];
 
-  return res.status(200).json(result[0].result);
+  return res.status(200).json(result[0].result.drep_details?result[0].result.drep_details:result[0].result);
 };
 
 router.get('/', handlerWrapper(getDrepDetails));

@@ -10,7 +10,7 @@ const getFaucetBalance = async (req: Request, res: Response): Promise<any> => {
   if (validateAddress(address)){
     address = address.length === 56 ? `e0${address}`:address
   }else{
-    return res.status(400).json({message:'Provide a valid Hex value'})
+    return res.status(400).json({message:'Provide a valid address'})
   }
 
   const result  = await prisma.$queryRaw`
@@ -22,9 +22,9 @@ const getFaucetBalance = async (req: Request, res: Response): Promise<any> => {
       group by stake_address.hash_raw;
   ` as Array<Record<string, number>>
 
-  return res.status(200).json({balance:result.length?result[0].balance:0});
+  return res.status(200).json(result.length?+result[0].balance:0);
 };
 
-router.get('/', handlerWrapper(getFaucetBalance));
+router.get('/balance', handlerWrapper(getFaucetBalance));
 
 export default router;

@@ -4,7 +4,7 @@ import http from "http";
 import stakeAddrRoute from "./controllers/stakeAddress";
 import delegationRoute from "./controllers/delegation";
 import drepRoute from "./controllers/drep";
-import faucetRoute from "./controllers/faucet";
+import addressRoute from "./controllers/address";
 import { errorHandler } from "./errors/AppError";
 import path from "path";
 import setupSwaggerUi from "./swagger-loader";
@@ -42,7 +42,7 @@ app.use(express.json());
 app.use('/api/delegation',delegationRoute);
 app.use('/api/stake-address-details', stakeAddrRoute);
 app.use('/api/drep-details',drepRoute)
-app.use('/api/faucet',faucetRoute)
+app.use('/api/address',addressRoute)
 
 setupSwaggerUi(app)
 const indexFile = path.resolve('.','./index.html')
@@ -66,7 +66,7 @@ const server = http.createServer(app);
 
 
 // Start the server
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 8080;
 console.log("Connecting to database")
 prisma.$connect().then(()=>{
 server.listen(port, () => {
