@@ -1,0 +1,250 @@
+openapi: 3.0.0
+info:
+  title: Stake Address API
+  version: 1.0.0
+  description: API for retrieving stake registration and deregistration information by address.
+
+paths:
+  /api/stake-address-details:
+    get:
+      summary: Retrieve stake address information
+      description: Get the latest stake registration and deregistration for a given stake address.
+      parameters:
+        - name: address
+          in: query
+          required: true
+          description: The stake address in hexadecimal or Bech32 format.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response with stake address data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      registration:
+                        type: object
+                        nullable: true
+                        properties:
+                          id:
+                            type: integer
+                            description: The ID of the registration.
+                          addr_id:
+                            type: integer
+                            description: The address ID.
+                          cert_index:
+                            type: integer
+                            description: The certificate index.
+                          epoch_no:
+                            type: integer
+                            description: The epoch number.
+                          tx_id:
+                            type: integer
+                            description: The transaction ID.
+                          deposit:
+                            type: number
+                            format: decimal
+                            description: The deposit amount (if applicable).
+                      deregistration:
+                        type: object
+                        nullable: true
+                        properties:
+                          id:
+                            type: integer
+                            description: The ID of the deregistration.
+                          addr_id:
+                            type: integer
+                            description: The address ID.
+                          cert_index:
+                            type: integer
+                            description: The certificate index.
+                          epoch_no:
+                            type: integer
+                            description: The epoch number.
+                          tx_id:
+                            type: integer
+                            description: The transaction ID.
+                          redeemer_id:
+                            type: integer
+                            description: The redeemer ID (if applicable).
+        '400':
+          description: Bad Request. The request is missing required parameters or has invalid data.
+        '404':
+          description: Not Found. The stake address does not exist in the database.
+        '500':
+          description: Internal Server Error. An unexpected error occurred while processing the request.
+
+  /api/delegation:
+    get:
+      summary: Get latest delegation information
+      description: Fetches the latest delegation and pool delegation details for the given address.
+      operationId: getDelegation
+      parameters:
+        - name: address
+          in: query
+          required: true
+          description: Bech32 or hex-encoded address to query.
+          schema:
+            type: string
+            example: ""
+      responses:
+        '200':
+          description: Successful response with delegation and pool information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  delegation:
+                    type: object
+                    properties:
+                      drep:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            drep:
+                              type: string
+                              description: The view of the DRep.
+                            epoch_no:
+                              type: integer
+                              description: The epoch number of the delegation.
+                            slot_no:
+                              type: integer
+                              description: The slot number of the delegation.
+                            block_no:
+                              type: integer
+                              description: The block number.
+                            time:
+                              type: string
+                              format: date-time
+                              description: The time of the block.
+                            tx_hash:
+                              type: string
+                              description: The transaction hash.
+                      pool:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            view:
+                              type: string
+                              description: The view of the pool.
+                            epoch_no:
+                              type: integer
+                              description: The epoch number of the delegation.
+                            slot_no:
+                              type: integer
+                              description: The slot number.
+                            block_no:
+                              type: integer
+                              description: The block number.
+                            time:
+                              type: string
+                              format: date-time
+                              description: The time of the block.
+                            tx_hash:
+                              type: string
+                              description: The transaction hash.
+        '400':
+          description: Bad request. The `address` query parameter is missing or invalid.
+        '500':
+          description: Internal server error.
+
+  /api/drep-details:
+    get:
+      summary: Get DRep details
+      description: Fetches DRep details including registration status, metadata, voting power, and transaction hashes for the provided address.
+      operationId: getDrepDetails
+      parameters:
+        - name: address
+          in: query
+          required: true
+          description: Hex-encoded address to query DRep details.
+          schema:
+            type: string
+            example: ""
+      responses:
+        '200':
+          description: Successful response with DRep and SoleVoter details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  drep_details:
+                    type: object
+                    properties:
+                      isRegisteredAsDRep:
+                        type: boolean
+                        description: Whether the address is currently registered as a DRep.
+                      wasRegisteredAsDRep:
+                        type: boolean
+                        description: Whether the address was previously registered as a DRep.
+                      isRegisteredAsSoleVoter:
+                        type: boolean
+                        description: Whether the address is currently registered as a Sole Voter.
+                      wasRegisteredAsSoleVoter:
+                        type: boolean
+                        description: Whether the address was previously registered as a Sole Voter.
+                      deposit:
+                        type: integer
+                        description: The current deposit value.
+                      url:
+                        type: string
+                        description: The metadata URL.
+                      dataHash:
+                        type: string
+                        description: Hash of the metadata.
+                      votingPower:
+                        type: integer
+                        description: The current voting power.
+                      dRepRegisterTxHash:
+                        type: string
+                        description: Transaction hash for DRep registration.
+                      dRepRetireTxHash:
+                        type: string
+                        description: Transaction hash for DRep retirement.
+                      soleVoterRegisterTxHash:
+                        type: string
+                        description: Transaction hash for Sole Voter registration.
+                      soleVoterRetireTxHash:
+                        type: string
+                        description: Transaction hash for Sole Voter retirement.
+        '400':
+          description: Bad Request. Address is invalid or missing.
+        '500':
+          description: Internal Server Error. Something went wrong with the query or database.
+
+  /api/faucet:
+    get:
+      summary: Get faucet balance for a given address
+      description: Retrieves the balance for a specified stake address.
+      parameters:
+        - in: query
+          name: address
+          schema:
+            type: string
+          required: true
+          description: The stake address in hex format to query the balance.
+      responses:
+        '200':
+          description: The faucet balance for the given address
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  balance:
+                    type: integer
+                    description: The balance in lovelace (smallest unit of ADA)
+                    example: 1000000000
+        '400':
+          description: Invalid address provided
+        '500':
+          description: Internal server error
