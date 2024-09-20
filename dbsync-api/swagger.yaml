@@ -24,54 +24,44 @@ paths:
               schema:
                 type: object
                 properties:
-                  result:
+                  registration:
                     type: object
+                    nullable: true
                     properties:
-                      registration:
-                        type: object
-                        nullable: true
-                        properties:
-                          id:
-                            type: integer
-                            description: The ID of the registration.
-                          addr_id:
-                            type: integer
-                            description: The address ID.
-                          cert_index:
-                            type: integer
-                            description: The certificate index.
-                          epoch_no:
-                            type: integer
-                            description: The epoch number.
-                          tx_id:
-                            type: integer
-                            description: The transaction ID.
-                          deposit:
-                            type: number
-                            format: decimal
-                            description: The deposit amount (if applicable).
-                      deregistration:
-                        type: object
-                        nullable: true
-                        properties:
-                          id:
-                            type: integer
-                            description: The ID of the deregistration.
-                          addr_id:
-                            type: integer
-                            description: The address ID.
-                          cert_index:
-                            type: integer
-                            description: The certificate index.
-                          epoch_no:
-                            type: integer
-                            description: The epoch number.
-                          tx_id:
-                            type: integer
-                            description: The transaction ID.
-                          redeemer_id:
-                            type: integer
-                            description: The redeemer ID (if applicable).
+                      epoch_no:
+                        type: integer
+                        description: Epoch number.
+                      slot_no:
+                        type: integer
+                        description: Slot number.
+                      block_no:
+                        type: integer
+                        description: Slot Number.
+                      time:
+                        type: string
+                        description: Time of transaction.
+                      tx_hash:
+                        type: string
+                        description: Transaction hash.
+                  deregistration:
+                    type: object
+                    nullable: true
+                    properties:
+                      epoch_no:
+                        type: integer
+                        description: Epoch number.
+                      slot_no:
+                        type: integer
+                        description: Slot number.
+                      block_no:
+                        type: integer
+                        description: Slot Number.
+                      time:
+                        type: string
+                        description: Time of transaction.
+                      tx_hash:
+                        type: string
+                        description: Transaction hash.
         '400':
           description: Bad Request. The request is missing required parameters or has invalid data.
         '404':
@@ -100,57 +90,55 @@ paths:
               schema:
                 type: object
                 properties:
-                  delegation:
-                    type: object
-                    properties:
-                      drep:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            drep:
-                              type: string
-                              description: The view of the DRep.
-                            epoch_no:
-                              type: integer
-                              description: The epoch number of the delegation.
-                            slot_no:
-                              type: integer
-                              description: The slot number of the delegation.
-                            block_no:
-                              type: integer
-                              description: The block number.
-                            time:
-                              type: string
-                              format: date-time
-                              description: The time of the block.
-                            tx_hash:
-                              type: string
-                              description: The transaction hash.
-                      pool:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            view:
-                              type: string
-                              description: The view of the pool.
-                            epoch_no:
-                              type: integer
-                              description: The epoch number of the delegation.
-                            slot_no:
-                              type: integer
-                              description: The slot number.
-                            block_no:
-                              type: integer
-                              description: The block number.
-                            time:
-                              type: string
-                              format: date-time
-                              description: The time of the block.
-                            tx_hash:
-                              type: string
-                              description: The transaction hash.
+                  drep:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        drep_id:
+                          type: string
+                          description: The view of the DRep.
+                        epoch_no:
+                          type: integer
+                          description: The epoch number of the delegation.
+                        slot_no:
+                          type: integer
+                          description: The slot number of the delegation.
+                        block_no:
+                          type: integer
+                          description: The block number.
+                        time:
+                          type: string
+                          format: date-time
+                          description: The time of the block.
+                        tx_hash:
+                          type: string
+                          description: The transaction hash.
+                  pool:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        pool_id:
+                          type: string
+                          description: The view of the pool.
+                        epoch_no:
+                          type: integer
+                          description: The epoch number of the delegation.
+                        slot_no:
+                          type: integer
+                          description: The slot number.
+                        block_no:
+                          type: integer
+                          description: The block number.
+                        time:
+                          type: string
+                          format: date-time
+                          description: The time of the block.
+                        tx_hash:
+                          type: string
+                          description: The transaction hash.
+
         '400':
           description: Bad request. The `address` query parameter is missing or invalid.
         '500':
@@ -162,7 +150,7 @@ paths:
       description: Fetches DRep details including registration status, metadata, voting power, and transaction hashes for the provided address.
       operationId: getDrepDetails
       parameters:
-        - name: address
+        - name: drepId
           in: query
           required: true
           description: Hex-encoded address to query DRep details.
@@ -177,51 +165,49 @@ paths:
               schema:
                 type: object
                 properties:
-                  drep_details:
-                    type: object
-                    properties:
-                      isRegisteredAsDRep:
-                        type: boolean
-                        description: Whether the address is currently registered as a DRep.
-                      wasRegisteredAsDRep:
-                        type: boolean
-                        description: Whether the address was previously registered as a DRep.
-                      isRegisteredAsSoleVoter:
-                        type: boolean
-                        description: Whether the address is currently registered as a Sole Voter.
-                      wasRegisteredAsSoleVoter:
-                        type: boolean
-                        description: Whether the address was previously registered as a Sole Voter.
-                      deposit:
-                        type: integer
-                        description: The current deposit value.
-                      url:
-                        type: string
-                        description: The metadata URL.
-                      dataHash:
-                        type: string
-                        description: Hash of the metadata.
-                      votingPower:
-                        type: integer
-                        description: The current voting power.
-                      dRepRegisterTxHash:
-                        type: string
-                        description: Transaction hash for DRep registration.
-                      dRepRetireTxHash:
-                        type: string
-                        description: Transaction hash for DRep retirement.
-                      soleVoterRegisterTxHash:
-                        type: string
-                        description: Transaction hash for Sole Voter registration.
-                      soleVoterRetireTxHash:
-                        type: string
-                        description: Transaction hash for Sole Voter retirement.
+                  isRegisteredAsDRep:
+                    type: boolean
+                    description: Whether the address is currently registered as a DRep.
+                  wasRegisteredAsDRep:
+                    type: boolean
+                    description: Whether the address was previously registered as a DRep.
+                  isRegisteredAsSoleVoter:
+                    type: boolean
+                    description: Whether the address is currently registered as a Sole Voter.
+                  wasRegisteredAsSoleVoter:
+                    type: boolean
+                    description: Whether the address was previously registered as a Sole Voter.
+                  deposit:
+                    type: integer
+                    description: The current deposit value.
+                  url:
+                    type: string
+                    description: The metadata URL.
+                  dataHash:
+                    type: string
+                    description: Hash of the metadata.
+                  votingPower:
+                    type: integer
+                    description: The current voting power.
+                  dRepRegisterTxHash:
+                    type: string
+                    description: Transaction hash for DRep registration.
+                  dRepRetireTxHash:
+                    type: string
+                    description: Transaction hash for DRep retirement.
+                  soleVoterRegisterTxHash:
+                    type: string
+                    description: Transaction hash for Sole Voter registration.
+                  soleVoterRetireTxHash:
+                    type: string
+                    description: Transaction hash for Sole Voter retirement.
+
         '400':
           description: Bad Request. Address is invalid or missing.
         '500':
           description: Internal Server Error. Something went wrong with the query or database.
 
-  /api/faucet:
+  /api/address/balance:
     get:
       summary: Get faucet balance for a given address
       description: Retrieves the balance for a specified stake address.
@@ -238,12 +224,9 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  balance:
-                    type: integer
-                    description: The balance in lovelace (smallest unit of ADA)
-                    example: 1000000000
+                type: integer
+                description: The balance in lovelace (smallest unit of ADA)
+                example: 1000000000
         '400':
           description: Invalid address provided
         '500':
