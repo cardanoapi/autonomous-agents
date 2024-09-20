@@ -1,13 +1,15 @@
-import 'dotenv/config'; // Ensure environment variables are loaded
-import express from 'express';
-import http from 'http';
-import stakeAddrRoute from './controllers/stakeAddress';
-import { errorHandler } from './errors/AppError';
-import {Response,Request} from 'express'
-import path from 'path';
-import setupSwaggerUi from './swagger-loader';
-import fs from 'fs'
-import { prisma } from './config/db';
+import "dotenv/config"; // Ensure environment variables are loaded
+import express, { Request, Response } from "express";
+import http from "http";
+import stakeAddrRoute from "./controllers/stakeAddress";
+import delegationRoute from "./controllers/delegation";
+import drepRoute from "./controllers/drep";
+import faucetRoute from "./controllers/faucet";
+import { errorHandler } from "./errors/AppError";
+import path from "path";
+import setupSwaggerUi from "./swagger-loader";
+import fs from "fs";
+import { prisma } from "./config/db";
 
 const app = express();
 
@@ -33,16 +35,14 @@ if (process.env.CORS_ENABLE){
     app.use(dynamicCors);
 }
 
-
-
-
 // Middleware
 app.use(express.json());
 
-
 // Order Routes
-app.use('/api/stake-address', stakeAddrRoute);
-
+app.use('/api/delegation',delegationRoute);
+app.use('/api/stake-address-details', stakeAddrRoute);
+app.use('/api/drep-details',drepRoute)
+app.use('/api/faucet',faucetRoute)
 
 setupSwaggerUi(app)
 const indexFile = path.resolve('.','./index.html')
@@ -66,7 +66,7 @@ const server = http.createServer(app);
 
 
 // Start the server
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 console.log("Connecting to database")
 prisma.$connect().then(()=>{
 server.listen(port, () => {

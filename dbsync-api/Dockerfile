@@ -29,7 +29,7 @@ COPY --from=builder --chown=node:node /app/prisma prisma
 COPY --from=builder --chown=node:node /app/dist ./
 
 # Expose the port the app runs on (if applicable)
-EXPOSE 3000
+EXPOSE 8080
 
 # Command to run the application
 CMD ["node", "/api/index.js"]

@@ -1,7 +1,7 @@
-import fs from 'fs';
-import path from 'path';
-import yaml from 'js-yaml';
-import swaggerUi from 'swagger-ui-express';
+import fs from "fs";
+import path from "path";
+import yaml from "js-yaml";
+import swaggerUi from "swagger-ui-express";
 
 // Define a TypeScript interface for your configuration
 interface Config {
@@ -19,8 +19,7 @@ function loadConfig(filePath: string): Config {
     // Read the YAML file
     const fileContent = fs.readFileSync(filePath, 'utf8');
     // Parse the YAML content
-    const config = yaml.load(fileContent) as Config;
-    return config;
+    return yaml.load(fileContent) as Config;
   } catch (e) {
     throw e;
   }
@@ -32,7 +31,6 @@ const yamlPath = path.join('.', 'swagger.yaml');
 
 export default function setupSwaggerUi(app:any){
   try{
-    // Use the function to load your configuration
      let swaggerDoc = loadConfig(yamlPath);
      app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
     }
