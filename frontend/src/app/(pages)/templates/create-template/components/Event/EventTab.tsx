@@ -13,12 +13,19 @@ import { FilterConfiguration } from './FilterConfiuration';
 export interface IConfiguredEventFilter {
     name: string;
     value: string | number | null;
+    type: string;
+    defaultValue: any;
 }
 
 export interface IConfiguredEvent {
     eventName: string;
     values: IConfiguredEventFilter[];
     index: number;
+}
+
+interface IEditingState {
+    index: number | null;
+    isEditing: boolean;
 }
 
 const CustomEventTabContent = ({
@@ -32,15 +39,21 @@ const CustomEventTabContent = ({
     const [currentEventType, setCurrentEventType] = useState(eventTypes[0]);
     const [selectedFilter, setSelectedFilter] = useState<IFieldMetaData | null>(null);
 
+    const [editingState, setEditingState] = useState<IEditingState>({
+        index: null,
+        isEditing: false
+    });
+
     // filter changes and event type changes
     const handleEventTypeChange = (eventLabel: string) => {
         const selectedEvent = eventTypes.find(
-            (item) => item.metaData.value === eventLabel
+            (item) => item.metaData.label === eventLabel
         );
         if (selectedEvent) setCurrentEventType(selectedEvent);
     };
 
     const handleFilterSelect = (filterLabel: string) => {
+        console.log('filterLabel', filterLabel);
         const selected = currentEventType?.filters?.find(
             (filter) => filter.label === filterLabel
         );
@@ -50,19 +63,45 @@ const CustomEventTabContent = ({
     // filter configs
     const closeFilter = () => setSelectedFilter(null);
 
+    const handleEdit = (index: number) => {
+        const filter = savedData[index];
+        setSelectedFilter({
+            label: filter.eventName,
+            type: 'string',
+            value: filter.eventName,
+            fields: filter.values.map((item, inex) => ({
+                label: item.name,
+                type: 'string',
+                value: item.value,
+                defaultValue: item.defaultValue
+            }))
+        });
+        setEditingState({ index, isEditing: true });
+    };
+
     const saveFilter = (data: IConfiguredEventFilter[]) => {
-        if (selectedFilter) {
-            const newData: IConfiguredEvent = {
+        const updateSavedData = (updatedItem: IConfiguredEvent, index: number) => {
+            const newData = [...savedData];
+            newData[index] = updatedItem;
+            setSavedData(newData);
+        };
+
+        if (editingState.index !== null) {
+            const updatedItem = {
+                ...savedData[editingState.index],
+                values: data
+            };
+            updateSavedData(updatedItem, editingState.index);
+            setEditingState({ index: null, isEditing: false });
+        } else if (selectedFilter) {
+            const newItem: IConfiguredEvent = {
                 index: savedData.length,
                 eventName: selectedFilter.label,
                 values: data
             };
-            const newSavedData = [...savedData, newData];
-            setSavedData(newSavedData);
-            console.log(newSavedData);
+            setSavedData([...savedData, newItem]);
+            setSelectedFilter(null);
         }
-        setSelectedFilter(null);
-        console.log(savedData);
     };
 
     const handleDelete = (index: number) => {
@@ -102,7 +141,7 @@ const CustomEventTabContent = ({
                 {savedData.length > 0 && (
                     <>
                         <div className="mt-4 h-[1px] w-full bg-brand-Gray-100 px-4"></div>
-                        {renderSavedEvents(savedData, handleDelete)}
+                        {renderSavedEvents(savedData, handleDelete, handleEdit)}
                     </>
                 )}
             </div>
@@ -114,20 +153,27 @@ export default CustomEventTabContent;
 
 const renderSavedEvents = (
     configuredEvents: IConfiguredEvent[],
-    onDelete: (index: number) => void
+    onDelete: (index: number) => void,
+    onEdit: any
 ) => {
     return (
         <div className="flex flex-col gap-4">
-            {configuredEvents.map((configuredEvent) => (
-                <div className="flex h-12 w-full items-center justify-between rounded-lg bg-gray-200 px-4">
+            {configuredEvents.map((configuredEvent, index) => (
+                <div
+                    className="flex h-12 w-full items-center justify-between rounded-lg bg-gray-200 px-4"
+                    key={index}
+                >
                     <span key={configuredEvent.eventName} className="h3 inline-flex">
                         {eventLabelMap.get(configuredEvent.eventName) ||
                             configuredEvent.eventName}
                     </span>
                     <div className="flex items-center gap-2">
-                        <Pencil className="cursor-pointer text-gray-100" />
+                        <Pencil
+                            className="cursor-pointer text-gray-400"
+                            onClick={() => onEdit(configuredEvent.index)}
+                        />
                         <X
-                            className="cursor-pointer text-gray-100"
+                            className="cursor-pointer text-gray-400"
                             onClick={() => onDelete(configuredEvent.index)}
                         />
                     </div>

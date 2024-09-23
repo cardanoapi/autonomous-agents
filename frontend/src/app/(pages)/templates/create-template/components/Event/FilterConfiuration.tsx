@@ -22,7 +22,9 @@ export const FilterConfiguration = ({
         () =>
             selectedFilter.fields?.map((field) => ({
                 name: field.label,
-                value: null
+                value: field.value,
+                type: field.type,
+                defaultValue: field.defaultValue
             })) || []
     );
 
@@ -31,10 +33,15 @@ export const FilterConfiguration = ({
         onClose();
     };
 
-    const handleConfigUpdate = (name: string, value: any) => {
+    const handleConfigUpdate = (
+        name: string,
+        value: any,
+        type: string,
+        defaultValue: any
+    ) => {
         console.log(name, value);
         const newValues = currentConfig.filter((item) => item.name != name);
-        newValues.push({ name, value });
+        newValues.push({ name, value, type, defaultValue });
         setCurrentConfig(newValues);
     };
     const renderFilterForm = (fields: IFieldMetaData[]) => {
@@ -50,13 +57,33 @@ export const FilterConfiguration = ({
                                     onChange={(
                                         e: React.ChangeEvent<HTMLInputElement>
                                     ) =>
-                                        handleConfigUpdate(field.label, e.target.value)
+                                        handleConfigUpdate(
+                                            field.label,
+                                            e.target.value,
+                                            field.type,
+                                            field.defaultValue
+                                        )
+                                    }
+                                    value={
+                                        currentConfig.find(
+                                            (item) => item.name === field.label
+                                        )?.value || field.defaultValue
                                     }
                                 />
                             ) : (
                                 <Input
                                     onChange={(e: any) =>
-                                        handleConfigUpdate(field.label, e.target.value)
+                                        handleConfigUpdate(
+                                            field.label,
+                                            e.target.value,
+                                            field.type,
+                                            field.defaultValue
+                                        )
+                                    }
+                                    value={
+                                        currentConfig.find(
+                                            (item) => item.name === field.label
+                                        )?.value || field.defaultValue
                                     }
                                 />
                             )}

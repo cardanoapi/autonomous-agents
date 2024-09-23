@@ -1,4 +1,10 @@
 import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@app/components/atoms/DropDownMenu';
+import {
     Select,
     SelectContent,
     SelectItem,
@@ -18,12 +24,12 @@ export const SelectEventType = ({
     <div className="flex w-full flex-col gap-3">
         <span className="h4">Event Type</span>
         <Select onValueChange={onEventTypeChange}>
-            <SelectTrigger>
-                <SelectValue placeholder={currentEventType.metaData.label} />
+            <SelectTrigger className="w-full">
+                {currentEventType.metaData.label}
             </SelectTrigger>
             <SelectContent className="bg-white">
                 {eventTypes.map((item) => (
-                    <SelectItem key={item.metaData.value} value={item.metaData.value}>
+                    <SelectItem key={item.metaData.label} value={item.metaData.label}>
                         {item.metaData.label}
                     </SelectItem>
                 ))}
@@ -41,21 +47,25 @@ export const SelectEventFilter = ({
 }) => (
     <div className="flex w-full flex-col gap-3">
         <span className="h4">Event Filter</span>
-        <Select onValueChange={onFilterSelect}>
-            <SelectTrigger useAddIcon={true}>
-                <SelectValue placeholder="Add filter">Add filter</SelectValue>
-            </SelectTrigger>
-            <SelectContent className="bg-white">
+        <DropdownMenu>
+            <DropdownMenuTrigger
+                className="w-full items-center justify-between rounded-lg border-[1px] px-3 py-2 text-base"
+                useAddIcon={true}
+            >
+                Add filter
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="!m-0 w-full">
                 {(currentEventType?.filters || []).map((item) => (
-                    <SelectItem
+                    <DropdownMenuItem
                         key={item.label}
-                        value={item.label}
+                        onClick={() => onFilterSelect(item.label)}
                         disabled={!item.fields?.length}
+                        className="m-0 w-full"
                     >
                         {item.label}
-                    </SelectItem>
+                    </DropdownMenuItem>
                 ))}
-            </SelectContent>
-        </Select>
+            </DropdownMenuContent>
+        </DropdownMenu>
     </div>
 );

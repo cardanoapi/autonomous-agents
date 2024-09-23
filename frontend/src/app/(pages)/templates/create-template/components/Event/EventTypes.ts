@@ -8,6 +8,7 @@ export interface IFieldMetaData {
     type: string;
     fields?: IFieldMetaData[];
     value?: any;
+    defaultValue?: any;
 }
 
 export interface IEventType {
@@ -24,7 +25,26 @@ export const eventTypes: IEventType[] = [
         filters: [
             {
                 label: 'Transaction Output',
-                type: 'output'
+                type: 'output',
+                fields: [
+                    {
+                        label: 'address',
+                        type: 'string'
+                    },
+                    {
+                        label: 'value',
+                        type: 'number',
+                        defaultValue: 1
+                    },
+                    {
+                        label: 'datumHash',
+                        type: 'Buffer'
+                    },
+                    {
+                        label: 'scriptRefrence', //not included in Pre Babbage Era
+                        type: 'Buffer'
+                    }
+                ]
             },
             {
                 label: 'Transaction Input',
@@ -50,7 +70,8 @@ export const eventTypes: IEventType[] = [
                     },
                     {
                         label: 'value',
-                        type: 'number'
+                        type: 'number',
+                        defaultValue: 1
                     },
                     {
                         label: 'datumHash',
@@ -68,7 +89,22 @@ export const eventTypes: IEventType[] = [
             },
             {
                 label: 'Mint Transaction',
-                type: 'mint'
+                type: 'mint',
+                fields: [
+                    {
+                        label: 'currencyName',
+                        type: 'string'
+                    },
+                    {
+                        label: 'tokenName',
+                        type: 'string'
+                    },
+                    {
+                        label: 'quantity',
+                        type: 'number',
+                        defaultValue: 1
+                    }
+                ]
             },
             {
                 label: 'Transaction Metadata',
@@ -76,11 +112,29 @@ export const eventTypes: IEventType[] = [
             },
             {
                 label: 'Withdrawal Transaction',
-                type: 'withdrawal'
+                type: 'withdrawal',
+                fields: [
+                    {
+                        label: 'rewardAccount',
+                        type: 'buffer'
+                    },
+                    {
+                        label: 'amount',
+                        type: 'number',
+                        defaultValue: 1
+                    }
+                ]
             },
             {
                 label: 'Transaction Fee',
-                type: 'fee'
+                type: 'fee',
+                fields: [
+                    {
+                        label: 'fee',
+                        type: 'number',
+                        defaultValue: 1
+                    }
+                ]
             }
         ]
     },
