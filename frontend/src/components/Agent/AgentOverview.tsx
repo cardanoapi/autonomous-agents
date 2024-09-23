@@ -207,7 +207,7 @@ const DRepStatus = ({ agent }: { agent?: IAgent }) => {
             <TextDisplayField
                 title={'DRep Status'}
                 content={
-                    agent?.drep_registered
+                    agent?.is_drep_registered
                         ? 'Registered as DRep'
                         : 'Not Registered as DRep'
                 }
@@ -235,14 +235,16 @@ const DelegationStatus = ({ agent }: { agent?: IAgent }) => {
             <TextDisplayField
                 title={'Stake Delegation Status'}
                 content={
-                    agent?.drep_registered ? 'Stake Delegated' : 'Stake Not Delegated'
+                    agent?.is_drep_registered
+                        ? 'Stake Delegated'
+                        : 'Stake Not Delegated'
                 }
             />
-            {agent?.delegated_drep_id ? (
+            {agent?.delegation?.drep_id ? (
                 <TextDisplayField
                     showCopy
                     title={'Delegated DRep Id'}
-                    content={agent?.delegated_drep_id}
+                    content={agent?.delegation?.drep_id}
                 />
             ) : (
                 <></>

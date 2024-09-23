@@ -10,7 +10,7 @@ const getStakeAddressDetails = async (req: Request, res: Response): Promise<any>
   if (validateAddress(address)){
     address = address.length === 56 ? `e0${address}`:address
   }else{
-    return res.status(400).json({message:'Provide a valid Hex value'})
+    return res.status(400).json({message:'Provide a valid address'})
   }
 
   const result  = await prisma.$queryRaw`
@@ -40,8 +40,8 @@ const getStakeAddressDetails = async (req: Request, res: Response): Promise<any>
       
       SELECT
           json_build_object(
-                  'registration', (SELECT json_agg(latest_registration) FROM latest_registration),
-                  'deRegistration', (SELECT json_agg(latest_deregistration) FROM latest_deregistration)
+                  'registration', (SELECT row_to_json(latest_registration) FROM latest_registration),
+                  'deRegistration', (SELECT row_to_json(latest_deregistration) FROM latest_deregistration)
           ) AS result;
   ` as Record<string,any>[];
 

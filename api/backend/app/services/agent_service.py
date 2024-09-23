@@ -1,29 +1,27 @@
 # agent_service.py
 import asyncio
-from datetime import datetime, UTC, timedelta
 import json
+from datetime import datetime, UTC, timedelta
 from typing import List
 
 import aiohttp
-import httpx
+from aiohttp import ClientSession
 
+from backend.app.exceptions import HTTPException
+from backend.app.models import AgentCreateDTO, AgentResponse, Delegation
 from backend.app.models import (
     TriggerCreateDTO,
     AgentResponseWithWalletDetails,
     AgentUpdateDTO,
     AgentResponseWithAgentConfigurations,
 )
-from backend.app.models import AgentCreateDTO, AgentKeyResponse, AgentResponse
 from backend.app.models.agent.function import AgentFunction
 from backend.app.repositories.agent_repository import AgentRepository
+from backend.app.repositories.user_repository import UserRepository
 from backend.app.services.agent_instance_wallet_service import AgentInstanceWalletService
 from backend.app.services.kafka_service import KafkaService
 from backend.app.services.template_trigger_service import TemplateTriggerService
 from backend.app.services.trigger_service import TriggerService
-from backend.app.utils import AiohttpClient
-from backend.config import settings
-from backend.app.exceptions import HTTPException
-from backend.app.repositories.user_repository import UserRepository
 from backend.config.api_settings import APISettings
 
 
@@ -52,7 +50,7 @@ class AgentService:
         self.kafka_service = kafka_service
         self.user_repository = UserRepository()
         self.agent_instance_wallet_service = agent_instance_wallet_service
-        self.gov_action_api = APISettings().GOV_ACTION_API
+        self.db_sync_api = APISettings().DB_SYNC_API
 
     async def create_agent(self, agent_data: AgentCreateDTO):
         agent = await self.agent_repository.save_agent(agent_data)
@@ -162,49 +160,80 @@ class AgentService:
         if user_is_super_admin == False:
             raise HTTPException(status_code=403, content="Forbidden Request")
 
-    async def fetch_data(self, url, session):
+    async def fetch_data(self, url, session: ClientSession):
         async with session.get(url) as response:
             try:
                 return await response.json()
             except:
                 raise HTTPException(status_code=400, content="Error fetching agent Drep details")
 
+    async def fetch_balance(self, stake_address: str, session: ClientSession):
+        async with session.get(f"{self.db_sync_api}/address/balance?address={stake_address}") as response:
+            try:
+                return await response.json()
+            except:
+                raise HTTPException(status_code=400, content="Error fetching agent wallet balance")
+
+    async def fetch_drep_details(self, drep_id: str, session: ClientSession):
+        async with session.get(f"{self.db_sync_api}/drep-details?drepId={drep_id}") as response:
+            try:
+                res = await response.json()
+                voting_power = res.get("votingPower") / (10**6) if res.get("votingPower") else 0
+                is_drep_registered = res.get("isRegisteredAsDRep", False)
+                return {"voting_power": voting_power, "is_drep_registered": is_drep_registered}
+            except:
+                raise HTTPException(status_code=400, content="Error fetching agent Drep details")
+
+    async def fetch_stake_address_details(self, stake_address: str, session: ClientSession):
+        async with session.get(f"{self.db_sync_api}/stake-address-details?address={stake_address}") as response:
+            try:
+                is_stake_registered = False
+                res = await response.json()
+                registration = res.get("registration", None)
+                de_registration = res.get("deRegistration", None)
+                if registration and not de_registration:
+                    is_stake_registered = True
+                elif registration and de_registration:
+                    is_stake_registered = registration.get("block_no", 0) > de_registration.get("block_no", 0)
+                else:
+                    is_stake_registered = False
+                last_registered = res.get("registration", {}).get("time", None) if res.get("registration", {}) else None
+                return {"last_registered": last_registered, "is_stake_registered": is_stake_registered}
+            except:
+                raise HTTPException(status_code=400, content="Error fetching agent Drep details")
+
+    async def fetch_delegation_details(self, stake_address: str, session: ClientSession):
+        async with session.get(f"{self.db_sync_api}/delegation?address={stake_address}") as response:
+            try:
+                res = await response.json()
+                drep_id = res.get("drep", {}).get("drep_id") if res.get("drep") else None
+                pool_id = res.get("pool", {}).get("pool_id") if res.get("pool") else None
+                return Delegation(pool_id=pool_id, drep_id=drep_id)
+            except:
+                raise HTTPException(status_code=400, content="Error fetching agent Drep details")
+
     async def return_agent_with_wallet_details(self, agent: AgentResponse):
         wallets = await self.agent_instance_wallet_service.get_wallets(agent_id=agent.id)
-        agent_keys = await self.agent_repository.retreive_agent_key(agent.id)
-        if len(wallets):
-            address = wallets[0].address
-        else:
-            address = agent_keys.agent_address
+        wallet = wallets[0]
         async with aiohttp.ClientSession() as session:
             async with asyncio.TaskGroup() as group:
-                drep_voting_power = group.create_task(
-                    self.fetch_data(f"{self.gov_action_api}/drep/get-voting-power/{agent_keys.drep_id}", session)
-                )
                 agent_configurations = group.create_task(self.trigger_service.list_triggers_by_agent_id(agent.id))
-                wallet_balance = group.create_task(
-                    self.fetch_data(
-                        f"{self.gov_action_api}/ada-holder/get-voting-power/e0{agent_keys.stake_verification_key_hash}",
-                        session,
-                    )
-                )
-                drep_details = group.create_task(
-                    self.fetch_data(f"{self.gov_action_api}/drep/info/{agent_keys.drep_id}", session)
-                )
-                delegated_drep_id = group.create_task(
-                    self.fetch_data(
-                        f"{self.gov_action_api}/ada-holder/get-current-delegation/e0{agent_keys.stake_verification_key_hash}",
-                        session,
-                    )
+                wallet_balance = group.create_task(self.fetch_balance(wallet.stake_key_hash, session))
+                drep_details = group.create_task(self.fetch_drep_details(wallet.stake_key_hash, session))
+                delegation_details = group.create_task(self.fetch_delegation_details(wallet.stake_key_hash, session))
+                stake_address_details = group.create_task(
+                    self.fetch_stake_address_details(wallet.stake_key_hash, session)
                 )
 
         return AgentResponseWithWalletDetails(
             **agent.dict(),
-            agent_address=address,
+            agent_address=wallet.address,
             wallet_amount=wallet_balance.result() / (10**6),
             agent_configurations=agent_configurations.result(),
-            voting_power=drep_voting_power.result() / (10**6),
-            drep_registered=drep_details.result().get("isRegisteredAsDRep"),
-            delegated_drep_id=delegated_drep_id.result().get("dRepHash", None) if delegated_drep_id.result() else None,
-            drep_id=agent_keys.drep_id,
+            voting_power=drep_details.result().get("voting_power"),
+            is_drep_registered=drep_details.result().get("is_drep_registered"),
+            delegation=delegation_details.result(),
+            drep_id=wallet.stake_key_hash,
+            is_stake_registered=stake_address_details.result().get("is_stake_registered"),
+            stake_last_registered=stake_address_details.result().get("last_registered"),
         )
