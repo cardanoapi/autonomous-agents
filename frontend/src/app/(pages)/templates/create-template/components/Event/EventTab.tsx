@@ -35,51 +35,41 @@ const CustomEventTabContent = ({
     className?: string;
     currentFunctionName?: string;
 }) => {
+    //main state to save data
     const [savedData, setSavedData] = useState<IConfiguredEvent[]>([]);
+
+    //state to control event type
     const [currentEventType, setCurrentEventType] = useState(eventTypes[0]);
+
+    // state to control current filter
     const [selectedFilter, setSelectedFilter] = useState<IFieldMetaData | null>(null);
 
+    //state for controlling edit state
     const [editingState, setEditingState] = useState<IEditingState>({
         index: null,
         isEditing: false
     });
 
-    // filter changes and event type changes
     const handleEventTypeChange = (eventLabel: string) => {
         const selectedEvent = eventTypes.find(
             (item) => item.metaData.label === eventLabel
         );
         if (selectedEvent) setCurrentEventType(selectedEvent);
+        setSelectedFilter(null);
     };
 
     const handleFilterSelect = (filterLabel: string) => {
-        console.log('filterLabel', filterLabel);
         const selected = currentEventType?.filters?.find(
             (filter) => filter.label === filterLabel
         );
+        console.log(selected);
         if (selected) setSelectedFilter(selected);
+        setEditingState({ index: null, isEditing: false });
     };
 
-    // filter configs
-    const closeFilter = () => setSelectedFilter(null);
-
-    const handleEdit = (index: number) => {
-        const filter = savedData[index];
-        setSelectedFilter({
-            label: filter.eventName,
-            type: 'string',
-            value: filter.eventName,
-            fields: filter.values.map((item, inex) => ({
-                label: item.name,
-                type: 'string',
-                value: item.value,
-                defaultValue: item.defaultValue
-            }))
-        });
-        setEditingState({ index, isEditing: true });
-    };
-
+    // filter CRUD
     const saveFilter = (data: IConfiguredEventFilter[]) => {
+        console.log(data);
         const updateSavedData = (updatedItem: IConfiguredEvent, index: number) => {
             const newData = [...savedData];
             newData[index] = updatedItem;
@@ -104,13 +94,34 @@ const CustomEventTabContent = ({
         }
     };
 
-    const handleDelete = (index: number) => {
+    const editFilter = (index: number) => {
+        const filter = savedData[index];
+        setSelectedFilter({
+            label: filter.eventName,
+            type: 'string',
+            value: filter.eventName,
+            fields: filter.values.map((item) => ({
+                label: item.name,
+                type: item.type,
+                value: item.value,
+                defaultValue: item.defaultValue
+            }))
+        });
+        setEditingState({ index, isEditing: true });
+    };
+
+    const deleteFilter = (index: number) => {
         const filteredData = savedData.filter((_, i) => i !== index);
         const newSavedData = filteredData.map((item, i) => ({
             ...item,
             index: i
         }));
         setSavedData(newSavedData);
+    };
+
+    const closeFilter = () => {
+        setSelectedFilter(null);
+        setEditingState({ index: null, isEditing: false });
     };
 
     return (
@@ -134,6 +145,7 @@ const CustomEventTabContent = ({
                         selectedFilter={selectedFilter}
                         onClose={closeFilter}
                         onSave={saveFilter}
+                        isEditing={editingState.isEditing}
                     />
                 )}
 
@@ -141,7 +153,12 @@ const CustomEventTabContent = ({
                 {savedData.length > 0 && (
                     <>
                         <div className="mt-4 h-[1px] w-full bg-brand-Gray-100 px-4"></div>
-                        {renderSavedEvents(savedData, handleDelete, handleEdit)}
+                        {renderSavedEvents(
+                            savedData,
+                            deleteFilter,
+                            editFilter,
+                            editingState.index
+                        )}
                     </>
                 )}
             </div>
@@ -154,13 +171,17 @@ export default CustomEventTabContent;
 const renderSavedEvents = (
     configuredEvents: IConfiguredEvent[],
     onDelete: (index: number) => void,
-    onEdit: any
+    onEdit: any,
+    editIndex?: number | null
 ) => {
     return (
         <div className="flex flex-col gap-4">
             {configuredEvents.map((configuredEvent, index) => (
                 <div
-                    className="flex h-12 w-full items-center justify-between rounded-lg bg-gray-200 px-4"
+                    className={cn(
+                        'flex h-12 w-full items-center justify-between rounded-lg bg-gray-200 px-4',
+                        editIndex === index ? 'border-2 border-black' : ''
+                    )}
                     key={index}
                 >
                     <span key={configuredEvent.eventName} className="h3 inline-flex">

@@ -56,7 +56,8 @@ export const eventTypes: IEventType[] = [
                     },
                     {
                         label: 'index',
-                        type: 'number'
+                        type: 'number',
+                        defaultValue: 0
                     }
                 ]
             },

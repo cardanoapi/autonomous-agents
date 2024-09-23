@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { X } from 'lucide-react';
+import { Pencil, X } from 'lucide-react';
 
 import { Button } from '@app/components/atoms/Button';
 import { Input } from '@app/components/atoms/Input';
@@ -12,21 +12,15 @@ import { IFieldMetaData } from './EventTypes';
 export const FilterConfiguration = ({
     selectedFilter,
     onClose,
-    onSave
+    onSave,
+    isEditing
 }: {
     selectedFilter: IFieldMetaData;
     onClose: () => void;
     onSave: any;
+    isEditing: boolean;
 }) => {
-    const [currentConfig, setCurrentConfig] = useState<IConfiguredEventFilter[]>(
-        () =>
-            selectedFilter.fields?.map((field) => ({
-                name: field.label,
-                value: field.value,
-                type: field.type,
-                defaultValue: field.defaultValue
-            })) || []
-    );
+    const [currentConfig, setCurrentConfig] = useState<IConfiguredEventFilter[]>([]);
 
     const handleSave = () => {
         onSave(currentConfig);
@@ -44,10 +38,31 @@ export const FilterConfiguration = ({
         newValues.push({ name, value, type, defaultValue });
         setCurrentConfig(newValues);
     };
+
+    const sortedFields =
+        selectedFilter.fields?.sort((a, b) => a.label.localeCompare(b.label)) || [];
+
+    useEffect(() => {
+        console.log('inner configs');
+        console.log(selectedFilter);
+        console.log(currentConfig);
+    });
+
+    useEffect(() => {
+        setCurrentConfig(
+            selectedFilter.fields?.map((field) => ({
+                name: field.label,
+                value: field.value || field.defaultValue || '',
+                type: field.type,
+                defaultValue: field.defaultValue
+            })) || []
+        );
+    }, [selectedFilter]);
+
     const renderFilterForm = (fields: IFieldMetaData[]) => {
         return (
             <div className="flex flex-col gap-4">
-                {fields.map((field) => (
+                {sortedFields.map((field) => (
                     <div key={field.label} className="flex items-center gap-4">
                         <span className="inline-flex w-32">{field.label}:</span>
                         <div className="w-96">
@@ -96,7 +111,10 @@ export const FilterConfiguration = ({
 
     return (
         <div className="relative mt-4 flex flex-col gap-4 rounded-xl bg-gray-100 p-6">
-            <span className="h4">{selectedFilter?.label}</span>
+            <span className="h4 flex items-center gap-2">
+                {selectedFilter?.label}{' '}
+                {isEditing && <Pencil size={20} className="text-gray-500" />}
+            </span>
             <X className="absolute right-2 top-2 cursor-pointer" onClick={onClose} />
             {renderFilterForm(selectedFilter?.fields || [])}
             <Button onClick={handleSave}>Ok</Button>
