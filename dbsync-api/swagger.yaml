@@ -5,7 +5,7 @@ info:
   description: API for retrieving stake registration and deregistration information by address.
 
 paths:
-  /api/stake-address-details:
+  /api/stake-address:
     get:
       summary: Retrieve stake address information
       description: Get the latest stake registration and deregistration for a given stake address.
@@ -144,14 +144,14 @@ paths:
         '500':
           description: Internal server error.
 
-  /api/drep/details:
+  /api/drep/{id}:
     get:
       summary: Get DRep details
       description: Fetches DRep details including registration status, metadata, voting power, and transaction hashes for the provided address.
       operationId: getDrepDetails
       parameters:
-        - name: drepId
-          in: query
+        - name: id
+          in: path
           required: true
           description: Hex-encoded address to query DRep details.
           schema:
@@ -231,7 +231,7 @@ paths:
           description: Invalid address provided
         '500':
           description: Internal server error
-  /api/drep/list:
+  /api/drep:
     get:
       summary: Fetch DRep list
       description: Fetches the drep list.
@@ -334,7 +334,7 @@ paths:
           description: Invalid address provided
         '500':
           description: Internal server error
-  /api/proposal/list:
+  /api/proposal:
     get:
       summary: Fetch Proposal list
       description: Fetches the Proposal list.

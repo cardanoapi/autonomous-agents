@@ -7,7 +7,8 @@ import { DrepSortType, DrepStatusType } from "../types/drep";
 const router = Router();
 
 const getDrepDetails = async (req: Request, res: Response): Promise<any> => {
-  const drepId = req.query.drepId as string;
+  console.log(req.params)
+  const drepId = req.params.id as string;
   if (!isHexValue(drepId)){
     return res.status(400).json({message:'Provide a valid Drep ID'})
   }
@@ -29,7 +30,7 @@ const getDrepList= async(req:Request,res:Response )=>{
   return res.status(200).json({totalCount:Math.round(totalCount/size),page,size,items})
 }
 
-router.get('/details', handlerWrapper(getDrepDetails));
-router.get('/list',handlerWrapper(getDrepList));
+router.get('/:id', handlerWrapper(getDrepDetails));
+router.get('/',handlerWrapper(getDrepList));
 
 export default router;

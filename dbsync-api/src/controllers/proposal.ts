@@ -25,6 +25,6 @@ const { items,totalCount } = await fetchProposals(page,size,proposal,type,sort)
   return res.status(200).json({totalCount:Math.round(totalCount/size),page,size,items})
 }
 
-router.get('/list',handlerWrapper(getProposals))
+router.get('/',handlerWrapper(getProposals))
 
 export default router

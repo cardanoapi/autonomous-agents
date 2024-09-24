@@ -41,7 +41,7 @@ app.use(express.json());
 
 // Order Routes
 app.use('/api/delegation',delegationRoute);
-app.use('/api/stake-address-details', stakeAddrRoute);
+app.use('/api/stake-address', stakeAddrRoute);
 app.use('/api/drep',drepRoute)
 app.use('/api/address',addressRoute)
 app.use('/api/proposal',proposalRoute)

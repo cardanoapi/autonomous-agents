@@ -4,7 +4,6 @@ import { formatResult } from "../helpers/formatter";
 import { ProposalTypes, SortTypes } from "../types/proposal";
 
 export const fetchProposals=async(page:number,size:number,proposal?:string,proposalType?:ProposalTypes,sort?:SortTypes)=>{
-  console.log("pospo: ",proposalType)
   const result = await prisma.$queryRaw `
 WITH LatestDrepDistr AS (
     SELECT
