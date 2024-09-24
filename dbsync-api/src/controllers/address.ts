@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
-import { prisma } from "../config/db";
 import { handlerWrapper } from "../errors/AppError";
 import { convertToHexIfBech32, validateAddress } from "../helpers/validator";
+import { fetchFaucetBalance } from "../repository/address";
 
 const router = Router();
 
@@ -13,16 +13,9 @@ const getFaucetBalance = async (req: Request, res: Response): Promise<any> => {
     return res.status(400).json({message:'Provide a valid address'})
   }
 
-  const result  = await prisma.$queryRaw`
-      select coalesce(sum(utxo_view.value), 0) as balance
-      from stake_address
-               join utxo_view
-                    on utxo_view.stake_address_id = stake_address.id
-      where stake_address.hash_raw = decode(${address}, 'hex')
-      group by stake_address.hash_raw;
-  ` as Array<Record<string, number>>
+ const balance = await fetchFaucetBalance(address)
 
-  return res.status(200).json(result.length?+result[0].balance:0);
+  return res.status(200).json(balance);
 };
 
 router.get('/balance', handlerWrapper(getFaucetBalance));

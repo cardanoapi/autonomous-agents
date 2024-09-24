@@ -14,6 +14,13 @@ export function isHexValue(value:string):boolean{
   return hexRegex.test(value);
 }
 
+export function validateHash(value:string) {
+  const regex = /^[a-f0-9A-F]{64}$/
+  if (value.includes('#')){
+    return regex.test(value.slice(0,-2))
+  }else return regex.test(value)
+}
+
 export function validateAddress(value: string): boolean {
   if (isHexValue(value)){
     return value.length === 56 || value.length === 58

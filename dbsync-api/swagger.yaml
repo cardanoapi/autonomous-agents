@@ -144,7 +144,7 @@ paths:
         '500':
           description: Internal server error.
 
-  /api/drep-details:
+  /api/drep/details:
     get:
       summary: Get DRep details
       description: Fetches DRep details including registration status, metadata, voting power, and transaction hashes for the provided address.
@@ -231,3 +231,254 @@ paths:
           description: Invalid address provided
         '500':
           description: Internal server error
+  /api/drep/list:
+    get:
+      summary: Fetch DRep list
+      description: Fetches the drep list.
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: number
+            default: 1
+          required: false
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [ VotingPower, RegistrationDate ]
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [ Active, Inactive, Retired ]
+        - in: query
+          name: size
+          schema:
+            type: number
+            default: 10
+          required: false
+        - in: query
+          name: dRepId
+          description: Search by dRepId
+          schema:
+            type: string
+            default: ''
+          required: false
+      responses:
+        200:
+          description: "A paginated list of DRep details."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  items:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                          drepId:
+                            type: "string"
+                            example: "string"
+                            description: "DRep ID in hexadecimal format."
+                          view:
+                            type: "string"
+                            example: "string"
+                            description: "DRep's view identifier."
+                          url:
+                            type: "string"
+                            format: "uri"
+                            example: "string"
+                            description: "URL to the DRep's metadata."
+                          metadataHash:
+                            type: "string"
+                            example: "string"
+                            description: "Hash of the metadata."
+                          deposit:
+                            type: "integer"
+                            format: "int64"
+                            example: 0
+                            description: "Deposit amount."
+                          votingPower:
+                            type: "integer"
+                            format: "int64"
+                            example: 0
+                            description: "DRep's amount."
+                          active:
+                            type: "boolean"
+                            example: false
+                            description: "Indicates if the DRep is active."
+                          latestTxHash:
+                            type: "string"
+                            example: "string"
+                            description: "Hash of the latest transaction."
+                          latestRegistrationDate:
+                            type: "string"
+                            format: "date-time"
+                            example: "0000-00-00T00:00:00"
+                            description: "Date and time of the latest registration."
+                  page:
+                    type: "integer"
+                    example: 0
+                    description: "Current page number."
+                  size:
+                    type: "integer"
+                    example: 0
+                    description: "Number of items returned per page."
+                  total:
+                    type: "integer"
+                    example: 0
+                    description: "Total number of items"
+        '400':
+          description: Invalid address provided
+        '500':
+          description: Internal server error
+  /api/proposal/list:
+    get:
+      summary: Fetch Proposal list
+      description: Fetches the Proposal list.
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: number
+            default: 1
+          required: false
+        - in: query
+          name: size
+          schema:
+            type: number
+            default: 10
+          required: false
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [ CreatedDate, ExpiryDate ]
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum: [ParameterChange, HardForkInitiation, TreasuryWithdrawals ,NoConfidence ,NewCommittee ,NewConstitution ,InfoAction]
+        - in: query
+          name: proposal
+          description: Search by proposal id
+          schema:
+            type: string
+            default: ''
+          required: false
+      responses:
+        200:
+          description: "A paginated list of Proposal details."
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  items:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                        id:
+                          type: integer
+                          example: 418
+                        txHash:
+                          type: string
+                          example: ""
+                        index:
+                          type: integer
+                          example: 0
+                        type:
+                          type: string
+                          example: ""
+                        details:
+                          type: object
+                          additionalProperties: true
+                          example: { }
+                        expiryDate:
+                          type: string
+                          format: date-time
+                          example: "2024-10-08T07:25:57.226978"
+                        expiryEpochNon:
+                          type: integer
+                          example: 481
+                        createdDate:
+                          type: string
+                          format: date-time
+                          example: "2024-09-23T10:35:09"
+                        createdEpochNo:
+                          type: integer
+                          example: 466
+                        url:
+                          type: string
+                          example: ""
+                        metadataHash:
+                          type: string
+                          example: "1111111111111111111111111111111111111111111111111111111111111111"
+                        protocolParams:
+                          type: object
+                          nullable: true
+                        title:
+                          type: string
+                          nullable: true
+                        abstract:
+                          type: string
+                          nullable: true
+                        motivation:
+                          type: string
+                          nullable: true
+                        rationale:
+                          type: string
+                          nullable: true
+                        dRepYesVotes:
+                          type: integer
+                          example: 0
+                        dRepNoVotes:
+                          type: integer
+                          example: ''
+                        dRepAbstainVotes:
+                          type: integer
+                          example: ''
+                        poolYesVotes:
+                          type: integer
+                          example: 0
+                        poolNoVotes:
+                          type: integer
+                          example: 0
+                        poolAbstainVotes:
+                          type: integer
+                          example: 0
+                        ccYesVotes:
+                          type: integer
+                          example: 0
+                        ccNoVotes:
+                          type: integer
+                          example: 0
+                        ccAbstainVotes:
+                          type: integer
+                          example: 0
+                        prevGovActionIndex:
+                          type: integer
+                          nullable: true
+                        prevGovActionTxHash:
+                          type: string
+                          nullable: true
+                  page:
+                    type: "integer"
+                    example: 0
+                    description: "Current page number."
+                  size:
+                    type: "integer"
+                    example: 0
+                    description: "Number of items returned per page."
+                  total:
+                    type: "integer"
+                    example: 0
+                    description: "Total number of items"
+        '400':
+          description: Invalid address provided
+        '500':
+          description: Internal server error
+
