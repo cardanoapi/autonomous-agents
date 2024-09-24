@@ -2684,7 +2684,7 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-libcardano@^1.2.0:
+libcardano@1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/libcardano/-/libcardano-1.4.0.tgz#7b6feda755ee3769924bdb09b65d035d3640c842"
   integrity sha512-TlGym2YAlIoCMWvJSnMhelogMcLFzoRs8xGym/r1uekA+g/GR+wgGnr2p8Rse4yueJrNBl7CFE+j68ltuMCJeQ==
