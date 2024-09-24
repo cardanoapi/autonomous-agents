@@ -175,7 +175,7 @@ class AgentService:
                 raise HTTPException(status_code=400, content="Error fetching agent wallet balance")
 
     async def fetch_drep_details(self, drep_id: str, session: ClientSession):
-        async with session.get(f"{self.db_sync_api}/drep-details?drepId={drep_id}") as response:
+        async with session.get(f"{self.db_sync_api}/drep?id={drep_id}") as response:
             try:
                 res = await response.json()
                 voting_power = res.get("votingPower") / (10**6) if res.get("votingPower") else 0
@@ -185,7 +185,7 @@ class AgentService:
                 raise HTTPException(status_code=400, content="Error fetching agent Drep details")
 
     async def fetch_stake_address_details(self, stake_address: str, session: ClientSession):
-        async with session.get(f"{self.db_sync_api}/stake-address-details?address={stake_address}") as response:
+        async with session.get(f"{self.db_sync_api}/stake-address?address={stake_address}") as response:
             try:
                 is_stake_registered = False
                 res = await response.json()
