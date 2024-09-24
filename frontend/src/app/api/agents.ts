@@ -56,6 +56,7 @@ export interface IAgent {
     id: string;
     name: string;
     template_id?: string;
+    template_name?: string;
     instance: number;
     index: number;
     last_active: string;

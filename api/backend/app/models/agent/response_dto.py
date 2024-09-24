@@ -16,6 +16,7 @@ class AgentResponse(BaseModel):
     userAddress: Optional[str]
     total_functions: Optional[int]
     is_active: Optional[bool]
+    template_name: Optional[str]
 
 
 class AgentResponseWithAgentConfigurations(AgentResponse):
