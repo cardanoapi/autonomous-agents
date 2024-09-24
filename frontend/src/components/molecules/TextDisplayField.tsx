@@ -9,17 +9,17 @@ const TextDisplayField = ({
     content,
     showCopy = false
 }: {
-    title: string;
+    title?: string;
     content?: string | number;
     showCopy?: boolean;
 }) => {
     return (
         <div className={'flex flex-col gap-1'}>
-            <h1 className={'text-sm font-medium'}>{title}</h1>
+            {title && <h1 className={'text-sm font-medium'}>{title}</h1>}
             <div className={'flex items-center gap-1'}>
                 <div
                     className={
-                        'w-fit max-w-[80px] truncate rounded sm:max-w-[150px] 3xl:max-w-[350px] '
+                        'w-fit max-w-[80px] truncate rounded text-brand-Black-300 sm:max-w-[150px] 3xl:max-w-[350px] '
                     }
                 >
                     {content}
