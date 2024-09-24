@@ -12,7 +12,7 @@ import {
 
 import CustomCron from '../Cron/CustomCron';
 import DefaultCron from '../Cron/DefaultCron';
-import CustomEventTabContent from '../Event/EventTab';
+import CustomEventTabContent from '../Event/EventMainTab';
 
 export interface ICronSetting {
     placeholder: string;
@@ -53,7 +53,6 @@ export default function TriggerTab({
     defaultCron,
     previousSelectedOption,
     previousConfiguredSettings,
-    setTriggerType,
     setSelectedTab,
     onlyCronTriggerTab,
     currentFunctionName
@@ -62,7 +61,6 @@ export default function TriggerTab({
     defaultCron?: any;
     previousSelectedOption?: string;
     previousConfiguredSettings?: IInputSetting[];
-    setTriggerType?: any;
     setSelectedTab?: React.Dispatch<React.SetStateAction<string>>;
     onlyCronTriggerTab?: boolean;
     currentFunctionName?: string;

@@ -8,13 +8,12 @@ import {
     Select,
     SelectContent,
     SelectItem,
-    SelectTrigger,
-    SelectValue
+    SelectTrigger
 } from '@app/components/atoms/Select';
 
-import { IEventType, eventTypes } from './EventTypes';
+import { IEventType, eventTypes } from './data/EventTypes';
 
-export const SelectEventType = ({
+export const EventTypeDropDown = ({
     currentEventType,
     onEventTypeChange
 }: {
@@ -38,7 +37,7 @@ export const SelectEventType = ({
     </div>
 );
 
-export const SelectEventFilter = ({
+export const EventFilterDropDown = ({
     currentEventType,
     onFilterSelect
 }: {
@@ -54,7 +53,7 @@ export const SelectEventFilter = ({
             >
                 Add filter
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="!m-0 w-full">
+            <DropdownMenuContent className="!w-56">
                 {(currentEventType?.filters || []).map((item) => (
                     <DropdownMenuItem
                         key={item.label}

@@ -1,25 +1,22 @@
 import { useState } from 'react';
 
-import { Pencil, X } from 'lucide-react';
-
 import { cn } from '@app/components/lib/utils';
 import { TabsContent } from '@app/components/molecules/Tabs';
 
-import { SelectEventFilter, SelectEventType } from './EventFilters';
-import { IFieldMetaData, eventTypes } from './EventTypes';
-import { eventLabelMap } from './EventTypes';
-import { FilterConfiguration } from './FilterConfiuration';
+import { EventFilterDropDown, EventTypeDropDown } from './EventDropDown';
+import FilterCard from './Filter/FilterCard';
+import { FilterForm } from './Filter/MainForm';
+import { IFieldMetaData, eventTypes } from './data/EventTypes';
 
-export interface IConfiguredEventFilter {
-    name: string;
+export interface IConfiguredField extends IFieldMetaData {
     value: string | number | null;
-    type: string;
-    defaultValue: any;
+    operator?: string;
+    index: number;
 }
 
-export interface IConfiguredEvent {
-    eventName: string;
-    values: IConfiguredEventFilter[];
+export interface IConfiguredTrigger {
+    name: string;
+    values: IConfiguredField[];
     index: number;
 }
 
@@ -30,27 +27,21 @@ interface IEditingState {
 
 const CustomEventTabContent = ({
     className,
-    currentFunctionName
 }: {
     className?: string;
     currentFunctionName?: string;
 }) => {
     //main state to save data
-    const [savedData, setSavedData] = useState<IConfiguredEvent[]>([]);
-
-    //state to control event type
+    const [savedData, setSavedData] = useState<IConfiguredTrigger[]>([]);
     const [currentEventType, setCurrentEventType] = useState(eventTypes[0]);
 
-    // state to control current filter
     const [selectedFilter, setSelectedFilter] = useState<IFieldMetaData | null>(null);
-
-    //state for controlling edit state
     const [editingState, setEditingState] = useState<IEditingState>({
         index: null,
         isEditing: false
     });
 
-    const handleEventTypeChange = (eventLabel: string) => {
+    const changeEventType = (eventLabel: string) => {
         const selectedEvent = eventTypes.find(
             (item) => item.metaData.label === eventLabel
         );
@@ -58,7 +49,7 @@ const CustomEventTabContent = ({
         setSelectedFilter(null);
     };
 
-    const handleFilterSelect = (filterLabel: string) => {
+    const changeFilter = (filterLabel: string) => {
         const selected = currentEventType?.filters?.find(
             (filter) => filter.label === filterLabel
         );
@@ -67,10 +58,10 @@ const CustomEventTabContent = ({
         setEditingState({ index: null, isEditing: false });
     };
 
-    // filter CRUD
-    const saveFilter = (data: IConfiguredEventFilter[]) => {
+    // Trigger CRUD
+    const saveTrigger = (data: IConfiguredField[]) => {
         console.log(data);
-        const updateSavedData = (updatedItem: IConfiguredEvent, index: number) => {
+        const updateSavedData = (updatedItem: IConfiguredTrigger, index: number) => {
             const newData = [...savedData];
             newData[index] = updatedItem;
             setSavedData(newData);
@@ -84,9 +75,9 @@ const CustomEventTabContent = ({
             updateSavedData(updatedItem, editingState.index);
             setEditingState({ index: null, isEditing: false });
         } else if (selectedFilter) {
-            const newItem: IConfiguredEvent = {
+            const newItem: IConfiguredTrigger = {
                 index: savedData.length,
-                eventName: selectedFilter.label,
+                name: selectedFilter.label,
                 values: data
             };
             setSavedData([...savedData, newItem]);
@@ -94,12 +85,11 @@ const CustomEventTabContent = ({
         }
     };
 
-    const editFilter = (index: number) => {
+    const editTrigger = (index: number) => {
         const filter = savedData[index];
         setSelectedFilter({
-            label: filter.eventName,
+            label: filter.name,
             type: 'string',
-            value: filter.eventName,
             fields: filter.values.map((item) => ({
                 label: item.name,
                 type: item.type,
@@ -110,7 +100,7 @@ const CustomEventTabContent = ({
         setEditingState({ index, isEditing: true });
     };
 
-    const deleteFilter = (index: number) => {
+    const deleteTrigger = (index: number) => {
         const filteredData = savedData.filter((_, i) => i !== index);
         const newSavedData = filteredData.map((item, i) => ({
             ...item,
@@ -119,7 +109,7 @@ const CustomEventTabContent = ({
         setSavedData(newSavedData);
     };
 
-    const closeFilter = () => {
+    const closeTrigger = () => {
         setSelectedFilter(null);
         setEditingState({ index: null, isEditing: false });
     };
@@ -129,23 +119,22 @@ const CustomEventTabContent = ({
             <div className="flex flex-col gap-4">
                 {/* Event Type and Filter Selectors */}
                 <div className="flex gap-4">
-                    <SelectEventType
+                    <EventTypeDropDown
                         currentEventType={currentEventType}
-                        onEventTypeChange={handleEventTypeChange}
+                        onEventTypeChange={changeEventType}
                     />
-                    <SelectEventFilter
+                    <EventFilterDropDown
                         currentEventType={currentEventType}
-                        onFilterSelect={handleFilterSelect}
+                        onFilterSelect={changeFilter}
                     />
                 </div>
 
-                {/* Filter Configuration */}
-                {selectedFilter && (
-                    <FilterConfiguration
+                {/* Render filter config form if filter is a new filter */}
+                {selectedFilter && !editingState.isEditing && (
+                    <FilterForm
                         selectedFilter={selectedFilter}
-                        onClose={closeFilter}
-                        onSave={saveFilter}
-                        isEditing={editingState.isEditing}
+                        onClose={closeTrigger}
+                        onSave={saveTrigger}
                     />
                 )}
 
@@ -153,12 +142,30 @@ const CustomEventTabContent = ({
                 {savedData.length > 0 && (
                     <>
                         <div className="mt-4 h-[1px] w-full bg-brand-Gray-100 px-4"></div>
-                        {renderSavedEvents(
-                            savedData,
-                            deleteFilter,
-                            editFilter,
-                            editingState.index
-                        )}
+                        <div className="flex flex-col gap-4">
+                            {savedData.map(
+                                (configuredTrigger: IConfiguredTrigger, index) =>
+                                    selectedFilter &&
+                                    editingState.isEditing &&
+                                    index === editingState.index ? (
+                                        <FilterForm
+                                            key={index}
+                                            selectedFilter={selectedFilter}
+                                            savedData={configuredTrigger}
+                                            onClose={closeTrigger}
+                                            onSave={saveTrigger}
+                                            isEditing={editingState.isEditing}
+                                        />
+                                    ) : (
+                                        <FilterCard
+                                            key={index}
+                                            configuredEvent={configuredTrigger}
+                                            onDelete={() => deleteTrigger(index)}
+                                            onEdit={() => editTrigger(index)}
+                                        />
+                                    )
+                            )}
+                        </div>
                     </>
                 )}
             </div>
@@ -167,39 +174,3 @@ const CustomEventTabContent = ({
 };
 
 export default CustomEventTabContent;
-
-const renderSavedEvents = (
-    configuredEvents: IConfiguredEvent[],
-    onDelete: (index: number) => void,
-    onEdit: any,
-    editIndex?: number | null
-) => {
-    return (
-        <div className="flex flex-col gap-4">
-            {configuredEvents.map((configuredEvent, index) => (
-                <div
-                    className={cn(
-                        'flex h-12 w-full items-center justify-between rounded-lg bg-gray-200 px-4',
-                        editIndex === index ? 'border-2 border-black' : ''
-                    )}
-                    key={index}
-                >
-                    <span key={configuredEvent.eventName} className="h3 inline-flex">
-                        {eventLabelMap.get(configuredEvent.eventName) ||
-                            configuredEvent.eventName}
-                    </span>
-                    <div className="flex items-center gap-2">
-                        <Pencil
-                            className="cursor-pointer text-gray-400"
-                            onClick={() => onEdit(configuredEvent.index)}
-                        />
-                        <X
-                            className="cursor-pointer text-gray-400"
-                            onClick={() => onDelete(configuredEvent.index)}
-                        />
-                    </div>
-                </div>
-            ))}
-        </div>
-    );
-};
