@@ -1,0 +1,2 @@
+CRITICAL utils.logger:agent_function.py:119 function_name='createInfoGovAction' parameters=[InfoActionParameters(name='anchor', value=ValueModel(url='agents.cardanoapi.io', dataHash='1111111111111111111111111111111111111111111111111111111111111111'))]
+CRITICAL utils.logger:agent_function.py:120 final obj
