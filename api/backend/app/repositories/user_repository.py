@@ -1,10 +1,12 @@
 from datetime import datetime, timezone
-from backend.config.database import prisma_connection
-from backend.app.models.user.user_dto import UserCreateDto
-from backend.app.models.template.template_dto import TemplateCreateDto
+
 from backend.app.models.agent.agent_dto import AgentCreateDTO
-from backend.app.repositories.template_repository import TemplateRepository
+from backend.app.models.user.user_dto import UserCreateDto
+from backend.app.repositories.agent_instance_wallet_repository import AgentInstanceWalletRepository
 from backend.app.repositories.agent_repository import AgentRepository
+from backend.app.repositories.template_repository import TemplateRepository
+from backend.app.services.agent_instance_wallet_service import AgentInstanceWalletService
+from backend.config.database import prisma_connection
 
 
 class UserRepository:
@@ -12,6 +14,7 @@ class UserRepository:
         self.db = db_connection or prisma_connection
         self.agent_repository = AgentRepository()
         self.template_repository = TemplateRepository()
+        self.agent_instance_wallet_service = AgentInstanceWalletService(AgentInstanceWalletRepository())
 
     async def create_user(self, user_data: UserCreateDto):
         user = await self.get_user_by_address(user_data.address)
@@ -42,7 +45,8 @@ class UserRepository:
 
     async def create_empty_agent_for_user(self, user_address: str):
         empty_agent_data = AgentCreateDTO(userAddress=user_address, name="Empty Agent", template_id=None, instance=1)
-        await self.agent_repository.save_agent(empty_agent_data)
+        agent = await self.agent_repository.save_agent(empty_agent_data)
+        await self.agent_instance_wallet_service.create_wallet(agent)
 
     async def create_empty_agent_for_user_if_not_exists(self, user_address: str):
         agent = await self.agent_repository.retrieve_agent_by_user_address(user_address)

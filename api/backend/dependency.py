@@ -10,11 +10,11 @@ from backend.app.repositories.trigger_repository import TriggerRepository
 from backend.app.services.agent_instance_wallet_service import AgentInstanceWalletService
 from backend.app.services.agent_service import AgentService
 from backend.app.services.function_services import AgentFunctionDetailService
+from backend.app.services.kafka_service import KafkaService
 from backend.app.services.template_service import TemplateService
 from backend.app.services.template_trigger_service import TemplateTriggerService
 from backend.app.services.trigger_history_service import TriggerHistoryService
 from backend.app.services.trigger_service import TriggerService
-from backend.app.services.kafka_service import KafkaService
 
 # Repository
 agent_repository = AgentRepository()
@@ -33,7 +33,12 @@ template_trigger_service = TemplateTriggerService(template_trigger_repository)
 trigger_service = TriggerService(trigger_repository, kafka_service=kafka_service)
 template_service = TemplateService(template_repository, template_trigger_service)
 agent_service = AgentService(
-    agent_repository, template_trigger_service, trigger_service, kafka_service, agent_instance_wallet_service
+    agent_repository,
+    template_trigger_service,
+    trigger_service,
+    kafka_service,
+    agent_instance_wallet_service,
+    template_service,
 )
 trigger_history_service = TriggerHistoryService(trigger_history_repo=trigger_history_repository)
 function_service = AgentFunctionDetailService(function_repo=function_repository)

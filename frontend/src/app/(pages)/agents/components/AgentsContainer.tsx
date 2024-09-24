@@ -1,7 +1,6 @@
 import { IAgent } from '@api/agents';
 
-import AgentCard from '@app/components/molecules/AgentCard';
-import { AgentCardSkeleton } from '@app/components/molecules/AgentCard';
+import AgentCard, { AgentCardSkeleton } from '@app/components/molecules/AgentCard';
 
 export interface AgentsContainerProps {
     agentsList: IAgent[];
@@ -28,7 +27,7 @@ const AgentsContainer: React.FC<AgentsContainerProps> = ({
                           agentName={agent.name || 'NA'}
                           agentID={agent.id || ''}
                           functionCount={agent.total_functions || 0}
-                          templateID={agent.template_id}
+                          templateName={agent.template_name}
                           totalTrigger={0}
                           lastActive={agent.last_active || 'NA'}
                           enableEdit={enableEdit}

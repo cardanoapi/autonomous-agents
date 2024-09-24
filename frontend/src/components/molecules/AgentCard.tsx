@@ -8,7 +8,6 @@ import { formatDatetoHumanReadable } from '@utils';
 import { PlayIcon, Trash2 } from 'lucide-react';
 
 import { deleteAgentbyID } from '@app/app/api/agents';
-import { ITemplate, fetchTemplatebyID } from '@app/app/api/templates';
 import {
     ITransactionsCount,
     fetchTransactionsCountByAgentID
@@ -31,7 +30,7 @@ import TransactionPieChart from './TransactionPieChart';
 export interface IAgentCard {
     agentName: string;
     agentID?: string;
-    templateID?: string;
+    templateName?: string;
     functionCount: number;
     lastActive: string | number;
     totalTrigger: number;
@@ -44,7 +43,7 @@ export interface IAgentCard {
 export default function AgentCard({
     agentName,
     agentID,
-    templateID,
+    templateName,
     functionCount,
     enableEdit = false,
     enableDelete = false,
@@ -55,11 +54,6 @@ export default function AgentCard({
     const router = useRouter();
     const { openModal } = useModal();
     const [dialogOpen, setDialogOpen] = useState(false);
-
-    const { data: template } = useQuery<ITemplate>({
-        queryKey: [`template-${templateID}`],
-        queryFn: () => fetchTemplatebyID(templateID || '')
-    });
 
     const { data: transactions_count } = useQuery<ITransactionsCount>({
         queryKey: [`Transactions-${agentID}`],
@@ -84,11 +78,6 @@ export default function AgentCard({
         queryFn: () => fecthTriggerHistoryMetric([], agentID)
     });
 
-    /*const { data: currentAgent } = useQuery({
-        queryKey: [`currentAgent/${agentID}`],
-        queryFn: () => fetchAgentbyID(agentID || '')
-    });*/
-
     function handleAgentRun(e: any) {
         e.stopPropagation();
         openModal('AgentRunnerView', {
@@ -107,10 +96,6 @@ export default function AgentCard({
     }
 
     const agentDetails: IAgentDetail[] = [
-        /*{
-            placeholder: 'No of Instance',
-            value: currentAgent?.instance || 0
-        }, */
         {
             placeholder: 'Total Functions',
             value: functionCount
@@ -126,11 +111,6 @@ export default function AgentCard({
             placeholder: 'Successfull Triggers',
             value: transactions_count?.successfulTransactions || 0
         }
-        /*
-        {
-            placeholder: 'Unsuccessfull Triggers',
-            value: transactions_count?.unSuccessfulTransactions || 0
-        }*/
     ];
 
     function renderAgentDetails(agentDetails: IAgentDetail[]) {
@@ -146,9 +126,6 @@ export default function AgentCard({
         );
     }
 
-    const templateStatus = templateID
-        ? { text: template?.name || 'Template Missing' }
-        : { text: 'Template not Used' };
     return (
         <>
             <Card
@@ -174,7 +151,7 @@ export default function AgentCard({
                     <span className="flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-center">
                         Template:{' '}
                         <div className="gray-background ml-1 overflow-hidden text-ellipsis whitespace-nowrap text-xs">
-                            {templateStatus.text}
+                            {templateName ? templateName : 'Template missing'}
                         </div>
                     </span>
 

@@ -20,6 +20,7 @@ from backend.app.repositories.agent_repository import AgentRepository
 from backend.app.repositories.user_repository import UserRepository
 from backend.app.services.agent_instance_wallet_service import AgentInstanceWalletService
 from backend.app.services.kafka_service import KafkaService
+from backend.app.services.template_service import TemplateService
 from backend.app.services.template_trigger_service import TemplateTriggerService
 from backend.app.services.trigger_service import TriggerService
 from backend.config.api_settings import APISettings
@@ -43,6 +44,7 @@ class AgentService:
         trigger_service: TriggerService,
         kafka_service: KafkaService,
         agent_instance_wallet_service: AgentInstanceWalletService,
+        template_service: TemplateService,
     ):
         self.agent_repository = agent_repository
         self.template_trigger_service = template_trigger_service
@@ -51,6 +53,7 @@ class AgentService:
         self.user_repository = UserRepository()
         self.agent_instance_wallet_service = agent_instance_wallet_service
         self.db_sync_api = APISettings().DB_SYNC_API
+        self.template_service = template_service
 
     async def create_agent(self, agent_data: AgentCreateDTO):
         agent = await self.agent_repository.save_agent(agent_data)
@@ -75,10 +78,19 @@ class AgentService:
         agents = await self.agent_repository.retrieve_agents(page, size, search)
         updated_agents = []
         for agent in agents:
+            template_name = ""
             is_online = check_if_agent_is_online(agent.last_active)
             agent_triggers_number = len(await self.trigger_service.list_triggers_by_agent_id(agent.id))
+            if agent.template_id:
+                template = await self.template_service.get_template_by_id(agent.template_id)
+                template_name = template.name if template else ""
             updated_agents.append(
-                AgentResponse(**agent.dict(), total_functions=agent_triggers_number, is_active=is_online)
+                AgentResponse(
+                    **agent.dict(),
+                    total_functions=agent_triggers_number,
+                    is_active=is_online,
+                    template_name=template_name,
+                )
             )
         return updated_agents
 
@@ -175,7 +187,7 @@ class AgentService:
                 raise HTTPException(status_code=400, content="Error fetching agent wallet balance")
 
     async def fetch_drep_details(self, drep_id: str, session: ClientSession):
-        async with session.get(f"{self.db_sync_api}/drep-details?drepId={drep_id}") as response:
+        async with session.get(f"{self.db_sync_api}/drep?id={drep_id}") as response:
             try:
                 res = await response.json()
                 voting_power = res.get("votingPower") / (10**6) if res.get("votingPower") else 0
@@ -185,7 +197,7 @@ class AgentService:
                 raise HTTPException(status_code=400, content="Error fetching agent Drep details")
 
     async def fetch_stake_address_details(self, stake_address: str, session: ClientSession):
-        async with session.get(f"{self.db_sync_api}/stake-address-details?address={stake_address}") as response:
+        async with session.get(f"{self.db_sync_api}/stake-address?address={stake_address}") as response:
             try:
                 is_stake_registered = False
                 res = await response.json()

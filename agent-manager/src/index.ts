@@ -24,7 +24,8 @@ const server = app.listen(port, async () => {
         console.log('Connection count:', manager.server.clients.size)
     }, 10000)
 
-    blockchain.on('extendBlock', (block) => {
+    blockchain.start()
+    blockchain.blockChain.on('extendBlock', (block) => {
         console.log(
             `[Blockchain] RollForward blockNo=${block.blockNo} hash=${block.headerHash.toString('hex')} slot=${block.slotNo}`
         )
