@@ -64,13 +64,13 @@ export const FilterFields: React.FC<FilterFieldsProps> = ({
                     <div className="relative">
                         <DropdownMenu>
                             <DropdownMenuTrigger
-                                className="flex w-fit gap-2"
+                                className="flex w-fit"
                                 disableIcon={true}
                             >
                                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white px-2 py-1 text-sm">
                                     {field.operator || field.operators[0]}
                                 </div>
-                                <div className="absolute right-1 top-1/2 flex -translate-y-1/2 transform cursor-pointer flex-col gap-1">
+                                <div className="flex transform cursor-pointer flex-col gap-1">
                                     <ChevronUp size={12} />
                                     <ChevronDown size={12} />
                                 </div>
@@ -106,7 +106,7 @@ export const FilterFields: React.FC<FilterFieldsProps> = ({
                                 field.operator || '='
                             )
                         }
-                        value={effectiveValue || 1}
+                        defaultValue={effectiveValue || 1}
                     />
                 )}
                 {(field.type === 'string' || field.type === 'buffer') && (
@@ -119,7 +119,7 @@ export const FilterFields: React.FC<FilterFieldsProps> = ({
                                 field.operator || '='
                             )
                         }
-                        value={effectiveValue || ''}
+                        defaultValue={effectiveValue || ''}
                     />
                 )}
                 {field.type === 'enum' && (
@@ -128,9 +128,9 @@ export const FilterFields: React.FC<FilterFieldsProps> = ({
                             handleFieldUpdate(field, e, field.operator || '=')
                         }
                     >
-                        <SelectTrigger className="h-8 text-sm text-gray-700">
+                        <SelectTrigger className="h-8 text-sm ">
                             <SelectValue
-                                placeholder="Select Option"
+                                placeholder={field.value || 'Select Option'}
                                 className="!text-sm placeholder:!text-sm placeholder:font-light"
                             ></SelectValue>
                         </SelectTrigger>

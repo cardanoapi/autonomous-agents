@@ -54,7 +54,7 @@ export const eventTypes: IEventType[] = [
                         options: ['script1', 'script2', 'script3']
                     }
                 ]
-            }
+            },
             // {
             //     label: 'Transaction Input',
             //     type: 'input',
@@ -70,25 +70,28 @@ export const eventTypes: IEventType[] = [
             //         }
             //     ]
             // },
-            // {
-            //     label: 'Transaction Certificate',
-            //     type: 'certificate',
-            //     fields: [
-            //         {
-            //             label: 'address',
-            //             type: 'string'
-            //         },
-            //         {
-            //             label: 'value',
-            //             type: 'number',
-            //             defaultValue: 1
-            //         },
-            //         {
-            //             label: 'datumHash',
-            //             type: 'Buffer'
-            //         }
-            //     ]
-            // },
+            {
+                label: 'Transaction Certificate',
+                type: 'list',
+                fields: [
+                    {
+                        label: 'address',
+                        type: 'string',
+                        operators: defaultOperators
+                    },
+                    {
+                        label: 'value',
+                        type: 'number',
+                        operators: defaultOperators,
+                        defaultValue: 1
+                    },
+                    {
+                        label: 'datumHash',
+                        operators: defaultOperators,
+                        type: 'buffer'
+                    }
+                ]
+            }
             // {
             //     label: 'Vote Transaction',
             //     type: 'vote'

@@ -12,6 +12,7 @@ export interface IConfiguredField extends IFieldMetaData {
     value: string | number | null;
     operator?: string;
     index: number;
+    relationship?: string;
 }
 
 export interface IConfiguredTrigger {
@@ -26,7 +27,7 @@ interface IEditingState {
 }
 
 const CustomEventTabContent = ({
-    className,
+    className
 }: {
     className?: string;
     currentFunctionName?: string;
@@ -54,8 +55,8 @@ const CustomEventTabContent = ({
             (filter) => filter.label === filterLabel
         );
         console.log(selected);
-        if (selected) setSelectedFilter(selected);
         setEditingState({ index: null, isEditing: false });
+        if (selected) setSelectedFilter(selected);
     };
 
     // Trigger CRUD
@@ -94,7 +95,8 @@ const CustomEventTabContent = ({
                 label: item.name,
                 type: item.type,
                 value: item.value,
-                defaultValue: item.defaultValue
+                defaultValue: item.defaultValue,
+                relationship: item.relationship
             }))
         });
         setEditingState({ index, isEditing: true });

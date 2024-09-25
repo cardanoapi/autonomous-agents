@@ -7,7 +7,6 @@ import {
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
 
-
 import { IFieldMetaData } from '../data/EventTypes';
 
 interface FieldSelectorProps {
