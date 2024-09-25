@@ -7,7 +7,6 @@ from datetime import datetime, timezone, timedelta, UTC
 from typing import List, Optional
 
 import pycardano
-from backend.app.exceptions.http import HTTPException
 from pycardano import (
     HDWallet,
     PaymentSigningKey,
@@ -17,6 +16,7 @@ from pycardano import (
 )
 from pycardano.crypto.bech32 import bech32_encode, convertbits, Encoding
 
+from backend.app.exceptions.http import HTTPException
 from backend.app.models import AgentResponse, AgentCreateDTO, AgentKeyResponse, AgentUpdateDTO
 from backend.config.database import prisma_connection
 
@@ -53,6 +53,9 @@ class AgentRepository:
         agents = await self.db.prisma.agent.find_many(where=filters, skip=skip, take=size)
         return agents
 
+    async def retrieve_all_agents(self) -> List[AgentResponse]:
+        return await self.db.prisma.agent.find_many(where={"deleted_at": None})
+
     async def retrieve_agent(self, agent_id: str) -> Optional[AgentResponse]:
         agent = await self.db.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})
 
@@ -67,6 +70,7 @@ class AgentRepository:
                 index=agent.index,
                 last_active=agent.last_active,
                 userAddress=agent.userAddress,
+                is_drep_registered=agent.is_drep_registered,
             )
             return agent_response
 
@@ -78,6 +82,16 @@ class AgentRepository:
             "name": agent_data.name,
             "instance": agent_data.instance,
             "updated_at": datetime.now(timezone.utc),
+        }
+        updated_agent = await self.db.prisma.agent.update(where={"id": agent_id}, data=updated_data)
+        return updated_agent
+
+    async def update_agent_drep_status(self, agent_id: str, drep_registered: bool) -> Optional[AgentResponse]:
+        agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
+        if agent is None or agent.deleted_at is not None:
+            return None
+        updated_data = {
+            "is_drep_registered": drep_registered,
         }
         updated_agent = await self.db.prisma.agent.update(where={"id": agent_id}, data=updated_data)
         return updated_agent
@@ -119,16 +133,6 @@ class AgentRepository:
         hd_wallet = HDWallet.from_mnemonic(mnemonic)
 
         derived_wallet = hd_wallet.derive(agent_index, hardened=True)
-        agent_private_key = derived_wallet.xprivate_key
-        agent_public_key = derived_wallet.public_key
-        agent_chain_code = derived_wallet.chain_code
-
-        # Derive the agent's child private key based on the agent_id
-
-        # agentPath = f"m/{agent_index}'"
-        # agent_key = masterKey.derive_from_path(agentPath)
-        #
-        # Generate the address using the derived agent key
         paymentPath = "m/1852'/1815'/0'/0/0"
         stakingPath = "m/1852'/1815'/0'/2/0"
 
@@ -149,18 +153,6 @@ class AgentRepository:
             staking_part=stakeVerificationKey.hash(),
             network=pycardano.Network.TESTNET,
         )
-        # spk = stakeVerificationKey.to_cbor_hex()
-        # stake_verification_key_bytes = bytes.fromhex(spk[4:])
-        #
-        # # Convert the bytes to a 5-bit array
-        # witprog = convertbits(stake_verification_key_bytes, 8, 5)
-        # if witprog is None:
-        #     raise ValueError("Failed to convert bits")
-        #
-        # drep_key = bech32_encode("drep", witprog, Encoding.BECH32)
-        # print(drep_key)
-
-        # Create and return the AgentResponse with the agent's key and address
         agent_response = AgentKeyResponse(
             payment_signing_key=str(paymentSigningKey.to_cbor_hex()),
             stake_signing_key=str(stakeSigningKey.to_cbor_hex()),

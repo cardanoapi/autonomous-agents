@@ -4,7 +4,6 @@ import { formatResult } from "../helpers/formatter";
 import { DrepSortType, DrepStatusType } from "../types/drep";
 
 export const fetchDrepList = async (page=1,size=10,drepId='', status?:DrepStatusType,sort?:DrepSortType)=>{
-  console.log("sdjksdj: ",status,sort)
   const result  = await prisma.$queryRaw
     `
     WITH DRepDistr AS (
@@ -313,7 +312,7 @@ export const fetchDrepDetails=async(drepId:string)=>{
           ),
     DrepDetails AS (SELECT
           IsRegisteredAsDRep.value as "isRegisteredAsDRep",
-          WasRegisteredAsDRep.value as "isRegisteredAsDRep",
+          WasRegisteredAsDRep.value as "wasRegisteredAsDRep",
           IsRegisteredAsSoleVoter.value as "isRegisteredAsSoleVoter",
           WasRegisteredAsSoleVoter.value as "wasRegisteredAsSoleVoter",
           CurrentDeposit.value as "deposit",
