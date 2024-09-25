@@ -12,7 +12,7 @@ export interface IConfiguredField extends IFieldMetaData {
     value: string | number | null;
     operator?: string;
     index: number;
-    relationship?: string;
+    relationship?: 'AND' | 'OR';
 }
 
 export interface IConfiguredTrigger {
@@ -56,6 +56,7 @@ const CustomEventTabContent = ({
         );
         console.log(selected);
         setEditingState({ index: null, isEditing: false });
+        closeTrigger();
         if (selected) setSelectedFilter(selected);
     };
 

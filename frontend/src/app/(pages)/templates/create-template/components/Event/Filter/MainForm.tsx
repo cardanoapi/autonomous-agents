@@ -8,7 +8,6 @@ import { Button } from '@app/components/atoms/Button';
 import { IConfiguredField, IConfiguredTrigger } from '../EventMainTab';
 import {
     IFieldMetaData,
-    eventLabelMap,
     getfieldsbyFilterLabel
 } from '../data/EventTypes';
 import { FieldSelector } from './FieldSelector';
@@ -47,10 +46,18 @@ export const FilterForm: React.FC<FilterFormProps> = ({
             setFieldOptions(filteredFields);
         }
     }, [savedData]);
+    
 
     useEffect(() => {
         setSortedFields(currentFields.sort((a, b) => a.label.localeCompare(b.label)));
     }, [currentFields]);
+
+    useEffect(()=>{
+        if (selectedFilter){
+            setFieldOptions(selectedFilter?.fields || [])
+            setCurrentFields([])
+        }
+    },[selectedFilter])
 
     const handleTriggerSave = () => {
         onSave(currentFields);
@@ -72,6 +79,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({
             ...prev,
             {
                 ...field,
+                relationship: 'AND',
                 index: prev.length
             }
         ]);
@@ -97,11 +105,11 @@ export const FilterForm: React.FC<FilterFormProps> = ({
     };
 
     const toggleRelationship = (index: number) => {
-        const newFields = currentFields.map((item, i) => {
+        const newFields : IConfiguredField[] = currentFields.map((item, i) => {
             if (i === index) {
                 return {
                     ...item,
-                    relationship: 'And' === item.relationship ? 'Or' : 'And'
+                    relationship : item.relationship === 'AND' ? 'OR' : 'AND'
                 };
             }
             return item;
@@ -119,11 +127,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({
             <FieldSelector
                 options={fieldOptions}
                 onSelectField={handleAddField}
-                triggerValue={
-                    eventLabelMap.get(
-                        selectedFilter?.label || savedData?.name || 'Add Field'
-                    ) || 'Add Field'
-                }
+                triggerValue={selectedFilter?.label || savedData?.name || 'Add Field'}
             />
             {currentFields.length > 0 && (
                 <span className="text-lg text-gray-800">Filters</span>
@@ -143,7 +147,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({
                             {currentFields.length > 1 &&
                                 index != currentFields.length - 1 && (
                                     <span
-                                        className="w-8 cursor-pointer underline underline-offset-2"
+                                        className="w-8 cursor-pointer underline underline-offset-2 text-brand-Blue-200"
                                         onClick={() => toggleRelationship(index)}
                                     >
                                         {field.relationship || 'And'}

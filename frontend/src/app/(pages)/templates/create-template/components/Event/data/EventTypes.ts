@@ -28,7 +28,7 @@ export const eventTypes: IEventType[] = [
         },
         filters: [
             {
-                label: 'Transaction Output',
+                label: 'Tx. Output',
                 type: 'list',
                 fields: [
                     {
@@ -55,6 +55,54 @@ export const eventTypes: IEventType[] = [
                     }
                 ]
             },
+            {
+                label: 'TxCert. RegisterStake',
+                type: 'list',
+                fields: [
+                    {
+                        label: 'scriptHash',
+                        type: 'buffer',
+                        operators: defaultOperators
+                    },
+                    {
+                        label: 'ketHash',
+                        type: 'buffer',
+                        operators: defaultOperators
+                    }
+                ]
+            },
+            {
+                label: 'TxCert. DeregisterStake',
+                type: 'list',
+                fields: [
+                    {
+                        label: 'scriptHash',
+                        type: 'buffer',
+                        operators: defaultOperators
+                    },
+                    {
+                        label: 'keyHash',
+                        type: 'buffer',
+                        operators: defaultOperators
+                    }
+                ]
+            },
+            {
+                label: 'TxCert. Delegation',
+                type: 'list',
+                fields: [
+                    {
+                        label: 'scriptHash',
+                        type: 'buffer',
+                        operators: defaultOperators
+                    },
+                    {
+                        label: 'keyHash',
+                        type: 'buffer',
+                        operators: defaultOperators
+                    }
+                ]
+            }
             // {
             //     label: 'Transaction Input',
             //     type: 'input',
@@ -70,28 +118,28 @@ export const eventTypes: IEventType[] = [
             //         }
             //     ]
             // },
-            {
-                label: 'Transaction Certificate',
-                type: 'list',
-                fields: [
-                    {
-                        label: 'address',
-                        type: 'string',
-                        operators: defaultOperators
-                    },
-                    {
-                        label: 'value',
-                        type: 'number',
-                        operators: defaultOperators,
-                        defaultValue: 1
-                    },
-                    {
-                        label: 'datumHash',
-                        operators: defaultOperators,
-                        type: 'buffer'
-                    }
-                ]
-            }
+            // {
+            //     label: 'Transaction Certificate',
+            //     type: 'list',
+            //     fields: [
+            //         {
+            //             label: 'RegisterStake',
+            //             type: 'string',
+            //             operators: defaultOperators
+            //         },
+            //         {
+            //             label: 'DeregisterStake',
+            //             type: 'number',
+            //             operators: defaultOperators,
+            //             defaultValue: 1
+            //         },
+            //         {
+            //             label: 'datumHash',
+            //             operators: defaultOperators,
+            //             type: 'buffer'
+            //         }
+            //     ]
+            // }
             // {
             //     label: 'Vote Transaction',
             //     type: 'vote'
