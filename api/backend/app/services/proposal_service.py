@@ -14,6 +14,7 @@ class ProposalService:
     def __init__(self, db_connection=None) -> None:
         self.db = db_connection or prisma_connection
         self.gov_action_api = APISettings().GOV_ACTION_API
+        self.metadata_api = APISettings().METADATA_API
 
     async def get_internal_proposals(self, page: int = 1, pageSize: int = 10, search: str | None = None):
 
@@ -96,12 +97,22 @@ class ProposalService:
                 )
 
     async def add_agent_detail_in_proposal(self, proposal: TriggerHistory, results: [Any], session: ClientSession):
+        proposal_dict = {}
         proposal_data = await self._fetch_proposal_data(session, proposal.txHash)
         if proposal_data:
             agent = await self.db.prisma.agent.find_unique(
                 where={"id": proposal.agentId},
             )
-            results.append(proposal_data | {"agentId": proposal.agentId, "agentName": agent.name})
+            proposal_dict = proposal_data | {"agentId": proposal.agentId, "agentName": agent.name}
+        if proposal_data.get("metadataHash") and proposal_data.get("url"):
+            url = proposal_data.get("url")
+            metadata_hash = proposal_data.get("metadataHash")
+            async with session.get(f"{self.metadata_api}/metadata?url={url}&hash={metadata_hash}") as metadata_resp:
+                metadata_resp_json = await metadata_resp.json()
+                if "hash" in metadata_resp_json:
+                    proposal_dict["title"] = metadata_resp_json["metadata"]["body"]["title"]
+        if proposal_dict:
+            results.append(proposal_dict)
 
     async def _fetch_proposal_data(self, session: aiohttp.ClientSession, tx_hash: str):
         async with session.get(f"{self.gov_action_api}/proposal/list?search={tx_hash}") as response:
