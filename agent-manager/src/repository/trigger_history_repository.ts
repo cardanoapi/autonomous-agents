@@ -34,6 +34,21 @@ export async function saveTriggerHistory(
             data: triggerHistory,
         })
     } catch (error) {
-        console.log(`Error : ${error}`)
+        console.log('TriggerHistoryError', error)
+        throw error
+    }
+}
+
+export async function updateAgentDrepRegistration(agentId: string, drepRegistered: boolean) {
+    try {
+        await prisma.agent.update({
+            where: { id: agentId },
+            data: {
+                is_drep_registered: drepRegistered,
+            },
+        })
+    } catch (err) {
+        console.log('AgentUpdateError', err)
+        throw err
     }
 }
