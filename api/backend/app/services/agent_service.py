@@ -2,7 +2,7 @@
 import asyncio
 import json
 from datetime import datetime, UTC, timedelta
-from typing import List
+from typing import List, Dict
 
 import aiohttp
 from aiohttp import ClientSession
@@ -15,6 +15,7 @@ from backend.app.models import (
     AgentUpdateDTO,
     AgentResponseWithAgentConfigurations,
 )
+from backend.app.models.agent.agent_instance_wallet import AgentInstanceWallet
 from backend.app.models.agent.function import AgentFunction
 from backend.app.repositories.agent_repository import AgentRepository
 from backend.app.repositories.user_repository import UserRepository
@@ -101,6 +102,25 @@ class AgentService:
         response = await self.return_agent_with_wallet_details(agent)
         return response
 
+    async def fetch_wallet_details_and_seed_drep_registration(self, agent: AgentResponse, session: ClientSession):
+        wallets = await self.agent_instance_wallet_service.get_wallets(agent.id)
+        if not len(wallets):
+            await self.agent_instance_wallet_service.create_wallet(agent)
+        wallets = await self.agent_instance_wallet_service.get_wallets(agent.id)
+        wallet = wallets[0]
+        drep = await self.fetch_drep_details(wallet.stake_key_hash, session)
+        drep_registered = drep.get("is_drep_registered", False)
+        if drep_registered:
+            await self.agent_repository.update_agent_drep_status(agent.id, drep_registered)
+
+    async def seed_drep_registration_column(self):
+        agents = await self.agent_repository.retrieve_all_agents()
+        async with aiohttp.ClientSession() as session:
+            async with asyncio.TaskGroup() as group:
+                for agent in agents:
+                    group.create_task(self.fetch_wallet_details_and_seed_drep_registration(agent, session))
+        return "Successful"
+
     async def update_agent(
         self, agent_id: str, agent_data: AgentUpdateDTO, userAddress: str
     ) -> AgentResponseWithAgentConfigurations:
@@ -186,8 +206,8 @@ class AgentService:
             except:
                 raise HTTPException(status_code=400, content="Error fetching agent wallet balance")
 
-    async def fetch_drep_details(self, drep_id: str, session: ClientSession):
-        async with session.get(f"{self.db_sync_api}/drep?id={drep_id}") as response:
+    async def fetch_drep_details(self, drep_id: str, session: ClientSession) -> Dict[str, float | bool]:
+        async with session.get(f"{self.db_sync_api}/drep/{drep_id}") as response:
             try:
                 res = await response.json()
                 voting_power = res.get("votingPower") / (10**6) if res.get("votingPower") else 0
@@ -226,7 +246,17 @@ class AgentService:
 
     async def return_agent_with_wallet_details(self, agent: AgentResponse):
         wallets = await self.agent_instance_wallet_service.get_wallets(agent_id=agent.id)
-        wallet = wallets[0]
+        if len(wallets):
+            wallet = wallets[0]
+        else:
+            agent_keys = await self.agent_repository.retreive_agent_key(agent.id)
+            wallet = AgentInstanceWallet(
+                agent_id=agent.id,
+                address=agent_keys.agent_address,
+                payment_key_hash=agent_keys.payment_verification_key_hash,
+                stake_key_hash=agent_keys.stake_verification_key_hash,
+                instance_index=0,
+            )
         async with aiohttp.ClientSession() as session:
             async with asyncio.TaskGroup() as group:
                 agent_configurations = group.create_task(self.trigger_service.list_triggers_by_agent_id(agent.id))
@@ -243,7 +273,6 @@ class AgentService:
             wallet_amount=wallet_balance.result() / (10**6),
             agent_configurations=agent_configurations.result(),
             voting_power=drep_details.result().get("voting_power"),
-            is_drep_registered=drep_details.result().get("is_drep_registered"),
             delegation=delegation_details.result(),
             drep_id=wallet.stake_key_hash,
             is_stake_registered=stake_address_details.result().get("is_stake_registered"),

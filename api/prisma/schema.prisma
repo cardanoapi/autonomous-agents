@@ -22,6 +22,7 @@ model Agent {
   deleted_at     DateTime? // Soft deletion field
   owner          User?                @relation(fields: [userAddress], references: [address])
   userAddress    String?
+  is_drep_registered Boolean @default(false)
   wallet_details AgentWalletDetails[]
 }
 

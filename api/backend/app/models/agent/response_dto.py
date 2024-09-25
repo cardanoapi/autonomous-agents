@@ -17,6 +17,7 @@ class AgentResponse(BaseModel):
     total_functions: Optional[int]
     is_active: Optional[bool]
     template_name: Optional[str]
+    is_drep_registered: Optional[bool]
 
 
 class AgentResponseWithAgentConfigurations(AgentResponse):

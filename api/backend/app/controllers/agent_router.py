@@ -2,15 +2,15 @@ from http import HTTPStatus
 from typing import List
 
 from classy_fastapi import Routable, get, post, put, delete
-from fastapi import HTTPException, Query, Depends
+from fastapi import Query, Depends
 
+from backend.app.auth.cookie_dependency import verify_cookie
 from backend.app.models.agent.agent_dto import AgentCreateDTO, AgentUpdateDTO
 from backend.app.models.agent.function import AgentFunction
-from backend.app.services.agent_service import AgentService
 from backend.app.models.agent.response_dto import AgentResponse, AgentResponseWithWalletDetails
-from backend.dependency import agent_service
-from backend.app.auth.cookie_dependency import verify_cookie
 from backend.app.models.user.user_dto import User
+from backend.app.services.agent_service import AgentService
+from backend.dependency import agent_service
 
 
 class AgentRouter(Routable):
@@ -43,6 +43,10 @@ class AgentRouter(Routable):
     async def get_agent(self, agent_id: str):
         agent = await self.agent_service.get_agent(agent_id)
         return agent
+
+    @get("/check/drep-registration")
+    async def check_drep_registration(self):
+        return await self.agent_service.seed_drep_registration_column()
 
     @put("/agents/{agent_id}", status_code=HTTPStatus.OK)
     async def update_agent(self, agent_id: str, agent_data: AgentUpdateDTO, user: User = Depends(verify_cookie)):

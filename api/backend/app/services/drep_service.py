@@ -1,11 +1,12 @@
 import asyncio
-from typing import Any, List
+import base64
+from typing import Any
 
 import aiohttp
-from backend.config.api_settings import APISettings
+
 from backend.app.repositories.agent_repository import AgentRepository
+from backend.config.api_settings import APISettings
 from backend.config.database import prisma_connection
-import base64
 
 
 class DrepService:
@@ -29,7 +30,10 @@ class DrepService:
                 agents = []
         else:
             agents = await self.db.prisma.agent.find_many(
-                where={"deleted_at": None}, skip=(page - 1) * page_size, take=page_size, order=[{"last_active": "desc"}]
+                where={"deleted_at": None, "is_drep_registered": True},
+                skip=(page - 1) * page_size,
+                take=page_size,
+                order=[{"last_active": "desc"}],
             )
         result = []
 
