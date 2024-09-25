@@ -6,10 +6,7 @@ import { Badge } from '@app/components/atoms/Badge';
 import { Button } from '@app/components/atoms/Button';
 
 import { IConfiguredField, IConfiguredTrigger } from '../EventMainTab';
-import {
-    IFieldMetaData,
-    getfieldsbyFilterLabel
-} from '../data/EventTypes';
+import { IFieldMetaData, getfieldsbyFilterLabel } from '../data/EventTypes';
 import { FieldSelector } from './FieldSelector';
 import { FilterFields } from './FilterFields';
 
@@ -46,18 +43,17 @@ export const FilterForm: React.FC<FilterFormProps> = ({
             setFieldOptions(filteredFields);
         }
     }, [savedData]);
-    
 
     useEffect(() => {
         setSortedFields(currentFields.sort((a, b) => a.label.localeCompare(b.label)));
     }, [currentFields]);
 
-    useEffect(()=>{
-        if (selectedFilter){
-            setFieldOptions(selectedFilter?.fields || [])
-            setCurrentFields([])
+    useEffect(() => {
+        if (selectedFilter) {
+            setFieldOptions(selectedFilter?.fields || []);
+            setCurrentFields([]);
         }
-    },[selectedFilter])
+    }, [selectedFilter]);
 
     const handleTriggerSave = () => {
         onSave(currentFields);
@@ -105,11 +101,11 @@ export const FilterForm: React.FC<FilterFormProps> = ({
     };
 
     const toggleRelationship = (index: number) => {
-        const newFields : IConfiguredField[] = currentFields.map((item, i) => {
+        const newFields: IConfiguredField[] = currentFields.map((item, i) => {
             if (i === index) {
                 return {
                     ...item,
-                    relationship : item.relationship === 'AND' ? 'OR' : 'AND'
+                    relationship: item.relationship === 'AND' ? 'OR' : 'AND'
                 };
             }
             return item;
@@ -147,7 +143,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({
                             {currentFields.length > 1 &&
                                 index != currentFields.length - 1 && (
                                     <span
-                                        className="w-8 cursor-pointer underline underline-offset-2 text-brand-Blue-200"
+                                        className="w-8 cursor-pointer text-brand-Blue-200 underline underline-offset-2"
                                         onClick={() => toggleRelationship(index)}
                                     >
                                         {field.relationship || 'And'}

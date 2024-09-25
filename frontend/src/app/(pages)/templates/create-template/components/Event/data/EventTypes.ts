@@ -65,7 +65,7 @@ export const eventTypes: IEventType[] = [
                         operators: defaultOperators
                     },
                     {
-                        label: 'ketHash',
+                        label: 'keyHash',
                         type: 'buffer',
                         operators: defaultOperators
                     }
