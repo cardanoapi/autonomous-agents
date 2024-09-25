@@ -87,6 +87,30 @@ export default function TriggerForm({
         setConfiguredSettings(currentSettings);
     }
 
+    const renderParams = (parameters: IParameter[]) => {
+        return parameters?.map((param) => {
+            return (
+                <div key={param.name} className="flex flex-col gap-y-4">
+                    <label className="h3 inline-flex">{param.description}</label>
+                    <Input
+                        disabled={selectedTab === 'EVENT'}
+                        onChange={(e) =>
+                            updateCronParameters(
+                                param.name,
+                                e.target.value,
+                                param.data_type,
+                                param.description,
+                                param.optional
+                            )
+                        }
+                        value={param.value}
+                        type={param.data_type}
+                    />
+                </div>
+            );
+        });
+    };
+
     return (
         <Card className="flex h-full flex-col gap-y-4 bg-brand-Azure-400 !px-4 !py-3">
             <form
@@ -104,19 +128,25 @@ export default function TriggerForm({
                         return (
                             <div key={index} className="flex flex-col gap-y-2">
                                 <label className="h3">{parameter.description}</label>
-                                <Input
-                                    disabled={selectedTab === 'EVENT'}
-                                    onChange={(e) =>
-                                        updateCronParameters(
-                                            parameter.name,
-                                            e.target.value,
-                                            parameter.data_type,
-                                            parameter.description,
-                                            parameter.optional
-                                        )
-                                    }
-                                    defaultValue={parameter.value}
-                                />
+                                {parameter.parameters ? (
+                                    <div className="mx-4 flex flex-col gap-4">
+                                        {renderParams(parameter.parameters)}
+                                    </div>
+                                ) : (
+                                    <Input
+                                        disabled={selectedTab === 'EVENT'}
+                                        onChange={(e) =>
+                                            updateCronParameters(
+                                                parameter.name,
+                                                e.target.value,
+                                                parameter.data_type,
+                                                parameter.description,
+                                                parameter.optional
+                                            )
+                                        }
+                                        defaultValue={parameter.value}
+                                    />
+                                )}
                             </div>
                         );
                     })}

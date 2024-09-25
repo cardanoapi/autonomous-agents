@@ -9,6 +9,7 @@ import AgentOverViewComponent from '@app/components/Agent/AgentOverview';
 import SkeletonLoadingForAgentOverview from '@app/components/Agent/SkeletonLoadingForAgentOverview';
 import { selectedAgentTabAtom } from '@app/store/localStore';
 
+import { cn } from '../lib/utils';
 import { Skeleton } from '../shadcn/ui/skeleton';
 import AgentLogComponent from './AgentLog';
 import AgentRunnerComponent from './AgentRunner';
@@ -16,11 +17,13 @@ import AgentRunnerComponent from './AgentRunner';
 const AgentTabContent = ({
     agent,
     agentLoading,
-    enableEdit
+    enableEdit,
+    className
 }: {
     agent?: IAgent;
     agentLoading?: boolean;
     enableEdit?: boolean;
+    className?: string;
 }) => {
     const [selectedAgentTab] = useAtom(selectedAgentTabAtom);
 
@@ -40,11 +43,7 @@ const AgentTabContent = ({
     }
     //Logs and History tab have their own Skeleton handled inside the component
     return (
-        <div
-            className={
-                'h-[550px] max-h-[650px] max-w-agentComponentWidth flex-1 rounded-lg bg-white px-4 py-6 4xl:h-[650px]'
-            }
-        >
+        <div className={cn('flex-1 rounded-lg bg-white px-4 py-6 ', className)}>
             {agentLoading ? (
                 selectedAgentTab === 'Overview' ? (
                     <SkeletonLoadingForAgentOverview />

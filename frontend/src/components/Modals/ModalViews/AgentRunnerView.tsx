@@ -15,7 +15,7 @@ const AgentRunnerModalView = ({
     agentId: string;
     refetchData?: () => void;
 }) => {
-    const dockerCommand = `docker run -d --pull always -e WS_URL=${environments.NEXT_PUBLIC_WS_URL} -e AGENT_ID=${agentId} cardanoapi/autonomous-agents-agent-node:${environments.NEXT_PUBLIC_IMAGE_TAG}`;
+    const dockerCommand = `docker run -d --pull always -e AGENT_ID=${agentId} cardanoapi/autonomous-agents-agent-node:${environments.NEXT_PUBLIC_IMAGE_TAG}`;
     const handleClickCopy = () => {
         navigator.clipboard.writeText(dockerCommand);
         SuccessToast('Docker Command Copied!');
