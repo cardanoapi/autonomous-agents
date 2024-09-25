@@ -99,6 +99,105 @@ const AgentOverViewComponent = ({
         }
     };
 
+    const renderWalletDetail = () => {
+        return (
+            <div className={' flex flex-col gap-2'}>
+                <div className={'flex flex-col'}>
+                    <span className={'pb-2 text-lg font-medium'}>Wallet</span>
+                    <div className={'flex w-full items-center gap-1'}>
+                        <span className={' font-medium'}>Address :</span>
+                        <TextDisplayField
+                            title="Address"
+                            content={agent?.agent_address}
+                            showCopy
+                        />
+                    </div>
+                    <div className={'flex gap-2'}>
+                        <span className={' font-medium'}>Balance :</span>
+                        <span>{agent?.wallet_amount + ' Ada'} </span>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const renderDrepDetail = () => {
+        return (
+            <div className={'flex flex-col items-end gap-2'}>
+                <div className={'flex flex-col'}>
+                    <span className={'pb-2 text-start text-lg font-medium'}>DRep</span>
+                    <div className={'flex w-full items-center gap-1'}>
+                        <span className={'font-medium'}>Id :</span>
+                        <TextDisplayField
+                            title="Id"
+                            showCopy
+                            content={agent?.drep_id}
+                        />
+                    </div>
+                    <div className={'flex gap-2'}>
+                        <span className={' font-medium'}>Registered :</span>
+                        <span>{agent?.is_drep_registered ? 'Yes' : 'No'}</span>
+                    </div>
+                    <div className={'flex gap-2'}>
+                        <span className={' font-medium'}>Voting Power :</span>
+                        <span>{agent?.voting_power ? agent?.voting_power : 0}</span>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const renderDelegationDetail = () => {
+        return (
+            <div className={'flex flex-col gap-2'}>
+                <div className={'flex flex-col'}>
+                    <span className={'pb-2 text-start text-lg font-medium'}>
+                        Delegation
+                    </span>
+                    <div className={'flex gap-2'}>
+                        <span className={' font-medium'}>DRep :</span>
+                        <span>
+                            {' '}
+                            {agent?.delegation?.drep_id
+                                ? agent?.delegation?.drep_id
+                                : '___'}{' '}
+                        </span>
+                    </div>
+                    <div className={'flex gap-2'}>
+                        <span className={' font-medium'}>Pool :</span>
+                        <span>
+                            {agent?.delegation?.pool_id
+                                ? agent?.delegation?.pool_id
+                                : '___'}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const renderStakeDetail = () => {
+        return (
+            <div className={' flex flex-col items-end gap-2'}>
+                <div className={'flex flex-col'}>
+                    <span className={'pb-2 text-lg font-medium'}>Stake</span>
+                    <div className={'flex w-full items-center gap-1'}>
+                        <span className={'font-medium'}>Address:</span>
+                        <TextDisplayField
+                            title="Address"
+                            showCopy
+                            content={agent?.drep_id}
+                        />
+                    </div>
+                    <div className={'flex gap-2'}>
+                        <span className={' font-medium'}>Registered :</span>
+                        <span>{agent?.is_stake_registered ? 'Yes' : 'No'}</span>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className={'flex h-full flex-col gap-10 '}>
             <div className={'flex justify-between'}>
@@ -157,7 +256,7 @@ const AgentOverViewComponent = ({
                                 }
                             />
                         </div>
-                        <div className={'flex justify-end'}>
+                        <div className={'flex justify-start'}>
                             <Button
                                 onClick={() => handleClickUpdate()}
                                 variant={'primary'}
@@ -176,116 +275,18 @@ const AgentOverViewComponent = ({
                             title={'Number of Agents'}
                             content={agent?.instance}
                         />
-                        <div className={'grid grid-cols-2'}>
-                            <div className={' flex flex-col gap-2'}>
-                                <div className={'flex flex-col'}>
-                                    <span className={'pb-2 text-lg font-medium'}>
-                                        Wallet
-                                    </span>
-                                    <div className={'flex w-full items-center gap-1'}>
-                                        <span className={' font-medium'}>
-                                            Address :
-                                        </span>
-                                        <TextDisplayField
-                                            content={agent?.agent_address}
-                                            showCopy
-                                        />
-                                    </div>
-                                    <div className={'flex gap-2'}>
-                                        <span className={' font-medium'}>
-                                            Balance :
-                                        </span>
-                                        <span>{agent?.wallet_amount + ' Ada'} </span>
-                                    </div>
-                                </div>
+                        <div className="grid w-full grid-cols-2 justify-between gap-y-10">
+                            <div className="flex w-full items-start">
+                                {renderWalletDetail()}
                             </div>
-                            <div className={'flex flex-col items-end gap-2'}>
-                                <div className={'flex flex-col'}>
-                                    <span
-                                        className={
-                                            'pb-2 text-start text-lg font-medium'
-                                        }
-                                    >
-                                        DRep
-                                    </span>
-                                    <div className={'flex w-full items-center gap-1'}>
-                                        <span className={'font-medium'}>Id :</span>
-                                        <TextDisplayField
-                                            showCopy
-                                            content={agent?.drep_id}
-                                        />
-                                    </div>
-                                    <div className={'flex gap-2'}>
-                                        <span className={' font-medium'}>
-                                            Registered :
-                                        </span>
-                                        <span>
-                                            {agent?.is_drep_registered ? 'Yes' : 'No'}
-                                        </span>
-                                    </div>
-                                    <div className={'flex gap-2'}>
-                                        <span className={' font-medium'}>
-                                            Voting Power :
-                                        </span>
-                                        <span>
-                                            {agent?.voting_power
-                                                ? agent?.voting_power
-                                                : 0}
-                                        </span>
-                                    </div>
-                                </div>
+                            <div className="flex w-full items-center">
+                                {renderDrepDetail()}
                             </div>
-                        </div>
-                        <div className={'grid grid-cols-2'}>
-                            <div className={'flex flex-col gap-2'}>
-                                <div className={'flex flex-col'}>
-                                    <span
-                                        className={
-                                            'pb-2 text-start text-lg font-medium'
-                                        }
-                                    >
-                                        Delegation
-                                    </span>
-                                    <div className={'flex gap-2'}>
-                                        <span className={' font-medium'}>DRep :</span>
-                                        <span>
-                                            {' '}
-                                            {agent?.delegation?.drep_id
-                                                ? agent?.delegation?.drep_id
-                                                : '___'}{' '}
-                                        </span>
-                                    </div>
-                                    <div className={'flex gap-2'}>
-                                        <span className={' font-medium'}>Pool :</span>
-                                        <span>
-                                            {agent?.delegation?.pool_id
-                                                ? agent?.delegation?.pool_id
-                                                : '___'}
-                                        </span>
-                                    </div>
-                                </div>
+                            <div className="flex w-full items-start">
+                                {renderDelegationDetail()}
                             </div>
-                            <div className={' flex flex-col items-end gap-2'}>
-                                <div className={'flex flex-col'}>
-                                    <span className={'pb-2 text-lg font-medium'}>
-                                        Stake
-                                    </span>
-                                    <div className={'flex w-full items-center gap-1'}>
-                                        <span className={'font-medium'}>Address:</span>
-                                        <TextDisplayField
-                                            showCopy
-                                            content={agent?.drep_id}
-                                        />
-                                    </div>
-                                    <div className={'flex gap-2'}>
-                                        <span className={' font-medium'}>
-                                            Registered :
-                                        </span>
-                                        <span>
-                                            {agent?.is_stake_registered ? 'Yes' : 'No'}
-                                        </span>
-                                    </div>
-                                </div>
+                            <div className="flex w-full items-center">
+                                {renderStakeDetail()}
                             </div>
                         </div>
                     </div>
