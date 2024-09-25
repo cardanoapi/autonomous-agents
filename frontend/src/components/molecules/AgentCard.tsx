@@ -2,7 +2,6 @@ import { useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
-import { fecthTriggerHistoryMetric } from '@api/triggerHistoryMetric';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { formatDatetoHumanReadable } from '@utils';
 import { PlayIcon, Trash2 } from 'lucide-react';
@@ -13,19 +12,16 @@ import {
     fetchTransactionsCountByAgentID
 } from '@app/app/api/trigger';
 import AgentAvatar from '@app/components/Agent/AgentAvatar';
-import { convertDictToGraphDataFormat } from '@app/components/Chart/ChartFilter';
 import { cn } from '@app/components/lib/utils';
 import { Truncate } from '@app/utils/common/extra';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
-import CustomLineChart from '../Chart/CustomLineChart';
 import { useModal } from '../Modals/context';
 import { Card, CardContent } from '../atoms/Card';
 import { Dialog, DialogContent } from '../atoms/Dialog';
 import { Skeleton } from '../shadcn/ui/skeleton';
 import ConfirmationBox from './ConfirmationBox';
 import { ErrorToast, SuccessToast } from './CustomToasts';
-import TransactionPieChart from './TransactionPieChart';
 
 export interface IAgentCard {
     agentName: string;
@@ -37,7 +33,6 @@ export interface IAgentCard {
     enableEdit?: boolean;
     enableDelete?: boolean;
     isActive?: boolean;
-    showGraphFooter?: boolean;
 }
 
 export default function AgentCard({
@@ -48,8 +43,7 @@ export default function AgentCard({
     enableEdit = false,
     enableDelete = false,
     lastActive = '',
-    isActive = false,
-    showGraphFooter = false
+    isActive = false
 }: IAgentCard) {
     const router = useRouter();
     const { openModal } = useModal();
@@ -71,11 +65,6 @@ export default function AgentCard({
             setDialogOpen(false);
             ErrorToast('Agent Delete Failed. Try Again!');
         }
-    });
-
-    const { data: triggerHistoryMetric } = useQuery({
-        queryKey: [`${agentID}TriggerHistoryMetric`],
-        queryFn: () => fecthTriggerHistoryMetric([], agentID)
     });
 
     function handleAgentRun(e: any) {
@@ -157,16 +146,9 @@ export default function AgentCard({
 
                     {renderAgentDetails(agentDetails)}
 
-                    {showGraphFooter ? (
-                        <AgentGraphFooter
-                            triggerHistoryMetric={triggerHistoryMetric}
-                            transactions_count={transactions_count}
-                        />
-                    ) : (
-                        <div className="pb-0">
-                            {renderAgentDetails(agentTriggerDetails)}
-                        </div>
-                    )}
+                    <div className="pb-0">
+                        {renderAgentDetails(agentTriggerDetails)}
+                    </div>
                 </CardContent>
             </Card>
             <DeleteAgentDialog
@@ -270,52 +252,6 @@ const DeleteAgentDialog = ({
                 />
             </DialogContent>
         </Dialog>
-    );
-};
-
-const AgentGraphFooter = ({
-    transactions_count,
-    triggerHistoryMetric
-}: {
-    transactions_count?: ITransactionsCount;
-    triggerHistoryMetric: any;
-}) => {
-    return (
-        <div className="flex justify-between">
-            <div className="w-[40%]">
-                <TransactionPieChart
-                    success={parseInt(
-                        transactions_count?.successfulTransactions || '0'
-                    )}
-                    skipped={parseInt(transactions_count?.skippedTransactions || '0')}
-                    failed={parseInt(
-                        transactions_count?.unSuccessfulTransactions || '0'
-                    )}
-                    className="!h-24 !w-24"
-                />
-            </div>
-            <div className="w-full">
-                <CustomLineChart
-                    chartData={convertDictToGraphDataFormat(
-                        triggerHistoryMetric?.last_week_successful_triggers || [],
-                        'Days'
-                    ).toReversed()}
-                    renderLines={false}
-                    renderXaxis={false}
-                    renderYaxis={false}
-                    renderDot={false}
-                    renderToolTip={true}
-                    strokeColor={'#1C63E7'}
-                    strokeWidth="4"
-                    smoothStroke={true}
-                    fillGradiant={true}
-                    className="pl-6"
-                    showOnlyTransaction={true}
-                    positionYToolTip={0}
-                    positionXToolTip={0}
-                />
-            </div>
-        </div>
     );
 };
 

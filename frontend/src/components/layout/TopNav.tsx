@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { usePathname } from 'next/navigation';
 
@@ -63,15 +63,6 @@ export default function TopNav() {
         agentId = path.split('/')[2];
     }
 
-    const [isActive, setIsActive] = useState(false);
-
-    useEffect(() => {
-        if (agentId && agents) {
-            const agent = agents.find((item) => item.id === agentId);
-            setIsActive(agent?.is_active || false);
-        }
-    }, [agents]);
-
     function getPageTitleByRegexMatch() {
         const RegexForAgentIdPage = /^\/agents\/.*$/;
         if (RegexForAgentIdPage.test(path)) {
@@ -90,7 +81,16 @@ export default function TopNav() {
         <div className="flex w-[full] items-center justify-between text-sm">
             {getPageTitle() === currentAgentName ? (
                 <div className={'flex items-center gap-3 py-3'}>
-                    <AgentAvatar hash={agentId} size={40} isActive={isActive} />
+                    <AgentAvatar
+                        hash={agentId}
+                        size={40}
+                        isActive={
+                            (agents &&
+                                agents.find((item) => item.id === agentId)
+                                    ?.is_active) ||
+                            false
+                        }
+                    />
                     <div className="card-h2">{Truncate(currentAgentName, 20)}</div>
                 </div>
             ) : (
