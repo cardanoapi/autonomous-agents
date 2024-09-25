@@ -26,6 +26,9 @@ class TriggerService:
     async def list_triggers_by_agent_id(self, agent_id: str) -> List[TriggerResponse]:
         return await self.trigger_repository.retreive_triggers_by_agent_id(agent_id)
 
+    async def count_triggers_by_agent_id(self, agent_id: str) -> int:
+        return await self.trigger_repository.count_triggers_by_agent_id(agent_id)
+
     async def delete_by_id(self, trigger_id: str) -> bool:
         return await self.trigger_repository.remove_trigger_by_trigger_id(trigger_id)
 
