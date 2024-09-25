@@ -60,7 +60,7 @@ export function generateProposalMetadataContent(agentName: string) {
                     uri: 'https://cardanoapi.github.io/autonomous-agents/archietecture_docusaurus/docs/architecture',
                 },
             ],
-            title: 'Autonomous-agent-testing Proposal Metadata',
+            title: `Proposal By Agent ${agentName}`,
         },
     })
 }
