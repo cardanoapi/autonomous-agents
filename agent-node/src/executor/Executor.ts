@@ -141,7 +141,7 @@ export class Executor {
                             )
                             resolve(res)
                             await txListener
-                                .addListener(res.hash, 0, 80000)
+                                .addListener(res.hash, 0, 300000)
                                 .then(() => {
                                     if (saveDrepStatus) {
                                         rpcInterface.checkAndSaveDrepRegistration(
