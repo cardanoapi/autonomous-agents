@@ -209,7 +209,7 @@ const AgentOverViewComponent = ({
                                         DRep
                                     </span>
                                     <div className={'flex w-full items-center gap-1'}>
-                                        <span className={'font-medium'}>Address :</span>
+                                        <span className={'font-medium'}>Id :</span>
                                         <TextDisplayField
                                             showCopy
                                             content={agent?.drep_id}

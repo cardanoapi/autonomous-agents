@@ -102,7 +102,6 @@ class Kuber {
                     this.handleApiCallQueue()
                 })
         }
-        console.log('CALL QUEUE: ', this.active_calls, this.call_queue)
     }
 
     private async call(method: string, url: string, data: BodyInit, headers?: HeadersInit): Promise<Response> {

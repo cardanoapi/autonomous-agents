@@ -90,13 +90,6 @@ export class AgentManagerRPC extends WsRpcServer {
     }
 
     protected onReady(client: RpcV1): void {
-        const addressApiUrl = `${process.env.API_SERVER}/api/agent/${client.getId()}/keys`
-        const agentKeysPromise = fetch(addressApiUrl)
-            .then((response) => response.json())
-            .then((data) => client.emit('agent_keys', data))
-            .catch((error) => {
-                throw error
-            })
         const agentConfigsPromise = fetchAgentConfiguration(client.getId())
             .then((config) => {
                 client.emit('initial_config', config)
@@ -104,8 +97,8 @@ export class AgentManagerRPC extends WsRpcServer {
             .catch((error) => {
                 throw error
             })
-        Promise.all([agentKeysPromise, agentConfigsPromise]).catch((err: Error) => {
-            console.error('AgentManagerRPC.onReady Error:', err)
+        Promise.all([agentConfigsPromise]).catch((err: Error) => {
+            console.error('AgentManagerRPC onReady Error:', err)
             this.disconnect(client.getId(), err.message)
         })
     }
