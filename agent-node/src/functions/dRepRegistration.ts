@@ -5,7 +5,9 @@ export default async function builtin(context: FunctionContext, anchor: any) {
         context.helpers.generateDrepMetadataContent()
     )
     const anchorData =
-        anchor['url'] && anchor['dataHash'] ? anchor : { url, dataHash }
+        anchor && anchor['url'] && anchor['dataHash']
+            ? anchor
+            : { url, dataHash }
     const req = {
         certificates: [
             {
@@ -16,7 +18,7 @@ export default async function builtin(context: FunctionContext, anchor: any) {
         ],
     }
     return await context.wallet
-        .buildAndSubmit(req, true)
+        .buildAndSubmit(req, true, true)
         .then((v) => {
             console.log('drepRegistration', v)
             return v

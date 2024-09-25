@@ -29,4 +29,8 @@ export class ManagerInterface {
     saveMetadata(content: string): Promise<any> {
         return this.rpc.callMethod('saveMetadata', content)
     }
+
+    checkAndSaveDrepRegistration(drepId: string) {
+        this.rpc.fireMethod('checkAndSaveDrepRegistration', drepId)
+    }
 }

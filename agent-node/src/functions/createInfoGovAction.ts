@@ -8,7 +8,9 @@ export default async function handler(
         context.helpers.generateProposalMetadataContent()
     )
     const anchorData =
-        anchor['url'] && anchor['dataHash'] ? anchor : { url, dataHash }
+        anchor && anchor['url'] && anchor['dataHash']
+            ? anchor
+            : { url, dataHash }
     const req = {
         proposals: [
             {

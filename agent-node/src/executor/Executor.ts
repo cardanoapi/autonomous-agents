@@ -89,9 +89,9 @@ export class Executor {
             walletDetails.stake_verification_key_hash
         )
         console.log(
-            'Account keys received : addresses =>',
-            walletDetails.agent_address,
-            rewardAddress
+            'Account keys received :',
+            '\n\tAddress: ' + walletDetails.agent_address,
+            '\n\tStake  : ' + rewardAddress
         )
         return {
             address: walletDetails.agent_address,
@@ -99,7 +99,11 @@ export class Executor {
             stakeKey: stakeKey,
             drepId: walletDetails.drep_id,
             rewardAddress: rewardAddress,
-            buildAndSubmit: (spec: any, stakeSigning?: boolean) => {
+            buildAndSubmit: (
+                spec: any,
+                stakeSigning?: boolean,
+                saveDrepStatus?: boolean
+            ) => {
                 spec.selections = [
                     walletDetails.agent_address,
                     {
@@ -139,6 +143,11 @@ export class Executor {
                             await txListener
                                 .addListener(res.hash, 0, 80000)
                                 .then(() => {
+                                    if (saveDrepStatus) {
+                                        rpcInterface.checkAndSaveDrepRegistration(
+                                            walletDetails.drep_id
+                                        )
+                                    }
                                     console.log(
                                         'Tx matched :',
                                         res.hash,
@@ -189,8 +198,10 @@ export class Executor {
             })
             .catch((err) => {
                 console.error('GetBalance : ', err)
-                throw err
             })
+        managerInterface.checkAndSaveDrepRegistration(
+            this.functionContext.wallet.drepId
+        )
     }
 
     makeProxy<T>(context: T): { proxy: T; callLog: CallLog[] } {

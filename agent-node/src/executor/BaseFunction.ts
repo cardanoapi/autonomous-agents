@@ -11,7 +11,11 @@ export interface Wallet {
     stakeKey: Key
     rewardAddress: string
     drepId: string
-    buildAndSubmit(spec: any, stakeSigning?: boolean): Promise<any>
+    buildAndSubmit(
+        spec: any,
+        stakeSigning?: boolean,
+        saveDrepStatus?: boolean
+    ): Promise<any>
     signTx(txRaw: Buffer, stakeSigning?: boolean): Buffer
 }
 
