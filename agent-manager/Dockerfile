@@ -8,8 +8,9 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 
 # Install dependencies
-RUN yarn install --frozen-lockfile --production
-
+RUN apk add --no-cache  py3-setuptools make python3 build-base \
+    && yarn install --frozen-lockfile --production \
+    && apk del  py3-setuptools make python3 build-base
 FROM base as builder
 # Copy the rest of the application code to the container
 RUN yarn install
