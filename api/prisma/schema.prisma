@@ -11,31 +11,37 @@ datasource db {
 
 // Agent table model
 model Agent {
-  id             String               @id // UUID
-  name           String
-  instance       BigInt
-  template_id    String?
-  index          BigInt               @default(autoincrement())
-  last_active    DateTime?
-  created_at     DateTime
-  updated_at     DateTime
-  deleted_at     DateTime? // Soft deletion field
-  owner          User?                @relation(fields: [userAddress], references: [address])
-  userAddress    String?
-  is_drep_registered Boolean @default(false)
-  wallet_details AgentWalletDetails[]
+  id               String              @id // UUID
+  name             String
+  instance         BigInt
+  template_id      String?
+  index            BigInt              @default(autoincrement())
+  last_active      DateTime?
+  created_at       DateTime
+  updated_at       DateTime
+  deleted_at       DateTime?           // Soft deletion field
+  owner            User?               @relation(fields: [userAddress], references: [address])
+  userAddress      String?
+  is_drep_registered Boolean           @default(false)
+  wallet_details   AgentWalletDetails[]
+
+  triggers         Trigger[]           // One-to-many relationship with Trigger
+  template         Template?           @relation(fields: [template_id], references: [id], onDelete: SetNull)
 }
 
 model Trigger {
-  id         String      @id
-  agent_id   String
-  type       TriggerType
-  action     Json
-  data       Json
-  created_at DateTime
-  updated_at DateTime
-  deleted_at DateTime?
+  id               String              @id
+  agent_id         String
+  type             TriggerType
+  action           Json
+  data             Json
+  created_at       DateTime
+  updated_at       DateTime
+  deleted_at       DateTime?
+
+  agent            Agent               @relation(fields: [agent_id], references: [id], onDelete: Cascade)
 }
+
 
 model Template_Trigger {
   id          String      @id
@@ -57,6 +63,8 @@ model Template {
   deleted_at  DateTime?
   owner       User?     @relation(fields: [userAddress], references: [address])
   userAddress String?
+
+  agents           Agent[]
 }
 
 // schema.prisma

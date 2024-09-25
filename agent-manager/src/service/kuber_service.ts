@@ -1,3 +1,5 @@
+import environments from '../config/environments'
+
 class Kuber {
     MAX_CONCURRENT_CALLS = 8
     active_calls = 0
@@ -5,7 +7,7 @@ class Kuber {
     providerUrl: string
 
     constructor() {
-        const kuberUrl = process.env.KUBER_BASE_URL
+        const kuberUrl = environments.kuberBaseUrl
         if (!kuberUrl) {
             console.log('Kuber Url not provided.')
             process.exit(1)
@@ -25,7 +27,7 @@ class Kuber {
     }
 
     async getBalance(address: string): Promise<any> {
-        const KuberAPIKey = process.env.KUBER_API_KEY
+        const KuberAPIKey = environments.kuberApiKey
         const headers: HeadersInit = {
             'content-type': 'application/json',
         }
@@ -45,7 +47,7 @@ class Kuber {
     }
 
     async buildTx(txSpec: any, submit?: boolean): Promise<any> {
-        const KuberAPIKey = process.env.KUBER_API_KEY
+        const KuberAPIKey = environments.kuberApiKey
         const headers: HeadersInit = {
             'content-type': 'application/json',
         }
@@ -89,7 +91,6 @@ class Kuber {
             this.call
                 .apply(this as Kuber, body)
                 .then((res) => {
-                    console.log('response is : ', res)
                     return res.text()
                 })
                 .then((str) => {
@@ -105,7 +106,6 @@ class Kuber {
     }
 
     private async call(method: string, url: string, data: BodyInit, headers?: HeadersInit): Promise<Response> {
-        console.log('call provider url', this.providerUrl)
         return fetch(`${this.providerUrl}${url}`, {
             method,
             body: data,

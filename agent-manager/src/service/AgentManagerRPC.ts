@@ -7,10 +7,11 @@ import {
 import { WsRpcServer } from '../lib/WsRpcServer'
 import { RpcV1 } from 'libcardano/network/Rpc'
 import { kuber } from './kuber_service'
-import { saveTriggerHistory, TriggerType } from '../repository/trigger_history_repository'
+import { saveTriggerHistory, TriggerType, updateAgentDrepRegistration } from '../repository/trigger_history_repository'
 import { ManagerWalletService } from './ManagerWallet'
 import { Server } from 'ws'
 import { metaDataService } from './Metadata_service'
+import { dbSync } from './db_sync_service'
 
 export interface ILog {
     function_name: string
@@ -74,8 +75,21 @@ export class AgentManagerRPC extends WsRpcServer {
         } else if (method === 'saveMetadata') {
             const [content] = args
             return metaDataService.saveMetadata(content)
+        } else if (method === 'checkAndSaveDrepRegistration') {
+            const [drepId] = args
+            return dbSync
+                .checkDrepRegistration(drepId)
+                .then((res) => {
+                    console.log('Drep Registration: ', res['isRegisteredAsDRep'])
+                    updateAgentDrepRegistration(connection_id, res['isRegisteredAsDRep']).catch((err) =>
+                        console.error('AgentUpdateError : ', err)
+                    )
+                })
+                .catch((err) => {
+                    throw err
+                })
         } else {
-            throw new Error('No such method exists')
+            return 'No such method exists'
         }
     }
 

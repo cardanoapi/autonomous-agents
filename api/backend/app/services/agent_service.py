@@ -76,21 +76,22 @@ class AgentService:
         return await self.agent_repository.retreive_agent_key(agent_id)
 
     async def list_agents(self, page: int, size: int, search: str | None) -> List[AgentResponse]:
-        agents = await self.agent_repository.retrieve_agents(page, size, search)
+        skip = (page - 1) * size
+        filters = {"deleted_at": None}
+        if search:
+            filters["name"] = {"contains": search, "mode": "insensitive"}
+        agents = await self.agent_repository.db.prisma.agent.find_many(
+            include={"template": True, "triggers": True}, where=filters, skip=skip, take=size
+        )
         updated_agents = []
         for agent in agents:
-            template_name = ""
             is_online = check_if_agent_is_online(agent.last_active)
-            agent_triggers_number = len(await self.trigger_service.list_triggers_by_agent_id(agent.id))
-            if agent.template_id:
-                template = await self.template_service.get_template_by_id(agent.template_id)
-                template_name = template.name if template else ""
             updated_agents.append(
                 AgentResponse(
                     **agent.dict(),
-                    total_functions=agent_triggers_number,
+                    total_functions=len(agent.triggers),
                     is_active=is_online,
-                    template_name=template_name,
+                    template_name=agent.template.name if agent.template else "",
                 )
             )
         return updated_agents
