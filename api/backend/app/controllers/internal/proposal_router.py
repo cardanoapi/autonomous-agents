@@ -1,8 +1,7 @@
 from classy_fastapi import get, Routable
-from backend.app.services.proposal_service import ProposalService
 from fastapi_pagination import Page
-from backend.app.models.proposals.proposal_dto import ProposalResponse
-from typing import List
+
+from backend.app.services.proposal_service import ProposalService
 
 
 class ProposalRouter(Routable):
@@ -15,7 +14,7 @@ class ProposalRouter(Routable):
         self,
         page: int = 1,
         pageSize: int = 10,
-        sort: str = "NewestCreated",
+        sort: str = "CreatedDate",
         proposal_type: str = "all",
         search: str | None = None,
     ):

@@ -1,11 +1,12 @@
-import asyncio
 from typing import List
+
 from backend.app.models.trigger.resposne_dto import TriggerResponse
 from backend.app.models.trigger.trigger_dto import (
     TriggerCreateDTO,
 )
-from backend.app.services.kafka_service import KafkaService
 from backend.app.repositories.trigger_repository import TriggerRepository
+from backend.app.services.kafka_service import KafkaService
+from backend.config.api_settings import api_settings
 
 
 class TriggerService:
@@ -72,4 +73,6 @@ class TriggerService:
             await self.trigger_repository.remove_trigger_by_trigger_id(config_id)
 
     async def publish_trigger_event(self, agent_id: str):
-        await self.kafka_service.publish_message("trigger_config_updates", "config_updated", key=agent_id)
+        await self.kafka_service.publish_message(
+            api_settings.KAFKA_PREFIX + "trigger_config_updates", "config_updated", key=agent_id
+        )

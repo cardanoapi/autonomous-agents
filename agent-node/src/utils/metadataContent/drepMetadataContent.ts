@@ -3,6 +3,7 @@ export function generateRegisterDrepMetadataContent(
     paymentAddress: string
 ) {
     return JSON.stringify({
+        '@language': 'en-us',
         '@context': {
             CIP100: 'https://github.com/cardano-foundation/CIPs/blob/master/CIP-0100/README.md#',
             CIP119: 'https://github.com/cardano-foundation/CIPs/blob/master/CIP-0119/README.md#',
