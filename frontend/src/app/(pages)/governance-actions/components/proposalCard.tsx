@@ -130,14 +130,16 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                         <div className="space-x-1 bg-brand-lightBlue bg-opacity-50 py-[6px] text-center ">
                             <span>Submitted:</span>
                             <span className="font-medium">
-                                {formatDisplayDate(proposal.createdDate)}
+                                {proposal.createdDate &&
+                                    formatDisplayDate(proposal.createdDate)}
                             </span>
                             <span>(Epoch {proposal.createdEpochNo})</span>
                         </div>
                         <p className="space-x-1 py-[6px] text-center">
                             <span>Expires:</span>
                             <span className="font-medium">
-                                {formatDisplayDate(proposal.expiryDate)}
+                                {proposal.createdDate &&
+                                    formatDisplayDate(proposal?.expiryDate)}
                             </span>
                             <span>(Epoch {proposal.expiryEpochNo})</span>
                         </p>

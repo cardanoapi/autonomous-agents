@@ -43,9 +43,11 @@ export default function DRepDirectory() {
         search: ''
     });
 
-    const { data, isFetching } = useQuery({
+    const { data, isLoading } = useQuery({
         queryKey: [QUERY_KEYS.useGetDRepListKey, queryParams],
-        queryFn: () => fetchDreps({ ...queryParams })
+        queryFn: () => fetchDreps({ ...queryParams }),
+        refetchOnWindowFocus: true,
+        staleTime: 5000
     });
 
     const [isFirstFetch, setIsFirstFetch] = useState<boolean>(true);
@@ -125,11 +127,11 @@ export default function DRepDirectory() {
             {/* DRep list */}
             <ScrollArea className="h-drepListHeight pb-4 pr-4">
                 <div className="flex flex-col space-y-4">
-                    {!isFetching &&
+                    {!isLoading &&
                         data?.items?.map((dRep) => (
                             <DRepCard key={dRep.drepId} dRep={dRep} />
                         ))}
-                    {isFetching &&
+                    {isLoading &&
                         Array.from({ length: 10 }).map((_, i) => (
                             <DRepCardSkeleton
                                 key={i}

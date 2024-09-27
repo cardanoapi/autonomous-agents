@@ -17,8 +17,8 @@ const result = await fetchDrepDetails(drepId)
 };
 
 const getDrepList= async(req:Request,res:Response )=>{
-  const size = req.query.size ? +req.query.size : 1
-  const page = req.query.page ? +req.query.page : 10
+  const size = req.query.size ? +req.query.size : 10
+  const page = req.query.page ? +req.query.page : 1
   const status = req.query.status ? req.query.status as DrepStatusType : undefined
   const sort = req.query.sort ? req.query.sort as DrepSortType : undefined
   const dRepId = req.query.dRepId as string

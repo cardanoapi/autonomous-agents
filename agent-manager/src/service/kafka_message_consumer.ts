@@ -8,6 +8,7 @@ const kafka = new Kafka({
     clientId: process.env['CLIENT_ID'],
     brokers: [brokerUrl], // Update with your Kafka broker address
 })
+const kafka_prefix = process.env.KAFKA_PREFIX || ''
 
 const consumer = kafka.consumer({ groupId: 'agent-manager-configs' })
 
@@ -19,7 +20,7 @@ export async function initKafkaConsumers(manager: AgentManagerRPC) {
     const managerService = new ManagerService(manager)
     await consumer.connect()
     await consumer.subscribe({
-        topic: 'trigger_config_updates',
+        topic: `${kafka_prefix}trigger_config_updates`,
         fromBeginning: true,
     })
 
@@ -36,7 +37,7 @@ export async function initKafkaConsumers(manager: AgentManagerRPC) {
 
     // kafka message are consumed in RPC format
     await manualTriggerConsumer.connect()
-    await manualTriggerConsumer.subscribe({ topic: 'Agent_Trigger' })
+    await manualTriggerConsumer.subscribe({ topic: `${kafka_prefix}Agent_Trigger` })
 
     await manualTriggerConsumer.run({
         eachMessage: async ({ message }) => {
