@@ -57,8 +57,11 @@ export default function TriggerForm({
         value: string,
         data_type: string,
         description: string,
-        optional: boolean
+        optional: boolean,
+        is_part_of_object: boolean = false,
+        parentObject: string | false = false
     ) {
+        console.log(name, value, is_part_of_object, parentObject);
         const newParam: IParameter = {
             name: name,
             value: value,
@@ -66,15 +69,34 @@ export default function TriggerForm({
             description: description,
             optional: optional
         };
+
         if (cronParameters.length <= 0) {
-            setCronParameters([newParam]);
-            return;
+            if (is_part_of_object && parentObject) {
+                const parentObjValue: IParameter = {
+                    name: parentObject,
+                    description: '',
+                    optional: false,
+                    data_type: 'obj',
+                    parameters: [newParam]
+                };
+                setCronParameters([parentObjValue]);
+            } else {
+                setCronParameters([newParam]);
+                return;
+            }
         }
-        const newParameters: IParameter[] = cronParameters?.filter(
-            (item) => item.name !== name
-        );
-        newParameters.push(newParam);
-        setCronParameters(newParameters);
+        if (is_part_of_object && parentObject) {
+            const existingParentObject = cronParameters.find(
+                (item) => item.name === parentObject
+            );
+        } else {
+            const newParameters: IParameter[] = cronParameters?.filter(
+                (item) => item.name !== name
+            );
+            newParameters.push(newParam);
+            setCronParameters(newParameters);
+        }
+        console.log(cronParameters);
     }
 
     function updateCronExpression(
@@ -87,7 +109,7 @@ export default function TriggerForm({
         setConfiguredSettings(currentSettings);
     }
 
-    const renderParams = (parameters: IParameter[]) => {
+    const renderParams = (parameters: IParameter[], parentName?: string) => {
         return parameters?.map((param) => {
             return (
                 <div key={param.name} className="flex flex-col gap-y-4">
@@ -100,7 +122,9 @@ export default function TriggerForm({
                                 e.target.value,
                                 param.data_type,
                                 param.description,
-                                param.optional
+                                param.optional,
+                                true,
+                                parentName
                             )
                         }
                         value={param.value}
@@ -130,7 +154,10 @@ export default function TriggerForm({
                                 <label className="h3">{parameter.description}</label>
                                 {parameter.parameters ? (
                                     <div className="mx-4 flex flex-col gap-4">
-                                        {renderParams(parameter.parameters)}
+                                        {renderParams(
+                                            parameter.parameters,
+                                            parameter.name
+                                        )}
                                     </div>
                                 ) : (
                                     <Input

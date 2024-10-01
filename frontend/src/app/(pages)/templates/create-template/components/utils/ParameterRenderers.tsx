@@ -1,0 +1,156 @@
+import { useEffect, useState } from 'react';
+
+import { IParameter, IParameterOption } from '@models/types/functions';
+import { SelectIcon, SelectTrigger } from '@radix-ui/react-select';
+
+import { Input } from '@app/components/atoms/Input';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectValue
+} from '@app/components/atoms/Select';
+import { Label } from '@app/components/atoms/label';
+import { NumberInput } from '@app/components/molecules/NumberInput';
+
+export const renderStringParameter = (
+    param: IParameter,
+    onValueChange: (id: string, value: any) => void
+) => (
+    <div className="flex w-full flex-col gap-2">
+        <Label className="h4">{param.name}</Label>
+        <Input
+            defaultValue={param.value}
+            className="w-full"
+            onChange={(e) => onValueChange(param.id, e.target.value)}
+        />
+    </div>
+);
+
+export const renderNumberParameter = (
+    param: IParameter,
+    onValueChange: (id: string, value: any) => void
+) => (
+    <div className="flex w-full flex-col gap-2">
+        <Label className="h4">{param.name}</Label>
+        <NumberInput
+            defaultValue={param.value ? Number(param.value) : 0}
+            className="w-full"
+            onChange={(e) => onValueChange(param.id, e.target.value)}
+        />
+    </div>
+);
+
+export const renderObjectParameter = (
+    param: IParameter,
+    onNestedValueChange: (parentId: string, subParamId: string, newValue: any) => void
+) => (
+    <div className="flex w-full flex-col gap-2">
+        <Label className="h4">{param.name}</Label>
+        <div className="ml-4 grid grid-cols-2 gap-4">
+            {param.parameters?.map((subParam, subIndex) => (
+                <div key={subIndex} className="flex items-center gap-4">
+                    <Label className="h4">{subParam.name}</Label>
+                    <Input
+                        defaultValue={subParam.value}
+                        className="w-full"
+                        onChange={(e) =>
+                            onNestedValueChange(param.id, subParam.id, e.target.value)
+                        }
+                    />
+                </div>
+            ))}
+        </div>
+    </div>
+);
+
+export const renderOptionsParameter = (
+    param: IParameter,
+    onOptionChange?: (value: any) => void,
+    defaultOptionValue?: IParameterOption | null
+) => {
+    const [selectedOption, setSelectedOption] = useState<IParameterOption | null>(
+        defaultOptionValue || null
+    );
+
+    useEffect(() => {
+        onOptionChange?.(selectedOption);
+    }, [selectedOption]);
+
+    const handleSelectedOptionParamChange = (paramId: string, newValue: any) => {
+        if (!selectedOption) return;
+        const newOptions = selectedOption.parameters?.map((param) =>
+            param.id === paramId ? { ...param, value: newValue } : param
+        );
+        setSelectedOption({ ...selectedOption, parameters: newOptions });
+    };
+
+    const handleOptionChange = (optionValue: any) => {
+        const currentOption = param.options?.find(
+            (option) => option.name === optionValue
+        );
+        currentOption && setSelectedOption(currentOption);
+    };
+
+    useEffect(() => {
+        console.log(selectedOption);
+    }, [selectedOption]);
+
+    return (
+        <div className="flex w-full flex-col gap-2">
+            <Label className="h4">{param.name}</Label>
+            <Select onValueChange={(name) => handleOptionChange(name)}>
+                <SelectTrigger className="flex w-full items-center justify-between rounded-lg border-2 border-brand-border-300 bg-white px-2 py-2">
+                    {selectedOption?.name || 'Select an option'}
+                    <SelectIcon />
+                </SelectTrigger>
+                <SelectContent className="bg-white">
+                    {param.options?.map((option, optIndex) => (
+                        <SelectItem key={optIndex} value={option.name}>
+                            {option.name}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+            {selectedOption?.parameters &&
+                renderParameters(
+                    selectedOption.parameters,
+                    handleSelectedOptionParamChange
+                )}
+        </div>
+    );
+};
+
+export const renderParameters = (
+    parameters: IParameter[],
+    onValueChange: (id: string, value: any) => void,
+    onNestedValueChange?: (parentId: string, subParamID: string, value: any) => void,
+    handleOptionChange?: (value: any) => void,
+
+    // Option is the only function type whose value is stored on the outer object since it contains multiple nesting with multiple params
+    // todo: refactor
+    optionValue?: IParameterOption
+) => (
+    <div className="flex flex-col gap-4">
+        {parameters.map((param, index) => (
+            <div key={index}>
+                {param.type === 'string' ||
+                param.type === 'hash' ||
+                param.type === 'url'
+                    ? renderStringParameter(param, onValueChange)
+                    : param.type === 'number'
+                      ? renderNumberParameter(param, onValueChange)
+                      : (param.type === 'object' || param.type === 'list') &&
+                          param.parameters
+                        ? renderObjectParameter(param, onNestedValueChange!)
+                        : param.type === 'options' && param.options
+                          ? renderOptionsParameter(
+                                param,
+                                handleOptionChange,
+                                optionValue || null
+                            )
+                          : null}
+            </div>
+        ))}
+    </div>
+);

@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 
+import { any } from 'zod';
+
 import { Card } from '@app/components/atoms/Card';
 import {
     Tabs,
@@ -56,7 +58,11 @@ export default function TriggerTab({
     setSelectedTab,
     onlyCronTriggerTab
 }: {
-    onChange?: any;
+    onChange?: (
+        cronExpression: string[],
+        configuredSettings: string,
+        selectedTab: any
+    ) => void;
     defaultCron?: any;
     previousSelectedOption?: string;
     previousConfiguredSettings?: IInputSetting[];
@@ -65,7 +71,9 @@ export default function TriggerTab({
     onlyCronTriggerTab?: boolean;
 }) {
     const [cron, setCron] = useState<string[]>(
-        defaultCron || ['*', '*', '*', '*', '*']
+        typeof defaultCron === 'string'
+            ? defaultCron.split(' ')
+            : defaultCron || ['*', '*', '*', '*', '*']
     );
 
     /* State for persisiting custom cron settings when switching tabs*/
