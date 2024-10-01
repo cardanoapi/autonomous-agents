@@ -46,15 +46,11 @@ export class Executor {
     }
 
     getHelpers(wallet: any, agentName: string) {
-        const context = this.functionContext
         return {
             generateProposalMetadataContent: () =>
                 generateProposalMetadataContent(agentName),
             generateDrepMetadataContent: () =>
-                generateRegisterDrepMetadataContent(
-                    agentName,
-                    wallet.paymentKey.private
-                ),
+                generateRegisterDrepMetadataContent(agentName, wallet.address),
             generateVoteMetadataContent: () => generateVoteMetadataContent(),
         }
     }
@@ -204,7 +200,6 @@ export class Executor {
             .catch((err) => {
                 console.error('GetBalance : ', err)
             })
-        console.log('drepId: ', this.functionContext.wallet.drepId)
         managerInterface.checkAndSaveDrepRegistration(
             this.functionContext.wallet.drepId
         )

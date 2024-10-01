@@ -62,6 +62,8 @@ export function generateProposalMetadataContent(agentName: string) {
                 },
             ],
             title: `Proposal By Agent ${agentName}`,
+            rationale:
+                'This proposal was created as a part of testing for autonomous-agent-testing',
         },
     })
 }
