@@ -9,11 +9,12 @@ import { convertToQueryStr } from '@app/utils/common/extra';
 import { agentFormSchema } from '../(pages)/agents/create-agent/_form/schema';
 import { baseAPIurl } from './config';
 
-type TriggerType = 'CRON' | 'MANUAL' | 'EVENT';
+export type TriggerType = 'CRON' | 'MANUAL' | 'EVENT';
 
 export interface ISubParameter {
     name: string;
-    value: string;
+    value?: string;
+    parameters?: ISubParameter[];
 }
 
 export interface IAgentAction {
