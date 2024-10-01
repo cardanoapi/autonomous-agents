@@ -1,3 +1,4 @@
+import { bech32 } from 'bech32';
 import { CIP30Instance } from 'kuber-client/types';
 
 export const convertLovelaceToAda = (lovelace?: number) => {
@@ -12,4 +13,23 @@ export async function getStakeAddress(enabledApi: CIP30Instance) {
     const rewardAddresses = await enabledApi.getRewardAddresses();
     const walletStakeAddress = rewardAddresses.length > 0 ? rewardAddresses[0] : '';
     return walletStakeAddress;
+}
+
+export function hexToBech32(hexAddress: string, prefix = 'drep') {
+    const data = Buffer.from(hexAddress, 'hex');
+
+    // Convert binary data into 5-bit groups as needed for Bech32
+    const words = bech32.toWords(data);
+
+    // Encode with Bech32 using the given prefix (usually 'stake')
+    return bech32.encode(prefix, words);
+}
+
+export function bech32toHex(bechAddress: string) {
+    if (bechAddress.startsWith('drep')) {
+        const decodedId = bech32.decode(bechAddress, 100);
+        const data = bech32.fromWords(decodedId.words);
+        return Buffer.from(data).toString('hex');
+    }
+    return bechAddress;
 }

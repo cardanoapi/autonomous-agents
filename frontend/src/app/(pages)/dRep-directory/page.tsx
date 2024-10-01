@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { fetchDreps } from '@api/dreps';
 import { useQuery } from '@tanstack/react-query';
+import { bech32toHex } from '@utils';
 
 import DataActionBar from '@app/app/components/DataActionBar';
 import {
@@ -53,7 +54,7 @@ export default function DRepDirectory() {
     const [isFirstFetch, setIsFirstFetch] = useState<boolean>(true);
 
     const handleSearch = (searchValue: string) => {
-        setQueryParams({ ...queryParams, search: searchValue, page: 1 });
+        setQueryParams({ ...queryParams, search: bech32toHex(searchValue), page: 1 });
     };
 
     const handleFilterChange = (filter: string) => {
