@@ -159,6 +159,11 @@ export class Executor {
                                     return
                                 })
                         } catch (error) {
+                            if (saveDrepStatus) {
+                                rpcInterface.checkAndSaveDrepRegistration(
+                                    walletDetails.drep_id
+                                )
+                            }
                             reject(error)
                         }
                     }
@@ -199,6 +204,7 @@ export class Executor {
             .catch((err) => {
                 console.error('GetBalance : ', err)
             })
+        console.log('drepId: ', this.functionContext.wallet.drepId)
         managerInterface.checkAndSaveDrepRegistration(
             this.functionContext.wallet.drepId
         )

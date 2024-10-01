@@ -2,13 +2,14 @@ import { Kafka } from 'kafkajs'
 import { ManagerService } from './ManagerService'
 import { AgentManagerRPC } from './AgentManagerRPC'
 import { fetchAgentConfiguration } from '../repository/agent_manager_repository'
+import environments from '../config/environments'
 
-const brokerUrl = process.env.BROKER_URL || ''
+const brokerUrl = environments.brokerUrl
 const kafka = new Kafka({
-    clientId: process.env['CLIENT_ID'],
+    clientId: environments.clientId,
     brokers: [brokerUrl], // Update with your Kafka broker address
 })
-const kafka_prefix = process.env.KAFKA_PREFIX || ''
+const kafka_prefix = environments.kafkaPrefix
 
 const consumer = kafka.consumer({ groupId: 'agent-manager-configs' })
 
