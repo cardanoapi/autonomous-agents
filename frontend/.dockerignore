@@ -7,7 +7,9 @@
 .git
 .env.example
 Readme.md
+Dockerfile
 .gitignore
+.dockerignore
 
 /node_modules
 /build
