@@ -22,7 +22,7 @@ class DrepService:
         if search:
             try:
                 internalDrep = await self.db.prisma.agentwalletdetails.find_first(
-                    where={"stake_key_hash": convert_hex_to_base64(search)}
+                    where={"stake_key_hash": convert_string_to_base64(search)}
                 )
                 agents = [
                     await self.db.prisma.agent.find_first(
@@ -129,13 +129,15 @@ class DrepService:
             # raise HTTPException(status_code = 500, content='MetaData Service Error')
 
 
-def convert_hex_to_base64(hex_string):
+def convert_string_to_base64(string):
     try:
-        binary_data = bytes.fromhex(hex_string)
+        if string.startswith("drep"):
+            pass
+        binary_data = bytes.fromhex(string)
         base64_result = base64.b64encode(binary_data).decode("utf-8")
         return base64_result
     except:
-        return hex_string
+        return string
 
 
 def convert_base64_to_hex(base_64_string: Base64):

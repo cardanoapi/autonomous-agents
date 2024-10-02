@@ -1,5 +1,4 @@
 import asyncio
-from datetime import datetime
 from typing import Any, List
 
 import aiohttp
@@ -67,7 +66,7 @@ class ProposalService:
         self, proposal: TriggerHistoryDto, index: int, results: [Any]
     ):
         url = f"{api_settings.DB_SYNC_API}/proposal?proposal={proposal.txHash}"
-        proposal_data = (await self._fetch_proposal_data(url))[0]
+        proposal_data = await self._fetch_proposal_data(url)
         if not proposal_data:
             results[index] = ""
             return
@@ -86,10 +85,8 @@ class ProposalService:
         search_url = f"{api_settings.DB_SYNC_API}/proposal?page={page}&size={pageSize}&sort={sort}"
         if search:
             search_url = f"{api_settings.DB_SYNC_API}/proposal?proposal={search}"
-        print(1, datetime.now().isoformat())
         async with aiohttp.ClientSession() as session:
             async with session.get(search_url) as response:
-                print("response", datetime.now().isoformat())
                 async with asyncio.TaskGroup() as tg:
                     response_json = await response.json()
                     for index, proposal in enumerate(response_json["items"]):
@@ -98,7 +95,6 @@ class ProposalService:
                             tg.create_task(
                                 self._fetch_metadata(proposal.get("metadataHash"), proposal.get("url"), proposal)
                             )
-                print(2, datetime.now().isoformat())
                 return Page(
                     items=response_json["items"],
                     total=response_json["totalCount"],
@@ -108,7 +104,6 @@ class ProposalService:
                 )
 
     async def add_agent_in_external_proposals(self, index: int, proposal: Any, proposals: List[Any]):
-        print("agent_detail", datetime.now().isoformat())
         if proposal["txHash"]:
             try:
                 internal_proposal = await self.db.prisma.triggerhistory.find_first(where={"txHash": proposal["txHash"]})
@@ -116,13 +111,11 @@ class ProposalService:
                     agent = await self.db.prisma.agent.find_first(where={"id": internal_proposal.agentId})
                     proposal["agentId"] = agent.id
                     proposal["agentName"] = agent.name
-                print("agent_detail_end", datetime.now().isoformat())
             except:
                 raise HTTPException(status_code=500, content="Proposal with given id not found")
         proposals[index] = proposal
 
     async def _fetch_metadata(self, metadata_hash: str, url: str, proposal_dict: Any):
-        print("meta_start", datetime.now().isoformat())
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(
@@ -133,7 +126,6 @@ class ProposalService:
                         proposal_dict["title"] = (
                             metadata_resp_json.get("metadata", {}).get("body", {}).get("title", None)
                         )
-            print("meta_end", datetime.now().isoformat())
         except:
             pass
             # raise HTTPException(status_code = 500, content='MetaData Service Error')
@@ -143,6 +135,6 @@ class ProposalService:
             async with session.get(url) as response:
                 if response.status == 200:
                     data = await response.json()
-                    if "items" in data:
-                        return data["items"]
+                    if "items" in data and data["items"]:
+                        return data["items"][0]
         return None

@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import { useMutation } from '@tanstack/react-query';
+import { hexToBech32 } from '@utils';
 import { Edit } from 'lucide-react';
 
 import {
@@ -128,11 +129,13 @@ const AgentOverViewComponent = ({
                     <span className={'pb-2 text-start text-lg font-medium'}>DRep</span>
                     <div className={'flex w-full items-center gap-1'}>
                         <span className={'font-medium'}>Id :</span>
-                        <TextDisplayField
-                            title="Id"
-                            showCopy
-                            content={agent?.drep_id}
-                        />
+                        {agent?.drep_id && (
+                            <TextDisplayField
+                                title="Id"
+                                showCopy
+                                content={hexToBech32(agent?.drep_id)}
+                            />
+                        )}
                     </div>
                     <div className={'flex gap-2'}>
                         <span className={' font-medium'}>Registered :</span>
@@ -183,11 +186,13 @@ const AgentOverViewComponent = ({
                     <span className={'pb-2 text-lg font-medium'}>Stake</span>
                     <div className={'flex w-full items-center gap-1'}>
                         <span className={'font-medium'}>Address:</span>
-                        <TextDisplayField
-                            title="Address"
-                            showCopy
-                            content={agent?.drep_id}
-                        />
+                        {agent?.drep_id && (
+                            <TextDisplayField
+                                title="Address"
+                                showCopy
+                                content={hexToBech32(agent?.drep_id, 'stake_test')}
+                            />
+                        )}
                     </div>
                     <div className={'flex gap-2'}>
                         <span className={' font-medium'}>Registered :</span>

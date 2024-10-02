@@ -81,9 +81,7 @@ function connectToManagerWebSocket() {
         )
     })
 
-    ws.on('error', (er) => {
-        console.error('WebSocket error', er)
-        attemptReconnect()
+    ws.on('error', (err: any) => {
         clearInterval(interval)
     })
 }
@@ -105,9 +103,11 @@ function attemptReconnect() {
             setTimeout(() => {
                 connectToManagerWebSocket()
                 isReconnecting = false
-                console.log(
-                    `Attempting to reconnect... (${reconnectAttempts}/${maxReconnectAttempts})`
-                )
+                if (reconnectAttempts <= maxReconnectAttempts) {
+                    console.log(
+                        `Attempting to reconnect... (${reconnectAttempts}/${maxReconnectAttempts})`
+                    )
+                }
             }, 10000)
             maxReconnectAttempts >= reconnectAttempts &&
                 console.log('Waiting for 10 seconds before reconnecting')
