@@ -14,7 +14,7 @@ export const mapToTriggerCreateDTO = (
         return {
             type: item.type,
             action: {
-                function_name: item.name,
+                function_name: item.id,
                 parameters: convertToNameValuePair(item.parameters || [])
             },
             data: {
@@ -29,8 +29,8 @@ const convertToNameValuePair = (data: IParameter[]): ISubParameter[] => {
     return data.map((param) => {
         if (param.parameters) {
             return {
-                name: param.name,
-                parameters: convertToNameValuePair(param.parameters)
+                name: param.id,
+                value: convertToKeyValuePairObject(param.parameters)
             };
         }
         return {
@@ -38,6 +38,14 @@ const convertToNameValuePair = (data: IParameter[]): ISubParameter[] => {
             value: param.value
         };
     });
+};
+
+const convertToKeyValuePairObject = (parameters: IParameter[]) => {
+    const obj: { [key: string]: any } = {};
+    parameters.forEach((param) => {
+        obj[param.id] = param.value;
+    });
+    return obj;
 };
 
 const determineDataType = () => {

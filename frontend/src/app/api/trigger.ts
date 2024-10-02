@@ -1,4 +1,4 @@
-import { IAgentAction, ICronTrigger , IEventTrigger } from './agents';
+import { IAgentAction, ICronTrigger, IEventTrigger } from './agents';
 import { baseAPIurl } from './config';
 
 export interface ITrigger {
@@ -80,9 +80,8 @@ export const fetchTriggers = async () => {
     return data;
 };
 
-
 export interface ITriggerCreateDto {
-    type : string
-    action : IAgentAction
-    data : ICronTrigger | IEventTrigger
+    type: string;
+    action: IAgentAction;
+    data: ICronTrigger | IEventTrigger;
 }

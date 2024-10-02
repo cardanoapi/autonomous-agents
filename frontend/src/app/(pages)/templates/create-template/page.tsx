@@ -31,6 +31,7 @@ import { FunctionForm } from './components/FunctionForm';
 import { mapToTriggerCreateDTO } from './components/FunctionUtil';
 
 export interface IConfiguredFunctionsItem extends IFunctionsItem {
+    index: string; // for identifying function instance , id attribute holds function name
     type: TriggerType;
     cronValue?: ICronTrigger;
     eventValue?: IEventTrigger;
@@ -68,7 +69,7 @@ export default function CreateTemplatePage() {
     const handleAddFunction = (inputFunction: IFunctionsItem) => {
         const currentFunction = {
             ...inputFunction,
-            id: v4(),
+            index: v4(),
             type: 'CRON' as TriggerType,
             cronValue: { frequency: '* * * * *', probability: 100 }
         };
@@ -81,9 +82,9 @@ export default function CreateTemplatePage() {
         setIsDialogOpen(true);
     };
 
-    const handleDeleteFunction = (inputFunction: IFunctionsItem) => {
+    const handleDeleteFunction = (inputFunction: IConfiguredFunctionsItem) => {
         const newFunctions = mainState.functions.filter(
-            (functionItem) => functionItem.id !== inputFunction.id
+            (functionItem) => functionItem.index !== inputFunction.index
         );
         setMainState({
             ...mainState,
@@ -96,7 +97,7 @@ export default function CreateTemplatePage() {
     const handleSaveFunction = (item: IConfiguredFunctionsItem) => {
         console.log(item);
         const newFunctions = mainState.functions.map((functionItem) =>
-            functionItem.id === item.id ? item : functionItem
+            functionItem.index === item.index ? item : functionItem
         );
         console.log(newFunctions);
         setMainState({ ...mainState, functions: newFunctions });
@@ -121,7 +122,7 @@ export default function CreateTemplatePage() {
             template_triggers: mapToTriggerCreateDTO(mainState.functions)
         };
         console.log(templateRequest);
-        // postTemplateData({data:templateRequest});
+        postTemplateData({ data: templateRequest });
     };
 
     return (
