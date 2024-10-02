@@ -13,7 +13,7 @@ export type TriggerType = 'CRON' | 'MANUAL' | 'EVENT';
 
 export interface ISubParameter {
     name: string;
-    value?: string;
+    value: string;
     parameters?: ISubParameter[];
 }
 

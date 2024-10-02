@@ -11,7 +11,7 @@ import { getFunctionParameters } from '@utils';
 
 import TriggerTab, {
     IInputSetting
-} from '@app/app/(pages)/templates/create-template/components/TriggerTab';
+} from '@app/app/(pages)/templates/create-template/components/utils/TriggerTab';
 import { Button } from '@app/components/atoms/Button';
 import { CustomCombobox } from '@app/components/molecules/CustomCombobox';
 import ProbabilityInput from '@app/components/molecules/ProbabilityInput';
