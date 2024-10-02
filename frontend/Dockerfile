@@ -2,18 +2,13 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-ARG NEXT_PUBLIC_API_ENDPOINT_HOST
-ARG NEXT_PUBLIC_WS_URL
-ENV NEXT_PUBLIC_API_ENDPOINT_HOST=${NEXT_PUBLIC_API_ENDPOINT_HOST}
-ENV NEXT_PUBLIC_WS_URL=${NEXT_PUBLIC_WS_URL}
-
 COPY package.json yarn.lock ./
 
 RUN yarn install --frozen-lockfile
 
 COPY . .
 
-RUN yarn build
+RUN NEXT_PUBLIC_UMAMI_ENABLED=true NEXT_PUBLIC_NODE_ENV=production NEXT_PUBLIC_APM_ENABLED=true yarn build
 
 FROM node:18-alpine
 

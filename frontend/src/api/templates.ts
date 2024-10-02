@@ -6,8 +6,8 @@ import { z } from 'zod';
 
 import { convertToQueryStr } from '@app/utils/common/extra';
 
-import { templateFormSchema } from '../(pages)/templates/create-template/components/schema';
-import { ITemplateOption } from '../(pages)/templates/create-template/page';
+import { templateFormSchema } from '../app/(pages)/templates/create-template/components/schema';
+import { ITemplateOption } from '../app/(pages)/templates/create-template/page';
 import { baseAPIurl } from './config';
 
 type TriggerType = 'CRON' | 'MANUAL' | 'EVENT';

@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { ILineChartData } from '@app/components/Chart/CustomLineChart';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
-import { fetchActiveAgentsCount, fetchAgents } from '../api/agents';
-import { fetchTemplates } from '../api/templates';
+import { fetchActiveAgentsCount, fetchAgents } from '@api/agents';
+import { fetchTemplates } from '@api/templates';
 import OverViewAgentsCard from './OverViewAgentsCard';
 import OverViewGraphCard from './OverViewGraphCard';
 import OverViewTemplatesCard from './OverViewTemplatesCard';

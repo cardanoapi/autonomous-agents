@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { Trash2 } from 'lucide-react';
 
-import { ITemplate, deleteTemplatebyID } from '@app/app/api/templates';
-import { ITemplateConfiguration } from '@app/app/api/templates';
+import { ITemplate, deleteTemplatebyID } from '@api/templates';
+import { ITemplateConfiguration } from '@api/templates';
 import { Truncate } from '@app/utils/common/extra';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 

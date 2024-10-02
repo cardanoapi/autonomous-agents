@@ -12,7 +12,7 @@ import environments from '@app/configs/environments';
 const mutex = new Mutex();
 
 const baseQuery = fetchBaseQuery({
-    baseUrl: environments.API_ENDPOINT_HOST
+    baseUrl: environments.api.apiUrl
 });
 
 const customFetchBase: BaseQueryFn<
