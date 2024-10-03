@@ -79,16 +79,16 @@ const AgentOverViewComponent = ({
             data: config.data
         }));
         console.log(updatedAgentConfigs);
-        // updateAgent
-        //     .mutateAsync({
-        //         agentId: agent?.id,
-        //         agentName: agentName,
-        //         instance: agentInstance,
-        //         agentConfigurations: updatedAgentConfigs
-        //     })
-        //     .then(() => {
-        //         setIsEditing(false);
-        //     });
+        updateAgent
+            .mutateAsync({
+                agentId: agent?.id,
+                agentName: agentName,
+                instance: agentInstance,
+                agentConfigurations: updatedAgentConfigs
+            })
+            .then(() => {
+                setIsEditing(false);
+            });
     };
 
     const handleClickDeleteAgent = (configIndex: number) => {

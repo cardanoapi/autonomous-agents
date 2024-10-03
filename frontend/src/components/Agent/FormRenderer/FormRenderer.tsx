@@ -33,7 +33,7 @@ const FormRenderer = ({
             agentFunction: AgentTriggerRequestData;
         }) => manualTriggerForAgent(data.agentId, data.agentFunction),
         onSuccess: () => {
-            // queryClient.refetchQueries({ queryKey: ['agents'] });
+            queryClient.refetchQueries({ queryKey: ['agents'] });
             SuccessToast(
                 `${selectedFunction ? selectedFunction.name : 'Transfer Ada'} has been successfully triggered.`
             );

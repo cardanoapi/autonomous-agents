@@ -2,7 +2,7 @@ import { ISubParameter } from '@api/agents';
 import { ITriggerCreateDto } from '@api/trigger';
 import { IParameter, IParameterOption } from '@models/types/functions';
 
-import { IConfiguredFunctionsItem } from '../page';
+import { IConfiguredFunctionsItem } from '../../page';
 
 export const mapToTriggerCreateDTO = (
     data: IConfiguredFunctionsItem[]

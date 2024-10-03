@@ -1,31 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import React from 'react';
 
 import { TriggerType } from '@api/agents';
 import { Slider } from '@mui/material';
-import {
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-} from '@radix-ui/react-select';
-import { current } from '@reduxjs/toolkit';
 import { X } from 'lucide-react';
 
 import { Button } from '@app/components/atoms/Button';
 import { Card, CardDescription, CardTitle } from '@app/components/atoms/Card';
-import { Select } from '@app/components/atoms/Select';
 import { CustomCombobox } from '@app/components/molecules/CustomCombobox';
+import { ErrorToast } from '@app/components/molecules/CustomToasts';
 
 import { IConfiguredFunctionsItem } from '../page';
-import { renderParameters } from './utils/ParameterRenderers';
-import TriggerTab from './utils/TriggerTab';
-import { ErrorToast } from '@app/components/molecules/CustomToasts';
+import { renderParameters } from './trigger/ParameterRenderers';
+import TriggerTab from './trigger/TriggerTab';
 
 interface IFunctionForm {
     currentFunction: IConfiguredFunctionsItem;
     onValueChange: (data: IConfiguredFunctionsItem) => void;
-    onClose: (data:IConfiguredFunctionsItem) => void;
+    onClose: (data: IConfiguredFunctionsItem) => void;
     onSave: (item: IConfiguredFunctionsItem) => void;
 }
 
@@ -40,8 +32,6 @@ export const FunctionForm = ({
     const [cronExpression] = useState(
         currentFunction?.cronValue?.frequency || '* * * * *'
     );
-
-   
 
     const updateFunctionState = (updates: Partial<IConfiguredFunctionsItem>) => {
         if (!functionState) return;
@@ -84,7 +74,7 @@ export const FunctionForm = ({
     };
 
     const handleTypeChange = (type: string) => {
-        const newFunciontState = { ...functionState , type: type as TriggerType};
+        const newFunciontState = { ...functionState, type: type as TriggerType };
         updateFunctionState(newFunciontState);
     };
 
@@ -114,40 +104,48 @@ export const FunctionForm = ({
     };
 
     const handleOnSave = () => {
-        const validState = checkAllRequiredFieldsAreFilled()
+        const validState = checkAllRequiredFieldsAreFilled();
         validState && onSave?.(functionState);
     };
 
     const checkAllRequiredFieldsAreFilled = () => {
-
         if (functionState?.type === 'EVENT') {
             //event type has no parameter for now
-            return true
-        } 
+            return true;
+        }
 
-        if (functionState?.parameters?.[0].type === 'options' && !functionState.optionValue) {
-            ErrorToast('Please select an option')
-            return false
+        if (
+            functionState?.parameters?.[0].type === 'options' &&
+            !functionState.optionValue
+        ) {
+            ErrorToast('Please select an option');
+            return false;
         }
 
         let validState = true;
         functionState?.parameters?.forEach((item) => {
-            if (item.optional === false && !item.value || item.value === '') {
-                validState = false
+            if ((item.optional === false && !item.value) || item.value === '') {
+                validState = false;
             }
             item.parameters?.forEach((subItem) => {
-                if(subItem.optional === false && !subItem.value || subItem.value === '') {
-                    validState = false
+                if (
+                    (subItem.optional === false && !subItem.value) ||
+                    subItem.value === ''
+                ) {
+                    validState = false;
                 }
             });
         });
-        !validState && ErrorToast('Please fill all required fields')
-        return validState
-    }
+        !validState && ErrorToast('Please fill all required fields');
+        return validState;
+    };
 
     return (
         <Card className="relative flex h-full min-h-[450px] min-w-[500px] flex-col justify-between bg-brand-Azure-400 !px-4 !py-3">
-            <X className="absolute right-4 top-4 cursor-pointer" onClick={() => onClose?.(functionState)} />
+            <X
+                className="absolute right-4 top-4 cursor-pointer"
+                onClick={() => onClose?.(functionState)}
+            />
             <div className="flex flex-col gap-y-4">
                 <CardTitle className="!h1 text-center">
                     {currentFunction?.name}

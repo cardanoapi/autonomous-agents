@@ -31,9 +31,9 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
         setOpenDialog(false);
     };
 
-    // if (agent?.is_active === false || agent?.is_active === null) {
-    //     return <AgentOfflinePlaceholder />;
-    // }
+    if (agent?.is_active === false || agent?.is_active === null) {
+        return <AgentOfflinePlaceholder />;
+    }
 
     return (
         <div className={'flex h-full w-full flex-col gap-10'}>

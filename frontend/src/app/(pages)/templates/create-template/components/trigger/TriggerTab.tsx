@@ -2,8 +2,6 @@
 
 import React, { useEffect, useState } from 'react';
 
-import { any } from 'zod';
-
 import { Card } from '@app/components/atoms/Card';
 import {
     Tabs,

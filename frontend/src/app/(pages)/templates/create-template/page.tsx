@@ -3,6 +3,8 @@
 import React from 'react';
 import { useState } from 'react';
 
+import { useRouter } from 'next/navigation';
+
 import { ICronTrigger, IEventTrigger, TriggerType } from '@api/agents';
 import { ICreateTemplateRequestDTO, postTemplateData } from '@api/templates';
 import {
@@ -11,6 +13,8 @@ import {
     TemplateFunctions
 } from '@models/types/functions';
 import { Dialog, DialogContent } from '@mui/material';
+import { useMutation } from '@tanstack/react-query';
+import { useAtom } from 'jotai';
 import { v4 } from 'uuid';
 
 import { Button } from '@app/components/atoms/Button';
@@ -24,18 +28,13 @@ import {
 import { Input } from '@app/components/atoms/Input';
 import { Textarea } from '@app/components/atoms/Textarea';
 import { Label } from '@app/components/atoms/label';
+import { ErrorToast } from '@app/components/molecules/CustomToasts';
+import { templateCreatedAtom } from '@app/store/localStore';
+import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { FunctionCards } from './components/FunctionCards';
 import { FunctionForm } from './components/FunctionForm';
-import { mapToTriggerCreateDTO } from './components/FunctionUtil';
-import { useMutation } from '@tanstack/react-query';
-import { queryClient } from '@app/utils/providers/ReactQueryProvider';
-import { useRouter } from 'next/navigation';
-import { useAtom } from 'jotai';
-import { templateCreatedAtom } from '@app/store/localStore';
-import { ErrorToast } from '@app/components/molecules/CustomToasts';
-
-
+import { mapToTriggerCreateDTO } from './components/utils/FunctionUtil';
 
 export interface IConfiguredFunctionsItem extends IFunctionsItem {
     index: string; // for identifying function instance , id attribute holds function name
@@ -55,10 +54,9 @@ interface IFormData {
 }
 
 export default function CreateTemplatePage() {
-
     const router = useRouter();
     const [submittingForm, setSubmittingForm] = useState(false);
-    const [,setTemplateCreated] = useAtom(templateCreatedAtom);
+    const [, setTemplateCreated] = useAtom(templateCreatedAtom);
 
     const [mainState, setMainState] = useState<IFormData>({
         name: '',
@@ -68,7 +66,7 @@ export default function CreateTemplatePage() {
 
     const templateMutation = useMutation({
         mutationFn: (data: ICreateTemplateRequestDTO) =>
-            postTemplateData({data:data}),
+            postTemplateData({ data: data }),
         onSuccess: () => {
             new Promise((resolve) => setTimeout(resolve, 1000));
             queryClient.refetchQueries({ queryKey: ['templates'] });
@@ -80,7 +78,7 @@ export default function CreateTemplatePage() {
             ErrorToast(error?.response?.data);
         }
     });
-    
+
     const [currentSelectedFunction, setCurrentSelectedFunction] =
         useState<IConfiguredFunctionsItem | null>(null);
 
@@ -100,12 +98,7 @@ export default function CreateTemplatePage() {
             type: 'CRON' as TriggerType,
             cronValue: { frequency: '* * * * *', probability: 100 }
         };
-        const newFunctions = [...mainState.functions, currentFunction];
         setCurrentSelectedFunction(currentFunction);
-        // setMainState({
-        //     ...mainState,
-        //     functions: newFunctions
-        // });
         setIsDialogOpen(true);
     };
 
@@ -125,7 +118,9 @@ export default function CreateTemplatePage() {
         const newFunctions = mainState.functions.map((functionItem) =>
             functionItem.index === item.index ? item : functionItem
         );
-        const indexExists = newFunctions.some((functionItem) => functionItem.index === item.index);
+        const indexExists = newFunctions.some(
+            (functionItem) => functionItem.index === item.index
+        );
         if (!indexExists) {
             newFunctions.push(item);
         }
@@ -139,27 +134,24 @@ export default function CreateTemplatePage() {
     };
 
     const handleTemplateSubmit = () => {
-
         if (!mainState.name) {
             ErrorToast('Template name is required');
-            return
+            return;
         }
 
         if (!mainState.description) {
             ErrorToast('Template description is required');
-            return
+            return;
         }
-
 
         const templateRequest: ICreateTemplateRequestDTO = {
             name: mainState.name,
             description: mainState.description,
             template_triggers: mapToTriggerCreateDTO(mainState.functions)
         };
-        setSubmittingForm(true)
+        setSubmittingForm(true);
         templateMutation.mutate(templateRequest);
     };
-
 
     return (
         <>
@@ -206,6 +198,7 @@ export default function CreateTemplatePage() {
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
+                {/* Render Selcted Configured Functions */}
                 <div className="grid w-full grid-cols-2 gap-4">
                     <FunctionCards
                         functions={mainState.functions}
@@ -221,12 +214,17 @@ export default function CreateTemplatePage() {
                     onClick={() => {
                         handleTemplateSubmit();
                     }}
-                    disabled={submittingForm || !mainState.functions.length || !mainState.name || !mainState.description}
+                    disabled={
+                        submittingForm ||
+                        !mainState.functions.length ||
+                        !mainState.name ||
+                        !mainState.description
+                    }
                 >
-                   
                     Create Template
                 </Button>
             </Card>
+            {/*Dialog for function form*/}
             <Dialog open={isDialogOpen}>
                 <DialogContent className="!p-0">
                     {currentSelectedFunction && (

@@ -4,21 +4,19 @@ import { IParameter, IParameterOption } from '@models/types/functions';
 import { SelectIcon, SelectTrigger } from '@radix-ui/react-select';
 
 import { Input } from '@app/components/atoms/Input';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectValue
-} from '@app/components/atoms/Select';
+import { Select, SelectContent, SelectItem } from '@app/components/atoms/Select';
 import { Label } from '@app/components/atoms/label';
 import { NumberInput } from '@app/components/molecules/NumberInput';
 
-export const renderStringParameter = (
+export const RenderStringParameter = (
     param: IParameter,
     onValueChange: (id: string, value: any) => void
 ) => (
     <div className="flex w-full flex-col gap-2">
-        <Label className="h4">{param.name}{param.optional == false ? ' *' : ''}</Label>
+        <Label className="h4">
+            {param.name}
+            {param.optional == false ? ' *' : ''}
+        </Label>
         <Input
             defaultValue={param.value}
             className="w-full"
@@ -27,12 +25,15 @@ export const renderStringParameter = (
     </div>
 );
 
-export const renderNumberParameter = (
+export const RenderNumberParameter = (
     param: IParameter,
     onValueChange: (id: string, value: any) => void
 ) => (
     <div className="flex w-full flex-col gap-2">
-        <Label className="h4">{param.name}{param.optional == false ? ' *' : ''}</Label>
+        <Label className="h4">
+            {param.name}
+            {param.optional == false ? ' *' : ''}
+        </Label>
         <NumberInput
             defaultValue={param.value ? Number(param.value) : 0}
             className="w-full"
@@ -41,12 +42,15 @@ export const renderNumberParameter = (
     </div>
 );
 
-export const renderObjectParameter = (
+export const RenderObjectParameter = (
     param: IParameter,
     onNestedValueChange: (parentId: string, subParamId: string, newValue: any) => void
 ) => (
     <div className="flex w-full flex-col gap-2">
-        <Label className="h4">{param.name}{param.optional == false ? ' *' : ''}</Label>
+        <Label className="h4">
+            {param.name}
+            {param.optional == false ? ' *' : ''}
+        </Label>
         <div className="ml-4 grid grid-cols-2 gap-4">
             {param.parameters?.map((subParam, subIndex) => (
                 <div key={subIndex} className="flex items-center gap-4">
@@ -64,7 +68,7 @@ export const renderObjectParameter = (
     </div>
 );
 
-export const renderOptionsParameter = (
+export const RenderOptionsParameter = (
     param: IParameter,
     onOptionChange?: (value: any) => void,
     defaultOptionValue?: IParameterOption | null
@@ -98,7 +102,10 @@ export const renderOptionsParameter = (
 
     return (
         <div className="flex w-full flex-col gap-2">
-            <Label className="h4">{param.name}{param.optional == false ? ' *' : ''}</Label>
+            <Label className="h4">
+                {param.name}
+                {param.optional == false ? ' *' : ''}
+            </Label>
             <Select onValueChange={(name) => handleOptionChange(name)}>
                 <SelectTrigger className="flex w-full items-center justify-between rounded-lg border-2 border-brand-border-300 bg-white px-2 py-2">
                     {selectedOption?.name || 'Select an option'}
@@ -137,14 +144,14 @@ export const renderParameters = (
                 {param.type === 'string' ||
                 param.type === 'hash' ||
                 param.type === 'url'
-                    ? renderStringParameter(param, onValueChange)
+                    ? RenderStringParameter(param, onValueChange)
                     : param.type === 'number'
-                      ? renderNumberParameter(param, onValueChange)
+                      ? RenderNumberParameter(param, onValueChange)
                       : (param.type === 'object' || param.type === 'list') &&
                           param.parameters
-                        ? renderObjectParameter(param, onNestedValueChange!)
+                        ? RenderObjectParameter(param, onNestedValueChange!)
                         : param.type === 'options' && param.options
-                          ? renderOptionsParameter(
+                          ? RenderOptionsParameter(
                                 param,
                                 handleOptionChange,
                                 optionValue || null

@@ -1,4 +1,3 @@
-import { IFunctionsItem } from '@models/types/functions';
 import { Trash2 } from 'lucide-react';
 import { Edit } from 'lucide-react';
 
