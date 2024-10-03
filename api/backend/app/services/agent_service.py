@@ -140,7 +140,7 @@ class AgentService:
         existing_agent = await self.agent_repository.modify_agent(agent_id, agent_data)
         self.raise_exception_if_agent_not_found(existing_agent)
         await self.kafka_service.publish_message(
-            api_settings.KAFKA_PREFIX + "trigger_config_updates", "config_updated", key=agent_id
+            api_settings.getKafkaTopicPrefix() + "trigger_config_updates", "config_updated", key=agent_id
         )
         return AgentResponseWithAgentConfigurations(**existing_agent.dict(), agent_configurations=updated_triggers)
 
@@ -172,7 +172,7 @@ class AgentService:
         await self.check_if_agent_exists(agent_id)
         message_in_rpc_format = json.dumps({"method": action.function_name, "parameters": action.dict()["parameters"]})
         await self.kafka_service.publish_message(
-            api_settings.KAFKA_PREFIX + "Agent_Trigger", message_in_rpc_format, key=agent_id
+            api_settings.getKafkaTopicPrefix() + "Agent_Trigger", message_in_rpc_format, key=agent_id
         )
 
     def raise_exception_if_agent_not_found(self, agent):
