@@ -1,4 +1,4 @@
-from typing import Union, Optional , Any
+from typing import Union, Optional, Any
 from pydantic import BaseModel, json
 from croniter import croniter
 

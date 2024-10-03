@@ -1,61 +1,69 @@
-import { Kafka } from 'kafkajs'
+import { Kafka, KafkaMessage } from "kafkajs";
 import { ManagerService } from './ManagerService'
 import { AgentManagerRPC } from './AgentManagerRPC'
 import { fetchAgentConfiguration } from '../repository/agent_manager_repository'
+import environments from '../config/environments'
 
-const brokerUrl = process.env.BROKER_URL || ''
+const brokerUrl = environments.brokerUrl
 const kafka = new Kafka({
-    clientId: process.env['CLIENT_ID'],
+    clientId: environments.clientId,
     brokers: [brokerUrl], // Update with your Kafka broker address
 })
+const kafka_prefix = environments.kafkaPrefix
 
-const consumer = kafka.consumer({ groupId: 'agent-manager-configs' })
+const consumer = kafka.consumer({ groupId: environments.kafkaConsumerGroup || `${  kafka_prefix}-agent-manager` })
 
-const manualTriggerConsumer = kafka.consumer({
-    groupId: 'agent-manager-actions',
-})
+
+const configTopic=`${environments.kafkaTopicPrefix || kafka_prefix}-updates`
+const triggerTopic = `${environments.kafkaTopicPrefix  || kafka_prefix}-triggers`
 
 export async function initKafkaConsumers(manager: AgentManagerRPC) {
     const managerService = new ManagerService(manager)
-    await consumer.connect()
-    await consumer.subscribe({
-        topic: 'trigger_config_updates',
-        fromBeginning: true,
+    await consumer.connect().catch(e=>{
+        console.error("Error connecting consumer",e)
     })
+    await consumer.subscribe({
+        topics: [configTopic,triggerTopic],
+        fromBeginning: true,
+    }).catch(e=>{
+        console.error("Error subscribing",e)
+    })
+
+    const configUpdateHandler= async (message:KafkaMessage)=>{
+        const agentId = message.key?.toString() || ''
+        const isActive = managerService.isAgentActive(agentId)
+        if (isActive) {
+            const updatedConfigs = await fetchAgentConfiguration(agentId)
+            managerService.sendToWebSocket(agentId, 'config_updated', updatedConfigs)
+        }
+    }
+    const manualTriggerHandler=(message:KafkaMessage)=>{
+        const agentId = message.key?.toString()
+        const methodConfig = message.value?.toString()
+        const parsedMethodConfig = JSON.parse(methodConfig || '')
+        if (agentId && parsedMethodConfig) {
+            const method = parsedMethodConfig.method
+            const parameters = parsedMethodConfig.parameters
+            if (method === 'Agent_Deletion') {
+                managerService.disconnectWebsocketConnection(
+                  agentId,
+                  `Due to deletion,Agent with id ${agentId} is disconnected.`
+                )
+            } else {
+                console.log(parsedMethodConfig)
+                manager.isActive(agentId) && manager.fireMethod(agentId, method, ...parameters)
+            }
+        }
+    }
 
     await consumer.run({
-        eachMessage: async ({ message }) => {
-            const agentId = message.key?.toString() || ''
-            const isActive = managerService.isAgentActive(agentId)
-            if (isActive) {
-                const updatedConfigs = await fetchAgentConfiguration(agentId)
-                managerService.sendToWebSocket(agentId, 'config_updated', updatedConfigs)
+        eachMessage: async ({ message,topic }) => {
+            if(topic == configTopic){
+                configUpdateHandler(message)
+            }else{
+                manualTriggerHandler(message)
             }
         },
     })
 
-    // kafka message are consumed in RPC format
-    await manualTriggerConsumer.connect()
-    await manualTriggerConsumer.subscribe({ topic: 'Agent_Trigger' })
-
-    await manualTriggerConsumer.run({
-        eachMessage: async ({ message }) => {
-            const agentId = message.key?.toString()
-            const methodConfig = message.value?.toString()
-            const parsedMethodConfig = JSON.parse(methodConfig || '')
-            if (agentId && parsedMethodConfig) {
-                const method = parsedMethodConfig.method
-                const parameters = parsedMethodConfig.parameters
-                if (method === 'Agent_Deletion') {
-                    managerService.disconnectWebsocketConnection(
-                        agentId,
-                        `Due to deletion,Agent with id ${agentId} is disconnected.`
-                    )
-                } else {
-                    console.log(parsedMethodConfig)
-                    manager.isActive(agentId) && manager.fireMethod(agentId, method, ...parameters)
-                }
-            }
-        },
-    })
 }

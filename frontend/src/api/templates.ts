@@ -90,59 +90,6 @@ export const postTemplateData = async ({
     }
 };
 
-// export const postTemplateData = async (
-//     formData: z.infer<typeof templateFormSchema>
-// ) => {
-//     const formatedTemplatedata = {
-//         name: formData.name,
-//         description: formData.description,
-//         template_triggers: formData.triggers.map((item: ITemplateOption) => ({
-//             type: item.type,
-//             action:
-//                 item.type === 'CRON'
-//                     ? {
-//                           function_name: item.value,
-//                           parameters: item?.cronParameters?.map((param) => ({
-//                               name: param.name,
-//                               value: param.value
-//                           }))
-//                       }
-//                     : {
-//                           function_name: 'voteOnProposal',
-//                           parameters: []
-//                       },
-
-//             data:
-//                 item.type === 'CRON'
-//                     ? {
-//                           frequency: item.cronExpression?.join(' '),
-//                           probability: item.probability
-//                       }
-//                     : {
-//                           event: 'VoteEvent',
-//                           parameters: []
-//                       }
-//         }))
-//     };
-
-//     try {
-//         const response = await axios.post(
-//             `${baseAPIurl}/templates`,
-//             formatedTemplatedata,
-//             {
-//                 headers: {
-//                     'Content-Type': 'application/json'
-//                 },
-//                 withCredentials: true
-//             }
-//         );
-//         return response.data;
-//     } catch (error) {
-//         console.error('Error posting template data:', error);
-//         throw error;
-//     }
-// };
-
 export const updateTemplateData = async (formData: ITemplate) => {
     try {
         const response = await axios.put(

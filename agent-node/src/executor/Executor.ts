@@ -46,15 +46,11 @@ export class Executor {
     }
 
     getHelpers(wallet: any, agentName: string) {
-        const context = this.functionContext
         return {
             generateProposalMetadataContent: () =>
                 generateProposalMetadataContent(agentName),
             generateDrepMetadataContent: () =>
-                generateRegisterDrepMetadataContent(
-                    agentName,
-                    wallet.paymentKey.private
-                ),
+                generateRegisterDrepMetadataContent(agentName, wallet.address),
             generateVoteMetadataContent: () => generateVoteMetadataContent(),
         }
     }
@@ -159,6 +155,11 @@ export class Executor {
                                     return
                                 })
                         } catch (error) {
+                            if (saveDrepStatus) {
+                                rpcInterface.checkAndSaveDrepRegistration(
+                                    walletDetails.drep_id
+                                )
+                            }
                             reject(error)
                         }
                     }

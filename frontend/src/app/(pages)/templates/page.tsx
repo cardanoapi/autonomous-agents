@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import React from 'react';
 
+import { ITemplate, fetchTemplates } from '@api/templates';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
-import { ITemplate, fetchTemplates } from '@app/app/api/templates';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import {
     adminAccessAtom,

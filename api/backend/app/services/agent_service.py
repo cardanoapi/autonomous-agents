@@ -24,7 +24,7 @@ from backend.app.services.kafka_service import KafkaService
 from backend.app.services.template_service import TemplateService
 from backend.app.services.template_trigger_service import TemplateTriggerService
 from backend.app.services.trigger_service import TriggerService
-from backend.config.api_settings import APISettings
+from backend.config.api_settings import api_settings
 
 
 def check_if_agent_is_online(last_active: datetime | None) -> bool:
@@ -53,7 +53,6 @@ class AgentService:
         self.kafka_service = kafka_service
         self.user_repository = UserRepository()
         self.agent_instance_wallet_service = agent_instance_wallet_service
-        self.db_sync_api = APISettings().DB_SYNC_API
         self.template_service = template_service
 
     async def create_agent(self, agent_data: AgentCreateDTO):
@@ -140,7 +139,9 @@ class AgentService:
             )
         existing_agent = await self.agent_repository.modify_agent(agent_id, agent_data)
         self.raise_exception_if_agent_not_found(existing_agent)
-        await self.kafka_service.publish_message("trigger_config_updates", "config_updated", key=agent_id)
+        await self.kafka_service.publish_message(
+            api_settings.getKafkaTopicPrefix() + "trigger_config_updates", "config_updated", key=agent_id
+        )
         return AgentResponseWithAgentConfigurations(**existing_agent.dict(), agent_configurations=updated_triggers)
 
     async def get_active_agents_count(self):
@@ -170,7 +171,9 @@ class AgentService:
     async def trigger_agent_action(self, agent_id: str, action: AgentFunction):
         await self.check_if_agent_exists(agent_id)
         message_in_rpc_format = json.dumps({"method": action.function_name, "parameters": action.dict()["parameters"]})
-        await self.kafka_service.publish_message("Agent_Trigger", message_in_rpc_format, key=agent_id)
+        await self.kafka_service.publish_message(
+            api_settings.getKafkaTopicPrefix() + "Agent_Trigger", message_in_rpc_format, key=agent_id
+        )
 
     def raise_exception_if_agent_not_found(self, agent):
         if agent is None or False:
@@ -202,14 +205,14 @@ class AgentService:
                 raise HTTPException(status_code=400, content="Error fetching agent Drep details")
 
     async def fetch_balance(self, stake_address: str, session: ClientSession):
-        async with session.get(f"{self.db_sync_api}/address/balance?address={stake_address}") as response:
+        async with session.get(f"{api_settings.DB_SYNC_API}/address/balance?address={stake_address}") as response:
             try:
                 return await response.json()
             except:
                 raise HTTPException(status_code=400, content="Error fetching agent wallet balance")
 
     async def fetch_drep_details(self, drep_id: str, session: ClientSession) -> Dict[str, float | bool]:
-        async with session.get(f"{self.db_sync_api}/drep/{drep_id}") as response:
+        async with session.get(f"{api_settings.DB_SYNC_API}/drep/{drep_id}") as response:
             try:
                 res = await response.json()
                 voting_power = res.get("votingPower") / (10**6) if res.get("votingPower") else 0
@@ -219,7 +222,7 @@ class AgentService:
                 raise HTTPException(status_code=400, content="Error fetching agent Drep details")
 
     async def fetch_stake_address_details(self, stake_address: str, session: ClientSession):
-        async with session.get(f"{self.db_sync_api}/stake-address?address={stake_address}") as response:
+        async with session.get(f"{api_settings.DB_SYNC_API}/stake-address?address={stake_address}") as response:
             try:
                 is_stake_registered = False
                 res = await response.json()
@@ -237,7 +240,7 @@ class AgentService:
                 raise HTTPException(status_code=400, content="Error fetching agent Drep details")
 
     async def fetch_delegation_details(self, stake_address: str, session: ClientSession):
-        async with session.get(f"{self.db_sync_api}/delegation?address={stake_address}") as response:
+        async with session.get(f"{api_settings.DB_SYNC_API}/delegation?address={stake_address}") as response:
             try:
                 res = await response.json()
                 drep_id = res.get("drep", {}).get("drep_id") if res.get("drep") else None

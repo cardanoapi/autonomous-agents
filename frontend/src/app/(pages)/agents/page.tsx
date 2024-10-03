@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
+import { IAgent, fetchAgents } from '@api/agents';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
-import { IAgent, fetchAgents } from '@app/app/api/agents';
 import { cn } from '@app/components/lib/utils';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';

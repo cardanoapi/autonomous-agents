@@ -1,6 +1,7 @@
 export function generateProposalMetadataContent(agentName: string) {
     return JSON.stringify({
         '@context': {
+            '@language': 'en-us',
             CIP100: 'https://github.com/cardano-foundation/CIPs/blob/master/CIP-0100/README.md#',
             CIP108: 'https://github.com/cardano-foundation/CIPs/blob/master/CIP-0108/README.md#',
             hashAlgorithm: 'CIP100:hashAlgorithm',
@@ -61,6 +62,8 @@ export function generateProposalMetadataContent(agentName: string) {
                 },
             ],
             title: `Proposal By Agent ${agentName}`,
+            rationale:
+                'This proposal was created as a part of testing for autonomous-agent-testing',
         },
     })
 }

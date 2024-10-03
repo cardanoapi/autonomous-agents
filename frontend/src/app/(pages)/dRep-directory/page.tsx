@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { fetchDreps } from '@api/dreps';
 import { useQuery } from '@tanstack/react-query';
+import { bech32toHex } from '@utils';
 
 import DataActionBar from '@app/app/components/DataActionBar';
 import {
@@ -43,15 +44,17 @@ export default function DRepDirectory() {
         search: ''
     });
 
-    const { data, isFetching } = useQuery({
+    const { data, isLoading } = useQuery({
         queryKey: [QUERY_KEYS.useGetDRepListKey, queryParams],
-        queryFn: () => fetchDreps({ ...queryParams })
+        queryFn: () => fetchDreps({ ...queryParams }),
+        refetchOnWindowFocus: true,
+        staleTime: 5000
     });
 
     const [isFirstFetch, setIsFirstFetch] = useState<boolean>(true);
 
     const handleSearch = (searchValue: string) => {
-        setQueryParams({ ...queryParams, search: searchValue, page: 1 });
+        setQueryParams({ ...queryParams, search: bech32toHex(searchValue), page: 1 });
     };
 
     const handleFilterChange = (filter: string) => {
@@ -125,11 +128,11 @@ export default function DRepDirectory() {
             {/* DRep list */}
             <ScrollArea className="h-drepListHeight pb-4 pr-4">
                 <div className="flex flex-col space-y-4">
-                    {!isFetching &&
+                    {!isLoading &&
                         data?.items?.map((dRep) => (
                             <DRepCard key={dRep.drepId} dRep={dRep} />
                         ))}
-                    {isFetching &&
+                    {isLoading &&
                         Array.from({ length: 10 }).map((_, i) => (
                             <DRepCardSkeleton
                                 key={i}

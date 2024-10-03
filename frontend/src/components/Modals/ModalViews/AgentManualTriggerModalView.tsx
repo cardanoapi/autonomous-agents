@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
+import { manualTriggerForAgent } from '@api/agents';
+import { IFunction, IParameter } from '@api/functions';
 import { useMutation } from '@tanstack/react-query';
 import { validateInputFieldForGroup } from '@utils';
 import { useAtom } from 'jotai';
 
-import { manualTriggerForAgent } from '@app/app/api/agents';
-import { IFunction, IParameter } from '@app/app/api/functions';
 import GroupParams from '@app/components/Agent/GroupParameters';
 import { Button } from '@app/components/atoms/Button';
 import { Input } from '@app/components/atoms/Input';

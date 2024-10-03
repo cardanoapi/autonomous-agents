@@ -2,16 +2,13 @@
 
 import { useState } from 'react';
 
+import { IAgent } from '@api/agents';
+import { IAgentTriggerHistory, fetchAllTriggerHistory } from '@api/triggerHistory';
 import { MapFunctionNameAndViewName } from '@consts';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { Copy, OctagonAlert } from 'lucide-react';
 
-import { IAgent } from '@app/app/api/agents';
-import {
-    IAgentTriggerHistory,
-    fetchAllTriggerHistory
-} from '@app/app/api/triggerHistory';
 import AgentAvatar from '@app/components/Agent/AgentAvatar';
 import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';

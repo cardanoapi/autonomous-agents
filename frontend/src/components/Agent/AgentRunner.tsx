@@ -1,14 +1,14 @@
 import Link from 'next/link';
 
+import { IAgent } from '@api/agents';
 import { Copy } from 'lucide-react';
 
-import { IAgent } from '@app/app/api/agents';
 import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import environments from '@app/configs/environments';
 
 const AgentRunnerComponent = ({ agent }: { agent?: IAgent }) => {
-    const dockerCommand = `docker run -d --pull always -e AGENT_ID=${agent?.id} cardanoapi/autonomous-agents-agent-node:${environments.NEXT_PUBLIC_IMAGE_TAG}`;
+    const dockerCommand = `docker run -d --pull always -e NETWORK=${environments.network} -e AGENT_ID=${agent?.id} cardanoapi/autonomous-agents:${environments.NEXT_PUBLIC_IMAGE_TAG}`;
     return (
         <div className={'flex h-full w-full flex-col gap-10'}>
             <div className={'flex items-center gap-3'}>

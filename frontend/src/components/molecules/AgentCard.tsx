@@ -2,15 +2,12 @@ import { useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
+import { deleteAgentbyID } from '@api/agents';
+import { ITransactionsCount, fetchTransactionsCountByAgentID } from '@api/trigger';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { formatDatetoHumanReadable } from '@utils';
 import { PlayIcon, Trash2 } from 'lucide-react';
 
-import { deleteAgentbyID } from '@app/app/api/agents';
-import {
-    ITransactionsCount,
-    fetchTransactionsCountByAgentID
-} from '@app/app/api/trigger';
 import AgentAvatar from '@app/components/Agent/AgentAvatar';
 import { cn } from '@app/components/lib/utils';
 import { Truncate } from '@app/utils/common/extra';

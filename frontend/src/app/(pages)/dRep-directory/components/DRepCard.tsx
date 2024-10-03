@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useAppDialog } from '@hooks';
 import { DRepStatus, IDRepInternal } from '@models/types';
 import { TypographyH2 } from '@typography';
-import { convertLovelaceToAda } from '@utils';
+import { convertLovelaceToAda, hexToBech32 } from '@utils';
 import { CopyIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -37,7 +37,7 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
     }, [dRep.votingPower]);
 
     const handleCopyDRepId = () => {
-        navigator.clipboard.writeText(dRep.drepId);
+        navigator.clipboard.writeText(hexToBech32(dRep.drepId));
         toast.success('Drep ID copied');
     };
 
@@ -81,7 +81,7 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                         </div>
                         <div className="flex items-center text-brand-navy">
                             <p className="w-52 truncate text-sm font-medium 2xl:w-48 4xl:w-80">
-                                DrepID : {dRep.drepId}
+                                DrepID : {hexToBech32(dRep.drepId)}
                             </p>
                             <CopyIcon
                                 onClick={handleCopyDRepId}

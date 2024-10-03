@@ -1,4 +1,5 @@
-import { IFunction } from '@app/app/api/functions';
+import { IFunction } from '@api/functions';
+
 import { useModal } from '@app/components/Modals/context';
 
 const AgentFunctionCard = ({ func, agentId }: { func: IFunction; agentId: string }) => {

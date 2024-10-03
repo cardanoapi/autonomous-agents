@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 
+import { IAgent } from '@api/agents';
 import { fecthTriggerHistoryMetric } from '@api/triggerHistoryMetric';
 import { useQuery } from '@tanstack/react-query';
 
-import { IAgent } from '@app/app/api/agents';
 import CustomLineChart from '@app/components/Chart/CustomLineChart';
 import {
     DropdownMenu,

@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 
+import { IAgentConfiguration, ICronTrigger } from '@api/agents';
 import { Edit, Plus, Trash2 } from 'lucide-react';
 
-import { IAgentConfiguration, ICronTrigger } from '@app/app/api/agents';
 import UpdateAgentFunctionModal from '@app/components/molecules/UpdateAgentFunctionModal';
 import { Dialog, DialogContent } from '@app/components/shadcn/dialog';
 import { convertCRONExpressionToReadableForm } from '@app/utils/dateAndTimeUtils';
