@@ -28,6 +28,14 @@ import { Label } from '@app/components/atoms/label';
 import { FunctionCards } from './components/FunctionCards';
 import { FunctionForm } from './components/FunctionForm';
 import { mapToTriggerCreateDTO } from './components/FunctionUtil';
+import { useMutation } from '@tanstack/react-query';
+import { queryClient } from '@app/utils/providers/ReactQueryProvider';
+import { useRouter } from 'next/navigation';
+import { useAtom } from 'jotai';
+import { templateCreatedAtom } from '@app/store/localStore';
+import { ErrorToast } from '@app/components/molecules/CustomToasts';
+
+
 
 export interface IConfiguredFunctionsItem extends IFunctionsItem {
     index: string; // for identifying function instance , id attribute holds function name
@@ -47,12 +55,32 @@ interface IFormData {
 }
 
 export default function CreateTemplatePage() {
+
+    const router = useRouter();
+    const [submittingForm, setSubmittingForm] = useState(false);
+    const [,setTemplateCreated] = useAtom(templateCreatedAtom);
+
     const [mainState, setMainState] = useState<IFormData>({
         name: '',
         description: '',
         functions: []
     });
 
+    const templateMutation = useMutation({
+        mutationFn: (data: ICreateTemplateRequestDTO) =>
+            postTemplateData({data:data}),
+        onSuccess: () => {
+            new Promise((resolve) => setTimeout(resolve, 1000));
+            queryClient.refetchQueries({ queryKey: ['templates'] });
+            router.push('/templates');
+            setTemplateCreated(true);
+        },
+        onError: (error: any) => {
+            setSubmittingForm(false);
+            ErrorToast(error?.response?.data);
+        }
+    });
+    
     const [currentSelectedFunction, setCurrentSelectedFunction] =
         useState<IConfiguredFunctionsItem | null>(null);
 
@@ -74,10 +102,10 @@ export default function CreateTemplatePage() {
         };
         const newFunctions = [...mainState.functions, currentFunction];
         setCurrentSelectedFunction(currentFunction);
-        setMainState({
-            ...mainState,
-            functions: newFunctions
-        });
+        // setMainState({
+        //     ...mainState,
+        //     functions: newFunctions
+        // });
         setIsDialogOpen(true);
     };
 
@@ -94,11 +122,13 @@ export default function CreateTemplatePage() {
     const handleDialogClose = () => setIsDialogOpen(false);
 
     const handleSaveFunction = (item: IConfiguredFunctionsItem) => {
-        console.log(item);
         const newFunctions = mainState.functions.map((functionItem) =>
             functionItem.index === item.index ? item : functionItem
         );
-        console.log(newFunctions);
+        const indexExists = newFunctions.some((functionItem) => functionItem.index === item.index);
+        if (!indexExists) {
+            newFunctions.push(item);
+        }
         setMainState({ ...mainState, functions: newFunctions });
         handleDialogClose();
     };
@@ -108,22 +138,28 @@ export default function CreateTemplatePage() {
         setIsDialogOpen(true);
     };
 
-    // const handleSubmit = () => {
-    //     const template_triggers : ITriggerCreateDto = mainState.functions.map((functionItem) => ({
-
-    //     }))
-    // }
-
     const handleTemplateSubmit = () => {
+
+        if (!mainState.name) {
+            ErrorToast('Template name is required');
+            return
+        }
+
+        if (!mainState.description) {
+            ErrorToast('Template description is required');
+            return
+        }
+
+
         const templateRequest: ICreateTemplateRequestDTO = {
             name: mainState.name,
             description: mainState.description,
             template_triggers: mapToTriggerCreateDTO(mainState.functions)
         };
-        console.log(mainState.functions);
-        console.log(templateRequest.template_triggers);
-        postTemplateData({ data: templateRequest });
+        setSubmittingForm(true)
+        templateMutation.mutate(templateRequest);
     };
+
 
     return (
         <>
@@ -179,13 +215,15 @@ export default function CreateTemplatePage() {
                 </div>
                 <Button
                     variant="primary"
-                    className="mt-6 min-w-36"
+                    className="mt-6 w-36"
                     size="md"
                     type="submit"
                     onClick={() => {
                         handleTemplateSubmit();
                     }}
+                    disabled={submittingForm || !mainState.functions.length || !mainState.name || !mainState.description}
                 >
+                   
                     Create Template
                 </Button>
             </Card>

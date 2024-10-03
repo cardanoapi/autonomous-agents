@@ -19,7 +19,7 @@ export function SubmitButton({
             type="submit"
             variant="primary"
             size="md"
-            className={cn('flex w-36 items-center justify-between', className)}
+            className={cn('flex min-w-36 items-center justify-between', className)}
             disabled={disabled}
         >
             <div className={cn('flex items-center', disabled ? 'fixed' : 'hidden')}>

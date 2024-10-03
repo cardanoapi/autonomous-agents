@@ -18,7 +18,7 @@ export const renderStringParameter = (
     onValueChange: (id: string, value: any) => void
 ) => (
     <div className="flex w-full flex-col gap-2">
-        <Label className="h4">{param.name}</Label>
+        <Label className="h4">{param.name}{param.optional == false ? ' *' : ''}</Label>
         <Input
             defaultValue={param.value}
             className="w-full"
@@ -32,7 +32,7 @@ export const renderNumberParameter = (
     onValueChange: (id: string, value: any) => void
 ) => (
     <div className="flex w-full flex-col gap-2">
-        <Label className="h4">{param.name}</Label>
+        <Label className="h4">{param.name}{param.optional == false ? ' *' : ''}</Label>
         <NumberInput
             defaultValue={param.value ? Number(param.value) : 0}
             className="w-full"
@@ -46,11 +46,11 @@ export const renderObjectParameter = (
     onNestedValueChange: (parentId: string, subParamId: string, newValue: any) => void
 ) => (
     <div className="flex w-full flex-col gap-2">
-        <Label className="h4">{param.name}</Label>
+        <Label className="h4">{param.name}{param.optional == false ? ' *' : ''}</Label>
         <div className="ml-4 grid grid-cols-2 gap-4">
             {param.parameters?.map((subParam, subIndex) => (
                 <div key={subIndex} className="flex items-center gap-4">
-                    <Label className="h4">{subParam.name}</Label>
+                    <Label className="h4 flex">{`Url${subParam.optional == false ? ' *' : ''}`}</Label>
                     <Input
                         defaultValue={subParam.value}
                         className="w-full"
@@ -98,7 +98,7 @@ export const renderOptionsParameter = (
 
     return (
         <div className="flex w-full flex-col gap-2">
-            <Label className="h4">{param.name}</Label>
+            <Label className="h4">{param.name}{param.optional == false ? ' *' : ''}</Label>
             <Select onValueChange={(name) => handleOptionChange(name)}>
                 <SelectTrigger className="flex w-full items-center justify-between rounded-lg border-2 border-brand-border-300 bg-white px-2 py-2">
                     {selectedOption?.name || 'Select an option'}

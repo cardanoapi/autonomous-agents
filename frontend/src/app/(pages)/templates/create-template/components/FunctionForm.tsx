@@ -20,11 +20,12 @@ import { CustomCombobox } from '@app/components/molecules/CustomCombobox';
 import { IConfiguredFunctionsItem } from '../page';
 import { renderParameters } from './utils/ParameterRenderers';
 import TriggerTab from './utils/TriggerTab';
+import { ErrorToast } from '@app/components/molecules/CustomToasts';
 
 interface IFunctionForm {
     currentFunction: IConfiguredFunctionsItem;
     onValueChange: (data: IConfiguredFunctionsItem) => void;
-    onClose: () => void;
+    onClose: (data:IConfiguredFunctionsItem) => void;
     onSave: (item: IConfiguredFunctionsItem) => void;
 }
 
@@ -40,9 +41,7 @@ export const FunctionForm = ({
         currentFunction?.cronValue?.frequency || '* * * * *'
     );
 
-    const [currentFunctionType, setCurrentFunctionType] = useState<TriggerType>(
-        functionState?.type || 'CRON'
-    );
+   
 
     const updateFunctionState = (updates: Partial<IConfiguredFunctionsItem>) => {
         if (!functionState) return;
@@ -85,11 +84,8 @@ export const FunctionForm = ({
     };
 
     const handleTypeChange = (type: string) => {
-        setCurrentFunctionType(type as TriggerType);
-        updateFunctionState({
-            ...functionState,
-            type: type as TriggerType
-        });
+        const newFunciontState = { ...functionState , type: type as TriggerType};
+        updateFunctionState(newFunciontState);
     };
 
     const handleNestedParameterChange = (
@@ -117,9 +113,41 @@ export const FunctionForm = ({
         updateFunctionState(updatedFuctionState);
     };
 
+    const handleOnSave = () => {
+        const validState = checkAllRequiredFieldsAreFilled()
+        validState && onSave?.(functionState);
+    };
+
+    const checkAllRequiredFieldsAreFilled = () => {
+
+        if (functionState?.type === 'EVENT') {
+            //event type has no parameter for now
+            return true
+        } 
+
+        if (functionState?.parameters?.[0].type === 'options' && !functionState.optionValue) {
+            ErrorToast('Please select an option')
+            return false
+        }
+
+        let validState = true;
+        functionState?.parameters?.forEach((item) => {
+            if (item.optional === false && !item.value || item.value === '') {
+                validState = false
+            }
+            item.parameters?.forEach((subItem) => {
+                if(subItem.optional === false && !subItem.value || subItem.value === '') {
+                    validState = false
+                }
+            });
+        });
+        !validState && ErrorToast('Please fill all required fields')
+        return validState
+    }
+
     return (
         <Card className="relative flex h-full min-h-[450px] min-w-[500px] flex-col justify-between bg-brand-Azure-400 !px-4 !py-3">
-            <X className="absolute right-4 top-4 cursor-pointer" onClick={onClose} />
+            <X className="absolute right-4 top-4 cursor-pointer" onClick={() => onClose?.(functionState)} />
             <div className="flex flex-col gap-y-4">
                 <CardTitle className="!h1 text-center">
                     {currentFunction?.name}
@@ -138,7 +166,7 @@ export const FunctionForm = ({
                 </div>
                 {currentFunction?.parameters &&
                     renderParameters(
-                        currentFunctionType === 'CRON'
+                        functionState.type === 'CRON'
                             ? currentFunction.parameters
                             : currentFunction.eventParameters || [],
                         handleParameterChange,
@@ -147,7 +175,7 @@ export const FunctionForm = ({
                         functionState.optionValue
                     )}
 
-                {currentFunctionType === 'CRON' && (
+                {functionState.type === 'CRON' && (
                     <>
                         <TriggerTab
                             onlyCronTriggerTab
@@ -179,7 +207,7 @@ export const FunctionForm = ({
                         </div>
                     </>
                 )}
-                {currentFunctionType === 'EVENT' && (
+                {functionState.type === 'EVENT' && (
                     <Card className="bg-gray-200">
                         <CardTitle>Event Trigger</CardTitle>
                         <CardDescription>
@@ -192,7 +220,7 @@ export const FunctionForm = ({
                 variant="primary"
                 className="mt-6 min-w-36"
                 size="md"
-                onClick={() => functionState && onSave?.(functionState)}
+                onClick={() => functionState && handleOnSave()}
             >
                 Save
             </Button>
