@@ -2,7 +2,7 @@
 
 import { useAtom } from 'jotai';
 
-import { IAgent } from '@app/app/api/agents';
+import { IAgent } from '@api/agents';
 import AgentHistoryComponent from '@app/components/Agent/AgentHistory';
 import AgentManualTriggerComponent from '@app/components/Agent/AgentManualTrigger';
 import AgentOverViewComponent from '@app/components/Agent/AgentOverview';

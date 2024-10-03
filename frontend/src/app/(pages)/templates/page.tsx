@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
-import { ITemplate, fetchTemplates } from '@app/app/api/templates';
+import { ITemplate, fetchTemplates } from '@api/templates';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import {
     adminAccessAtom,

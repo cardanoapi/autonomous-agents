@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { AvailableFunctions, IFunctionsItem } from '@models/types/functions';
 import { useAtom } from 'jotai/index';
 
-import { IAgent } from '@app/app/api/agents';
+import { IAgent } from '@api/agents';
 import FormRenderer from '@app/components/Agent/FormRenderer/FormRenderer';
 import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { Dialog, DialogContent } from '@app/components/shadcn/dialog';

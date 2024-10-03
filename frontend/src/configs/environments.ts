@@ -1,13 +1,51 @@
 const IS_IN_PRODUCTION_MODE = process.env.NEXT_PUBLIC_NODE_ENV === 'production';
 const IS_REDUX_LOGGER_DISABLED = process.env.IS_REDUX_LOGGER_DISABLED === 'true';
 const BASE_DEPLOY_PATH = process.env.BASE_DEPLOY_PATH ?? '';
+const baseProductionDomain = "agents.cardanoapi.io";
+const networkBase = {
+    baseApiHost: "api."+baseProductionDomain,
+    baseManagerHost: "manager."+baseProductionDomain,
+}
+type NetworkName='preview'|'preprod'|"sanchonet"
 
-const environments = {
+export const networkConfig :Record<'default'|NetworkName|string,{name:NetworkName,publicApiUrl:string,govtoolUrl:string}>={
+    default:{
+        name: "sanchonet",
+        publicApiUrl: `https://sanchonet.${networkBase.baseApiHost}/api`,
+        govtoolUrl: 'https://govtool.cardanoapi.io'
+        
+    },
+    preview:{
+        name: "preview",
+        publicApiUrl: `https://preview.${networkBase.baseApiHost}/api`,
+        govtoolUrl: 'https://govtool.cardanoapi.io'
+
+    },
+    preprod:{
+        name: "preprod",
+        publicApiUrl: `https://preprod.${networkBase.baseApiHost}/api`,
+        govtoolUrl: 'https://govtool.cardanoapi.io'
+
+    },
+    sanchonet:{
+        name: "sanchonet",
+        publicApiUrl: `https://sanchonet.${networkBase.baseApiHost}/api`,
+        govtoolUrl: 'https://govtool.cardanoapi.io'
+    },
+};
+
+
+export const environments = {
+    api:{
+        apiUrl:process.env.API_URL,  
+        publicUrl: process.env.NEXT_PUBLIC_API_URL,
+        internalUrl: process.env.API_URL,
+        managerUrl: process.env.NEXT_PUBLIC_MANAGER_URL
+    },
+    network: process.env.NEXT_PUBLIC_NETWORK_NAME || ("sanchonet" as NetworkName),
+   
     // build-time configs
     BASE_DEPLOY_PATH,
-
-    // api host configs
-    API_ENDPOINT_HOST: process.env.API_ENDPOINT_HOST,
 
     FORM_PRIVACY_POLICY_URL:
         process.env.FORM_PRIVACY_POLICY_URL ??
@@ -23,20 +61,6 @@ const environments = {
     SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
     SENTRY_RELEASE: process.env.SENTRY_RELEASE,
 
-    // Integrations enabled
-    ENABLE_BRAND_COLORS:
-        (process.env.ENABLE_BRAND_COLORS &&
-            (process.env.ENABLE_BRAND_COLORS === 'true' ||
-                // @ts-ignore
-                process.env.ENABLE_BRAND_COLORS === true)) ??
-        false,
-    ENABLE_JOYRIDE_TOURS:
-        (process.env.ENABLE_JOYRIDE_TOURS &&
-            (process.env.ENABLE_JOYRIDE_TOURS === 'true' ||
-                // @ts-ignore
-                process.env.ENABLE_JOYRIDE_TOURS === true)) ??
-        false,
-
     // internal configs
     IS_IN_PRODUCTION_MODE,
     IS_REDUX_LOGGER_DISABLED,
@@ -46,12 +70,24 @@ const environments = {
     ELASTIC_APM_ENVIRONMENT: process.env.ELASTIC_APM_ENVIRONMENT,
     APM_ENABLED:
         process.env.ELASTIC_APM_SERVER_URL && process.env.ELASTIC_APM_SERVICE_NAME,
-    NEXT_PUBLIC_WS_URL: process.env.NEXT_PUBLIC_WS_URL ?? 'ws://172.17.0.1:3001',
     NEXT_PUBLIC_IMAGE_TAG: process.env.NEXT_PUBLIC_IMAGE_TAG ?? 'dev',
-    API_URL:
-        process.env.NEXT_PUBLIC_API_ENDPOINT_HOST ||
-        'https://api.agents.cardanoapi.io/api',
     GOVTOOL_BASE_URL: 'https://govtool.cardanoapi.io'
 };
+
+
+if(typeof window !== 'undefined' ){
+    if(!environments.api.publicUrl){
+        const domainPrefix=window.location.hostname.split('.')[0] || 'default'
+        const config=networkConfig[domainPrefix] || networkConfig['default']
+        environments.network=config.name
+        environments.api.publicUrl = config.publicApiUrl
+        // we in browser, internal url is also publicUrl
+        environments.api.apiUrl= config.publicApiUrl
+    }else{
+        environments.api.apiUrl=environments.api.publicUrl
+    }
+}else{
+    environments.api.apiUrl=environments.api.internalUrl
+}
 
 export default environments;

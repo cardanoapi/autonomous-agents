@@ -1,4 +1,4 @@
-import { IAgentTriggerHistory } from '@app/app/api/triggerHistory';
+import { IAgentTriggerHistory } from '@api/triggerHistory';
 
 export function filterSuccessTriggers(triggers: IAgentTriggerHistory[]) {
     const filteredTriggers = triggers.filter(

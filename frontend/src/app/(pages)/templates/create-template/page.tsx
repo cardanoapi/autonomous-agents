@@ -12,8 +12,8 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { templateFormSchema } from '@app/app/(pages)/templates/create-template/components/schema';
-import { IFunction, IParameter, fetchFunctions } from '@app/app/api/functions';
-import { postTemplateData } from '@app/app/api/templates';
+import { IFunction, IParameter, fetchFunctions } from '@api/functions';
+import { postTemplateData } from '@api/templates';
 import { Card } from '@app/components/atoms/Card';
 import { Dialog, DialogContent } from '@app/components/atoms/Dialog';
 import { Form, FormControl, FormField, FormItem } from '@app/components/atoms/Form';

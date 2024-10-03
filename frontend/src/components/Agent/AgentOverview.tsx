@@ -11,7 +11,7 @@ import {
     IAgentConfiguration,
     IAgentUpdateReqDto,
     updateAgentData
-} from '@app/app/api/agents';
+} from '@api/agents';
 import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { ErrorToast, SuccessToast } from '@app/components/molecules/CustomToasts';
 import TextDisplayField from '@app/components/molecules/TextDisplayField';
