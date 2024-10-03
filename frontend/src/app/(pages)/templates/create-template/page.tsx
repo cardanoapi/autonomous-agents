@@ -121,7 +121,8 @@ export default function CreateTemplatePage() {
             description: mainState.description,
             template_triggers: mapToTriggerCreateDTO(mainState.functions)
         };
-        console.log(templateRequest);
+        console.log(mainState.functions);
+        console.log(templateRequest.template_triggers);
         postTemplateData({ data: templateRequest });
     };
 
@@ -132,7 +133,7 @@ export default function CreateTemplatePage() {
                     <Label>Template Name </Label>
                     <Input
                         placeholder="Enter Template Name"
-                        className="h-[38px] w-full"
+                        className="mt-3 h-[38px] w-full"
                         value={mainState.name}
                         onChange={(e) => handleUpdateMainState('name', e.target.value)}
                     />
