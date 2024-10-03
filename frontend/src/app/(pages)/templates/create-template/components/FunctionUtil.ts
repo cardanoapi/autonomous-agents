@@ -18,6 +18,20 @@ const mapConfiguredFunctionToTriggerCreateDTO = (
         frequency: item.cronValue?.frequency || '* * * * *'
     };
 
+    if (item.type === 'EVENT') {
+        return {
+            type: item.type,
+            action: {
+                function_name: item.id,
+                parameters: mapParamValueToKeyValuePair(item.eventParameters || [])
+            },
+            data: {
+                event: 'VoteEvent',
+                parameters: mapParamValueToKeyValuePair(item.eventParameters || [])
+            }
+        };
+    }
+
     if (item.id === 'delegation') {
         return {
             type: item.type,

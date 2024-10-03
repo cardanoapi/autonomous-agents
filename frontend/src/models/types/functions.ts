@@ -20,6 +20,11 @@ export interface IFunctionsItem {
     name: string;
     description: string;
     parameters?: IParameter[];
+    // For functions which have event type available
+    canBeEvent?: boolean;
+    eventParameters?: IParameter[];
+    eventDescription?: string;
+    eventName?: string;
 }
 
 export interface IParameter {
@@ -178,7 +183,12 @@ export const AvailableFunctions: IFunctionsDto[] = [
                             }
                         ]
                     }
-                ]
+                ],
+                canBeEvent: true,
+                eventName: 'VoteEvent',
+                eventParameters: [],
+                eventDescription:
+                    'This Vote event will be triggered when any new Proposal is created on the network. The Agent will vote "No" on the proposal. (No parameters required)'
             }
         ]
     },

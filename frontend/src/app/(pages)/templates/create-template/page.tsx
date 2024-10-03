@@ -5,7 +5,6 @@ import { useState } from 'react';
 
 import { ICronTrigger, IEventTrigger, TriggerType } from '@api/agents';
 import { ICreateTemplateRequestDTO, postTemplateData } from '@api/templates';
-import { ITriggerCreateDto } from '@api/trigger';
 import {
     IFunctionsItem,
     IParameterOption,
