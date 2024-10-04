@@ -5,25 +5,34 @@ on:
     branches:
       - master
       - dev
+
 jobs:
-    build-check:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout Repository
-              uses: actions/checkout@v2
+  build-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v2
-              with:
-                  node-version: '18' 
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
 
-            - name: Install Yarn
-              run: npm install --global yarn
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('frontend/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
-            - name: Install Dependencies
-              working-directory: frontend
-              run: yarn install
+      - name: Install Yarn
+        run: npm install --global yarn
 
-            - name: Run Build Check
-              working-directory: frontend
-              run: yarn run build:check
+      - name: Install Dependencies
+        working-directory: frontend
+        run: yarn install
+
+      - name: Run Build Check
+        working-directory: frontend
+        run: yarn run build:check
