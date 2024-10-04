@@ -1,4 +1,4 @@
-import getFaucetAdaForAddress, { fetchWalletBalance } from '../utils/fuacet'
+import getFaucetAdaForAddress, { faucetEnabled, fetchWalletBalance } from "../utils/fuacet";
 import { kuber } from './kuber_service'
 import environments from '../config/environments'
 import { TxListener } from './TxListener'
@@ -32,10 +32,6 @@ export class ManagerWalletService {
     }
 
     async loadWalletFunds() {
-        if (!this.managerWalletAddress) {
-            console.error('Manager wallet address not found')
-            return
-        }
         getFaucetAdaForAddress(this.managerWalletAddress)
             .then((data: any) => {
                 console.log('Response for faucet load', data)
@@ -45,10 +41,13 @@ export class ManagerWalletService {
     }
 
     async transferWalletFunds(address: string, amount: number) {
-        if (!this.managerWalletAddress) {
-            return 'Manager Wallet address not found'
+        if (!this.managerWalletAddress || !environments.managerWalletSigningKey) {
+            throw new Error('Faucet is not enabled')
         }
         if (amount > this.walletBalance) {
+            if(!faucetEnabled){
+                throw new Error('Insufficient balance on manager wallet')
+            }
             await this.loadWalletFunds()
         }
         if (this.beneficiaryQueue.length && this.isBusy) {

@@ -1,17 +1,24 @@
 import environments from '../config/environments'
 
+const url = new URL(environments.faucet.url || 'https://faucet.sanchonet.world.dev.cardano.org/send-money')
+const apiKey=  environments.faucet.apiKey
+export const faucetEnabled=!!(url || apiKey)
+
+
 export default async function getFaucetAdaForAddress(address: string) {
-    const url = new URL('https://faucet.sanchonet.world.dev.cardano.org/send-money')
+    if(!faucetEnabled){
+        throw new Error("Faucet is not enabled.")
+    }
     const params: Record<string, string> = {
         type: 'default',
         action: 'funds',
         address,
-        api_key: environments.sanchonetFaucetApiKey,
+        api_key:apiKey
     }
 
-    Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]))
+    Object.keys(params).forEach((key) => url!.searchParams.append(key, params[key]))
 
-    return fetch(url)
+    return fetch(url!)
         .then((response) => response.json())
         .then((data) => {
             return data
