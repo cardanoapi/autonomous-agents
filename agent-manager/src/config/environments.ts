@@ -7,11 +7,14 @@ const environments = {
     agentMnemonic: process.env.AGENT_MNEMONIC || '',
     metaDataBaseURL: process.env.METADATA_BASE_URL || 'https://metadata.cardanoapi.io',
     dbSyncBaseUrl: process.env.DB_SYNC_BASE_URL || 'https://dbsyncapi.agents.cardanoapi.io/api/',
-    kafkaTopicPrefix: process.env.KAFKA_TOPIC_PREFIX || '',
-    kafkaConsumerGroup: process.env.KAFKA_CONSUMER_GROUP || '',
-    kafkaPrefix: process.env.KAFKA_PREFIX || 'local',
-    brokerUrl: process.env.KAFKA_BROKERS || '',
-    clientId: process.env.CLIENT_ID || '',
+    kafka:{
+        topicPrefix: process.env.KAFKA_TOPIC_PREFIX || '',
+        consumerGroup: process.env.KAFKA_CONSUMER_GROUP || '',
+        prefix: process.env.KAFKA_PREFIX || 'local',
+        brokers: process.env.KAFKA_BROKERS || '',
+        clientId: process.env.KAFKA_CLIENT_ID || '',
+    }
+
 }
 
 export default environments
