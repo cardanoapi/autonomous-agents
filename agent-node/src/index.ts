@@ -18,7 +18,7 @@ if(!wsUrl){
     const network= process.env.NETWORK
 
     if(network && process.env.MANAGER_BASE_DOMAIN){ // This is set in docker file
-        wsUrl=`ws://${network.toLowerCase()}.${process.env.MANAGER_BASE_DOMAIN}`
+        wsUrl=`wss://${network.toLowerCase()}.${process.env.MANAGER_BASE_DOMAIN}`
     }else{
         wsUrl='ws://localhost:3001'
     }
@@ -36,6 +36,7 @@ let isReconnecting = false
 let hasConnectedBefore = false
 
 function connectToManagerWebSocket() {
+    console.log("Initiating connection to manager at:",wsUrl)
     let interval: NodeJS.Timeout | number
     const scheduledTasks: ScheduledTask[] = []
     ws = new WebSocket(`${wsUrl}/${agentId}`)
