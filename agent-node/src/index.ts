@@ -13,7 +13,16 @@ import { globalRootKeyBuffer, globalState } from './constants/global'
 import { AgentRunner } from './executor/AgentRunner'
 
 configDotenv()
-const wsUrl = process.env.WS_URL || 'ws://localhost:3001'
+let wsUrl:string = process.env.WS_URL as string
+if(!wsUrl){
+    const network= process.env.NETWORK
+
+    if(network && process.env.MANAGER_BASE_DOMAIN){ // This is set in docker file
+        wsUrl=`ws://${network.toLowerCase()}.${process.env.MANAGER_BASE_DOMAIN}`
+    }else{
+        wsUrl='ws://localhost:3001'
+    }
+}
 const agentId = process.env.AGENT_ID || ''
 if (!agentId) {
     console.error('Agent ID is required as an argument')

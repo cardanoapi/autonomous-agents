@@ -34,7 +34,7 @@ WORKDIR /app
 COPY --from=builder --chown=node:node app/dist/ dist/
 
 COPY --from=base --chown=node:node app/node_modules node_modules/
-ENV WS_URL=wss://manager.agents.cardanoapi.io
+ENV MANAGER_BASE_DOMAIN=manager.agents.cardanoapi.io
 
 # Command to run the application
 CMD ["node", "dist/index.js"]

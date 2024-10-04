@@ -8,8 +8,8 @@ import i18nextConfig from './next-i18next.config.js';
 const i18n = i18nextConfig.i18n;
 
 const imageDomains = process.env.IMAGE_DOMAINS
-    ? process.env.IMAGE_DOMAINS.split(',')
-    : null;
+  ? process.env.IMAGE_DOMAINS.split(',')
+  : null;
 const imageDomainsWithOnlyHostname = [];
 
 function getHostnameFromRegex(url) {
@@ -45,6 +45,11 @@ const nextConfig = {
             {
                 source: '/script.js',
                 destination: 'https://umami.sireto.io/script.js'
+            },
+            {
+                // Forward /api to localhost:8000 for local development
+                source: '/api/:path*',
+                destination: 'http://localhost:8000/api/:path*'
             }
         ];
     },
@@ -117,14 +122,8 @@ const nextConfigWithPWA = withPWA({
 });
 
 const sentryWebpackPluginOptions = {
-    // Additional config options for the Sentry Webpack plugin. Keep in mind that
-    // the following options are set automatically, and overriding them is not
-    // recommended:
-    //   release, url, authToken, configFile, stripPrefix,
-    //   urlPrefix, include, ignore
-
     dryRun: process.env.NODE_ENV !== 'production',
-    silent: true, // Suppresses all logs
+    silent: true,
     attachStacktrace: true,
     release: process.env.SENTRY_RELEASE,
     url: process.env.SENTRY_URL,
@@ -132,27 +131,22 @@ const sentryWebpackPluginOptions = {
     project: process.env.SENTRY_PROJECT,
     authToken: process.env.SENTRY_AUTH_TOKEN,
     sourcemaps: {
-        // Specify the directory containing build artifacts
         assets: './**',
-        // Don't upload the source maps of dependencies
         ignore: ['./node_modules/**']
     },
     debug: process.env.NEXT_PUBLIC_NODE_ENV !== 'production'
-
-    // For all available options, see:
-    // https://github.com/getsentry/sentry-webpack-plugin#options.
 };
 
 const nextConfigWithSentryIfEnabled =
-    !!process.env.SENTRY_DSN &&
-    !!process.env.SENTRY_URL &&
-    !!process.env.SENTRY_ORG &&
-    !!process.env.SENTRY_PROJECT &&
-    !!process.env.SENTRY_RELEASE
-        ? withSentryConfig(
-              { ...nextConfigWithPWA, devtool: 'source-map' },
-              sentryWebpackPluginOptions
-          )
-        : nextConfigWithPWA;
+  !!process.env.SENTRY_DSN &&
+  !!process.env.SENTRY_URL &&
+  !!process.env.SENTRY_ORG &&
+  !!process.env.SENTRY_PROJECT &&
+  !!process.env.SENTRY_RELEASE
+    ? withSentryConfig(
+      { ...nextConfigWithPWA, devtool: 'source-map' },
+      sentryWebpackPluginOptions
+    )
+    : nextConfigWithPWA;
 
 export default nextConfigWithSentryIfEnabled;

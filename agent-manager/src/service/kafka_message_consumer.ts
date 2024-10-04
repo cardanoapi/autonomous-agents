@@ -5,26 +5,29 @@ import { fetchAgentConfiguration } from '../repository/agent_manager_repository'
 import environments from '../config/environments'
 
 let config = environments.kafka
-
+const configTopic=`${config.topicPrefix || config.prefix || 'agent'}-updates`
+const triggerTopic = `${config.topicPrefix  || config.prefix || 'agent'}-triggers`
+const topicList=[configTopic,triggerTopic]
+const brokers=config.brokers.split(',').map(x=>x.trim()).filter(x=>x && x.length>0)
+const groupId= config.consumerGroup || `${  config.prefix || 'agent'}-manager`
 
 const kafka = new Kafka({
     clientId: config.clientId?config.clientId: `${config.prefix || 'agent'}-manager`  ,
-    brokers: config.brokers.split(',').map(x=>x.trim()).filter(x=>x && x.length>0), // Update with your Kafka broker address
+    brokers , // Update with your Kafka broker address
 })
 
-const consumer = kafka.consumer({ groupId: config.consumerGroup || `${  config.prefix || 'agent'}-manager` })
+const consumer = kafka.consumer({ groupId })
 
 
-const configTopic=`${config.topicPrefix || config.prefix || 'agent'}-updates`
-const triggerTopic = `${config.topicPrefix  || config.prefix || 'agent'}-triggers`
 
 export async function initKafkaConsumers(manager: AgentManagerRPC) {
+    console.log("[Kafka]",`brokers:${brokers}, groupId:${groupId}, topics:${topicList}`)
     const managerService = new ManagerService(manager)
     await consumer.connect().catch(e=>{
         console.error("Error connecting consumer",e)
     })
     await consumer.subscribe({
-        topics: [configTopic,triggerTopic],
+        topics: topicList,
         fromBeginning: true,
     }).catch(e=>{
         console.error("Error subscribing",e)
@@ -59,6 +62,7 @@ export async function initKafkaConsumers(manager: AgentManagerRPC) {
 
     await consumer.run({
         eachMessage: async ({ message,topic }) => {
+            console.info("topic=",topic,"message=",message.value)
             if(topic == configTopic){
                 configUpdateHandler(message)
             }else{

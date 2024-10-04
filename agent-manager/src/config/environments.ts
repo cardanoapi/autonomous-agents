@@ -1,7 +1,6 @@
 const environments = {
     kuberApiKey: process.env.KUBER_API_KEY || '',
     kuberBaseUrl: process.env.KUBER_BASE_URL || 'https://sanchonet.kuber.cardanoapi.io/',
-    sanchonetFaucetApiKey: process.env.SANCHONET_FAUCET_API_KEY || '',
     managerWalletAddress: process.env.MANAGER_WALLET_ADDRESS || '',
     managerWalletSigningKey: process.env.MANAGER_WALLET_SIGNING_KEY || '',
     agentMnemonic: process.env.AGENT_MNEMONIC || '',
@@ -13,6 +12,11 @@ const environments = {
         prefix: process.env.KAFKA_PREFIX || 'local',
         brokers: process.env.KAFKA_BROKERS || '',
         clientId: process.env.KAFKA_CLIENT_ID || '',
+    },
+    faucet:{
+        apiKey: process.env.FAUCET_API_KEY || '',
+        url: process.env.FAUCET_URL || ''
+
     }
 
 }
