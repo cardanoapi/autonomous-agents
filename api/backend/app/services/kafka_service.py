@@ -9,7 +9,7 @@ class KafkaService:
         self,
     ):
         if settings.KAFKA_ENABLED:
-            self.producer = AIOKafkaProducer(bootstrap_servers=settings.KAFKA_BROKERS)
+            self.producer = AIOKafkaProducer(bootstrap_servers=settings.KAFKA_BROKERS,client_id='auto-agents-api',)
 
     async def start(self):
         if settings.KAFKA_ENABLED:

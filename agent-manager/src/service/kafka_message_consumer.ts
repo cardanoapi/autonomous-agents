@@ -4,18 +4,19 @@ import { AgentManagerRPC } from './AgentManagerRPC'
 import { fetchAgentConfiguration } from '../repository/agent_manager_repository'
 import environments from '../config/environments'
 
-const brokerUrl = environments.brokerUrl
+let config = environments.kafka
+
+
 const kafka = new Kafka({
-    clientId: environments.clientId,
-    brokers: [brokerUrl], // Update with your Kafka broker address
+    clientId: config.clientId?config.clientId: `${config.prefix || 'agent'}-manager`  ,
+    brokers: config.brokers.split(',').map(x=>x.trim()).filter(x=>x && x.length>0), // Update with your Kafka broker address
 })
-const kafka_prefix = environments.kafkaPrefix
 
-const consumer = kafka.consumer({ groupId: environments.kafkaConsumerGroup || `${  kafka_prefix}-agent-manager` })
+const consumer = kafka.consumer({ groupId: config.consumerGroup || `${  config.prefix || 'agent'}-manager` })
 
 
-const configTopic=`${environments.kafkaTopicPrefix || kafka_prefix}-updates`
-const triggerTopic = `${environments.kafkaTopicPrefix  || kafka_prefix}-triggers`
+const configTopic=`${config.topicPrefix || config.prefix || 'agent'}-updates`
+const triggerTopic = `${config.topicPrefix  || config.prefix || 'agent'}-triggers`
 
 export async function initKafkaConsumers(manager: AgentManagerRPC) {
     const managerService = new ManagerService(manager)

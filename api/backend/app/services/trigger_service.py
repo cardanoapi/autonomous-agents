@@ -74,5 +74,5 @@ class TriggerService:
 
     async def publish_trigger_event(self, agent_id: str):
         await self.kafka_service.publish_message(
-            api_settings.getKafkaTopicPrefix() + "trigger_config_updates", "config_updated", key=agent_id
+            api_settings.getKafkaTopicPrefix() + "-updates", "config_updated", key=agent_id
         )
