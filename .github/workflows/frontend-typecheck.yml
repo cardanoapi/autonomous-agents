@@ -5,6 +5,9 @@ on:
     branches:
       - master
       - dev
+    paths:
+      - 'frontend/**'
+      - .github/workflows/frontend-typecheck.yml
 
 jobs:
   build-check:
