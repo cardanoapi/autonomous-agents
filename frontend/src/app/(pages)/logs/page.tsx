@@ -2,12 +2,9 @@
 
 import { useEffect, useState } from 'react';
 
+import { IAgentTriggerHistory, fetchAllTriggerHistory } from '@api/triggerHistory';
 import { useQuery } from '@tanstack/react-query';
 
-import {
-    IAgentTriggerHistory,
-    fetchAllTriggerHistory
-} from '@api/triggerHistory';
 import { EmptyLogsPlaceholder } from '@app/components/Agent/AgentLog';
 import { AgentLogCard, AgentLogCardSkeleton } from '@app/components/Agent/AgentLog';
 import AgentFunctionsDropDown from '@app/components/Common/AgentFunctionsDropDown';

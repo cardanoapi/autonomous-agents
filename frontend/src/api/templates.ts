@@ -2,13 +2,11 @@
 
 import { IAgentAction, ICronTrigger, IEventTrigger } from '@api/agents';
 import axios from 'axios';
-import { z } from 'zod';
 
 import { convertToQueryStr } from '@app/utils/common/extra';
 
-import { templateFormSchema } from '../app/(pages)/templates/create-template/components/schema';
-import { ITemplateOption } from '../app/(pages)/templates/create-template/page';
 import { baseAPIurl } from './config';
+import { ITriggerCreateDto } from './trigger';
 
 type TriggerType = 'CRON' | 'MANUAL' | 'EVENT';
 
@@ -35,6 +33,12 @@ export interface ITemplate {
     template_configurations?: Array<ITemplateConfiguration>;
 }
 
+export interface ICreateTemplateRequestDTO {
+    name: string;
+    description: string;
+    template_triggers: ITriggerCreateDto[];
+}
+
 export const fetchTemplates = async (params: {
     page: number;
     size: number;
@@ -59,45 +63,19 @@ export const fetchTemplatebyID = async (templateID: string): Promise<ITemplate> 
     return await res.json();
 };
 
-export const postTemplateData = async (
-    formData: z.infer<typeof templateFormSchema>
-) => {
-    const formatedTemplatedata = {
-        name: formData.name,
-        description: formData.description,
-        template_triggers: formData.triggers.map((item: ITemplateOption) => ({
-            type: item.type,
-            action:
-                item.type === 'CRON'
-                    ? {
-                          function_name: item.value,
-                          parameters: item?.cronParameters?.map((param) => ({
-                              name: param.name,
-                              value: param.value
-                          }))
-                      }
-                    : {
-                          function_name: 'voteOnProposal',
-                          parameters: []
-                      },
-
-            data:
-                item.type === 'CRON'
-                    ? {
-                          frequency: item.cronExpression?.join(' '),
-                          probability: item.probability
-                      }
-                    : {
-                          event: 'VoteEvent',
-                          parameters: []
-                      }
-        }))
-    };
-
+export const postTemplateData = async ({
+    data
+}: {
+    data: ICreateTemplateRequestDTO;
+}) => {
     try {
         const response = await axios.post(
             `${baseAPIurl}/templates`,
-            formatedTemplatedata,
+            {
+                name: data.name,
+                description: data.description,
+                template_triggers: data.template_triggers
+            },
             {
                 headers: {
                     'Content-Type': 'application/json'

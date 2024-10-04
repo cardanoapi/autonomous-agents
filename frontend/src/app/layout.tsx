@@ -1,4 +1,6 @@
 /* eslint-disable @next/next/no-sync-scripts */
+import React from 'react';
+
 import type { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
 
@@ -21,11 +23,10 @@ import '@app/assets/css/tailwind.css';
 import ModalContainer from '@app/components/Modals/container';
 import SideNav from '@app/components/layout/SideNav/SideNav';
 import TopNav from '@app/components/layout/TopNav';
+import environments from '@app/configs/environments';
 import ThemeProvider from '@app/shared/hocs/ThemeProvider';
 import ReactQueryProvider from '@app/utils/providers/ReactQueryProvider';
 import NextNProgress from '@app/views/atoms/NextNProgress';
-import React from 'react';
-import environments from '@app/configs/environments';
 
 // const inter = Inter({ subsets: ['latin'] });
 // const queryClient = new QueryClient();
@@ -49,13 +50,15 @@ export default function RootLayout({
     return (
         <html lang="en" className="">
             <head>
-                {
-                    process.env.NEXT_PUBLIC_UMAMI_ENABLED?<script
-                    defer
-                    src="/script.js"
-                    data-website-id="4a162fd2-d6ec-403e-8a69-7927e2f0db3f"
-                ></script>:<></>
-                }
+                {process.env.NEXT_PUBLIC_UMAMI_ENABLED ? (
+                    <script
+                        defer
+                        src="/script.js"
+                        data-website-id="4a162fd2-d6ec-403e-8a69-7927e2f0db3f"
+                    ></script>
+                ) : (
+                    <></>
+                )}
                 {embedApmScript()}
             </head>
             <body className={poppins.className}>
@@ -104,8 +107,10 @@ function embedApmScript() {
     const config = {
         serviceName: 'autonomous-agents-webapp',
         serverUrl: '/',
-        environment: environments.IS_IN_PRODUCTION_MODE?environments.network : 'local',
-        serverUrlPrefix: "/status"
+        environment: environments.IS_IN_PRODUCTION_MODE
+            ? environments.network
+            : 'local',
+        serverUrlPrefix: '/status'
     };
     const htmlStr = 'elasticApm.init(' + JSON.stringify(config) + ')';
     return process.env.NEXT_PUBLIC_APM_ENABLED ? (

@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 
+import { IParameter } from '@api/functions';
 import { X } from 'lucide-react';
 
-import { IParameter } from '@api/functions';
 import { Button } from '@app/components/atoms/Button';
 import { Card, CardTitle } from '@app/components/atoms/Card';
 import { Input } from '@app/components/atoms/Input';

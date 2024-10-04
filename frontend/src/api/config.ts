@@ -1,3 +1,3 @@
-import environments from "@app/configs/environments";
+import environments from '@app/configs/environments';
 
-export  const baseAPIurl=environments.api.apiUrl
+export const baseAPIurl = environments.api.apiUrl;

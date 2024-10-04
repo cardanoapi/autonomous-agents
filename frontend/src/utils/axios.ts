@@ -2,11 +2,8 @@ import axios, { AxiosInstance } from 'axios';
 
 import { ENVIRONMENTS } from '@app/configs';
 
-
-
 const axiosClient: AxiosInstance = axios.create({
-    baseURL: ENVIRONMENTS.api.apiUrl,
-
+    baseURL: ENVIRONMENTS.api.apiUrl
 });
 
 axiosClient.interceptors.response.use(

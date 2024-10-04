@@ -2,16 +2,16 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 
-import { useMutation } from '@tanstack/react-query';
-import { hexToBech32 } from '@utils';
-import { Edit } from 'lucide-react';
-
 import {
     IAgent,
     IAgentConfiguration,
     IAgentUpdateReqDto,
     updateAgentData
 } from '@api/agents';
+import { useMutation } from '@tanstack/react-query';
+import { hexToBech32 } from '@utils';
+import { Edit } from 'lucide-react';
+
 import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { ErrorToast, SuccessToast } from '@app/components/molecules/CustomToasts';
 import TextDisplayField from '@app/components/molecules/TextDisplayField';
@@ -79,6 +79,7 @@ const AgentOverViewComponent = ({
             action: config.action,
             data: config.data
         }));
+        console.log(updatedAgentConfigs);
         updateAgent
             .mutateAsync({
                 agentId: agent?.id,

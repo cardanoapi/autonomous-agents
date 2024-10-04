@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
+import { postAgentData } from '@api/agents';
+import { ITemplate, fetchTemplates } from '@api/templates';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
@@ -12,8 +14,6 @@ import toast from 'react-hot-toast';
 import { z } from 'zod';
 
 import { agentFormSchema } from '@app/app/(pages)/agents/create-agent/_form/schema';
-import { postAgentData } from '@api/agents';
-import { ITemplate, fetchTemplates } from '@api/templates';
 import { Card } from '@app/components/atoms/Card';
 import { Form, FormControl, FormField, FormItem } from '@app/components/atoms/Form';
 import { Input } from '@app/components/atoms/Input';

@@ -1,49 +1,48 @@
 const IS_IN_PRODUCTION_MODE = process.env.NEXT_PUBLIC_NODE_ENV === 'production';
 const IS_REDUX_LOGGER_DISABLED = process.env.IS_REDUX_LOGGER_DISABLED === 'true';
 const BASE_DEPLOY_PATH = process.env.BASE_DEPLOY_PATH ?? '';
-const baseProductionDomain = "agents.cardanoapi.io";
+const baseProductionDomain = 'agents.cardanoapi.io';
 const networkBase = {
-    baseApiHost: "api."+baseProductionDomain,
-    baseManagerHost: "manager."+baseProductionDomain,
-}
-type NetworkName='preview'|'preprod'|"sanchonet"
+    baseApiHost: 'api.' + baseProductionDomain,
+    baseManagerHost: 'manager.' + baseProductionDomain
+};
+type NetworkName = 'preview' | 'preprod' | 'sanchonet';
 
-export const networkConfig :Record<'default'|NetworkName|string,{name:NetworkName,publicApiUrl:string,govtoolUrl:string}>={
-    default:{
-        name: "sanchonet",
+export const networkConfig: Record<
+    'default' | NetworkName | string,
+    { name: NetworkName; publicApiUrl: string; govtoolUrl: string }
+> = {
+    default: {
+        name: 'sanchonet',
         publicApiUrl: `https://sanchonet.${networkBase.baseApiHost}/api`,
         govtoolUrl: 'https://govtool.cardanoapi.io'
-        
     },
-    preview:{
-        name: "preview",
+    preview: {
+        name: 'preview',
         publicApiUrl: `https://preview.${networkBase.baseApiHost}/api`,
         govtoolUrl: 'https://govtool.cardanoapi.io'
-
     },
-    preprod:{
-        name: "preprod",
+    preprod: {
+        name: 'preprod',
         publicApiUrl: `https://preprod.${networkBase.baseApiHost}/api`,
         govtoolUrl: 'https://govtool.cardanoapi.io'
-
     },
-    sanchonet:{
-        name: "sanchonet",
+    sanchonet: {
+        name: 'sanchonet',
         publicApiUrl: `https://sanchonet.${networkBase.baseApiHost}/api`,
         govtoolUrl: 'https://govtool.cardanoapi.io'
-    },
+    }
 };
 
-
 export const environments = {
-    api:{
-        apiUrl:process.env.API_URL,  
+    api: {
+        apiUrl: process.env.API_URL,
         publicUrl: process.env.NEXT_PUBLIC_API_URL,
         internalUrl: process.env.API_URL,
         managerUrl: process.env.NEXT_PUBLIC_MANAGER_URL
     },
-    network: process.env.NEXT_PUBLIC_NETWORK_NAME || ("sanchonet" as NetworkName),
-   
+    network: process.env.NEXT_PUBLIC_NETWORK_NAME || ('sanchonet' as NetworkName),
+
     // build-time configs
     BASE_DEPLOY_PATH,
 
@@ -74,20 +73,19 @@ export const environments = {
     GOVTOOL_BASE_URL: 'https://govtool.cardanoapi.io'
 };
 
-
-if(typeof window !== 'undefined' ){
-    if(!environments.api.publicUrl){
-        const domainPrefix=window.location.hostname.split('.')[0] || 'default'
-        const config=networkConfig[domainPrefix] || networkConfig['default']
-        environments.network=config.name
-        environments.api.publicUrl = config.publicApiUrl
+if (typeof window !== 'undefined') {
+    if (!environments.api.publicUrl) {
+        const domainPrefix = window.location.hostname.split('.')[0] || 'default';
+        const config = networkConfig[domainPrefix] || networkConfig['default'];
+        environments.network = config.name;
+        environments.api.publicUrl = config.publicApiUrl;
         // we in browser, internal url is also publicUrl
-        environments.api.apiUrl= config.publicApiUrl
-    }else{
-        environments.api.apiUrl=environments.api.publicUrl
+        environments.api.apiUrl = config.publicApiUrl;
+    } else {
+        environments.api.apiUrl = environments.api.publicUrl;
     }
-}else{
-    environments.api.apiUrl=environments.api.internalUrl
+} else {
+    environments.api.apiUrl = environments.api.internalUrl;
 }
 
 export default environments;
