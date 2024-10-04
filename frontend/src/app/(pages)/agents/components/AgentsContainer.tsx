@@ -33,6 +33,7 @@ const AgentsContainer: React.FC<AgentsContainerProps> = ({
                           enableEdit={enableEdit}
                           isActive={agent.is_active}
                           enableDelete={enableDelete}
+                          agentSecretKey={agent.secret_key}
                       />
                   ))}
         </div>

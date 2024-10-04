@@ -20,7 +20,7 @@ from pycardano.crypto.bech32 import bech32_encode, convertbits, Encoding
 from backend.app.exceptions.http import HTTPException
 from backend.app.models import AgentResponse, AgentCreateDTO, AgentKeyResponse, AgentUpdateDTO
 from backend.app.models.user.user_dto import User
-from backend.app.utils.base64 import generate_random_base64
+from backend.app.utils.generator import generate_random_base64
 from backend.config.database import prisma_connection
 
 
@@ -35,7 +35,7 @@ class AgentRepository:
         agent_data_dict["id"] = agent_id
         agent_data_dict["created_at"] = datetime.now(timezone.utc)
         agent_data_dict["updated_at"] = datetime.now(timezone.utc)
-        agent_data_dict["secret_key"] = generate_random_base64(16)
+        agent_data_dict["secret_key"] = generate_random_base64(32)
         agent = await self.db.prisma.agent.create(data=agent_data_dict)
         agent_response = AgentResponse(
             id=agent_id,

@@ -6,7 +6,7 @@ from backend.app.repositories.agent_instance_wallet_repository import AgentInsta
 from backend.app.repositories.agent_repository import AgentRepository
 from backend.app.repositories.template_repository import TemplateRepository
 from backend.app.services.agent_instance_wallet_service import AgentInstanceWalletService
-from backend.app.utils.base64 import generate_random_base64
+from backend.app.utils.generator import generate_random_base64
 from backend.config.database import prisma_connection
 
 
