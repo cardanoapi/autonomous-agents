@@ -24,7 +24,7 @@ model Agent {
   userAddress      String?
   is_drep_registered Boolean           @default(false)
   wallet_details   AgentWalletDetails[]
-
+  secret_key       Bytes
   triggers         Trigger[]           // One-to-many relationship with Trigger
   template         Template?           @relation(fields: [template_id], references: [id], onDelete: SetNull)
 }
