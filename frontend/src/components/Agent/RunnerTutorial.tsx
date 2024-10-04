@@ -4,12 +4,7 @@ import { Copy } from 'lucide-react';
 
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import environments from '@app/configs/environments';
-
-function convertToBase64(agentSecretKey: string) {
-    const newSecretKey = environments.network + '_' + agentSecretKey;
-    const buffer = new Buffer(newSecretKey);
-    return buffer.toString('base64');
-}
+import { convertToBase64 } from '@app/utils/base64converter';
 
 const AgentRunnerTutorial = ({ agentSecretKey }: { agentSecretKey: string }) => {
     const dockerCommand = `docker run -d --pull always -e TOKEN=${convertToBase64(agentSecretKey)} cardanoapi/autonomous-agents:${environments.NEXT_PUBLIC_IMAGE_TAG}`;

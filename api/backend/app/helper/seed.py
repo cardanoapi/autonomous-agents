@@ -13,6 +13,7 @@ async def seed_data():
                 where={"id": item.id}, data={"secret_key": generate_random_base64(32)}
             )
         print("Successful")
+        await prisma_connection.disconnect()
     except Exception as err:
         print("Error occured ", err)
 

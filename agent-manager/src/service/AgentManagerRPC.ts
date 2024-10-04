@@ -31,15 +31,15 @@ export class AgentManagerRPC extends WsRpcServer {
     }
 
     protected async validateConnection(req: IncomingMessage): Promise<string> {
-        const agentId = req.url?.slice(1)
+        const agentSecretKey = req.url?.slice(1)
         console.log('new connection from', req.socket.remoteAddress)
 
-        if (agentId) {
-            const exists = await checkIfAgentExistsInDB(agentId)
+        if (agentSecretKey) {
+            const exists = await checkIfAgentExistsInDB(agentSecretKey)
             if (exists) {
-                return agentId
+                return agentSecretKey
             } else {
-                throw Error(`Agent with id ${agentId} doesn't exist`)
+                throw Error(`Agent with secret_key ${agentSecretKey} doesn't exist`)
             }
         } else {
             throw Error('Invalid websocket connection')
