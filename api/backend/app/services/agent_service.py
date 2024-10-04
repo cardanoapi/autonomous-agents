@@ -1,5 +1,6 @@
 # agent_service.py
 import asyncio
+import base64
 import json
 from datetime import datetime, UTC, timedelta
 from typing import List, Dict
@@ -17,6 +18,7 @@ from backend.app.models import (
 )
 from backend.app.models.agent.agent_instance_wallet import AgentInstanceWallet
 from backend.app.models.agent.function import AgentFunction
+from backend.app.models.user.user_dto import User
 from backend.app.repositories.agent_repository import AgentRepository
 from backend.app.repositories.user_repository import UserRepository
 from backend.app.services.agent_instance_wallet_service import AgentInstanceWalletService
@@ -75,7 +77,9 @@ class AgentService:
         # return await self.agent_instance_wallet_service.get_wallets(agent_id)
         return await self.agent_repository.retreive_agent_key(agent_id)
 
-    async def list_agents(self, page: int, size: int, search: str | None) -> List[AgentResponse]:
+    async def list_agents(
+        self, page: int, size: int, search: str | None, user: User | None = None
+    ) -> List[AgentResponse]:
         skip = (page - 1) * size
         filters = {"deleted_at": None}
         if search:
@@ -83,9 +87,14 @@ class AgentService:
         agents = await self.agent_repository.db.prisma.agent.find_many(
             include={"template": True, "triggers": True}, where=filters, skip=skip, take=size
         )
+        super_admin = user.isSuperUser if user else False
         updated_agents = []
         for agent in agents:
+            display_secret_key = False
+            if user:
+                display_secret_key = super_admin or user.address == agent.userAddress
             is_online = check_if_agent_is_online(agent.last_active)
+            agent.secret_key = base64.b64decode(agent.secret_key._raw).decode() if display_secret_key else None
             updated_agents.append(
                 AgentResponse(
                     **agent.dict(),
@@ -96,8 +105,8 @@ class AgentService:
             )
         return updated_agents
 
-    async def get_agent(self, agent_id: str) -> AgentResponseWithWalletDetails:
-        agent = await self.agent_repository.retrieve_agent(agent_id)
+    async def get_agent(self, agent_id: str, user: User | None) -> AgentResponseWithWalletDetails:
+        agent = await self.agent_repository.retrieve_agent(agent_id, user)
         self.raise_exception_if_agent_not_found(agent)
         agent.is_active = check_if_agent_is_online(agent.last_active)
         response = await self.return_agent_with_wallet_details(agent)
@@ -142,6 +151,7 @@ class AgentService:
         await self.kafka_service.publish_message(
             api_settings.getKafkaTopicPrefix() + "-updates", "config_updated", key=agent_id
         )
+        existing_agent.secret_key = base64.b64decode(existing_agent.secret_key._raw).decode()
         return AgentResponseWithAgentConfigurations(**existing_agent.dict(), agent_configurations=updated_triggers)
 
     async def get_active_agents_count(self):
