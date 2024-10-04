@@ -4,6 +4,7 @@
     "private": true,
     "scripts": {
         "clean": "rimraf \"{node_modules,.next,.next-dev,out,.cache,.idea}\"",
+        "build:check": "tsc --noEmit",
         "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md}\"",
         "format": "prettier --write .",
         "lint:fix": "eslint --fix \"**/*.{js,jsx,ts,tsx}\"",
