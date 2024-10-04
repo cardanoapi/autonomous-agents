@@ -9,6 +9,9 @@ on:
         branches:
             - master
             - dev
+        paths:
+            - 'api/**'
+            - .github/workflows/black-lint.yml
 jobs:
     black-lint:
         runs-on: ubuntu-latest
