@@ -10,7 +10,7 @@ ALTER TABLE "Agent" ADD COLUMN "secret_key" BYTEA;
 
 -- Step 2: Update existing records with random Base64 values
 UPDATE "Agent"
-SET "secret_key" = decode('c2VjcmV0a2V5dmFsdWU', 'base64')
+SET "secret_key" = decode('c2VjcmV0a2V5dmFsdWU=', 'base64')
 WHERE "secret_key" IS NULL;
 
 -- Step 3: Alter the column to make it NOT NULL
