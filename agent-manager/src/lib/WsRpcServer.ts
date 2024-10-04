@@ -48,23 +48,24 @@ export abstract class WsRpcServer extends RpcV1Server {
     private setupServer() {
         this.server.on('connection', async (ws: WebSocket, req) => {
             const conn_id = req.url?.slice(1) || ''
-            if (this.activeConnections[conn_id]) {
-                ws.close(1000, `Connection for id ${conn_id} is already active`)
-                return
-            }
-            this.addConnection(conn_id, new CborDuplex(new WsClientPipe(ws), cborxBackend(true)))
-            const { instanceCount, agentIndex, agentName } = await fetchAgentConfiguration(conn_id)
-            if (!agentIndex || !instanceCount || !agentName) {
-                this.disconnect(conn_id, 'No instance found')
-                return
-            }
-            const rootKeyBuffer = await generateRootKey(agentIndex || 0)
-            this.emit(conn_id, 'instance_count', { instanceCount, rootKeyBuffer, agentName })
             try {
+                if (this.activeConnections[conn_id]) {
+                    ws.close(1000, `Connection for id ${conn_id} is already active`)
+                    return
+                }
+                this.addConnection(conn_id, new CborDuplex(new WsClientPipe(ws), cborxBackend(true)))
+
+                const { instanceCount, agentIndex, agentName } = await fetchAgentConfiguration(conn_id)
+                if (!agentIndex || !instanceCount || !agentName) {
+                    this.disconnect(conn_id, 'No instance found')
+                    return
+                }
+                const rootKeyBuffer = await generateRootKey(agentIndex || 0)
+                this.emit(conn_id, 'instance_count', { instanceCount, rootKeyBuffer, agentName })
                 await this.validateConnection(req)
                 this.onReady(this.activeConnections[conn_id])
             } catch (err: any) {
-                console.error(err)
+                console.error("New Agent connection error",err)
                 this.disconnect(conn_id, err.message)
             }
         })

@@ -62,6 +62,7 @@ export async function initKafkaConsumers(manager: AgentManagerRPC) {
 
     await consumer.run({
         eachMessage: async ({ message,topic }) => {
+            console.info("topic=",topic,"message=",message.value)
             if(topic == configTopic){
                 configUpdateHandler(message)
             }else{
