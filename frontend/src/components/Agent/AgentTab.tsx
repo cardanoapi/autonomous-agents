@@ -3,7 +3,7 @@
 import { cn } from '../lib/utils';
 import AgentTabItem from './AgentTabItem';
 
-const adminTabs = ['Overview', 'Functions', 'Logs', 'Manual Actions', 'Settings'];
+const adminTabs = ['Overview', 'Functions', 'Manual Actions', 'Logs' ,'Settings'];
 const normalTabs = ['Overview', 'Functions', 'Logs'];
 
 const AgentTabSection = ({
