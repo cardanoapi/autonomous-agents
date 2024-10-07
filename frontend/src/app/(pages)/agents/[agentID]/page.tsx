@@ -19,14 +19,12 @@ import {
 import {
     adminAccessAtom,
     currentAgentNameAtom,
-    currentConnectedWalletAtom,
-    selectedAgentTabAtom
+    currentConnectedWalletAtom
 } from '@app/store/localStore';
 
 export default function AgentPageById() {
     const [, setCurrentAgentName] = useAtom(currentAgentNameAtom);
     const [adminAccess] = useAtom(adminAccessAtom);
-    const [selectedTab] = useAtom(selectedAgentTabAtom);
     const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
     const params = useParams();
     const router = useRouter();

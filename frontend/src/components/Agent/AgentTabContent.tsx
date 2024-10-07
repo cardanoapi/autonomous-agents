@@ -30,14 +30,14 @@ const AgentTabContent = ({
     function getAgentSelectedTabComponent() {
         if (selectedAgentTab === 'Overview')
             return <AgentOverViewComponent agent={agent} enableEdit={enableEdit} />;
-        else if (selectedAgentTab === 'History')
+        else if (selectedAgentTab === 'Functions')
             return <AgentHistoryComponent agent={agent} />;
         else if (selectedAgentTab === 'Logs')
             return <AgentLogComponent agent={agent} />;
         else if (enableEdit) {
-            if (selectedAgentTab === 'Manual Trigger')
+            if (selectedAgentTab === 'Manual Actions')
                 return <AgentManualTriggerComponent agent={agent} />;
-            else if (selectedAgentTab === 'Agent Runner')
+            else if (selectedAgentTab === 'Settings')
                 return <AgentRunnerComponent agent={agent} />;
         }
     }
@@ -47,8 +47,8 @@ const AgentTabContent = ({
             {agentLoading ? (
                 selectedAgentTab === 'Overview' ? (
                     <SkeletonLoadingForAgentOverview />
-                ) : selectedAgentTab === 'Manual Trigger' ||
-                  selectedAgentTab === 'Agent Runner' ? (
+                ) : selectedAgentTab === 'Manual Actions' ||
+                  selectedAgentTab === 'Settings' ? (
                     <DefaultSkeleton />
                 ) : null
             ) : (
