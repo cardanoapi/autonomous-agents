@@ -1,305 +1,184 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 
-import {
-    IAgent,
-    IAgentConfiguration,
-    IAgentUpdateReqDto,
-    updateAgentData
-} from '@api/agents';
-import { useMutation } from '@tanstack/react-query';
+import { IAgent } from '@api/agents';
 import { hexToBech32 } from '@utils';
-import { Edit } from 'lucide-react';
 
-import AgentsIcon from '@app/components/icons/AgentsIcon';
-import { ErrorToast, SuccessToast } from '@app/components/molecules/CustomToasts';
 import TextDisplayField from '@app/components/molecules/TextDisplayField';
-import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
+import { useModal } from '../Modals/context';
 import { Button } from '../atoms/Button';
-import { cn } from '../lib/utils';
 import { ScrollArea } from '../shadcn/ui/scroll-area';
-import AgentFunctionsDetailComponent from './AgentFunctionsDetail';
+import AgentHistoryComponent from './AgentHistory';
+import CustomCopyBox from './CustomCopyBox';
 
-const AgentOverViewComponent = ({
-    agent,
-    enableEdit
-}: {
+interface AgentOverViewProps {
     agent?: IAgent;
     enableEdit?: boolean;
-}) => {
-    const [isEditing, setIsEditing] = useState(false);
-    const [agentName, setAgentName] = useState(agent?.name || '');
-    const [agentInstance, setAgentInstance] = useState(agent?.instance || 0);
-    const [agentConfigurations, setAgentConfigurations] = useState<
-        Array<IAgentConfiguration>
-    >(agent?.agent_configurations || []);
+}
 
-    const agentNameRef = useRef<HTMLInputElement>(null);
+const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
+    const { openModal } = useModal();
 
-    const updateAgent = useMutation({
-        mutationFn: (data: IAgentUpdateReqDto) => updateAgentData(data),
-        onSuccess: () => {
-            queryClient.refetchQueries({ queryKey: [`agent${agent?.id}`] });
-            queryClient.refetchQueries({ queryKey: ['myAgent'] });
-            SuccessToast('Agent successfully updated.');
-        },
-        onError: (error: any) => {
-            ErrorToast(error?.response?.data);
-        }
-    });
-
-    useEffect(() => {
-        if (isEditing && agentNameRef.current) {
-            agentNameRef.current.focus();
-        }
-    }, [isEditing]);
-    const handleClickEditButton = () => {
-        setIsEditing(true);
+    const handleAgentRun = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        openModal('AgentRunnerView', {
+            agentId: agent?.id
+        });
     };
 
-    const handleUpdateAgentFunction = (
-        agentConfig: IAgentConfiguration,
-        configIndex: number
-    ) => {
-        if (configIndex < agentConfigurations.length) {
-            agentConfigurations[configIndex] = agentConfig;
-        } else {
-            agentConfigurations.push(agentConfig);
-        }
-        setAgentConfigurations([...agentConfigurations]);
-    };
+    const renderCustomCopyBox = (
+        title: string,
+        content: string | number,
+        className: string = 'w-96',
+        showCopyIcon: boolean = true
+    ) => (
+        <CustomCopyBox
+            title={title}
+            content={content.toString()}
+            className={className}
+            showCopyIcon={showCopyIcon}
+        />
+    );
 
-    const handleClickUpdate = () => {
-        const updatedAgentConfigs = agentConfigurations.map((config) => ({
-            id: config.id,
-            agent_id: agent?.id || '',
-            type: config.type,
-            action: config.action,
-            data: config.data
-        }));
-        console.log(updatedAgentConfigs);
-        updateAgent
-            .mutateAsync({
-                agentId: agent?.id,
-                agentName: agentName,
-                instance: agentInstance,
-                agentConfigurations: updatedAgentConfigs
-            })
-            .then(() => {
-                setIsEditing(false);
-            });
-    };
-
-    const handleClickDeleteAgent = (configIndex: number) => {
-        if (agent) {
-            const updatedConfigs = agentConfigurations?.filter(
-                (_, index) => index != configIndex
-            );
-            updatedConfigs && setAgentConfigurations(updatedConfigs);
-        }
-    };
-
-    const renderWalletDetail = () => {
-        return (
-            <div className={' flex flex-col gap-2'}>
-                <div className={'flex flex-col'}>
-                    <span className={'pb-2 text-lg font-medium'}>Wallet</span>
-                    <div className={'flex w-full items-center gap-1'}>
-                        <span className={' font-medium'}>Address :</span>
-                        <TextDisplayField
-                            title="Address"
-                            content={agent?.agent_address}
-                            showCopy
-                        />
-                    </div>
-                    <div className={'flex gap-2'}>
-                        <span className={' font-medium'}>Balance :</span>
-                        <span>{agent?.wallet_amount + ' Ada'} </span>
-                    </div>
-                </div>
-            </div>
-        );
-    };
-
-    const renderDrepDetail = () => {
-        return (
-            <div className={'flex flex-col items-end gap-2'}>
-                <div className={'flex flex-col'}>
-                    <span className={'pb-2 text-start text-lg font-medium'}>DRep</span>
-                    <div className={'flex w-full items-center gap-1'}>
-                        <span className={'font-medium'}>Id :</span>
-                        {agent?.drep_id && (
-                            <TextDisplayField
-                                title="Id"
-                                showCopy
-                                content={hexToBech32(agent?.drep_id)}
-                            />
-                        )}
-                    </div>
-                    <div className={'flex gap-2'}>
-                        <span className={' font-medium'}>Registered :</span>
-                        <span>{agent?.is_drep_registered ? 'Yes' : 'No'}</span>
-                    </div>
-                    <div className={'flex gap-2'}>
-                        <span className={' font-medium'}>Voting Power :</span>
-                        <span>{agent?.voting_power ? agent?.voting_power : 0}</span>
-                    </div>
-                </div>
-            </div>
-        );
-    };
-
-    const renderDelegationDetail = () => {
-        return (
-            <div className={'flex flex-col gap-2'}>
-                <div className={'flex flex-col'}>
-                    <span className={'pb-2 text-start text-lg font-medium'}>
-                        Delegation
-                    </span>
-                    <div className={'flex gap-2'}>
-                        <span className={' font-medium'}>DRep :</span>
-                        <span>
-                            {' '}
-                            {agent?.delegation?.drep_id
-                                ? agent?.delegation?.drep_id
-                                : '___'}{' '}
-                        </span>
-                    </div>
-                    <div className={'flex gap-2'}>
-                        <span className={' font-medium'}>Pool :</span>
-                        <span>
-                            {agent?.delegation?.pool_id
-                                ? agent?.delegation?.pool_id
-                                : '___'}
-                        </span>
-                    </div>
-                </div>
-            </div>
-        );
-    };
-
-    const renderStakeDetail = () => {
-        return (
-            <div className={' flex flex-col items-end gap-2'}>
-                <div className={'flex flex-col'}>
-                    <span className={'pb-2 text-lg font-medium'}>Stake</span>
-                    <div className={'flex w-full items-center gap-1'}>
-                        <span className={'font-medium'}>Address:</span>
-                        {agent?.drep_id && (
-                            <TextDisplayField
-                                title="Address"
-                                showCopy
-                                content={hexToBech32(agent?.drep_id, 'stake_test')}
-                            />
-                        )}
-                    </div>
-                    <div className={'flex gap-2'}>
-                        <span className={' font-medium'}>Registered :</span>
-                        <span>{agent?.is_stake_registered ? 'Yes' : 'No'}</span>
-                    </div>
-                </div>
-            </div>
-        );
-    };
+    const triggerDataPlaceholder = [
+        'success',
+        'skip',
+        'failed',
+        ...Array(24)
+            .fill(0)
+            .map((_, i) => ['success', 'skip', 'failed'][Math.floor(Math.random() * 3)])
+    ];
 
     return (
-        <div className={'flex h-full flex-col gap-10 '}>
-            <div className={'flex justify-between'}>
-                <div className={'flex items-center gap-3'}>
-                    <AgentsIcon />
-                    <span className={'text-[20px] font-semibold'}>Agent Overview</span>
-                </div>
-                {isEditing ? (
-                    <></>
-                ) : (
-                    <Edit
-                        className={cn('cursor-pointer', enableEdit ? '' : '!hidden')}
-                        onClick={handleClickEditButton}
+        <div className="flex h-full flex-col gap-10">
+            <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                    <TextDisplayField
+                        title="Agent Name"
+                        content={agent?.name}
+                        textClassName="text-xl font-semibold"
                     />
-                )}
+                    <Button
+                        variant="primary"
+                        onClick={handleAgentRun}
+                        size="sm"
+                        className="px-4"
+                    >
+                        Run Agent
+                    </Button>
+                </div>
+                <ScrollArea className="w-full overflow-y-auto p-2">
+                    <div className="flex flex-col gap-8">
+                        <div className="flex flex-col gap-4">
+                            <div className="flex gap-3">
+                                {renderCustomCopyBox(
+                                    'wallet address',
+                                    agent?.agent_address || ''
+                                )}
+                                {renderCustomCopyBox(
+                                    'wallet balance',
+                                    `${Number(agent?.wallet_amount || 0).toFixed(2)} Ada`,
+                                    '',
+                                    false
+                                )}
+                            </div>
+                            <div className="flex gap-3">
+                                {renderCustomCopyBox('drep id', agent?.drep_id || '')}
+                                {renderCustomCopyBox(
+                                    'is drep registered',
+                                    agent?.is_drep_registered ? 'Yes' : 'No',
+                                    '',
+                                    false
+                                )}
+                                {renderCustomCopyBox(
+                                    'voting power',
+                                    `${agent?.voting_power || 0} Ada`,
+                                    '',
+                                    false
+                                )}
+                            </div>
+                            <div className="flex gap-3">
+                                {renderCustomCopyBox(
+                                    'stake id',
+                                    hexToBech32(agent?.drep_id || '', 'stake_test')
+                                )}
+                                {renderCustomCopyBox(
+                                    'is stake registered',
+                                    agent?.is_stake_registered ? 'Yes' : 'No',
+                                    '',
+                                    false
+                                )}
+                            </div>
+                            <div className="flex gap-3">
+                                {renderCustomCopyBox(
+                                    'delegated Drep',
+                                    agent?.delegation?.drep_id || ''
+                                )}
+                                {renderCustomCopyBox(
+                                    'delegated Pool',
+                                    agent?.delegation?.pool_id || '',
+                                    '',
+                                    false
+                                )}
+                            </div>
+                        </div>
+                        <div>
+                            <TriggerDataBox
+                                triggerData={triggerDataPlaceholder}
+                                lastActive={agent?.last_active}
+                            />
+                        </div>
+                    </div>
+                </ScrollArea>
             </div>
-            <ScrollArea
-                className={'h-agentComponentHeight w-full overflow-y-auto pr-6 '}
-            >
-                {isEditing ? (
-                    <div className={'flex flex-col gap-10'}>
-                        <div className={'flex flex-col gap-2'}>
-                            <h1 className={'text-sm font-medium'}>Agent Name</h1>
-                            <input
-                                ref={agentNameRef}
-                                type={'text'}
-                                value={agentName}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                    setAgentName(e.target.value)
-                                }
-                                className={
-                                    's w-fit rounded border-0 border-b border-gray-300 px-4 py-2 outline-0'
-                                }
-                            />
-                        </div>
-                        <AgentFunctionsDetailComponent
-                            onClickSave={(agentConfig, index) => {
-                                handleUpdateAgentFunction(agentConfig, index);
-                            }}
-                            onClickDelete={(configIndex: number) =>
-                                handleClickDeleteAgent(configIndex)
-                            }
-                            agentConfigurations={agentConfigurations}
-                            isEditing={true}
-                        />
-                        <div className={'flex flex-col gap-2'}>
-                            <h1 className={'text-sm font-medium'}>Agent Instance</h1>
-                            <input
-                                type={'number'}
-                                value={agentInstance}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                    setAgentInstance(+e.target.value)
-                                }
-                                className={
-                                    's w-fit rounded border-0 border-b border-gray-300 px-4 py-2 outline-0'
-                                }
-                            />
-                        </div>
-                        <div className={'flex justify-start'}>
-                            <Button
-                                onClick={() => handleClickUpdate()}
-                                variant={'primary'}
-                            >
-                                Update
-                            </Button>
-                        </div>
-                    </div>
-                ) : (
-                    <div className={'flex flex-col gap-10'}>
-                        <TextDisplayField title={'Agent Name'} content={agent?.name} />
-                        <AgentFunctionsDetailComponent
-                            agentConfigurations={agentConfigurations}
-                        />
-                        <TextDisplayField
-                            title={'Number of Agents'}
-                            content={agent?.instance}
-                        />
-                        <div className="grid w-full grid-cols-2 justify-between gap-y-10">
-                            <div className="flex w-full items-start">
-                                {renderWalletDetail()}
-                            </div>
-                            <div className="flex w-full items-center">
-                                {renderDrepDetail()}
-                            </div>
-                            <div className="flex w-full items-start">
-                                {renderDelegationDetail()}
-                            </div>
-                            <div className="flex w-full items-center">
-                                {renderStakeDetail()}
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </ScrollArea>
         </div>
     );
 };
 
 export default AgentOverViewComponent;
+
+const TriggerDataBox = ({
+    triggerData,
+    lastActive
+}: {
+    triggerData: string[];
+    lastActive?: string;
+}) => {
+    const customBox = (status: string, width?: string, height?: string) => {
+        const bgColor =
+            status === 'success'
+                ? 'bg-green-500'
+                : status === 'failed'
+                  ? 'bg-red-500'
+                  : 'bg-gray-400';
+        return (
+            <div
+                className={`${bgColor} ${width ? width : 'w-full'} ${height ? height : 'h-full'} rounded-lg hover:cursor-pointer`}
+            ></div>
+        );
+    };
+
+    return (
+        <div className="flex w-full justify-between rounded-lg border-[1px] border-brand-border-100 px-10 py-6">
+            <div className="flex flex-col gap-2 ">
+                <div className="text-sm font-medium text-gray-600">Triggered</div>
+                <div className="text-[10px] text-gray-500 ">Last 24 triggers</div>
+                <div className="flex h-6 w-full gap-[6px]">
+                    {triggerData.map((item, index) => customBox(item, `w-3`, `h-full`))}
+                </div>
+            </div>
+            <div className="flex w-full items-center justify-center">
+                <div className="flex flex-col items-center gap-8">
+                    <div className="items-center text-sm font-medium text-gray-600">
+                        Last Active
+                    </div>
+                    <div className="items-center text-xs text-gray-500">
+                        {lastActive || 'Not Activated'}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};

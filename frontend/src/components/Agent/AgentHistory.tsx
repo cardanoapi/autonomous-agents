@@ -13,14 +13,20 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
-import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
 import { IChartFilterOption, chartFilterOptions } from '../Chart/ChartFilter';
 import { convertDictToGraphDataFormat } from '../Chart/ChartFilter';
 import AgentFunctionsDropDown from '../Common/AgentFunctionsDropDown';
+import { cn } from '../lib/utils';
 
-const AgentHistoryComponent = ({ agent }: { agent?: IAgent }) => {
+const AgentHistoryComponent = ({
+    agent,
+    chartClassName
+}: {
+    agent?: IAgent;
+    chartClassName?: string;
+}) => {
     const [currentChartFilterOption, setCurrentChartFilterOption] = useState(
         chartFilterOptions[2]
     );
@@ -70,58 +76,55 @@ const AgentHistoryComponent = ({ agent }: { agent?: IAgent }) => {
 
     if (isLoading)
         return (
-            <div className={'flex h-full w-full flex-col gap-10'}>
+            <div className={'flex h-[500px] w-full flex-col gap-10'}>
                 <Skeleton className={'h-5 w-[300px]'} />
                 <Skeleton className={'h-full w-full'} />
             </div>
         );
     return (
-        <div className={'flex h-full w-full flex-col gap-10'}>
-            <div className={'flex items-center gap-3'}>
-                <AgentsIcon />
-                <span className={'text-[20px] font-semibold'}>Agent History</span>
-            </div>
-            <div
-                className={
-                    'flex h-full w-full flex-col gap-2 rounded border border-brand-White-200 p-4'
-                }
-            >
-                <div className="flex justify-between">
-                    <span className="title-1">Transactions</span>
-                    <div className="flex gap-2">
-                        <AgentFunctionsDropDown
-                            onChange={(stringValue: string) => {
-                                setCurrentFunction(stringValue);
-                            }}
-                        />
-                        <DropdownMenu>
-                            <DropdownMenuTrigger
-                                border={true}
-                                className="flex min-w-40 justify-between"
-                            >
-                                {currentChartFilterOption.placeholder}
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="bg-white">
-                                {chartFilterOptions.map(
-                                    (item: IChartFilterOption, index) => (
-                                        <DropdownMenuItem
-                                            onClick={() => {
-                                                setCurrentChartFilterOption({
-                                                    placeholder: item.placeholder,
-                                                    unit: item.unit,
-                                                    xaxisInterval: item.xaxisInterval
-                                                });
-                                            }}
-                                            key={index}
-                                        >
-                                            {item.placeholder}
-                                        </DropdownMenuItem>
-                                    )
-                                )}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
+        <div
+            className={cn(
+                'flex h-full w-full flex-col gap-2 rounded border border-brand-border-100 lg:p-6 2xl:p-10',
+                chartClassName
+            )}
+        >
+            <div className="flex justify-between">
+                <span className="title-1">Transactions</span>
+                <div className="flex gap-2">
+                    <AgentFunctionsDropDown
+                        onChange={(stringValue: string) => {
+                            setCurrentFunction(stringValue);
+                        }}
+                    />
+                    <DropdownMenu>
+                        <DropdownMenuTrigger
+                            border={true}
+                            className="flex min-w-40 justify-between"
+                        >
+                            {currentChartFilterOption.placeholder}
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="bg-white">
+                            {chartFilterOptions.map(
+                                (item: IChartFilterOption, index) => (
+                                    <DropdownMenuItem
+                                        onClick={() => {
+                                            setCurrentChartFilterOption({
+                                                placeholder: item.placeholder,
+                                                unit: item.unit,
+                                                xaxisInterval: item.xaxisInterval
+                                            });
+                                        }}
+                                        key={index}
+                                    >
+                                        {item.placeholder}
+                                    </DropdownMenuItem>
+                                )
+                            )}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
+            </div>
+            <div className="flex h-full w-full flex-col items-center justify-between gap-4 lg:p-2 2xl:p-8">
                 <CustomLineChart
                     chartData={
                         triggerHistoryMetric !== undefined
@@ -133,9 +136,6 @@ const AgentHistoryComponent = ({ agent }: { agent?: IAgent }) => {
                     }
                     xaxisInterval={currentChartFilterOption.xaxisInterval}
                 />
-                <div className="mt-2 text-center">
-                    Time ({currentChartFilterOption.unit})
-                </div>
             </div>
         </div>
     );

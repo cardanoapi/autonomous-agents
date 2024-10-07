@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import React from 'react';
 
 import { IAgent, fetchAgents } from '@api/agents';
 import { useQuery } from '@tanstack/react-query';
