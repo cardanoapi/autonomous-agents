@@ -67,12 +67,12 @@ export function generateRegisterDrepMetadataContent(
             qualifications: 'Known for running test in cardano blockchain.',
             references: [
                 {
-                    '@type': 'Identity',
+                    '@type': 'Link',
                     label: 'Autonomous_Agent_Docs',
                     uri: 'https://cardanoapi.github.io/autonomous-agents/archietecture_docusaurus/docs/architecture',
                 },
                 {
-                    '@type': 'Link',
+                    '@type': 'Identity',
                     label: 'Autonomous_Agent',
                     uri: 'https://agents.cardanoapi.io',
                 },

@@ -29,7 +29,11 @@ export async function fetchAgentConfiguration(agentSecretKey: string): Promise<{
     try {
         const agent = await prisma.agent.findFirst({
             include: {
-                triggers: true,
+                triggers: {
+                    where: {
+                        deleted_at: null,
+                    },
+                },
             },
             where: {
                 secret_key: Buffer.from(agentSecretKey),
