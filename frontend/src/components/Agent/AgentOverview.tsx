@@ -31,7 +31,7 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
     const renderCustomCopyBox = (
         title: string,
         content: string | number,
-        className: string = 'w-96',
+        className: string = 'w-96 px-2 py-[6px]',
         showCopyIcon: boolean = true
     ) => (
         <CustomCopyBox
@@ -64,12 +64,12 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
                         variant="primary"
                         onClick={handleAgentRun}
                         size="sm"
-                        className="px-4"
+                        className="min-w-32 px-4"
                     >
                         Run Agent
                     </Button>
                 </div>
-                <ScrollArea className="w-full overflow-y-auto p-2">
+                <ScrollArea className="w-full overflow-y-auto ">
                     <div className="flex flex-col gap-8">
                         <div className="flex flex-col gap-4">
                             <div className="flex gap-3">

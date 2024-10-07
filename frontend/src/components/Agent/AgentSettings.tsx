@@ -23,7 +23,7 @@ import { ScrollArea } from '../shadcn/ui/scroll-area';
 import AgentFunctionsDetailComponent from './AgentFunctionsDetail';
 import AgentHistoryComponent from './AgentHistory';
 
-const AgentOverViewComponent = ({
+const AgentSettingsComponent = ({
     agent,
     enableEdit
 }: {
@@ -303,4 +303,4 @@ const AgentOverViewComponent = ({
     );
 };
 
-export default AgentOverViewComponent;
+export default AgentSettingsComponent;

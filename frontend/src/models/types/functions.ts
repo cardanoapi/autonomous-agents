@@ -273,7 +273,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
             },
             {
                 id: 'createInfoGovAction',
-                name: 'Info',
+                name: 'Info Action Proposal',
                 parameters: [
                     {
                         id: 'anchor',

@@ -3,7 +3,6 @@
 import { IAgent } from '@api/agents';
 import { useAtom } from 'jotai';
 
-import AgentHistoryComponent from '@app/components/Agent/AgentHistory';
 import AgentManualTriggerComponent from '@app/components/Agent/AgentManualTrigger';
 import AgentOverViewComponent from '@app/components/Agent/AgentOverview';
 import SkeletonLoadingForAgentOverview from '@app/components/Agent/SkeletonLoadingForAgentOverview';
@@ -11,8 +10,9 @@ import { selectedAgentTabAtom } from '@app/store/localStore';
 
 import { cn } from '../lib/utils';
 import { Skeleton } from '../shadcn/ui/skeleton';
+import AgentFunctionsComponent from './AgentFunctions';
 import AgentLogComponent from './AgentLog';
-import AgentRunnerComponent from './AgentRunner';
+import AgentSettingsComponent from './AgentSettings';
 
 const AgentTabContent = ({
     agent,
@@ -31,14 +31,14 @@ const AgentTabContent = ({
         if (selectedAgentTab === 'Overview')
             return <AgentOverViewComponent agent={agent} enableEdit={enableEdit} />;
         else if (selectedAgentTab === 'Functions')
-            return <AgentHistoryComponent agent={agent} />;
+            return <AgentFunctionsComponent agent={agent} />;
         else if (selectedAgentTab === 'Logs')
             return <AgentLogComponent agent={agent} />;
         else if (enableEdit) {
             if (selectedAgentTab === 'Manual Actions')
                 return <AgentManualTriggerComponent agent={agent} />;
             else if (selectedAgentTab === 'Settings')
-                return <AgentRunnerComponent agent={agent} />;
+                return <AgentSettingsComponent agent={agent} enableEdit={enableEdit} />;
         }
     }
     //Logs and History tab have their own Skeleton handled inside the component
