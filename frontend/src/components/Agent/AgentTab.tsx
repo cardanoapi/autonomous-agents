@@ -16,7 +16,9 @@ const AgentTabSection = ({
     const tabs = showAllTabs ? adminTabs : normalTabs;
 
     return (
-        <div className={cn('flex  flex-col gap-2 rounded-lg bg-white py-6', className)}>
+        <div
+            className={cn('flex  flex-col gap-2 rounded-lg bg-white py-6 ', className)}
+        >
             {tabs.map((item, index) => (
                 <AgentTabItem key={index} item={item} />
             ))}
