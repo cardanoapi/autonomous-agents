@@ -45,10 +45,6 @@ class AgentRouter(Routable):
         agent = await self.agent_service.get_agent(agent_id, user)
         return agent
 
-    @get("/check/drep-registration")
-    async def check_drep_registration(self):
-        return await self.agent_service.seed_drep_registration_column()
-
     @put("/agents/{agent_id}", status_code=HTTPStatus.OK)
     async def update_agent(self, agent_id: str, agent_data: AgentUpdateDTO, user: User = Depends(verify_cookie)):
         updated_agent = await self.agent_service.update_agent(agent_id, agent_data, userAddress=user.address)
@@ -64,8 +60,8 @@ class AgentRouter(Routable):
         return await self.agent_service.delete_agent(agent_id, user.address)
 
     @post("/agents/{agent_id}/trigger", status_code=HTTPStatus.OK)
-    async def trigger_agent_action(self, agent_id: str, action: AgentFunction):
-        await self.agent_service.trigger_agent_action(agent_id, action)
+    async def trigger_agent_action(self, agent_id: str, action: AgentFunction, user: User = Depends(verify_cookie)):
+        await self.agent_service.trigger_agent_action(agent_id, action, user)
 
     @get("/agents/my-agent", response_model=AgentResponseWithWalletDetails)
     async def get_my_agent(self, user: User = Depends(verify_cookie)):

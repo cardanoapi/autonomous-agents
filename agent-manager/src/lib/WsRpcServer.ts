@@ -65,7 +65,7 @@ export abstract class WsRpcServer extends RpcV1Server {
                 await this.validateConnection(req)
                 this.onReady(this.activeConnections[conn_id])
             } catch (err: any) {
-                console.error("New Agent connection error",err)
+                console.error('New Agent connection error', err)
                 this.disconnect(conn_id, err.message)
             }
         })

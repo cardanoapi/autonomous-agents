@@ -1,4 +1,4 @@
-import getFaucetAdaForAddress, { faucetEnabled, fetchWalletBalance } from "../utils/fuacet";
+import getFaucetAdaForAddress, { faucetEnabled, fetchWalletBalance } from '../utils/fuacet'
 import { kuber } from './kuber_service'
 import environments from '../config/environments'
 import { TxListener } from './TxListener'
@@ -45,7 +45,7 @@ export class ManagerWalletService {
             throw new Error('Faucet is not enabled')
         }
         if (amount > this.walletBalance) {
-            if(!faucetEnabled){
+            if (!faucetEnabled) {
                 throw new Error('Insufficient balance on manager wallet')
             }
             await this.loadWalletFunds()

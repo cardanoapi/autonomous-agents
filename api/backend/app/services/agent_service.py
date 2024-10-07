@@ -85,7 +85,7 @@ class AgentService:
         if search:
             filters["name"] = {"contains": search, "mode": "insensitive"}
         agents = await self.agent_repository.db.prisma.agent.find_many(
-            include={"template": True, "triggers": True}, where=filters, skip=skip, take=size
+            include={"template": True, "triggers": {"where": {"deleted_at": None}}}, where=filters, skip=skip, take=size
         )
         super_admin = user.isSuperUser if user else False
         updated_agents = []
@@ -112,25 +112,6 @@ class AgentService:
         response = await self.return_agent_with_wallet_details(agent)
         return response
 
-    async def fetch_wallet_details_and_seed_drep_registration(self, agent: AgentResponse, session: ClientSession):
-        wallets = await self.agent_instance_wallet_service.get_wallets(agent.id)
-        if not len(wallets):
-            await self.agent_instance_wallet_service.create_wallet(agent)
-        wallets = await self.agent_instance_wallet_service.get_wallets(agent.id)
-        wallet = wallets[0]
-        drep = await self.fetch_drep_details(wallet.stake_key_hash, session)
-        drep_registered = drep.get("is_drep_registered", False)
-        if drep_registered:
-            await self.agent_repository.update_agent_drep_status(agent.id, drep_registered)
-
-    async def seed_drep_registration_column(self):
-        agents = await self.agent_repository.retrieve_all_agents()
-        async with aiohttp.ClientSession() as session:
-            async with asyncio.TaskGroup() as group:
-                for agent in agents:
-                    group.create_task(self.fetch_wallet_details_and_seed_drep_registration(agent, session))
-        return "Successful"
-
     async def update_agent(
         self, agent_id: str, agent_data: AgentUpdateDTO, userAddress: str
     ) -> AgentResponseWithAgentConfigurations:
@@ -149,9 +130,8 @@ class AgentService:
         existing_agent = await self.agent_repository.modify_agent(agent_id, agent_data)
         self.raise_exception_if_agent_not_found(existing_agent)
         await self.kafka_service.publish_message(
-            api_settings.getKafkaTopicPrefix() + "-updates", "config_updated", key=agent_id
+            api_settings.getKafkaTopicPrefix() + "-updates", "config_updated", key=existing_agent.secret_key
         )
-        existing_agent.secret_key = base64.b64decode(existing_agent.secret_key._raw).decode()
         return AgentResponseWithAgentConfigurations(**existing_agent.dict(), agent_configurations=updated_triggers)
 
     async def get_active_agents_count(self):
@@ -159,7 +139,7 @@ class AgentService:
 
     async def delete_agent(self, agent_id: str, user_address: str) -> str:
 
-        existing_agent = await self.agent_repository.retrieve_agent(agent_id)
+        existing_agent = await self.agent_repository.retrieve_agent(agent_id, None, user_address)
         self.raise_exception_if_agent_not_found(existing_agent)
         await self.is_superadmin(user_address)
 
@@ -167,9 +147,9 @@ class AgentService:
         await self.agent_instance_wallet_service.delete_wallet(agent_id)
 
         await self.kafka_service.publish_message(
-            "Agent_Trigger",
+            api_settings.getKafkaTopicPrefix() + "-triggers",
             json.dumps({"method": "Agent_Deletion", "parameters": []}),
-            agent_id,
+            existing_agent.secret_key,
         )
         return agent_id
 
@@ -178,11 +158,13 @@ class AgentService:
         self.raise_exception_if_agent_not_found(agent)
         return True
 
-    async def trigger_agent_action(self, agent_id: str, action: AgentFunction):
-        await self.check_if_agent_exists(agent_id)
+    async def trigger_agent_action(self, agent_id: str, action: AgentFunction, user: User):
+        agent = await self.agent_repository.retrieve_agent(agent_id, user)
+        if agent is None or False:
+            raise HTTPException(status_code=404, content="Agent not found")
         message_in_rpc_format = json.dumps({"method": action.function_name, "parameters": action.dict()["parameters"]})
         await self.kafka_service.publish_message(
-            api_settings.getKafkaTopicPrefix() + "-triggers", message_in_rpc_format, key=agent_id
+            api_settings.getKafkaTopicPrefix() + "-triggers", message_in_rpc_format, key=agent.secret_key
         )
 
     def raise_exception_if_agent_not_found(self, agent):

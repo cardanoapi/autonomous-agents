@@ -72,11 +72,11 @@ class TriggerRepository:
             return False
         elif trigger.deleted_at is not None:
             return True
-
-        await self.db.prisma.trigger.update(
-            where={"agent_id": trigger.agent_id, "id": trigger_id},
-            data={"deleted_at": datetime.now(timezone.utc)},
-        )
+        await self.db.prisma.trigger.delete(where={"id": trigger_id})
+        # await self.db.prisma.trigger.update(
+        #     where={"agent_id": trigger.agent_id, "id": trigger_id},
+        #     data={"deleted_at": datetime.now(timezone.utc)},
+        # )
         return True
 
     async def retreive_trigger_by_id(self, trigger_id: str) -> Optional[TriggerResponse]:

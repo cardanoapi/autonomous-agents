@@ -60,11 +60,15 @@ class AgentRepository:
     async def retrieve_all_agents(self) -> List[AgentResponse]:
         return await self.db.prisma.agent.find_many(where={"deleted_at": None})
 
-    async def retrieve_agent(self, agent_id: str, user: User | None = None) -> Optional[AgentResponse]:
+    async def retrieve_agent(
+        self, agent_id: str, user: User | None = None, user_address: str | None = None
+    ) -> Optional[AgentResponse]:
         agent = await self.db.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})
         display_secret_key = False
         if user:
             display_secret_key = user.isSuperUser or user.address == agent.userAddress
+        if user_address:
+            display_secret_key = user_address == agent.userAddress
         if agent is None:
             return None
         else:
@@ -91,16 +95,7 @@ class AgentRepository:
             "updated_at": datetime.now(timezone.utc),
         }
         updated_agent = await self.db.prisma.agent.update(where={"id": agent_id}, data=updated_data)
-        return updated_agent
-
-    async def update_agent_drep_status(self, agent_id: str, drep_registered: bool) -> Optional[AgentResponse]:
-        agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
-        if agent is None or agent.deleted_at is not None:
-            return None
-        updated_data = {
-            "is_drep_registered": drep_registered,
-        }
-        updated_agent = await self.db.prisma.agent.update(where={"id": agent_id}, data=updated_data)
+        updated_agent.secret_key = base64.b64decode(updated_agent.secret_key._raw).decode()
         return updated_agent
 
     async def get_online_agents_count(self):
