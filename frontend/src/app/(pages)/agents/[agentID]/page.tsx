@@ -60,8 +60,6 @@ export default function AgentPageById() {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>{agent?.name || 'Agent Profile'}</BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>{selectedTab}</BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
             <div className={'flex h-[600px] w-full gap-4 2xl:h-[700px] 4xl:h-[800px] '}>

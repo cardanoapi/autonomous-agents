@@ -3,8 +3,8 @@
 import { cn } from '../lib/utils';
 import AgentTabItem from './AgentTabItem';
 
-const adminTabs = ['Overview', 'History', 'Logs', 'Manual Trigger', 'Agent Runner'];
-const normalTabs = ['Overview', 'History', 'Logs'];
+const adminTabs = ['Overview', 'Functions', 'Logs', 'Manual Actions', 'Settings'];
+const normalTabs = ['Overview', 'Functions', 'Logs'];
 
 const AgentTabSection = ({
     showAllTabs = false,
