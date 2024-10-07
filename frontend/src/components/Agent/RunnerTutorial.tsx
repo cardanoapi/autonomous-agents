@@ -6,14 +6,20 @@ import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import environments from '@app/configs/environments';
 import { convertToBase64 } from '@app/utils/base64converter';
 
-const AgentRunnerTutorial = ({ agentSecretKey }: { agentSecretKey: string }) => {
+const AgentRunnerTutorial = ({
+    agentSecretKey,
+    showToken
+}: {
+    agentSecretKey: string;
+    showToken?: boolean;
+}) => {
     const dockerCommand = `docker run -d --pull always -e TOKEN=${convertToBase64(agentSecretKey)} cardanoapi/autonomous-agents:${environments.NEXT_PUBLIC_IMAGE_TAG}`;
 
     return (
         <div className={'flex flex-col gap-6'}>
             <span className={''}>Run this agent by following tutorial:</span>
             <div className={'flex flex-col gap-2'}>
-                <span className={'text-base font-semibold text-brand-Black-100'}>
+                <span className={'font-norm text-base text-brand-Black-100'}>
                     Using Docker:
                 </span>
                 <div className={'flex w-full items-center gap-1'}>
@@ -51,6 +57,26 @@ const AgentRunnerTutorial = ({ agentSecretKey }: { agentSecretKey: string }) => 
                         </Link>
                     </span>
                 </span>
+                {showToken && (
+                    <div
+                        className={
+                            'flex flex-row items-end gap-2 pt-2 text-sm font-normal text-brand-Black-300'
+                        }
+                    >
+                        Token :
+                        <div
+                            onClick={() => {
+                                navigator.clipboard.writeText(
+                                    convertToBase64(agentSecretKey)
+                                );
+                                SuccessToast('Token Copied!');
+                            }}
+                            className={'cursor-pointer text-xs'}
+                        >
+                            {convertToBase64(agentSecretKey)}
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

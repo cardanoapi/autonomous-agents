@@ -11,7 +11,7 @@ const AgentRunnerComponent = ({ agent }: { agent?: IAgent }) => {
                 <span className={'text-[20px] font-semibold'}>Manual Trigger</span>
             </div>
             {agent && agent.secret_key && (
-                <AgentRunnerTutorial agentSecretKey={agent.secret_key} />
+                <AgentRunnerTutorial showToken agentSecretKey={agent.secret_key} />
             )}
         </div>
     );
