@@ -1,1 +1,0 @@
-[{'agentId': '93f025d8-4b68-45b9-a45d-34c3d18ca9de', 'functionName': 'voteOnProposal', 'status': True, 'success': False, 'timestamp': '2024-09-25T07:03:36.733000+00:00', 'message': "Cannot read properties of undefined (reading 'url')", 'triggerType': 'EVENT', 'txHash': None, 'instanceIndex': 0}]
