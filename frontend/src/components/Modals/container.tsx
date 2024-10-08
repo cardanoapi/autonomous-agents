@@ -33,7 +33,7 @@ const ModalContainer = () => {
     return (
         <Dialog open={isOpen} onOpenChange={() => closeModal()}>
             <DialogContent
-                className={`max-w-none bg-red-50 !p-0 ${getClassName(view)} w-fit`}
+                className={`max-w-none !p-0 ${getClassName(view)} w-fit`}
                 onClickCloseIcon={() => closeModal()}
             >
                 {getRenderComponent(view, modalProps)}
