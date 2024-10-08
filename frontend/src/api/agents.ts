@@ -73,6 +73,7 @@ export interface IAgent {
     is_stake_registered?: boolean;
     delegation?: IDelegation;
     stake_last_registered?: string;
+    secret_key?: string;
 }
 
 export const fetchAgents = async (params: {
@@ -84,7 +85,9 @@ export const fetchAgents = async (params: {
 
     const queryString = convertToQueryStr(page, size, search);
 
-    const res = await fetch(`${baseAPIurl}/agents?${queryString}`);
+    const res = await fetch(`${baseAPIurl}/agents?${queryString}`, {
+        credentials: 'include'
+    });
     if (!res.ok) {
         throw new Error('Agents Fetch Operation failed: Network Error');
     }
@@ -166,7 +169,7 @@ export const fetchAgentbyID = async (agentID: string): Promise<IAgent> => {
     const url = `${baseAPIurl}/agent/${agentID}`;
 
     try {
-        const response = await axios.get(url);
+        const response = await axios.get(url, { withCredentials: true });
         return response.data;
     } catch (error) {
         throw new Error('Agent Fetch Operation failed: Network Error');

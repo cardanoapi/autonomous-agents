@@ -4,6 +4,7 @@ export function generateRegisterDrepMetadataContent(
 ) {
     return JSON.stringify({
         '@context': {
+            '@language': 'en-us',
             CIP100: 'https://github.com/cardano-foundation/CIPs/blob/master/CIP-0100/README.md#',
             CIP119: 'https://github.com/cardano-foundation/CIPs/blob/master/CIP-0119/README.md#',
             hashAlgorithm: 'CIP100:hashAlgorithm',
@@ -66,12 +67,12 @@ export function generateRegisterDrepMetadataContent(
             qualifications: 'Known for running test in cardano blockchain.',
             references: [
                 {
-                    '@type': 'Identity',
+                    '@type': 'Link',
                     label: 'Autonomous_Agent_Docs',
                     uri: 'https://cardanoapi.github.io/autonomous-agents/archietecture_docusaurus/docs/architecture',
                 },
                 {
-                    '@type': 'Link',
+                    '@type': 'Identity',
                     label: 'Autonomous_Agent',
                     uri: 'https://agents.cardanoapi.io',
                 },

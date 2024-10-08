@@ -15,6 +15,7 @@ import { Edit } from 'lucide-react';
 import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { ErrorToast, SuccessToast } from '@app/components/molecules/CustomToasts';
 import TextDisplayField from '@app/components/molecules/TextDisplayField';
+import environments from '@app/configs/environments';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { Button } from '../atoms/Button';
@@ -249,19 +250,23 @@ const AgentOverViewComponent = ({
                             agentConfigurations={agentConfigurations}
                             isEditing={true}
                         />
-                        <div className={'flex flex-col gap-2'}>
-                            <h1 className={'text-sm font-medium'}>Agent Instance</h1>
-                            <input
-                                type={'number'}
-                                value={agentInstance}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                    setAgentInstance(+e.target.value)
-                                }
-                                className={
-                                    's w-fit rounded border-0 border-b border-gray-300 px-4 py-2 outline-0'
-                                }
-                            />
-                        </div>
+                        {environments.NEXT_PUBLIC_ENABLE_AGENT_INSTANCE && (
+                            <div className={'flex flex-col gap-2'}>
+                                <h1 className={'text-sm font-medium'}>
+                                    Agent Instance
+                                </h1>
+                                <input
+                                    type={'number'}
+                                    value={agentInstance}
+                                    onChange={(
+                                        e: React.ChangeEvent<HTMLInputElement>
+                                    ) => setAgentInstance(+e.target.value)}
+                                    className={
+                                        's w-fit rounded border-0 border-b border-gray-300 px-4 py-2 outline-0'
+                                    }
+                                />
+                            </div>
+                        )}
                         <div className={'flex justify-start'}>
                             <Button
                                 onClick={() => handleClickUpdate()}
@@ -277,10 +282,18 @@ const AgentOverViewComponent = ({
                         <AgentFunctionsDetailComponent
                             agentConfigurations={agentConfigurations}
                         />
-                        <TextDisplayField
-                            title={'Number of Agents'}
-                            content={agent?.instance}
-                        />
+                        {environments.NEXT_PUBLIC_ENABLE_AGENT_INSTANCE ? (
+                            <div
+                                className={'flex w-full items-center gap-1 font-normal'}
+                            >
+                                <span className={'font-medium'}>
+                                    Number of Instance :
+                                </span>
+                                {agent?.instance}
+                            </div>
+                        ) : (
+                            <></>
+                        )}
                         <div className="grid w-full grid-cols-2 justify-between gap-y-10">
                             <div className="flex w-full items-start">
                                 {renderWalletDetail()}

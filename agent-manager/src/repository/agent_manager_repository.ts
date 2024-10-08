@@ -3,11 +3,11 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-export async function checkIfAgentExistsInDB(agentId: string): Promise<boolean> {
+export async function checkIfAgentExistsInDB(agentSecretKey: string): Promise<boolean> {
     return prisma.agent
         .findFirst({
             where: {
-                id: agentId,
+                secret_key: Buffer.from(agentSecretKey),
                 deleted_at: null,
             },
         })
@@ -20,40 +20,37 @@ export async function checkIfAgentExistsInDB(agentId: string): Promise<boolean> 
         })
 }
 
-export async function fetchAgentConfiguration(agentId: string): Promise<{
+export async function fetchAgentConfiguration(agentSecretKey: string): Promise<{
     instanceCount: number | null
     configurations: any[]
     agentIndex: number | null
     agentName: string | null
 }> {
     try {
-        const [agentInstance, agentConfigurations] = await Promise.all([
-            prisma.agent.findFirst({
-                where: {
-                    id: agentId,
-                    deleted_at: null,
+        const agent = await prisma.agent.findFirst({
+            include: {
+                triggers: {
+                    where: {
+                        deleted_at: null,
+                    },
                 },
-            }),
-            prisma.trigger.findMany({
-                where: {
-                    agent_id: agentId,
-                    deleted_at: null,
-                },
-            }),
-        ])
-        if (agentInstance != null) {
-            const instanceCount = Number(agentInstance.instance)
-            const agentIndex = Number(agentInstance.index)
-            const agentName = agentInstance.name
-            const configurationsData = agentConfigurations.map(
-                (config: { id: string; type: string; data: JsonValue; action: JsonValue }) => ({
+            },
+            where: {
+                secret_key: Buffer.from(agentSecretKey),
+                deleted_at: null,
+            },
+        })
+        if (agent != null) {
+            const instanceCount = Number(agent.instance)
+            const agentIndex = Number(agent.index)
+            const agentName = agent.name
+            const configurationsData =
+                agent.triggers.map((config: { id: string; type: string; data: JsonValue; action: JsonValue }) => ({
                     id: config.id,
                     type: config.type,
                     data: config.data,
                     action: config.action,
-                })
-            )
-
+                })) || []
             return { instanceCount, configurations: configurationsData, agentIndex, agentName }
         } else {
             return { instanceCount: null, configurations: [], agentIndex: null, agentName: null }
@@ -64,13 +61,15 @@ export async function fetchAgentConfiguration(agentId: string): Promise<{
     }
 }
 
-export async function updateLastActiveTimestamp(agentId: string): Promise<void> {
+export async function updateLastActiveTimestamp(agentSecretKey: string): Promise<void> {
     try {
-        await prisma.agent.update({
-            where: { id: agentId },
+        await prisma.agent.updateMany({
+            where: {
+                secret_key: Buffer.from(agentSecretKey),
+            },
             data: { last_active: new Date() },
         })
     } catch (error: any) {
-        console.error(`Error updating last active timestamp for agent ${agentId}: ${error}`)
+        console.error(`Error updating last active timestamp for agent with secret key ${agentSecretKey}: ${error}`)
     }
 }

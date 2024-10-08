@@ -18,6 +18,7 @@ class AgentResponse(BaseModel):
     is_active: Optional[bool]
     template_name: Optional[str]
     is_drep_registered: Optional[bool]
+    secret_key: Optional[str]
 
 
 class AgentResponseWithAgentConfigurations(AgentResponse):

@@ -1,6 +1,6 @@
 import base64
 import os
-from typing import Any, List
+from typing import List
 
 import pycardano
 from pycardano import HDWallet, PaymentSigningKey, PaymentVerificationKey, StakeSigningKey, StakeVerificationKey
@@ -44,33 +44,6 @@ def get_wallet_account(walletKey, account_index):
         staking_part=stakeKh,
         network=pycardano.Network.TESTNET,
     )
-    return {
-        "address": str(address),
-        "stake_key_hash": base64.b64encode(stakeKh.payload).decode("utf-8"),
-        "payment_key_hash": base64.b64encode(pkh.payload).decode("utf-8"),
-    }
-
-
-def generate_wallet_key(agent_index: int, instance_index: int) -> dict[str, Any]:
-
-    payment_path = f"m/1852'/1815'/${instance_index}'/0/0"
-    staking_path = f"m/1852'/1815'/${instance_index}'/2/0"
-
-    payment_key = derived_wallet.derive_from_path(payment_path)
-    payment_signing_key = PaymentSigningKey(payment_key.xprivate_key[:32])
-    payment_verification_key = PaymentVerificationKey.from_signing_key(payment_signing_key)
-
-    staking_key = derived_wallet.derive_from_path(staking_path)
-    stake_signing_key = StakeSigningKey(staking_key.xprivate_key[:32])
-    stake_verification_key = StakeVerificationKey.from_signing_key(stake_signing_key)
-    pkh = payment_verification_key.hash()
-    stakeKh = stake_verification_key.hash()
-    address = pycardano.Address(
-        payment_part=pkh,
-        staking_part=stakeKh,
-        network=pycardano.Network.TESTNET,
-    )
-
     return {
         "address": str(address),
         "stake_key_hash": base64.b64encode(stakeKh.payload).decode("utf-8"),
