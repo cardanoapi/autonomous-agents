@@ -22,6 +22,7 @@ import { Badge } from '../atoms/Badge';
 import { cn } from '../lib/utils';
 import { ScrollArea } from '../shadcn/ui/scroll-area';
 import { Skeleton } from '../shadcn/ui/skeleton';
+import ErrorPlaceholder from './ErrorPlaceholder';
 
 const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
     const statusOptions = ['Success', 'Skipped', 'Failed'];
@@ -123,7 +124,7 @@ const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
             </ScrollArea>
             {!loadingLogs && LogsHistory?.items.length === 0 && (
                 <div className="flex flex-grow">
-                    <EmptyLogsPlaceholder />
+                    <ErrorPlaceholder icon={OctagonAlert} title="No Logs Found" content='Logs are Empty.' className='border-0'/>
                 </div>
             )}
         </div>
@@ -260,26 +261,6 @@ const TxHashComponent = ({ txHash }: { txHash: string }) => {
 
 export default AgentLogComponent;
 
-export const EmptyLogsPlaceholder = ({ className }: { className?: string }) => {
-    return (
-        <div
-            className={cn(
-                'flex h-full w-full items-center justify-center rounded border-[4px] border-dashed border-gray-200 bg-slate-50',
-                className
-            )}
-        >
-            <div className="flex flex-col items-center gap-2">
-                <span className="flex items-center justify-center gap-2 text-center text-2xl text-gray-300">
-                    <OctagonAlert className="h-8 w-8" />
-                    Logs are Empty.
-                </span>
-                <span className="text-center text-sm text-gray-300">
-                    No trigger logs found !
-                </span>
-            </div>
-        </div>
-    );
-};
 
 export const AgentLogCardSkeleton = ({ className }: { className?: string }) => {
     return (

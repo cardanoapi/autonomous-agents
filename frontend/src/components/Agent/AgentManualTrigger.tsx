@@ -9,6 +9,7 @@ import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { Dialog, DialogContent } from '@app/components/shadcn/dialog';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 import { errorAtom, selectedFunctionAtom } from '@app/store/atoms/formRenderer';
+import ErrorPlaceholder from './ErrorPlaceholder';
 
 import { cn } from '../lib/utils';
 
@@ -98,7 +99,7 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
             </Dialog>
              {
                 (agent?.is_active === false || agent?.is_active === null  || agent?.is_active === undefined )  &&
-                    <AgentOfflinePlaceholder className='w-full h-full absolute border-0'/>
+                    <ErrorPlaceholder className='w-full h-full absolute border-0' title='Agent seems to be Offline' content='Run the Agent for Manual Actions.' icon={AgentsIcon}/>
             } 
         </div>
     );
