@@ -1,10 +1,9 @@
 import { IncomingMessage } from 'http'
 import {
-    checkIfAgentExistsInDB,
-    fetchAgentConfiguration,
-    updateLastActiveTimestamp,
-} from '../repository/agent_manager_repository'
-import { WsRpcServer } from '../lib/WsRpcServer'
+    fetchAgentConfiguration, getAgentIdBySecret,
+    updateLastActiveTimestamp
+} from "../repository/agent_manager_repository";
+import { WsClientPipe, WsRpcServer } from "../lib/WsRpcServer";
 import { RpcV1 } from 'libcardano/network/Rpc'
 import { kuber } from './kuber_service'
 import { saveTriggerHistory, TriggerType, updateAgentDrepRegistration } from '../repository/trigger_history_repository'
@@ -12,6 +11,9 @@ import { ManagerWalletService } from './ManagerWallet'
 import { Server } from 'ws'
 import { metaDataService } from './Metadata_service'
 import { dbSync } from './db_sync_service'
+import { CborDuplex } from "libcardano/network/ouroboros";
+import { cborxBackend } from "libcardano/lib/cbor";
+import { generateRootKey } from "../utils/cardano";
 
 export interface ILog {
     function_name: string
@@ -35,12 +37,15 @@ export class AgentManagerRPC extends WsRpcServer {
         console.log('new connection from', req.socket.remoteAddress)
 
         if (agentSecretKey) {
-            const exists = await checkIfAgentExistsInDB(agentSecretKey)
+            const exists = await getAgentIdBySecret(Buffer.from(agentSecretKey,"base64"))
             if (exists) {
-                return agentSecretKey
+
+                return exists
             } else {
                 throw Error(`Agent with secret_key ${agentSecretKey} doesn't exist`)
             }
+
+
         } else {
             throw Error('Invalid websocket connection')
         }
@@ -105,7 +110,17 @@ export class AgentManagerRPC extends WsRpcServer {
 
     protected onReady(client: RpcV1): void {
         const agentConfigsPromise = fetchAgentConfiguration(client.getId())
-            .then((config) => {
+            .then(async (config) => {
+                if(!config){
+                    this.disconnect(client.getId(),"Invalid instance configuration")
+                    return
+                }
+
+                const { instanceCount, agentIndex, agentName } = config
+                const rootKeyBuffer = await generateRootKey(agentIndex || 0)
+                client.emit( 'instance_count', { instanceCount, rootKeyBuffer, agentName })
+
+
                 client.emit('initial_config', config)
             })
             .catch((error) => {

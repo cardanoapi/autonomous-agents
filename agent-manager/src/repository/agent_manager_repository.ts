@@ -3,57 +3,58 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-export async function checkIfAgentExistsInDB(agentSecretKey: string): Promise<boolean> {
+export async function getAgentIdBySecret(agentSecret: Buffer): Promise<string|null> {
     return prisma.agent
-        .findFirst({
-            where: {
-                secret_key: Buffer.from(agentSecretKey),
-                deleted_at: null,
-            },
-        })
-        .then((agents: any) => {
-            return !!agents
-        })
-        .catch((error: any) => {
-            console.error('checkIfAgentExistsInDB: Unknown error', error)
-            return false
-        })
+      .findFirst({
+          where: {
+              secret_key: agentSecret,
+              deleted_at: null,
+          }
+      })
+      .then((agents: any) => {
+          return agents.id
+      })
+      .catch((error: any) => {
+          console.error('checkIfAgentExistsInDB: Unknown error', error)
+          return false
+      })
 }
 
-export async function fetchAgentConfiguration(agentSecretKey: string): Promise<{
-    instanceCount: number | null
+export async function fetchAgentConfiguration(agentId: string): Promise<{
+    instanceCount: number
     configurations: any[]
-    agentIndex: number | null
-    agentName: string | null
-}> {
+    agentIndex: number
+    agentName: string
+}|undefined> {
     try {
-        const agent = await prisma.agent.findFirst({
-            include: {
-                triggers: {
-                    where: {
-                        deleted_at: null,
-                    },
+        const [agentInstance, agentConfigurations] = await Promise.all([
+            prisma.agent.findFirst({
+                where: {
+                    id: agentId,
+                    deleted_at: null,
                 },
-            },
-            where: {
-                secret_key: Buffer.from(agentSecretKey),
-                deleted_at: null,
-            },
-        })
-        if (agent != null) {
-            const instanceCount = Number(agent.instance)
-            const agentIndex = Number(agent.index)
-            const agentName = agent.name
-            const configurationsData =
-                agent.triggers.map((config: { id: string; type: string; data: JsonValue; action: JsonValue }) => ({
-                    id: config.id,
-                    type: config.type,
-                    data: config.data,
-                    action: config.action,
-                })) || []
+            }),
+            prisma.trigger.findMany({
+                where: {
+                    agent_id: agentId,
+                    deleted_at: null,
+                },
+            }),
+        ])
+        if (agentInstance != null) {
+            const instanceCount = Number(agentInstance.instance)
+            const agentIndex = Number(agentInstance.index)
+            const agentName = agentInstance.name
+            const configurationsData = agentConfigurations.map(
+              (config: { id: string; type: string; data: JsonValue; action: JsonValue }) => ({
+                  id: config.id,
+                  type: config.type,
+                  data: config.data,
+                  action: config.action,
+              })
+            )
+
             return { instanceCount, configurations: configurationsData, agentIndex, agentName }
-        } else {
-            return { instanceCount: null, configurations: [], agentIndex: null, agentName: null }
         }
     } catch (error: any) {
         console.log(`Error fetching agent configuration: ${error}`)
@@ -61,15 +62,13 @@ export async function fetchAgentConfiguration(agentSecretKey: string): Promise<{
     }
 }
 
-export async function updateLastActiveTimestamp(agentSecretKey: string): Promise<void> {
+export async function updateLastActiveTimestamp(agentId: string): Promise<void> {
     try {
-        await prisma.agent.updateMany({
-            where: {
-                secret_key: Buffer.from(agentSecretKey),
-            },
+        await prisma.agent.update({
+            where: { id: agentId },
             data: { last_active: new Date() },
         })
     } catch (error: any) {
-        console.error(`Error updating last active timestamp for agent with secret key ${agentSecretKey}: ${error}`)
+        console.error(`Error updating last active timestamp for agent ${agentId}: ${error}`)
     }
 }

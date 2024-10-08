@@ -77,8 +77,6 @@ class TriggerService:
                 tg.create_task(self.trigger_repository.remove_trigger_by_trigger_id(config_id))
 
     async def publish_trigger_event(self, agent_id: str):
-        existing_agent = await self.trigger_repository.db.prisma.agent.find_first(where={"id": agent_id})
-        secret_key = base64.b64decode(existing_agent.secret_key._raw).decode()
         await self.kafka_service.publish_message(
-            api_settings.getKafkaTopicPrefix() + "-updates", "config_updated", key=secret_key
+            api_settings.getKafkaTopicPrefix() + "-updates", "config_updated", key=agent_id
         )
