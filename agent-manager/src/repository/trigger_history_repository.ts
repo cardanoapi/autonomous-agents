@@ -7,22 +7,19 @@ const prisma = new PrismaClient()
 export type TriggerType = 'CRON' | 'MANUAL' | 'EVENT' | 'INTERNAL'
 
 export async function saveTriggerHistory(
-    agentSecretKey: string,
-    functionName: string,
-    status: boolean,
-    success: boolean,
-    message: string,
-    triggerType: TriggerType,
-    txHash?: string,
-    instanceIndex: number = 0
+  agentId: string,
+  functionName: string,
+  status: boolean,
+  success: boolean,
+  message: string,
+  triggerType: TriggerType,
+  txHash?: string,
+  instanceIndex: number = 0
 ): Promise<void> {
     try {
-        const agent = await prisma.agent.findFirst({
-            where: { secret_key: Buffer.from(agentSecretKey) },
-        })
         const triggerHistory: any = {}
         triggerHistory['id'] = uuidv4()
-        triggerHistory['agentId'] = agent!.id
+        triggerHistory['agentId'] = agentId
         triggerHistory['functionName'] = functionName
         triggerHistory['status'] = status
         triggerHistory['success'] = success
@@ -42,16 +39,16 @@ export async function saveTriggerHistory(
     }
 }
 
-export async function updateAgentDrepRegistration(agentSecretKey: string, drepRegistered: boolean) {
+export async function updateAgentDrepRegistration(agentId: string, drepRegistered: boolean) {
     try {
-        await prisma.agent.updateMany({
-            where: { secret_key: Buffer.from(agentSecretKey) },
+        await prisma.agent.update({
+            where: { id: agentId },
             data: {
                 is_drep_registered: drepRegistered,
             },
         })
     } catch (err) {
-        console.log('AgentDrepStatusUpdateError', err)
+        console.log('AgentUpdateError', err)
         throw err
     }
 }

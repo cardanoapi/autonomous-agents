@@ -94,7 +94,8 @@ class AgentService:
             if user:
                 display_secret_key = super_admin or user.address == agent.userAddress
             is_online = check_if_agent_is_online(agent.last_active)
-            agent.secret_key = base64.b64decode(agent.secret_key._raw).decode() if display_secret_key else None
+            agent.secret_key = str(agent.secret_key)
+            # agent.secret_key = base64.b64decode(agent.secret_key._raw).decode() if display_secret_key else None
             updated_agents.append(
                 AgentResponse(
                     **agent.dict(),
@@ -130,7 +131,7 @@ class AgentService:
         existing_agent = await self.agent_repository.modify_agent(agent_id, agent_data)
         self.raise_exception_if_agent_not_found(existing_agent)
         await self.kafka_service.publish_message(
-            api_settings.getKafkaTopicPrefix() + "-updates", "config_updated", key=existing_agent.secret_key
+            api_settings.getKafkaTopicPrefix() + "-updates", "config_updated", key=existing_agent.id
         )
         return AgentResponseWithAgentConfigurations(**existing_agent.dict(), agent_configurations=updated_triggers)
 
@@ -149,7 +150,7 @@ class AgentService:
         await self.kafka_service.publish_message(
             api_settings.getKafkaTopicPrefix() + "-triggers",
             json.dumps({"method": "Agent_Deletion", "parameters": []}),
-            existing_agent.secret_key,
+            agent_id,
         )
         return agent_id
 
@@ -158,13 +159,11 @@ class AgentService:
         self.raise_exception_if_agent_not_found(agent)
         return True
 
-    async def trigger_agent_action(self, agent_id: str, action: AgentFunction, user: User):
-        agent = await self.agent_repository.retrieve_agent(agent_id, user)
-        if agent is None or False:
-            raise HTTPException(status_code=404, content="Agent not found")
+    async def trigger_agent_action(self, agent_id: str, action: AgentFunction):
+        await self.check_if_agent_exists(agent_id)
         message_in_rpc_format = json.dumps({"method": action.function_name, "parameters": action.dict()["parameters"]})
         await self.kafka_service.publish_message(
-            api_settings.getKafkaTopicPrefix() + "-triggers", message_in_rpc_format, key=agent.secret_key
+            api_settings.getKafkaTopicPrefix() + "-triggers", message_in_rpc_format, key=agent_id
         )
 
     def raise_exception_if_agent_not_found(self, agent):

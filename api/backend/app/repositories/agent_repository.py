@@ -81,7 +81,7 @@ class AgentRepository:
                 last_active=agent.last_active,
                 userAddress=agent.userAddress,
                 is_drep_registered=agent.is_drep_registered,
-                secret_key=base64.b64decode(agent.secret_key._raw).decode() if display_secret_key else None,
+                secret_key=str(agent.secret_key) if display_secret_key else None,
             )
             return agent_response
 
@@ -95,7 +95,7 @@ class AgentRepository:
             "updated_at": datetime.now(timezone.utc),
         }
         updated_agent = await self.db.prisma.agent.update(where={"id": agent_id}, data=updated_data)
-        updated_agent.secret_key = base64.b64decode(updated_agent.secret_key._raw).decode()
+        updated_agent.secret_key = str(updated_agent.secret_key)
         return updated_agent
 
     async def get_online_agents_count(self):
@@ -204,6 +204,6 @@ class AgentRepository:
                 index=agent.index,
                 last_active=agent.last_active,
                 userAddress=agent.userAddress,
-                secret_key=base64.b64decode(agent.secret_key._raw).decode(),
+                secret_key=str(agent.secret_key),
             )
             return agent_response

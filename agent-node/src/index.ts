@@ -19,6 +19,7 @@ let wsUrl: string = process.env.WS_URL as string
 let token: string = process.env.TOKEN as string
 if (token) {
     token = decodeBase64string(token)
+    console.log("Token:",token)
     const errMsg = validateToken(token)
     if (errMsg) {
         console.error(errMsg)

@@ -61,7 +61,7 @@ class AgentRouter(Routable):
 
     @post("/agents/{agent_id}/trigger", status_code=HTTPStatus.OK)
     async def trigger_agent_action(self, agent_id: str, action: AgentFunction, user: User = Depends(verify_cookie)):
-        await self.agent_service.trigger_agent_action(agent_id, action, user)
+        await self.agent_service.trigger_agent_action(agent_id, action)
 
     @get("/agents/my-agent", response_model=AgentResponseWithWalletDetails)
     async def get_my_agent(self, user: User = Depends(verify_cookie)):
