@@ -54,7 +54,10 @@ export const RenderObjectParameter = (
         <div className="ml-4 grid grid-cols-2 gap-4">
             {param.parameters?.map((subParam, subIndex) => (
                 <div key={subIndex} className="flex items-center gap-4">
-                    <Label className="h4 flex">{`Url${subParam.optional == false ? ' *' : ''}`}</Label>
+                    <Label className="h4 flex items-center">
+                        {subParam.name}
+                        {subParam.optional === false && <span className="ml-1">*</span>}
+                    </Label>
                     <Input
                         defaultValue={subParam.value}
                         className="w-full"
