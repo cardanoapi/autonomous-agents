@@ -124,7 +124,12 @@ const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
             </ScrollArea>
             {!loadingLogs && LogsHistory?.items.length === 0 && (
                 <div className="flex flex-grow">
-                    <ErrorPlaceholder icon={OctagonAlert} title="No Logs Found" content='Logs are Empty.' className='border-0'/>
+                    <ErrorPlaceholder
+                        icon={OctagonAlert}
+                        title="No Logs Found"
+                        content="Logs are Empty."
+                        className="border-0"
+                    />
                 </div>
             )}
         </div>
@@ -260,7 +265,6 @@ const TxHashComponent = ({ txHash }: { txHash: string }) => {
 };
 
 export default AgentLogComponent;
-
 
 export const AgentLogCardSkeleton = ({ className }: { className?: string }) => {
     return (

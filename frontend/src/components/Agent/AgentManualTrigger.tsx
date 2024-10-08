@@ -9,9 +9,9 @@ import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { Dialog, DialogContent } from '@app/components/shadcn/dialog';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 import { errorAtom, selectedFunctionAtom } from '@app/store/atoms/formRenderer';
-import ErrorPlaceholder from './ErrorPlaceholder';
 
 import { cn } from '../lib/utils';
+import ErrorPlaceholder from './ErrorPlaceholder';
 
 const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
     const [openDialog, setOpenDialog] = useState(false);
@@ -67,7 +67,11 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
                                                     'flex h-[130px] w-full cursor-pointer flex-col gap-2 rounded-md bg-brand-White-200 px-3 py-2  drop-shadow-md hover:bg-gray-200 lg:w-[300px]'
                                                 }
                                             >
-                                                <span className={'text-sm font-[550] text-brand-Black-100/90'}>
+                                                <span
+                                                    className={
+                                                        'text-sm font-[550] text-brand-Black-100/90'
+                                                    }
+                                                >
                                                     {item.name}
                                                 </span>
                                                 <span
@@ -97,10 +101,16 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
                     />
                 </DialogContent>
             </Dialog>
-             {
-                (agent?.is_active === false || agent?.is_active === null  || agent?.is_active === undefined )  &&
-                    <ErrorPlaceholder className='w-full h-full absolute border-0' title='Agent seems to be Offline' content='Run the Agent for Manual Actions.' icon={AgentsIcon}/>
-            } 
+            {(agent?.is_active === false ||
+                agent?.is_active === null ||
+                agent?.is_active === undefined) && (
+                <ErrorPlaceholder
+                    className="absolute h-full w-full border-0"
+                    title="Agent seems to be Offline"
+                    content="Run the Agent for Manual Actions."
+                    icon={AgentsIcon}
+                />
+            )}
         </div>
     );
 };

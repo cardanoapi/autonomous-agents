@@ -7,21 +7,18 @@ import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import environments from '@app/configs/environments';
 
+import { Label } from '../atoms/label';
+
 const AgentRunnerComponent = ({ agent }: { agent?: IAgent }) => {
     const dockerCommand = `docker run -d --pull always -e NETWORK=${environments.network} -e AGENT_ID=${agent?.id} cardanoapi/autonomous-agents:${environments.NEXT_PUBLIC_IMAGE_TAG}`;
     return (
         <div className={'flex h-full w-full flex-col gap-10'}>
-            <div className={'flex items-center gap-3'}>
-                <AgentsIcon />
-                <span className={'text-[20px] font-semibold'}>Manual Trigger</span>
-            </div>
             <div className={'flex flex-col gap-6'}>
-                <span className={''}>Run this agent by following tutorial:</span>
                 <div className={'flex flex-col gap-2'}>
-                    <span className={'text-base font-semibold text-brand-Black-100'}>
-                        Using Docker:
-                    </span>
-                    <div className={'flex w-full items-center gap-1'}>
+                    <Label className={'text-sm text-brand-Black-100'}>
+                        Agent Runner Command
+                    </Label>
+                    <div className={'flex w-full items-center gap-2'}>
                         <div
                             onClick={() => {
                                 navigator.clipboard.writeText(dockerCommand);

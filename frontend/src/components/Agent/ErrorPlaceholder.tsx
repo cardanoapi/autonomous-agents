@@ -1,10 +1,10 @@
-import { cn } from "../lib/utils";
+import { cn } from '../lib/utils';
 
 const ErrorPlaceholder = ({
     className,
     icon: IconComponent,
     title,
-    content,
+    content
 }: {
     className?: string;
     icon?: React.ComponentType<React.SVGAttributes<SVGElement>>;
@@ -13,7 +13,7 @@ const ErrorPlaceholder = ({
 }) => (
     <div
         className={cn(
-            "flex h-full w-full items-center justify-center rounded border-[4px] border-dashed border-gray-200 bg-slate-50",
+            'flex h-full w-full items-center justify-center rounded border-[4px] border-dashed border-gray-200 bg-slate-50',
             className
         )}
     >
@@ -27,4 +27,4 @@ const ErrorPlaceholder = ({
     </div>
 );
 
-export default ErrorPlaceholder
+export default ErrorPlaceholder;
