@@ -72,7 +72,7 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
                 <ScrollArea className="w-full overflow-y-auto ">
                     <div className="flex flex-col gap-8">
                         <div className="flex flex-col gap-4">
-                            <div className="flex gap-3">
+                            <div className="flex gap-3 items-center">
                                 {renderCustomCopyBox(
                                     'wallet address',
                                     agent?.agent_address || ''
@@ -84,7 +84,7 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
                                     false
                                 )}
                             </div>
-                            <div className="flex gap-3">
+                            <div className="flex gap-3 items-center">
                                 {renderCustomCopyBox('drep id', agent?.drep_id || '')}
                                 {renderCustomCopyBox(
                                     'is drep registered',
@@ -99,7 +99,7 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
                                     false
                                 )}
                             </div>
-                            <div className="flex gap-3">
+                            <div className="flex gap-3 items-center">
                                 {renderCustomCopyBox(
                                     'stake id',
                                     hexToBech32(agent?.drep_id || '', 'stake_test')
@@ -111,7 +111,7 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
                                     false
                                 )}
                             </div>
-                            <div className="flex gap-3">
+                            <div className="flex gap-3 items-center">
                                 {renderCustomCopyBox(
                                     'delegated Drep',
                                     agent?.delegation?.drep_id || ''
