@@ -12,6 +12,9 @@ import { Button } from '../atoms/Button';
 import { ScrollArea } from '../shadcn/ui/scroll-area';
 import AgentHistoryComponent from './AgentHistory';
 import CustomCopyBox from './CustomCopyBox';
+import { IAgentTriggerHistory } from '@api/triggerHistory';
+import { fetchAllTriggerHistory , fetchAgentTriggerHistoryById } from '@api/triggerHistory';
+import { useQuery } from '@tanstack/react-query';
 
 interface AgentOverViewProps {
     agent?: IAgent;
@@ -19,6 +22,25 @@ interface AgentOverViewProps {
 }
 
 const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
+
+    const {
+        data: LogsHistory,
+        refetch: refetchLogsHistory,
+        isLoading: loadingLogs
+    } = useQuery({
+        queryKey: [
+            `${agent?.id}LogsHistory`,
+            1,
+            24,
+            agent?.id,
+        ],
+        queryFn: fetchAllTriggerHistory,
+        refetchInterval: 60000,
+        refetchOnWindowFocus: true,
+        refetchOnMount: true
+    });
+
+
     const { openModal } = useModal();
 
     const handleAgentRun = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -41,16 +63,7 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
             showCopyIcon={showCopyIcon}
         />
     );
-
-    const triggerDataPlaceholder = [
-        'success',
-        'skip',
-        'failed',
-        ...Array(24)
-            .fill(0)
-            .map((_, i) => ['success', 'skip', 'failed'][Math.floor(Math.random() * 3)])
-    ];
-
+    
     return (
         <div className="flex h-full flex-col gap-10">
             <div className="flex flex-col gap-4">
@@ -60,16 +73,20 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
                         content={agent?.name}
                         textClassName="text-xl font-semibold"
                     />
-                    <Button
-                        variant="primary"
-                        onClick={handleAgentRun}
-                        size="sm"
-                        className="min-w-32 px-4"
-                    >
-                        Run Agent
-                    </Button>
+                    {
+                        !agent?.is_active && (     
+                        <Button
+                            variant="primary"
+                            onClick={handleAgentRun}
+                            size="sm"
+                            className="min-w-32 px-4"
+                        >
+                            Run Agent
+                        </Button>
+                        )
+                    }
                 </div>
-                <ScrollArea className="w-full overflow-y-auto ">
+                <ScrollArea className="w-full overflow-y-auto h-[calc(100%-500px)]">
                     <div className="flex flex-col gap-8">
                         <div className="flex flex-col gap-4">
                             <div className="flex items-center gap-3">
@@ -126,10 +143,13 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
                         </div>
                         <div>
                             <TriggerDataBox
-                                triggerData={triggerDataPlaceholder}
+                                triggerData={LogsHistory && LogsHistory.items || []}
                                 lastActive={agent?.last_active}
                             />
                         </div>
+                    </div>
+                    <div className='mt-8'>
+                    <AgentHistoryComponent chartClassName='w-full h-[550px]'/>
                     </div>
                 </ScrollArea>
             </div>
@@ -143,7 +163,7 @@ const TriggerDataBox = ({
     triggerData,
     lastActive
 }: {
-    triggerData: string[];
+    triggerData: IAgentTriggerHistory[];
     lastActive?: string;
 }) => {
     const customBox = (status: string, width?: string, height?: string) => {
@@ -166,7 +186,7 @@ const TriggerDataBox = ({
                 <div className="text-sm font-medium text-gray-600">Triggered</div>
                 <div className="text-[10px] text-gray-500 ">Last 24 triggers</div>
                 <div className="flex h-6 w-full gap-[6px]">
-                    {triggerData.map((item, index) => customBox(item, `w-3`, `h-full`))}
+                    {triggerData.map((item, index) => customBox(item.status && item.success ? 'success' : item.status ? 'failed' : 'skipped', `w-3`, `h-full`))}
                 </div>
             </div>
             <div className="flex w-full items-center justify-center">
@@ -175,7 +195,7 @@ const TriggerDataBox = ({
                         Last Active
                     </div>
                     <div className="items-center text-xs text-gray-500">
-                        {lastActive || 'Not Activated'}
+                        {lastActive ?  (new Date(lastActive).toDateString()) : 'Not Activated'}
                     </div>
                 </div>
             </div>
