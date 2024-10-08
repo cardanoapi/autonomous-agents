@@ -10,6 +10,8 @@ import { Dialog, DialogContent } from '@app/components/shadcn/dialog';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 import { errorAtom, selectedFunctionAtom } from '@app/store/atoms/formRenderer';
 
+import { cn } from '../lib/utils';
+
 const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [, setSelectedFunction] = useAtom(selectedFunctionAtom);
@@ -31,26 +33,28 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
         setOpenDialog(false);
     };
 
-    if (agent?.is_active === false || agent?.is_active === null) {
-        return <AgentOfflinePlaceholder />;
-    }
+    // if (agent?.is_active === false || agent?.is_active === null) {
+    //     return <AgentOfflinePlaceholder />;
+    // }
 
     return (
-        <div className={'flex h-full w-full flex-col gap-10'}>
+        <div className={'relative flex h-full w-full flex-col gap-2'}>
             <div className={'flex items-center gap-3'}>
-                <AgentsIcon />
-                <span className={'text-[20px] font-semibold'}>Manual Trigger</span>
+                <span className={'text-[20px] font-semibold'}>Available Functions</span>
             </div>
-            <span>Available functions:</span>
-            <ScrollArea className={'h-agentComponentHeight overflow-y-auto pr-4'}>
-                <div className={'flex flex-col gap-4'}>
+            <ScrollArea className={'h-agentComponentHeight overflow-y-auto py-4 pr-4'}>
+                <div className={'flex flex-col gap-12 px-2'}>
                     {AvailableFunctions.map((func) => {
                         return (
-                            <div key={func.group}>
-                                <span className={'font-semibold text-brand-Black-300'}>
+                            <div key={func.group} className="flex flex-col gap-4">
+                                <span
+                                    className={
+                                        'inline-flex font-semibold text-brand-Black-300'
+                                    }
+                                >
                                     {func.group}
                                 </span>
-                                <div className={'flex flex-wrap gap-4 '}>
+                                <div className={'flex flex-wrap gap-x-6 gap-y-4 px-2 '}>
                                     {func.items.map((item) => {
                                         return (
                                             <div
@@ -59,10 +63,10 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
                                                 }
                                                 key={item.id}
                                                 className={
-                                                    'flex h-[130px] w-full cursor-pointer flex-col gap-2 rounded-md bg-gray-100 px-3 py-2 drop-shadow-md hover:bg-gray-200 lg:w-[300px]'
+                                                    'flex h-[130px] w-full cursor-pointer flex-col gap-2 rounded-md bg-brand-White-200 px-3 py-2  drop-shadow-md hover:bg-gray-200 lg:w-[300px]'
                                                 }
                                             >
-                                                <span className={'text-sm font-normal'}>
+                                                <span className={'text-sm font-[550] text-brand-Black-100/90'}>
                                                     {item.name}
                                                 </span>
                                                 <span
@@ -92,21 +96,30 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
                     />
                 </DialogContent>
             </Dialog>
+             {
+                (agent?.is_active === false || agent?.is_active === null  || agent?.is_active === undefined )  &&
+                    <AgentOfflinePlaceholder className='w-full h-full absolute border-0'/>
+            } 
         </div>
     );
 };
 
 export default AgentManualTriggerComponent;
 
-const AgentOfflinePlaceholder: React.FC = () => (
-    <div className="flex h-full w-full items-center justify-center rounded border-[4px] border-dashed border-gray-200 bg-slate-50">
+const AgentOfflinePlaceholder = ({ className }: { className?: string }) => (
+    <div
+        className={cn(
+            'flex h-full w-full items-center justify-center rounded border-[4px] border-dashed border-gray-200 bg-slate-50',
+            className
+        )}
+    >
         <div className="flex flex-col items-center gap-2">
-            <span className="flex items-center justify-center gap-2 text-2xl text-gray-300">
+            <span className="flex items-center justify-center gap-2 text-xl font-semibold text-gray-300">
                 <AgentsIcon className="mb-1 h-8 w-8" />
-                Agent is Offline.
+                Agent seems to be Offline.
             </span>
-            <span className="text-xl text-gray-300">
-                Start the Agent to trigger Functions manually.
+            <span className="text-base text-gray-300">
+                Agent needs to be online for Manual Actions.
             </span>
         </div>
     </div>

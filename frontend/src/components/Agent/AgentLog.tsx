@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import React from 'react';
 
 import { IAgent } from '@api/agents';
 import { IAgentTriggerHistory, fetchAllTriggerHistory } from '@api/triggerHistory';
@@ -8,7 +9,7 @@ import { MapFunctionNameAndViewName } from '@consts';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { Copy, OctagonAlert } from 'lucide-react';
-import React from 'react';
+
 import AgentAvatar from '@app/components/Agent/AgentAvatar';
 import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
@@ -79,7 +80,6 @@ const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
     }
     return (
         <div className={'flex h-full w-full flex-col gap-4'}>
-         
             <div className="flex justify-end gap-4 pr-4 ">
                 <AgentFunctionsDropDown
                     onChange={(strVal: string) => {
@@ -269,11 +269,13 @@ export const EmptyLogsPlaceholder = ({ className }: { className?: string }) => {
             )}
         >
             <div className="flex flex-col items-center gap-2">
-                <span className="flex items-center justify-center gap-2 text-2xl text-gray-300 text-center">
+                <span className="flex items-center justify-center gap-2 text-center text-2xl text-gray-300">
                     <OctagonAlert className="h-8 w-8" />
                     Logs are Empty.
                 </span>
-                <span className="text-sm text-gray-300 text-center">No trigger logs found !</span>
+                <span className="text-center text-sm text-gray-300">
+                    No trigger logs found !
+                </span>
             </div>
         </div>
     );
