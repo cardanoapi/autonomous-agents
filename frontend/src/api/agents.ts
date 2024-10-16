@@ -73,6 +73,7 @@ export interface IAgent {
     is_stake_registered?: boolean;
     delegation?: IDelegation;
     stake_last_registered?: string;
+    no_of_successfull_triggers?: number;
 }
 
 export const fetchAgents = async (params: {

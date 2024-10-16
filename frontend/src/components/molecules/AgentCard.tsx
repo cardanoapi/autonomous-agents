@@ -30,6 +30,7 @@ export interface IAgentCard {
     totalTrigger: number;
     enableEdit?: boolean;
     enableDelete?: boolean;
+    no_of_successful_triggers?: number;
     isActive?: boolean;
 }
 
@@ -38,6 +39,7 @@ export default function AgentCard({
     agentID,
     templateName,
     functionCount,
+    no_of_successful_triggers,
     enableEdit = false,
     enableDelete = false,
     lastActive = '',
@@ -46,11 +48,6 @@ export default function AgentCard({
     const router = useRouter();
     const { openModal } = useModal();
     const [dialogOpen, setDialogOpen] = useState(false);
-
-    const { data: transactions_count } = useQuery<ITransactionsCount>({
-        queryKey: [`Transactions-${agentID}`],
-        queryFn: () => fetchTransactionsCountByAgentID(agentID || '')
-    });
 
     const deleteAgentMutation = useMutation({
         mutationFn: (agentID: string) => deleteAgentbyID(agentID),
@@ -95,8 +92,8 @@ export default function AgentCard({
 
     const agentTriggerDetails: IAgentDetail[] = [
         {
-            placeholder: 'Successfull Triggers',
-            value: transactions_count?.successfulTransactions || 0
+            placeholder: 'Successful Triggers',
+            value: no_of_successful_triggers || 0
         }
     ];
 

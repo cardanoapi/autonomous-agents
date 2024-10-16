@@ -3,6 +3,12 @@
 import React from 'react';
 
 import { IAgent } from '@api/agents';
+import { IAgentTriggerHistory } from '@api/triggerHistory';
+import {
+    fetchAgentTriggerHistoryById,
+    fetchAllTriggerHistory
+} from '@api/triggerHistory';
+import { useQuery } from '@tanstack/react-query';
 import { hexToBech32 } from '@utils';
 
 import TextDisplayField from '@app/components/molecules/TextDisplayField';
@@ -12,9 +18,6 @@ import { Button } from '../atoms/Button';
 import { ScrollArea } from '../shadcn/ui/scroll-area';
 import AgentHistoryComponent from './AgentHistory';
 import CustomCopyBox from './CustomCopyBox';
-import { IAgentTriggerHistory } from '@api/triggerHistory';
-import { fetchAllTriggerHistory , fetchAgentTriggerHistoryById } from '@api/triggerHistory';
-import { useQuery } from '@tanstack/react-query';
 
 interface AgentOverViewProps {
     agent?: IAgent;
@@ -22,24 +25,17 @@ interface AgentOverViewProps {
 }
 
 const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
-
     const {
         data: LogsHistory,
         refetch: refetchLogsHistory,
         isLoading: loadingLogs
     } = useQuery({
-        queryKey: [
-            `${agent?.id}LogsHistory`,
-            1,
-            24,
-            agent?.id,
-        ],
+        queryKey: [`${agent?.id}LogsHistory`, 1, 24, agent?.id],
         queryFn: fetchAllTriggerHistory,
         refetchInterval: 60000,
         refetchOnWindowFocus: true,
         refetchOnMount: true
     });
-
 
     const { openModal } = useModal();
 
@@ -53,17 +49,17 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
     const renderCustomCopyBox = (
         title: string,
         content: string | number,
-        className: string = 'w-96 px-2 py-[6px]',
+        className: string = '',
         showCopyIcon: boolean = true
     ) => (
         <CustomCopyBox
             title={title}
             content={content.toString()}
-            className={className}
+            className={className + 'w-96 px-2 py-[6px]'}
             showCopyIcon={showCopyIcon}
         />
     );
-    
+
     return (
         <div className="flex h-full flex-col gap-10">
             <div className="flex flex-col gap-4">
@@ -73,8 +69,7 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
                         content={agent?.name}
                         textClassName="text-xl font-semibold"
                     />
-                    {
-                        !agent?.is_active && (     
+                    {!agent?.is_active && (
                         <Button
                             variant="primary"
                             onClick={handleAgentRun}
@@ -83,12 +78,25 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
                         >
                             Run Agent
                         </Button>
-                        )
-                    }
+                    )}
                 </div>
-                <ScrollArea className="w-full overflow-y-auto h-[calc(100%-500px)]">
+                <ScrollArea className="h-[calc(100%-570px)] w-full overflow-y-auto pr-4">
                     <div className="flex flex-col gap-8">
                         <div className="flex flex-col gap-4">
+                            <div className="flex items-center gap-3">
+                                {renderCustomCopyBox(
+                                    'Successful Triggers',
+                                    agent?.no_of_successfull_triggers || 0,
+                                    '',
+                                    false
+                                )}
+                                {renderCustomCopyBox(
+                                    'Status',
+                                    agent?.is_active ? 'Online' : 'Offline',
+                                    '',
+                                    false
+                                )}
+                            </div>
                             <div className="flex items-center gap-3">
                                 {renderCustomCopyBox(
                                     'wallet address',
@@ -106,13 +114,13 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
                                 {renderCustomCopyBox(
                                     'is drep registered',
                                     agent?.is_drep_registered ? 'Yes' : 'No',
-                                    '',
+                                    'w-fit',
                                     false
                                 )}
                                 {renderCustomCopyBox(
                                     'voting power',
                                     `${agent?.voting_power || 0} Ada`,
-                                    '',
+                                    'w-fit',
                                     false
                                 )}
                             </div>
@@ -143,13 +151,13 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
                         </div>
                         <div>
                             <TriggerDataBox
-                                triggerData={LogsHistory && LogsHistory.items || []}
+                                triggerData={(LogsHistory && LogsHistory.items) || []}
                                 lastActive={agent?.last_active}
                             />
                         </div>
                     </div>
-                    <div className='mt-8'>
-                    <AgentHistoryComponent chartClassName='w-full h-[550px]'/>
+                    <div className="mt-8">
+                        <AgentHistoryComponent chartClassName="w-full h-[550px]" />
                     </div>
                 </ScrollArea>
             </div>
@@ -186,7 +194,17 @@ const TriggerDataBox = ({
                 <div className="text-sm font-medium text-gray-600">Triggered</div>
                 <div className="text-[10px] text-gray-500 ">Last 24 triggers</div>
                 <div className="flex h-6 w-full gap-[6px]">
-                    {triggerData.map((item, index) => customBox(item.status && item.success ? 'success' : item.status ? 'failed' : 'skipped', `w-3`, `h-full`))}
+                    {triggerData.map((item, index) =>
+                        customBox(
+                            item.status && item.success
+                                ? 'success'
+                                : item.status
+                                  ? 'failed'
+                                  : 'skipped',
+                            `w-3`,
+                            `h-full`
+                        )
+                    )}
                 </div>
             </div>
             <div className="flex w-full items-center justify-center">
@@ -195,7 +213,9 @@ const TriggerDataBox = ({
                         Last Active
                     </div>
                     <div className="items-center text-xs text-gray-500">
-                        {lastActive ?  (new Date(lastActive).toDateString()) : 'Not Activated'}
+                        {lastActive
+                            ? new Date(lastActive).toDateString()
+                            : 'Not Activated'}
                     </div>
                 </div>
             </div>
