@@ -77,7 +77,7 @@ const AgentFunctionsDetailComponent = ({
     };
 
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex h-full flex-col gap-2">
             <div className="flex items-center gap-4">
                 {isEditing && (
                     <div
@@ -139,17 +139,34 @@ const AgentFunctionsDetailComponent = ({
                                     className="w-auto"
                                     showCopyIcon={false}
                                 />
-                                {config.action?.parameters.map((param, index) => (
-                                    <CustomCopyBox
-                                        title={param.name}
-                                        content={param.value.toString()}
-                                        key={index}
-                                        className="w-auto"
-                                        iconClassName="text-gray-500"
-                                        showCopyIcon={false}
-                                        copyOnContentClick={true}
-                                    />
-                                ))}
+                                {config.action?.parameters.map((param, index) =>
+                                    typeof param.value === 'object' &&
+                                    !Array.isArray(param.value) ? (
+                                        Object.entries(param.value).map(
+                                            ([key, value], subIndex) => (
+                                                <CustomCopyBox
+                                                    title={key}
+                                                    content={value?.toString() || ''}
+                                                    key={subIndex}
+                                                    className="w-auto"
+                                                    iconClassName="text-gray-500"
+                                                    showCopyIcon={false}
+                                                    copyOnContentClick={true}
+                                                />
+                                            )
+                                        )
+                                    ) : (
+                                        <CustomCopyBox
+                                            title={param.name}
+                                            content={param.value?.toString() || ''}
+                                            key={index}
+                                            className="w-auto"
+                                            iconClassName="text-gray-500"
+                                            showCopyIcon={false}
+                                            copyOnContentClick={true}
+                                        />
+                                    )
+                                )}
                             </div>
                         </div>
                     ))
