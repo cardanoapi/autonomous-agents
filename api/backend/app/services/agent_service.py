@@ -86,12 +86,14 @@ class AgentService:
         updated_agents = []
         for agent in agents:
             is_online = check_if_agent_is_online(agent.last_active)
+            successful_triggers = await self.agent_repository.get_agent_successful_triggers_count(agent_id=agent.id)
             updated_agents.append(
                 AgentResponse(
                     **agent.dict(),
                     total_functions=len(agent.triggers),
                     is_active=is_online,
                     template_name=agent.template.name if agent.template else "",
+                    no_of_successfull_triggers=successful_triggers,
                 )
             )
         return updated_agents

@@ -62,6 +62,8 @@ class AgentRepository:
         if agent is None:
             return None
         else:
+            successful_triggers = await self.get_agent_successful_triggers_count(agent_id=agent.id)
+
             agent_response = AgentResponse(
                 id=agent.id,
                 name=agent.name,
@@ -71,6 +73,7 @@ class AgentRepository:
                 last_active=agent.last_active,
                 userAddress=agent.userAddress,
                 is_drep_registered=agent.is_drep_registered,
+                no_of_successfull_triggers=successful_triggers,
             )
             return agent_response
 
@@ -204,3 +207,7 @@ class AgentRepository:
                 userAddress=agent.userAddress,
             )
             return agent_response
+
+    async def get_agent_successful_triggers_count(self, agent_id: str) -> int:
+        count = await self.db.prisma.triggerhistory.count(where={"agentId": agent_id, "status": True, "success": True})
+        return count
