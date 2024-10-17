@@ -4,12 +4,13 @@ import React, { useState } from 'react';
 
 import { IAgentConfiguration, ICronTrigger } from '@api/agents';
 import { TemplateFunctions } from '@models/types/functions';
-import { Edit, Plus, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 
 import UpdateAgentFunctionModal from '@app/components/molecules/UpdateAgentFunctionModal';
 import { Dialog, DialogContent } from '@app/components/shadcn/dialog';
 import { convertCRONExpressionToReadableForm } from '@app/utils/dateAndTimeUtils';
 
+import ConfirmationBox from '../molecules/ConfirmationBox';
 import CustomCopyBox from './CustomCopyBox';
 
 const AgentFunctionsDetailComponent = ({
@@ -21,7 +22,7 @@ const AgentFunctionsDetailComponent = ({
     agentConfigurations?: Array<IAgentConfiguration>;
     isEditing?: boolean;
     onClickSave?: (agentConfig: IAgentConfiguration, index: number) => void;
-    onClickDelete?: (configIndex: number) => void;
+    onClickDelete?: (configIndex: string) => void;
 }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [addNewConfigBtnClicked, setAddNewConfigBtnClicked] = useState(false);
@@ -78,16 +79,7 @@ const AgentFunctionsDetailComponent = ({
 
     return (
         <div className="flex h-full flex-col gap-2">
-            <div className="flex items-center gap-4">
-                {isEditing && (
-                    <div
-                        className="cursor-pointer rounded p-1 hover:bg-gray-200"
-                        onClick={() => handleOpenDialog(true)}
-                    >
-                        <Plus />
-                    </div>
-                )}
-            </div>
+            <div className="flex items-center gap-4"></div>
             <div className="flex flex-row flex-wrap gap-6">
                 {!agentConfigurations?.length ? (
                     <span className="text-xs text-brand-Black-300">
@@ -99,30 +91,16 @@ const AgentFunctionsDetailComponent = ({
                             className="group relative flex w-[300px] flex-col flex-wrap justify-between gap-2 rounded bg-brand-White-200 p-3 drop-shadow-md"
                             key={`${config.agent_id}-${config.id}`}
                         >
+                            <Trash2
+                                className="absolute right-3 top-3 hidden  cursor-pointer text-red-400 group-hover:flex"
+                                size={20}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onClickDelete && onClickDelete(config.id);
+                                }}
+                            />
                             <div className="flex flex-col">
                                 {renderConfigMeta(config)}
-                            </div>
-                            <div className="flex flex-col gap-1">
-                                {/* {renderConfigDetails(config)} */}
-                                {isEditing && (
-                                    <div className="absolute right-2 flex gap-1">
-                                        <Edit
-                                            color="#A1A1A1"
-                                            className="hidden h-4 w-4 cursor-pointer group-hover:block"
-                                            onClick={() =>
-                                                handleOpenDialog(false, index)
-                                            }
-                                        />
-                                        <Trash2
-                                            color="#A1A1A1"
-                                            className="hidden h-4 w-4 cursor-pointer group-hover:block"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                onClickDelete && onClickDelete(index);
-                                            }}
-                                        />
-                                    </div>
-                                )}
                             </div>
                             <div className="grid w-full grid-cols-2 gap-x-4 gap-y-4 px-1">
                                 <CustomCopyBox

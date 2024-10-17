@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { IAgent } from '@api/agents';
 import { IAgentConfiguration } from '@api/agents';
-import { ITriggerCreateDto } from '@api/trigger';
+import { ITriggerCreateDto, deleteTrigger } from '@api/trigger';
 import { postTrigger } from '@api/trigger';
 import { Dialog, DialogContent } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
@@ -13,6 +13,7 @@ import { IConfiguredFunctionsItem } from '@app/app/(pages)/templates/create-temp
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { Button } from '../atoms/Button';
+import ConfirmationBox from '../molecules/ConfirmationBox';
 import { ErrorToast, SuccessToast } from '../molecules/CustomToasts';
 import TextDisplayField from '../molecules/TextDisplayField';
 import { ScrollArea } from '../shadcn/ui/scroll-area';
@@ -25,12 +26,14 @@ export default function AgentFunctionsComponent({
     agent: IAgent | null | undefined;
 }) {
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
+    const [triggerID, setTriggerID] = useState('');
 
     const toggleDialog = () => {
         setDialogOpen(dialogOpen ? false : true);
     };
 
-    const functionMutation = useMutation({
+    const postTriggerMutation = useMutation({
         mutationFn: (data: ITriggerCreateDto) => postTrigger(agent?.id || '', data),
         onSuccess: () => {
             queryClient.refetchQueries({ queryKey: [`agent${agent?.id}`] });
@@ -42,9 +45,30 @@ export default function AgentFunctionsComponent({
         }
     });
 
+    const deleteTriggerMutation = useMutation({
+        mutationFn: (triggerID: string) => deleteTrigger(triggerID),
+        onSuccess: () => {
+            queryClient.refetchQueries({ queryKey: [`agent${agent?.id}`] });
+            SuccessToast('Function Deleted Successfully');
+        },
+        onError: () => {
+            ErrorToast('Something went wrong!');
+        }
+    });
+
     const handlePostTrigger = (item: IConfiguredFunctionsItem) => {
         const triggerData = mapConfiguredFunctionToTriggerCreateDTO(item);
-        triggerData && functionMutation.mutate(triggerData);
+        triggerData && postTriggerMutation.mutate(triggerData);
+    };
+
+    const handleDeleteTrigger = (triggerID: string) => {
+        setOpenDeleteConfirmation(true);
+        setTriggerID(triggerID);
+    };
+
+    const handleDeleteConfirmation = () => {
+        deleteTriggerMutation.mutate(triggerID);
+        setOpenDeleteConfirmation(false);
     };
 
     return (
@@ -68,6 +92,7 @@ export default function AgentFunctionsComponent({
                 <ScrollArea className="h-[500px] w-full overflow-y-auto px-2 ">
                     <AgentFunctionsDetailComponent
                         agentConfigurations={agent?.agent_configurations || []}
+                        onClickDelete={handleDeleteTrigger}
                     />
                 </ScrollArea>
             </div>
@@ -82,6 +107,19 @@ export default function AgentFunctionsComponent({
                         hideFormHeader={true}
                         btnPlaceholder={'Add Function'}
                         renderFunctionSelector={true}
+                    />
+                </DialogContent>
+            </Dialog>
+            <Dialog
+                open={openDeleteConfirmation}
+                onClose={() => setOpenDeleteConfirmation(false)}
+            >
+                <DialogContent>
+                    <ConfirmationBox
+                        msg="Are you sure you want to delete this function? This action cannot be undone! "
+                        title="Confirm Delete"
+                        onAccept={handleDeleteConfirmation}
+                        onClose={() => setOpenDeleteConfirmation(false)}
                     />
                 </DialogContent>
             </Dialog>

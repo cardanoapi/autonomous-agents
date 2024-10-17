@@ -102,3 +102,10 @@ export const postTrigger = async (agentID: string, triggerData: ITriggerCreateDt
     );
     return response.data;
 };
+
+export const deleteTrigger = async (triggerID: string) => {
+    const response = await axios.delete(`${baseAPIurl}/triggers/${triggerID}`, {
+        withCredentials: true
+    });
+    return response.data;
+};
