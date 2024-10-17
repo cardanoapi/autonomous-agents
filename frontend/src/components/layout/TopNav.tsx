@@ -10,6 +10,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
 import AgentAvatar from '@app/components/Agent/AgentAvatar';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
+import { templateAtom } from '@app/store/atoms/template';
 import {
     adminAccessAtom,
     agentsAtom,
@@ -22,6 +24,7 @@ export default function TopNav() {
     const [adminAcesss] = useAtom(adminAccessAtom);
     const [, setAgents] = useAtom(agentsAtom);
     const path: string = usePathname();
+    const [template] = useAtom(templateAtom);
 
     const { data: agents } = useQuery<IAgent[]>({
         queryKey: ['agents'],
@@ -59,43 +62,51 @@ export default function TopNav() {
         '/logs': 'Agents Log History'
     };
 
-    if (getPageTitle() === currentAgentName) {
+    if (getPageTitleByRegexMatch('agents')) {
         agentId = path.split('/')[2];
     }
 
-    function getPageTitleByRegexMatch() {
-        const RegexForAgentIdPage = /^\/agents\/.*$/;
-        if (RegexForAgentIdPage.test(path)) {
-            return currentAgentName;
+    function getPageTitleByRegexMatch(pageTitle: string) {
+        const RegexForAgentIdPage = new RegExp(`^\/${pageTitle}\/.*$`);
+        return RegexForAgentIdPage.test(path);
+    }
+
+    function renderTopNavSection() {
+        const title = PageTitles[path];
+        if (title) {
+            return <span className="h1">{title}</span>;
         } else {
-            return '';
+            if (getPageTitleByRegexMatch('agents')) {
+                return (
+                    <div className={'flex items-center gap-3 py-3'}>
+                        <AgentAvatar
+                            hash={agentId}
+                            size={40}
+                            isActive={
+                                (agents &&
+                                    agents.find((item) => item.id === agentId)
+                                        ?.is_active) ||
+                                false
+                            }
+                        />
+                        <div className="card-h2">{Truncate(currentAgentName, 20)}</div>
+                    </div>
+                );
+            } else if (getPageTitleByRegexMatch('templates')) {
+                return <span className="h1">{template?.name}</span>;
+            } else {
+                return <Skeleton className="h-8 w-[140px]" />;
+            }
         }
     }
 
-    function getPageTitle() {
-        const title = PageTitles[path];
-        return title ? title : getPageTitleByRegexMatch();
+    if (!template?.name && getPageTitleByRegexMatch('templates')) {
+        return <Skeleton className="h-8 w-[140px]" />;
     }
 
     return (
         <div className="flex w-[full] items-center justify-between text-sm">
-            {getPageTitle() === currentAgentName ? (
-                <div className={'flex items-center gap-3 py-3'}>
-                    <AgentAvatar
-                        hash={agentId}
-                        size={40}
-                        isActive={
-                            (agents &&
-                                agents.find((item) => item.id === agentId)
-                                    ?.is_active) ||
-                            false
-                        }
-                    />
-                    <div className="card-h2">{Truncate(currentAgentName, 20)}</div>
-                </div>
-            ) : (
-                <span className="h1">{getPageTitle()}</span>
-            )}
+            {renderTopNavSection()}
             {adminAcesss && 'Admin'}
         </div>
     );

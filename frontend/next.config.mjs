@@ -8,8 +8,8 @@ import i18nextConfig from './next-i18next.config.js';
 const i18n = i18nextConfig.i18n;
 
 const imageDomains = process.env.IMAGE_DOMAINS
-  ? process.env.IMAGE_DOMAINS.split(',')
-  : null;
+    ? process.env.IMAGE_DOMAINS.split(',')
+    : null;
 const imageDomainsWithOnlyHostname = [];
 
 function getHostnameFromRegex(url) {
@@ -138,15 +138,15 @@ const sentryWebpackPluginOptions = {
 };
 
 const nextConfigWithSentryIfEnabled =
-  !!process.env.SENTRY_DSN &&
-  !!process.env.SENTRY_URL &&
-  !!process.env.SENTRY_ORG &&
-  !!process.env.SENTRY_PROJECT &&
-  !!process.env.SENTRY_RELEASE
-    ? withSentryConfig(
-      { ...nextConfigWithPWA, devtool: 'source-map' },
-      sentryWebpackPluginOptions
-    )
-    : nextConfigWithPWA;
+    !!process.env.SENTRY_DSN &&
+    !!process.env.SENTRY_URL &&
+    !!process.env.SENTRY_ORG &&
+    !!process.env.SENTRY_PROJECT &&
+    !!process.env.SENTRY_RELEASE
+        ? withSentryConfig(
+              { ...nextConfigWithPWA, devtool: 'source-map' },
+              sentryWebpackPluginOptions
+          )
+        : nextConfigWithPWA;
 
 export default nextConfigWithSentryIfEnabled;
