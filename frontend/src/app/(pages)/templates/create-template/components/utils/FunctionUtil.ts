@@ -10,7 +10,7 @@ export const mapToTriggerCreateDTO = (
     return data.map(mapConfiguredFunctionToTriggerCreateDTO);
 };
 
-const mapConfiguredFunctionToTriggerCreateDTO = (
+export const mapConfiguredFunctionToTriggerCreateDTO = (
     item: IConfiguredFunctionsItem
 ): ITriggerCreateDto => {
     const commonData = {

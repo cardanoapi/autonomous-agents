@@ -73,32 +73,30 @@ export const RenderOptionsParameter = (
     onOptionChange?: (value: any) => void,
     defaultOptionValue?: IParameterOption | null
 ) => {
-    const [selectedOption, setSelectedOption] = useState<IParameterOption | null>(
-        defaultOptionValue || null
-    );
-
-    useEffect(() => {
-        onOptionChange?.(selectedOption);
-    }, [selectedOption]);
-
     const handleSelectedOptionParamChange = (paramId: string, newValue: any) => {
-        if (!selectedOption) return;
-        const newOptions = selectedOption.parameters?.map((param) =>
+        if (!defaultOptionValue) return;
+
+        // Create a new array of parameters with the updated parameter
+        const updatedParameters = defaultOptionValue?.parameters?.map((param) =>
             param.id === paramId ? { ...param, value: newValue } : param
         );
-        setSelectedOption({ ...selectedOption, parameters: newOptions });
+
+        // Create a new option object with the updated parameters
+        const updatedOption = {
+            ...defaultOptionValue,
+            parameters: updatedParameters
+        };
+
+        // Trigger the onChange handler with the new option
+        updatedOption && onOptionChange && onOptionChange(updatedOption);
     };
 
     const handleOptionChange = (optionValue: any) => {
         const currentOption = param.options?.find(
             (option) => option.name === optionValue
         );
-        currentOption && setSelectedOption(currentOption);
+        onOptionChange?.(currentOption);
     };
-
-    useEffect(() => {
-        console.log(selectedOption);
-    }, [selectedOption]);
 
     return (
         <div className="flex w-full flex-col gap-2">
@@ -108,7 +106,7 @@ export const RenderOptionsParameter = (
             </Label>
             <Select onValueChange={(name) => handleOptionChange(name)}>
                 <SelectTrigger className="flex w-full items-center justify-between rounded-lg border-2 border-brand-border-300 bg-white px-2 py-2">
-                    {selectedOption?.name || 'Select an option'}
+                    {defaultOptionValue?.name || 'Select an option'}
                     <SelectIcon />
                 </SelectTrigger>
                 <SelectContent className="bg-white">
@@ -119,9 +117,9 @@ export const RenderOptionsParameter = (
                     ))}
                 </SelectContent>
             </Select>
-            {selectedOption?.parameters &&
+            {defaultOptionValue?.parameters &&
                 renderParameters(
-                    selectedOption.parameters,
+                    defaultOptionValue.parameters,
                     handleSelectedOptionParamChange
                 )}
         </div>

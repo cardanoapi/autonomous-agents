@@ -141,7 +141,9 @@ const AgentFunctionsDetailComponent = ({
                                 />
                                 {config.action?.parameters.map((param, index) =>
                                     typeof param.value === 'object' &&
-                                    !Array.isArray(param.value) ? (
+                                    !Array.isArray(param.value) &&
+                                    param.value !== null &&
+                                    param.value !== undefined ? (
                                         Object.entries(param.value).map(
                                             ([key, value], subIndex) => (
                                                 <CustomCopyBox

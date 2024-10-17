@@ -1,16 +1,18 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 
-import { IAgent } from '@api/agents';
+import { IAgent, IAgentConfiguration } from '@api/agents';
 import { IAgentTriggerHistory } from '@api/triggerHistory';
 import {
     fetchAgentTriggerHistoryById,
     fetchAllTriggerHistory
 } from '@api/triggerHistory';
+import { Dialog, DialogContent } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { hexToBech32 } from '@utils';
 
+import { FunctionForm } from '@app/app/(pages)/templates/create-template/components/FunctionForm';
 import TextDisplayField from '@app/components/molecules/TextDisplayField';
 
 import { useModal } from '../Modals/context';
@@ -38,6 +40,11 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
     });
 
     const { openModal } = useModal();
+
+    const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+    const [agentConfigurations, setAgentConfigurations] = useState<
+        IAgentConfiguration[]
+    >(agent?.agent_configurations || []);
 
     const handleAgentRun = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
@@ -161,6 +168,20 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
                     </div>
                 </ScrollArea>
             </div>
+            {/* <Dialog open={isDialogOpen}>
+                {/* <DialogContent className="!p-0">
+                    {currentSelectedFunction && (
+                        <FunctionForm
+                            currentFunction={currentSelectedFunction}
+                            onClose={handleDialogClose}
+                            onValueChange={() => {}}
+                            onSave={(item: IConfiguredFunctionsItem) => {
+                                handleSaveFunction(item);
+                            }}
+                        />
+                    )}
+                </DialogContent> */}
+            {/* </Dialog> */}
         </div>
     );
 };

@@ -1,3 +1,6 @@
+import { IAgentTrigger } from '@models/types';
+import axios from 'axios';
+
 import { IAgentAction, ICronTrigger, IEventTrigger } from './agents';
 import { baseAPIurl } from './config';
 
@@ -85,3 +88,17 @@ export interface ITriggerCreateDto {
     action: IAgentAction;
     data: ICronTrigger | IEventTrigger;
 }
+
+export const postTrigger = async (agentID: string, triggerData: ITriggerCreateDto) => {
+    const response = await axios.post(
+        `${baseAPIurl}/agents/${agentID}/triggers`,
+        triggerData,
+        {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            withCredentials: true
+        }
+    );
+    return response.data;
+};
