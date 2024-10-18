@@ -83,12 +83,17 @@ def get_application() -> FastAPI:
         docs_url=settings.DOCS_URL,
         lifespan=lifespan,
     )
+
     origins = [
-        "http://agents.cardanoapi.io",
         "http://localhost:8080",
         "http://localhost:3000",
-        "*",
+        "https://agents.cardanoapi.io",
+        "https://sanchonet.agents.cardanoapi.io",
+        "https://preview.agents.cardanoapi.io",
+        "https://prepod.agents.cardanoapi.io",
+        "https://sancho.agents.cardanoapi.io",
     ]
+
     log.debug("Add application routes.")
     log.debug("Register global exception handler for custom HTTPException.")
     add_pagination(app)
