@@ -176,11 +176,36 @@ export default AgentOverViewComponent;
 
 const TriggerDataBox = ({
     triggerData,
-    lastActive
+    lastActive,
+    numberOfBoxes = 24
 }: {
     triggerData: IAgentTriggerHistory[];
     lastActive?: string;
+    numberOfBoxes?: number
 }) => {
+
+
+    const dataSource = triggerData.map(
+        (item) =>
+            (item.status && item.success ? 'success' : item.status ? 'failed' : 'skipped') as string
+    );
+
+    {
+        console.log(dataSource.length , numberOfBoxes)
+    }
+
+    if (dataSource.length < numberOfBoxes) {
+        const target = numberOfBoxes - dataSource.length;
+        for (let i = 0; i < target; i++) {
+            dataSource.push('skipped');
+        }
+    }
+
+    {
+        console.log(dataSource.length)
+    }
+
+
     const customBox = (status: string, width?: string, height?: string) => {
         const bgColor =
             status === 'success'
@@ -201,13 +226,9 @@ const TriggerDataBox = ({
                 <div className="text-sm font-medium text-gray-600">Triggered</div>
                 <div className="text-[10px] text-gray-500 ">Last 24 triggers</div>
                 <div className="flex h-6 w-full gap-[6px]">
-                    {triggerData.map((item, index) =>
+                    {dataSource.map((status : string, index) =>
                         customBox(
-                            item.status && item.success
-                                ? 'success'
-                                : item.status
-                                  ? 'failed'
-                                  : 'skipped',
+                            status,
                             `w-3`,
                             `h-full`
                         )
