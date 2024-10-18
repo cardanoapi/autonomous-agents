@@ -5,7 +5,6 @@ import { TriggerType } from '@api/agents';
 import { TemplateFunctions } from '@models/types/functions';
 import { Slider } from '@mui/material';
 import { X } from 'lucide-react';
-import { ChevronDown } from 'lucide-react';
 
 import { Button } from '@app/components/atoms/Button';
 import { Card, CardDescription, CardTitle } from '@app/components/atoms/Card';
@@ -19,18 +18,18 @@ import { cn } from '@app/components/lib/utils';
 import { CustomCombobox } from '@app/components/molecules/CustomCombobox';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
 
-import { IConfiguredFunctionsItem } from '../page';
+import { IFormFunctionInstance } from '../page';
 import { renderParameters } from './trigger/ParameterRenderers';
 import TriggerTab from './trigger/TriggerTab';
 
-interface IFunctionForm {
-    currentFunction?: IConfiguredFunctionsItem;
-    onValueChange: (data: IConfiguredFunctionsItem) => void;
-    onClose: (data: IConfiguredFunctionsItem) => void;
-    onSave: (item: IConfiguredFunctionsItem) => void;
-    hideFormHeader?: boolean;
+interface IFunctionFormParams {
+    currentFunction?: IFormFunctionInstance;
+    onValueChange: (data: IFormFunctionInstance) => void;
+    onClose: (data: IFormFunctionInstance) => void;
+    onSave: (item: IFormFunctionInstance) => void;
     btnPlaceholder?: string;
     renderFunctionSelector?: boolean;
+    editMode?: boolean;
 }
 
 export const FunctionForm = ({
@@ -38,11 +37,11 @@ export const FunctionForm = ({
     onValueChange,
     onClose,
     onSave,
-    hideFormHeader,
     btnPlaceholder,
-    renderFunctionSelector = false
-}: IFunctionForm) => {
-    const [functionState, setFunctionState] = useState<IConfiguredFunctionsItem>(
+    renderFunctionSelector = false,
+    editMode = false
+}: IFunctionFormParams ) => {
+    const [functionState, setFunctionState] = useState<IFormFunctionInstance>(
         currentFunction || {
             ...TemplateFunctions[0],
             index: '0',
@@ -53,7 +52,7 @@ export const FunctionForm = ({
         currentFunction?.cronValue?.frequency || '* * * * *'
     );
 
-    const updateFunctionState = (updates: Partial<IConfiguredFunctionsItem>) => {
+    const updateFunctionState = (updates: Partial<IFormFunctionInstance>) => {
         if (!functionState) return;
         const updatedFunction = { ...functionState, ...updates };
         setFunctionState(updatedFunction);
@@ -185,7 +184,7 @@ export const FunctionForm = ({
             )}
         >
             <X
-                className="absolute right-4 top-4 cursor-pointer"
+                className="absolute right-6 top-4 cursor-pointer"
                 onClick={() => onClose?.(functionState)}
             />
             <div className="flex flex-col gap-y-4">
@@ -247,6 +246,7 @@ export const FunctionForm = ({
                                 functionState?.congifuredCronSettings
                             }
                             previousSelectedOption={functionState?.selectedCronOption}
+                            defaultToCustomTab={editMode}
                         />
                         <div className="px-4">
                             <span className="h4 text-center">

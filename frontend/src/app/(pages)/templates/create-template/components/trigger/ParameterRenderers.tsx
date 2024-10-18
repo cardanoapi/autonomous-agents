@@ -15,7 +15,7 @@ export const RenderStringParameter = (
     <div className="flex w-full flex-col gap-2">
         <Label className="h4">
             {param.name}
-            {param.optional == false ? ' *' : ''}
+            {param.optional == false && <span className="text-red-500">*</span>}
         </Label>
         <Input
             defaultValue={param.value}
@@ -32,7 +32,7 @@ export const RenderNumberParameter = (
     <div className="flex w-full flex-col gap-2">
         <Label className="h4">
             {param.name}
-            {param.optional == false ? ' *' : ''}
+            {param.optional == false && <span className="text-red-500">*</span>}
         </Label>
         <NumberInput
             defaultValue={param.value ? Number(param.value) : 0}
@@ -49,12 +49,17 @@ export const RenderObjectParameter = (
     <div className="flex w-full flex-col gap-2">
         <Label className="h4">
             {param.name}
-            {param.optional == false ? ' *' : ''}
+            {param.optional == false && <span className="text-red-500">*</span>}
         </Label>
         <div className="ml-4 grid grid-cols-2 gap-4">
             {param.parameters?.map((subParam, subIndex) => (
                 <div key={subIndex} className="flex items-center gap-4">
-                    <Label className="h4 flex">{`Url${subParam.optional == false ? ' *' : ''}`}</Label>
+                    <Label className="h4">
+                        {subParam.name}
+                        {subParam.optional == false && (
+                            <span className="text-red-500">*</span>
+                        )}
+                    </Label>
                     <Input
                         defaultValue={subParam.value}
                         className="w-full"
@@ -102,7 +107,7 @@ export const RenderOptionsParameter = (
         <div className="flex w-full flex-col gap-2">
             <Label className="h4">
                 {param.name}
-                {param.optional == false ? ' *' : ''}
+                {param.optional == false && <span className="text-red-500">*</span>}
             </Label>
             <Select onValueChange={(name) => handleOptionChange(name)}>
                 <SelectTrigger className="flex w-full items-center justify-between rounded-lg border-2 border-brand-border-300 bg-white px-2 py-2">

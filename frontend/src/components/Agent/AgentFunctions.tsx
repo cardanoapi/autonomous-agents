@@ -1,15 +1,14 @@
 import { useState } from 'react';
 
 import { IAgent } from '@api/agents';
-import { IAgentConfiguration } from '@api/agents';
 import { ITriggerCreateDto, deleteTrigger } from '@api/trigger';
 import { postTrigger } from '@api/trigger';
 import { Dialog, DialogContent } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 
 import { FunctionForm } from '@app/app/(pages)/templates/create-template/components/FunctionForm';
-import { mapConfiguredFunctionToTriggerCreateDTO } from '@app/app/(pages)/templates/create-template/components/utils/FunctionUtil';
-import { IConfiguredFunctionsItem } from '@app/app/(pages)/templates/create-template/page';
+import { mapFormFunctionToTriggerConfiguration } from '@app/app/(pages)/templates/create-template/components/utils/FunctionMapper';
+import { IFormFunctionInstance } from '@app/app/(pages)/templates/create-template/page';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { Button } from '../atoms/Button';
@@ -17,7 +16,6 @@ import ConfirmationBox from '../molecules/ConfirmationBox';
 import { ErrorToast, SuccessToast } from '../molecules/CustomToasts';
 import TextDisplayField from '../molecules/TextDisplayField';
 import { ScrollArea } from '../shadcn/ui/scroll-area';
-import AgentFunctionForm from './AgentFunctionForm';
 import AgentFunctionsDetailComponent from './AgentFunctionsDetail';
 
 export default function AgentFunctionsComponent({
@@ -56,8 +54,8 @@ export default function AgentFunctionsComponent({
         }
     });
 
-    const handlePostTrigger = (item: IConfiguredFunctionsItem) => {
-        const triggerData = mapConfiguredFunctionToTriggerCreateDTO(item);
+    const handlePostTrigger = (item: IFormFunctionInstance) => {
+        const triggerData = mapFormFunctionToTriggerConfiguration(item);
         triggerData && postTriggerMutation.mutate(triggerData);
     };
 
@@ -101,10 +99,9 @@ export default function AgentFunctionsComponent({
                     <FunctionForm
                         onClose={toggleDialog}
                         onValueChange={() => {}}
-                        onSave={(item: IConfiguredFunctionsItem) => {
+                        onSave={(item: IFormFunctionInstance) => {
                             handlePostTrigger(item);
                         }}
-                        hideFormHeader={true}
                         btnPlaceholder={'Add Function'}
                         renderFunctionSelector={true}
                     />
@@ -120,6 +117,7 @@ export default function AgentFunctionsComponent({
                         title="Confirm Delete"
                         onAccept={handleDeleteConfirmation}
                         onClose={() => setOpenDeleteConfirmation(false)}
+                        onDecline={() => setOpenDeleteConfirmation(false)}
                     />
                 </DialogContent>
             </Dialog>

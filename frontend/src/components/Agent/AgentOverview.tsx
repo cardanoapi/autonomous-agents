@@ -168,20 +168,6 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
                     </div>
                 </ScrollArea>
             </div>
-            {/* <Dialog open={isDialogOpen}>
-                {/* <DialogContent className="!p-0">
-                    {currentSelectedFunction && (
-                        <FunctionForm
-                            currentFunction={currentSelectedFunction}
-                            onClose={handleDialogClose}
-                            onValueChange={() => {}}
-                            onSave={(item: IConfiguredFunctionsItem) => {
-                                handleSaveFunction(item);
-                            }}
-                        />
-                    )}
-                </DialogContent> */}
-            {/* </Dialog> */}
         </div>
     );
 };
