@@ -13,6 +13,9 @@ export interface IAgentTriggerHistory {
     triggerType: string;
     txHash: string;
     instanceIndex: number;
+    parameters?: Array<any>;
+    internal?: any;
+    result?: any;
 }
 
 export const fetchAgentTriggerHistoryById = async (
