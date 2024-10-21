@@ -22,19 +22,18 @@ import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 import { SuccessToast } from '../../molecules/CustomToasts';
 import { ErrorToast } from '../../molecules/CustomToasts';
 import CustomCopyBox from '../shared/CustomCopyBox';
+import { IAgent } from '@api/agents';
 
 const AgentFunctionsDetailComponent = ({
-    onClickSave,
+    agent,
     onClickDelete,
     agentConfigurations,
     enableContol = false,
-    isEditing = false
 }: {
     agentConfigurations?: Array<IAgentConfiguration>;
-    isEditing?: boolean;
-    onClickSave?: (agentConfig: IAgentConfiguration, index: number) => void;
     onClickDelete?: (configIndex: string) => void;
     enableContol?: boolean;
+    agent?: IAgent;
 }) => {
     const [openDialog, setOpenDialog] = useState(false);
 
@@ -45,9 +44,6 @@ const AgentFunctionsDetailComponent = ({
         return TemplateFunctions.find((f) => f.id === functionName);
     };
 
-    const handleOpenDialog = (isAddNew: boolean, index?: number) => {
-        setOpenDialog(true);
-    };
 
     const renderConfigMeta = (config: IAgentConfiguration) => {
         const functionMetaData = getFunctionMetaData(
@@ -72,13 +68,13 @@ const AgentFunctionsDetailComponent = ({
         mutationFn: (data: IAgentConfiguration) => updateTrigger(data),
         onSuccess: () => {
             SuccessToast('Function Updated Successfully.');
-            queryClient.invalidateQueries({ queryKey: ['agents'] });
-            queryClient.invalidateQueries({ queryKey: ['myAgent'] });
-            queryClient.invalidateQueries({ queryKey: ['agents'] });
-            setOpenDialog(false);
         },
         onError: (error: any) => {
             ErrorToast(error?.response?.data);
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: [`agent${agent?.id}`] });
+            setOpenDialog(false);
         }
     });
 

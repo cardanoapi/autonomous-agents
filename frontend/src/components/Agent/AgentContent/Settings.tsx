@@ -8,11 +8,12 @@ import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { Button } from '../../atoms/Button';
 import { Input } from '../../atoms/Input';
-import { Textarea } from '../../atoms/Textarea';
 import { Label } from '../../atoms/label';
 import { ErrorToast, SuccessToast } from '../../molecules/CustomToasts';
 import { NumberInput } from '../../molecules/NumberInput';
 import ContentHeader from './ContentHeader';
+import { useAtom } from 'jotai';
+import { currentAgentNameAtom } from '@app/store/localStore';
 
 export default function AgentSettingsComponent({
     agent,
@@ -22,6 +23,7 @@ export default function AgentSettingsComponent({
     enableControl? : boolean
 }) {
     const [isEditing, setIsEditing] = useState(false);
+    const [,setAgentName] = useAtom(currentAgentNameAtom);
 
     const [agentData, setAgentData] = useState<IAgentUpdateReqDto>({
         agentId: agent?.id,
@@ -34,13 +36,15 @@ export default function AgentSettingsComponent({
     const { mutate: postAgentData, isPending: submittingForm } = useMutation({
         mutationFn: (data: IAgentUpdateReqDto) => updateAgentData(data),
         onSuccess: () => {
-            queryClient.refetchQueries({ queryKey: ['agents'] });
-            queryClient.refetchQueries({ queryKey: ['myAgent'] });
-            queryClient.refetchQueries({ queryKey: [`agents${agent?.id || ''}`] });
             SuccessToast('Agent Updated Successfully.');
         },
         onError: () => {
             ErrorToast('Error while updating Agent. Try Again!');
+        },
+        onSettled: () => {
+            setAgentName(agent?.name || 'AgentProfile');
+            queryClient.invalidateQueries({ queryKey: [`agent${agent?.id}` , 'agents'] });
+            setIsEditing(false);
         }
     });
 

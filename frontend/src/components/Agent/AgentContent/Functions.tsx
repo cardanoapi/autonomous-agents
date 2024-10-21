@@ -100,6 +100,7 @@ export default function AgentFunctionsComponent({
                     agentConfigurations={agent?.agent_configurations || []}
                     onClickDelete={handleDeleteTrigger}
                     enableContol={enableControl}
+                    agent={agent || undefined}
                 />
             </div>
             <Dialog open={dialogOpen}>
