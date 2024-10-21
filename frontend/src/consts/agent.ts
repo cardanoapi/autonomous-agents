@@ -108,7 +108,8 @@ export const MapFunctionNameAndViewName: Record<string, string> = {
     noConfidence: 'No Confidence',
     updateCommittee: 'Update Committee',
     treasuryWithdrawal: 'Treasury Withdrawal',
-    saveMetadata: 'Save Metadata'
+    saveMetadata: 'Save Metadata',
+    loadFunds: 'Load Funds'
 } as Record<string, string>;
 
 export const AgentFunctions = [

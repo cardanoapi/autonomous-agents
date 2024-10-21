@@ -79,6 +79,9 @@ model TriggerHistory {
   txHash        String?
   triggerType   TriggerType
   instanceIndex BigInt      @default(0)
+  parameters    Json?
+  result        Json?
+  internal      Json?
 }
 
 model FunctionDetail {

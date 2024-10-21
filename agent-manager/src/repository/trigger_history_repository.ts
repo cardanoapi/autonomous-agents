@@ -7,14 +7,17 @@ const prisma = new PrismaClient()
 export type TriggerType = 'CRON' | 'MANUAL' | 'EVENT' | 'INTERNAL'
 
 export async function saveTriggerHistory(
-  agentId: string,
-  functionName: string,
-  status: boolean,
-  success: boolean,
-  message: string,
-  triggerType: TriggerType,
-  txHash?: string,
-  instanceIndex: number = 0
+    agentId: string,
+    functionName: string,
+    status: boolean,
+    success: boolean,
+    message: string,
+    triggerType: TriggerType,
+    txHash?: string,
+    instanceIndex: number = 0,
+    parameters?: string,
+    internal?: string,
+    result?: string
 ): Promise<void> {
     try {
         const triggerHistory: any = {}
@@ -27,6 +30,9 @@ export async function saveTriggerHistory(
         triggerHistory['timestamp'] = DateTime.utc().toISO()
         triggerHistory['triggerType'] = triggerType
         triggerHistory['instanceIndex'] = instanceIndex
+        triggerHistory['parameters'] = parameters
+        triggerHistory['internal'] = internal
+        triggerHistory['result'] = result
         if (txHash) {
             triggerHistory['txHash'] = txHash
         }

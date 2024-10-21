@@ -7,7 +7,8 @@ import {
 import { globalState } from '../constants/global'
 import { ManagerInterface } from '../service/ManagerInterfaceService'
 import { CallLog } from '../executor/Executor'
-import { ILog } from '../service/TriggerActionHandler'
+import { ILog, InternalLog } from '../service/TriggerActionHandler'
+import { DateTime } from 'luxon'
 
 export function getParameterValue(
     parameters: ActionParameter[] = [],
@@ -48,22 +49,58 @@ export function saveTxLog(
     triggerType: TriggerType,
     instanceIndex: number
 ) {
-    callLogs.reverse().forEach((log: any, index) => {
-        const txLog: ILog = {
-            function_name: log.function,
-            triggerType: index + 1 < callLogs.length ? 'INTERNAL' : triggerType,
-            trigger: true,
-            success: true,
-            message: '',
-            instanceIndex: instanceIndex,
+    try {
+        const mainLog = callLogs.shift()
+        if (mainLog) {
+            const internalLogs: InternalLog[] = []
+            const txLog: ILog = {
+                function_name: mainLog.function,
+                triggerType: triggerType,
+                trigger: true,
+                success: true,
+                message: '',
+                instanceIndex: instanceIndex,
+                parameters: mainLog.arguments,
+            }
+            if (mainLog.return) {
+                txLog.result = mainLog.return
+                txLog.txHash = mainLog.return.hash
+            } else if (mainLog.error) {
+                txLog.result = mainLog.error
+                txLog.message =
+                    mainLog.error &&
+                    ((mainLog.error as Error).message ?? mainLog.error)
+                txLog.success = false
+            }
+            callLogs.length &&
+                callLogs.forEach((log: any) => {
+                    const internalLog: InternalLog = {
+                        function_name: log.function,
+                        success: true,
+                        message: '',
+                        parameters: log.arguments,
+                    }
+                    if (log.return) {
+                        internalLog.result = log.return
+                        internalLog.txHash = log.return.hash
+                    } else if (log.error) {
+                        internalLog.result = log.error
+                        internalLog.message =
+                            log.error && (log.error.message ?? log.error)
+                        internalLog.success = false
+                    }
+                    internalLog.timeStamp = DateTime.utc().toISO()
+                    internalLogs.push(internalLog)
+                })
+            if (internalLogs.length) {
+                txLog.internal = internalLogs
+            }
+            managerInterface.logTx(txLog)
+            console.log('Method call log', mainLog)
+        } else {
+            console.log('No log found')
         }
-        if (log.return) {
-            txLog.txHash = log.return.hash
-        } else if (log.error) {
-            txLog.message = log.error && (log.error.message ?? log.error)
-            txLog.success = false
-        }
-        managerInterface.logTx(txLog)
-    })
-    console.log('Method call log', callLogs)
+    } catch (err) {
+        console.error('SaveTxLogError :', err)
+    }
 }
