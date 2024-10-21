@@ -24,7 +24,7 @@ import { Skeleton } from '../../shadcn/ui/skeleton';
 import ErrorPlaceholder from '../shared/ErrorPlaceholder';
 import ContentHeader from './ContentHeader';
 
-const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
+export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
     const statusOptions = ['Success', 'Skipped', 'Failed'];
     const [statusPlaceholder, setStatusPlaceholder] = useState('None');
     const [currentFunction, setCurrentFunction] = useState('None');

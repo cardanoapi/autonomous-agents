@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { IAgentTriggerHistory, fetchAllTriggerHistory } from '@api/triggerHistory';
 import { useQuery } from '@tanstack/react-query';
 
-import { EmptyLogsPlaceholder } from '@app/components/Agent/AgentContent/Logs';
 import {
     AgentLogCard,
     AgentLogCardSkeleton
@@ -210,11 +209,6 @@ export default function LogsPage() {
                                       />
                                   )
                               )}
-                        {!loadingLogs && LogsHistory?.items.length === 0 && (
-                            <div className="h-full max-h-logsList items-center justify-center">
-                                <EmptyLogsPlaceholder className="!my-2" />
-                            </div>
-                        )}
                     </ScrollArea>
                 </div>
             </div>
