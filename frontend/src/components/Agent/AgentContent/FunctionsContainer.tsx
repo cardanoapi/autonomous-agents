@@ -27,12 +27,14 @@ const AgentFunctionsDetailComponent = ({
     onClickSave,
     onClickDelete,
     agentConfigurations,
+    enableContol = false,
     isEditing = false
 }: {
     agentConfigurations?: Array<IAgentConfiguration>;
     isEditing?: boolean;
     onClickSave?: (agentConfig: IAgentConfiguration, index: number) => void;
     onClickDelete?: (configIndex: string) => void;
+    enableContol?: boolean;
 }) => {
     const [openDialog, setOpenDialog] = useState(false);
 
@@ -109,21 +111,25 @@ const AgentFunctionsDetailComponent = ({
                             className="group relative flex w-[300px] flex-col flex-wrap justify-between gap-2 rounded bg-brand-White-200 p-3 drop-shadow-md"
                             key={`${config.agent_id}-${config.id}`}
                         >
-                            <div className="absolute right-3 top-3 hidden items-center gap-2 group-hover:flex">
-                                <Edit
-                                    className="cursor-pointer text-gray-400"
-                                    size={20}
-                                    onClick={() => handleClickEdit(config)}
-                                />
-                                <Trash2
-                                    className="cursor-pointer text-red-400 group-hover:flex"
-                                    size={20}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        onClickDelete && onClickDelete(config.id);
-                                    }}
-                                />
-                            </div>
+                            {
+                                enableContol && (
+                                    <div className="absolute right-3 top-3 hidden items-center gap-2 group-hover:flex">
+                                        <Edit
+                                            className="cursor-pointer text-gray-400"
+                                            size={20}
+                                            onClick={() => handleClickEdit(config)}
+                                        />
+                                        <Trash2
+                                            className="cursor-pointer text-red-400 group-hover:flex"
+                                            size={20}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onClickDelete && onClickDelete(config.id);
+                                            }}
+                                        />
+                                    </div>)
+                            }
+                       
                             <div className="flex flex-col">
                                 {renderConfigMeta(config)}
                             </div>

@@ -14,7 +14,7 @@ import { cn } from '../../lib/utils';
 import ErrorPlaceholder from '../shared/ErrorPlaceholder';
 import ContentHeader from './ContentHeader';
 
-const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
+const AgentManualTriggerComponent = ({ agent, }: { agent?: IAgent }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [, setSelectedFunction] = useAtom(selectedFunctionAtom);
     const [, setErrorIndex] = useAtom(errorAtom);

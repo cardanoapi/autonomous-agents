@@ -24,10 +24,10 @@ import HeaderContent from './ContentHeader';
 
 interface AgentOverViewProps {
     agent?: IAgent;
-    enableEdit?: boolean;
+    enableControl?: boolean;
 }
 
-const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
+const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent , enableControl }) => {
     const {
         data: LogsHistory,
         refetch: refetchLogsHistory,
@@ -77,7 +77,7 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent }) => {
                         content={agent?.name}
                         textClassName="text-xl font-semibold"
                     />
-                    {!agent?.is_active && (
+                    {!agent?.is_active && enableControl && (
                         <Button
                             variant="primary"
                             onClick={handleAgentRun}

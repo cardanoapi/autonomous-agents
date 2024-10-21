@@ -30,16 +30,16 @@ const AgentTabContent = ({
 
     function getAgentSelectedTabComponent() {
         if (selectedAgentTab === 'Overview')
-            return <AgentOverViewComponent agent={agent} enableEdit={enableEdit} />;
+            return <AgentOverViewComponent agent={agent} enableControl={enableEdit} />;
         else if (selectedAgentTab === 'Functions')
-            return <AgentFunctionsComponent agent={agent} />;
+            return <AgentFunctionsComponent agent={agent} enableControl={enableEdit}/>;
         else if (selectedAgentTab === 'Logs')
             return <AgentLogComponent agent={agent} />;
         else if (enableEdit) {
             if (selectedAgentTab === 'Manual Actions')
                 return <AgentManualTriggerComponent agent={agent} />;
             else if (selectedAgentTab === 'Settings')
-                return <AgentSettingsComponent agent={agent} />;
+                return <AgentSettingsComponent agent={agent} enableControl={enableEdit}/>;
         }
     }
     //Logs and History tab have their own Skeleton handled inside the component

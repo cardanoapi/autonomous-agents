@@ -15,9 +15,11 @@ import { NumberInput } from '../../molecules/NumberInput';
 import ContentHeader from './ContentHeader';
 
 export default function AgentSettingsComponent({
-    agent
+    agent,
+    enableControl
 }: {
     agent: IAgent | undefined;
+    enableControl? : boolean
 }) {
     const [isEditing, setIsEditing] = useState(false);
 
@@ -111,6 +113,8 @@ export default function AgentSettingsComponent({
                     />
                 </div>
             </div>
+            {
+                enableControl && (
             <div className="flex justify-end">
                 {isEditing ? (
                     <div className="flex items-center gap-2">
@@ -141,7 +145,8 @@ export default function AgentSettingsComponent({
                         Edit
                     </Button>
                 )}
-            </div>
+            </div>)
+            }
         </div>
     );
 }

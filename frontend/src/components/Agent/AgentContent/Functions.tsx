@@ -20,9 +20,11 @@ import HeaderContent from './ContentHeader';
 import AgentFunctionsDetailComponent from './FunctionsContainer';
 
 export default function AgentFunctionsComponent({
-    agent
+    agent,
+    enableControl
 }: {
     agent: IAgent | null | undefined;
+    enableControl?: boolean;
 }) {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
@@ -80,19 +82,24 @@ export default function AgentFunctionsComponent({
                             content={'Saved Functions'}
                             textClassName="text-xl font-semibold"
                         />
-                        <Button
-                            variant="primary"
-                            onClick={toggleDialog}
-                            size="sm"
-                            className="min-w-32 px-4"
-                        >
-                            Add Function
-                        </Button>
+                        {
+                            enableControl && (
+                                <Button
+                                    variant="primary"
+                                    onClick={toggleDialog}
+                                    size="sm"
+                                    className="min-w-32 px-4"
+                                >
+                                    Add Function
+                                </Button>
+                            )
+                        }
                     </div>
                 </HeaderContent>
                 <AgentFunctionsDetailComponent
                     agentConfigurations={agent?.agent_configurations || []}
                     onClickDelete={handleDeleteTrigger}
+                    enableContol={enableControl}
                 />
             </div>
             <Dialog open={dialogOpen}>
