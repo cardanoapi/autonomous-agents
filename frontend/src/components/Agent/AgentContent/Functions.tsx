@@ -15,7 +15,6 @@ import { Button } from '../../atoms/Button';
 import ConfirmationBox from '../../molecules/ConfirmationBox';
 import { ErrorToast, SuccessToast } from '../../molecules/CustomToasts';
 import TextDisplayField from '../../molecules/TextDisplayField';
-import { ScrollArea } from '../../shadcn/ui/scroll-area';
 import HeaderContent from './ContentHeader';
 import AgentFunctionsDetailComponent from './FunctionsContainer';
 
@@ -104,7 +103,7 @@ export default function AgentFunctionsComponent({
                 />
             </div>
             <Dialog open={dialogOpen}>
-                <DialogContent className="bg- relative bg-brand-Azure-400 !p-0">
+                <DialogContent className="relative bg-brand-Azure-400 !p-0">
                     <FunctionForm
                         onClose={toggleDialog}
                         onValueChange={() => {}}

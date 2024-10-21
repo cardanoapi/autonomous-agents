@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 
 import { IAgentConfiguration, ICronTrigger } from '@api/agents';
-import { ITriggerCreateDto, updateTrigger } from '@api/trigger';
+import {  updateTrigger } from '@api/trigger';
 import { TemplateFunctions } from '@models/types/functions';
 import { Dialog, DialogContent } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
@@ -13,7 +13,6 @@ import { FunctionForm } from '@app/app/(pages)/templates/create-template/compone
 import {
     mapAgentConfigurationToFormFunction,
     mapFormFunctionToAgentConfiguration,
-    mapFormFunctionToTriggerConfiguration
 } from '@app/app/(pages)/templates/create-template/components/utils/FunctionMapper';
 import { IFormFunctionInstance } from '@app/app/(pages)/templates/create-template/page';
 import { convertCRONExpressionToReadableForm } from '@app/utils/dateAndTimeUtils';
@@ -183,7 +182,7 @@ const AgentFunctionsDetailComponent = ({
             </div>
             {currentFunction && (
                 <Dialog open={openDialog}>
-                    <DialogContent className="!min-w-[650px] !p-0">
+                    <DialogContent className="!p-0">
                         <FunctionForm
                             currentFunction={currentFunction}
                             onValueChange={() => {}}
