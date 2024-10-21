@@ -11,12 +11,13 @@ import { mapFormFunctionToTriggerConfiguration } from '@app/app/(pages)/template
 import { IFormFunctionInstance } from '@app/app/(pages)/templates/create-template/page';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
-import { Button } from '../atoms/Button';
-import ConfirmationBox from '../molecules/ConfirmationBox';
-import { ErrorToast, SuccessToast } from '../molecules/CustomToasts';
-import TextDisplayField from '../molecules/TextDisplayField';
-import { ScrollArea } from '../shadcn/ui/scroll-area';
-import AgentFunctionsDetailComponent from './AgentFunctionsDetail';
+import { Button } from '../../atoms/Button';
+import ConfirmationBox from '../../molecules/ConfirmationBox';
+import { ErrorToast, SuccessToast } from '../../molecules/CustomToasts';
+import TextDisplayField from '../../molecules/TextDisplayField';
+import { ScrollArea } from '../../shadcn/ui/scroll-area';
+import HeaderContent from './ContentHeader';
+import AgentFunctionsDetailComponent from './FunctionsContainer';
 
 export default function AgentFunctionsComponent({
     agent
@@ -72,27 +73,27 @@ export default function AgentFunctionsComponent({
     return (
         <div className="flex flex-col gap-10 ">
             <div className="flex flex-col gap-4">
-                <div className="flex w-full items-center justify-between">
-                    <TextDisplayField
-                        title="Agent Name"
-                        content={'Saved Functions'}
-                        textClassName="text-xl font-semibold"
-                    />
-                    <Button
-                        variant="primary"
-                        onClick={toggleDialog}
-                        size="sm"
-                        className="min-w-32 px-4"
-                    >
-                        Add Function
-                    </Button>
-                </div>
-                <ScrollArea className="h-[500px] w-full overflow-y-auto px-2 ">
-                    <AgentFunctionsDetailComponent
-                        agentConfigurations={agent?.agent_configurations || []}
-                        onClickDelete={handleDeleteTrigger}
-                    />
-                </ScrollArea>
+                <HeaderContent>
+                    <div className="flex w-full items-center justify-between bg-white">
+                        <TextDisplayField
+                            title="Agent Name"
+                            content={'Saved Functions'}
+                            textClassName="text-xl font-semibold"
+                        />
+                        <Button
+                            variant="primary"
+                            onClick={toggleDialog}
+                            size="sm"
+                            className="min-w-32 px-4"
+                        >
+                            Add Function
+                        </Button>
+                    </div>
+                </HeaderContent>
+                <AgentFunctionsDetailComponent
+                    agentConfigurations={agent?.agent_configurations || []}
+                    onClickDelete={handleDeleteTrigger}
+                />
             </div>
             <Dialog open={dialogOpen}>
                 <DialogContent className="bg- relative bg-brand-Azure-400 !p-0">

@@ -5,8 +5,11 @@ import { useEffect, useState } from 'react';
 import { IAgentTriggerHistory, fetchAllTriggerHistory } from '@api/triggerHistory';
 import { useQuery } from '@tanstack/react-query';
 
-import { EmptyLogsPlaceholder } from '@app/components/Agent/AgentLog';
-import { AgentLogCard, AgentLogCardSkeleton } from '@app/components/Agent/AgentLog';
+import { EmptyLogsPlaceholder } from '@app/components/Agent/AgentContent/Logs';
+import {
+    AgentLogCard,
+    AgentLogCardSkeleton
+} from '@app/components/Agent/AgentContent/Logs';
 import AgentFunctionsDropDown from '@app/components/Common/AgentFunctionsDropDown';
 import { Badge } from '@app/components/atoms/Badge';
 import {

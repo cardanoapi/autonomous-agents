@@ -1,7 +1,7 @@
 import { CopyIcon } from 'lucide-react';
 
-import { cn } from '../lib/utils';
-import { SuccessToast } from '../molecules/CustomToasts';
+import { cn } from '../../lib/utils';
+import { SuccessToast } from '../../molecules/CustomToasts';
 
 const CustomCopyBox = ({
     title,

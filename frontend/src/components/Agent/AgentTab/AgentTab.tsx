@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '../lib/utils';
+import { cn } from '../../lib/utils';
 import AgentTabItem from './AgentTabItem';
 
 const adminTabs = ['Overview', 'Functions', 'Manual Actions', 'Logs', 'Settings'];

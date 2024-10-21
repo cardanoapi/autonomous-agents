@@ -6,18 +6,22 @@ import { IAgentConfiguration, ICronTrigger } from '@api/agents';
 import { ITriggerCreateDto, updateTrigger } from '@api/trigger';
 import { TemplateFunctions } from '@models/types/functions';
 import { Dialog, DialogContent } from '@mui/material';
+import { useMutation } from '@tanstack/react-query';
 import { Edit, Trash2 } from 'lucide-react';
 
 import { FunctionForm } from '@app/app/(pages)/templates/create-template/components/FunctionForm';
-import { mapAgentConfigurationToFormFunction, mapFormFunctionToAgentConfiguration, mapFormFunctionToTriggerConfiguration } from '@app/app/(pages)/templates/create-template/components/utils/FunctionMapper';
+import {
+    mapAgentConfigurationToFormFunction,
+    mapFormFunctionToAgentConfiguration,
+    mapFormFunctionToTriggerConfiguration
+} from '@app/app/(pages)/templates/create-template/components/utils/FunctionMapper';
 import { IFormFunctionInstance } from '@app/app/(pages)/templates/create-template/page';
 import { convertCRONExpressionToReadableForm } from '@app/utils/dateAndTimeUtils';
-import { SuccessToast } from '../molecules/CustomToasts';
-import { useMutation } from '@tanstack/react-query';
-import { ErrorToast } from '../molecules/CustomToasts';
-
-import CustomCopyBox from './CustomCopyBox';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
+
+import { SuccessToast } from '../../molecules/CustomToasts';
+import { ErrorToast } from '../../molecules/CustomToasts';
+import CustomCopyBox from '../shared/CustomCopyBox';
 
 const AgentFunctionsDetailComponent = ({
     onClickSave,
@@ -77,20 +81,19 @@ const AgentFunctionsDetailComponent = ({
     });
 
     const handleClickEdit = (config: IAgentConfiguration) => {
-        const mappedFunction =  mapAgentConfigurationToFormFunction(config)
-        setCurrentFunction(mappedFunction)
-        setOpenDialog(true)
+        const mappedFunction = mapAgentConfigurationToFormFunction(config);
+        setCurrentFunction(mappedFunction);
+        setOpenDialog(true);
     };
 
-    const handleUpdate = (functionData : IFormFunctionInstance) => {
-
-        console.log(functionData)
+    const handleUpdate = (functionData: IFormFunctionInstance) => {
+        console.log(functionData);
 
         if (functionData.agent_id) {
-            const data = mapFormFunctionToAgentConfiguration(functionData)
-            updateTemplate.mutateAsync(data)
+            const data = mapFormFunctionToAgentConfiguration(functionData);
+            updateTemplate.mutateAsync(data);
         }
-    }
+    };
 
     return (
         <div className="flex h-full flex-col gap-2">
@@ -131,17 +134,16 @@ const AgentFunctionsDetailComponent = ({
                                     className="w-auto"
                                     showCopyIcon={false}
                                 />
-                                {
-                                    config.type === 'CRON' &&
-                                        <CustomCopyBox
-                                            title="Cron Expression"
-                                            content={convertCRONExpressionToReadableForm(
-                                                (config.data as ICronTrigger).frequency
-                                            )}
-                                            className="w-auto"
-                                            showCopyIcon={false}
-                                        />
-                                }
+                                {config.type === 'CRON' && (
+                                    <CustomCopyBox
+                                        title="Cron Expression"
+                                        content={convertCRONExpressionToReadableForm(
+                                            (config.data as ICronTrigger).frequency
+                                        )}
+                                        className="w-auto"
+                                        showCopyIcon={false}
+                                    />
+                                )}
                                 {config.action?.parameters.map((param, index) =>
                                     typeof param.value === 'object' &&
                                     !Array.isArray(param.value) &&
@@ -183,7 +185,9 @@ const AgentFunctionsDetailComponent = ({
                         <FunctionForm
                             currentFunction={currentFunction}
                             onValueChange={() => {}}
-                            onSave={(functionData) => {handleUpdate(functionData)}}
+                            onSave={(functionData) => {
+                                handleUpdate(functionData);
+                            }}
                             onClose={() => setOpenDialog(false)}
                             editMode={true}
                             btnPlaceholder="Update"

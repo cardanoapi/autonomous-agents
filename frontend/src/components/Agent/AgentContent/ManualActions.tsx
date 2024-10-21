@@ -10,8 +10,9 @@ import { Dialog, DialogContent } from '@app/components/shadcn/dialog';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 import { errorAtom, selectedFunctionAtom } from '@app/store/atoms/formRenderer';
 
-import { cn } from '../lib/utils';
-import ErrorPlaceholder from './ErrorPlaceholder';
+import { cn } from '../../lib/utils';
+import ErrorPlaceholder from '../shared/ErrorPlaceholder';
+import ContentHeader from './ContentHeader';
 
 const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
     const [openDialog, setOpenDialog] = useState(false);
@@ -34,16 +35,16 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
         setOpenDialog(false);
     };
 
-    // if (agent?.is_active === false || agent?.is_active === null) {
-    //     return <AgentOfflinePlaceholder />;
-    // }
 
     return (
-        <div className={'relative flex h-full w-full flex-col gap-2'}>
-            <div className={'flex items-center gap-3'}>
-                <span className={'text-[20px] font-semibold'}>Available Functions</span>
-            </div>
-            <ScrollArea className={'h-agentComponentHeight overflow-y-auto py-4 pr-4'}>
+        <div className={'flex h-full w-full flex-col gap-2'}>
+            {agent?.is_active && (
+                    <ContentHeader>
+                        <div className={'flex items-center gap-3'}>
+                            <span className={'text-[20px] font-semibold'}>Available Functions</span>
+                        </div>
+                    </ContentHeader>
+                )}
                 <div className={'flex flex-col gap-12 px-2'}>
                     {AvailableFunctions.map((func) => {
                         return (
@@ -89,7 +90,6 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
                         );
                     })}
                 </div>
-            </ScrollArea>
             <Dialog open={openDialog} onOpenChange={handleOpenChange}>
                 <DialogContent
                     className={'!min-w-[650px] !p-0'}
@@ -116,22 +116,3 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
 };
 
 export default AgentManualTriggerComponent;
-
-const AgentOfflinePlaceholder = ({ className }: { className?: string }) => (
-    <div
-        className={cn(
-            'flex h-full w-full items-center justify-center rounded border-[4px] border-dashed border-gray-200 bg-slate-50',
-            className
-        )}
-    >
-        <div className="flex flex-col items-center gap-2">
-            <span className="flex items-center justify-center gap-2 text-xl font-semibold text-gray-300">
-                <AgentsIcon className="mb-1 h-8 w-8" />
-                Agent seems to be Offline.
-            </span>
-            <span className="text-base text-gray-300">
-                Agent needs to be online for Manual Actions.
-            </span>
-        </div>
-    </div>
-);

@@ -8,8 +8,8 @@ import { IAgent, fetchAgentbyID } from '@api/agents';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
-import AgentTabSection from '@app/components/Agent/AgentTab';
-import AgentTabContent from '@app/components/Agent/AgentTabContent';
+import AgentTabSection from '@app/components/Agent/AgentTab/AgentTab';
+import AgentTabContent from '@app/components/Agent/AgentTab/AgentTabContent';
 import {
     Breadcrumb,
     BreadcrumbItem,

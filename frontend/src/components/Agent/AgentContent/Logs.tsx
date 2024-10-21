@@ -10,19 +10,20 @@ import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { Copy, OctagonAlert } from 'lucide-react';
 
-import AgentAvatar from '@app/components/Agent/AgentAvatar';
+import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import { agentsAtom } from '@app/store/localStore';
 import { Truncate } from '@app/utils/common/extra';
 import { formatTimestamp } from '@app/utils/dateAndTimeUtils';
 
-import AgentFunctionsDropDown from '../Common/AgentFunctionsDropDown';
-import { Badge } from '../atoms/Badge';
-import { cn } from '../lib/utils';
-import { ScrollArea } from '../shadcn/ui/scroll-area';
-import { Skeleton } from '../shadcn/ui/skeleton';
-import ErrorPlaceholder from './ErrorPlaceholder';
+import AgentFunctionsDropDown from '../../Common/AgentFunctionsDropDown';
+import { Badge } from '../../atoms/Badge';
+import { cn } from '../../lib/utils';
+import { ScrollArea } from '../../shadcn/ui/scroll-area';
+import { Skeleton } from '../../shadcn/ui/skeleton';
+import ErrorPlaceholder from '../shared/ErrorPlaceholder';
+import ContentHeader from './ContentHeader';
 
 const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
     const statusOptions = ['Success', 'Skipped', 'Failed'];
@@ -81,31 +82,32 @@ const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
     }
     return (
         <div className={'flex h-full w-full flex-col gap-4'}>
-            <div className="flex justify-end gap-4 pr-4 ">
-                <AgentFunctionsDropDown
-                    onChange={(strVal: string) => {
-                        setCurrentFunction(strVal);
-                    }}
-                />
-                <div className="flex justify-center gap-2">
-                    {statusOptions.map((status: string, index) => (
-                        <Badge
-                            key={index}
-                            variant={
-                                statusPlaceholder === status
-                                    ? 'successPrimary'
-                                    : 'primary'
-                            }
-                            className="flex w-20 justify-center"
-                            onClick={() => handleStatusChange(status)}
-                        >
-                            {status}
-                        </Badge>
-                    ))}
+            <ContentHeader>
+                <div className="flex justify-end gap-4 pr-4 ">
+                    <AgentFunctionsDropDown
+                        onChange={(strVal: string) => {
+                            setCurrentFunction(strVal);
+                        }}
+                    />
+                    <div className="flex justify-center gap-2">
+                        {statusOptions.map((status: string, index) => (
+                            <Badge
+                                key={index}
+                                variant={
+                                    statusPlaceholder === status
+                                        ? 'successPrimary'
+                                        : 'primary'
+                                }
+                                className="flex w-20 justify-center"
+                                onClick={() => handleStatusChange(status)}
+                            >
+                                {status}
+                            </Badge>
+                        ))}
+                    </div>
                 </div>
-            </div>
-            <ScrollArea className={'max-h-agentComponentHeight overflow-y-auto pr-4'}>
-                <div className="grid grid-cols-1 gap-2">
+            </ContentHeader>
+                <div className="grid grid-cols-1 gap-2 mt-4">
                     {loadingLogs
                         ? Array.from({ length: 50 }).map((_, index) => (
                               <AgentLogCardSkeleton key={index} />
@@ -121,16 +123,13 @@ const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
                               )
                           )}
                 </div>
-            </ScrollArea>
             {!loadingLogs && LogsHistory?.items.length === 0 && (
-                <div className="flex flex-grow">
                     <ErrorPlaceholder
-                        icon={OctagonAlert}
-                        title="No Logs Found"
-                        content="Logs are Empty."
-                        className="border-0"
-                    />
-                </div>
+                                className="absolute h-full w-full border-0 mt-4"
+                                title="No Matching logs found"
+                                content="Try changing the filters"
+                                icon={AgentsIcon}
+                            />
             )}
         </div>
     );

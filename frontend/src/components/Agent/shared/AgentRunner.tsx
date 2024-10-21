@@ -7,7 +7,7 @@ import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import environments from '@app/configs/environments';
 
-import { Label } from '../atoms/label';
+import { Label } from '../../atoms/label';
 
 const AgentRunnerComponent = ({ agent }: { agent?: IAgent }) => {
     const dockerCommand = `docker run -d --pull always -e NETWORK=${environments.network} -e AGENT_ID=${agent?.id} cardanoapi/autonomous-agents:${environments.NEXT_PUBLIC_IMAGE_TAG}`;

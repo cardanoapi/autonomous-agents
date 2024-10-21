@@ -15,10 +15,10 @@ import {
 } from '@app/components/atoms/DropDownMenu';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
-import { IChartFilterOption, chartFilterOptions } from '../Chart/ChartFilter';
-import { convertDictToGraphDataFormat } from '../Chart/ChartFilter';
-import AgentFunctionsDropDown from '../Common/AgentFunctionsDropDown';
-import { cn } from '../lib/utils';
+import { IChartFilterOption, chartFilterOptions } from '../../Chart/ChartFilter';
+import { convertDictToGraphDataFormat } from '../../Chart/ChartFilter';
+import AgentFunctionsDropDown from '../../Common/AgentFunctionsDropDown';
+import { cn } from '../../lib/utils';
 
 const AgentHistoryComponent = ({
     agent,

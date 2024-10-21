@@ -12,7 +12,7 @@ import { CopyIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import AppDialog from '@app/app/components/AppDialog';
-import AgentAvatar from '@app/components/Agent/AgentAvatar';
+import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import { Badge } from '@app/components/atoms/Badge';
 import { Button } from '@app/components/atoms/Button';
 import { cn } from '@app/components/lib/utils';

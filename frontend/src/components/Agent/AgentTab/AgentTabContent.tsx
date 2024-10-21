@@ -3,16 +3,17 @@
 import { IAgent } from '@api/agents';
 import { useAtom } from 'jotai';
 
-import AgentManualTriggerComponent from '@app/components/Agent/AgentManualTrigger';
-import AgentOverViewComponent from '@app/components/Agent/AgentOverview';
-import SkeletonLoadingForAgentOverview from '@app/components/Agent/SkeletonLoadingForAgentOverview';
+import AgentManualTriggerComponent from '@app/components/Agent/AgentContent/ManualActions';
+import AgentOverViewComponent from '@app/components/Agent/AgentContent/Overview';
+import SkeletonLoadingForAgentOverview from '@app/components/Agent/shared/SkeletonLoadingForAgentOverview';
 import { selectedAgentTabAtom } from '@app/store/localStore';
 
-import { cn } from '../lib/utils';
-import { Skeleton } from '../shadcn/ui/skeleton';
-import AgentFunctionsComponent from './AgentFunctions';
-import AgentLogComponent from './AgentLog';
-import AgentSettingsComponent from './AgentSettings';
+import { cn } from '../../lib/utils';
+import { ScrollArea, ScrollBar } from '../../shadcn/ui/scroll-area';
+import { Skeleton } from '../../shadcn/ui/skeleton';
+import AgentFunctionsComponent from '../AgentContent/Functions';
+import AgentLogComponent from '../AgentContent/Logs';
+import AgentSettingsComponent from '../AgentContent/Settings';
 
 const AgentTabContent = ({
     agent,
@@ -43,17 +44,20 @@ const AgentTabContent = ({
     }
     //Logs and History tab have their own Skeleton handled inside the component
     return (
-        <div className={cn('flex-1 rounded-lg bg-white p-8 ', className)}>
-            {agentLoading ? (
-                selectedAgentTab === 'Overview' ? (
-                    <SkeletonLoadingForAgentOverview />
-                ) : selectedAgentTab === 'Manual Actions' ||
-                  selectedAgentTab === 'Settings' ? (
-                    <DefaultSkeleton />
-                ) : null
-            ) : (
-                getAgentSelectedTabComponent()
-            )}
+        <div className={cn('relative flex-1 rounded-lg bg-white p-8', className)}>
+            <ScrollArea className="h-[95%] w-full pb-4 pr-4 pt-10">
+                <ScrollBar className="" />
+                {agentLoading ? (
+                    selectedAgentTab === 'Overview' ? (
+                        <SkeletonLoadingForAgentOverview />
+                    ) : selectedAgentTab === 'Manual Actions' ||
+                      selectedAgentTab === 'Settings' ? (
+                        <DefaultSkeleton />
+                    ) : null
+                ) : (
+                    getAgentSelectedTabComponent()
+                )}
+            </ScrollArea>
         </div>
     );
 };
