@@ -3,29 +3,32 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-export async function getAgentIdBySecret(agentSecret: Buffer): Promise<string|null> {
+export async function getAgentIdBySecret(agentSecret: Buffer): Promise<string | null> {
     return prisma.agent
-      .findFirst({
-          where: {
-              secret_key: agentSecret,
-              deleted_at: null,
-          }
-      })
-      .then((agents: any) => {
-          return agents.id
-      })
-      .catch((error: any) => {
-          console.error('checkIfAgentExistsInDB: Unknown error', error)
-          return false
-      })
+        .findFirst({
+            where: {
+                secret_key: agentSecret,
+                deleted_at: null,
+            },
+        })
+        .then((agents: any) => {
+            return agents.id
+        })
+        .catch((error: any) => {
+            console.error('checkIfAgentExistsInDB: Unknown error', error)
+            return false
+        })
 }
 
-export async function fetchAgentConfiguration(agentId: string): Promise<{
-    instanceCount: number
-    configurations: any[]
-    agentIndex: number
-    agentName: string
-}|undefined> {
+export async function fetchAgentConfiguration(agentId: string): Promise<
+    | {
+          instanceCount: number
+          configurations: any[]
+          agentIndex: number
+          agentName: string
+      }
+    | undefined
+> {
     try {
         const [agentInstance, agentConfigurations] = await Promise.all([
             prisma.agent.findFirst({
@@ -46,12 +49,12 @@ export async function fetchAgentConfiguration(agentId: string): Promise<{
             const agentIndex = Number(agentInstance.index)
             const agentName = agentInstance.name
             const configurationsData = agentConfigurations.map(
-              (config: { id: string; type: string; data: JsonValue; action: JsonValue }) => ({
-                  id: config.id,
-                  type: config.type,
-                  data: config.data,
-                  action: config.action,
-              })
+                (config: { id: string; type: string; data: JsonValue; action: JsonValue }) => ({
+                    id: config.id,
+                    type: config.type,
+                    data: config.data,
+                    action: config.action,
+                })
             )
 
             return { instanceCount, configurations: configurationsData, agentIndex, agentName }

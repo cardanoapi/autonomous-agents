@@ -13,13 +13,14 @@ import { globalRootKeyBuffer, globalState } from './constants/global'
 import { AgentRunner } from './executor/AgentRunner'
 import { decodeBase64string } from './utils/base64converter'
 import { validateToken } from './utils/validator'
+import { getHandlers } from './executor/AgentFunctions'
 
 configDotenv()
 let wsUrl: string = process.env.WS_URL as string
 let token: string = process.env.TOKEN as string
 if (token) {
     token = decodeBase64string(token)
-    console.log("Token:",token)
+    console.log('Token:', token)
     const errMsg = validateToken(token)
     if (errMsg) {
         console.error(errMsg)
@@ -32,10 +33,11 @@ if (token) {
 if (!wsUrl) {
     const network = token.split('_')[0]
 
-    if(network && process.env.MANAGER_BASE_DOMAIN){ // This is set in docker file
-        wsUrl=`wss://${network.toLowerCase()}.${process.env.MANAGER_BASE_DOMAIN}`
-    }else{
-        wsUrl='ws://localhost:3001'
+    if (network && process.env.MANAGER_BASE_DOMAIN) {
+        // This is set in docker file
+        wsUrl = `wss://${network.toLowerCase()}.${process.env.MANAGER_BASE_DOMAIN}`
+    } else {
+        wsUrl = 'ws://localhost:3001'
     }
 }
 const agentSecret = token.split('_')[1]
@@ -46,8 +48,10 @@ const maxReconnectAttempts = 2
 let isReconnecting = false
 let hasConnectedBefore = false
 
+getHandlers()
+
 function connectToManagerWebSocket() {
-    console.log("Initiating connection to manager at:",wsUrl)
+    console.log('Initiating connection to manager at:', wsUrl)
     let interval: NodeJS.Timeout | number
     const scheduledTasks: ScheduledTask[] = []
     ws = new WebSocket(`${wsUrl}/${agentSecret}`)

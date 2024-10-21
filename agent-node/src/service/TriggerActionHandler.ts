@@ -1,14 +1,21 @@
 import { Action, triggerAction, TriggerType } from './triggerService'
 import { ManagerInterface } from './ManagerInterfaceService'
 
-export interface ILog {
+export interface InternalLog {
     function_name: string
     message: string
     txHash?: string
+    success: boolean
+    parameters?: any
+    result?: any
+    timeStamp?: string
+}
+
+export interface ILog extends InternalLog {
     triggerType: TriggerType
     trigger: boolean
-    success: boolean
     instanceIndex: number
+    internal?: any
 }
 
 export interface ITrigger {

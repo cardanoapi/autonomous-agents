@@ -5,8 +5,6 @@ import { RpcV1Server } from 'libcardano/network/WsRpcServer'
 import { Pipe } from 'libcardano/network/event'
 import { CborDuplex } from 'libcardano/network/ouroboros'
 import { cborxBackend } from 'libcardano/lib/cbor'
-import { fetchAgentConfiguration } from '../repository/agent_manager_repository'
-import { generateRootKey } from '../utils/cardano'
 
 export class WsClientPipe extends Pipe<any, any> {
     ws: WebSocket
@@ -47,10 +45,9 @@ export abstract class WsRpcServer extends RpcV1Server {
 
     private setupServer() {
         this.server.on('connection', async (ws: WebSocket, req) => {
-            let validatedConnId;
+            let validatedConnId
             try {
-
-                 validatedConnId=await this.validateConnection(req)
+                validatedConnId = await this.validateConnection(req)
                 if (this.activeConnections[validatedConnId]) {
                     ws.close(1000, `Connection for id ${validatedConnId} is already active`)
                     return
@@ -59,8 +56,7 @@ export abstract class WsRpcServer extends RpcV1Server {
                 this.onReady(this.activeConnections[validatedConnId])
             } catch (err: any) {
                 console.error('New Agent connection error', err)
-                if(validatedConnId)
-                    this.disconnect(validatedConnId, err.message)
+                if (validatedConnId) this.disconnect(validatedConnId, err.message)
             }
         })
     }
