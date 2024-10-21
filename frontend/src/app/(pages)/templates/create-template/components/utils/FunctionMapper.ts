@@ -217,17 +217,18 @@ export const mapAgentConfigurationToFormFunction = (
 export const mapFormFunctionToAgentConfiguration = (
     formFuncion: IFormFunctionInstance
 ): IAgentConfiguration => {
-
     const functionMetaData = TemplateFunctions.find((f) => f.name === formFuncion.name);
 
     // Ids are different. Meta data id and actual trigger id
-    const convertedObj = mapFormFunctionToTriggerConfiguration({...formFuncion, id : functionMetaData?.id || ''});
+    const convertedObj = mapFormFunctionToTriggerConfiguration({
+        ...formFuncion,
+        id: functionMetaData?.id || ''
+    });
 
     return {
         ...convertedObj,
         agent_id: formFuncion.agent_id || '',
         type: formFuncion.type as TriggerType,
-        id : formFuncion.id
+        id: formFuncion.id
     };
 };
-

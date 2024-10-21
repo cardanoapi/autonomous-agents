@@ -2,8 +2,10 @@ import { useState } from 'react';
 
 import { IAgent, IAgentUpdateReqDto, updateAgentData } from '@api/agents';
 import { useMutation } from '@tanstack/react-query';
+import { useAtom } from 'jotai';
 import { Edit } from 'lucide-react';
 
+import { currentAgentNameAtom } from '@app/store/localStore';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { Button } from '../../atoms/Button';
@@ -12,18 +14,16 @@ import { Label } from '../../atoms/label';
 import { ErrorToast, SuccessToast } from '../../molecules/CustomToasts';
 import { NumberInput } from '../../molecules/NumberInput';
 import ContentHeader from './ContentHeader';
-import { useAtom } from 'jotai';
-import { currentAgentNameAtom } from '@app/store/localStore';
 
 export default function AgentSettingsComponent({
     agent,
     enableControl
 }: {
     agent: IAgent | undefined;
-    enableControl? : boolean
+    enableControl?: boolean;
 }) {
     const [isEditing, setIsEditing] = useState(false);
-    const [,setAgentName] = useAtom(currentAgentNameAtom);
+    const [, setAgentName] = useAtom(currentAgentNameAtom);
 
     const [agentData, setAgentData] = useState<IAgentUpdateReqDto>({
         agentId: agent?.id,
@@ -33,7 +33,7 @@ export default function AgentSettingsComponent({
         agentConfigurations: agent?.agent_configurations
     });
 
-    const { mutate: postAgentData, isPending: submittingForm } = useMutation({
+    const { mutate: postAgentData } = useMutation({
         mutationFn: (data: IAgentUpdateReqDto) => updateAgentData(data),
         onSuccess: () => {
             SuccessToast('Agent Updated Successfully.');
@@ -43,7 +43,9 @@ export default function AgentSettingsComponent({
         },
         onSettled: () => {
             setAgentName(agent?.name || 'AgentProfile');
-            queryClient.invalidateQueries({ queryKey: [`agent${agent?.id}` , 'agents'] });
+            queryClient.invalidateQueries({
+                queryKey: [`agent${agent?.id}`, 'agents']
+            });
             setIsEditing(false);
         }
     });
@@ -87,10 +89,10 @@ export default function AgentSettingsComponent({
         <div className="flex h-full w-full flex-col justify-between">
             <div className="flex w-[60%] flex-col gap-4 ">
                 <ContentHeader>
-                <div className="flex items-center gap-2">
-                    <span className="h1">Saved Settings</span>
-                    {isEditing && <Edit className="text-gray-300" size={20} />}
-                </div>
+                    <div className="flex items-center gap-2">
+                        <span className="h1">Saved Settings</span>
+                        {isEditing && <Edit className="text-gray-300" size={20} />}
+                    </div>
                 </ContentHeader>
                 <div></div>
                 <div className="flex flex-col gap-2">
@@ -117,40 +119,39 @@ export default function AgentSettingsComponent({
                     />
                 </div>
             </div>
-            {
-                enableControl && (
-            <div className="flex justify-end">
-                {isEditing ? (
-                    <div className="flex items-center gap-2">
-                        <Button
-                            variant={'secondary'}
-                            size={'sm'}
-                            className="min-w-32"
-                            onClick={handleCancel}
-                        >
-                            Cancel
-                        </Button>
+            {enableControl && (
+                <div className="flex justify-end">
+                    {isEditing ? (
+                        <div className="flex items-center gap-2">
+                            <Button
+                                variant={'secondary'}
+                                size={'sm'}
+                                className="min-w-32"
+                                onClick={handleCancel}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                variant={'primary'}
+                                size={'sm'}
+                                className="min-w-32"
+                                onClick={handleAgentUpdate}
+                            >
+                                Save
+                            </Button>
+                        </div>
+                    ) : (
                         <Button
                             variant={'primary'}
                             size={'sm'}
                             className="min-w-32"
-                            onClick={handleAgentUpdate}
+                            onClick={toggleEdit}
                         >
-                            Save
+                            Edit
                         </Button>
-                    </div>
-                ) : (
-                    <Button
-                        variant={'primary'}
-                        size={'sm'}
-                        className="min-w-32"
-                        onClick={toggleEdit}
-                    >
-                        Edit
-                    </Button>
-                )}
-            </div>)
-            }
+                    )}
+                </div>
+            )}
         </div>
     );
 }

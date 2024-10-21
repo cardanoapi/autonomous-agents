@@ -8,7 +8,7 @@ import { IAgentTriggerHistory, fetchAllTriggerHistory } from '@api/triggerHistor
 import { MapFunctionNameAndViewName } from '@consts';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
-import { Copy, OctagonAlert } from 'lucide-react';
+import { Copy } from 'lucide-react';
 
 import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import AgentsIcon from '@app/components/icons/AgentsIcon';
@@ -20,7 +20,6 @@ import { formatTimestamp } from '@app/utils/dateAndTimeUtils';
 import AgentFunctionsDropDown from '../../Common/AgentFunctionsDropDown';
 import { Badge } from '../../atoms/Badge';
 import { cn } from '../../lib/utils';
-import { ScrollArea } from '../../shadcn/ui/scroll-area';
 import { Skeleton } from '../../shadcn/ui/skeleton';
 import ErrorPlaceholder from '../shared/ErrorPlaceholder';
 import ContentHeader from './ContentHeader';
@@ -107,29 +106,29 @@ const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
                     </div>
                 </div>
             </ContentHeader>
-                <div className="grid grid-cols-1 gap-2 mt-4">
-                    {loadingLogs
-                        ? Array.from({ length: 50 }).map((_, index) => (
-                              <AgentLogCardSkeleton key={index} />
-                          ))
-                        : LogsHistory?.items.length > 0 &&
-                          LogsHistory.items.map(
-                              (history: IAgentTriggerHistory, index: number) => (
-                                  <AgentLogCard
-                                      history={history}
-                                      key={index}
-                                      className="bg-gray-100"
-                                  />
-                              )
-                          )}
-                </div>
+            <div className="mt-4 grid grid-cols-1 gap-2">
+                {loadingLogs
+                    ? Array.from({ length: 50 }).map((_, index) => (
+                          <AgentLogCardSkeleton key={index} />
+                      ))
+                    : LogsHistory?.items.length > 0 &&
+                      LogsHistory.items.map(
+                          (history: IAgentTriggerHistory, index: number) => (
+                              <AgentLogCard
+                                  history={history}
+                                  key={index}
+                                  className="bg-gray-100"
+                              />
+                          )
+                      )}
+            </div>
             {!loadingLogs && LogsHistory?.items.length === 0 && (
-                    <ErrorPlaceholder
-                                className="absolute h-full w-full border-0 mt-4"
-                                title="No Matching logs found"
-                                content="Try changing the filters"
-                                icon={AgentsIcon}
-                            />
+                <ErrorPlaceholder
+                    className="absolute mt-4 h-full w-full border-0"
+                    title="No Matching logs found"
+                    content="Try changing the filters"
+                    icon={AgentsIcon}
+                />
             )}
         </div>
     );

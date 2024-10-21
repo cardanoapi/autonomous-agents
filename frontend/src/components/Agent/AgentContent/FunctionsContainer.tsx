@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 
 import { IAgentConfiguration, ICronTrigger } from '@api/agents';
-import {  updateTrigger } from '@api/trigger';
+import { IAgent } from '@api/agents';
+import { updateTrigger } from '@api/trigger';
 import { TemplateFunctions } from '@models/types/functions';
 import { Dialog, DialogContent } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
@@ -12,7 +13,7 @@ import { Edit, Trash2 } from 'lucide-react';
 import { FunctionForm } from '@app/app/(pages)/templates/create-template/components/FunctionForm';
 import {
     mapAgentConfigurationToFormFunction,
-    mapFormFunctionToAgentConfiguration,
+    mapFormFunctionToAgentConfiguration
 } from '@app/app/(pages)/templates/create-template/components/utils/FunctionMapper';
 import { IFormFunctionInstance } from '@app/app/(pages)/templates/create-template/page';
 import { convertCRONExpressionToReadableForm } from '@app/utils/dateAndTimeUtils';
@@ -21,13 +22,12 @@ import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 import { SuccessToast } from '../../molecules/CustomToasts';
 import { ErrorToast } from '../../molecules/CustomToasts';
 import CustomCopyBox from '../shared/CustomCopyBox';
-import { IAgent } from '@api/agents';
 
 const AgentFunctionsDetailComponent = ({
     agent,
     onClickDelete,
     agentConfigurations,
-    enableContol = false,
+    enableContol = false
 }: {
     agentConfigurations?: Array<IAgentConfiguration>;
     onClickDelete?: (configIndex: string) => void;
@@ -42,7 +42,6 @@ const AgentFunctionsDetailComponent = ({
     const getFunctionMetaData = (functionName: string) => {
         return TemplateFunctions.find((f) => f.id === functionName);
     };
-
 
     const renderConfigMeta = (config: IAgentConfiguration) => {
         const functionMetaData = getFunctionMetaData(
@@ -101,30 +100,29 @@ const AgentFunctionsDetailComponent = ({
                         Click edit button to add functions
                     </span>
                 ) : (
-                    agentConfigurations.map((config, index) => (
+                    agentConfigurations.map((config) => (
                         <div
                             className="group relative flex w-[300px] flex-col flex-wrap justify-between gap-2 rounded bg-brand-White-200 p-3 drop-shadow-md"
                             key={`${config.agent_id}-${config.id}`}
                         >
-                            {
-                                enableContol && (
-                                    <div className="absolute right-3 top-3 hidden items-center gap-2 group-hover:flex">
-                                        <Edit
-                                            className="cursor-pointer text-gray-400"
-                                            size={20}
-                                            onClick={() => handleClickEdit(config)}
-                                        />
-                                        <Trash2
-                                            className="cursor-pointer text-red-400 group-hover:flex"
-                                            size={20}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                onClickDelete && onClickDelete(config.id);
-                                            }}
-                                        />
-                                    </div>)
-                            }
-                       
+                            {enableContol && (
+                                <div className="absolute right-3 top-3 hidden items-center gap-2 group-hover:flex">
+                                    <Edit
+                                        className="cursor-pointer text-gray-400"
+                                        size={20}
+                                        onClick={() => handleClickEdit(config)}
+                                    />
+                                    <Trash2
+                                        className="cursor-pointer text-red-400 group-hover:flex"
+                                        size={20}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onClickDelete && onClickDelete(config.id);
+                                        }}
+                                    />
+                                </div>
+                            )}
+
                             <div className="flex flex-col">
                                 {renderConfigMeta(config)}
                             </div>

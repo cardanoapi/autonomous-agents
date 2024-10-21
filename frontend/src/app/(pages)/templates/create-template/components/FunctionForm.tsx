@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import React from 'react';
 
 import { TriggerType } from '@api/agents';
@@ -40,7 +40,7 @@ export const FunctionForm = ({
     btnPlaceholder,
     renderFunctionSelector = false,
     editMode = false
-}: IFunctionFormParams ) => {
+}: IFunctionFormParams) => {
     const [functionState, setFunctionState] = useState<IFormFunctionInstance>(
         currentFunction || {
             ...TemplateFunctions[0],

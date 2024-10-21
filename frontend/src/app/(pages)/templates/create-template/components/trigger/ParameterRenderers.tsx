@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-
 import { IParameter, IParameterOption } from '@models/types/functions';
 import { SelectIcon, SelectTrigger } from '@radix-ui/react-select';
 

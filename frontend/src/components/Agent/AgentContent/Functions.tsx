@@ -81,18 +81,16 @@ export default function AgentFunctionsComponent({
                             content={'Saved Functions'}
                             textClassName="text-xl font-semibold"
                         />
-                        {
-                            enableControl && (
-                                <Button
-                                    variant="primary"
-                                    onClick={toggleDialog}
-                                    size="sm"
-                                    className="min-w-32 px-4"
-                                >
-                                    Add Function
-                                </Button>
-                            )
-                        }
+                        {enableControl && (
+                            <Button
+                                variant="primary"
+                                onClick={toggleDialog}
+                                size="sm"
+                                className="min-w-32 px-4"
+                            >
+                                Add Function
+                            </Button>
+                        )}
                     </div>
                 </HeaderContent>
                 <AgentFunctionsDetailComponent

@@ -1,7 +1,11 @@
-import { IAgentTrigger } from '@models/types';
 import axios from 'axios';
 
-import { IAgentAction, IAgentConfiguration, ICronTrigger, IEventTrigger } from './agents';
+import {
+    IAgentAction,
+    IAgentConfiguration,
+    ICronTrigger,
+    IEventTrigger
+} from './agents';
 import { baseAPIurl } from './config';
 
 export interface ITrigger {
@@ -111,8 +115,7 @@ export const deleteTrigger = async (triggerID: string) => {
 };
 
 export const updateTrigger = async (triggerData: IAgentConfiguration) => {
-
-    console.log(triggerData)
+    console.log(triggerData);
     const response = await axios.put(
         `${baseAPIurl}/triggers/${triggerData.id}`,
         {

@@ -1,23 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 
-import { IAgent, IAgentConfiguration } from '@api/agents';
+import { IAgent } from '@api/agents';
 import { IAgentTriggerHistory } from '@api/triggerHistory';
-import {
-    fetchAgentTriggerHistoryById,
-    fetchAllTriggerHistory
-} from '@api/triggerHistory';
-import { Dialog, DialogContent } from '@mui/material';
+import { fetchAllTriggerHistory } from '@api/triggerHistory';
 import { useQuery } from '@tanstack/react-query';
 import { hexToBech32 } from '@utils';
 
-import { FunctionForm } from '@app/app/(pages)/templates/create-template/components/FunctionForm';
 import TextDisplayField from '@app/components/molecules/TextDisplayField';
 
 import { useModal } from '../../Modals/context';
 import { Button } from '../../atoms/Button';
-import { ScrollArea } from '../../shadcn/ui/scroll-area';
 import CustomCopyBox from '../shared/CustomCopyBox';
 import AgentHistoryComponent from '../shared/TriggerChart';
 import HeaderContent from './ContentHeader';
@@ -27,12 +21,11 @@ interface AgentOverViewProps {
     enableControl?: boolean;
 }
 
-const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent , enableControl }) => {
-    const {
-        data: LogsHistory,
-        refetch: refetchLogsHistory,
-        isLoading: loadingLogs
-    } = useQuery({
+const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({
+    agent,
+    enableControl
+}) => {
+    const { data: LogsHistory } = useQuery({
         queryKey: [`${agent?.id}LogsHistory`, 1, 24, agent?.id],
         queryFn: fetchAllTriggerHistory,
         refetchInterval: 60000,
@@ -41,11 +34,6 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent , enableCo
     });
 
     const { openModal } = useModal();
-
-    const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-    const [agentConfigurations, setAgentConfigurations] = useState<
-        IAgentConfiguration[]
-    >(agent?.agent_configurations || []);
 
     const handleAgentRun = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
@@ -203,7 +191,12 @@ const TriggerDataBox = ({
         }
     }
 
-    const customBox = (status: string, width?: string, height?: string) => {
+    const customBox = (
+        status: string,
+        width?: string,
+        height?: string,
+        index?: number
+    ) => {
         const bgColor =
             status === 'success'
                 ? 'bg-green-500'
@@ -213,6 +206,7 @@ const TriggerDataBox = ({
         return (
             <div
                 className={`${bgColor} ${width ? width : 'w-full'} ${height ? height : 'h-full'} rounded-lg hover:cursor-pointer`}
+                key={index}
             ></div>
         );
     };
@@ -223,9 +217,11 @@ const TriggerDataBox = ({
                 <div className="text-sm font-medium text-gray-600">Triggered</div>
                 <div className="text-[10px] text-gray-500 ">Last 24 triggers</div>
                 <div className="flex h-6 w-full gap-[6px]">
-                    {dataSource.reverse().map((status: string, index) =>
-                        customBox(status, `w-3`, `h-full`)
-                    )}
+                    {dataSource
+                        .reverse()
+                        .map((status: string, index: number) =>
+                            customBox(status, `w-3`, `h-full`, index)
+                        )}
                 </div>
             </div>
             <div className="flex w-full items-center justify-center">

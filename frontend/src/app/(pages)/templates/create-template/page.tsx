@@ -149,7 +149,9 @@ export default function CreateTemplatePage() {
         const templateRequest: ICreateTemplateRequestDTO = {
             name: mainState.name,
             description: mainState.description,
-            template_triggers: mainState.functions.map((func)=> mapFormFunctionToTriggerConfiguration(func))
+            template_triggers: mainState.functions.map((func) =>
+                mapFormFunctionToTriggerConfiguration(func)
+            )
         };
         setSubmittingForm(true);
         templateMutation.mutate(templateRequest);

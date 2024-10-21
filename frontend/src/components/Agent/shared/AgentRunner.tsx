@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { IAgent } from '@api/agents';
 import { Copy } from 'lucide-react';
 
-import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import environments from '@app/configs/environments';
 

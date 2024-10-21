@@ -37,7 +37,7 @@ export default function AgentPageById() {
     });
 
     const [agentOwnerIsUser, setAgentOwnerIsUser] = useState(false);
-    
+
     useEffect(() => {
         if (agent) {
             setCurrentAgentName(agent?.name || '');

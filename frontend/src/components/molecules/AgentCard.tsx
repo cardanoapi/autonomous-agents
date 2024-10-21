@@ -4,8 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 
 import { deleteAgentbyID } from '@api/agents';
-import { ITransactionsCount, fetchTransactionsCountByAgentID } from '@api/trigger';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { formatDatetoHumanReadable } from '@utils';
 import { PlayIcon, Trash2 } from 'lucide-react';
 
