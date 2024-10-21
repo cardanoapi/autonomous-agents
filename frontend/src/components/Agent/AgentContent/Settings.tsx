@@ -4,6 +4,7 @@ import { IAgent, IAgentUpdateReqDto, updateAgentData } from '@api/agents';
 import { useMutation } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { Edit } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 
 import { currentAgentNameAtom } from '@app/store/localStore';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
@@ -24,6 +25,7 @@ export default function AgentSettingsComponent({
 }) {
     const [isEditing, setIsEditing] = useState(false);
     const [, setAgentName] = useAtom(currentAgentNameAtom);
+    const [showSecret, setShowSecret] = useState(false);
 
     const [agentData, setAgentData] = useState<IAgentUpdateReqDto>({
         agentId: agent?.id,
@@ -85,8 +87,16 @@ export default function AgentSettingsComponent({
         setIsEditing(false);
     };
 
+    const AgnetDataCanBeChanged = () => {
+        return (
+            agent &&
+            agentData.agentName === agent?.name &&
+            agentData.instance === agent?.instance
+        );
+    };
+
     return (
-        <div className="flex h-full w-full flex-col justify-between">
+        <div className="flex h-full w-full flex-col justify-between gap-4">
             <div className="flex w-[60%] flex-col gap-4 ">
                 <ContentHeader>
                     <div className="flex items-center gap-2">
@@ -118,6 +128,31 @@ export default function AgentSettingsComponent({
                         min={1}
                     />
                 </div>
+                <div className="flex flex-col gap-2">
+                    <Label>Secret Key</Label>
+                    <div className="flex items-center gap-2">
+                        <Input
+                            value={
+                                showSecret
+                                    ? agent?.secret_key || ''
+                                    : '*'.repeat(agent?.secret_key?.length || 10)
+                            }
+                            className="mx-[2px]"
+                            viewOnly={true}
+                        />
+                        {showSecret ? (
+                            <EyeOff
+                                onClick={() => setShowSecret(!showSecret)}
+                                className="cursor-pointer text-gray-400"
+                            />
+                        ) : (
+                            <Eye
+                                onClick={() => setShowSecret(!showSecret)}
+                                className="cursor-pointer text-gray-400"
+                            />
+                        )}
+                    </div>
+                </div>
             </div>
             {enableControl && (
                 <div className="flex justify-end">
@@ -136,6 +171,7 @@ export default function AgentSettingsComponent({
                                 size={'sm'}
                                 className="min-w-32"
                                 onClick={handleAgentUpdate}
+                                disabled={AgnetDataCanBeChanged()}
                             >
                                 Save
                             </Button>
