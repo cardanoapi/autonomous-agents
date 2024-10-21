@@ -5,7 +5,6 @@ import { useAtom } from 'jotai';
 
 import AgentManualTriggerComponent from '@app/components/Agent/AgentContent/ManualActions';
 import AgentOverViewComponent from '@app/components/Agent/AgentContent/Overview';
-import SkeletonLoadingForAgentOverview from '@app/components/Agent/shared/SkeletonLoadingForAgentOverview';
 import { selectedAgentTabAtom } from '@app/store/localStore';
 
 import { cn } from '../../lib/utils';
@@ -48,12 +47,10 @@ const AgentTabContent = ({
     return (
         <div className={cn('relative flex-1 rounded-lg bg-white p-8', className)}>
             <ScrollArea className="h-[95%] w-full pb-4 pr-4 pt-10">
-                <ScrollBar className="" />
                 {agentLoading ? (
-                    selectedAgentTab === 'Overview' ? (
-                        <SkeletonLoadingForAgentOverview />
-                    ) : selectedAgentTab === 'Manual Actions' ||
-                      selectedAgentTab === 'Settings' ? (
+                    selectedAgentTab === 'Overview' ||
+                    selectedAgentTab === 'Manual Actions' ||
+                    selectedAgentTab === 'Settings' ? (
                         <DefaultSkeleton />
                     ) : null
                 ) : (
@@ -65,6 +62,6 @@ const AgentTabContent = ({
 };
 
 export const DefaultSkeleton = () => {
-    return <Skeleton className="h-full w-full"></Skeleton>;
+    return <Skeleton className="absolute h-full w-full"></Skeleton>;
 };
 export default AgentTabContent;
