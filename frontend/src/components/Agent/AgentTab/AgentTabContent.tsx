@@ -8,7 +8,7 @@ import AgentOverViewComponent from '@app/components/Agent/AgentContent/Overview'
 import { selectedAgentTabAtom } from '@app/store/localStore';
 
 import { cn } from '../../lib/utils';
-import { ScrollArea, ScrollBar } from '../../shadcn/ui/scroll-area';
+import { ScrollArea } from '../../shadcn/ui/scroll-area';
 import { Skeleton } from '../../shadcn/ui/skeleton';
 import AgentFunctionsComponent from '../AgentContent/Functions';
 import AgentLogComponent from '../AgentContent/Logs';
