@@ -70,7 +70,9 @@ export const environments = {
     APM_ENABLED:
         process.env.ELASTIC_APM_SERVER_URL && process.env.ELASTIC_APM_SERVICE_NAME,
     NEXT_PUBLIC_IMAGE_TAG: process.env.NEXT_PUBLIC_IMAGE_TAG ?? 'dev',
-    GOVTOOL_BASE_URL: 'https://govtool.cardanoapi.io'
+    GOVTOOL_BASE_URL: 'https://govtool.cardanoapi.io',
+    NEXT_PUBLIC_ENABLE_AGENT_INSTANCE:
+        process.env.NEXT_PUBLIC_ENABLE_AGENT_INSTANCE === 'true' || false
 };
 
 if (typeof window !== 'undefined') {

@@ -34,6 +34,7 @@ const AgentsContainer: React.FC<AgentsContainerProps> = ({
                           isActive={agent.is_active}
                           enableDelete={enableDelete}
                           no_of_successful_triggers={agent.no_of_successfull_triggers}
+                          agentSecretKey={agent.secret_key}
                       />
                   ))}
         </div>

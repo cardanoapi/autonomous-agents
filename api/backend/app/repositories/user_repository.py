@@ -6,6 +6,7 @@ from backend.app.repositories.agent_instance_wallet_repository import AgentInsta
 from backend.app.repositories.agent_repository import AgentRepository
 from backend.app.repositories.template_repository import TemplateRepository
 from backend.app.services.agent_instance_wallet_service import AgentInstanceWalletService
+from backend.app.utils.generator import generate_random_base64
 from backend.config.database import prisma_connection
 
 
@@ -44,7 +45,13 @@ class UserRepository:
         return user.isSuperUser if user else False
 
     async def create_empty_agent_for_user(self, user_address: str):
-        empty_agent_data = AgentCreateDTO(userAddress=user_address, name="Empty Agent", template_id=None, instance=1)
+        empty_agent_data = AgentCreateDTO(
+            userAddress=user_address,
+            name="Empty Agent",
+            template_id=None,
+            instance=1,
+            secret_key=generate_random_base64(16),
+        )
         agent = await self.agent_repository.save_agent(empty_agent_data)
         await self.agent_instance_wallet_service.create_wallet(agent)
 

@@ -80,7 +80,7 @@ export default function TopNav() {
     return (
         <div className="flex w-[full] items-center justify-between text-sm">
             {getPageTitle() === currentAgentName ? (
-                <div className={'flex items-center gap-3 py-3'}>
+                <div className={'flex items-center gap-3 '}>
                     <AgentAvatar
                         hash={agentId}
                         size={40}

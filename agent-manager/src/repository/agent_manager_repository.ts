@@ -3,29 +3,29 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-export async function checkIfAgentExistsInDB(agentId: string): Promise<boolean> {
+export async function getAgentIdBySecret(agentSecret: Buffer): Promise<string|null> {
     return prisma.agent
-        .findFirst({
-            where: {
-                id: agentId,
-                deleted_at: null,
-            },
-        })
-        .then((agents: any) => {
-            return !!agents
-        })
-        .catch((error: any) => {
-            console.error('checkIfAgentExistsInDB: Unknown error', error)
-            return false
-        })
+      .findFirst({
+          where: {
+              secret_key: agentSecret,
+              deleted_at: null,
+          }
+      })
+      .then((agents: any) => {
+          return agents.id
+      })
+      .catch((error: any) => {
+          console.error('checkIfAgentExistsInDB: Unknown error', error)
+          return false
+      })
 }
 
 export async function fetchAgentConfiguration(agentId: string): Promise<{
-    instanceCount: number | null
+    instanceCount: number
     configurations: any[]
-    agentIndex: number | null
-    agentName: string | null
-}> {
+    agentIndex: number
+    agentName: string
+}|undefined> {
     try {
         const [agentInstance, agentConfigurations] = await Promise.all([
             prisma.agent.findFirst({
@@ -46,17 +46,15 @@ export async function fetchAgentConfiguration(agentId: string): Promise<{
             const agentIndex = Number(agentInstance.index)
             const agentName = agentInstance.name
             const configurationsData = agentConfigurations.map(
-                (config: { id: string; type: string; data: JsonValue; action: JsonValue }) => ({
-                    id: config.id,
-                    type: config.type,
-                    data: config.data,
-                    action: config.action,
-                })
+              (config: { id: string; type: string; data: JsonValue; action: JsonValue }) => ({
+                  id: config.id,
+                  type: config.type,
+                  data: config.data,
+                  action: config.action,
+              })
             )
 
             return { instanceCount, configurations: configurationsData, agentIndex, agentName }
-        } else {
-            return { instanceCount: null, configurations: [], agentIndex: null, agentName: null }
         }
     } catch (error: any) {
         console.log(`Error fetching agent configuration: ${error}`)

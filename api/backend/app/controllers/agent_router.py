@@ -4,7 +4,7 @@ from typing import List
 from classy_fastapi import Routable, get, post, put, delete
 from fastapi import Query, Depends
 
-from backend.app.auth.cookie_dependency import verify_cookie
+from backend.app.auth.cookie_dependency import verify_cookie, get_user_if_logged_in
 from backend.app.models.agent.agent_dto import AgentCreateDTO, AgentUpdateDTO
 from backend.app.models.agent.function import AgentFunction
 from backend.app.models.agent.response_dto import AgentResponse, AgentResponseWithWalletDetails
@@ -35,18 +35,15 @@ class AgentRouter(Routable):
         page: int = Query(default=1, ge=1),
         size: int = Query(default=50, le=101),
         search: str | None = None,
+        user: User | None = Depends(get_user_if_logged_in),
     ):
-        agents = await self.agent_service.list_agents(page, size, search)
+        agents = await self.agent_service.list_agents(page, size, search, user)
         return agents
 
     @get("/agent/{agent_id}", response_model=AgentResponseWithWalletDetails)
-    async def get_agent(self, agent_id: str):
-        agent = await self.agent_service.get_agent(agent_id)
+    async def get_agent(self, agent_id: str, user: User | None = Depends(get_user_if_logged_in)):
+        agent = await self.agent_service.get_agent(agent_id, user)
         return agent
-
-    @get("/check/drep-registration")
-    async def check_drep_registration(self):
-        return await self.agent_service.seed_drep_registration_column()
 
     @put("/agents/{agent_id}", status_code=HTTPStatus.OK)
     async def update_agent(self, agent_id: str, agent_data: AgentUpdateDTO, user: User = Depends(verify_cookie)):
@@ -63,7 +60,7 @@ class AgentRouter(Routable):
         return await self.agent_service.delete_agent(agent_id, user.address)
 
     @post("/agents/{agent_id}/trigger", status_code=HTTPStatus.OK)
-    async def trigger_agent_action(self, agent_id: str, action: AgentFunction):
+    async def trigger_agent_action(self, agent_id: str, action: AgentFunction, user: User = Depends(verify_cookie)):
         await self.agent_service.trigger_agent_action(agent_id, action)
 
     @get("/agents/my-agent", response_model=AgentResponseWithWalletDetails)

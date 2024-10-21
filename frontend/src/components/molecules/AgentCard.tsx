@@ -31,6 +31,7 @@ export interface IAgentCard {
     enableDelete?: boolean;
     no_of_successful_triggers?: number;
     isActive?: boolean;
+    agentSecretKey?: string;
 }
 
 export default function AgentCard({
@@ -42,7 +43,8 @@ export default function AgentCard({
     enableEdit = false,
     enableDelete = false,
     lastActive = '',
-    isActive = false
+    isActive = false,
+    agentSecretKey = ''
 }: IAgentCard) {
     const router = useRouter();
     const { openModal } = useModal();
@@ -64,7 +66,7 @@ export default function AgentCard({
     function handleAgentRun(e: any) {
         e.stopPropagation();
         openModal('AgentRunnerView', {
-            agentId: agentID
+            agentSecretKey: agentSecretKey
         });
     }
 

@@ -53,7 +53,7 @@ const DialogContent = React.forwardRef<
                         e.stopPropagation();
                         onClickCloseIcon();
                     }}
-                    className="hover:bg-black-200 absolute right-4 top-2 rounded-md  disabled:pointer-events-none"
+                    className="absolute right-4 top-2 rounded-md  focus:border-0 active:border-0 disabled:pointer-events-none"
                 >
                     <svg
                         width="24"

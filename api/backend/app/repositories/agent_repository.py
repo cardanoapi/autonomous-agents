@@ -1,3 +1,4 @@
+import base64
 import binascii
 import hashlib
 import json
@@ -18,6 +19,8 @@ from pycardano.crypto.bech32 import bech32_encode, convertbits, Encoding
 
 from backend.app.exceptions.http import HTTPException
 from backend.app.models import AgentResponse, AgentCreateDTO, AgentKeyResponse, AgentUpdateDTO
+from backend.app.models.user.user_dto import User
+from backend.app.utils.generator import generate_random_base64
 from backend.config.database import prisma_connection
 
 
@@ -32,6 +35,7 @@ class AgentRepository:
         agent_data_dict["id"] = agent_id
         agent_data_dict["created_at"] = datetime.now(timezone.utc)
         agent_data_dict["updated_at"] = datetime.now(timezone.utc)
+        agent_data_dict["secret_key"] = generate_random_base64(32)
         agent = await self.db.prisma.agent.create(data=agent_data_dict)
         agent_response = AgentResponse(
             id=agent_id,
@@ -56,9 +60,15 @@ class AgentRepository:
     async def retrieve_all_agents(self) -> List[AgentResponse]:
         return await self.db.prisma.agent.find_many(where={"deleted_at": None})
 
-    async def retrieve_agent(self, agent_id: str) -> Optional[AgentResponse]:
+    async def retrieve_agent(
+        self, agent_id: str, user: User | None = None, user_address: str | None = None
+    ) -> Optional[AgentResponse]:
         agent = await self.db.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})
-
+        display_secret_key = False
+        if user:
+            display_secret_key = user.isSuperUser or user.address == agent.userAddress
+        if user_address:
+            display_secret_key = user_address == agent.userAddress
         if agent is None:
             return None
         else:
@@ -74,6 +84,7 @@ class AgentRepository:
                 userAddress=agent.userAddress,
                 is_drep_registered=agent.is_drep_registered,
                 no_of_successfull_triggers=successful_triggers,
+                secret_key=str(agent.secret_key) if display_secret_key else None,
             )
             return agent_response
 
@@ -87,16 +98,7 @@ class AgentRepository:
             "updated_at": datetime.now(timezone.utc),
         }
         updated_agent = await self.db.prisma.agent.update(where={"id": agent_id}, data=updated_data)
-        return updated_agent
-
-    async def update_agent_drep_status(self, agent_id: str, drep_registered: bool) -> Optional[AgentResponse]:
-        agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
-        if agent is None or agent.deleted_at is not None:
-            return None
-        updated_data = {
-            "is_drep_registered": drep_registered,
-        }
-        updated_agent = await self.db.prisma.agent.update(where={"id": agent_id}, data=updated_data)
+        updated_agent.secret_key = str(updated_agent.secret_key)
         return updated_agent
 
     async def get_online_agents_count(self):
@@ -205,6 +207,7 @@ class AgentRepository:
                 index=agent.index,
                 last_active=agent.last_active,
                 userAddress=agent.userAddress,
+                secret_key=str(agent.secret_key),
             )
             return agent_response
 

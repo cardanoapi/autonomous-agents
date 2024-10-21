@@ -6,19 +6,17 @@ const environments = {
     agentMnemonic: process.env.AGENT_MNEMONIC || '',
     metaDataBaseURL: process.env.METADATA_BASE_URL || 'https://metadata.cardanoapi.io',
     dbSyncBaseUrl: process.env.DB_SYNC_BASE_URL || 'https://dbsyncapi.agents.cardanoapi.io/api/',
-    kafka:{
+    kafka: {
         topicPrefix: process.env.KAFKA_TOPIC_PREFIX || '',
         consumerGroup: process.env.KAFKA_CONSUMER_GROUP || '',
         prefix: process.env.KAFKA_PREFIX || 'local',
         brokers: process.env.KAFKA_BROKERS || '',
         clientId: process.env.KAFKA_CLIENT_ID || '',
     },
-    faucet:{
+    faucet: {
         apiKey: process.env.FAUCET_API_KEY || '',
-        url: process.env.FAUCET_URL || ''
-
-    }
-
+        url: process.env.FAUCET_URL || '',
+    },
 }
 
 export default environments

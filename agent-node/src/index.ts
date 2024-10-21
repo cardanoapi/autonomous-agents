@@ -11,11 +11,26 @@ import { RpcTopicHandler } from './service/RpcTopicHandler'
 import { ScheduledTask } from 'node-cron'
 import { globalRootKeyBuffer, globalState } from './constants/global'
 import { AgentRunner } from './executor/AgentRunner'
+import { decodeBase64string } from './utils/base64converter'
+import { validateToken } from './utils/validator'
 
 configDotenv()
-let wsUrl:string = process.env.WS_URL as string
-if(!wsUrl){
-    const network= process.env.NETWORK
+let wsUrl: string = process.env.WS_URL as string
+let token: string = process.env.TOKEN as string
+if (token) {
+    token = decodeBase64string(token)
+    console.log("Token:",token)
+    const errMsg = validateToken(token)
+    if (errMsg) {
+        console.error(errMsg)
+        process.exit(1)
+    }
+} else {
+    console.error('Token is required as an argument')
+    process.exit(1)
+}
+if (!wsUrl) {
+    const network = token.split('_')[0]
 
     if(network && process.env.MANAGER_BASE_DOMAIN){ // This is set in docker file
         wsUrl=`wss://${network.toLowerCase()}.${process.env.MANAGER_BASE_DOMAIN}`
@@ -23,11 +38,7 @@ if(!wsUrl){
         wsUrl='ws://localhost:3001'
     }
 }
-const agentId = process.env.AGENT_ID || ''
-if (!agentId) {
-    console.error('Agent ID is required as an argument')
-    process.exit(1)
-}
+const agentSecret = token.split('_')[1]
 
 let ws: WebSocket | null = null
 let reconnectAttempts = 0
@@ -39,7 +50,7 @@ function connectToManagerWebSocket() {
     console.log("Initiating connection to manager at:",wsUrl)
     let interval: NodeJS.Timeout | number
     const scheduledTasks: ScheduledTask[] = []
-    ws = new WebSocket(`${wsUrl}/${agentId}`)
+    ws = new WebSocket(`${wsUrl}/${agentSecret}`)
     const clientPipe = new WsClientPipe(ws)
     const rpcChannel = new AgentRpc(
         new CborDuplex(clientPipe, cborxBackend(true))
