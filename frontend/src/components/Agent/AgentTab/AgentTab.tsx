@@ -1,5 +1,11 @@
 'use client';
 
+import { useEffect } from 'react';
+
+import { useAtom } from 'jotai';
+
+import { selectedAgentTabAtom } from '@app/store/localStore';
+
 import { cn } from '../../lib/utils';
 import AgentTabItem from './AgentTabItem';
 
@@ -14,6 +20,12 @@ const AgentTabSection = ({
     className?: string;
 }) => {
     const tabs = showAllTabs ? adminTabs : normalTabs;
+
+    const [, setSelectedTab] = useAtom(selectedAgentTabAtom);
+
+    useEffect(() => {
+        setSelectedTab('Overview');
+    }, []);
 
     return (
         <div
