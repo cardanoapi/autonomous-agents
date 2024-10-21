@@ -13,7 +13,7 @@ export type TriggerType = 'CRON' | 'MANUAL' | 'EVENT';
 
 export interface ISubParameter {
     name: string;
-    value: any;
+    value?: any;
 }
 
 export interface IAgentAction {
@@ -35,8 +35,8 @@ export interface IAgentConfiguration {
     id: string;
     agent_id: string;
     type: TriggerType;
-    action?: IAgentAction;
-    data?: ICronTrigger | IEventTrigger;
+    action: IAgentAction;
+    data: ICronTrigger | IEventTrigger;
 }
 
 export interface IAgentUpdateReqDto {
@@ -73,6 +73,7 @@ export interface IAgent {
     is_stake_registered?: boolean;
     delegation?: IDelegation;
     stake_last_registered?: string;
+    no_of_successfull_triggers?: number;
     secret_key?: string;
 }
 

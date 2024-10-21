@@ -8,8 +8,8 @@ import { IAgent, fetchAgentbyID } from '@api/agents';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
-import AgentTabSection from '@app/components/Agent/AgentTab';
-import AgentTabContent from '@app/components/Agent/AgentTabContent';
+import AgentTabSection from '@app/components/Agent/AgentTab/AgentTab';
+import AgentTabContent from '@app/components/Agent/AgentTab/AgentTabContent';
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -19,14 +19,12 @@ import {
 import {
     adminAccessAtom,
     currentAgentNameAtom,
-    currentConnectedWalletAtom,
-    selectedAgentTabAtom
+    currentConnectedWalletAtom
 } from '@app/store/localStore';
 
 export default function AgentPageById() {
     const [, setCurrentAgentName] = useAtom(currentAgentNameAtom);
     const [adminAccess] = useAtom(adminAccessAtom);
-    const [selectedTab] = useAtom(selectedAgentTabAtom);
     const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
     const params = useParams();
     const router = useRouter();
@@ -39,6 +37,7 @@ export default function AgentPageById() {
     });
 
     const [agentOwnerIsUser, setAgentOwnerIsUser] = useState(false);
+
     useEffect(() => {
         if (agent) {
             setCurrentAgentName(agent?.name || '');
@@ -60,8 +59,6 @@ export default function AgentPageById() {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>{agent?.name || 'Agent Profile'}</BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>{selectedTab}</BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
             <div className={'flex h-[600px] w-full gap-4 2xl:h-[700px] 4xl:h-[800px] '}>

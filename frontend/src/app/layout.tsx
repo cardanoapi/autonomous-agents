@@ -89,7 +89,7 @@ export default function RootLayout({
                                 <div className="hidden h-screen min-w-[256px] max-w-[256px] overflow-hidden lg:flex 3xl:min-w-[290px] 3xl:max-w-[290px]">
                                     <SideNav />
                                 </div>
-                                <div className="max-h-screen flex-grow flex-col overflow-y-auto overflow-x-clip px-[24px] pt-[3%] 2xl:px-[45px] ">
+                                <div className="max-h-screen flex-grow flex-col overflow-clip px-[24px] pt-[3%] 2xl:px-[45px] ">
                                     <TopNav />
                                     <div className="mt-10">{children}</div>
                                 </div>

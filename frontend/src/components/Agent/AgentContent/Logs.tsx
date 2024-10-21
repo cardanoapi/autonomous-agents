@@ -1,28 +1,30 @@
 'use client';
 
 import { useState } from 'react';
+import React from 'react';
 
 import { IAgent } from '@api/agents';
 import { IAgentTriggerHistory, fetchAllTriggerHistory } from '@api/triggerHistory';
 import { MapFunctionNameAndViewName } from '@consts';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
-import { Copy, OctagonAlert } from 'lucide-react';
+import { Copy } from 'lucide-react';
 
-import AgentAvatar from '@app/components/Agent/AgentAvatar';
+import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import AgentsIcon from '@app/components/icons/AgentsIcon';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import { agentsAtom } from '@app/store/localStore';
 import { Truncate } from '@app/utils/common/extra';
 import { formatTimestamp } from '@app/utils/dateAndTimeUtils';
 
-import AgentFunctionsDropDown from '../Common/AgentFunctionsDropDown';
-import { Badge } from '../atoms/Badge';
-import { cn } from '../lib/utils';
-import { ScrollArea } from '../shadcn/ui/scroll-area';
-import { Skeleton } from '../shadcn/ui/skeleton';
+import AgentFunctionsDropDown from '../../Common/AgentFunctionsDropDown';
+import { Badge } from '../../atoms/Badge';
+import { cn } from '../../lib/utils';
+import { Skeleton } from '../../shadcn/ui/skeleton';
+import ErrorPlaceholder from '../shared/ErrorPlaceholder';
+import ContentHeader from './ContentHeader';
 
-const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
+export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
     const statusOptions = ['Success', 'Skipped', 'Failed'];
     const [statusPlaceholder, setStatusPlaceholder] = useState('None');
     const [currentFunction, setCurrentFunction] = useState('None');
@@ -78,56 +80,55 @@ const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
         setStatusPlaceholder(status);
     }
     return (
-        <div className={'flex h-full w-full flex-col gap-10'}>
-            <div className={'flex items-center gap-3'}>
-                <AgentsIcon />
-                <span className={'text-[20px] font-semibold'}>Agent Logs</span>
-            </div>
-            <div className="flex justify-end gap-4 pr-4 ">
-                <AgentFunctionsDropDown
-                    onChange={(strVal: string) => {
-                        setCurrentFunction(strVal);
-                    }}
-                />
-                <div className="flex justify-center gap-2">
-                    {statusOptions.map((status: string, index) => (
-                        <Badge
-                            key={index}
-                            variant={
-                                statusPlaceholder === status
-                                    ? 'successPrimary'
-                                    : 'primary'
-                            }
-                            className="flex w-20 justify-center"
-                            onClick={() => handleStatusChange(status)}
-                        >
-                            {status}
-                        </Badge>
-                    ))}
+        <div className={'flex h-full w-full flex-col gap-4'}>
+            <ContentHeader>
+                <div className="flex justify-end gap-4 pr-4 ">
+                    <AgentFunctionsDropDown
+                        onChange={(strVal: string) => {
+                            setCurrentFunction(strVal);
+                        }}
+                    />
+                    <div className="flex justify-center gap-2">
+                        {statusOptions.map((status: string, index) => (
+                            <Badge
+                                key={index}
+                                variant={
+                                    statusPlaceholder === status
+                                        ? 'successPrimary'
+                                        : 'primary'
+                                }
+                                className="flex w-20 justify-center"
+                                onClick={() => handleStatusChange(status)}
+                            >
+                                {status}
+                            </Badge>
+                        ))}
+                    </div>
                 </div>
+            </ContentHeader>
+            <div className="mt-4 grid grid-cols-1 gap-2">
+                {loadingLogs
+                    ? Array.from({ length: 50 }).map((_, index) => (
+                          <AgentLogCardSkeleton key={index} />
+                      ))
+                    : LogsHistory?.items.length > 0 &&
+                      LogsHistory.items.map(
+                          (history: IAgentTriggerHistory, index: number) => (
+                              <AgentLogCard
+                                  history={history}
+                                  key={index}
+                                  className="bg-gray-100"
+                              />
+                          )
+                      )}
             </div>
-            <ScrollArea className={'max-h-agentComponentHeight overflow-y-auto pr-4'}>
-                <div className="grid grid-cols-1 gap-2">
-                    {loadingLogs
-                        ? Array.from({ length: 50 }).map((_, index) => (
-                              <AgentLogCardSkeleton key={index} />
-                          ))
-                        : LogsHistory?.items.length > 0 &&
-                          LogsHistory.items.map(
-                              (history: IAgentTriggerHistory, index: number) => (
-                                  <AgentLogCard
-                                      history={history}
-                                      key={index}
-                                      className="bg-gray-100"
-                                  />
-                              )
-                          )}
-                </div>
-            </ScrollArea>
             {!loadingLogs && LogsHistory?.items.length === 0 && (
-                <div className="flex flex-grow">
-                    <EmptyLogsPlaceholder />
-                </div>
+                <ErrorPlaceholder
+                    className="absolute mt-4 h-full w-full border-0"
+                    title="No Matching logs found"
+                    content="Try changing the filters"
+                    icon={AgentsIcon}
+                />
             )}
         </div>
     );
@@ -262,25 +263,6 @@ const TxHashComponent = ({ txHash }: { txHash: string }) => {
 };
 
 export default AgentLogComponent;
-
-export const EmptyLogsPlaceholder = ({ className }: { className?: string }) => {
-    return (
-        <div
-            className={cn(
-                'flex h-full w-full items-center justify-center rounded border-[4px] border-dashed border-gray-200 bg-slate-50',
-                className
-            )}
-        >
-            <div className="flex flex-col items-center gap-2">
-                <span className="flex items-center justify-center gap-2 text-2xl text-gray-300">
-                    <OctagonAlert className="h-8 w-8" />
-                    Trigger History is Empty.
-                </span>
-                <span className="text-xl text-gray-300">No trigger logs found !</span>
-            </div>
-        </div>
-    );
-};
 
 export const AgentLogCardSkeleton = ({ className }: { className?: string }) => {
     return (

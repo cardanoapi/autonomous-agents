@@ -94,6 +94,7 @@ class AgentService:
             if user:
                 display_secret_key = super_admin or user.address == agent.userAddress
             is_online = check_if_agent_is_online(agent.last_active)
+            successful_triggers = await self.agent_repository.get_agent_successful_triggers_count(agent_id=agent.id)
             agent.secret_key = str(agent.secret_key)
             # agent.secret_key = base64.b64decode(agent.secret_key._raw).decode() if display_secret_key else None
             updated_agents.append(
@@ -102,6 +103,7 @@ class AgentService:
                     total_functions=len(agent.triggers),
                     is_active=is_online,
                     template_name=agent.template.name if agent.template else "",
+                    no_of_successfull_triggers=successful_triggers,
                 )
             )
         return updated_agents

@@ -9,7 +9,7 @@ import { PATHS } from '@consts';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
-import AgentAvatar from '@app/components/Agent/AgentAvatar';
+import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import {
     adminAccessAtom,
     agentsAtom,
