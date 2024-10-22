@@ -8,7 +8,7 @@ import { updateTrigger } from '@api/trigger';
 import { TemplateFunctions } from '@models/types/functions';
 import { Dialog, DialogContent } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, OctagonAlert, Trash2 } from 'lucide-react';
 
 import { FunctionForm } from '@app/app/(pages)/templates/create-template/components/FunctionForm';
 import {
@@ -22,6 +22,7 @@ import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 import { SuccessToast } from '../../molecules/CustomToasts';
 import { ErrorToast } from '../../molecules/CustomToasts';
 import CustomCopyBox from '../shared/CustomCopyBox';
+import ErrorPlaceholder from '../shared/ErrorPlaceholder';
 
 const AgentFunctionsDetailComponent = ({
     agent,
@@ -96,9 +97,12 @@ const AgentFunctionsDetailComponent = ({
             <div className="flex items-center gap-4"></div>
             <div className="flex flex-row flex-wrap gap-6">
                 {!agentConfigurations?.length ? (
-                    <span className="text-xs text-brand-Black-300">
-                        Click edit button to add functions
-                    </span>
+                    <ErrorPlaceholder
+                        title="No Functions"
+                        content="Agent seems to have no functions configured."
+                        icon={OctagonAlert}
+                        className="absolute h-full w-full border-0"
+                    />
                 ) : (
                     agentConfigurations.map((config) => (
                         <div
