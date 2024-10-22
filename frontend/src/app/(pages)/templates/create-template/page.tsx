@@ -34,9 +34,9 @@ import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { FunctionCards } from './components/FunctionCards';
 import { FunctionForm } from './components/FunctionForm';
-import { mapToTriggerCreateDTO } from './components/utils/FunctionUtil';
+import { mapFormFunctionToTriggerConfiguration } from './components/utils/FunctionMapper';
 
-export interface IConfiguredFunctionsItem extends IFunctionsItem {
+export interface IFormFunctionInstance extends IFunctionsItem {
     index: string; // for identifying function instance , id attribute holds function name
     type: TriggerType;
     cronValue?: ICronTrigger;
@@ -45,12 +45,14 @@ export interface IConfiguredFunctionsItem extends IFunctionsItem {
     //for saving cron settings
     selectedCronOption?: string;
     congifuredCronSettings?: any;
+    //To be compatible with IAgentConfiuration
+    agent_id?: string;
 }
 
 interface IFormData {
     name: string;
     description: string;
-    functions: IConfiguredFunctionsItem[];
+    functions: IFormFunctionInstance[];
 }
 
 export default function CreateTemplatePage() {
@@ -80,7 +82,7 @@ export default function CreateTemplatePage() {
     });
 
     const [currentSelectedFunction, setCurrentSelectedFunction] =
-        useState<IConfiguredFunctionsItem | null>(null);
+        useState<IFormFunctionInstance | null>(null);
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -102,7 +104,7 @@ export default function CreateTemplatePage() {
         setIsDialogOpen(true);
     };
 
-    const handleDeleteFunction = (inputFunction: IConfiguredFunctionsItem) => {
+    const handleDeleteFunction = (inputFunction: IFormFunctionInstance) => {
         const newFunctions = mainState.functions.filter(
             (functionItem) => functionItem.index !== inputFunction.index
         );
@@ -114,7 +116,7 @@ export default function CreateTemplatePage() {
 
     const handleDialogClose = () => setIsDialogOpen(false);
 
-    const handleSaveFunction = (item: IConfiguredFunctionsItem) => {
+    const handleSaveFunction = (item: IFormFunctionInstance) => {
         const newFunctions = mainState.functions.map((functionItem) =>
             functionItem.index === item.index ? item : functionItem
         );
@@ -128,7 +130,7 @@ export default function CreateTemplatePage() {
         handleDialogClose();
     };
 
-    const handleEditFunction = (item: IConfiguredFunctionsItem) => {
+    const handleEditFunction = (item: IFormFunctionInstance) => {
         setCurrentSelectedFunction(item);
         setIsDialogOpen(true);
     };
@@ -147,7 +149,9 @@ export default function CreateTemplatePage() {
         const templateRequest: ICreateTemplateRequestDTO = {
             name: mainState.name,
             description: mainState.description,
-            template_triggers: mapToTriggerCreateDTO(mainState.functions)
+            template_triggers: mainState.functions.map((func) =>
+                mapFormFunctionToTriggerConfiguration(func)
+            )
         };
         setSubmittingForm(true);
         templateMutation.mutate(templateRequest);
@@ -232,7 +236,7 @@ export default function CreateTemplatePage() {
                             currentFunction={currentSelectedFunction}
                             onClose={handleDialogClose}
                             onValueChange={() => {}}
-                            onSave={(item: IConfiguredFunctionsItem) => {
+                            onSave={(item: IFormFunctionInstance) => {
                                 handleSaveFunction(item);
                             }}
                         />

@@ -1,6 +1,6 @@
 import { IAgent } from '@api/agents';
 
-import AgentAvatar from '@app/components/Agent/AgentAvatar';
+import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
 export default function MyAgentCard({

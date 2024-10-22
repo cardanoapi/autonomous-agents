@@ -7,14 +7,14 @@ const prisma = new PrismaClient()
 export type TriggerType = 'CRON' | 'MANUAL' | 'EVENT' | 'INTERNAL'
 
 export async function saveTriggerHistory(
-    agentId: string,
-    functionName: string,
-    status: boolean,
-    success: boolean,
-    message: string,
-    triggerType: TriggerType,
-    txHash?: string,
-    instanceIndex: number = 0
+  agentId: string,
+  functionName: string,
+  status: boolean,
+  success: boolean,
+  message: string,
+  triggerType: TriggerType,
+  txHash?: string,
+  instanceIndex: number = 0
 ): Promise<void> {
     try {
         const triggerHistory: any = {}

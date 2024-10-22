@@ -9,9 +9,9 @@ import { PATHS } from '@consts';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
-import AgentAvatar from '@app/components/Agent/AgentAvatar';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { templateAtom } from '@app/store/atoms/template';
+import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import {
     adminAccessAtom,
     agentsAtom,

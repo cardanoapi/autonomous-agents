@@ -1,5 +1,6 @@
 # agent_service.py
 import asyncio
+import base64
 import json
 from datetime import datetime, UTC, timedelta
 from typing import List, Dict
@@ -17,6 +18,7 @@ from backend.app.models import (
 )
 from backend.app.models.agent.agent_instance_wallet import AgentInstanceWallet
 from backend.app.models.agent.function import AgentFunction
+from backend.app.models.user.user_dto import User
 from backend.app.repositories.agent_repository import AgentRepository
 from backend.app.repositories.user_repository import UserRepository
 from backend.app.services.agent_instance_wallet_service import AgentInstanceWalletService
@@ -75,52 +77,43 @@ class AgentService:
         # return await self.agent_instance_wallet_service.get_wallets(agent_id)
         return await self.agent_repository.retreive_agent_key(agent_id)
 
-    async def list_agents(self, page: int, size: int, search: str | None) -> List[AgentResponse]:
+    async def list_agents(
+        self, page: int, size: int, search: str | None, user: User | None = None
+    ) -> List[AgentResponse]:
         skip = (page - 1) * size
         filters = {"deleted_at": None}
         if search:
             filters["name"] = {"contains": search, "mode": "insensitive"}
         agents = await self.agent_repository.db.prisma.agent.find_many(
-            include={"template": True, "triggers": True}, where=filters, skip=skip, take=size
+            include={"template": True, "triggers": {"where": {"deleted_at": None}}}, where=filters, skip=skip, take=size
         )
+        super_admin = user.isSuperUser if user else False
         updated_agents = []
         for agent in agents:
+            display_secret_key = False
+            if user:
+                display_secret_key = super_admin or user.address == agent.userAddress
             is_online = check_if_agent_is_online(agent.last_active)
+            successful_triggers = await self.agent_repository.get_agent_successful_triggers_count(agent_id=agent.id)
+            agent.secret_key = str(agent.secret_key)
+            # agent.secret_key = base64.b64decode(agent.secret_key._raw).decode() if display_secret_key else None
             updated_agents.append(
                 AgentResponse(
                     **agent.dict(),
                     total_functions=len(agent.triggers),
                     is_active=is_online,
                     template_name=agent.template.name if agent.template else "",
+                    no_of_successfull_triggers=successful_triggers,
                 )
             )
         return updated_agents
 
-    async def get_agent(self, agent_id: str) -> AgentResponseWithWalletDetails:
-        agent = await self.agent_repository.retrieve_agent(agent_id)
+    async def get_agent(self, agent_id: str, user: User | None) -> AgentResponseWithWalletDetails:
+        agent = await self.agent_repository.retrieve_agent(agent_id, user)
         self.raise_exception_if_agent_not_found(agent)
         agent.is_active = check_if_agent_is_online(agent.last_active)
         response = await self.return_agent_with_wallet_details(agent)
         return response
-
-    async def fetch_wallet_details_and_seed_drep_registration(self, agent: AgentResponse, session: ClientSession):
-        wallets = await self.agent_instance_wallet_service.get_wallets(agent.id)
-        if not len(wallets):
-            await self.agent_instance_wallet_service.create_wallet(agent)
-        wallets = await self.agent_instance_wallet_service.get_wallets(agent.id)
-        wallet = wallets[0]
-        drep = await self.fetch_drep_details(wallet.stake_key_hash, session)
-        drep_registered = drep.get("is_drep_registered", False)
-        if drep_registered:
-            await self.agent_repository.update_agent_drep_status(agent.id, drep_registered)
-
-    async def seed_drep_registration_column(self):
-        agents = await self.agent_repository.retrieve_all_agents()
-        async with aiohttp.ClientSession() as session:
-            async with asyncio.TaskGroup() as group:
-                for agent in agents:
-                    group.create_task(self.fetch_wallet_details_and_seed_drep_registration(agent, session))
-        return "Successful"
 
     async def update_agent(
         self, agent_id: str, agent_data: AgentUpdateDTO, userAddress: str
@@ -140,7 +133,7 @@ class AgentService:
         existing_agent = await self.agent_repository.modify_agent(agent_id, agent_data)
         self.raise_exception_if_agent_not_found(existing_agent)
         await self.kafka_service.publish_message(
-            api_settings.getKafkaTopicPrefix() + "-updates", "config_updated", key=agent_id
+            api_settings.getKafkaTopicPrefix() + "-updates", "config_updated", key=existing_agent.id
         )
         return AgentResponseWithAgentConfigurations(**existing_agent.dict(), agent_configurations=updated_triggers)
 
@@ -149,7 +142,7 @@ class AgentService:
 
     async def delete_agent(self, agent_id: str, user_address: str) -> str:
 
-        existing_agent = await self.agent_repository.retrieve_agent(agent_id)
+        existing_agent = await self.agent_repository.retrieve_agent(agent_id, None, user_address)
         self.raise_exception_if_agent_not_found(existing_agent)
         await self.is_superadmin(user_address)
 
@@ -157,7 +150,7 @@ class AgentService:
         await self.agent_instance_wallet_service.delete_wallet(agent_id)
 
         await self.kafka_service.publish_message(
-            "Agent_Trigger",
+            api_settings.getKafkaTopicPrefix() + "-triggers",
             json.dumps({"method": "Agent_Deletion", "parameters": []}),
             agent_id,
         )

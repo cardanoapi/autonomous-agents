@@ -1,4 +1,11 @@
-import { IAgentAction, ICronTrigger, IEventTrigger } from './agents';
+import axios from 'axios';
+
+import {
+    IAgentAction,
+    IAgentConfiguration,
+    ICronTrigger,
+    IEventTrigger
+} from './agents';
 import { baseAPIurl } from './config';
 
 export interface ITrigger {
@@ -85,3 +92,43 @@ export interface ITriggerCreateDto {
     action: IAgentAction;
     data: ICronTrigger | IEventTrigger;
 }
+
+export const postTrigger = async (agentID: string, triggerData: ITriggerCreateDto) => {
+    const response = await axios.post(
+        `${baseAPIurl}/agents/${agentID}/triggers`,
+        triggerData,
+        {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            withCredentials: true
+        }
+    );
+    return response.data;
+};
+
+export const deleteTrigger = async (triggerID: string) => {
+    const response = await axios.delete(`${baseAPIurl}/triggers/${triggerID}`, {
+        withCredentials: true
+    });
+    return response.data;
+};
+
+export const updateTrigger = async (triggerData: IAgentConfiguration) => {
+    console.log(triggerData);
+    const response = await axios.put(
+        `${baseAPIurl}/triggers/${triggerData.id}`,
+        {
+            type: triggerData.type,
+            action: triggerData.action,
+            data: triggerData.data
+        },
+        {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            withCredentials: true
+        }
+    );
+    return response.data;
+};

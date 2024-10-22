@@ -3,12 +3,12 @@ import { Edit } from 'lucide-react';
 
 import { Card } from '@app/components/atoms/Card';
 
-import { IConfiguredFunctionsItem } from '../page';
+import { IFormFunctionInstance } from '../page';
 
 interface IFunctionCards {
-    functions: IConfiguredFunctionsItem[];
-    onUnselect: (item: IConfiguredFunctionsItem) => void;
-    onEdit: (item: IConfiguredFunctionsItem) => void;
+    functions: IFormFunctionInstance[];
+    onUnselect: (item: IFormFunctionInstance) => void;
+    onEdit: (item: IFormFunctionInstance) => void;
 }
 export const FunctionCards = ({ functions, onUnselect, onEdit }: IFunctionCards) => {
     return functions.map((functionItem, index) => (

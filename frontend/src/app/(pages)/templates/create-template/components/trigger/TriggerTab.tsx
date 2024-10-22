@@ -54,7 +54,8 @@ export default function TriggerTab({
     previousConfiguredSettings,
     setTriggerType,
     setSelectedTab,
-    onlyCronTriggerTab
+    onlyCronTriggerTab,
+    defaultToCustomTab = false
 }: {
     onChange?: (
         cronExpression: string[],
@@ -67,6 +68,7 @@ export default function TriggerTab({
     setTriggerType?: any;
     setSelectedTab?: React.Dispatch<React.SetStateAction<string>>;
     onlyCronTriggerTab?: boolean;
+    defaultToCustomTab?: boolean;
 }) {
     const [cron, setCron] = useState<string[]>(
         typeof defaultCron === 'string'
@@ -83,7 +85,10 @@ export default function TriggerTab({
         previousSelectedOption || 'Minute-option-one'
     );
 
-    const defaultSelectedCronTab = previousSelectedOption?.split('-')[0] || 'Minute';
+    const defaultSelectedCronTab =
+        (defaultToCustomTab && 'Custom') ||
+        previousSelectedOption?.split('-')[0] ||
+        'Minute';
 
     const initialSettings: IInputSetting[] = [
         { name: 'Minute-option-two', value: 1 },

@@ -12,7 +12,7 @@ import { CopyIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import AppDialog from '@app/app/components/AppDialog';
-import AgentAvatar from '@app/components/Agent/AgentAvatar';
+import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import { Badge } from '@app/components/atoms/Badge';
 import { Button } from '@app/components/atoms/Button';
 import { cn } from '@app/components/lib/utils';
@@ -72,9 +72,11 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                 <div className="flex space-x-4 sm:space-x-6  xl:space-x-12 2xl:space-x-10 4xl:space-x-20">
                     <div className="flex flex-col space-y-2">
                         <div className="flex gap-2">
-                            <TypographyH2 className={`font-semibold ${isDataMissing}`}>
-                                {isDataMissing ? 'Data Missing' : dRep.givenName}
-                            </TypographyH2>
+                            {dRep.givenName && (
+                                <TypographyH2 className={`font-semibold`}>
+                                    {dRep.givenName}
+                                </TypographyH2>
+                            )}
                             <Badge variant={getBadgeVariant(dRep.status)}>
                                 {dRep.status}
                             </Badge>
@@ -136,7 +138,7 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
             </AppDialog>
 
             <AppDialog isOpen={isDrepDetailsOpen} toggleDialog={toggleDrepDetailDialog}>
-                <DrepDetailDialogContent dRep={dRep} />
+                <DrepDetailDialogContent dRep={dRep} onClose={toggleDrepDetailDialog} />
             </AppDialog>
         </>
     );

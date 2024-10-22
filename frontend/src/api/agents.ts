@@ -13,7 +13,7 @@ export type TriggerType = 'CRON' | 'MANUAL' | 'EVENT';
 
 export interface ISubParameter {
     name: string;
-    value: any;
+    value?: any;
 }
 
 export interface IAgentAction {
@@ -35,8 +35,8 @@ export interface IAgentConfiguration {
     id: string;
     agent_id: string;
     type: TriggerType;
-    action?: IAgentAction;
-    data?: ICronTrigger | IEventTrigger;
+    action: IAgentAction;
+    data: ICronTrigger | IEventTrigger;
 }
 
 export interface IAgentUpdateReqDto {
@@ -73,6 +73,8 @@ export interface IAgent {
     is_stake_registered?: boolean;
     delegation?: IDelegation;
     stake_last_registered?: string;
+    no_of_successfull_triggers?: number;
+    secret_key?: string;
 }
 
 export const fetchAgents = async (params: {
@@ -84,7 +86,9 @@ export const fetchAgents = async (params: {
 
     const queryString = convertToQueryStr(page, size, search);
 
-    const res = await fetch(`${baseAPIurl}/agents?${queryString}`);
+    const res = await fetch(`${baseAPIurl}/agents?${queryString}`, {
+        credentials: 'include'
+    });
     if (!res.ok) {
         throw new Error('Agents Fetch Operation failed: Network Error');
     }
@@ -166,7 +170,7 @@ export const fetchAgentbyID = async (agentID: string): Promise<IAgent> => {
     const url = `${baseAPIurl}/agent/${agentID}`;
 
     try {
-        const response = await axios.get(url);
+        const response = await axios.get(url, { withCredentials: true });
         return response.data;
     } catch (error) {
         throw new Error('Agent Fetch Operation failed: Network Error');
