@@ -13,7 +13,7 @@ import TextDisplayField from '@app/components/molecules/TextDisplayField';
 import { useModal } from '../../Modals/context';
 import { Button } from '../../atoms/Button';
 import CustomCopyBox from '../shared/CustomCopyBox';
-import AgentHistoryComponent from '../shared/TriggerChart';
+import AgentHistoryChart from '../shared/TriggerChart';
 import HeaderContent from './ContentHeader';
 
 interface AgentOverViewProps {
@@ -154,7 +154,7 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({
                 </div>
             </div>
             <div className="mt-8">
-                <AgentHistoryComponent chartClassName="w-full h-[550px]" />
+                <AgentHistoryChart chartClassName="w-full h-[550px]" agent={agent} />
             </div>
         </div>
     );
