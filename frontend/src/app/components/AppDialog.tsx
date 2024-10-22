@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { X } from 'lucide-react';
+
 import {
     Dialog,
     DialogContent,
@@ -17,13 +19,18 @@ interface AppDialogContentProps extends React.PropsWithChildren {
     title?: string;
     description?: string;
     className?: string;
+    onClose?: (open: boolean) => void;
 }
 
 export const AppDialogContent: React.FC<AppDialogContentProps> = (props) => {
-    const { title, description, children, className } = props;
+    const { title, description, children, className, onClose } = props;
 
     return (
-        <DialogContent className={className}>
+        <DialogContent className={className} defaultCross={false}>
+            <X
+                className="absolute right-2 top-2 cursor-pointer"
+                onClick={() => onClose?.(false)}
+            />
             <DialogHeader className="mb-2">
                 {title && <DialogTitle>{title}</DialogTitle>}
                 {description && <DialogDescription>{description}</DialogDescription>}
