@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { IAgent } from '@api/agents';
 import { IAgentTriggerHistory, fetchAllTriggerHistory } from '@api/triggerHistory';
@@ -175,8 +174,8 @@ export const AgentLogCard = ({
                             isActive={false}
                             isLink
                         />
-                        <div className="card-h2 flex flex-col ">
-                            <span className={'text-sm leading-normal'}>
+                        <div className="card-h2 flex basis-4/5 flex-col truncate">
+                            <span className={'w-11/12 truncate text-sm leading-normal'}>
                                 {Truncate(
                                     (agents &&
                                         agents[history.agentId] &&
