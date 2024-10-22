@@ -20,7 +20,7 @@ import { convertDictToGraphDataFormat } from '../../Chart/ChartFilter';
 import AgentFunctionsDropDown from '../../Common/AgentFunctionsDropDown';
 import { cn } from '../../lib/utils';
 
-const AgentHistoryComponent = ({
+const AgentHistoryChart = ({
     agent,
     chartClassName
 }: {
@@ -141,4 +141,4 @@ const AgentHistoryComponent = ({
     );
 };
 
-export default AgentHistoryComponent;
+export default AgentHistoryChart;
