@@ -93,14 +93,18 @@ export default function TopNav() {
                     </div>
                 );
             } else if (getPageTitleByRegexMatch('templates')) {
-                return <span className="h1">{Truncate(template?.name || '', 30)}</span>;
+                return <span className="h1">{template?.name}</span>;
             } else {
                 return <Skeleton className="h-8 w-[140px]" />;
             }
         }
     }
 
-    if (!template?.name && getPageTitleByRegexMatch('templates')) {
+    if (
+        !template?.name &&
+        getPageTitleByRegexMatch('templates') &&
+        path !== '/templates/create-template'
+    ) {
         return <Skeleton className="h-8 w-[140px]" />;
     }
 
