@@ -1,6 +1,7 @@
 import { IAgentConfiguration, ISubParameter } from '@api/agents';
 import { TriggerType } from '@api/agents';
 import { ICronTrigger } from '@api/agents';
+import { ITemplateConfiguration } from '@api/templates';
 import { ITriggerCreateDto } from '@api/trigger';
 import {
     IParameter,
@@ -230,5 +231,26 @@ export const mapFormFunctionToAgentConfiguration = (
         agent_id: formFuncion.agent_id || '',
         type: formFuncion.type as TriggerType,
         id: formFuncion.id
+    };
+};
+
+export const mapFormFunctionToTemplateConfiguration = (
+    formFunction: IFormFunctionInstance,
+    template_id: string
+): ITemplateConfiguration => {
+    const functionMetaData = TemplateFunctions.find(
+        (f) => f.name === formFunction.name
+    );
+
+    const convertedObj = mapFormFunctionToTriggerConfiguration({
+        ...formFunction,
+        id: functionMetaData?.id || ''
+    });
+
+    return {
+        ...convertedObj,
+        type: formFunction.type as TriggerType,
+        id: formFunction.id,
+        template_id: template_id
     };
 };

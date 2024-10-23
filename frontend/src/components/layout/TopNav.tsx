@@ -9,9 +9,9 @@ import { PATHS } from '@consts';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
+import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { templateAtom } from '@app/store/atoms/template';
-import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import {
     adminAccessAtom,
     agentsAtom,
@@ -93,7 +93,7 @@ export default function TopNav() {
                     </div>
                 );
             } else if (getPageTitleByRegexMatch('templates')) {
-                return <span className="h1">{template?.name}</span>;
+                return <span className="h1">{Truncate(template?.name || '', 30)}</span>;
             } else {
                 return <Skeleton className="h-8 w-[140px]" />;
             }

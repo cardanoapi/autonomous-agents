@@ -22,8 +22,8 @@ export interface ITemplateConfiguration {
     id: string;
     template_id: string;
     type: TriggerType;
-    action?: IAgentAction;
-    data?: ICronTrigger | IEventTrigger;
+    action: IAgentAction;
+    data: ICronTrigger | IEventTrigger;
 }
 
 export interface ITemplate {
@@ -108,7 +108,7 @@ export const updateTemplateData = async (formData: ITemplate) => {
         );
         return response.data;
     } catch (error) {
-        console.error('Error posting agent data:', error);
+        console.error('Error updating Template data:', error);
         throw error;
     }
 };
