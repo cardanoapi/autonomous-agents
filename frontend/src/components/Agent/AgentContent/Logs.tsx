@@ -1,18 +1,18 @@
 'use client';
 
-import { useState } from 'react';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { IAgent } from '@api/agents';
 import { IAgentTriggerHistory, fetchAllTriggerHistory } from '@api/triggerHistory';
 import { MapFunctionNameAndViewName } from '@consts';
 import { useQuery } from '@tanstack/react-query';
+import { formatParameterName } from '@utils';
 import { useAtom } from 'jotai';
 import { Copy } from 'lucide-react';
 
 import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import AgentsIcon from '@app/components/icons/AgentsIcon';
-import { SuccessToast } from '@app/components/molecules/CustomToasts';
+import { useCopyClipboard } from '@app/lib/hooks/useCopyToClipboard';
 import { agentsAtom } from '@app/store/localStore';
 import { Truncate } from '@app/utils/common/extra';
 import { formatTimestamp } from '@app/utils/dateAndTimeUtils';
@@ -164,7 +164,7 @@ export const AgentLogCard = ({
                 className
             )}
         >
-            <div className={'row flex  items-start gap-8 '}>
+            <div className={'flex w-full flex-row items-start gap-8 '}>
                 {globalLog && (
                     <div className={'flex items-center gap-3 sm:min-w-[200px]'}>
                         <AgentAvatar
@@ -174,8 +174,8 @@ export const AgentLogCard = ({
                             isActive={false}
                             isLink
                         />
-                        <div className="card-h2 flex flex-col ">
-                            <span className={'text-sm leading-normal'}>
+                        <div className="card-h2 flex basis-4/5 flex-col truncate">
+                            <span className={'w-11/12 truncate text-sm leading-normal'}>
                                 {Truncate(
                                     (agents &&
                                         agents[history.agentId] &&
@@ -202,7 +202,7 @@ export const AgentLogCard = ({
                         </span>
                     </div>
                 )}
-                <div className={'flex flex-col items-start gap-2'}>
+                <div className={'flex w-full flex-col items-start gap-2'}>
                     <div className={'flex flex-row items-center gap-1'}>
                         <span className={'text-sm font-medium'}>
                             {MapFunctionNameAndViewName[history.functionName] ||
@@ -212,10 +212,34 @@ export const AgentLogCard = ({
                             {history.triggerType || 'CRON'}
                         </span>
                     </div>
-                    {history.message && (
+                    {history.parameters && (
+                        <div className={'flex flex-col gap-0.5'}>
+                            <span className={'text-sm font-medium'}>Parameters</span>
+                            {history.parameters?.map((param, index) => {
+                                return (
+                                    <LogFunctionParameter param={param} key={index} />
+                                );
+                            })}
+                        </div>
+                    )}
+                    {history.result ? (
+                        <div className={'flex flex-col gap-0.5'}>
+                            <span className={'text-sm font-medium'}>Result</span>
+                            {history.txHash || !history.message ? (
+                                <LogObjectParameter
+                                    longTruncate
+                                    params={history.result}
+                                />
+                            ) : (
+                                <span className={'text-xs'}>{history.message}</span>
+                            )}
+                        </div>
+                    ) : history.txHash ? (
+                        <TxHashComponent txHash={history.txHash} />
+                    ) : (
                         <span className={'text-xs'}>{history.message}</span>
                     )}
-                    {history.txHash && <TxHashComponent txHash={history.txHash} />}
+                    {history.internal && <InternalLogs history={history} />}
                 </div>
             </div>
             <div
@@ -230,10 +254,103 @@ export const AgentLogCard = ({
     );
 };
 
+const InternalLogs = ({ history }: { history: IAgentTriggerHistory }) => {
+    return (
+        <div className={'flex w-full flex-col gap-1'}>
+            {history.internal?.map((internal: any, index: number) => {
+                return (
+                    <div
+                        key={index}
+                        className={
+                            'flex h-[45px] flex-row gap-1 border-0 border-t-2 border-brand-Black-200/30 p-0.5'
+                        }
+                    >
+                        <div
+                            className={`h-full w-1 ${internal.success ? 'bg-green-500' : 'bg-red-500'}`}
+                        ></div>
+                        <div className={'flex flex-col gap-0.5'}>
+                            <span className={'text-sm font-medium'}>
+                                {MapFunctionNameAndViewName[internal.function_name] ||
+                                    internal.function_name}
+                            </span>
+                            {internal.txHash && (
+                                <TxHashComponent txHash={internal.txHash} />
+                            )}
+                            {internal.message && (
+                                <span className={'text-xs'}>{internal.message}</span>
+                            )}
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
+    );
+};
+
+const LogFunctionParameter = ({ param }: { param: any }) => {
+    const { copyToClipboard } = useCopyClipboard();
+    if (typeof param === 'string') {
+        return <span className={'text-xs'}>{param}</span>;
+    }
+    const handleOnCopy = () => {
+        copyToClipboard(param.value, `${formatParameterName(param.name)} Copied!`);
+    };
+
+    return (
+        <div
+            className={
+                'flex w-[220px] flex-row gap-1 truncate text-xs drop-shadow sm:w-[300px] lg:w-[550px]'
+            }
+        >
+            <span>{formatParameterName(param.name)} :</span>
+            {typeof param.value === 'string' ? (
+                <span
+                    className={'w-full cursor-pointer truncate'}
+                    onClick={handleOnCopy}
+                >
+                    {param.value}
+                </span>
+            ) : (
+                <div className={'flex flex-col gap-1 '}>
+                    <span className={'h-2'}></span>
+                    <LogObjectParameter params={param.value} />
+                </div>
+            )}
+        </div>
+    );
+};
+
+const LogObjectParameter = ({
+    params,
+    longTruncate = false
+}: {
+    params: Record<any, any>;
+    longTruncate?: boolean;
+}) => {
+    const { copyToClipboard } = useCopyClipboard();
+
+    return Object.entries(params).map((param, index) => {
+        return (
+            <span
+                onClick={() =>
+                    copyToClipboard(
+                        param[1],
+                        `${formatParameterName(param[0])} copied!`
+                    )
+                }
+                key={index}
+                className={` cursor-pointer truncate text-xs drop-shadow ${longTruncate ? 'w-fit sm:w-[250px] md:w-[550px]' : 'w-[100px] md:w-[400px]'}`}
+            >
+                {formatParameterName(param[0])} : {param[1]}
+            </span>
+        );
+    });
+};
+
 const TxHashComponent = ({ txHash }: { txHash: string }) => {
+    const { copyToClipboard } = useCopyClipboard();
     const handleOnClickCopy = () => {
-        navigator.clipboard.writeText(txHash);
-        SuccessToast('Transaction Hash Copied!');
+        copyToClipboard(txHash, 'Transaction Hash Copied!');
     };
     return (
         <>
