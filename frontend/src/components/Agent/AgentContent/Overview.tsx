@@ -3,8 +3,7 @@
 import React from 'react';
 
 import { IAgent } from '@api/agents';
-import { IAgentTriggerHistory } from '@api/triggerHistory';
-import { fetchAllTriggerHistory } from '@api/triggerHistory';
+import { IAgentTriggerHistory, fetchAllTriggerHistory } from '@api/triggerHistory';
 import { useQuery } from '@tanstack/react-query';
 import { hexToBech32 } from '@utils';
 
@@ -38,7 +37,7 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({
     const handleAgentRun = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         openModal('AgentRunnerView', {
-            agentId: agent?.id
+            agentSecretKey: agent?.secret_key
         });
     };
 
