@@ -57,6 +57,9 @@ export abstract class WsRpcServer extends RpcV1Server {
             } catch (err: any) {
                 console.error('New Agent connection error', err)
                 if (validatedConnId) this.disconnect(validatedConnId, err.message)
+                else {
+                    ws.close(1000, err.message)
+                }
             }
         })
     }

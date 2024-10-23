@@ -12,7 +12,7 @@ export async function getAgentIdBySecret(agentSecret: Buffer): Promise<string | 
             },
         })
         .then((agents: any) => {
-            return agents.id
+            return agents ? agents.id : null
         })
         .catch((error: any) => {
             console.error('checkIfAgentExistsInDB: Unknown error', error)
