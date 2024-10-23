@@ -102,7 +102,11 @@ class AgentService:
                     **agent.dict(),
                     total_functions=len(agent.triggers),
                     is_active=is_online,
-                    template_name=agent.template.name if agent.template else "",
+                    template_name=(
+                        agent.template.name
+                        if (agent.template is not None and agent.template.deleted_at is None)
+                        else ""
+                    ),
                     no_of_successfull_triggers=successful_triggers,
                 )
             )
