@@ -25,7 +25,7 @@ const getDrepList= async(req:Request,res:Response )=>{
     return res.status(400).json({message:'Provide a valid Drep ID'})
   }
   const { items,totalCount }  = await fetchDrepList(page,size,dRepId,status,sort)
-  return res.status(200).json({totalCount:Math.round(totalCount/size),page,size,items})
+  return res.status(200).json({total:totalCount,page,size,items})
 }
 
 router.get('/:id', handlerWrapper(getDrepDetails));
