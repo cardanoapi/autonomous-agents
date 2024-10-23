@@ -49,6 +49,7 @@ const TemplateOverview = ({
             queryClient.refetchQueries({ queryKey: [`template${template.id}`] });
             setDialogOpen(false);
             SuccessToast('Template Updated Successfully');
+            setIsEditing(false);
         },
         onError: () => {
             ErrorToast('Template Update Failed. Please try again.');
@@ -154,8 +155,6 @@ const TemplateOverview = ({
 
     const handleSaveTemplate = () => {
         if (validateData()) {
-            console.log(templateDataCopy);
-            setIsEditing(false);
             templateUpdateMutation.mutate(templateDataCopy);
         }
     };

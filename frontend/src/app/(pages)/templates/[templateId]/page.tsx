@@ -16,6 +16,7 @@ import {
     BreadcrumbList,
     BreadcrumbSeparator
 } from '@app/components/atoms/Breadcrumb';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { templateAtom } from '@app/store/atoms/template';
 import { adminAccessAtom } from '@app/store/localStore';
 import { Truncate } from '@app/utils/common/extra';
@@ -27,7 +28,7 @@ const EditTemplateCard = () => {
     const params = useParams();
     const templateId = params.templateId as string;
 
-    const { data: template } = useQuery<ITemplate>({
+    const { data: template, isLoading: templateLoading } = useQuery<ITemplate>({
         queryKey: [`template${templateId}`],
         queryFn: () => fetchTemplatebyID(templateId || '')
     });
@@ -42,6 +43,7 @@ const EditTemplateCard = () => {
         <div className="mt-12 flex h-full w-full flex-col gap-6">
             <TemplateBreadCrumb templateName={template?.name} />
             <div className="relative h-full max-w-agentComponentWidth flex-1 rounded-lg bg-white p-8">
+                {templateLoading && <Skeleton className=" h-[550px] w-full" />}
                 {template && (
                     <TemplateOverview template={template} enableEdit={adminAccess} />
                 )}
