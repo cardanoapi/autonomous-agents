@@ -78,7 +78,7 @@ class TemplateTriggerRepository:
     ) -> Optional[TemplateTriggerResponse]:
         template_trigger = await self.db.prisma.template_trigger.find_first(where={"id": template_trigger_id})
         if template_trigger is None or template_trigger.deleted_at is not None:
-            raise HTTPException(status_code=404, content="Template not found")
+            raise HTTPException(status_code=404, content="Template trigger not found")
         updated_data_dict = template_trigger_data.dict()
 
         # validation for CRON nad TOPIC
