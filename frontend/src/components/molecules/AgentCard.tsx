@@ -133,12 +133,14 @@ export default function AgentCard({
                 />
 
                 <CardContent className="flex flex-col gap-y-2">
-                    <span className="flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-center">
-                        Template:{' '}
-                        <div className="gray-background ml-1 overflow-hidden text-ellipsis whitespace-nowrap text-xs">
-                            {templateName ? templateName : 'Template missing'}
-                        </div>
-                    </span>
+                    {templateName && (
+                        <span className="flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-center">
+                            Template:{' '}
+                            <div className="gray-background ml-1 overflow-hidden text-ellipsis whitespace-nowrap text-xs">
+                                {templateName}
+                            </div>
+                        </span>
+                    )}
 
                     {renderAgentDetails(agentDetails)}
 
