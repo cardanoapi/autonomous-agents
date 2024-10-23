@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
-import { ITemplate, deleteTemplatebyID } from '@api/templates';
-import { ITemplateConfiguration } from '@api/templates';
+import { ITemplate, ITemplateConfiguration, deleteTemplatebyID } from '@api/templates';
 import { useMutation } from '@tanstack/react-query';
 import { Trash2 } from 'lucide-react';
 
@@ -12,7 +11,6 @@ import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { Card, CardContent, CardDescription } from '../atoms/Card';
 import { Dialog, DialogContent } from '../atoms/Dialog';
-import TemplateIcon from '../icons/TemplatesIcon';
 import { Skeleton } from '../shadcn/ui/skeleton';
 import ConfirmationBox from './ConfirmationBox';
 import { SuccessToast } from './CustomToasts';
@@ -51,7 +49,7 @@ export default function TemplateCard({
             <TemplateCardContent
                 template={template}
                 enableDelete={enableDelete}
-                onEdit={() => router.push(`/templates/${template.id}/edit`)}
+                onEdit={() => router.push(`/templates/${template.id}`)}
                 onDelete={() => setDialogOpen(true)}
                 templateTriggerNames={returnTriggersList(
                     template.template_configurations || []
@@ -75,9 +73,10 @@ function TemplateCardContent({
 }: any) {
     const TriggersDiv = () => {
         return (
-            <div className="flex items-center gap-1">
-                <div className="text-xs">Triggers :</div>
+            <div className="card-h4 flex items-center gap-3">
+                <div className="text-xs">Triggers</div>
                 <div className="flex gap-1">
+                    :
                     {templateTriggerNames.map((templateName: string) => (
                         <span
                             key={templateName}
@@ -93,7 +92,7 @@ function TemplateCardContent({
 
     return (
         <Card
-            className="hover-transition-primary group relative flex min-h-[157px] min-w-[271px] flex-col justify-between gap-y-0 p-4 pb-6 pr-4 hover:cursor-pointer"
+            className="hover-transition-primary group relative flex h-[137px] min-w-[280px] flex-col justify-between gap-y-2 px-4 py-3 hover:cursor-pointer"
             onClick={onEdit}
         >
             <div>
@@ -103,33 +102,33 @@ function TemplateCardContent({
                     onEdit={onEdit}
                     onDelete={onDelete}
                 />
-                <CardDescription className="card-description1 mt-2 overflow-hidden text-xs">
+                <CardDescription className="card-description1 mt-1 overflow-hidden text-xs">
                     {Truncate(template.description, 60)}
                 </CardDescription>
+                <CardContent className="mt-3 flex flex-col gap-y-0">
+                    <span className="card-h4">
+                        Functions : {template?.template_configurations?.length || 0}
+                    </span>
+                    <TriggersDiv />
+                </CardContent>
             </div>
-            <CardContent className="mt-2 flex flex-col gap-y-1">
-                <span className="card-h4">
-                    Functions : {template?.template_configurations?.length || 0}
-                </span>
-                <TriggersDiv />
-            </CardContent>
         </Card>
     );
 }
 
 function TemplateCardHeader({ templateName, enableDelete, onDelete }: any) {
     const iconClass =
-        'absolute top-0 right-0 hidden hover:cursor-pointer group-hover:flex z-20 bg-white';
+        'absolute -top-1 h-5 w-5 -right-1 hidden hover:cursor-pointer group-hover:flex z-20 bg-white';
 
     return (
-        <div className="relative z-10 flex justify-between">
+        <div className="relative z-10 flex justify-between gap-4">
             <div className="flex items-center gap-x-2 overflow-hidden">
-                <TemplateIcon fill="#1C63E7" />
-                <span className="inline-flex !overflow-hidden text-ellipsis whitespace-nowrap text-base font-medium">
+                {/*<TemplateIcon fill="#1C63E7" />*/}
+                <span className="inline-flex !overflow-hidden text-ellipsis whitespace-nowrap text-base font-normal">
                     {templateName}
                 </span>
             </div>
-            <div className="flex items-center gap-x-2">
+            <div className="flex items-center gap-x-2 ">
                 {enableDelete ? (
                     <div className="flex gap-2">
                         <Trash2

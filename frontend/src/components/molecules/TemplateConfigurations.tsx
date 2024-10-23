@@ -4,34 +4,50 @@ import React, { useState } from 'react';
 
 import { ICronTrigger } from '@api/agents';
 import { ITemplateConfiguration } from '@api/templates';
+import { useAtom } from 'jotai';
 import { Edit, Trash2 } from 'lucide-react';
 
 import UpdateTemplateFunctionModal from '@app/components/molecules/UpdateTemplateFunctionModal';
 import { Dialog, DialogContent } from '@app/components/shadcn/dialog';
+import { templateAtom } from '@app/store/atoms/template';
 
 import { cn } from '../lib/utils';
 
-const TemplateConfigurations = ({
-    templateConfigurations,
-    onDeleteConfig,
-    handleUpdateTemplateConfig,
-    enableEdit = false
-}: {
-    templateConfigurations: Array<ITemplateConfiguration>;
-    onDeleteConfig: (args: string) => void;
-    enableEdit?: boolean;
-    handleUpdateTemplateConfig: (
-        updatedTemplateConfig: ITemplateConfiguration,
-        updatedTemplateConfigIndex: number
-    ) => void;
-}) => {
+const TemplateConfigurations = ({ isEditing }: { isEditing: boolean }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [templateConfigIndex, setTemplateConfigIndex] = useState(0);
-    console.log('sads : ', templateConfigurations);
+    const [template, setTemplate] = useAtom(templateAtom);
+    const onDeleteConfig = (configId: string) => {
+        if (template && template.template_configurations) {
+            const updatedConfigs = template.template_configurations?.filter(
+                (config) => config.id != configId
+            );
+            updatedConfigs &&
+                setTemplate({ ...template, template_configurations: updatedConfigs });
+        }
+    };
+    const handleUpdateTemplateConfig = (
+        updatedTemplateConfig: ITemplateConfiguration,
+        updatedTemplateConfigIndex: number
+    ) => {
+        if (!template?.template_configurations) return;
+        if (updatedTemplateConfigIndex < template.template_configurations.length) {
+            template.template_configurations[updatedTemplateConfigIndex] =
+                updatedTemplateConfig;
+        } else {
+            template.template_configurations.push(updatedTemplateConfig);
+        }
+        setTemplate({
+            ...template
+        });
+    };
+
     return (
-        <div className={'flex flex-row flex-wrap gap-10'}>
-            {templateConfigurations && templateConfigurations.length ? (
-                templateConfigurations?.map((config, index) => {
+        <div className={'flex flex-row flex-wrap gap-3 pb-2'}>
+            {template &&
+            template.template_configurations &&
+            template.template_configurations.length ? (
+                template.template_configurations?.map((config, index) => {
                     return (
                         <div
                             className={
@@ -54,8 +70,8 @@ const TemplateConfigurations = ({
 
                             <div
                                 className={cn(
-                                    'absolute right-2 top-2 flex gap-1',
-                                    enableEdit ? '' : 'hidden'
+                                    'absolute  right-2 top-2 gap-1',
+                                    isEditing ? 'group-hover:flex' : 'hidden'
                                 )}
                             >
                                 <Edit
@@ -68,7 +84,6 @@ const TemplateConfigurations = ({
                                         setTemplateConfigIndex(index);
                                     }}
                                 />
-
                                 <Trash2
                                     color="#A1A1A1"
                                     onClick={() => {
@@ -93,7 +108,7 @@ const TemplateConfigurations = ({
                     <UpdateTemplateFunctionModal
                         header={'Update Template Configurations'}
                         templateConfigIndex={templateConfigIndex}
-                        templateConfigs={templateConfigurations}
+                        templateConfigs={template?.template_configurations}
                         onClickSave={(
                             updatedTemplateConfig,
                             updatedTemplateConfigIndex
