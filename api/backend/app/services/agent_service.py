@@ -32,7 +32,7 @@ from backend.config.api_settings import api_settings
 def check_if_agent_is_online(last_active: datetime | None) -> bool:
     if last_active is None:
         return False
-    threshold_time = timedelta(seconds=5)
+    threshold_time = timedelta(seconds=12)
     time_diff = datetime.now(UTC) - last_active
     if time_diff <= threshold_time:
         return True
