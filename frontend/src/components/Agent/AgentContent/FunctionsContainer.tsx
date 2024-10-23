@@ -2,13 +2,12 @@
 
 import React, { useState } from 'react';
 
-import { IAgentConfiguration, ICronTrigger } from '@api/agents';
+import { IAgentConfiguration } from '@api/agents';
 import { IAgent } from '@api/agents';
 import { updateTrigger } from '@api/trigger';
-import { TemplateFunctions } from '@models/types/functions';
 import { Dialog, DialogContent } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
-import { Edit, OctagonAlert, Trash2 } from 'lucide-react';
+import { OctagonAlert } from 'lucide-react';
 
 import { FunctionForm } from '@app/app/(pages)/templates/create-template/components/FunctionForm';
 import {
@@ -80,12 +79,13 @@ const AgentFunctionsDetailComponent = ({
                         className="absolute h-full w-full border-0"
                     />
                 ) : (
-                    agentConfigurations.map((config) => (
+                    agentConfigurations.map((config, index) => (
                         <FunctionCardWithMeta
                             config={config}
                             onClickDelete={onClickDelete}
                             enableContol={enableContol}
                             handleClickEdit={handleClickEdit}
+                            key={index}
                         />
                     ))
                 )}
