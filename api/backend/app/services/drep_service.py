@@ -104,13 +104,12 @@ class DrepService:
                                 if agent:
                                     drep["agentId"] = agent.id
                                     drep["agentName"] = agent.name
-
             return {
                 "items": response_json["items"],
-                "total": response_json["totalCount"],
+                "total": response_json["total"],
                 "page": max(response_json["page"], 1),
                 "size": response_json["size"],
-                "pages": max(int(response_json["totalCount"]) // int(response_json["size"]), 1),
+                "pages": max(int(response_json["total"]) // int(response_json["size"]), 1),
             }
 
     async def fetch_metadata_for_drep(self, metadata_hash: str, url: str, drep: Any):
