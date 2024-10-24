@@ -25,6 +25,15 @@ interface DRepCardProps {
     dRep: IDRepInternal;
 }
 
+export const getDrepGivedName = (drep: IDRepInternal) => {
+    if (!drep.givenName) {
+        return '';
+    } else if (typeof drep.givenName === 'string') {
+        return drep.givenName;
+    } else {
+        return drep.givenName['@value'] || '';
+    }
+};
 const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
     const { isOpen, toggleDialog } = useAppDialog();
 
@@ -71,14 +80,15 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
             >
                 <div className="flex space-x-4 sm:space-x-6  xl:space-x-12 2xl:space-x-10 4xl:space-x-20">
                     <div className="flex flex-col space-y-2">
-                        <div className="flex gap-2">
-                            {dRep.givenName && (
-                                <TypographyH2 className={`font-semibold`}>
-                                    {dRep.givenName}
+                        <div className={cn('flex')}>
+                            {getDrepGivedName(dRep) !== '' && (
+                                <TypographyH2 className={`mr-2 font-semibold`}>
+                                    {getDrepGivedName(dRep)}
                                 </TypographyH2>
                             )}
                             <Badge variant={getBadgeVariant(dRep.status)}>
                                 {dRep.status}
+                                {/* {dRep.givenName?.value} */}
                             </Badge>
                         </div>
                         <div className="flex items-center text-brand-navy">

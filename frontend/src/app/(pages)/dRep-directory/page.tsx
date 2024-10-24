@@ -84,6 +84,10 @@ export default function DRepDirectory() {
         isFirstFetch && setIsFirstFetch(false);
     }, [data]);
 
+    useEffect(() => {
+        console.log(data);
+    }, [data]);
+
     return (
         <div className="!mt-4 flex h-defaultPageHeightwithoutTopNav flex-col space-y-12">
             <div className="flex items-center justify-between">
@@ -129,8 +133,9 @@ export default function DRepDirectory() {
             <ScrollArea className="h-drepListHeight pb-4 pr-4">
                 <div className="flex flex-col space-y-4">
                     {!isLoading &&
-                        data?.items?.map((dRep) => (
-                            <DRepCard key={dRep.drepId} dRep={dRep} />
+                        data &&
+                        data?.items?.map((dRep, index) => (
+                            <DRepCard key={index} dRep={dRep} />
                         ))}
                     {isLoading &&
                         Array.from({ length: 10 }).map((_, i) => (
