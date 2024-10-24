@@ -32,7 +32,6 @@ import { ErrorToast } from '@app/components/molecules/CustomToasts';
 import { templateCreatedAtom } from '@app/store/localStore';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
-import { templateFormSchema } from './components/Form/TriggerForm';
 import { FunctionCards } from './components/FunctionCards';
 import { FunctionForm } from './components/FunctionForm';
 import { mapFormFunctionToTriggerConfiguration } from './components/utils/FunctionMapper';

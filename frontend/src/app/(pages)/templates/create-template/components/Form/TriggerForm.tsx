@@ -52,7 +52,7 @@ export default function TriggerForm({
         previousConfiguredSettings || ''
     );
     const [probability, setProbability] = useState<string>('100');
-    const [triggerType, setTriggerType] = useState('CRON');
+    const [triggerType ] = useState('CRON');
     const [selectedTab, setSelectedTab] = useState('CRON');
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
