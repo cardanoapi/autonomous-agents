@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { useParams } from 'next/navigation';
 
@@ -74,11 +74,11 @@ const UpdateAgentFunctionModal = ({
             parameters: []
         });
 
-    useEffect(() => {
-        if (agentConfig && agentConfig.action) {
-            setLocalAgentActionConfigurations(agentConfig.action);
-        }
-    }, [agentConfig]);
+    // useEffect(() => {
+    //     if (agentConfig && agentConfig.action) {
+    //         setLocalAgentActionConfigurations(agentConfig.action);
+    //     }
+    // }, [agentConfig]);
 
     const [probability, setProbability] = useState<string>(
         defaultProbabilityStringValue

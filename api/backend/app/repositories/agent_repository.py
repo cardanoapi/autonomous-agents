@@ -1,3 +1,4 @@
+import base64
 import binascii
 import hashlib
 import json
@@ -7,7 +8,6 @@ from datetime import datetime, timezone, timedelta, UTC
 from typing import List, Optional
 
 import pycardano
-from backend.app.exceptions.http import HTTPException
 from pycardano import (
     HDWallet,
     PaymentSigningKey,
@@ -17,7 +17,10 @@ from pycardano import (
 )
 from pycardano.crypto.bech32 import bech32_encode, convertbits, Encoding
 
+from backend.app.exceptions.http import HTTPException
 from backend.app.models import AgentResponse, AgentCreateDTO, AgentKeyResponse, AgentUpdateDTO
+from backend.app.models.user.user_dto import User
+from backend.app.utils.generator import generate_random_base64
 from backend.config.database import prisma_connection
 
 
@@ -32,6 +35,7 @@ class AgentRepository:
         agent_data_dict["id"] = agent_id
         agent_data_dict["created_at"] = datetime.now(timezone.utc)
         agent_data_dict["updated_at"] = datetime.now(timezone.utc)
+        agent_data_dict["secret_key"] = generate_random_base64(32)
         agent = await self.db.prisma.agent.create(data=agent_data_dict)
         agent_response = AgentResponse(
             id=agent_id,
@@ -53,12 +57,23 @@ class AgentRepository:
         agents = await self.db.prisma.agent.find_many(where=filters, skip=skip, take=size)
         return agents
 
-    async def retrieve_agent(self, agent_id: str) -> Optional[AgentResponse]:
-        agent = await self.db.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})
+    async def retrieve_all_agents(self) -> List[AgentResponse]:
+        return await self.db.prisma.agent.find_many(where={"deleted_at": None})
 
+    async def retrieve_agent(
+        self, agent_id: str, user: User | None = None, user_address: str | None = None
+    ) -> Optional[AgentResponse]:
+        agent = await self.db.prisma.agent.find_first(where={"id": agent_id, "deleted_at": None})
+        display_secret_key = False
+        if user:
+            display_secret_key = user.isSuperUser or user.address == agent.userAddress
+        if user_address:
+            display_secret_key = user_address == agent.userAddress
         if agent is None:
             return None
         else:
+            successful_triggers = await self.get_agent_successful_triggers_count(agent_id=agent.id)
+
             agent_response = AgentResponse(
                 id=agent.id,
                 name=agent.name,
@@ -67,6 +82,9 @@ class AgentRepository:
                 index=agent.index,
                 last_active=agent.last_active,
                 userAddress=agent.userAddress,
+                is_drep_registered=agent.is_drep_registered,
+                no_of_successfull_triggers=successful_triggers,
+                secret_key=str(agent.secret_key) if display_secret_key else None,
             )
             return agent_response
 
@@ -80,6 +98,7 @@ class AgentRepository:
             "updated_at": datetime.now(timezone.utc),
         }
         updated_agent = await self.db.prisma.agent.update(where={"id": agent_id}, data=updated_data)
+        updated_agent.secret_key = str(updated_agent.secret_key)
         return updated_agent
 
     async def get_online_agents_count(self):
@@ -119,16 +138,6 @@ class AgentRepository:
         hd_wallet = HDWallet.from_mnemonic(mnemonic)
 
         derived_wallet = hd_wallet.derive(agent_index, hardened=True)
-        agent_private_key = derived_wallet.xprivate_key
-        agent_public_key = derived_wallet.public_key
-        agent_chain_code = derived_wallet.chain_code
-
-        # Derive the agent's child private key based on the agent_id
-
-        # agentPath = f"m/{agent_index}'"
-        # agent_key = masterKey.derive_from_path(agentPath)
-        #
-        # Generate the address using the derived agent key
         paymentPath = "m/1852'/1815'/0'/0/0"
         stakingPath = "m/1852'/1815'/0'/2/0"
 
@@ -149,18 +158,6 @@ class AgentRepository:
             staking_part=stakeVerificationKey.hash(),
             network=pycardano.Network.TESTNET,
         )
-        # spk = stakeVerificationKey.to_cbor_hex()
-        # stake_verification_key_bytes = bytes.fromhex(spk[4:])
-        #
-        # # Convert the bytes to a 5-bit array
-        # witprog = convertbits(stake_verification_key_bytes, 8, 5)
-        # if witprog is None:
-        #     raise ValueError("Failed to convert bits")
-        #
-        # drep_key = bech32_encode("drep", witprog, Encoding.BECH32)
-        # print(drep_key)
-
-        # Create and return the AgentResponse with the agent's key and address
         agent_response = AgentKeyResponse(
             payment_signing_key=str(paymentSigningKey.to_cbor_hex()),
             stake_signing_key=str(stakeSigningKey.to_cbor_hex()),
@@ -210,5 +207,10 @@ class AgentRepository:
                 index=agent.index,
                 last_active=agent.last_active,
                 userAddress=agent.userAddress,
+                secret_key=str(agent.secret_key),
             )
             return agent_response
+
+    async def get_agent_successful_triggers_count(self, agent_id: str) -> int:
+        count = await self.db.prisma.triggerhistory.count(where={"agentId": agent_id, "status": True, "success": True})
+        return count

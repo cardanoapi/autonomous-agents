@@ -20,6 +20,11 @@ export interface IFunctionsItem {
     name: string;
     description: string;
     parameters?: IParameter[];
+    // For functions which have event type available
+    canBeEvent?: boolean;
+    eventParameters?: IParameter[];
+    eventDescription?: string;
+    eventName?: string;
 }
 
 export interface IParameter {
@@ -55,7 +60,29 @@ export const AvailableFunctions: IFunctionsDto[] = [
                 id: 'dRepRegistration',
                 name: 'DRep registration',
                 description:
-                    'This will register you as Decentralized Representative (DRep) on the Cardano network.'
+                    'This will register you as Decentralized Representative (DRep) on the Cardano network.',
+                parameters: [
+                    {
+                        id: 'anchor',
+                        type: 'object',
+                        optional: true,
+                        name: 'Anchor',
+                        parameters: [
+                            {
+                                id: 'url',
+                                name: 'Url',
+                                optional: false,
+                                type: 'url'
+                            },
+                            {
+                                id: 'dataHash',
+                                name: 'Data Hash',
+                                optional: true,
+                                type: 'hash'
+                            }
+                        ]
+                    }
+                ]
             },
             {
                 id: 'dRepDeRegistration',
@@ -156,7 +183,12 @@ export const AvailableFunctions: IFunctionsDto[] = [
                             }
                         ]
                     }
-                ]
+                ],
+                canBeEvent: true,
+                eventName: 'VoteEvent',
+                eventParameters: [],
+                eventDescription:
+                    'This Vote event will be triggered when any new Proposal is created on the network. The Agent will vote "No" on the proposal. (No parameters required)'
             }
         ]
     },
@@ -241,7 +273,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
             },
             {
                 id: 'createInfoGovAction',
-                name: 'Info',
+                name: 'Info Action Proposal',
                 parameters: [
                     {
                         id: 'anchor',
@@ -430,4 +462,12 @@ export const AvailableFunctions: IFunctionsDto[] = [
             }
         ]
     }
+];
+
+export const TemplateFunctions: IFunctionsItem[] = [
+    AvailableFunctions[2].items[0], // Transfer ADA
+    AvailableFunctions[0].items[4], // Delegation (Stake Delegation)
+    AvailableFunctions[1].items[0], // Vote (Vote On Proposal)
+    AvailableFunctions[3].items[0], // Proposal New Constitution
+    AvailableFunctions[3].items[1] // Info Action Proposal
 ];

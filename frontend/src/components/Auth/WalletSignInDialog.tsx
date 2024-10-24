@@ -82,7 +82,8 @@ export default function WalletSignInDialog({
                 setCurrentConnectedWallet({
                     api: enabledWalletApi,
                     provider: wallet.name,
-                    address: stakeAddress,
+                    /* Store address without netowrk prefix */
+                    address: stakeAddress.slice(2, stakeAddress.length),
                     icon: wallet.icon
                 });
 

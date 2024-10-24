@@ -1,70 +1,54 @@
 import { useState } from 'react';
+import React from 'react';
 
 import { useRouter } from 'next/navigation';
 
-import { fecthTriggerHistoryMetric } from '@api/triggerHistoryMetric';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { deleteAgentbyID } from '@api/agents';
+import { useMutation } from '@tanstack/react-query';
 import { formatDatetoHumanReadable } from '@utils';
 import { PlayIcon, Trash2 } from 'lucide-react';
 
-import { deleteAgentbyID } from '@app/app/api/agents';
-import { ITemplate, fetchTemplatebyID } from '@app/app/api/templates';
-import {
-    ITransactionsCount,
-    fetchTransactionsCountByAgentID
-} from '@app/app/api/trigger';
-import AgentAvatar from '@app/components/Agent/AgentAvatar';
-import { convertDictToGraphDataFormat } from '@app/components/Chart/ChartFilter';
+import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import { cn } from '@app/components/lib/utils';
 import { Truncate } from '@app/utils/common/extra';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
-import CustomLineChart from '../Chart/CustomLineChart';
 import { useModal } from '../Modals/context';
 import { Card, CardContent } from '../atoms/Card';
 import { Dialog, DialogContent } from '../atoms/Dialog';
 import { Skeleton } from '../shadcn/ui/skeleton';
 import ConfirmationBox from './ConfirmationBox';
 import { ErrorToast, SuccessToast } from './CustomToasts';
-import TransactionPieChart from './TransactionPieChart';
 
 export interface IAgentCard {
     agentName: string;
     agentID?: string;
-    templateID?: string;
+    templateName?: string;
     functionCount: number;
     lastActive: string | number;
     totalTrigger: number;
     enableEdit?: boolean;
     enableDelete?: boolean;
+    no_of_successful_triggers?: number;
     isActive?: boolean;
-    showGraphFooter?: boolean;
+    agentSecretKey?: string;
 }
 
 export default function AgentCard({
     agentName,
     agentID,
-    templateID,
+    templateName,
     functionCount,
+    no_of_successful_triggers,
     enableEdit = false,
     enableDelete = false,
     lastActive = '',
     isActive = false,
-    showGraphFooter = false
+    agentSecretKey = ''
 }: IAgentCard) {
     const router = useRouter();
     const { openModal } = useModal();
     const [dialogOpen, setDialogOpen] = useState(false);
-
-    const { data: template } = useQuery<ITemplate>({
-        queryKey: [`template-${templateID}`],
-        queryFn: () => fetchTemplatebyID(templateID || '')
-    });
-
-    const { data: transactions_count } = useQuery<ITransactionsCount>({
-        queryKey: [`Transactions-${agentID}`],
-        queryFn: () => fetchTransactionsCountByAgentID(agentID || '')
-    });
 
     const deleteAgentMutation = useMutation({
         mutationFn: (agentID: string) => deleteAgentbyID(agentID),
@@ -79,20 +63,10 @@ export default function AgentCard({
         }
     });
 
-    const { data: triggerHistoryMetric } = useQuery({
-        queryKey: [`${agentID}TriggerHistoryMetric`],
-        queryFn: () => fecthTriggerHistoryMetric([], agentID)
-    });
-
-    /*const { data: currentAgent } = useQuery({
-        queryKey: [`currentAgent/${agentID}`],
-        queryFn: () => fetchAgentbyID(agentID || '')
-    });*/
-
     function handleAgentRun(e: any) {
         e.stopPropagation();
         openModal('AgentRunnerView', {
-            agentId: agentID
+            agentSecretKey: agentSecretKey
         });
     }
 
@@ -107,10 +81,6 @@ export default function AgentCard({
     }
 
     const agentDetails: IAgentDetail[] = [
-        /*{
-            placeholder: 'No of Instance',
-            value: currentAgent?.instance || 0
-        }, */
         {
             placeholder: 'Total Functions',
             value: functionCount
@@ -123,14 +93,9 @@ export default function AgentCard({
 
     const agentTriggerDetails: IAgentDetail[] = [
         {
-            placeholder: 'Successfull Triggers',
-            value: transactions_count?.successfulTransactions || 0
+            placeholder: 'Successful Triggers',
+            value: no_of_successful_triggers || 0
         }
-        /*
-        {
-            placeholder: 'Unsuccessfull Triggers',
-            value: transactions_count?.unSuccessfulTransactions || 0
-        }*/
     ];
 
     function renderAgentDetails(agentDetails: IAgentDetail[]) {
@@ -146,9 +111,6 @@ export default function AgentCard({
         );
     }
 
-    const templateStatus = templateID
-        ? { text: template?.name || 'Template Missing' }
-        : { text: 'Template not Used' };
     return (
         <>
             <Card
@@ -171,25 +133,20 @@ export default function AgentCard({
                 />
 
                 <CardContent className="flex flex-col gap-y-2">
-                    <span className="flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-center">
-                        Template:{' '}
-                        <div className="gray-background ml-1 overflow-hidden text-ellipsis whitespace-nowrap text-xs">
-                            {templateStatus.text}
-                        </div>
-                    </span>
+                    {templateName && (
+                        <span className="flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-center">
+                            Template:{' '}
+                            <div className="gray-background ml-1 overflow-hidden text-ellipsis whitespace-nowrap text-xs">
+                                {templateName}
+                            </div>
+                        </span>
+                    )}
 
                     {renderAgentDetails(agentDetails)}
 
-                    {showGraphFooter ? (
-                        <AgentGraphFooter
-                            triggerHistoryMetric={triggerHistoryMetric}
-                            transactions_count={transactions_count}
-                        />
-                    ) : (
-                        <div className="pb-0">
-                            {renderAgentDetails(agentTriggerDetails)}
-                        </div>
-                    )}
+                    <div className="pb-0">
+                        {renderAgentDetails(agentTriggerDetails)}
+                    </div>
                 </CardContent>
             </Card>
             <DeleteAgentDialog
@@ -293,52 +250,6 @@ const DeleteAgentDialog = ({
                 />
             </DialogContent>
         </Dialog>
-    );
-};
-
-const AgentGraphFooter = ({
-    transactions_count,
-    triggerHistoryMetric
-}: {
-    transactions_count?: ITransactionsCount;
-    triggerHistoryMetric: any;
-}) => {
-    return (
-        <div className="flex justify-between">
-            <div className="w-[40%]">
-                <TransactionPieChart
-                    success={parseInt(
-                        transactions_count?.successfulTransactions || '0'
-                    )}
-                    skipped={parseInt(transactions_count?.skippedTransactions || '0')}
-                    failed={parseInt(
-                        transactions_count?.unSuccessfulTransactions || '0'
-                    )}
-                    className="!h-24 !w-24"
-                />
-            </div>
-            <div className="w-full">
-                <CustomLineChart
-                    chartData={convertDictToGraphDataFormat(
-                        triggerHistoryMetric?.last_week_successful_triggers || [],
-                        'Days'
-                    ).toReversed()}
-                    renderLines={false}
-                    renderXaxis={false}
-                    renderYaxis={false}
-                    renderDot={false}
-                    renderToolTip={true}
-                    strokeColor={'#1C63E7'}
-                    strokeWidth="4"
-                    smoothStroke={true}
-                    fillGradiant={true}
-                    className="pl-6"
-                    showOnlyTransaction={true}
-                    positionYToolTip={0}
-                    positionXToolTip={0}
-                />
-            </div>
-        </div>
     );
 };
 

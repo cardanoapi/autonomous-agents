@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { z } from 'zod';
 
-import { IParameter } from '@app/app/api/functions';
+import { IParameter } from '@api/functions';
 import { Button } from '@app/components/atoms/Button';
 import { Card, CardTitle } from '@app/components/atoms/Card';
 import { Input } from '@app/components/atoms/Input';
@@ -130,7 +130,6 @@ export default function TriggerForm({
                 </div>
                 <TriggerTab
                     setSelectedTab={setSelectedTab}
-                    setTriggerType={setTriggerType}
                     onChange={updateCronExpression}
                     defaultCron={cronExpression}
                     previousSelectedOption={defaultSelected}

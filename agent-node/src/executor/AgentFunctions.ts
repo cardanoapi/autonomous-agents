@@ -58,8 +58,6 @@ function loadHandlersSync(directory: string): FunctionGroup {
             }
         }
     })
-    console.log('Discovered Functions  :', Object.keys(handlers))
-    console.log('Discovered builtins  :', Object.keys(builtins))
 
     return {
         functions: handlers,

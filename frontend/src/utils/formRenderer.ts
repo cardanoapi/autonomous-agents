@@ -131,27 +131,34 @@ export function extractAnswerFromList(param: IParameter) {
                   : false;
           })
         : [];
-    if (filteredItems) {
-        return filteredItems
-            .map((item) => {
-                if (item.type === 'object') {
-                    const answerMap = new Map();
-                    item.parameters?.forEach((param) => {
-                        answerMap.set(param.id, param.value);
-                    });
-                    return Object.fromEntries(answerMap);
-                } else {
+    if (filteredItems.length) {
+        if (filteredItems[0].type === 'object') {
+            const answerMap = new Map();
+            filteredItems.forEach((item) => {
+                answerMap.set(
+                    item.parameters![0].value,
+                    item.parameters![1].type === 'number'
+                        ? +item.parameters![1].value
+                        : -item.parameters![1].value
+                );
+            });
+            return Object.fromEntries(answerMap);
+        } else {
+            return filteredItems
+                .map((item) => {
                     return item.parameters?.map((param) => param.value)[0];
-                }
-            })
-            .flat();
+                })
+                .flat();
+        }
     }
-    return filteredItems;
+    return param.items![0].type === 'object' ? {} : [];
 }
 
 export function extractAnswerFromObject(param: IParameter) {
     const paramsMap = new Map();
-    param.parameters?.forEach((param) => paramsMap.set(param.id, param.value));
+    param.parameters?.forEach((param) =>
+        paramsMap.set(param.id, param.type === 'number' ? +param.value : param.value)
+    );
     return Object.fromEntries(paramsMap);
 }
 

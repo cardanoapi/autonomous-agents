@@ -1,4 +1,7 @@
 # PyCharm
+app.log
 .idea/
 .vscode/
 */**/.vscode/
+
+

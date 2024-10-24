@@ -1,4 +1,4 @@
-import getFaucetAdaForAddress, { fetchWalletBalance } from '../utils/fuacet'
+import getFaucetAdaForAddress, { faucetEnabled, fetchWalletBalance } from '../utils/fuacet'
 import { kuber } from './kuber_service'
 import environments from '../config/environments'
 import { TxListener } from './TxListener'
@@ -8,33 +8,46 @@ export class ManagerWalletService {
     beneficiaryQueue: Array<Record<any, any>> = []
     isBusy = false
     txListener: TxListener
+    managerWalletAddress = ''
 
     constructor(txListener: TxListener) {
-        this.fetchManagerWalletBalance()
         this.txListener = txListener
+        this.managerWalletAddress = environments.managerWalletAddress
+        this.fetchManagerWalletBalance()
     }
 
-    fetchManagerWalletBalance() {
-        fetchWalletBalance(environments.managerWalletAddress)
+    async fetchManagerWalletBalance() {
+        if (!this.managerWalletAddress) {
+            this.walletBalance = 0
+            return
+        }
+        fetchWalletBalance(this.managerWalletAddress)
             .then((data) => {
                 this.walletBalance = data ? data : 0
             })
             .catch((err) => {
                 console.error(err)
-                process.exit(1)
+                this.walletBalance = 0
             })
     }
 
-    loadWalletFunds() {
-        getFaucetAdaForAddress(environments.managerWalletAddress)
-            .then(() => {
+    async loadWalletFunds() {
+        getFaucetAdaForAddress(this.managerWalletAddress)
+            .then((data: any) => {
+                console.log('Response for faucet load', data)
                 this.fetchManagerWalletBalance()
             })
             .catch((err) => console.error(err))
     }
 
     async transferWalletFunds(address: string, amount: number) {
+        if (!this.managerWalletAddress || !environments.managerWalletSigningKey) {
+            throw new Error('Faucet is not enabled')
+        }
         if (amount > this.walletBalance) {
+            if (!faucetEnabled) {
+                throw new Error('Insufficient balance on manager wallet')
+            }
             await this.loadWalletFunds()
         }
         if (this.beneficiaryQueue.length && this.isBusy) {

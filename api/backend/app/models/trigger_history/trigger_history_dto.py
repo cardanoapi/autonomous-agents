@@ -1,7 +1,7 @@
-from typing import Optional
+from datetime import datetime
+from typing import Optional, Any
 
 from pydantic import BaseModel
-from datetime import datetime
 
 
 class TriggerHistoryDto(BaseModel):
@@ -14,3 +14,6 @@ class TriggerHistoryDto(BaseModel):
     triggerType: Optional[str]
     txHash: Optional[str]
     instanceIndex: Optional[int]
+    parameters: Optional[Any]
+    result: Optional[Any]
+    internal: Optional[Any]

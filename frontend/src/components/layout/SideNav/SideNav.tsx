@@ -52,13 +52,16 @@ export default function SideNav() {
     const { data: myAgent } = useQuery({
         queryKey: ['myAgent'],
         queryFn: async () => {
-            if (currentConnectedWallet && adminAccess === false) {
-                const agent = await fetchMyAgent();
-                return agent;
+            if (currentConnectedWallet && !adminAccess) {
+                return await fetchMyAgent();
             }
             return null;
         },
-        refetchInterval: 5000
+        enabled: !!currentConnectedWallet && adminAccess === false, // Only enable when conditions are met
+        refetchOnWindowFocus: true,
+        refetchOnMount: true,
+        refetchInterval: 5000,
+        refetchIntervalInBackground: true
     });
 
     const SideNavItems: ISideNavItem[] = [

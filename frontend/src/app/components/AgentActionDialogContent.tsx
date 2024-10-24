@@ -45,7 +45,7 @@ const AgentsActionDialogContent = ({
     const userOwnedAgents = filterUserOwnedAgents(activeAgents);
 
     return (
-        <AppDialogContent title={title} description={description}>
+        <AppDialogContent title={title} description={description} onClose={handleClose}>
             <div className="space-y-2' flex w-full flex-col">
                 {userOwnedAgents.length === 0 ? (
                     <EmptyAgent />

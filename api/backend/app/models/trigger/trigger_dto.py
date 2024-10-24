@@ -1,4 +1,4 @@
-from typing import Union, Optional
+from typing import Union, Optional, Any
 from pydantic import BaseModel, json
 from croniter import croniter
 
@@ -12,7 +12,7 @@ class CronTriggerDTO(BaseModel):
 
 class SubParameter(BaseModel):
     name: str
-    value: Optional[str]
+    value: Any
 
 
 class EventTriggerDTO(BaseModel):

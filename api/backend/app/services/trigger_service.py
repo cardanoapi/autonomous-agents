@@ -1,11 +1,14 @@
 import asyncio
+import base64
 from typing import List
+
 from backend.app.models.trigger.resposne_dto import TriggerResponse
 from backend.app.models.trigger.trigger_dto import (
     TriggerCreateDTO,
 )
-from backend.app.services.kafka_service import KafkaService
 from backend.app.repositories.trigger_repository import TriggerRepository
+from backend.app.services.kafka_service import KafkaService
+from backend.config.api_settings import api_settings
 
 
 class TriggerService:
@@ -25,6 +28,9 @@ class TriggerService:
 
     async def list_triggers_by_agent_id(self, agent_id: str) -> List[TriggerResponse]:
         return await self.trigger_repository.retreive_triggers_by_agent_id(agent_id)
+
+    async def count_triggers_by_agent_id(self, agent_id: str) -> int:
+        return await self.trigger_repository.count_triggers_by_agent_id(agent_id)
 
     async def delete_by_id(self, trigger_id: str) -> bool:
         return await self.trigger_repository.remove_trigger_by_trigger_id(trigger_id)
@@ -48,9 +54,10 @@ class TriggerService:
         configs_to_delete = [
             config_id for config_id in agent_existing_configuration_ids if config_id not in updating_configuration_ids
         ]
-        updated_configs = await self.update_agent_multiple_configs(agent_configurations)
-        await self.delete_agent_multiple_configs(configs_to_delete)
-        return updated_configs
+        async with asyncio.TaskGroup() as tg:
+            updated_configs = tg.create_task(self.update_agent_multiple_configs(agent_configurations))
+            tg.create_task(self.delete_agent_multiple_configs(configs_to_delete))
+        return updated_configs.result()
 
     async def update_agent_multiple_configs(self, agent_configurations: List[TriggerResponse]):
         updated_configs = []
@@ -65,8 +72,11 @@ class TriggerService:
         return updated_configs
 
     async def delete_agent_multiple_configs(self, config_ids: List[str]):
-        for config_id in config_ids:
-            await self.trigger_repository.remove_trigger_by_trigger_id(config_id)
+        async with asyncio.TaskGroup() as tg:
+            for config_id in config_ids:
+                tg.create_task(self.trigger_repository.remove_trigger_by_trigger_id(config_id))
 
     async def publish_trigger_event(self, agent_id: str):
-        await self.kafka_service.publish_message("trigger_config_updates", "config_updated", key=agent_id)
+        await self.kafka_service.publish_message(
+            api_settings.getKafkaTopicPrefix() + "-updates", "config_updated", key=agent_id
+        )

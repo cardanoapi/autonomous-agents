@@ -27,7 +27,12 @@ class AuthRouter(Routable):
 
             # Extract Signed Address and Creates a user using the address , if user with address already exists ,returns the user.
             signed_address = extract_signed_address_from_signature_header(hex_signature=signed_data.signature)
-            user = await self.user_service.create_user(UserCreateDto(address=signed_address, isSuperUser=False))
+
+            signed_address_without_network_prefix = signed_address[2:]
+
+            user = await self.user_service.create_user(
+                UserCreateDto(address=signed_address_without_network_prefix, isSuperUser=False)
+            )
 
             # Generate JWT Token using user Address
             token = generate_jwt_token_using_user_address(user.address)

@@ -1,11 +1,19 @@
 import { IDRepInternal } from '@models/types';
-import { convertLovelaceToAda } from '@utils';
+import { convertLovelaceToAda, hexToBech32 } from '@utils';
 import { CopyIcon, ExternalLink } from 'lucide-react';
 
 import { AppDialogContent } from '@app/app/components/AppDialog';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 
-export default function DrepDetailDialogContent({ dRep }: { dRep: IDRepInternal }) {
+import { getDrepGivedName } from './DRepCard';
+
+export default function DrepDetailDialogContent({
+    dRep,
+    onClose
+}: {
+    dRep: IDRepInternal;
+    onClose?: (value: boolean) => void;
+}) {
     const formattedVotingPower = convertLovelaceToAda(dRep.votingPower).toLocaleString(
         'en-US'
     );
@@ -18,10 +26,10 @@ export default function DrepDetailDialogContent({ dRep }: { dRep: IDRepInternal 
     };
 
     return (
-        <AppDialogContent className=" pt-0">
+        <AppDialogContent className=" pt-0" onClose={onClose}>
             <div className="mb-4 flex items-center gap-2">
                 <span className="text-lg font-semibold">
-                    {dRep.givenName || 'Data Missing'}
+                    {getDrepGivedName(dRep) || 'Data Missing'}
                 </span>
                 <ExternalLink
                     className="cursor-pointer text-blue-600"
@@ -31,7 +39,7 @@ export default function DrepDetailDialogContent({ dRep }: { dRep: IDRepInternal 
             <div className="space-y-4 rounded-lg border border-gray-200 p-4 shadow-sm md:w-[520px]">
                 <div className="flex items-start justify-between">
                     <p className="max-w-xs truncate text-sm font-semibold text-gray-700">
-                        Drep ID: {dRep.drepId}
+                        Drep ID: {hexToBech32(dRep.drepId)}
                     </p>
                     <div className="flex gap-2">
                         {dRep.agentId && dRep.agentName && (

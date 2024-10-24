@@ -625,3 +625,5 @@ cypress/videos/
 
 
 *storybook.log
+
+next-env.d.ts

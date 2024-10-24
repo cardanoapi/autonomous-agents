@@ -17,7 +17,9 @@ const TemplatesTopNav = ({
     return (
         <div className="flex justify-between">
             <div className="flex items-center justify-center gap-x-4">
-                <span className="h1-new">Templates({templatesCount})</span>
+                <span className="text-lg  font-medium">
+                    Templates({templatesCount})
+                </span>
                 <DataActionBar
                     className="h-10 min-w-[420px]"
                     placeholder="Search Template Name "

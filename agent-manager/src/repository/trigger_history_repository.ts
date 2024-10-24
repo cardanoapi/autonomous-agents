@@ -14,7 +14,10 @@ export async function saveTriggerHistory(
     message: string,
     triggerType: TriggerType,
     txHash?: string,
-    instanceIndex: number = 0
+    instanceIndex: number = 0,
+    parameters?: string,
+    internal?: string,
+    result?: string
 ): Promise<void> {
     try {
         const triggerHistory: any = {}
@@ -27,6 +30,9 @@ export async function saveTriggerHistory(
         triggerHistory['timestamp'] = DateTime.utc().toISO()
         triggerHistory['triggerType'] = triggerType
         triggerHistory['instanceIndex'] = instanceIndex
+        triggerHistory['parameters'] = parameters
+        triggerHistory['internal'] = internal
+        triggerHistory['result'] = result
         if (txHash) {
             triggerHistory['txHash'] = txHash
         }
@@ -34,6 +40,21 @@ export async function saveTriggerHistory(
             data: triggerHistory,
         })
     } catch (error) {
-        console.log(`Error : ${error}`)
+        console.log('TriggerHistoryError', error)
+        throw error
+    }
+}
+
+export async function updateAgentDrepRegistration(agentId: string, drepRegistered: boolean) {
+    try {
+        await prisma.agent.update({
+            where: { id: agentId },
+            data: {
+                is_drep_registered: drepRegistered,
+            },
+        })
+    } catch (err) {
+        console.log('AgentUpdateError', err)
+        throw err
     }
 }

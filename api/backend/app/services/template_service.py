@@ -68,6 +68,9 @@ class TemplateService:
         self.raise_exception_if_template_not_found(template)
         return TemplateResponseWithConfigurations(**template.dict(), template_configurations=template_configurations)
 
+    async def get_template_by_id(self, template_id: str) -> TemplateResponse:
+        return await self.template_repository.retrieve_template(template_id)
+
     async def update_template(
         self, template_id: str, template_data: TemplateEditDto, userAddress: str
     ) -> TemplateResponseWithConfigurations:

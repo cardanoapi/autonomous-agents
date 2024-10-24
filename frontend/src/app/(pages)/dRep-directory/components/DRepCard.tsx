@@ -7,12 +7,12 @@ import { useRouter } from 'next/navigation';
 import { useAppDialog } from '@hooks';
 import { DRepStatus, IDRepInternal } from '@models/types';
 import { TypographyH2 } from '@typography';
-import { convertLovelaceToAda } from '@utils';
+import { convertLovelaceToAda, hexToBech32 } from '@utils';
 import { CopyIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import AppDialog from '@app/app/components/AppDialog';
-import AgentAvatar from '@app/components/Agent/AgentAvatar';
+import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import { Badge } from '@app/components/atoms/Badge';
 import { Button } from '@app/components/atoms/Button';
 import { cn } from '@app/components/lib/utils';
@@ -25,6 +25,15 @@ interface DRepCardProps {
     dRep: IDRepInternal;
 }
 
+export const getDrepGivedName = (drep: IDRepInternal) => {
+    if (!drep.givenName) {
+        return '';
+    } else if (typeof drep.givenName === 'string') {
+        return drep.givenName;
+    } else {
+        return drep.givenName['@value'] || '';
+    }
+};
 const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
     const { isOpen, toggleDialog } = useAppDialog();
 
@@ -37,7 +46,7 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
     }, [dRep.votingPower]);
 
     const handleCopyDRepId = () => {
-        navigator.clipboard.writeText(dRep.drepId);
+        navigator.clipboard.writeText(hexToBech32(dRep.drepId));
         toast.success('Drep ID copied');
     };
 
@@ -71,17 +80,20 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
             >
                 <div className="flex space-x-4 sm:space-x-6  xl:space-x-12 2xl:space-x-10 4xl:space-x-20">
                     <div className="flex flex-col space-y-2">
-                        <div className="flex gap-2">
-                            <TypographyH2 className={`font-semibold ${isDataMissing}`}>
-                                {isDataMissing ? 'Data Missing' : dRep.givenName}
-                            </TypographyH2>
+                        <div className={cn('flex')}>
+                            {getDrepGivedName(dRep) !== '' && (
+                                <TypographyH2 className={`mr-2 font-semibold`}>
+                                    {getDrepGivedName(dRep)}
+                                </TypographyH2>
+                            )}
                             <Badge variant={getBadgeVariant(dRep.status)}>
                                 {dRep.status}
+                                {/* {dRep.givenName?.value} */}
                             </Badge>
                         </div>
                         <div className="flex items-center text-brand-navy">
                             <p className="w-52 truncate text-sm font-medium 2xl:w-48 4xl:w-80">
-                                DrepID : {dRep.drepId}
+                                DrepID : {hexToBech32(dRep.drepId)}
                             </p>
                             <CopyIcon
                                 onClick={handleCopyDRepId}
@@ -136,7 +148,7 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
             </AppDialog>
 
             <AppDialog isOpen={isDrepDetailsOpen} toggleDialog={toggleDrepDetailDialog}>
-                <DrepDetailDialogContent dRep={dRep} />
+                <DrepDetailDialogContent dRep={dRep} onClose={toggleDrepDetailDialog} />
             </AppDialog>
         </>
     );

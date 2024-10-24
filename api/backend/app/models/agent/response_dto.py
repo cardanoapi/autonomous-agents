@@ -1,7 +1,7 @@
 from datetime import datetime
+from typing import List, Optional
 
 from pydantic import BaseModel
-from typing import List, Optional
 
 from backend.app.models import TriggerResponse
 
@@ -16,19 +16,30 @@ class AgentResponse(BaseModel):
     userAddress: Optional[str]
     total_functions: Optional[int]
     is_active: Optional[bool]
+    template_name: Optional[str]
+    is_drep_registered: Optional[bool]
+    no_of_successfull_triggers: Optional[int]
+    secret_key: Optional[str]
 
 
 class AgentResponseWithAgentConfigurations(AgentResponse):
     agent_configurations: Optional[List[TriggerResponse]]
 
 
+class Delegation(BaseModel):
+    pool_id: Optional[str]
+    drep_id: Optional[str]
+
+
 class AgentResponseWithWalletDetails(AgentResponseWithAgentConfigurations):
     agent_address: Optional[str]
     wallet_amount: Optional[float]
     drep_id: Optional[str]
-    delegated_drep_id: Optional[str]
     voting_power: Optional[float]
-    drep_registered: Optional[bool]
+    is_drep_registered: Optional[bool]
+    is_stake_registered: Optional[bool]
+    stake_last_registered: Optional[str]
+    delegation: Optional[Delegation]
 
 
 class AgentKeyResponse(BaseModel):

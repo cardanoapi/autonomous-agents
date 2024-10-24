@@ -50,9 +50,11 @@ export default function GovernanceAction() {
         [searchParams]
     );
 
-    const { data, isFetching } = useQuery({
+    const { data, isLoading } = useQuery({
         queryKey,
-        queryFn: () => fetchProposals(searchParams)
+        queryFn: () => fetchProposals(searchParams),
+        refetchOnWindowFocus: true,
+        staleTime: 5000
     });
 
     const handleSearch = (searchValue: string) => {
@@ -118,11 +120,11 @@ export default function GovernanceAction() {
             </div>
             <ScrollArea className="h-proposalListHeight pr-4">
                 <div className="grid w-full grid-flow-row grid-cols-1 gap-8 py-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-                    {!isFetching &&
+                    {!isLoading &&
                         data?.items?.map((proposal: any) => (
                             <ProposalCard key={proposal.id} proposal={proposal} />
                         ))}
-                    {isFetching && (
+                    {isLoading && (
                         <>
                             {searchParams.proposal_type === 'internal'
                                 ? Array(10)
@@ -138,7 +140,7 @@ export default function GovernanceAction() {
                         </>
                     )}
                 </div>
-                {!isFetching && data?.items?.length === 0 && (
+                {!isLoading && data?.items?.length === 0 && (
                     <EmptyGovActionPlaceholder className="h-full" />
                 )}
                 <div ref={ref} />

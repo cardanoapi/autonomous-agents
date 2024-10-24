@@ -8,15 +8,17 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 
 # Install dependencies
-RUN yarn install --frozen-lockfile --production
+RUN if [ "$(uname -m)" != "x86_64" ]; then \
+        apk add --no-cache py3-setuptools make python3 build-base; \
+    fi \
+    && yarn install --frozen-lockfile --production \
+    && if [ "$(uname -m)" != "x86_64" ]; then \
+        apk del py3-setuptools make python3 build-base; \
+    fi
 
-FROM node:18-alpine as builder
+FROM base as builder
 
-WORKDIR /app
-
-COPY package.json yarn.lock ./
-
-RUN yarn install
+RUN yarn install --frozen-lockfile
 
 # Copy the rest of the application code to the container
 COPY . .
@@ -32,6 +34,7 @@ WORKDIR /app
 COPY --from=builder --chown=node:node app/dist/ dist/
 
 COPY --from=base --chown=node:node app/node_modules node_modules/
+ENV MANAGER_BASE_DOMAIN=manager.agents.cardanoapi.io
 
 # Command to run the application
 CMD ["node", "dist/index.js"]

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 import { useParams } from 'next/navigation';
 
-import { ICronTrigger } from '@api/agents';
+import { ICronTrigger, ISubParameter } from '@api/agents';
 import { ITemplateConfiguration } from '@api/templates';
 import { AgentFunctions } from '@consts';
 import { AgentTriggerFunctionType } from '@models/types';
@@ -69,14 +69,14 @@ const UpdateTemplateFunctionModal = ({
     const [localTemplateActionConfigurations, setLocalTemplateActionConfigurations] =
         useState<{
             function_name: string;
-            parameters: Array<{ name: string; description?: string; value: string }>;
+            parameters: ISubParameter[];
         }>({
             function_name: '',
             parameters: []
         });
 
     useEffect(() => {
-        if (templateConfig && templateConfig.action) {
+        if (templateConfig?.action) {
             setLocalTemplateActionConfigurations(templateConfig.action);
         }
     }, [templateConfig]);
@@ -206,7 +206,7 @@ const UpdateTemplateFunctionModal = ({
                                         <span
                                             className={'text-sm text-brand-Black-300'}
                                         >
-                                            {param?.description}
+                                            {param?.name}
                                         </span>
                                         <input
                                             value={param.value}

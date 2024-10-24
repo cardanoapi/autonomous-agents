@@ -2,6 +2,7 @@ import json
 import uuid
 from datetime import datetime, timezone
 from typing import List, Optional, Union
+
 from backend.app.exceptions import HTTPException
 from backend.app.models.trigger.resposne_dto import TriggerResponse
 from backend.app.models.trigger.trigger_dto import (
@@ -61,13 +62,16 @@ class TriggerRepository:
         triggers = await self.db.prisma.trigger.find_many(where={"agent_id": agent_id, "deleted_at": None})
         return triggers
 
+    async def count_triggers_by_agent_id(self, agent_id: str) -> int:
+        triggers = await self.db.prisma.trigger.count(where={"agent_id": agent_id, "deleted_at": None})
+        return triggers
+
     async def remove_trigger_by_trigger_id(self, trigger_id: str) -> bool:
         trigger = await self.db.prisma.trigger.find_first(where={"id": trigger_id})
         if trigger is None:
             return False
         elif trigger.deleted_at is not None:
             return True
-
         await self.db.prisma.trigger.update(
             where={"agent_id": trigger.agent_id, "id": trigger_id},
             data={"deleted_at": datetime.now(timezone.utc)},

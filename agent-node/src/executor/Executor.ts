@@ -3,6 +3,10 @@ import { ManagerInterface } from '../service/ManagerInterfaceService'
 import { FunctionGroup, getHandlers } from './AgentFunctions'
 import { Builtins, FunctionContext, Key, Wallet } from './BaseFunction'
 import { TxListener } from './TxListener'
+import { generateProposalMetadataContent } from '../utils/metadataContent/proposalMetadataContent'
+import { generateRegisterDrepMetadataContent } from '../utils/metadataContent/drepMetadataContent'
+import { generateVoteMetadataContent } from '../utils/metadataContent/voteMetadataContent'
+import { rewardAddressBech32 } from '../utils/cardano'
 
 export interface CallLog {
     function: string
@@ -37,8 +41,20 @@ export class Executor {
             },
             builtins: this.getBuiltins(wallet),
             agentName: '',
+            helpers: this.getHelpers(wallet, ''),
         }
     }
+
+    getHelpers(wallet: any, agentName: string) {
+        return {
+            generateProposalMetadataContent: () =>
+                generateProposalMetadataContent(agentName),
+            generateDrepMetadataContent: () =>
+                generateRegisterDrepMetadataContent(agentName, wallet.address),
+            generateVoteMetadataContent: () => generateVoteMetadataContent(),
+        }
+    }
+
     makeWallet(walletDetails: AgentWalletDetails): Wallet {
         const txSubmissionHold: any[] = []
         let isProcessing: boolean = false
@@ -64,16 +80,26 @@ export class Executor {
                 throw new Error('Key.signRaw is not implemented')
             },
         }
+        const rewardAddress = rewardAddressBech32(
+            0,
+            walletDetails.stake_verification_key_hash
+        )
         console.log(
-            'Account keys received : address =>',
-            walletDetails.agent_address
+            'Account keys received :',
+            '\n\tAddress: ' + walletDetails.agent_address,
+            '\n\tStake  : ' + rewardAddress
         )
         return {
             address: walletDetails.agent_address,
             paymentKey: paymentKey,
             stakeKey: stakeKey,
             drepId: walletDetails.drep_id,
-            buildAndSubmit: (spec: any, stakeSigning?: boolean) => {
+            rewardAddress: rewardAddress,
+            buildAndSubmit: (
+                spec: any,
+                stakeSigning?: boolean,
+                saveDrepStatus?: boolean
+            ) => {
                 spec.selections = [
                     walletDetails.agent_address,
                     {
@@ -111,8 +137,13 @@ export class Executor {
                             )
                             resolve(res)
                             await txListener
-                                .addListener(res.hash, 0, 80000)
+                                .addListener(res.hash, 0, 300000)
                                 .then(() => {
+                                    if (saveDrepStatus) {
+                                        rpcInterface.checkAndSaveDrepRegistration(
+                                            walletDetails.drep_id
+                                        )
+                                    }
                                     console.log(
                                         'Tx matched :',
                                         res.hash,
@@ -124,6 +155,11 @@ export class Executor {
                                     return
                                 })
                         } catch (error) {
+                            if (saveDrepStatus) {
+                                rpcInterface.checkAndSaveDrepRegistration(
+                                    walletDetails.drep_id
+                                )
+                            }
                             reject(error)
                         }
                     }
@@ -147,20 +183,26 @@ export class Executor {
             this.functionContext.wallet
         )
         this.functionContext.agentName = agentName
+        this.functionContext.helpers = this.getHelpers(
+            this.functionContext.wallet,
+            agentName
+        )
         managerInterface
             .getFaucetBalance(this.functionContext.wallet.address)
             .then((balance) => {
-                if (balance <= 0) {
+                if (balance <= 10000) {
                     this.functionContext.builtins
-                        .loadFunds(10000)
+                        .loadFunds(1000)
                         .then((res) => console.log('Wallet load: ', res))
                         .catch((err) => console.error(err))
                 }
             })
             .catch((err) => {
                 console.error('GetBalance : ', err)
-                throw err
             })
+        managerInterface.checkAndSaveDrepRegistration(
+            this.functionContext.wallet.drepId
+        )
     }
 
     makeProxy<T>(context: T): { proxy: T; callLog: CallLog[] } {
@@ -211,6 +253,7 @@ export class Executor {
             callLog: callLog,
         }
     }
+
     getBuiltins(wallet: Wallet): Builtins {
         const builtins = this.functions.builtins
         const context = this.functionContext
@@ -233,13 +276,10 @@ export class Executor {
                 )
             },
             loadFunds: async (amount: number): Promise<any> => {
-                return await this.rpcInterface.loadFunds(
-                    context.wallet.address,
-                    amount
-                )
+                return await this.rpcInterface.loadFunds(wallet.address, amount)
             },
-            saveMetadata: async (fileName, content) => {
-                return await this.rpcInterface.saveMetadata(fileName, content)
+            saveMetadata: async (content) => {
+                return await this.rpcInterface.saveMetadata(content)
             },
             ...updatedBuiltins,
         } as Builtins

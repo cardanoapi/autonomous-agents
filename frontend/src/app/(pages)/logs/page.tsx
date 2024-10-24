@@ -2,14 +2,13 @@
 
 import { useEffect, useState } from 'react';
 
+import { IAgentTriggerHistory, fetchAllTriggerHistory } from '@api/triggerHistory';
 import { useQuery } from '@tanstack/react-query';
 
 import {
-    IAgentTriggerHistory,
-    fetchAllTriggerHistory
-} from '@app/app/api/triggerHistory';
-import { EmptyLogsPlaceholder } from '@app/components/Agent/AgentLog';
-import { AgentLogCard, AgentLogCardSkeleton } from '@app/components/Agent/AgentLog';
+    AgentLogCard,
+    AgentLogCardSkeleton
+} from '@app/components/Agent/AgentContent/Logs';
 import AgentFunctionsDropDown from '@app/components/Common/AgentFunctionsDropDown';
 import { Badge } from '@app/components/atoms/Badge';
 import {
@@ -210,11 +209,6 @@ export default function LogsPage() {
                                       />
                                   )
                               )}
-                        {!loadingLogs && LogsHistory?.items.length === 0 && (
-                            <div className="h-full max-h-logsList items-center justify-center">
-                                <EmptyLogsPlaceholder className="!my-2" />
-                            </div>
-                        )}
                     </ScrollArea>
                 </div>
             </div>

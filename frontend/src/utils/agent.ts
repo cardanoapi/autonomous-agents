@@ -122,3 +122,13 @@ export function formatDatetoHumanReadable(inputDate: string | number): string {
         } else return `${diffInSeconds} second${diffInSeconds > 1 ? 's' : ''} ago`;
     }
 }
+
+export function formatParameterName(name: string) {
+    const transformedName = name.replace('_', ' ');
+    return transformedName
+        .split(' ')
+        .map((word) => {
+            return word[0].toUpperCase() + word.substring(1);
+        })
+        .join(' ');
+}

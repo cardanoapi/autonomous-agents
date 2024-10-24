@@ -1,16 +1,18 @@
 import { IncomingMessage } from 'http'
 import {
-    checkIfAgentExistsInDB,
     fetchAgentConfiguration,
+    getAgentIdBySecret,
     updateLastActiveTimestamp,
 } from '../repository/agent_manager_repository'
 import { WsRpcServer } from '../lib/WsRpcServer'
 import { RpcV1 } from 'libcardano/network/Rpc'
 import { kuber } from './kuber_service'
-import { saveTriggerHistory, TriggerType } from '../repository/trigger_history_repository'
+import { saveTriggerHistory, TriggerType, updateAgentDrepRegistration } from '../repository/trigger_history_repository'
 import { ManagerWalletService } from './ManagerWallet'
 import { Server } from 'ws'
 import { metaDataService } from './Metadata_service'
+import { dbSync } from './db_sync_service'
+import { generateRootKey } from '../utils/cardano'
 
 export interface ILog {
     function_name: string
@@ -20,6 +22,9 @@ export interface ILog {
     trigger: boolean
     success: boolean
     instanceIndex: number
+    internal?: string
+    parameters?: string
+    result?: string
 }
 
 export class AgentManagerRPC extends WsRpcServer {
@@ -30,15 +35,15 @@ export class AgentManagerRPC extends WsRpcServer {
     }
 
     protected async validateConnection(req: IncomingMessage): Promise<string> {
-        const agentId = req.url?.slice(1)
+        const agentSecretKey = req.url?.slice(1)
         console.log('new connection from', req.socket.remoteAddress)
 
-        if (agentId) {
-            const exists = await checkIfAgentExistsInDB(agentId)
+        if (agentSecretKey) {
+            const exists = await getAgentIdBySecret(Buffer.from(agentSecretKey, 'base64'))
             if (exists) {
-                return agentId
+                return exists
             } else {
-                throw Error(`Agent with id ${agentId} doesn't exist`)
+                throw Error(`Agent with secret_key ${agentSecretKey} doesn't exist`)
             }
         } else {
             throw Error('Invalid websocket connection')
@@ -61,7 +66,10 @@ export class AgentManagerRPC extends WsRpcServer {
                 params.message,
                 params.triggerType,
                 txHash,
-                params.instanceIndex
+                params.instanceIndex,
+                params.parameters,
+                params.internal,
+                params.result
             ).catch((err) => console.error('SaveTriggerHistory : ', err))
         } else if (method === 'loadFunds') {
             const [address, amount] = args
@@ -72,10 +80,23 @@ export class AgentManagerRPC extends WsRpcServer {
                 return data.reduce((totalVal: number, item: any) => totalVal + item.value.lovelace, 0) / 10 ** 6
             })
         } else if (method === 'saveMetadata') {
-            const [fileName, content] = args
-            return metaDataService.saveMetadata(fileName, content)
+            const [content] = args
+            return metaDataService.saveMetadata(content)
+        } else if (method === 'checkAndSaveDrepRegistration') {
+            const [drepId] = args
+            return dbSync
+                .checkDrepRegistration(drepId)
+                .then((res) => {
+                    console.log('Drep Registration: ', res['isRegisteredAsDRep'])
+                    updateAgentDrepRegistration(connection_id, res['isRegisteredAsDRep']).catch((err) =>
+                        console.error('AgentUpdateError : ', err)
+                    )
+                })
+                .catch((err) => {
+                    throw err
+                })
         } else {
-            throw new Error('No such method exists')
+            return 'No such method exists'
         }
     }
 
@@ -90,22 +111,24 @@ export class AgentManagerRPC extends WsRpcServer {
     }
 
     protected onReady(client: RpcV1): void {
-        const addressApiUrl = `${process.env.API_SERVER}/api/agent/${client.getId()}/keys`
-        const agentKeysPromise = fetch(addressApiUrl)
-            .then((response) => response.json())
-            .then((data) => client.emit('agent_keys', data))
-            .catch((error) => {
-                throw error
-            })
         const agentConfigsPromise = fetchAgentConfiguration(client.getId())
-            .then((config) => {
+            .then(async (config) => {
+                if (!config) {
+                    this.disconnect(client.getId(), 'Invalid instance configuration')
+                    return
+                }
+
+                const { instanceCount, agentIndex, agentName } = config
+                const rootKeyBuffer = await generateRootKey(agentIndex || 0)
+                client.emit('instance_count', { instanceCount, rootKeyBuffer, agentName })
+
                 client.emit('initial_config', config)
             })
             .catch((error) => {
                 throw error
             })
-        Promise.all([agentKeysPromise, agentConfigsPromise]).catch((err: Error) => {
-            console.error('AgentManagerRPC.onReady Error:', err)
+        Promise.all([agentConfigsPromise]).catch((err: Error) => {
+            console.error('AgentManagerRPC onReady Error:', err)
             this.disconnect(client.getId(), err.message)
         })
     }
