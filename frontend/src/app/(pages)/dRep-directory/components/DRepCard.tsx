@@ -25,6 +25,15 @@ interface DRepCardProps {
     dRep: IDRepInternal;
 }
 
+export const getDrepGivedName = (drep: IDRepInternal) => {
+    if (!drep.givenName) {
+        return '';
+    } else if (typeof drep.givenName === 'string') {
+        return drep.givenName;
+    } else {
+        return drep.givenName['@value'] || '';
+    }
+};
 const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
     const { isOpen, toggleDialog } = useAppDialog();
 
@@ -63,16 +72,6 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
     }
 
     const router = useRouter();
-
-    const getDrepGivedName = (drep: IDRepInternal) => {
-        if (!drep.givenName) {
-            return '';
-        } else if (typeof drep.givenName === 'string') {
-            return drep.givenName;
-        } else {
-            return drep.givenName['@value'] || '';
-        }
-    };
 
     return (
         <>

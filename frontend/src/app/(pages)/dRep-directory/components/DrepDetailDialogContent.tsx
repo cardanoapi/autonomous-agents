@@ -5,6 +5,8 @@ import { CopyIcon, ExternalLink } from 'lucide-react';
 import { AppDialogContent } from '@app/app/components/AppDialog';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 
+import { getDrepGivedName } from './DRepCard';
+
 export default function DrepDetailDialogContent({
     dRep,
     onClose
@@ -27,7 +29,7 @@ export default function DrepDetailDialogContent({
         <AppDialogContent className=" pt-0" onClose={onClose}>
             <div className="mb-4 flex items-center gap-2">
                 <span className="text-lg font-semibold">
-                    {dRep.givenName || 'Data Missing'}
+                    {getDrepGivedName(dRep) || 'Data Missing'}
                 </span>
                 <ExternalLink
                     className="cursor-pointer text-blue-600"
