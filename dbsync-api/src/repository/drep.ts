@@ -37,7 +37,7 @@ export const fetchDrepList = async (page=1,size=10,drepId='', status?:DrepStatus
                     'status', CASE
                                   WHEN dr_deposit.deposit > 0 AND (DRepActivity.epoch_no - Max(coalesce(block.epoch_no, block_first_register.epoch_no))) <= DRepActivity.drep_activity THEN 'Active'
                                   WHEN dr_deposit.deposit > 0 AND (DRepActivity.epoch_no - Max(coalesce(block.epoch_no, block_first_register.epoch_no))) > DRepActivity.drep_activity THEN 'Inactive'
-                                  WHEN dr_deposit.deposit < 0 THEN 'Retired'
+                                    WHEN dr_deposit.deposit < 0 THEN 'Retired'
                         END,
                     'latestTxHash', encode(dr_voting_anchor.tx_hash, 'hex'),
                     'latestRegistrationDate', newestRegister.time,
@@ -81,7 +81,9 @@ export const fetchDrepList = async (page=1,size=10,drepId='', status?:DrepStatus
                     tx.hash AS tx_hash
                 FROM
                     drep_registration dr
-                        JOIN tx ON tx.id = dr.tx_id) AS dr_voting_anchor ON dr_voting_anchor.drep_hash_id = dh.id
+                        JOIN tx ON tx.id = dr.tx_id
+                    WHERE dr.deposit > 0
+                ) AS dr_voting_anchor ON dr_voting_anchor.drep_hash_id = dh.id
                 AND dr_voting_anchor.rn = 1
                 LEFT JOIN (
                 SELECT
@@ -108,7 +110,7 @@ export const fetchDrepList = async (page=1,size=10,drepId='', status?:DrepStatus
                 LEFT JOIN DRepDistr ON DRepDistr.hash_id = dh.id
                 AND DRepDistr.rn = 1
                 LEFT JOIN voting_anchor va ON va.id = dr_voting_anchor.voting_anchor_id
-                LEFT JOIN voting_anchor non_deregister_voting_anchor on non_deregister_voting_anchor.id = dr_non_deregister_voting_anchor.voting_anchor_id
+                LEFT JOIN voting_anchor non_deregister_voting_anchor on non_deregister_voting_anchor.id = dr_non_deregister_voting_anchor.voting_anchor_id  
                 LEFT JOIN off_chain_vote_fetch_error ON off_chain_vote_fetch_error.voting_anchor_id = va.id
                 LEFT JOIN off_chain_vote_data ON off_chain_vote_data.voting_anchor_id = va.id
                 LEFT JOIN off_chain_vote_drep_data on off_chain_vote_drep_data.off_chain_vote_data_id = off_chain_vote_data.id
@@ -139,7 +141,7 @@ export const fetchDrepList = async (page=1,size=10,drepId='', status?:DrepStatus
                 LEFT JOIN tx AS tx_first_register ON tx_first_register.id = dr_first_register.tx_id
                 LEFT JOIN block AS block_first_register ON block_first_register.id = tx_first_register.block_id
             ${drepId ? Prisma.sql`WHERE dh.raw = decode(${drepId}, 'hex')` : Prisma.sql``}
-        GROUP BY
+        GROUP BY    
             dh.raw,
             second_to_newest_drep_registration.voting_anchor_id,
             dh.view,
@@ -344,7 +346,20 @@ export const fetchDrepDetails=async(drepId:string)=>{
 
           LIMIT 1
           ),
+    IsScriptHash AS (
+               SELECT EXISTS(
+                   SELECT
+                       drep_hash.has_script
+                   FROM
+                       drep_hash
+                           CROSS JOIN DRepId
+                   WHERE
+                       drep_hash.raw = DRepId.raw
+                     AND
+                       drep_hash.has_script = true
+               ) AS has_script),
     DrepDetails AS (SELECT
+                        IsScriptHash.has_script as "hasScript",
           IsRegisteredAsDRep.value as "isRegisteredAsDRep",
           WasRegisteredAsDRep.value as "wasRegisteredAsDRep",
           IsRegisteredAsSoleVoter.value as "isRegisteredAsSoleVoter",
@@ -369,6 +384,7 @@ export const fetchDrepDetails=async(drepId:string)=>{
           CROSS JOIN DRepRetire
           CROSS JOIN SoleVoterRegister
           CROSS JOIN SoleVoterRetire
+        CROSS JOIN IsScriptHash
           )
 
       SELECT
