@@ -18,7 +18,6 @@ class DrepService:
         self.db = prisma_connection
 
     async def fetch_internal_dreps(self, page: int, page_size: int, search: str | None):
-        total_count = 0
         if search:
             try:
                 internalDrep = await self.db.prisma.agentwalletdetails.find_first(
@@ -32,7 +31,7 @@ class DrepService:
             except:
                 agents = []
         else:
-            [agents, total_count] = await asyncio.gather(
+            [agents] = await asyncio.gather(
                 self.db.prisma.agent.find_many(
                     include={"wallet_details": True},
                     where={"deleted_at": None, "is_drep_registered": True},
@@ -40,13 +39,13 @@ class DrepService:
                     take=page_size,
                     order={"last_active": "desc"},
                 ),
-                self.db.prisma.agent.count(where={"deleted_at": None, "is_drep_registered": True}),
             )
         async with aiohttp.ClientSession() as session:
             async with asyncio.TaskGroup() as tg:
                 for index, agent in enumerate(agents):
                     tg.create_task(self.fetch_metadata(agent, index, agents, session))
-        return [agents, total_count]
+
+        return [agent for agent in agents if agent]
 
     async def fetch_metadata(self, agent: Agent, index: int, agents: [Any], session: ClientSession):
         drep_dict = {}
@@ -72,6 +71,8 @@ class DrepService:
         if drep_dict:
             drep_dict = drep_dict | {"agentId": agent.id, "agentName": agent.name}
             agents[index] = drep_dict
+        else:
+            agents[index] = ""
 
     async def fetch_external_dreps(self, page: int, page_size: int, search: str | None):
 
@@ -92,7 +93,7 @@ class DrepService:
 
                             try:
                                 internalDrep = await self.db.prisma.agentwalletdetails.find_first(
-                                    where={"stake_key_hash": convert_hex_to_base64(drep["drepId"])}
+                                    where={"stake_key_hash": convert_string_to_base64(drep["drepId"])}
                                 )
                             except Exception as e:
                                 internalDrep = False
