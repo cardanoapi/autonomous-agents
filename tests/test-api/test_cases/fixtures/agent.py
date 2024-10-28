@@ -10,6 +10,8 @@ from test_cases.data.agent_function import (
     vote_event_function,
     info_action_manual_trigger,
 )
+import base64
+from utils.logger import logger
 
 
 @pytest.fixture(scope="session")
@@ -41,6 +43,11 @@ def load_funds_to_agent_address(create_admin_agent_fixture, autonomous_agent_api
         response = cardano_faucet.load_funds(agent_response.json().get("agent_address"))
         time.sleep(60)  # Wait for funds transfer cooldown.
 
+    return response
+
+@pytest.fixture(scope="session")
+def admin_agent_fixture(autonomous_agent_api, admin_login_cookie , create_admin_agent_fixture):
+    response = autonomous_agent_api.get_agent(create_admin_agent_fixture.json().get("id"),headers={"Cookie": admin_login_cookie})
     return response
 
 
@@ -85,6 +92,7 @@ def edit_admin_agent_fixture(
 
 @pytest.fixture(scope="session")
 def run_admin_agent_fixture(
+    admin_agent_fixture,
     edit_admin_agent_fixture,
     load_funds_to_agent_address,
     autonomous_agent_api,
@@ -97,9 +105,13 @@ def run_admin_agent_fixture(
 
     agent_id = edit_admin_agent_fixture.json().get("id")
     project_path = "../../agent-node"
+    agent_secret_key = admin_agent_fixture.json().get("secret_key")
     env = os.environ.copy()
     env["WS_URL"] = env.get("AGENT_MANAGER_WS_URL")
     env["AGENT_ID"] = agent_id
+    env['TOKEN'] = convert_to_base64_with_network_prefix(agent_secret_key, env.get("NETWORK"))
+
+    logger.info(f"token: {env['TOKEN']}")
 
     try:
         # Run agent-node with yarn and environment variables
@@ -145,3 +157,10 @@ def delete_admin_agent_fixture(
     )
     assert response.status_code == 204
     return response
+
+
+
+def convert_to_base64_with_network_prefix(agent_secret_key: str, network: str) -> str:
+    new_secret_key = f"{network}_{agent_secret_key}"
+    encoded_bytes = base64.b64encode(new_secret_key.encode('utf-8'))
+    return encoded_bytes.decode('utf-8')
