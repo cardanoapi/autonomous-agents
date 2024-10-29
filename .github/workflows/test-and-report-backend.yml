@@ -1,6 +1,10 @@
 name: Backend Allure Test and Deploy
 
 on:
+  workflow_run:
+    workflows: ["Docker Build and Deploy"]
+    types: [completed]
+
   push:
     branches:
       - master
@@ -41,7 +45,6 @@ jobs:
         run: |
           poetry install
           poetry run pytest --alluredir allure-results
-        continue-on-error: true
         env :
             BASE_API_URL: ${{ vars.BASE_API_URL }}
             USER_KEY : ${{ secrets.USER_KEY }}
@@ -52,8 +55,10 @@ jobs:
             AGENT_RUN_TIMOUT : ${{ vars.AGENT_RUN_TIMOUT }}
             CARDANO_FAUCET_BASE_URL : ${{ vars.CARDANO_FAUCET_BASE_URL }}
             CARDANO_FAUCET_API_KEY : ${{ secrets.CARDANO_FAUCET_API_KEY }}
+            NETWORK : ${{ vars.NETWORK }}
 
       - name: Upload results
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: allure-results
@@ -61,6 +66,7 @@ jobs:
 
   build_and_deploy_report:
     runs-on: ubuntu-latest
+    if: always()
     needs: backend_tests
     steps:
       - name: Checkout code
@@ -84,10 +90,11 @@ jobs:
       - name: Allure Report action from marketplace
         uses: simple-elf/allure-report-action@v1.7
         with:
-            gh_pages: gh-pages/test_backend_allure_report
-            allure_results: allure-results
-            allure_history: allure-history
-            report_url : https://cardanoapi.github.io/autonomous-agents/test_backend_allure_report
+              gh_pages: gh-pages/test_backend_allure_report
+              allure_results: allure-results
+              allure_history: allure-history
+              report_url: https://cardanoapi.github.io/autonomous-agents/test_backend_allure_report
+          
 
       - name: Deploy report to Github Pages
         if: always()
@@ -97,4 +104,3 @@ jobs:
               publish_dir: allure-history
               publish_branch: gh-pages
               destination_dir: test_backend_allure_report
-
