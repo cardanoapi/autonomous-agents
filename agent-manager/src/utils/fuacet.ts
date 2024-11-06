@@ -29,12 +29,20 @@ export default async function getFaucetAdaForAddress(address: string) {
 
 export async function fetchWalletBalance(address: string) {
     const kuberUrl = environments.kuberBaseUrl
+    const kuberApiKey = environments.kuberApiKey
     if (!kuberUrl) return 0
     const url = kuberUrl + '/api/v3/utxo?address=' + address
-    return fetch(url)
+    return fetch(url, {
+        method: 'GET',
+        headers: {
+            'api-key': kuberApiKey,
+        },
+    })
         .then((res) => res.json())
         .then((data: any) => {
-            return data.reduce((totalVal: number, item: any) => totalVal + item.value.lovelace, 0) / 10 ** 6
+            if (Array.isArray(data)) {
+                return data.reduce((totalVal: number, item: any) => totalVal + item.value.lovelace, 0) / 10 ** 6
+            } else return 0
         })
         .catch((error) => {
             throw error

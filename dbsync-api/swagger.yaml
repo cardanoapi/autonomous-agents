@@ -165,6 +165,9 @@ paths:
               schema:
                 type: object
                 properties:
+                  hasScript:
+                    type: boolean
+                    description: whether the drep has script or not
                   isRegisteredAsDRep:
                     type: boolean
                     description: Whether the address is currently registered as a DRep.
