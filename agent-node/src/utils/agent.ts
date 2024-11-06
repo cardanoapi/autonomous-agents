@@ -4,11 +4,11 @@ import {
     Configuration,
     TriggerType,
 } from '../service/triggerService'
-import { globalState } from '../constants/global'
 import { ManagerInterface } from '../service/ManagerInterfaceService'
 import { CallLog } from '../executor/Executor'
 import { ILog, InternalLog } from '../service/TriggerActionHandler'
 import { DateTime } from 'luxon'
+import { IEventBasedAction, IEventTrigger } from '../types/eventTriger'
 
 export function getParameterValue(
     parameters: ActionParameter[] = [],
@@ -21,19 +21,21 @@ export function getParameterValue(
 export function checkIfAgentWithEventTriggerTypeExists(
     configurations: Configuration[]
 ) {
+    const eventBasedAction: IEventBasedAction[] = []
     configurations.forEach((config) => {
         if (config.type === 'EVENT') {
-            globalState.eventTriggerTypeDetails = {
-                eventType: true,
-                function_name: config.action.function_name,
-            }
+            eventBasedAction.push({
+                eventTrigger: config.data as unknown as IEventTrigger,
+                triggeringFunction: config.action,
+            })
         }
     })
+    return eventBasedAction.flat()
 }
 
 export function createActionDtoForEventTrigger(tx: any, index: number): Action {
     return {
-        function_name: globalState.eventTriggerTypeDetails.function_name,
+        function_name: 'voteOnProposal',
         parameters: [
             {
                 name: 'proposal',

@@ -6,8 +6,3 @@ export type AgentWalletDetails = {
     payment_verification_key_hash: string
     drep_id: string
 }
-
-export type EventTriggerTypeDetails = {
-    eventType: boolean
-    function_name: string
-}
