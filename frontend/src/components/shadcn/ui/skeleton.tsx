@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { cn } from '@app/components/lib/utils';
+import { cn } from '@app/components/shadcn/lib/utils';
 
 export function Skeleton({
     className,

@@ -1,7 +1,8 @@
 import { Card } from '@mui/material';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import OverViewAgentsCard from '@app/app/components/OverViewAgentsCard';
+import OverViewAgentsCard from '@app/components/organisms/cards/AgentDashboardCard';
+
 const meta = {
     title: 'OverViewAgentsCard',
     component: Card,

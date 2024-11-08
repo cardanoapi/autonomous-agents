@@ -1,8 +1,8 @@
 import Link from 'next/link';
 
-import DataActionBar from '@app/app/components/DataActionBar';
 import { Button } from '@app/components/atoms/Button';
-import { cn } from '@app/components/lib/utils';
+import DataActionBar from '@app/components/molecules/DataActionBar';
+import { cn } from '@app/components/shadcn/lib/utils';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
 const TemplatesTopNav = ({

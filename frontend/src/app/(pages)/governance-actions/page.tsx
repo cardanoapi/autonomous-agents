@@ -7,22 +7,22 @@ import { QUERY_KEYS } from '@consts';
 import { useQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 
-import DataActionBar from '@app/app/components/DataActionBar';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
+import DataActionBar from '@app/components/molecules/DataActionBar';
 import PaginationBtns from '@app/components/molecules/PaginationBtns';
 import { Tabs, TabsList, TabsTrigger } from '@app/components/molecules/Tabs';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 
-import EmptyGovActionPlaceholder from './components/EmptyGovActionPlaceholder';
 import ProposalCard, {
     ExternalProposalCardSkeleton,
     InternalProposalCardSkeleton
-} from './components/proposalCard';
+} from '../../../components/organisms/cards/proposalCard';
+import EmptyGovActionPlaceholder from './components/EmptyGovActionPlaceholder';
 
 interface IProposalFilterOption {
     placeholder: string;

@@ -1,9 +1,8 @@
 import type { Meta } from '@storybook/react';
 import { QueryClientProvider } from '@tanstack/react-query';
 
+import AgentCard from '@app/components/organisms/cards/AgentCard';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
-
-import AgentCard from '@app/components/molecules/AgentCard';
 
 const meta = {
     title: 'AgentCard',

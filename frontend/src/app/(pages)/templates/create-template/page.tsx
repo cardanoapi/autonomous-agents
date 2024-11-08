@@ -18,7 +18,6 @@ import { useAtom } from 'jotai';
 import { v4 } from 'uuid';
 
 import { Button } from '@app/components/atoms/Button';
-import { Card } from '@app/components/atoms/Card';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -26,8 +25,9 @@ import {
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
 import { Input } from '@app/components/atoms/Input';
-import { Textarea } from '@app/components/atoms/Textarea';
 import { Label } from '@app/components/atoms/Label';
+import { Textarea } from '@app/components/atoms/Textarea';
+import { Card } from '@app/components/molecules/Card';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
 import { templateCreatedAtom } from '@app/store/localStore';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';

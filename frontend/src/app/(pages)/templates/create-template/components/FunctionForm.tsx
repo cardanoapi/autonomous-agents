@@ -7,16 +7,16 @@ import { Slider } from '@mui/material';
 import { X } from 'lucide-react';
 
 import { Button } from '@app/components/atoms/Button';
-import { Card, CardDescription, CardTitle } from '@app/components/atoms/Card';
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger
 } from '@app/components/atoms/Select';
-import { cn } from '@app/components/lib/utils';
+import { Card, CardDescription, CardTitle } from '@app/components/molecules/Card';
 import { CustomCombobox } from '@app/components/molecules/CustomCombobox';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
+import { cn } from '@app/components/shadcn/lib/utils';
 
 import { IFormFunctionInstance } from '../page';
 import { renderParameters } from './trigger/ParameterRenderers';

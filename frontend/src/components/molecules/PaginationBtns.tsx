@@ -2,7 +2,7 @@ import React from 'react';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-import { cn } from '../lib/utils';
+import { cn } from '../shadcn/lib/utils';
 
 interface PaginationBtnsProps extends React.HTMLAttributes<HTMLDivElement> {
     lowerLimit?: number;

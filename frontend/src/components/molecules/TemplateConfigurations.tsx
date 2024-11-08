@@ -8,10 +8,10 @@ import { useAtom } from 'jotai';
 import { Edit, Trash2 } from 'lucide-react';
 
 import UpdateTemplateFunctionModal from '@app/components/molecules/UpdateTemplateFunctionModal';
-import { Dialog, DialogContent } from '@app/components/shadcn/dialog';
+import { Dialog, DialogContent } from '@app/components/shadcn/ui/dialog';
 import { templateAtom } from '@app/store/atoms/template';
 
-import { cn } from '../lib/utils';
+import { cn } from '../shadcn/lib/utils';
 
 const TemplateConfigurations = ({ isEditing }: { isEditing: boolean }) => {
     const [openDialog, setOpenDialog] = useState(false);

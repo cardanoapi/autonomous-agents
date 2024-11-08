@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Card } from '@app/components/atoms/Card';
-import ComboBox ,{IComboBoxOption} from '@app/components/molecules/ComboBox';
+import { Card } from '@app/components/molecules/Card';
+import ComboBox, { IComboBoxOption } from '@app/components/molecules/ComboBox';
 
 const demoOptions: IComboBoxOption[] = [
     {

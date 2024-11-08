@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Card } from '@app/components/atoms/Card';
+import { Card } from '@app/components/molecules/Card';
+import CustomLineChart from '@app/components/organisms/chart/CustomLineChart';
 
-import CustomLineChart from '@app/components/Chart/CustomLineChart';
 const meta = {
     title: 'CustomLineChart',
     component: Card,

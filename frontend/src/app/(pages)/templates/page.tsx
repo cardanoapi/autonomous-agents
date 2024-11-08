@@ -15,8 +15,8 @@ import {
 } from '@app/store/localStore';
 import { IQueryParams } from '@app/utils/query';
 
-import TemplateList from './components/TemplateList';
 import TemplatesTopNav, { TemplatesTopNavSkeleton } from './components/TemplatesTopNav';
+import TemplatesContainer from './components/TemplateContainer';
 
 const TemplatesPage = () => {
     const [templateCreated, setTemplateCreated] = useAtom(templateCreatedAtom);
@@ -67,7 +67,7 @@ const TemplatesPage = () => {
             )}
 
             {/* Template List */}
-            <TemplateList
+            <TemplatesContainer
                 templates={templates}
                 isLoading={isLoading && isFirstFetch}
                 adminAccess={adminAccess}

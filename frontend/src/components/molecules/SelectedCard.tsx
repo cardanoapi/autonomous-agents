@@ -1,6 +1,6 @@
 import { Trash2 } from 'lucide-react';
 
-import { Card } from '../atoms/Card';
+import { Card } from './Card';
 
 export default function SelectedCard({
     name,

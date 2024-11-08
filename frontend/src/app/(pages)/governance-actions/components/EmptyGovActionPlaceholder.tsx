@@ -1,6 +1,6 @@
 import { TriangleAlert } from 'lucide-react';
 
-import { cn } from '@app/components/lib/utils';
+import { cn } from '@app/components/shadcn/lib/utils';
 
 export default function EmptyGovActionPlaceholder({
     className

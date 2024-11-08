@@ -1,4 +1,4 @@
-import AgentsActionDialogContent from '@app/app/components/AgentActionDialogContent';
+import AgentsActionDialogContent from "@app/components/molecules/AgentActionDialogContent";
 
 interface AgentsVoteDialogContentProps {
     handleClose: () => void;

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-import { RadioGroup, RadioGroupItem } from '@app/components/atoms/RadioGroup';
 import { Label } from '@app/components/atoms/Label';
-import { cn } from '@app/components/lib/utils';
+import { RadioGroup, RadioGroupItem } from '@app/components/atoms/RadioGroup';
 import { NumberInput } from '@app/components/molecules/NumberInput';
+import { cn } from '@app/components/shadcn/lib/utils';
 
 import { ICronSetting, IInputSetting } from './TriggerTab';
 

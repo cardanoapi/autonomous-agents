@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Card } from '@app/components/atoms/Card';
-
-import DynamicLineChart from '@app/components/Chart/DynamicLineChart';
+import { Card } from '@app/components/molecules/Card';
+import DynamicLineChart from '@app/components/organisms/chart/DynamicLineChart';
 
 const meta = {
     title: 'DynamicLineChart',

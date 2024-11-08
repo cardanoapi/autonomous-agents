@@ -1,6 +1,6 @@
 import type { StoryObj } from '@storybook/react';
 
-import { Card } from '@app/components/atoms/Card';
+import { Card } from '@app/components/molecules/Card';
 import { SubmitButton } from '@app/components/molecules/SubmitButton';
 
 const meta = {

@@ -6,19 +6,21 @@ import { fetchDreps } from '@api/dreps';
 import { useQuery } from '@tanstack/react-query';
 import { bech32toHex } from '@utils';
 
-import DataActionBar from '@app/app/components/DataActionBar';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
+import DataActionBar from '@app/components/molecules/DataActionBar';
 import PaginationBtns from '@app/components/molecules/PaginationBtns';
 import { Tabs, TabsList, TabsTrigger } from '@app/components/molecules/Tabs';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 import { QUERY_KEYS } from '@app/consts/queryKeys';
 
-import DRepCard, { DRepCardSkeleton } from './components/DRepCard';
+import DRepCard, {
+    DRepCardSkeleton
+} from '../../../components/organisms/cards/DRepCard';
 
 interface IDrepFilterOption {
     placeholder: string;

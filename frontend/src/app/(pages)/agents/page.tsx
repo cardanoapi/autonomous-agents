@@ -7,8 +7,8 @@ import { IAgent, fetchAgents } from '@api/agents';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
-import { cn } from '@app/components/lib/utils';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
+import { cn } from '@app/components/shadcn/lib/utils';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 import {
     adminAccessAtom,
@@ -18,7 +18,7 @@ import {
 import { IQueryParams } from '@app/utils/query';
 
 import AgentsContainer from './components/AgentsContainer';
-import AgentsTopNav, { AgentsTopNavSkeleton } from './components/AgentsTopNav';
+import AgentsTopNav, { AgentsTopNavSkeleton } from '../../../components/organisms/layout/AgentsTopNav';
 
 export default function AgentsPage() {
     const [agentCreated, setAgentCreated] = useAtom(agentCreatedAtom);

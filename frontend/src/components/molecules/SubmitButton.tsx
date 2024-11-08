@@ -1,7 +1,7 @@
 import { LoaderCircle } from 'lucide-react';
 
 import { Button } from '../atoms/Button';
-import { cn } from '../lib/utils';
+import { cn } from '../shadcn/lib/utils';
 
 interface SubmitButtonProps {
     disabled?: boolean;

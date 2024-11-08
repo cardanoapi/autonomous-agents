@@ -1,6 +1,8 @@
 import { IAgent } from '@api/agents';
 
-import AgentCard, { AgentCardSkeleton } from '@app/components/molecules/AgentCard';
+import AgentCard, {
+    AgentCardSkeleton
+} from '@app/components/organisms/cards/AgentCard';
 
 export interface AgentsContainerProps {
     agentsList: IAgent[];

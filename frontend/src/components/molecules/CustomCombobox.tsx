@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
-import { cn } from '@app/components/lib/utils';
+import { cn } from '@app/components/shadcn/lib/utils';
 
 export function CustomCombobox({
     defaultValue,

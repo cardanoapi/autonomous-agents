@@ -1,7 +1,8 @@
 import { Card } from '@mui/material';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import OverViewTemplatesCard from '@app/app/components/OverViewTemplatesCard';
+import OverViewTemplatesCard from '@app/components/organisms/cards/TemplateDashboardCard';
+
 const meta = {
     title: 'OverViewTemplatesCard',
     component: Card,

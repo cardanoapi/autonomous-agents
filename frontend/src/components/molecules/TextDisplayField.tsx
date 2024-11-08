@@ -4,7 +4,7 @@ import { Copy } from 'lucide-react';
 
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 
-import { cn } from '../lib/utils';
+import { cn } from '../shadcn/lib/utils';
 
 const TextDisplayField = ({
     title,

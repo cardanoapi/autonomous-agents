@@ -5,11 +5,6 @@ import { useEffect, useState } from 'react';
 import { IAgentTriggerHistory, fetchAllTriggerHistory } from '@api/triggerHistory';
 import { useQuery } from '@tanstack/react-query';
 
-import {
-    AgentLogCard,
-    AgentLogCardSkeleton
-} from '@app/components/Agent/AgentContent/Logs';
-import AgentFunctionsDropDown from '@app/components/Common/AgentFunctionsDropDown';
 import { Badge } from '@app/components/atoms/Badge';
 import {
     DropdownMenu,
@@ -18,7 +13,9 @@ import {
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
 import { SearchField } from '@app/components/atoms/SearchField';
+import AgentFunctionsDropDown from '@app/components/molecules/AgentFunctionsDropDown';
 import PaginationBtns from '@app/components/molecules/PaginationBtns';
+import { AgentLogCard, AgentLogCardSkeleton } from '../agents/[agentID]/content/Logs';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 
 export default function LogsPage() {

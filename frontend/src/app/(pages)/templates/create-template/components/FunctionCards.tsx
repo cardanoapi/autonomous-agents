@@ -1,7 +1,7 @@
 import { Trash2 } from 'lucide-react';
 import { Edit } from 'lucide-react';
 
-import { Card } from '@app/components/atoms/Card';
+import { Card } from '@app/components/molecules/Card';
 
 import { IFormFunctionInstance } from '../page';
 

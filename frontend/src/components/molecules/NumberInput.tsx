@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import { Input } from '../atoms/Input';
 // assuming cn is defined here
-import { cn } from '../lib/utils';
+import { cn } from '../shadcn/lib/utils';
 
 // Correct import path
 

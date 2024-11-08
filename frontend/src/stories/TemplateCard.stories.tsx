@@ -3,7 +3,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
-import TemplateCard from '@app/components/molecules/TemplateCard';
+import TemplateCard from '@app/components/organisms/cards/TemplateCard';
 const meta = {
     title: 'TemplateCard',
     component: TemplateCard,

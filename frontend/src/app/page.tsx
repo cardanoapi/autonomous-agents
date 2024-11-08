@@ -8,23 +8,18 @@ import Head from 'next/head';
 import { fecthTriggerHistoryMetric } from '@api/triggerHistoryMetric';
 import { useQuery } from '@tanstack/react-query';
 
-import { convertDictToGraphDataFormat } from '@app/components/Chart/ChartFilter';
-import {
-    IChartFilterOption,
-    chartFilterOptions
-} from '@app/components/Chart/ChartFilter';
-import CustomLineChart from '@app/components/Chart/CustomLineChart';
-import { ILineChartData } from '@app/components/Chart/CustomLineChart';
-import { Card } from '@app/components/atoms/Card';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
+import { Card } from '@app/components/molecules/Card';
+import { convertDictToGraphDataFormat , IChartFilterOption , chartFilterOptions } from '@app/components/organisms/chart/ChartFilter';
+import CustomLineChart from '@app/components/organisms/chart/CustomLineChart';
+import { ILineChartData } from '@app/components/organisms/chart/CustomLineChart';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
-
-import DashboardCards from './components/DashboardCards';
+import DashboardCards from '../components/organisms/cards/DashboardCards';
 
 interface IDataSource {
     placeholder: string;

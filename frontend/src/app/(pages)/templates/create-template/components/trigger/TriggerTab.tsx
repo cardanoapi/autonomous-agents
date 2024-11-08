@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 
-import { Card } from '@app/components/atoms/Card';
+import { Card } from '@app/components/molecules/Card';
 import {
     Tabs,
     TabsContent,

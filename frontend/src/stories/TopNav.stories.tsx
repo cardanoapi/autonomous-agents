@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import TopNav from '@app/components/layout/TopNav';
+import TopNav from '@app/components/organisms/layout/TopNav';
+
 const meta = {
     title: 'TopNav',
     component: TopNav,

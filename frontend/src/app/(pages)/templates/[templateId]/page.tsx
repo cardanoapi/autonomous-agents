@@ -9,13 +9,13 @@ import { fetchTemplatebyID } from '@api/templates';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
-import TemplateOverview from '@app/components/Template/Content/TemplateOverview';
 import {
     Breadcrumb,
     BreadcrumbItem,
     BreadcrumbList,
     BreadcrumbSeparator
 } from '@app/components/atoms/Breadcrumb';
+import TemplateOverview from '@app/components/organisms/TemplateOverview';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { templateAtom } from '@app/store/atoms/template';
 import { adminAccessAtom } from '@app/store/localStore';

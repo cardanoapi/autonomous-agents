@@ -13,19 +13,24 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
 
-import { agentFormSchema } from '@app/app/(pages)/agents/create-agent/_form/schema';
-import { Card } from '@app/components/atoms/Card';
 import { Form, FormControl, FormField, FormItem } from '@app/components/atoms/Form';
 import { Input } from '@app/components/atoms/Input';
 import { Label } from '@app/components/atoms/Label';
-import { cn } from '@app/components/lib/utils';
+import { Card } from '@app/components/molecules/Card';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
 import MultipleSelector, { IOption } from '@app/components/molecules/MultiSearchSelect';
 import { NumberInput } from '@app/components/molecules/NumberInput';
 import SelectedCard from '@app/components/molecules/SelectedCard';
 import { SubmitButton } from '@app/components/molecules/SubmitButton';
+import { cn } from '@app/components/shadcn/lib/utils';
 import { agentCreatedAtom } from '@app/store/localStore';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
+
+export const agentFormSchema = z.object({
+    agentName: z.string(),
+    agentTemplate: z.string().optional(),
+    numberOfAgents: z.number().min(1)
+});
 
 export default function CreateAgentForm() {
     const [selected, setSelected] = useState<IOption[]>([]);

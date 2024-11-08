@@ -7,7 +7,7 @@ import { Command as CommandPrimitive, useCommandState } from 'cmdk';
 import { SearchIcon } from 'lucide-react';
 
 import { Command, CommandGroup, CommandItem, CommandList } from '../atoms/Command';
-import { cn } from '../lib/utils';
+import { cn } from '../shadcn/lib/utils';
 
 export interface IOption {
     value: string;

@@ -2,10 +2,10 @@ import { IDRepInternal } from '@models/types';
 import { convertLovelaceToAda, hexToBech32 } from '@utils';
 import { CopyIcon, ExternalLink } from 'lucide-react';
 
-import { AppDialogContent } from '@app/app/components/AppDialog';
+import { AppDialogContent } from '@app/components/molecules/AppDialog';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 
-import { getDrepGivedName } from './DRepCard';
+import { getDrepGivedName } from '../../../../components/organisms/cards/DRepCard';
 
 export default function DrepDetailDialogContent({
     dRep,

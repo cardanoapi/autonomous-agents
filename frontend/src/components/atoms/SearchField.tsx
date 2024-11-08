@@ -4,7 +4,7 @@ import { Slot } from '@radix-ui/react-slot';
 import { VariantProps, cva } from 'class-variance-authority';
 import { Search } from 'lucide-react';
 
-import { cn } from '../lib/utils';
+import { cn } from '../shadcn/lib/utils';
 
 const SearchFieldVariants = cva(
     'inline-flex rounded-[8px] text-[14px] gap-x-2 pl-2 leading-[21px] items-center placeholder:text-brand-Gray-200 py-2',

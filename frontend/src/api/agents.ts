@@ -6,7 +6,7 @@ import { z } from 'zod';
 
 import { convertToQueryStr } from '@app/utils/common/extra';
 
-import { agentFormSchema } from '../app/(pages)/agents/create-agent/_form/schema';
+import { agentFormSchema } from '@app/app/(pages)/agents/create-agent/page';
 import { baseAPIurl } from './config';
 
 export type TriggerType = 'CRON' | 'MANUAL' | 'EVENT';

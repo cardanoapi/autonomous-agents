@@ -13,7 +13,7 @@ import {
     CommandItem
 } from '../atoms/Command';
 import { Popover, PopoverContent, PopoverTrigger } from '../atoms/Popover';
-import { cn } from '../lib/utils';
+import { cn } from '../shadcn/lib/utils';
 
 export interface IComboBoxOption {
     value: string;

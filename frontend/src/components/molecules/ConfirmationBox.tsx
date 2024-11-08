@@ -1,8 +1,8 @@
 import { CircleAlert, X } from 'lucide-react';
 
 import { Button } from '../atoms/Button';
-import { Card } from '../atoms/Card';
-import { cn } from '../lib/utils';
+import { cn } from '../shadcn/lib/utils';
+import { Card } from './Card';
 
 export default function ConfirmationBox({
     msg,

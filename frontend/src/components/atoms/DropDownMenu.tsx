@@ -5,8 +5,8 @@ import * as React from 'react';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { Check, ChevronRight, Circle } from 'lucide-react';
 
-import PolygonIcon from '../icons/Polygon';
-import { cn } from '../lib/utils';
+import PolygonIcon from '../../../public/icons/Polygon';
+import { cn } from '../shadcn/lib/utils';
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 
