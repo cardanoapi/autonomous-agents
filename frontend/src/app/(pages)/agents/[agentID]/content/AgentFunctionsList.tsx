@@ -21,7 +21,7 @@ import { SuccessToast, ErrorToast } from '@app/components/molecules/CustomToasts
 import FunctionCardWithMeta from '@app/components/organisms/agent/FunctionCardWithMeta';
 import ErrorPlaceholder from '@app/components/molecules/ErrorPlaceholder';
 
-const AgentFunctionsDetailComponent = ({
+const AgentFunctionsList = ({
     agent,
     onClickDelete,
     agentConfigurations,
@@ -109,4 +109,4 @@ const AgentFunctionsDetailComponent = ({
     );
 };
 
-export default AgentFunctionsDetailComponent;
+export default AgentFunctionsList;

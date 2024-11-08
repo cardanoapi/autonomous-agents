@@ -12,7 +12,7 @@ import { errorAtom, selectedFunctionAtom } from '@app/store/atoms/formRenderer';
 import ErrorPlaceholder from '@app/components/molecules/ErrorPlaceholder';
 import ContentHeader from './ContentHeader';
 
-const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
+const AgentManualActionsContent = ({ agent }: { agent?: IAgent }) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [, setSelectedFunction] = useAtom(selectedFunctionAtom);
     const [, setErrorIndex] = useAtom(errorAtom);
@@ -121,4 +121,4 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
     );
 };
 
-export default AgentManualTriggerComponent;
+export default AgentManualActionsContent;

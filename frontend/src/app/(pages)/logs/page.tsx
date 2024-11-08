@@ -15,8 +15,12 @@ import {
 import { SearchField } from '@app/components/atoms/SearchField';
 import AgentFunctionsDropDown from '@app/components/molecules/AgentFunctionsDropDown';
 import PaginationBtns from '@app/components/molecules/PaginationBtns';
-import { AgentLogCard, AgentLogCardSkeleton } from '../agents/[agentID]/content/Logs';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
+
+import {
+    AgentLogCard,
+    AgentLogCardSkeleton
+} from '../agents/[agentID]/content/AgentLogsContent';
 
 export default function LogsPage() {
     // Object to store all state related to the query

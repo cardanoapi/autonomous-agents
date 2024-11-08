@@ -3,16 +3,16 @@
 import { IAgent } from '@api/agents';
 import { useAtom } from 'jotai';
 
-import AgentManualTriggerComponent from '../content/ManualActions';
-import AgentOverViewComponent from '../content/Overview';
-import { selectedAgentTabAtom } from '@app/store/localStore';
-
 import { cn } from '@app/components/shadcn/lib/utils';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
-import AgentFunctionsComponent from '../content/Functions';
-import AgentLogComponent from '../content/Logs';
-import AgentSettingsComponent from '../content/Settings';
+import { selectedAgentTabAtom } from '@app/store/localStore';
+
+import AgentLogContent from '../content/AgentLogsContent';
+import AgentOverViewContent from '../content/AgentOverviewContent';
+import AgentSettingsContent from '../content/AgentSettingsContent';
+import AgentFunctionsContent from '../content/AgentFunctionsContent';
+import AgentManualTriggerContent from '../content/AgentManualActionsContent';
 
 const AgentTabContent = ({
     agent,
@@ -29,17 +29,17 @@ const AgentTabContent = ({
 
     function getAgentSelectedTabComponent() {
         if (selectedAgentTab === 'Overview')
-            return <AgentOverViewComponent agent={agent} enableControl={enableEdit} />;
+            return <AgentOverViewContent agent={agent} enableControl={enableEdit} />;
         else if (selectedAgentTab === 'Functions')
-            return <AgentFunctionsComponent agent={agent} enableControl={enableEdit} />;
+            return <AgentFunctionsContent agent={agent} enableControl={enableEdit} />;
         else if (selectedAgentTab === 'Logs')
-            return <AgentLogComponent agent={agent} />;
+            return <AgentLogContent agent={agent} />;
         else if (enableEdit) {
             if (selectedAgentTab === 'Manual Actions')
-                return <AgentManualTriggerComponent agent={agent} />;
+                return <AgentManualTriggerContent agent={agent} />;
             else if (selectedAgentTab === 'Settings')
                 return (
-                    <AgentSettingsComponent agent={agent} enableControl={enableEdit} />
+                    <AgentSettingsContent agent={agent} enableControl={enableEdit} />
                 );
         }
     }

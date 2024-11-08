@@ -24,7 +24,7 @@ import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import ErrorPlaceholder from '@app/components/molecules/ErrorPlaceholder';
 import ContentHeader from './ContentHeader';
 
-export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
+export const AgentLogContent = ({ agent }: { agent?: IAgent }) => {
     const statusOptions = ['Success', 'Skipped', 'Failed'];
     const [statusPlaceholder, setStatusPlaceholder] = useState('None');
     const [currentFunction, setCurrentFunction] = useState('None');
@@ -379,7 +379,7 @@ const TxHashComponent = ({ txHash }: { txHash: string }) => {
     );
 };
 
-export default AgentLogComponent;
+export default AgentLogContent;
 
 export const AgentLogCardSkeleton = ({ className }: { className?: string }) => {
     return (

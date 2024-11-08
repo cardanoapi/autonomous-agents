@@ -16,9 +16,9 @@ import ConfirmationBox from '@app/components/molecules/ConfirmationBox';
 import { ErrorToast , SuccessToast } from '@app/components/molecules/CustomToasts';
 import TextDisplayField from '@app/components/molecules/TextDisplayField';
 import HeaderContent from './ContentHeader';
-import AgentFunctionsDetailComponent from './FunctionsContainer';
+import AgentFunctionsList from './AgentFunctionsList';
 
-export default function AgentFunctionsComponent({
+export default function AgentFunctionsContent({
     agent,
     enableControl
 }: {
@@ -93,7 +93,7 @@ export default function AgentFunctionsComponent({
                         )}
                     </div>
                 </HeaderContent>
-                <AgentFunctionsDetailComponent
+                <AgentFunctionsList
                     agentConfigurations={agent?.agent_configurations || []}
                     onClickDelete={handleDeleteTrigger}
                     enableContol={enableControl}

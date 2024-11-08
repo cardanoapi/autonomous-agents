@@ -16,7 +16,7 @@ import { ErrorToast , SuccessToast } from '@app/components/molecules/CustomToast
 import { NumberInput } from '@app/components/molecules/NumberInput';
 import ContentHeader from './ContentHeader';
 
-export default function AgentSettingsComponent({
+export default function AgentSettingsContent({
     agent,
     enableControl
 }: {
