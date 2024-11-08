@@ -17,8 +17,8 @@ import {
 } from '@app/store/localStore';
 import { IQueryParams } from '@app/utils/query';
 
-import AgentsContainer from './components/AgentsContainer';
 import AgentsTopNav, { AgentsTopNavSkeleton } from '../../../components/organisms/layout/AgentsTopNav';
+import AgentCard, { AgentCardSkeleton } from '@app/components/organisms/cards/AgentCard';
 
 export default function AgentsPage() {
     const [agentCreated, setAgentCreated] = useAtom(agentCreatedAtom);
@@ -35,7 +35,7 @@ export default function AgentsPage() {
         search: ''
     });
 
-    const { data: agents, isLoading: isLoading } = useQuery<IAgent[]>({
+    const { data: agents, isLoading } = useQuery<IAgent[]>({
         queryKey: ['agents', queryParams],
         queryFn: () => fetchAgents(queryParams),
         refetchOnWindowFocus: true,
@@ -56,27 +56,21 @@ export default function AgentsPage() {
     }, [agentCreated]);
 
     useEffect(() => {
-        // is Loading is set to true when query params change and the skeleton is renderd causing the  search value to default to none.
         if (isFirstFetch) {
             setIsFirstFetch(false);
         }
     }, [agents]);
 
     const otherAgents = useMemo(() => {
-        return (
-            agents?.filter(
-                (agent) => agent.userAddress !== currentConnectedWallet?.address
-            ) || []
-        );
+        return agents?.filter(agent => agent.userAddress !== currentConnectedWallet?.address) || [];
     }, [agents, currentConnectedWallet?.address]);
 
     const myAgents = useMemo(() => {
-        return (
-            agents?.filter(
-                (agent) => agent.userAddress === currentConnectedWallet?.address
-            ) || []
-        );
+        return agents?.filter(agent => agent.userAddress === currentConnectedWallet?.address) || [];
     }, [agents, currentConnectedWallet?.address]);
+
+    const gridClass = "grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 3xl:pr-12 4xl:grid-cols-5 5xl:grid-cols-6"
+
     return (
         <>
             {isLoading && isFirstFetch ? (
@@ -89,25 +83,53 @@ export default function AgentsPage() {
                 />
             )}
 
-            <ScrollArea
-                className="mt-5 max-h-agentsList overflow-y-auto py-4 pr-4"
-                scrollHideDelay={200}
-            >
-                <AgentsContainer
-                    agentsList={otherAgents || []}
-                    enableEdit={adminAccess}
-                    enableDelete={adminAccess}
-                    loadingAgents={isLoading}
-                />
+            <ScrollArea className="mt-5 max-h-agentsList overflow-y-auto py-4 pr-4" scrollHideDelay={200}>
+                {/* Render Other Agents */}
+                <div className={gridClass}>
+                    {isLoading
+                        ? Array.from({ length: 10 }).map((_, index) => (
+                            <AgentCardSkeleton key={index} />
+                        ))
+                        : otherAgents.map(agent => (
+                            <AgentCard
+                                key={agent.id}
+                                agentName={agent.name || 'NA'}
+                                agentID={agent.id || ''}
+                                functionCount={agent.total_functions || 0}
+                                templateName={agent.template_name}
+                                totalTrigger={0}
+                                lastActive={agent.last_active || 'NA'}
+                                enableEdit={adminAccess}
+                                isActive={agent.is_active}
+                                enableDelete={adminAccess}
+                                no_of_successful_triggers={agent.no_of_successfull_triggers}
+                                agentSecretKey={agent.secret_key}
+                            />
+                        ))}
+                </div>
+
+                {/* Render My Agents */}
                 {currentConnectedWallet && !isLoading && myAgents.length > 0 && (
                     <div className={cn(otherAgents.length > 0 && 'my-8')}>
                         <span className="h1-new mb-4 inline-flex">My Agents</span>
-                        <AgentsContainer
-                            agentsList={myAgents || []}
-                            enableEdit={true}
-                            enableDelete={adminAccess}
-                            loadingAgents={false}
-                        />
+                        <div className={gridClass}>
+                            {myAgents.map(agent => (
+                                <AgentCard
+                                    key={agent.id}
+                                    agentName={agent.name || 'NA'}
+                                    agentID={agent.id || ''}
+                                    functionCount={agent.total_functions || 0}
+                                    templateName={agent.template_name}
+                                    totalTrigger={0}
+                                    lastActive={agent.last_active || 'NA'}
+                                    enableEdit={true}
+                                    isActive={agent.is_active}
+                                    enableDelete={adminAccess}
+                                    no_of_successful_triggers={agent.no_of_successfull_triggers}
+                                    agentSecretKey={agent.secret_key}
+                                />
+                            ))}
+                        </div>
                     </div>
                 )}
             </ScrollArea>
