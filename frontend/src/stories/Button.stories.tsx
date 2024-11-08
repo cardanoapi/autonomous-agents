@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import SelectedCard from './SelectedCard';
+import {Button} from '@app/components/atoms/Button';
 
 const meta = {
-    title: 'SelectedCard',
-    component: SelectedCard,
+    title: 'Button',
+    component: Button,
     parameters: {
         layout: 'centered'
     },
@@ -12,13 +12,15 @@ const meta = {
     tags: ['autodocs'],
 
     argTypes: {}
-} satisfies Meta<typeof SelectedCard>;
+} satisfies Meta<typeof Button>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
     args: {
-        name: 'SendAda',
-        handleUnselect: () => {}
+        children: 'Create new agent',
+        variant: 'primary',
+        border: 'none',
+        size: 'sm'
     }
 };

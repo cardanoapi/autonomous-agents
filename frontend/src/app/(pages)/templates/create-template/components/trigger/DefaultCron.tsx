@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { RadioGroup, RadioGroupItem } from '@app/components/atoms/RadioGroup';
-import { Label } from '@app/components/atoms/label';
+import { Label } from '@app/components/atoms/Label';
 import { cn } from '@app/components/lib/utils';
 import { NumberInput } from '@app/components/molecules/NumberInput';
 

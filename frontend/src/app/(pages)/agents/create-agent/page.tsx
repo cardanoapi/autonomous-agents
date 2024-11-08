@@ -17,7 +17,7 @@ import { agentFormSchema } from '@app/app/(pages)/agents/create-agent/_form/sche
 import { Card } from '@app/components/atoms/Card';
 import { Form, FormControl, FormField, FormItem } from '@app/components/atoms/Form';
 import { Input } from '@app/components/atoms/Input';
-import { Label } from '@app/components/atoms/label';
+import { Label } from '@app/components/atoms/Label';
 import { cn } from '@app/components/lib/utils';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
 import MultipleSelector, { IOption } from '@app/components/molecules/MultiSearchSelect';

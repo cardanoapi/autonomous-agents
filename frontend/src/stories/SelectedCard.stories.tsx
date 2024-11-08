@@ -1,10 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Input } from './Input';
-
+import SelectedCard from '@app/components/molecules/SelectedCard';
 const meta = {
-    title: 'Input',
-    component: Input,
+    title: 'SelectedCard',
+    component: SelectedCard,
     parameters: {
         layout: 'centered'
     },
@@ -12,13 +11,13 @@ const meta = {
     tags: ['autodocs'],
 
     argTypes: {}
-} satisfies Meta<typeof Input>;
+} satisfies Meta<typeof SelectedCard>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
     args: {
-        placeholder: 'Enter Agent Name',
-        className: 'w-[297px]'
+        name: 'SendAda',
+        handleUnselect: () => {}
     }
 };

@@ -3,7 +3,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
-import AgentCard from './AgentCard';
+import AgentCard from '@app/components/molecules/AgentCard';
 
 const meta = {
     title: 'AgentCard',

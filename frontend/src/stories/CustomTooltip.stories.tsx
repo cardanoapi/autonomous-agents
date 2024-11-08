@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import CustomTooltip from '@app/components/Chart/CustomTooltip';
 
-import { NumberInput } from './NumberInput';
 
 const meta = {
-    title: 'NumberInput',
-    component: NumberInput,
+    title: 'CustomTooltip',
+    component: CustomTooltip,
     parameters: {
         layout: 'centered'
     },
@@ -12,7 +12,7 @@ const meta = {
     tags: ['autodocs'],
 
     argTypes: {}
-} satisfies Meta<typeof NumberInput>;
+} satisfies Meta<typeof CustomTooltip>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

@@ -2,10 +2,10 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import { Card } from '@app/components/atoms/Card';
 
-import CustomLineChart from './CustomLineChart';
+import DynamicLineChart from '@app/components/Chart/DynamicLineChart';
 
 const meta = {
-    title: 'CustomLineChart',
+    title: 'DynamicLineChart',
     component: Card,
     parameters: {
         layout: 'centered'
@@ -14,13 +14,13 @@ const meta = {
     tags: ['autodocs'],
 
     argTypes: {}
-} satisfies Meta<typeof CustomLineChart>;
+} satisfies Meta<typeof DynamicLineChart>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
     args: {
-        className: 'w-[70vh] h-[40vh]',
-        children: <CustomLineChart />
+        children: <DynamicLineChart />,
+        className: 'w-[800px] h-[400px]'
     }
 };

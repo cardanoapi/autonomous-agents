@@ -3,7 +3,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
-import ConfirmationBox from './ConfirmationBox';
+import ConfirmationBox from '@app/components/molecules/ConfirmationBox';
 
 const meta = {
     title: 'ConfirmationBox',

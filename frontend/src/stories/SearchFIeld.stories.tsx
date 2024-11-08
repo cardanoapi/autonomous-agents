@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Button } from './Button';
+import { SearchField } from '@app/components/atoms/SearchField';
 
 const meta = {
-    title: 'Button',
-    component: Button,
+    title: 'SearchField',
+    component: SearchField,
     parameters: {
         layout: 'centered'
     },
@@ -12,15 +12,13 @@ const meta = {
     tags: ['autodocs'],
 
     argTypes: {}
-} satisfies Meta<typeof Button>;
+} satisfies Meta<typeof SearchField>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
     args: {
-        children: 'Create new agent',
-        variant: 'primary',
-        border: 'none',
-        size: 'sm'
+        placeholder: 'Search for Templates',
+        variant: 'primary'
     }
 };

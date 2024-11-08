@@ -15,7 +15,7 @@ import { IFormFunctionInstance } from '@app/app/(pages)/templates/create-templat
 import FunctionCardWithMeta from '@app/components/Agent/shared/FunctionCardWithMeta';
 import { Input } from '@app/components/atoms/Input';
 import { Textarea } from '@app/components/atoms/Textarea';
-import { Label } from '@app/components/atoms/label';
+import { Label } from '@app/components/atoms/Label';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';

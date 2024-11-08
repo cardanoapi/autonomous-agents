@@ -1,10 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Switch } from './Switch';
-
+import { NumberInput } from '@app/components/molecules/NumberInput';
 const meta = {
-    title: 'Switch',
-    component: Switch,
+    title: 'NumberInput',
+    component: NumberInput,
     parameters: {
         layout: 'centered'
     },
@@ -12,7 +11,7 @@ const meta = {
     tags: ['autodocs'],
 
     argTypes: {}
-} satisfies Meta<typeof Switch>;
+} satisfies Meta<typeof NumberInput>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

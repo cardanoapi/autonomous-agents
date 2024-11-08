@@ -3,7 +3,7 @@ import { SelectIcon, SelectTrigger } from '@radix-ui/react-select';
 
 import { Input } from '@app/components/atoms/Input';
 import { Select, SelectContent, SelectItem } from '@app/components/atoms/Select';
-import { Label } from '@app/components/atoms/label';
+import { Label } from '@app/components/atoms/Label';
 import { NumberInput } from '@app/components/molecules/NumberInput';
 
 export const RenderStringParameter = (

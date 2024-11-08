@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import MultipleSelector, { IOption } from './MultiSearchSelect';
+import MultipleSelector, { IOption } from '@app/components/molecules/MultiSearchSelect';
 
 const meta = {
     title: 'MultiSearchSelect',

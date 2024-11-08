@@ -11,7 +11,7 @@ import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { Button } from '../../atoms/Button';
 import { Input } from '../../atoms/Input';
-import { Label } from '../../atoms/label';
+import { Label } from '../../atoms/Label';
 import { ErrorToast, SuccessToast } from '../../molecules/CustomToasts';
 import { NumberInput } from '../../molecules/NumberInput';
 import ContentHeader from './ContentHeader';

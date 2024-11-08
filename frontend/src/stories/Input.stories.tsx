@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import CustomTooltip from './CustomTooltip';
+import { Input } from '@app/components/atoms/Input';
 
 const meta = {
-    title: 'CustomTooltip',
-    component: CustomTooltip,
+    title: 'Input',
+    component: Input,
     parameters: {
         layout: 'centered'
     },
@@ -12,10 +12,13 @@ const meta = {
     tags: ['autodocs'],
 
     argTypes: {}
-} satisfies Meta<typeof CustomTooltip>;
+} satisfies Meta<typeof Input>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
-    args: {}
+    args: {
+        placeholder: 'Enter Agent Name',
+        className: 'w-[297px]'
+    }
 };

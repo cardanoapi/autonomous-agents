@@ -7,7 +7,7 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue
-} from './Select';
+} from '@app/components/atoms/Select';
 
 const meta = {
     title: 'Select',

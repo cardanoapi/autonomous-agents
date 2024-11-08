@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Textarea } from './Textarea';
+import { Card, CardHeader } from '@app/components/atoms/Card';
 
 const meta = {
-    title: 'Textarea',
-    component: Textarea,
+    title: 'Card',
+    component: Card,
     parameters: {
         layout: 'centered'
     },
@@ -12,12 +12,16 @@ const meta = {
     tags: ['autodocs'],
 
     argTypes: {}
-} satisfies Meta<typeof Textarea>;
+} satisfies Meta<typeof Card>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
     args: {
-        placeholder: 'Text..'
+        children: (
+            <>
+                <CardHeader>Demo Card</CardHeader>
+            </>
+        )
     }
 };

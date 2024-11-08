@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Checkbox } from './Checkbox';
+import { Label } from '@app/components/atoms/Label';
 
 const meta = {
-    title: 'Checkbox',
-    component: Checkbox,
+    title: 'Label',
+    component: Label,
     parameters: {
         layout: 'centered'
     },
@@ -12,10 +12,13 @@ const meta = {
     tags: ['autodocs'],
 
     argTypes: {}
-} satisfies Meta<typeof Checkbox>;
+} satisfies Meta<typeof Label>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
-    args: {}
+    args: {
+        children: 'Agent Name',
+        size: 'large'
+    }
 };

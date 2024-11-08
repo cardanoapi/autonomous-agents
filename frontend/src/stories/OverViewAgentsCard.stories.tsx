@@ -1,10 +1,9 @@
 import { Card } from '@mui/material';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import OverViewTemplatesCard from './OverViewTemplatesCard';
-
+import OverViewAgentsCard from '@app/app/components/OverViewAgentsCard';
 const meta = {
-    title: 'OverViewTemplatesCard',
+    title: 'OverViewAgentsCard',
     component: Card,
     parameters: {
         layout: 'centered'
@@ -13,7 +12,7 @@ const meta = {
     tags: ['autodocs'],
 
     argTypes: {}
-} satisfies Meta<typeof OverViewTemplatesCard>;
+} satisfies Meta<typeof OverViewAgentsCard>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -21,11 +20,11 @@ export const Primary: Story = {
     args: {
         className: 'w-[269px] h-[143px]',
         children: (
-            <OverViewTemplatesCard
-                title="Number of Templates"
-                totalTemplates={15}
-                defaultTemplates={5}
-                customTemplates={10}
+            <OverViewAgentsCard
+                title="Total Agents"
+                totalAgents={200}
+                activeAgents={172}
+                inactiveAgents={38}
             />
         )
     }

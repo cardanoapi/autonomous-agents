@@ -5,7 +5,7 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger
-} from './DropDownMenu';
+} from '@app/components/atoms/DropDownMenu';
 
 const meta = {
     title: 'DropdownMenu',

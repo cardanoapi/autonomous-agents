@@ -27,7 +27,7 @@ import {
 } from '@app/components/atoms/DropDownMenu';
 import { Input } from '@app/components/atoms/Input';
 import { Textarea } from '@app/components/atoms/Textarea';
-import { Label } from '@app/components/atoms/label';
+import { Label } from '@app/components/atoms/Label';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
 import { templateCreatedAtom } from '@app/store/localStore';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
