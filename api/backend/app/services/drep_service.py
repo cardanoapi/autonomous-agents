@@ -49,11 +49,11 @@ class DrepService:
                     for index, agent in enumerate(agents):
                         tg.create_task(self.fetch_metadata(agent, index, agents, session))
         except* Exception as exception:
-            exception
+            exception  # task group returns exception object itselgf
 
         return [agent for agent in agents if agent]
 
-    async def fetch_metadata(self, agent: Agent, index: int, agents: [Any], session: ClientSession):
+    async def fetch_metadata(self, agent: Agent, index: int, agents: list[Any], session: ClientSession):
         drep_dict = {}
         drep_id = convert_base64_to_hex(agent.wallet_details[0].stake_key_hash)
         async with session.get(f"{api_settings.DB_SYNC_API}/drep?dRepId={drep_id}") as response:
@@ -89,7 +89,9 @@ class DrepService:
         async with aiohttp.ClientSession() as session:
             async with session.get(fetchUrl) as response:
                 if response.status != 200 or response is None:
-                    raise HTTPException(status_code=500, content="DB Sync upstream service error")
+                    raise HTTPException(
+                        status_code=500, content="Error fetching external Dreps , DB Sync upstream service error"
+                    )
                 response_json = await response.json()
 
             async with asyncio.TaskGroup() as tg:

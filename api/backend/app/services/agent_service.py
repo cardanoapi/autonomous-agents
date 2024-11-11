@@ -240,7 +240,8 @@ class AgentService:
                 return {"last_registered": last_registered, "is_stake_registered": is_stake_registered}
             except:
                 raise HTTPException(
-                    status_code=500, content="Error fetching agent Drep details , DB Sync upstream service error"
+                    status_code=500,
+                    content="Error fetching agent stake address details , DB Sync upstream service error",
                 )
 
     async def fetch_delegation_details(self, stake_address: str, session: ClientSession):
@@ -252,7 +253,7 @@ class AgentService:
                 return Delegation(pool_id=pool_id, drep_id=drep_id)
             except:
                 raise HTTPException(
-                    status_code=500, content="Error fetching agent Drep details , DB Sync upstream service error"
+                    status_code=500, content="Error fetching agent Delegation details , DB Sync upstream service error"
                 )
 
     async def return_agent_with_wallet_details(self, agent: AgentResponse):
