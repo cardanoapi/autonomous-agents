@@ -207,7 +207,9 @@ class AgentService:
             try:
                 return await response.json()
             except:
-                raise HTTPException(status_code=400, content="Error fetching agent wallet balance")
+                raise HTTPException(
+                    status_code=500, content="Error fetching agent wallet balance. DB Sync upstream service error"
+                )
 
     async def fetch_drep_details(self, drep_id: str, session: ClientSession) -> Dict[str, float | bool]:
         async with session.get(f"{api_settings.DB_SYNC_API}/drep/{drep_id}") as response:
@@ -217,7 +219,9 @@ class AgentService:
                 is_drep_registered = res.get("isRegisteredAsDRep", False)
                 return {"voting_power": voting_power, "is_drep_registered": is_drep_registered}
             except:
-                raise HTTPException(status_code=400, content="Error fetching agent Drep details")
+                raise HTTPException(
+                    status_code=500, content="Error fetching agent Drep details , DB Sync upstream service error"
+                )
 
     async def fetch_stake_address_details(self, stake_address: str, session: ClientSession):
         async with session.get(f"{api_settings.DB_SYNC_API}/stake-address?address={stake_address}") as response:
@@ -235,7 +239,9 @@ class AgentService:
                 last_registered = res.get("registration", {}).get("time", None) if res.get("registration", {}) else None
                 return {"last_registered": last_registered, "is_stake_registered": is_stake_registered}
             except:
-                raise HTTPException(status_code=400, content="Error fetching agent Drep details")
+                raise HTTPException(
+                    status_code=500, content="Error fetching agent Drep details , DB Sync upstream service error"
+                )
 
     async def fetch_delegation_details(self, stake_address: str, session: ClientSession):
         async with session.get(f"{api_settings.DB_SYNC_API}/delegation?address={stake_address}") as response:
@@ -245,7 +251,9 @@ class AgentService:
                 pool_id = res.get("pool", {}).get("pool_id") if res.get("pool") else None
                 return Delegation(pool_id=pool_id, drep_id=drep_id)
             except:
-                raise HTTPException(status_code=400, content="Error fetching agent Drep details")
+                raise HTTPException(
+                    status_code=500, content="Error fetching agent Drep details , DB Sync upstream service error"
+                )
 
     async def return_agent_with_wallet_details(self, agent: AgentResponse):
         wallets = await self.agent_instance_wallet_service.get_wallets(agent_id=agent.id)
@@ -260,15 +268,21 @@ class AgentService:
                 stake_key_hash=agent_keys.stake_verification_key_hash,
                 instance_index=0,
             )
-        async with aiohttp.ClientSession() as session:
-            async with asyncio.TaskGroup() as group:
-                agent_configurations = group.create_task(self.trigger_service.list_triggers_by_agent_id(agent.id))
-                wallet_balance = group.create_task(self.fetch_balance(wallet.stake_key_hash, session))
-                drep_details = group.create_task(self.fetch_drep_details(wallet.stake_key_hash, session))
-                delegation_details = group.create_task(self.fetch_delegation_details(wallet.stake_key_hash, session))
-                stake_address_details = group.create_task(
-                    self.fetch_stake_address_details(wallet.stake_key_hash, session)
-                )
+
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with asyncio.TaskGroup() as group:
+                    agent_configurations = group.create_task(self.trigger_service.list_triggers_by_agent_id(agent.id))
+                    wallet_balance = group.create_task(self.fetch_balance(wallet.stake_key_hash, session))
+                    drep_details = group.create_task(self.fetch_drep_details(wallet.stake_key_hash, session))
+                    delegation_details = group.create_task(
+                        self.fetch_delegation_details(wallet.stake_key_hash, session)
+                    )
+                    stake_address_details = group.create_task(
+                        self.fetch_stake_address_details(wallet.stake_key_hash, session)
+                    )
+        except* Exception as exception:
+            exception  # TaskGroup returns the HTTP Exception itself. https://docs.python.org/3/library/asyncio-task.html#asyncio.Task
 
         return AgentResponseWithWalletDetails(
             **agent.dict(),
