@@ -27,6 +27,7 @@ from backend.app.services.template_service import TemplateService
 from backend.app.services.template_trigger_service import TemplateTriggerService
 from backend.app.services.trigger_service import TriggerService
 from backend.config.api_settings import api_settings
+from backend.config.logger import logger
 
 
 def check_if_agent_is_online(last_active: datetime | None) -> bool:
@@ -200,6 +201,7 @@ class AgentService:
             try:
                 return await response.json()
             except:
+                logger.error("Error fetching agent Drep details , DB Sync upstream service error")
                 raise HTTPException(status_code=400, content="Error fetching agent Drep details")
 
     async def fetch_balance(self, stake_address: str, session: ClientSession):
@@ -207,6 +209,7 @@ class AgentService:
             try:
                 return await response.json()
             except:
+                logger.error("Error fetching agent wallet balance. DB Sync upstream service error")
                 raise HTTPException(
                     status_code=500, content="Error fetching agent wallet balance. DB Sync upstream service error"
                 )
@@ -219,6 +222,7 @@ class AgentService:
                 is_drep_registered = res.get("isRegisteredAsDRep", False)
                 return {"voting_power": voting_power, "is_drep_registered": is_drep_registered}
             except:
+                logger.error("Error fetching agent Drep details , DB Sync upstream service error")
                 raise HTTPException(
                     status_code=500, content="Error fetching agent Drep details , DB Sync upstream service error"
                 )
@@ -239,6 +243,7 @@ class AgentService:
                 last_registered = res.get("registration", {}).get("time", None) if res.get("registration", {}) else None
                 return {"last_registered": last_registered, "is_stake_registered": is_stake_registered}
             except:
+                logger.error("Error fetching agent stake address details , DB Sync upstream service error")
                 raise HTTPException(
                     status_code=500,
                     content="Error fetching agent stake address details , DB Sync upstream service error",
@@ -252,6 +257,7 @@ class AgentService:
                 pool_id = res.get("pool", {}).get("pool_id") if res.get("pool") else None
                 return Delegation(pool_id=pool_id, drep_id=drep_id)
             except:
+                logger.error("Error fetching agent Delegation details , DB Sync upstream service error")
                 raise HTTPException(
                     status_code=500, content="Error fetching agent Delegation details , DB Sync upstream service error"
                 )
@@ -283,6 +289,7 @@ class AgentService:
                         self.fetch_stake_address_details(wallet.stake_key_hash, session)
                     )
         except* Exception as exception:
+            logger.error("Error fetching agent wallet details , DB Sync upstream service error")
             exception  # TaskGroup returns the HTTP Exception itself. https://docs.python.org/3/library/asyncio-task.html#asyncio.Task
 
         return AgentResponseWithWalletDetails(

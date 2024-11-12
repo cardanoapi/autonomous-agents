@@ -11,6 +11,7 @@ from backend.app.repositories.agent_repository import AgentRepository
 from backend.config.api_settings import api_settings
 from backend.config.database import prisma_connection
 from backend.app.exceptions import HTTPException
+from backend.config.logger import logger
 
 
 class DrepService:
@@ -49,6 +50,7 @@ class DrepService:
                     for index, agent in enumerate(agents):
                         tg.create_task(self.fetch_metadata(agent, index, agents, session))
         except* Exception as exception:
+            logger.error(exception)
             exception  # task group returns exception object itselgf
 
         return [agent for agent in agents if agent]
@@ -89,6 +91,7 @@ class DrepService:
         async with aiohttp.ClientSession() as session:
             async with session.get(fetchUrl) as response:
                 if response.status != 200 or response is None:
+                    logger.error("Error fetching external Dreps , DB Sync upstream service error")
                     raise HTTPException(
                         status_code=500, content="Error fetching external Dreps , DB Sync upstream service error"
                     )

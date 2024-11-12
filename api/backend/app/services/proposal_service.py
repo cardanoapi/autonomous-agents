@@ -8,6 +8,7 @@ from backend.app.exceptions import HTTPException
 from backend.app.models.trigger_history.trigger_history_dto import TriggerHistoryDto
 from backend.config.api_settings import api_settings
 from backend.config.database import prisma_connection
+from backend.config.logger import logger
 
 
 class ProposalService:
@@ -89,6 +90,7 @@ class ProposalService:
         async with aiohttp.ClientSession() as session:
             async with session.get(search_url) as response:
                 if response.status != 200:
+                    logger.error("Error fetching External Proposals , DB Sync upstream service error")
                     raise HTTPException(
                         status_code=500, content="Error fetching External Proposals , DB Sync upstream service error"
                     )
@@ -116,6 +118,7 @@ class ProposalService:
                     proposal["agentId"] = agent.id
                     proposal["agentName"] = agent.name
             except:
+                logger.error("Proposal with given id not found")
                 raise HTTPException(status_code=500, content="Proposal with given id not found")
         proposals[index] = proposal
 
@@ -138,6 +141,7 @@ class ProposalService:
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 if response.status == 500:
+                    logger.error("Error fetching proposal MetaData , DB Sync Upstream service error")
                     raise HTTPException(
                         status_code=500, content="Error fetching proposal MetaData , DB Sync Upstream service error"
                     )
