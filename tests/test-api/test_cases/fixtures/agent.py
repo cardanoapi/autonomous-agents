@@ -45,9 +45,15 @@ def load_funds_to_agent_address(create_admin_agent_fixture, autonomous_agent_api
 
     return response
 
+
 @pytest.fixture(scope="session")
-def admin_agent_fixture(autonomous_agent_api, admin_login_cookie , create_admin_agent_fixture):
-    response = autonomous_agent_api.get_agent(create_admin_agent_fixture.json().get("id"),headers={"Cookie": admin_login_cookie})
+def admin_agent_fixture(
+    autonomous_agent_api, admin_login_cookie, create_admin_agent_fixture
+):
+    response = autonomous_agent_api.get_agent(
+        create_admin_agent_fixture.json().get("id"),
+        headers={"Cookie": admin_login_cookie},
+    )
     return response
 
 
@@ -109,7 +115,9 @@ def run_admin_agent_fixture(
     env = os.environ.copy()
     env["WS_URL"] = env.get("AGENT_MANAGER_WS_URL")
     env["AGENT_ID"] = agent_id
-    env['TOKEN'] = convert_to_base64_with_network_prefix(agent_secret_key, env.get("NETWORK"))
+    env["TOKEN"] = convert_to_base64_with_network_prefix(
+        agent_secret_key, env.get("NETWORK")
+    )
 
     logger.info(f"token: {env['TOKEN']}")
 
@@ -125,6 +133,16 @@ def run_admin_agent_fixture(
             stderr=subprocess.STDOUT,
         )
         time.sleep(20)  # Wait for the agent to start
+
+        # Execute Stake registration , needed to trigger gov action
+        response = autonomous_agent_api.agent_manual_trigger(
+            agentID=agent_id,
+            body={"function_name": "registerStake", "parameters": []},
+            headers={"Cookie": admin_login_cookie},
+        )
+
+        time.sleep(45)
+
         # Execute create gov info action manual trigger
         response = autonomous_agent_api.agent_manual_trigger(
             agentID=agent_id,
@@ -159,8 +177,7 @@ def delete_admin_agent_fixture(
     return response
 
 
-
 def convert_to_base64_with_network_prefix(agent_secret_key: str, network: str) -> str:
     new_secret_key = f"{network}_{agent_secret_key}"
-    encoded_bytes = base64.b64encode(new_secret_key.encode('utf-8'))
-    return encoded_bytes.decode('utf-8')
+    encoded_bytes = base64.b64encode(new_secret_key.encode("utf-8"))
+    return encoded_bytes.decode("utf-8")
