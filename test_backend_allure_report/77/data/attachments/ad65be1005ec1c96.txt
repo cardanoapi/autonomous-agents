@@ -1,0 +1,2 @@
+Logging response from template edit fixture.
+{'id': 'efdbe356-5a3f-4bbf-8ad9-e9a433a5ab81', 'name': 'afab8245-d6bb-4470-b918-97540541c123', 'description': 'Template Edited using Integration Test', 'template_configurations': [{'id': '981cd2aa-468c-425d-a30e-b5eb12bee490', 'template_id': 'efdbe356-5a3f-4bbf-8ad9-e9a433a5ab81', 'type': 'CRON', 'action': {'function_name': 'transferADA', 'parameters': [{'name': 'receiver_address', 'value': '1111111111111111111111111111111111'}, {'name': 'receiving_ada', 'value': '10'}]}, 'data': {'frequency': '* * * * *', 'probability': 0.3}}]}
