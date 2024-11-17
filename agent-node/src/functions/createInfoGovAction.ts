@@ -19,7 +19,19 @@ export default async function handler(
             },
         ],
     }
-    return await context.wallet.buildAndSubmit(req).catch((e) => {
-        throw e
+    return await context.wallet.buildAndSubmit(req).catch(async (e) => {
+        if (e.includes('ProposalReturnAccountDoesNotExist')) {
+            await context.builtins.registerStake().catch((e) => {
+                throw e
+            })
+            return context.wallet
+                .buildAndSubmit(req)
+                .then((v) => v)
+                .catch((e) => {
+                    throw e
+                })
+        } else {
+            throw e
+        }
     })
 }
