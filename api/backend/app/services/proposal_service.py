@@ -8,6 +8,7 @@ from backend.app.exceptions import HTTPException
 from backend.app.models.trigger_history.trigger_history_dto import TriggerHistoryDto
 from backend.config.api_settings import api_settings
 from backend.config.database import prisma_connection
+from backend.config.logger import logger
 
 
 class ProposalService:
@@ -63,7 +64,7 @@ class ProposalService:
         )
 
     async def add_metadata_and_agent_detail_in_internal_proposal(
-        self, proposal: TriggerHistoryDto, index: int, results: [Any]
+        self, proposal: TriggerHistoryDto, index: int, results: list[Any]
     ):
         url = f"{api_settings.DB_SYNC_API}/proposal?proposal={proposal.txHash}"
         proposal_data = await self._fetch_proposal_data(url)
@@ -85,23 +86,28 @@ class ProposalService:
         search_url = f"{api_settings.DB_SYNC_API}/proposal?page={page}&size={pageSize}&sort={sort}"
         if search:
             search_url = f"{api_settings.DB_SYNC_API}/proposal?proposal={search}"
+
         async with aiohttp.ClientSession() as session:
             async with session.get(search_url) as response:
-                async with asyncio.TaskGroup() as tg:
-                    response_json = await response.json()
-                    for index, proposal in enumerate(response_json["items"]):
-                        tg.create_task(self.add_agent_in_external_proposals(index, proposal, response_json["items"]))
-                        if proposal.get("metadataHash") and proposal.get("url"):
-                            tg.create_task(
-                                self._fetch_metadata(proposal.get("metadataHash"), proposal.get("url"), proposal)
-                            )
-                return Page(
-                    items=response_json["items"],
-                    total=response_json["totalCount"],
-                    page=max(response_json["page"] | 0, 1),
-                    size=response_json["size"],
-                    pages=max(int(response_json["totalCount"]) // int(response_json["size"]) | 0, 1),
-                )
+                if response.status != 200:
+                    logger.error("Error fetching External Proposals , DB Sync upstream service error")
+                    raise HTTPException(
+                        status_code=500, content="Error fetching External Proposals , DB Sync upstream service error"
+                    )
+                response_json = await response.json()
+
+        async with asyncio.TaskGroup() as tg:
+            for index, proposal in enumerate(response_json["items"]):
+                tg.create_task(self.add_agent_in_external_proposals(index, proposal, response_json["items"]))
+                if proposal.get("metadataHash") and proposal.get("url"):
+                    tg.create_task(self._fetch_metadata(proposal.get("metadataHash"), proposal.get("url"), proposal))
+        return Page(
+            items=response_json["items"],
+            total=response_json["totalCount"],
+            page=max(response_json["page"] | 0, 1),
+            size=response_json["size"],
+            pages=max(int(response_json["totalCount"]) // int(response_json["size"]) | 0, 1),
+        )
 
     async def add_agent_in_external_proposals(self, index: int, proposal: Any, proposals: List[Any]):
         if proposal["txHash"]:
@@ -112,6 +118,7 @@ class ProposalService:
                     proposal["agentId"] = agent.id
                     proposal["agentName"] = agent.name
             except:
+                logger.error("Proposal with given id not found")
                 raise HTTPException(status_code=500, content="Proposal with given id not found")
         proposals[index] = proposal
 
@@ -133,6 +140,11 @@ class ProposalService:
     async def _fetch_proposal_data(self, url: str):
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
+                if response.status == 500:
+                    logger.error("Error fetching proposal MetaData , DB Sync Upstream service error")
+                    raise HTTPException(
+                        status_code=500, content="Error fetching proposal MetaData , DB Sync Upstream service error"
+                    )
                 if response.status == 200:
                     data = await response.json()
                     if "items" in data and data["items"]:
