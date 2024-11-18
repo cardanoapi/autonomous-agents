@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { IBooleanNode, IEventTrigger, IFieldNode } from '@api/agents';
 import { ChevronDown } from 'lucide-react';
 import { FileJson, Parentheses } from 'lucide-react';
 
@@ -14,16 +15,9 @@ import {
 import { Input } from '@app/components/atoms/Input';
 import { cn } from '@app/components/lib/utils';
 
-import InfoCard from '../cards/InfoCard';
 import { CustomSelect } from '../../../../../../components/molecules/CustomDropDown';
-import {
-    Events,
-    IBooleanNode,
-    IEvent,
-    IEventFilter,
-    IEventTrigger,
-    IFieldNode
-} from './EventTrigger';
+import InfoCard from '../cards/InfoCard';
+import { Events, IEvent, IEventFilter } from './EventTrigger';
 import NodeGraph from './EventTriggerGraph';
 
 const EventTab = ({ className }: { className?: string }) => {
@@ -296,7 +290,7 @@ const EventTab = ({ className }: { className?: string }) => {
                     {formData?.parameters.map((param, index) => {
                         if (param.id === currentEventFilter?.id) {
                             return (
-                                <div>
+                                <div key={index}>
                                     {(param as IBooleanNode).children?.map(
                                         (child, childIndex) => (
                                             <div

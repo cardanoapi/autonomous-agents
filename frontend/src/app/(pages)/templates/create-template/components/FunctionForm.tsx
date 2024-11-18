@@ -4,7 +4,7 @@ import React from 'react';
 import { TriggerType } from '@api/agents';
 import { TemplateFunctions } from '@models/types/functions';
 import { Slider } from '@mui/material';
-import { Check, Trash2, X } from 'lucide-react';
+import { X } from 'lucide-react';
 
 import { Button } from '@app/components/atoms/Button';
 import { Card, CardTitle } from '@app/components/atoms/Card';
@@ -19,9 +19,9 @@ import { CustomCombobox } from '@app/components/molecules/CustomCombobox';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
 
 import { IFormFunctionInstance } from '../page';
-import EventTab from './event/EventTab';
 import { renderParameters } from './ParameterRenderers';
 import TriggerTab from './TriggerTab';
+import EventTab from './event/EventTab';
 
 interface IFunctionFormParams {
     currentFunction?: IFormFunctionInstance;

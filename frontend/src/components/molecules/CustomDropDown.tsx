@@ -18,14 +18,12 @@ export const CustomDropDown = ({
     label,
     onSelect,
     chevronIcon = true,
-    plusIcon = false,
-    disabled = false
+    plusIcon = false
 }: {
     defaultValue: string;
     label: string;
     options: string[];
     onSelect: (item: string) => void; // Specify the type for onSelect
-    disabled?: boolean;
     chevronIcon?: boolean;
     plusIcon?: boolean;
 }) => (
@@ -75,13 +73,17 @@ export const CustomSelect = ({
     label?: string;
     className?: string;
     options: ISelectItem[];
-    onSelect: (item: any) => void; 
+    onSelect: (item: any) => void;
     disabled?: boolean;
     plusIcon?: boolean;
 }) => (
-    <div className={cn("flex w-full flex-col gap-3" , className)}>
+    <div className={cn('flex w-full flex-col gap-3', className)}>
         {label && <span className="h4">{label}</span>}
-        <Select defaultValue={defaultValue} onValueChange={(item) => onSelect(item)} disabled={disabled}>
+        <Select
+            defaultValue={defaultValue}
+            onValueChange={(item) => onSelect(item)}
+            disabled={disabled}
+        >
             <SelectTrigger
                 useAddIcon={plusIcon}
                 className="w-full items-center justify-between rounded-lg border-[1px] border-brand-border-200 px-4 py-2"
