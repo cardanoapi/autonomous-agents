@@ -9,7 +9,6 @@ import { convertToQueryStr } from '@app/utils/common/extra';
 import { agentFormSchema } from '../app/(pages)/agents/create-agent/_form/schema';
 import { baseAPIurl } from './config';
 
-
 export type BooleanOperator = 'AND' | 'OR';
 export type ComparisonOperator = 'equals' | 'greaterThan' | 'lessThan' | 'in';
 
@@ -52,7 +51,6 @@ export interface ICronTrigger {
     frequency: string;
     probability: number;
 }
-
 
 export interface IAgentConfiguration {
     id: string;
@@ -234,4 +232,3 @@ export const fetchMyAgent = async (): Promise<IAgent> => {
         throw new Error('Agent Fetch Operation failed: Network Error');
     }
 };
-

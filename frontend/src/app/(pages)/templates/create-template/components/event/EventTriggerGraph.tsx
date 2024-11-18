@@ -1,25 +1,20 @@
 import { useEffect, useState } from 'react';
 
-import { Canvas, Edge, EdgeData, Node, NodeData, NodeProps } from 'reaflow';
-
-import { IEventTrigger, IFilterNode } from './EventTrigger';
+import { IEventTrigger, IFilterNode } from '@api/agents';
+import { Canvas, EdgeData, NodeData } from 'reaflow';
 
 interface NodeGraphProps {
-    data : IEventTrigger;
+    data: IEventTrigger;
     className?: string;
-    onNodeClick?: (node: Node) => any;
     maxHeight?: number;
     maxWidth?: number;
-    nodeStyle?: any;
 }
 
 export default function EventTriggerGraph({
-    data ,
+    data,
     className,
-    onNodeClick,
     maxHeight,
-    maxWidth,
-    nodeStyle
+    maxWidth
 }: NodeGraphProps) {
     const [nodes, setNodes] = useState<NodeData[]>([]);
     const [edges, setEdges] = useState<EdgeData[]>([]);
@@ -132,52 +127,6 @@ export default function EventTriggerGraph({
             className={`w-full bg-[#D2E0FB] ${className || ''}`}
             direction="RIGHT"
             zoomable={true}
-            node={(node: NodeProps) => (
-                <Node
-                    //   onClick={(event, node) => onNodeClick && onNodeClick(node)}
-                    style={nodeStyle}
-                />
-            )}
         />
     );
 }
-
-// const recursivelyAddNode = (obj: any, parentId: string, text?: string) => {
-//     if (Array.isArray(obj.id)) {
-//         obj.id.forEach((idPart: string, index: number) => {
-//             const newParentId =
-//                 index > 0
-//                     ? `${parentId}.${obj.id.slice(0, index).join('.')}`
-//                     : parentId;
-
-//             const isFirst = index === 0;
-//             const isLast = index === obj.id.length - 1;
-
-//             if (isFirst) {
-//                 recursivelyAddNode({ id: idPart }, newParentId, text);
-//             } else if (isLast) {
-//                 recursivelyAddNode(
-//                     { id: idPart, value: `${obj.operator} - ${obj.value}` },
-//                     newParentId
-//                 );
-//             } else {
-//                 recursivelyAddNode({ id: idPart }, newParentId);
-//             }
-//         });
-//     } else if (typeof obj.id === 'string') {
-//         const nodeId = `${parentId}.${obj.id}`;
-//         text
-//             ? addNode(nodeId, obj.id + text)
-//             : obj.value
-//               ? addNode(nodeId, `${obj.id} : ${obj.value}`)
-//               : addNode(nodeId, obj.id);
-//         addEdge(parentId, obj.id);
-//     }
-
-//     // If obj has children, recursively add each child node
-//     else if (obj.children) {
-//         obj.children.forEach((child: any) =>
-//             recursivelyAddNode(child, parentId, ` ( ${obj.operator} ) `)
-//         );
-//     }
-// };

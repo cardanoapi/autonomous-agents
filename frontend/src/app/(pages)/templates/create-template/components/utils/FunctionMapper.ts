@@ -11,7 +11,7 @@ import {
 
 import { IFormFunctionInstance } from '../../page';
 import {
-    mapKeyValuePairToParamValue,
+    // mapKeyValuePairToParamValue,
     mapOptionToKeyValuePair,
     mapParamValueToKeyValuePair
 } from './MapperHelper';
@@ -25,19 +25,19 @@ export const mapFormFunctionToTriggerConfiguration = (
         frequency: item.cronValue?.frequency || '* * * * *'
     };
 
-    if (item.type === 'EVENT') {
-        return {
-            type: item.type,
-            action: {
-                function_name: item.id,
-                parameters: mapParamValueToKeyValuePair(item.eventParameters || [])
-            },
-            data: {
-                event: 'VoteEvent',
-                parameters: mapParamValueToKeyValuePair(item.eventParameters || [])
-            }
-        };
-    }
+    // if (item.type === 'EVENT') {
+    //     return {
+    //         type: item.type,
+    //         action: {
+    //             function_name: item.id,
+    //             parameters: mapParamValueToKeyValuePair(item.eventParameters || [])
+    //         },
+    //         data: {
+    //             event: 'VoteEvent',
+    //             parameters: mapParamValueToKeyValuePair(item.eventParameters || [])
+    //         }
+    //     };
+    // }
 
     if (item.id === 'delegation') {
         return {
@@ -167,10 +167,10 @@ export const mapTriggerConfigurationToFormFunction = (
           }
         : undefined;
 
-    const eventParameters =
-        trigger.type === 'EVENT'
-            ? mapKeyValuePairToParamValue(trigger.action.parameters || [])
-            : undefined;
+    // const eventParameters =
+    //     trigger.type === 'EVENT'
+    //         ? mapKeyValuePairToParamValue(trigger.action.parameters || [])
+    //         : undefined;
 
     const final_obj = {
         id: trigger.action.function_name,
@@ -183,13 +183,13 @@ export const mapTriggerConfigurationToFormFunction = (
         ),
         type: trigger.type as TriggerType,
         cronValue,
-        eventValue:
-            trigger.type === 'EVENT'
-                ? {
-                      event: (trigger.data as any).event,
-                      parameters: eventParameters
-                  }
-                : undefined,
+        // eventValue:
+        //     trigger.type === 'EVENT'
+        //         ? {
+        //               event: (trigger.data as any).event,
+        //               parameters: eventParameters
+        //           }
+        //         : undefined,
         optionValue:
             baseFunction?.parameters && baseFunction?.parameters[0].type === 'options'
                 ? populateOptionValue(trigger.action.parameters[0])
