@@ -4,7 +4,7 @@ import * as React from 'react';
 import { forwardRef, useEffect } from 'react';
 
 import { Command as CommandPrimitive, useCommandState } from 'cmdk';
-import { SearchIcon } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 import { Command, CommandGroup, CommandItem, CommandList } from '../atoms/Command';
 import { cn } from '../lib/utils';
@@ -408,7 +408,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                                     : placeholder
                             }
                             className={cn(
-                                'placeholder:text-muted-foreground ml-2 w-[90%] flex-1 bg-white outline-none',
+                                'placeholder:text-muted-foreground ml-2 w-[90%] flex-1 bg-white outline-none hover:cursor-pointer',
                                 inputProps?.className,
                                 selected.length >= maxSelected
                                     ? 'bg-brand-White-200'
@@ -416,7 +416,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                             )}
                         />
                     </div>
-                    <SearchIcon className="text-gray-400" />
+                    <Plus className="text-gray-400" />
                 </div>
                 <div className="relative mt-2">
                     {open && (

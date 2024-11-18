@@ -3,7 +3,7 @@ import { Edit } from 'lucide-react';
 
 import { Card } from '@app/components/atoms/Card';
 
-import { IFormFunctionInstance } from '../page';
+import { IFormFunctionInstance } from '../../page';
 
 interface IFunctionCards {
     functions: IFormFunctionInstance[];

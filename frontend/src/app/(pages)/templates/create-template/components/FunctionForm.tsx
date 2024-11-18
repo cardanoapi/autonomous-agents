@@ -4,10 +4,10 @@ import React from 'react';
 import { TriggerType } from '@api/agents';
 import { TemplateFunctions } from '@models/types/functions';
 import { Slider } from '@mui/material';
-import { X } from 'lucide-react';
+import { Check, Trash2, X } from 'lucide-react';
 
 import { Button } from '@app/components/atoms/Button';
-import { Card, CardDescription, CardTitle } from '@app/components/atoms/Card';
+import { Card, CardTitle } from '@app/components/atoms/Card';
 import {
     Select,
     SelectContent,
@@ -19,8 +19,9 @@ import { CustomCombobox } from '@app/components/molecules/CustomCombobox';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
 
 import { IFormFunctionInstance } from '../page';
-import { renderParameters } from './trigger/ParameterRenderers';
-import TriggerTab from './trigger/TriggerTab';
+import EventTab from './event/EventTab';
+import { renderParameters } from './ParameterRenderers';
+import TriggerTab from './TriggerTab';
 
 interface IFunctionFormParams {
     currentFunction?: IFormFunctionInstance;
@@ -125,7 +126,6 @@ export const FunctionForm = ({
 
     const handleOnSave = () => {
         const validState = checkAllRequiredFieldsAreFilled();
-        console.log(functionState);
         validState && onSave?.(functionState);
     };
 
@@ -226,10 +226,9 @@ export const FunctionForm = ({
                     )}
                 </div>
                 {functionState?.parameters &&
+                    functionState.type == 'CRON' &&
                     renderParameters(
-                        functionState.type === 'CRON'
-                            ? functionState.parameters || []
-                            : functionState.eventParameters || [],
+                        functionState.parameters,
                         handleParameterChange,
                         handleNestedParameterChange,
                         handleOptionChange,
@@ -270,22 +269,19 @@ export const FunctionForm = ({
                     </>
                 )}
                 {functionState.type === 'EVENT' && (
-                    <Card className="bg-gray-200">
-                        <CardTitle>Event Trigger</CardTitle>
-                        <CardDescription>
-                            {functionState?.eventDescription}
-                        </CardDescription>
-                    </Card>
+                    <EventTab className="mt-4 w-full bg-white" />
                 )}
             </div>
-            <Button
-                variant="primary"
-                className="mt-6 min-w-36"
-                size="md"
-                onClick={() => functionState && handleOnSave()}
-            >
-                {btnPlaceholder || 'Save'}
-            </Button>
+            <div className="flex w-full justify-end">
+                <Button
+                    variant="primary"
+                    className="mt-6 w-36 "
+                    size="md"
+                    onClick={() => functionState && handleOnSave()}
+                >
+                    {btnPlaceholder || 'Save'}
+                </Button>
+            </div>
         </Card>
     );
 };

@@ -5,7 +5,7 @@ import { Label } from '@app/components/atoms/label';
 import { cn } from '@app/components/lib/utils';
 import { NumberInput } from '@app/components/molecules/NumberInput';
 
-import { ICronSetting, IInputSetting } from './TriggerTab';
+import { ICronSetting, IInputSetting } from '../TriggerTab';
 
 export default function DefaultCron({
     cronSetting,
