@@ -33,8 +33,8 @@ import { ErrorToast } from '@app/components/molecules/CustomToasts';
 import { templateCreatedAtom } from '@app/store/localStore';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
-import { FunctionCards } from './components/FunctionCards';
 import { FunctionForm } from './components/FunctionForm';
+import { FunctionCards } from './components/cards/FunctionCards';
 import { mapFormFunctionToTriggerConfiguration } from './components/utils/FunctionMapper';
 
 export interface IFormFunctionInstance extends IFunctionsItem {
@@ -233,7 +233,7 @@ export default function CreateTemplatePage() {
                 </div>
             </Card>
             {/*Dialog for function form*/}
-            <Dialog open={isDialogOpen} fullScreen={isMobile}>
+            <Dialog open={isDialogOpen} fullWidth maxWidth="xl">
                 <DialogContent className="!p-0">
                     {currentSelectedFunction && (
                         <FunctionForm
