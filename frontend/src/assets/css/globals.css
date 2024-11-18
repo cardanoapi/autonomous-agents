@@ -16,3 +16,14 @@
 .boxShadow {
     box-shadow: 0px 4px 15px 0px #dde3f5;
 }
+
+@layer utilities {
+    .popover-content-width-full {
+      width: var(--radix-popover-trigger-width);
+      max-height: var(--radix-popover-content-available-height);
+    }
+  }
+
+.dropdown-menu-content.full-width {
+    width: var(--radix-dropdown-menu-trigger-width);
+  }
