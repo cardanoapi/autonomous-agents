@@ -91,7 +91,7 @@ const AgentFunctionsDetailComponent = ({
                 )}
             </div>
             {currentFunction && (
-                <Dialog open={openDialog}>
+                <Dialog open={openDialog} fullWidth maxWidth="xl">
                     <DialogContent className="!p-0">
                         <FunctionForm
                             currentFunction={currentFunction}
