@@ -94,10 +94,13 @@ export default function EventTriggerGraph({
         // Initalize Root node and edge
         if (data) {
             const rootId = reduceString(data.id);
+            const text = data.negate
+                ? 'NOT ( ' + data.id + ` ( ${data.operator} ) ` + ')'
+                : data.id + ` ( ${data.operator} ) `;
             newNodes.push({
                 id: rootId,
-                text: data.id + ` ( ${data.operator} ) `,
-                width: getNodeWidth(data.id + ` ${data.operator} `)
+                text: text,
+                width: getNodeWidth(text)
             });
 
             data.parameters.forEach((param) => {
