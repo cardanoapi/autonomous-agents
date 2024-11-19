@@ -29,7 +29,7 @@ class TemplateTriggerRepository:
         if template_data.type == "CRON":
             validate_type_CRON(template_data.data.frequency, template_data.data.probability)
         elif template_data.type == "EVENT":
-            validate_type_EVENT(template_data.data.event)
+            validate_type_EVENT(template_data.data)
         else:
             raise HTTPException(status_code=400, content=f"Invalid Trigger Type {template_data.type}")
 
@@ -85,7 +85,7 @@ class TemplateTriggerRepository:
             await validate_type_CRON(template_trigger_data.data.frequency, template_trigger_data.data.probability)
 
         if template_trigger_data.type == "EVENT":
-            await validate_type_EVENT(template_trigger_data.data.event)
+            await validate_type_EVENT(template_trigger_data.data)
 
         # for config data
         data_dict = updated_data_dict.pop("data")
