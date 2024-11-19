@@ -4,28 +4,22 @@ export type BooleanOperator = 'AND' | 'OR'
 export type ComparisonOperator = 'equals' | 'greaterThan' | 'lessThan' | 'in'
 
 export interface IEventBasedAction {
-    eventTrigger: IEventTrigger
+    eventTrigger: IBooleanNode | IFieldNode
     triggeringFunction: Action
 }
 
-export interface IEventTrigger {
-    id: string | string[]
-    parameters: IFilterNode[]
-    negate: boolean
-    operator: BooleanOperator
-}
-
-export interface IField {
+export interface IFieldNode {
     id: string | string[]
     value: any
     negate: boolean
     operator: ComparisonOperator
 }
 
-interface IChildrenFields {
+export interface IBooleanNode {
+    id?:string|string[]
     children: IFilterNode[]
     negate: boolean
     operator: BooleanOperator
 }
 
-export type IFilterNode = IField | IChildrenFields
+export type IFilterNode = IFieldNode | IBooleanNode

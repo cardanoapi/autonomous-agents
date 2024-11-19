@@ -8,7 +8,7 @@ import { ManagerInterface } from '../service/ManagerInterfaceService'
 import { CallLog } from '../executor/Executor'
 import { ILog, InternalLog } from '../service/TriggerActionHandler'
 import { DateTime } from 'luxon'
-import { IEventBasedAction, IEventTrigger } from '../types/eventTriger'
+import { IEventBasedAction, IFilterNode } from "../types/eventTriger";
 
 export function getParameterValue(
     parameters: ActionParameter[] = [],
@@ -25,7 +25,7 @@ export function checkIfAgentWithEventTriggerTypeExists(
     configurations.forEach((config) => {
         if (config.type === 'EVENT') {
             eventBasedAction.push({
-                eventTrigger: config.data as unknown as IEventTrigger,
+                eventTrigger: config.data as unknown as IFilterNode,
                 triggeringFunction: config.action,
             })
         }

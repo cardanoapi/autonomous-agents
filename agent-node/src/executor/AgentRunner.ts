@@ -22,6 +22,7 @@ export class AgentRunner {
         method: string,
         ...args: any
     ) {
+
         this.executor.invokeFunction(method, ...args).then((result) => {
             saveTxLog(result, this.managerInterface, triggerType, instanceIndex)
         })

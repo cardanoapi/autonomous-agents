@@ -1,5 +1,7 @@
 import { convertToBufferIfBech32 } from './cardano'
 import { BooleanOperator, ComparisonOperator } from '../types/eventTriger'
+import * as buffer from "buffer";
+import { logicalFunctions } from "./operatorSupport";
 
 const NetworkName = ['preview', 'preprod', 'sanchonet']
 
@@ -19,7 +21,7 @@ export function reduceBooleanArray(
     bools: Array<boolean>,
     reducer: BooleanOperator,
     negate: boolean
-) {
+) : boolean {
     let reducedBooleanLogic
     if (reducer === 'AND') {
         reducedBooleanLogic = bools.reduce((acc, bool) => acc && bool, true)
@@ -31,44 +33,26 @@ export function reduceBooleanArray(
 
 export function compareValue(
     operator: ComparisonOperator,
-    filterValue: any,
-    txPropertyVal: any
+    objectProperty: any,
+    txPropertyVal: any,
+    property_path:string[]
 ) {
-    filterValue = convertToBufferIfBech32(filterValue)
-    switch (operator) {
-        case 'greaterThan':
-            if (Array.isArray(txPropertyVal)) {
-                return txPropertyVal.some((item) => filterValue > item)
-            }
-            return filterValue > txPropertyVal
-        case 'lessThan':
-            if (Array.isArray(txPropertyVal)) {
-                return txPropertyVal.some((item) => filterValue < item)
-            }
-            return filterValue < txPropertyVal
-        case 'equals':
-            if (Array.isArray(txPropertyVal)) {
-                return txPropertyVal.some(
-                    (item) => !Buffer.compare(filterValue, item)
-                )
-            }
-            return !Buffer.compare(filterValue, txPropertyVal)
-        case 'in':
-            if (Array.isArray(txPropertyVal)) {
-                return txPropertyVal.includes(filterValue)
-            }
-            return false
-        default:
-            return false
-    }
-}
+      if(txPropertyVal.constructor.name == 'Buffer')
+        console.debug(`compareValue[${property_path.join('.')}] (${operator},0x${txPropertyVal.toString('hex')}, ${objectProperty})`)
+      else
+        console.debug(`compareValue[${property_path.join('.')}] (${operator},${txPropertyVal}, ${objectProperty})`)
 
-export function getPropertyValue(initial_value: any, keys: Array<string>) {
-    return keys.reduce((acc, key) => {
-        if (Array.isArray(acc)) {
-            return acc.map((item) => item[key]).filter(Boolean)
-        } else {
-            return acc && acc[key] != undefined ? acc[key] : undefined
-        }
-    }, initial_value)
+    let filterValue = convertToBufferIfBech32(objectProperty)
+    console.debug("filterValue=",filterValue);
+    let result;
+    result =  logicalFunctions.execute(operator,txPropertyVal,filterValue)
+
+
+    if(txPropertyVal.constructor.name == 'Buffer')
+        console.debug(`compareValue[${property_path.join('.')}] (${operator},0x${txPropertyVal.toString('hex')}, ${objectProperty}) = ${result}`)
+    else
+        console.debug(`compareValue[${property_path.join('.')}] (${operator},${txPropertyVal}, ${objectProperty}) = ${result}`)
+    return  result
+
+
 }
