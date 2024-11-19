@@ -226,7 +226,6 @@ export const FunctionForm = ({
                     )}
                 </div>
                 {functionState?.parameters &&
-                    functionState.type == 'CRON' &&
                     renderParameters(
                         functionState.parameters,
                         handleParameterChange,
@@ -277,6 +276,7 @@ export const FunctionForm = ({
                                 eventValue: eventTrigger
                             });
                         }}
+                        savedEventTrigger={functionState?.eventValue}
                     />
                 )}
             </div>
