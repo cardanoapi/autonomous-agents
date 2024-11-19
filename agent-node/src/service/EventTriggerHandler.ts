@@ -3,10 +3,9 @@ import { Transaction } from 'libcardano/cardano/ledger-serialization/transaction
 import { AgentRunner } from '../executor/AgentRunner'
 import {
     compareValue,
-    getPropertyValue,
-    reduceBooleanArray,
 } from '../utils/validator'
-import { IEventBasedAction, IField, IFilterNode } from '../types/eventTriger'
+import { IBooleanNode, IEventBasedAction, IFieldNode, IFilterNode } from "../types/eventTriger";
+import { node } from "globals";
 
 export class EventTriggerHandler {
     eventBasedActions: IEventBasedAction[] = []
@@ -20,7 +19,7 @@ export class EventTriggerHandler {
             transactions.forEach((tx: Transaction) => {
                 this.eventBasedActions.forEach((eventBasedAction) => {
                     const handler = (this as any)[
-                        eventBasedAction.eventTrigger.id + 'Handler'
+                    (eventBasedAction.eventTrigger as IFieldNode).id + 'Handler'
                     ]
                     if (handler !== undefined && handler !== 'constructor') {
                         handler.bind(this)(tx, eventBasedAction, agentRunners)
@@ -35,64 +34,88 @@ export class EventTriggerHandler {
         eventBasedAction: IEventBasedAction,
         agentRunners?: AgentRunner[]
     ) {
-        const txProperty = Array.isArray(eventBasedAction.eventTrigger.id)
-            ? getPropertyValue(tx, [
-                  'body',
-                  ...eventBasedAction.eventTrigger.id.splice(1),
-              ])
-            : tx.body
-        const finalBooleanVals = this.getComparedBooleans(
-            txProperty,
-            eventBasedAction.eventTrigger.parameters
-        )
-        const { operator, negate } = eventBasedAction.eventTrigger
-        const { function_name, parameters } =
-            eventBasedAction.triggeringFunction
-        const reducedFinalBoolValue = reduceBooleanArray(
-            finalBooleanVals,
-            operator,
-            negate
-        )
-        if (reducedFinalBoolValue && agentRunners) {
+        let result
+        try {
+            console.log("Tx:", tx.hash.toString('hex'), "tx.outputs=", tx.body.outputs.length, "inputs=", tx.body.inputs.length)
+             result = this.solveNode({ tx: tx.body, transaction: tx.body }, eventBasedAction.eventTrigger, [])
+            console.log("tx=", tx.hash.toString('hex'), "solution=", result)
+        }catch (e){
+            console.error("Error handling event",e);
+            return
+        }
+
+        const {function_name,parameters} =   eventBasedAction.triggeringFunction
+        if (result && agentRunners) {
             agentRunners.forEach((runner, index) => {
                 runner.invokeFunction(
                     'EVENT',
                     index,
-                    function_name,
-                    ...parameters
+                  function_name,
+                  ...parameters
                 )
             })
         }
     }
+    solveNode(targetObject: any,filterNode: IFilterNode,parentNodes:string[]){
+        return this.solveNodeInternal(targetObject,filterNode,filterNode.id,parentNodes)
+    }
+    solveNodeInternal(targetObject: any,filterNode: IFilterNode,nodes:string[]|string|undefined,parent_nodes:string[]): boolean{
 
-    getComparedBooleans(tx: any, params: IFilterNode[]) {
-        const comparedBooleanValues: Array<boolean> = []
-        params.forEach((param) => {
-            if ('id' in param) {
-                comparedBooleanValues.push(
-                    this.compareFields(tx, param as IField)
-                )
-            } else if ('children' in param) {
-                const bools = this.getComparedBooleans(tx, param.children)
-                comparedBooleanValues.push(
-                    reduceBooleanArray(bools, param.operator, param.negate)
-                )
-            }
-        })
-        return comparedBooleanValues
+        if(nodes ===undefined || nodes.length==0 ) {
+            let result= 'children' in filterNode ? this.solveBooleanNode(targetObject, filterNode, parent_nodes)
+              : this.solveFieldNode(targetObject, filterNode, parent_nodes)
+            return filterNode.negate?!result:result
+        }else if(typeof nodes==="string") {
+            nodes=[nodes]
+        }
+
+        let result
+        const propertyValue = targetObject[nodes[0]]
+        parent_nodes.push(nodes[0])
+
+        let subArray = nodes.slice(1)
+        if (Array.isArray(propertyValue)) {
+            const node_pos=parent_nodes.length
+            parent_nodes.push('')
+            result= propertyValue.reduce((acc, node,index:number) => {
+                if(acc){
+                    return acc
+                }
+                parent_nodes[node_pos]=index.toString()
+                const result=this.solveNodeInternal(node, filterNode, subArray,parent_nodes)
+                console.log(parent_nodes.join('.'),": result=",result)
+                return result
+            }, false)
+            parent_nodes.pop()
+        } else {
+            result= this.solveNodeInternal(propertyValue, filterNode, subArray,parent_nodes)
+        }
+        parent_nodes.pop()
+        return result
+
     }
 
-    compareFields(tx: any, param: IField) {
-        const txPropertyValue = getPropertyValue(tx, param.id as [])
-        if (!txPropertyValue) {
-            return false
+    solveBooleanNode(targetObject: any,filterNode: IBooleanNode,parent_nodes:string[]=[]): boolean{
+        let orOperator=(a:boolean,b:boolean)=> a || b
+        let operator=orOperator
+        if(filterNode.operator === 'AND'){
+            operator= (a:boolean,b:boolean)=> a && b
         }
-        const comparisonResult = compareValue(
-            param.operator,
-            param.value,
-            txPropertyValue
-        )
-        return param.negate ? !comparisonResult : comparisonResult
+        const result= filterNode.children.reduce((acc,node)=>{
+            return operator(acc,this.solveNodeInternal(targetObject,node,node.id,parent_nodes))
+        },operator !== orOperator)
+        console.log("id=",filterNode.id,"operator=",filterNode.operator,"result=",result)
+        return result
+    }
+
+    solveFieldNode(targetObject: any,filterNode: IFieldNode,parent_nodes:string[]) : boolean{
+
+            return  compareValue(
+              filterNode.operator,
+              filterNode.value,
+              targetObject,
+              parent_nodes
+            )
     }
 
     addEventActions(actions: IEventBasedAction[]) {

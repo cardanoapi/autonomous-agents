@@ -25,7 +25,7 @@ export function rewardAddressBech32(
     )
 }
 
-export function convertToBufferIfBech32(address: any): Buffer | string {
+export function convertToBufferIfBech32(address: any): Buffer | string| any {
     if (!address) return ''
     else if (typeof address !== 'string') return address
     else if (
