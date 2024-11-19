@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { IBooleanNode, IEventTrigger, IFieldNode } from '@api/agents';
 import { ChevronDown } from 'lucide-react';
-import { FileJson, Parentheses } from 'lucide-react';
+import { FileJson } from 'lucide-react';
 
 import { Card } from '@app/components/atoms/Card';
 import { Checkbox } from '@app/components/atoms/Checkbox';
@@ -14,9 +14,11 @@ import {
 } from '@app/components/atoms/DropDownMenu';
 import { Input } from '@app/components/atoms/Input';
 import { cn } from '@app/components/lib/utils';
+import { ErrorToast } from '@app/components/molecules/CustomToasts';
 
 import { CustomSelect } from '../../../../../../components/molecules/CustomDropDown';
 import InfoCard from '../cards/InfoCard';
+import CustomEditor from './CustomEditor';
 import { Events, IEvent, IEventFilter } from './EventTrigger';
 import NodeGraph from './EventTriggerGraph';
 
@@ -41,7 +43,7 @@ const EventTab = ({
         savedEventTrigger || null
     );
 
-    const [formMode, setFormMode] = useState<string>('normal');
+    const [proMode, setProMode] = useState(false);
 
     useEffect(() => {
         if (formData) {
@@ -223,22 +225,21 @@ const EventTab = ({
         );
     };
 
+    const updateFormDataFromEditor = (data: any) => {
+        try {
+            const parsedData = JSON.parse(data);
+            setFormData(parsedData);
+        } catch (error) {
+            ErrorToast('Invalid JSON');
+        }
+    };
+
     return (
         <div className={cn('flex w-full flex-col gap-4 rounded-lg p-4', className)}>
             <div className="absolute right-8 flex gap-2 rounded-md bg-gray-200 p-2">
-                <Parentheses
-                    className={cn(
-                        'cursor-pointer',
-                        formMode === 'normal' && 'text-brand-Blue-200'
-                    )}
-                    onClick={() => setFormMode('normal')}
-                />
                 <FileJson
-                    className={cn(
-                        'cursor-pointer',
-                        formMode === 'json' && 'text-brand-Blue-200'
-                    )}
-                    onClick={() => setFormMode('json')}
+                    className={cn('cursor-pointer', proMode && 'text-brand-Blue-200')}
+                    onClick={() => setProMode(!proMode)}
                 />
             </div>
             <div className="flex gap-2">
@@ -279,14 +280,7 @@ const EventTab = ({
                 />
             </div>
             <div className="h-[600px] w-full items-center scroll-auto">
-                {formMode === 'normal' && <NodeGraph data={formData} />}
-                {formData && formMode === 'json' && (
-                    <div className="h-full overflow-y-auto bg-neutral-100 p-12">
-                        <pre>
-                            <code>{JSON.stringify(formData, null, 2)}</code>
-                        </pre>
-                    </div>
-                )}
+                <NodeGraph data={formData} />
             </div>
             <Card className="min-h-[200px] bg-gray-200">
                 <div className="mb-8 flex items-end justify-between">
@@ -366,6 +360,18 @@ const EventTab = ({
                         }
                     })}
             </Card>
+            <div
+                className={cn(
+                    'transition-duration-300 fixed right-4 top-1/2 h-[80vh] w-[500px] -translate-y-1/2 transition-all ease-in-out',
+                    !proMode && 'hidden'
+                )}
+            >
+                <CustomEditor
+                    defaultValue={formData}
+                    onClose={() => setProMode(false)}
+                    onValueChange={updateFormDataFromEditor}
+                />
+            </div>
         </div>
     );
 };

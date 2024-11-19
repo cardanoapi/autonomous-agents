@@ -183,7 +183,7 @@ export const FunctionForm = ({
                     eventValue: currentFunction.eventValue
                 });
         }
-    },[]);
+    }, []);
 
     return (
         <Card
