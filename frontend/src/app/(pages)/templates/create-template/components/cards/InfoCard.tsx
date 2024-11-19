@@ -24,10 +24,10 @@ export default function InfoCard({
                     { flex: visible }
                 )}
             >
-                Edit filter attributes by clicking on the filter node.
+                Create different relations between event and their paramaters
                 <br />
                 <br />
-                Toggle logic relations by clicking on the operator node.
+                For complex relations you can edit the trigger via json mode.
             </span>
         </div>
     );
