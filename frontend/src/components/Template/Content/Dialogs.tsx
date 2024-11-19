@@ -15,7 +15,7 @@ const UpdateFunctionDialog = ({
     toggleDialog: () => void;
     handleFunctionUpdate: (functionItem: any) => void;
 }) => (
-    <Dialog open={dialogOpen}>
+    <Dialog open={dialogOpen} fullWidth maxWidth="xl">
         <DialogContent className="!p-0">
             {currentFunction && (
                 <FunctionForm
@@ -39,7 +39,7 @@ const AddFunctionDialog = ({
     toggleDialog: () => void;
     handleAddNewFunction: (functionItem: any) => void;
 }) => (
-    <Dialog open={dialogOpen}>
+    <Dialog open={dialogOpen} fullWidth maxWidth="xl">
         <DialogContent className="!p-0">
             <FunctionForm
                 renderFunctionSelector={true}

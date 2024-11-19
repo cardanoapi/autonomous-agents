@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import React from 'react';
 
 import { TriggerType } from '@api/agents';
@@ -176,6 +176,16 @@ export const FunctionForm = ({
         }
     };
 
+    useEffect(() => {
+        if (currentFunction && editMode) {
+            currentFunction.type === 'EVENT' &&
+                setFunctionState({
+                    ...functionState,
+                    eventValue: currentFunction.eventValue
+                });
+        }
+    });
+
     return (
         <Card
             className={cn(
@@ -283,7 +293,7 @@ export const FunctionForm = ({
             <div className="flex w-full justify-end">
                 <Button
                     variant="primary"
-                    className="mt-6 w-36 "
+                    className="mt-2 w-36 "
                     size="md"
                     onClick={() => functionState && handleOnSave()}
                 >

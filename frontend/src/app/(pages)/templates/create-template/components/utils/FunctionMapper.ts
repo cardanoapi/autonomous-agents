@@ -1,4 +1,4 @@
-import { IAgentConfiguration, ISubParameter } from '@api/agents';
+import { IAgentConfiguration, IEventTrigger, ISubParameter } from '@api/agents';
 import { TriggerType } from '@api/agents';
 import { ICronTrigger } from '@api/agents';
 import { ITemplateConfiguration } from '@api/templates';
@@ -31,7 +31,7 @@ export const mapFormFunctionToTriggerConfiguration = (
                 type: item.type,
                 action: {
                     function_name: item.id,
-                    parameters: mapParamValueToKeyValuePair(item.eventParameters || [])
+                    parameters: mapParamValueToKeyValuePair(item.parameters || [])
                 },
                 data: item.eventValue
             };
@@ -166,11 +166,6 @@ export const mapTriggerConfigurationToFormFunction = (
           }
         : undefined;
 
-    // const eventParameters =
-    //     trigger.type === 'EVENT'
-    //         ? mapKeyValuePairToParamValue(trigger.action.parameters || [])
-    //         : undefined;
-
     const final_obj = {
         id: trigger.action.function_name,
         index: '',
@@ -182,13 +177,8 @@ export const mapTriggerConfigurationToFormFunction = (
         ),
         type: trigger.type as TriggerType,
         cronValue,
-        // eventValue:
-        //     trigger.type === 'EVENT'
-        //         ? {
-        //               event: (trigger.data as any).event,
-        //               parameters: eventParameters
-        //           }
-        //         : undefined,
+        eventValue:
+            trigger.type === 'EVENT' ? (trigger.data as IEventTrigger) : undefined,
         optionValue:
             baseFunction?.parameters && baseFunction?.parameters[0].type === 'options'
                 ? populateOptionValue(trigger.action.parameters[0])
