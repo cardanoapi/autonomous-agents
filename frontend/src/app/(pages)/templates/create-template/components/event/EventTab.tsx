@@ -22,9 +22,11 @@ import NodeGraph from './EventTriggerGraph';
 
 const EventTab = ({
     className,
+    savedEventTrigger,
     onChange = () => {}
 }: {
     className?: string;
+    savedEventTrigger?: IEventTrigger;
     onChange?: (value: IEventTrigger) => void;
 }) => {
     const [currentEvent, setCurrentEvent] = useState<IEvent | null>(null);
@@ -35,7 +37,9 @@ const EventTab = ({
 
     const [isInfoVisible, setIsInfoVisible] = useState(false);
 
-    const [formData, setFormData] = useState<IEventTrigger | null>(null);
+    const [formData, setFormData] = useState<IEventTrigger | null>(
+        savedEventTrigger || null
+    );
 
     const [formMode, setFormMode] = useState<string>('normal');
 
@@ -44,6 +48,27 @@ const EventTab = ({
             onChange(formData);
         }
     }, [formData]);
+
+    useEffect(() => {
+        if (savedEventTrigger) {
+            const savedEvent = Events.find(
+                (event) => event.id === savedEventTrigger?.id
+            );
+            if (savedEvent) {
+                setCurrentEvent(savedEvent);
+            }
+            const lastEventFilter = savedEvent?.filters.find(
+                (filter) =>
+                    filter.id ===
+                    savedEventTrigger?.parameters[
+                        savedEventTrigger?.parameters.length - 1
+                    ]?.id
+            );
+            if (lastEventFilter) {
+                setCurrentEventFilter(lastEventFilter);
+            }
+        }
+    }, []);
 
     const handleSelectEvent = (eventId: string) => {
         const selectedEvent = Events.find((event) => event.id === eventId);
@@ -239,9 +264,7 @@ const EventTab = ({
                             value: item.id
                         })) || []
                     }
-                    defaultValue={
-                        `${currentEvent?.label} filters` || 'Add Event Filter'
-                    }
+                    defaultValue={`${currentEvent?.label || 'Event'} filters`}
                     label="Event Filter"
                     onSelect={handleAddEventFilter}
                     disabled={currentEvent === null}
@@ -257,7 +280,7 @@ const EventTab = ({
                 />
             </div>
             <div className="h-[600px] w-full items-center scroll-auto">
-                {formData && formMode === 'normal' && <NodeGraph data={formData} />}
+                {formMode === 'normal' && <NodeGraph data={formData} />}
                 {formData && formMode === 'json' && (
                     <div className="h-full overflow-y-auto bg-neutral-100 p-12">
                         <pre>
@@ -266,40 +289,42 @@ const EventTab = ({
                     </div>
                 )}
             </div>
-            {currentEventFilter && (
-                <Card className="min-h-[200px] bg-gray-200">
-                    <div className="mb-8 flex items-end justify-between">
-                        <nav className="flex gap-4">
-                            {formData &&
-                                formData?.parameters.map((param, index) => (
-                                    <div
-                                        key={index}
-                                        className={cn(
-                                            'cursor-pointer font-semibold',
+            <Card className="min-h-[200px] bg-gray-200">
+                <div className="mb-8 flex items-end justify-between">
+                    <nav className="flex gap-4">
+                        {formData &&
+                            formData?.parameters.map((param, index) => (
+                                <div
+                                    key={index}
+                                    className={cn(
+                                        'cursor-pointer font-semibold',
+                                        currentEventFilter &&
                                             currentEventFilter.id === param.id &&
-                                                'text-brand-Blue-200 underline underline-offset-4'
-                                        )}
-                                        onClick={() =>
-                                            handleSelectEventFilter(param.id as string)
-                                        }
-                                    >
-                                        {param.id}
-                                    </div>
-                                ))}
-                        </nav>
-                        <CustomSelect
-                            className="w-64"
-                            options={
-                                getNotSelectedEventFilterParameters()?.map((item) => ({
-                                    label: item.label,
-                                    value: item.id
-                                })) || []
-                            }
-                            defaultValue={` Add Parameters`}
-                            onSelect={handleAddParameter}
-                        />
-                    </div>
-                    {formData?.parameters.map((param, index) => {
+                                            'text-brand-Blue-200 underline underline-offset-4'
+                                    )}
+                                    onClick={() =>
+                                        handleSelectEventFilter(param.id as string)
+                                    }
+                                >
+                                    {param.id}
+                                </div>
+                            ))}
+                    </nav>
+                    <CustomSelect
+                        className="w-64"
+                        options={
+                            getNotSelectedEventFilterParameters()?.map((item) => ({
+                                label: item.label,
+                                value: item.id
+                            })) || []
+                        }
+                        disabled={currentEventFilter === null}
+                        defaultValue={` Add Parameters`}
+                        onSelect={handleAddParameter}
+                    />
+                </div>
+                {currentEventFilter &&
+                    formData?.parameters.map((param, index) => {
                         if (param.id === currentEventFilter?.id) {
                             return (
                                 <div key={index}>
@@ -341,8 +366,7 @@ const EventTab = ({
                             );
                         }
                     })}
-                </Card>
-            )}
+            </Card>
         </div>
     );
 };

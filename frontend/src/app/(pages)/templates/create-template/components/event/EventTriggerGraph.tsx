@@ -4,7 +4,7 @@ import { IEventTrigger, IFilterNode } from '@api/agents';
 import { Canvas, EdgeData, NodeData } from 'reaflow';
 
 interface NodeGraphProps {
-    data: IEventTrigger;
+    data: IEventTrigger | null;
     className?: string;
     maxHeight?: number;
     maxWidth?: number;
@@ -92,21 +92,27 @@ export default function EventTriggerGraph({
         };
 
         // Initalize Root node and edge
-        const rootId = reduceString(data.id);
-        newNodes.push({
-            id: rootId,
-            text: data.id + ` ( ${data.operator} ) `,
-            width: getNodeWidth(data.id + ` ${data.operator} `)
-        });
+        if (data) {
+            const rootId = reduceString(data.id);
+            newNodes.push({
+                id: rootId,
+                text: data.id + ` ( ${data.operator} ) `,
+                width: getNodeWidth(data.id + ` ${data.operator} `)
+            });
 
-        data.parameters.forEach((param) => {
-            // recursivelyAddNode(param, operatorId);
-            addNodesRecursively(param, rootId);
-        });
+            data.parameters.forEach((param) => {
+                // recursivelyAddNode(param, operatorId);
+                addNodesRecursively(param, rootId);
+            });
+        }
 
         setNodes(newNodes);
         setEdges(newEdges);
     }, [data]);
+
+    if (!data) {
+        return <div className="h-full w-full bg-[#D2E0FB]"></div>;
+    }
 
     return (
         <Canvas
