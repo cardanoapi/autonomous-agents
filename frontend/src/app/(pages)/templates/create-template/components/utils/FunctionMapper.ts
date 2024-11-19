@@ -25,19 +25,18 @@ export const mapFormFunctionToTriggerConfiguration = (
         frequency: item.cronValue?.frequency || '* * * * *'
     };
 
-    // if (item.type === 'EVENT') {
-    //     return {
-    //         type: item.type,
-    //         action: {
-    //             function_name: item.id,
-    //             parameters: mapParamValueToKeyValuePair(item.eventParameters || [])
-    //         },
-    //         data: {
-    //             event: 'VoteEvent',
-    //             parameters: mapParamValueToKeyValuePair(item.eventParameters || [])
-    //         }
-    //     };
-    // }
+    if (item.type === 'EVENT') {
+        if (item.eventValue) {
+            return {
+                type: item.type,
+                action: {
+                    function_name: item.id,
+                    parameters: mapParamValueToKeyValuePair(item.eventParameters || [])
+                },
+                data: item.eventValue
+            };
+        }
+    }
 
     if (item.id === 'delegation') {
         return {

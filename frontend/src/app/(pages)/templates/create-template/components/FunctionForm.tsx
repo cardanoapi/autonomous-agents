@@ -269,7 +269,15 @@ export const FunctionForm = ({
                     </>
                 )}
                 {functionState.type === 'EVENT' && (
-                    <EventTab className="mt-4 w-full bg-white" />
+                    <EventTab
+                        className="mt-4 w-full bg-white"
+                        onChange={(eventTrigger) => {
+                            setFunctionState({
+                                ...functionState,
+                                eventValue: eventTrigger
+                            });
+                        }}
+                    />
                 )}
             </div>
             <div className="flex w-full justify-end">
