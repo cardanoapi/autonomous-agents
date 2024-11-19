@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { IBooleanNode, IEventTrigger, IFieldNode } from '@api/agents';
 import { ChevronDown } from 'lucide-react';
@@ -20,7 +20,13 @@ import InfoCard from '../cards/InfoCard';
 import { Events, IEvent, IEventFilter } from './EventTrigger';
 import NodeGraph from './EventTriggerGraph';
 
-const EventTab = ({ className }: { className?: string }) => {
+const EventTab = ({
+    className,
+    onChange = () => {}
+}: {
+    className?: string;
+    onChange?: (value: IEventTrigger) => void;
+}) => {
     const [currentEvent, setCurrentEvent] = useState<IEvent | null>(null);
 
     const [currentEventFilter, setCurrentEventFilter] = useState<IEventFilter | null>(
@@ -32,6 +38,12 @@ const EventTab = ({ className }: { className?: string }) => {
     const [formData, setFormData] = useState<IEventTrigger | null>(null);
 
     const [formMode, setFormMode] = useState<string>('normal');
+
+    useEffect(() => {
+        if (formData) {
+            onChange(formData);
+        }
+    }, [formData]);
 
     const handleSelectEvent = (eventId: string) => {
         const selectedEvent = Events.find((event) => event.id === eventId);
