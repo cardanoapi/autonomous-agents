@@ -66,21 +66,23 @@ const FunctionCardWithMeta = ({
 
             <div className="flex flex-col">{renderConfigMeta(config)}</div>
             <div className="grid w-full grid-cols-2 gap-x-4 gap-y-4 px-1">
-                <CustomCopyBox
-                    title="Trigger Probability"
-                    content={`${(config.data as ICronTrigger).probability * 100 || 100}%`}
-                    className="w-auto"
-                    showCopyIcon={false}
-                />
                 {config.type === 'CRON' && (
-                    <CustomCopyBox
-                        title="Cron Expression"
-                        content={convertCRONExpressionToReadableForm(
-                            (config.data as ICronTrigger).frequency
-                        )}
-                        className="w-auto"
-                        showCopyIcon={false}
-                    />
+                    <>
+                        <CustomCopyBox
+                            title="Trigger Probability"
+                            content={`${(config.data as ICronTrigger).probability * 100 || 100}%`}
+                            className="w-auto"
+                            showCopyIcon={false}
+                        />
+                        <CustomCopyBox
+                            title="Cron Expression"
+                            content={convertCRONExpressionToReadableForm(
+                                (config.data as ICronTrigger).frequency
+                            )}
+                            className="w-auto"
+                            showCopyIcon={false}
+                        />
+                    </>
                 )}
                 {config.action?.parameters.map((param, index) =>
                     typeof param.value === 'object' &&
