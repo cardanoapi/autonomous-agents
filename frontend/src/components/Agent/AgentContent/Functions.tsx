@@ -100,7 +100,7 @@ export default function AgentFunctionsComponent({
                     agent={agent || undefined}
                 />
             </div>
-            <Dialog open={dialogOpen}>
+            <Dialog open={dialogOpen} fullWidth maxWidth="xl">
                 <DialogContent className="relative bg-brand-Azure-400 !p-0">
                     <FunctionForm
                         onClose={toggleDialog}

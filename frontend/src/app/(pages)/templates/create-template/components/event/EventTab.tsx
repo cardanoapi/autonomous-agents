@@ -204,7 +204,6 @@ const EventTab = ({
                 )
             };
             setFormData(data);
-            console.log(formData);
         }
     };
 

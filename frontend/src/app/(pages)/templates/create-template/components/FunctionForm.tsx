@@ -131,7 +131,6 @@ export const FunctionForm = ({
 
     const checkAllRequiredFieldsAreFilled = () => {
         if (functionState?.type === 'EVENT') {
-            //event type has no parameter for now
             return true;
         }
 
@@ -184,7 +183,7 @@ export const FunctionForm = ({
                     eventValue: currentFunction.eventValue
                 });
         }
-    });
+    },[]);
 
     return (
         <Card
