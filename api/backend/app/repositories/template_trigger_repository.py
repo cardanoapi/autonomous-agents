@@ -82,10 +82,10 @@ class TemplateTriggerRepository:
 
         # validation for CRON nad TOPIC
         if template_trigger_data.type == "CRON":
-            await validate_type_CRON(template_trigger_data.data.frequency, template_trigger_data.data.probability)
+            validate_type_CRON(template_trigger_data.data.frequency, template_trigger_data.data.probability)
 
         if template_trigger_data.type == "EVENT":
-            await validate_type_EVENT(template_trigger_data.data)
+            validate_type_EVENT(template_trigger_data.data)
 
         # for config data
         data_dict = updated_data_dict.pop("data")
