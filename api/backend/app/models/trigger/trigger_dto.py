@@ -39,6 +39,7 @@ class Field(BaseModel):
 
 
 class ChildrenFields(BaseModel):
+    id: Optional[Union[str, list[str]]] = None
     children: list["FilterNode"]
     negate: bool
     operator: BooleanOperator
