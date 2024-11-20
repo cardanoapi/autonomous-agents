@@ -45,6 +45,7 @@ export interface IParameterOption {
     name: string;
     type: ParameterType;
     parameters?: IParameter[];
+    value?: string;
 }
 
 export interface ItemObject {
@@ -182,6 +183,29 @@ export const AvailableFunctions: IFunctionsDto[] = [
                                 type: 'hash'
                             }
                         ]
+                    },
+                    {
+                        id: 'vote',
+                        name: 'Vote',
+                        type: 'options',
+                        options: [
+                            {
+                                id: 'yes',
+                                name: 'Yes',
+                                type: 'function'
+                            },
+                            {
+                                id: 'no',
+                                name: 'No',
+                                type: 'function'
+                            },
+                            {
+                                id: 'abstain',
+                                name: 'Abstain',
+                                type: 'function'
+                            }
+                        ],
+                        optional: false
                     }
                 ],
                 canBeEvent: true,
