@@ -93,8 +93,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
             {
                 id: 'registerStake',
                 name: 'Stake registration',
-                description:
-                    'This will register you as Stake Pool Operator on the Cardano network.'
+                description: 'This will register your stake on the Cardano network.'
             },
             {
                 id: 'stakeDeRegistration',
@@ -458,7 +457,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
                     }
                 ],
                 description:
-                    'Propose no confidence on the current constitutional committee'
+                    'A proposal to modify the membership, signature threshold, or terms of the constitutional committee.'
             }
         ]
     }
