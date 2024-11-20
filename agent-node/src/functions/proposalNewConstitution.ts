@@ -21,7 +21,11 @@ export default async function handler(
         proposals: [
             {
                 anchor: anchorData,
-                newConstitution: newConstitutionData,
+                newConstitution: {
+                    ...newConstitutionData,
+                    scriptHash:
+                        'db1bc3c3f99ce68977ceaf27ab4dd917123ef9e73f85c304236eab23',
+                },
                 refundAccount: context.wallet.rewardAddress,
                 guardrailscript: guardRailScript || undefined,
             },
