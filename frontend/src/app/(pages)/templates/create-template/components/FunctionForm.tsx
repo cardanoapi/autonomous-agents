@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import React from 'react';
 
 import { TriggerType } from '@api/agents';
@@ -89,7 +89,6 @@ export const FunctionForm = ({
         const updatedParameters = functionState?.parameters?.map((param) =>
             param.id === paramId ? { ...param, value: newValue } : param
         );
-        console.log(updatedParameters);
         updateFunctionState({ parameters: updatedParameters });
     };
 
@@ -124,8 +123,8 @@ export const FunctionForm = ({
     };
 
     const handleOnSave = () => {
-        const validState = checkAllRequiredFieldsAreFilled();
         console.log(functionState);
+        const validState = checkAllRequiredFieldsAreFilled();
         validState && onSave?.(functionState);
     };
 
@@ -141,7 +140,7 @@ export const FunctionForm = ({
         }
 
         if (
-            functionState?.parameters?.[0].type === 'options' &&
+            functionState?.parameters?.some((param) => param.type === 'options') &&
             !functionState.optionValue
         ) {
             ErrorToast('Please select an option');
@@ -150,6 +149,9 @@ export const FunctionForm = ({
 
         let validState = true;
         functionState?.parameters?.forEach((item) => {
+            if (item.type === 'options' && functionState.optionValue) {
+                return;
+            }
             if ((item.optional === false && !item.value) || item.value === '') {
                 validState = false;
             }
@@ -180,10 +182,6 @@ export const FunctionForm = ({
             setFunctionState(currentSelectedFunction);
         }
     };
-
-    useEffect(() => {
-        console.log(currentFunction);
-    }, []);
 
     return (
         <Card
