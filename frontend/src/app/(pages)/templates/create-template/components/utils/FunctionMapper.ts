@@ -31,7 +31,7 @@ export const mapFormFunctionToTriggerConfiguration = (
             action: {
                 function_name: item.id,
                 parameters: item.optionValue
-                    ? [mapOptionToKeyValuePair(item.optionValue, 'vote_params')]
+                    ? [mapOptionToKeyValuePair(item.optionValue, 'vote')]
                     : []
             },
             data: {
@@ -52,6 +52,22 @@ export const mapFormFunctionToTriggerConfiguration = (
             },
             data: commonData
         };
+    }
+
+    if (item.id == 'voteOnProposal' && item.type == 'CRON' && item.optionValue) {
+        alert(item.optionValue.id);
+        item.parameters =
+            item.parameters?.map((param) => {
+                if (param.type === 'options') {
+                    return {
+                        name: param.name,
+                        id: param.id || 'vote',
+                        type: 'string',
+                        value: item.optionValue?.id || 'yes'
+                    };
+                }
+                return param;
+            }) || item.parameters;
     }
 
     return {

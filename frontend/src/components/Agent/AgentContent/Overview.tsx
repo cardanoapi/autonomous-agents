@@ -179,10 +179,6 @@ const TriggerDataBox = ({
                   : 'skipped') as string
     );
 
-    {
-        console.log(dataSource.length, numberOfBoxes);
-    }
-
     if (dataSource.length < numberOfBoxes) {
         const target = numberOfBoxes - dataSource.length;
         for (let i = 0; i < target; i++) {
