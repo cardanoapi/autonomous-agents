@@ -186,9 +186,32 @@ export const AvailableFunctions: IFunctionsDto[] = [
                 ],
                 canBeEvent: true,
                 eventName: 'VoteEvent',
-                eventParameters: [],
+                eventParameters: [
+                    {
+                        id: 'vote',
+                        name: 'Vote',
+                        type: 'options',
+                        options: [
+                            {
+                                id: 'yes',
+                                name: 'Yes',
+                                type: 'string'
+                            },
+                            {
+                                id: 'no',
+                                name: 'No',
+                                type: 'string'
+                            },
+                            {
+                                id: 'abstain',
+                                name: 'Abstain',
+                                type: 'string'
+                            }
+                        ]
+                    }
+                ],
                 eventDescription:
-                    'This Vote event will be triggered when any new Proposal is created on the network. The Agent will vote "No" on the proposal. (No parameters required)'
+                    'This agent will automatically cast a vote on any proposal that is created on the network while it is active. '
             }
         ]
     },

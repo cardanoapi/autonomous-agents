@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import React from 'react';
 
 import { TriggerType } from '@api/agents';
@@ -131,7 +131,12 @@ export const FunctionForm = ({
 
     const checkAllRequiredFieldsAreFilled = () => {
         if (functionState?.type === 'EVENT') {
-            //event type has no parameter for now
+            if (functionState.id === 'voteOnProposal') {
+                if (!functionState.optionValue) {
+                    ErrorToast('Please select an option');
+                    return false;
+                }
+            }
             return true;
         }
 
@@ -175,6 +180,10 @@ export const FunctionForm = ({
             setFunctionState(currentSelectedFunction);
         }
     };
+
+    useEffect(() => {
+        console.log(currentFunction);
+    }, []);
 
     return (
         <Card
@@ -225,16 +234,15 @@ export const FunctionForm = ({
                         />
                     )}
                 </div>
-                {functionState?.parameters &&
-                    renderParameters(
-                        functionState.type === 'CRON'
-                            ? functionState.parameters || []
-                            : functionState.eventParameters || [],
-                        handleParameterChange,
-                        handleNestedParameterChange,
-                        handleOptionChange,
-                        functionState.optionValue
-                    )}
+                {renderParameters(
+                    (functionState.type === 'CRON'
+                        ? functionState.parameters
+                        : functionState.eventParameters) || [],
+                    handleParameterChange,
+                    handleNestedParameterChange,
+                    handleOptionChange,
+                    functionState.optionValue
+                )}
 
                 {functionState.type === 'CRON' && (
                     <>

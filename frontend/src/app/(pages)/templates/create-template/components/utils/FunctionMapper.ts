@@ -30,7 +30,9 @@ export const mapFormFunctionToTriggerConfiguration = (
             type: item.type,
             action: {
                 function_name: item.id,
-                parameters: mapParamValueToKeyValuePair(item.eventParameters || [])
+                parameters: item.optionValue
+                    ? [mapOptionToKeyValuePair(item.optionValue, 'vote_params')]
+                    : []
             },
             data: {
                 event: 'VoteEvent',
@@ -193,10 +195,14 @@ export const mapTriggerConfigurationToFormFunction = (
         optionValue:
             baseFunction?.parameters && baseFunction?.parameters[0].type === 'options'
                 ? populateOptionValue(trigger.action.parameters[0])
-                : undefined,
+                : (trigger.type === 'EVENT'
+                      ? eventParameters && populateOptionValue(eventParameters[0])
+                      : undefined) || undefined,
         selectedCronOption: undefined,
         congifuredCronSettings: undefined,
-        agent_id: (trigger as IAgentConfiguration).agent_id || undefined
+        agent_id: (trigger as IAgentConfiguration).agent_id || undefined,
+        eventDescription: baseFunction.eventDescription,
+        eventParameters: baseFunction.eventParameters
     };
 
     return final_obj;
