@@ -24,6 +24,7 @@ const FormRenderer = ({
 }: {
     closeModal: (boolVal: boolean) => void;
     agent?: IAgent;
+    handleClose?: any;
 }) => {
     const [selectedFunction] = useAtom(selectedFunctionAtom);
     const [, setErrorIndex] = useAtom(errorAtom);
@@ -96,7 +97,14 @@ const FormRenderer = ({
                         <FormParameters parameters={selectedFunction.parameters} />
                     )}
                     <div className={'flex justify-end gap-2'}>
-                        <Button variant={'danger'}>Cancel</Button>
+                        <Button
+                            variant={'danger'}
+                            onClick={() => {
+                                closeModal(false);
+                            }}
+                        >
+                            Cancel
+                        </Button>
                         <Button onClick={() => handleTrigger()} variant={'primary'}>
                             Trigger
                         </Button>
