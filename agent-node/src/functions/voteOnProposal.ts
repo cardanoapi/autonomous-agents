@@ -3,7 +3,8 @@ import { FunctionContext } from '../executor/BaseFunction'
 export default async function handler(
     context: FunctionContext,
     proposal: Record<string, any>,
-    anchor: Record<string, any>
+    anchor: Record<string, any>,
+    voteType: 'yes' | 'no' | 'abstain'
 ) {
     const { dataHash, url } = await context.builtins.saveMetadata(
         context.helpers.generateVoteMetadataContent()
@@ -17,7 +18,7 @@ export default async function handler(
             voter: context.wallet.drepId,
             role: 'drep',
             proposal: proposal,
-            vote: true,
+            vote: voteType,
             anchor: anchorData,
         },
     }
