@@ -75,6 +75,27 @@ class TestAgentFunctionExecution:
             message="No successful 'create infoAction proposal' log found",
         )
 
+    @allure.sub_suite("MANUAL")
+    @allure.title("Test Manual Stake Registration Logs")
+    @allure.feature("Stake Registration Function")
+    def test_stake_registration_logs(
+        self, run_admin_agent_fixture, autonomous_agent_api
+    ):
+        agent_id = run_admin_agent_fixture.json().get("id")
+        logs = (
+            autonomous_agent_api.get_trigger_history(
+                param=f"?agent_id={agent_id}&functionName={'registerStake'}"
+            )
+            .json()
+            .get("items")
+        )
+        assert_successful_log(
+            logs,
+            function_name="registerStake",
+            trigger_type="MANUAL",
+            message="No successful 'stake Registration' log found",
+        )
+
     @allure.sub_suite("EVENT")
     @allure.title("Test Event Vote Logs")
     @allure.feature("Vote Event Function")
