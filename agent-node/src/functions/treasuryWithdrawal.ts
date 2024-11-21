@@ -1,4 +1,5 @@
 import { FunctionContext } from '../executor/BaseFunction'
+import { bech32toHex } from '../utils/cardano'
 
 export default async function handler(
     context: FunctionContext,
@@ -8,6 +9,16 @@ export default async function handler(
     const { dataHash, url } = await context.builtins.saveMetadata(
         context.helpers.generateProposalMetadataContent()
     )
+    let updatedWithdrawal = withdrawal
+    if (withdrawal) {
+        const stakeKey = Object.keys(withdrawal)[0]
+        if (stakeKey.startsWith('stake')) {
+            const statkeKeyHex = bech32toHex(stakeKey)
+            updatedWithdrawal = {
+                ['e0'+statkeKeyHex]: withdrawal[stakeKey],
+            }
+        }
+    }
     const anchorData =
         anchor && anchor['url'] && anchor['dataHash']
             ? anchor
@@ -17,7 +28,7 @@ export default async function handler(
             {
                 anchor: anchorData,
                 refundAccount: context.wallet.rewardAddress,
-                withdraw: withdrawal,
+                withdraw: updatedWithdrawal,
                 script: {
                     type: 'PlutusScriptV3',
                     description: '',
