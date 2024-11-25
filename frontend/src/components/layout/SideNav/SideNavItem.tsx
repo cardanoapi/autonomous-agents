@@ -12,7 +12,7 @@ export interface ISideNavItem {
     hidden?: boolean;
 }
 
-export default function SideNavItem({ Prop }: { Prop: ISideNavItem }) {
+export default function SideNavItem({ Prop , onClick }: { Prop: ISideNavItem , onClick? : any }) {
     const currentPath = usePathname();
 
     const isActive =
@@ -24,7 +24,7 @@ export default function SideNavItem({ Prop }: { Prop: ISideNavItem }) {
     }
 
     return (
-        <Link href={Prop.href}>
+        <Link href={Prop.href} onClick={onClick}>
             <div
                 className={cn(
                     'hover-transition-blue flex h-10 items-center rounded px-3',
