@@ -1,193 +1,88 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-
+import { useState , useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-
-import { fetchMyAgent } from '@api/agents';
-import { CheckUserStatus, SendLogoutRequest } from '@api/auth';
-import { PATHS } from '@consts';
+import { getUserStatus, SendLogoutRequest } from '@api/auth';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
-import { Boxes } from 'lucide-react';
-
 import WalletSignInDialog from '@app/components/Auth/WalletSignInDialog';
 import { Button } from '@app/components/atoms/Button';
-import AgentsIcon from '@app/components/icons/AgentsIcon';
-import DashBoardIcon from '@app/components/icons/DashboardIcon';
-import GovernanceActionIcon from '@app/components/icons/GovernanceActionIcon';
-import LogsIcon from '@app/components/icons/LogsIcon';
-import TemplateIcon from '@app/components/icons/TemplatesIcon';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import { adminAccessAtom, currentConnectedWalletAtom } from '@app/store/localStore';
+import MyAgentCard from '@app/components/layout/SideNav/MyAgentCard';
+import SideNavLogo from '@app/components/layout/SideNav/SideNavLogo';
+import ConnectedWalletCard from '@app/components/layout/SideNav/ConnectedWalletCard';
+import { SideNavItems } from '@app/components/layout/SideNav/SideNavData';
+import SideNavItem from '@app/components/layout/SideNav/SideNavItem';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { IUserStatusResponse } from '@api/auth';
 
-import MyAgentCard from './components/MyAgentCard';
-import SideNavLink from './components/SideNavLink';
-import SideNavLogo from './components/SideNavLogo';
-import WalletCard from './components/WalletCard';
-
-export interface ISideNavItem {
-    title: string;
-    href: string;
-    icon: any;
-    hidden?: boolean;
-}
-
-export default function SideNav() {
+export default function SideNav({className} : {className?: string}) {
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [currentConnectedWallet, setCurrentConnectedWallet] = useAtom(
-        currentConnectedWalletAtom
-    );
+    const [currentConnectedWallet, setCurrentConnectedWallet] = useAtom(currentConnectedWalletAtom);
     const [adminAccess, setAdminAccess] = useAtom(adminAccessAtom);
-    const router = useRouter();
+    const router : AppRouterInstance = useRouter();
 
     const { data: userStatus } = useQuery({
-        queryKey: ['userSatus'],
-        queryFn: async () => {
-            return CheckUserStatus();
+        queryKey: ['userStatus'],
+        queryFn: async () : Promise<IUserStatusResponse|false> => {
+            return getUserStatus();
         },
-        refetchInterval: 30000
+        refetchInterval: 30000,
+        enabled : currentConnectedWallet !== null,
     });
 
-    const { data: myAgent } = useQuery({
-        queryKey: ['myAgent'],
-        queryFn: async () => {
-            if (currentConnectedWallet && !adminAccess) {
-                return await fetchMyAgent();
+    useEffect(() : void => {
+            console.log(userStatus);
+            console.log(currentConnectedWallet)
+            const isAdmin  : boolean = userStatus && userStatus.is_admin || false;
+            const hasWallet : boolean = currentConnectedWallet !== null;
+            setAdminAccess(isAdmin && hasWallet);
+            if (userStatus === false) {
+                 setCurrentConnectedWallet(null);
             }
-            return null;
-        },
-        enabled: !!currentConnectedWallet && adminAccess === false, // Only enable when conditions are met
-        refetchOnWindowFocus: true,
-        refetchOnMount: true,
-        refetchInterval: 5000,
-        refetchIntervalInBackground: true
-    });
-
-    const SideNavItems: ISideNavItem[] = [
-        {
-            title: 'Dashboard',
-            href: '/',
-            icon: DashBoardIcon
-        },
-        {
-            title: 'Agents',
-            href: '/agents',
-            icon: AgentsIcon
-        },
-        {
-            title: 'Templates',
-            href: '/templates',
-            icon: TemplateIcon
-        },
-        {
-            title: 'DRep Directory',
-            href: PATHS.dRepDirectory,
-            icon: Boxes
-        },
-        {
-            title: 'Governance Actions',
-            href: PATHS.governanceActions,
-            icon: GovernanceActionIcon
-        },
-        {
-            title: 'Logs',
-            href: '/logs',
-            icon: LogsIcon
-        }
-    ];
-
-    const toggleDialog = () => {
-        dialogOpen ? setDialogOpen(false) : setDialogOpen(true);
-    };
-
-    const handleDisconnect = () => {
-        setAdminAccess(false);
-        setCurrentConnectedWallet(null);
-        SendLogoutRequest();
-        SuccessToast('Wallet Disconnected');
-        router.push('/');
-    };
-
-    useEffect(() => {
-        if (
-            userStatus === false ||
-            (userStatus && !userStatus.is_admin) ||
-            currentConnectedWallet === null
-        ) {
-            // Remove admin access for unauthenticated users, non-admins, or if wallet info is missing
-            setAdminAccess(false);
-        } else {
-            // Grant admin access if the user is an admin and wallet info is present
-            setAdminAccess(true);
-        }
-        // Reset currentConnectedWallet if userStatus is false
-        if (userStatus === false) {
-            setCurrentConnectedWallet(null);
-        }
     }, [userStatus]);
 
-    const renderMyAgentCard = () => {
-        return (
-            <MyAgentCard
-                agent={myAgent}
-                onClick={() => {
-                    router.push(`/agents/${myAgent?.id}`);
-                }}
-            />
-        );
-    };
-
-    const renderMyWalletCard = () => {
-        return (
-            <WalletCard
-                address={
-                    (currentConnectedWallet && currentConnectedWallet.address) || ''
-                }
-                onDisconnect={handleDisconnect}
-                iconSrc={(currentConnectedWallet && currentConnectedWallet.icon) || ''}
-            />
-        );
+    const logoutUser  = () : void => {
+        setAdminAccess(false);
+        setCurrentConnectedWallet(null);
+        SendLogoutRequest().then(()=>{
+            SuccessToast('Wallet Disconnected');
+            router.push('/');
+        });
     };
 
     return (
-        <>
+        <div className={className}>
             <WalletSignInDialog
                 refDialogOpen={dialogOpen}
-                onComplete={toggleDialog}
-                onClose={toggleDialog}
+                onComplete={()=>{setDialogOpen(false)}}
+                onClose={() => {setDialogOpen(false)}}
             />
-            <nav className="overflow-wrap flex h-full w-full flex-col border-r-[0.5px] bg-white">
-                <SideNavLogo />
-
-                <div className=" flex w-full flex-grow flex-col justify-between">
-                    <div className="mt-6 flex flex-col gap-y-4 px-2">
+            <nav className="h-full w-full overflow-wrap flex flex-col border-r-[0.5px] bg-white justify-between px-2">
+                <div>
+                  <SideNavLogo />
+                    <li className="mt-6 flex flex-col gap-y-4">
                         {SideNavItems.map((Prop, index) => (
-                            <SideNavLink key={index} Prop={Prop} />
+                            <SideNavItem key={index} Prop={Prop} />
                         ))}
-                    </div>
-
-                    {currentConnectedWallet !== null && (
-                        <div className="mt-6 flex flex-col gap-y-4 px-2">
-                            {/* Show My Agent Card if only user is not admin */}
-                            <div className="flex flex-col gap-x-2 gap-y-4 px-2 pb-2">
-                                {adminAccess === false && renderMyAgentCard()}
-                            </div>
-                            {renderMyWalletCard()}
+                    </li>
+                </div>
+                {currentConnectedWallet ? (
+                        <div className="flex flex-col gap-y-2 pb-2">
+                            {!adminAccess && <MyAgentCard/>}
+                            <ConnectedWalletCard onDisconnect={logoutUser}/>
                         </div>
-                    )}
-
-                    {currentConnectedWallet === null && (
+                    )  :
                         <Button
                             className="m-2"
-                            onClick={toggleDialog}
+                            onClick={()=>setDialogOpen(true)}
                             variant={'primary'}
                         >
                             Connect Wallet
                         </Button>
-                    )}
-                </div>
+                    }
             </nav>
-        </>
+        </div>
     );
 }

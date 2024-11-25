@@ -5,9 +5,14 @@ import { usePathname } from 'next/navigation';
 
 import { cn } from '@app/components/lib/utils';
 
-import { ISideNavItem } from '../SideNav';
+export interface ISideNavItem {
+    title: string;
+    href: string;
+    icon: any;
+    hidden?: boolean;
+}
 
-export default function SideNavLink({ Prop }: { Prop: ISideNavItem }) {
+export default function SideNavItem({ Prop }: { Prop: ISideNavItem }) {
     const currentPath = usePathname();
 
     const isActive =

@@ -72,10 +72,6 @@ export default function Home() {
         }
     ];
 
-    useEffect(() => {
-        console.log(isLoading);
-    }, [triggerHistoryMetric]);
-
     return (
         <>
             <Head>
