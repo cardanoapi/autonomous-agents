@@ -110,5 +110,5 @@
 }
 
 .pagination-btn-position {
-    @apply absolute bottom-8 right-10;
+    @apply absolute md:bottom-8 md:right-10 bottom-4 right-5;
 }

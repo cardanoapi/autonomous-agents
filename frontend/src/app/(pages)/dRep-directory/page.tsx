@@ -89,13 +89,13 @@ export default function DRepDirectory() {
     }, [data]);
 
     return (
-        <div className="!mt-4 flex h-defaultPageHeightwithoutTopNav flex-col space-y-12">
+        <div className="md:!mt-4 flex h-defaultPageHeightwithoutTopNav flex-col md:space-y-12 space-y-6">
             <div className="flex items-center justify-between">
-                <div className="flex gap-2">
+                <div className="flex flex-col md:flex-row gap-2 ">
                     <DataActionBar
                         onSearch={handleSearch}
                         placeholder="Search DRep ID"
-                        className="!w-[500px]"
+                        className="md:w-[500px]"
                     />
                     <DrepFilterTab
                         onClick={handleFilterChange}
@@ -103,7 +103,7 @@ export default function DRepDirectory() {
                         defaultValue={DrepFilterOptions[0].value}
                     />
                 </div>
-                <div>
+                <div className={"hidden"}>
                     <DropdownMenu>
                         <span>Dreps per Page: </span>
                         <DropdownMenuTrigger className="inline-flex">
@@ -128,9 +128,8 @@ export default function DRepDirectory() {
                     </DropdownMenu>
                 </div>
             </div>
-
             {/* DRep list */}
-            <ScrollArea className="h-drepListHeight pb-4 pr-4">
+            <ScrollArea className="h-drepListHeight pb-4 md:pr-4">
                 <div className="flex flex-col space-y-4">
                     {!isLoading &&
                         data &&
@@ -172,7 +171,7 @@ const DrepFilterTab = ({
             onClick(value);
         }
     };
-    const triggerClassName = 'text-base border-gray-200 border-[1px] !h-full';
+    const triggerClassName = 'md:text-base border-gray-200 border-[1px] !h-full text-sm rounded-full md:rounded-sm';
     return (
         <Tabs defaultValue={defaultValue} className="!m-0 !p-0">
             <TabsList className="!h-full !p-0">

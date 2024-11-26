@@ -20,12 +20,15 @@ import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
 import AgentsDelegationDialogContent from './AgentsDelegationDialogContent';
 import DrepDetailDialogContent from './DrepDetailDialogContent';
+import { useAtom } from 'jotai';
+import { currentConnectedWalletAtom } from '@app/store/localStore';
+import { Truncate } from '@app/utils/common/extra';
 
 interface DRepCardProps {
     dRep: IDRepInternal;
 }
 
-export const getDrepGivedName = (drep: IDRepInternal) => {
+export const getDrepGivedName = (drep: IDRepInternal) : string => {
     if (!drep.givenName) {
         return '';
     } else if (typeof drep.givenName === 'string') {
@@ -38,6 +41,8 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
     const { isOpen, toggleDialog } = useAppDialog();
 
     const [isDrepDetailsOpen, setIsDrepDetailsOpen] = useState(false);
+
+    const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom)
 
     const isDataMissing = dRep.givenName === undefined;
 
@@ -76,23 +81,24 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
     return (
         <>
             <div
-                className={`shadow-xs flex w-full items-center justify-between rounded-lg border !border-none bg-white p-4 ${isDataMissing && 'shadow-bg-red-100 bg-red-100/40'}`}
+                className={`shadow-xs flex w-full md:items-center md:justify-between rounded-lg border !border-none bg-white p-4 ${isDataMissing && 'shadow-bg-red-100 bg-red-100/40'} flex-col md:flex-row gap-y-4 items-start justify-start`}
             >
-                <div className="flex space-x-4 sm:space-x-6  xl:space-x-12 2xl:space-x-10 4xl:space-x-20">
-                    <div className="flex flex-col space-y-2">
+                <div className="flex space-x-0 md:space-x-4 sm:space-x-6 xl:space-x-12 2xl:space-x-10 4xl:space-x-20 flex-col md:flex-row gap-y-4 ">
+                    <div className="flex flex-col space-y-2 ">
                         <div className={cn('flex')}>
                             {getDrepGivedName(dRep) !== '' && (
                                 <TypographyH2 className={`mr-2 font-semibold`}>
-                                    {getDrepGivedName(dRep)}
+                                    {Truncate(getDrepGivedName(dRep) , 25)}
                                 </TypographyH2>
                             )}
-                            <Badge variant={getBadgeVariant(dRep.status)}>
-                                {dRep.status}
-                                {/* {dRep.givenName?.value} */}
-                            </Badge>
+                            <div className={"hidden md:block"}>
+                                <Badge variant={getBadgeVariant(dRep.status)}>
+                                    {dRep.status}
+                                </Badge>
+                            </div>
                         </div>
                         <div className="flex items-center text-brand-navy">
-                            <p className="w-52 truncate text-sm font-medium 2xl:w-48 4xl:w-80">
+                            <p className="w-60 truncate text-sm font-medium 2xl:w-48 4xl:w-80">
                                 DrepID : {hexToBech32(dRep.drepId)}
                             </p>
                             <CopyIcon
@@ -102,12 +108,23 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                             />
                         </div>
                     </div>
-                    <div>
-                        <div className="flex w-32 flex-col items-center space-y-2">
-                            <p className="text-sm text-gray-800">Voting Power</p>
-                            <p className="font-semibold text-gray-600">
-                                ₳ {formattedVotingPower}
-                            </p>
+                    <div className={'flex gap-2 '}>
+                        <div className={'flex flex-col md:flex-row'}>
+                            <div className="flex w-32 flex-col md:items-center space-y-2 ">
+                                <p className="text-sm text-gray-800">Voting Power</p>
+                                <p className="font-semibold text-gray-600 text-sm md:text-base">
+                                    ₳ {formattedVotingPower}
+                                </p>
+                            </div>
+                        </div>
+                        <hr className="border-b border-gray-200" />
+                        <div className={'flex flex-col md:hidden'}>
+                            <div className="flex w-32 flex-col md:items-center space-y-2  items-center justify-center">
+                                <p className="text-sm text-gray-800 inline-flex">Status</p>
+                                <Badge variant={getBadgeVariant(dRep.status)} className={'w-20'}>
+                                    {dRep.status}
+                                </Badge>
+                            </div>
                         </div>
                     </div>
                     {dRep.agentId && dRep.agentName && (
@@ -119,15 +136,15 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                         />
                     )}
                 </div>
-                <div className="flex gap-2">
-                    <Button
+                <div className="flex gap-2 ">
+                <Button
                         className="rounded-3xl"
                         variant={'cool'}
                         onClick={() => setIsDrepDetailsOpen(!isDrepDetailsOpen)}
                     >
                         View details
                     </Button>
-                    {dRep.status === DRepStatus.Active && (
+                    {dRep.status === DRepStatus.Active && currentConnectedWallet && (
                         <Button
                             onClick={toggleDialog}
                             className="rounded-3xl bg-brand-Blue-200 !px-6"
