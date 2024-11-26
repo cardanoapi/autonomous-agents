@@ -81,11 +81,10 @@ export default function GovernanceAction() {
     return (
         <div className="flex h-defaultPageHeightwithoutTopNav w-full flex-col gap-4">
             <div className="flex items-center justify-between">
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-col md:flex-row">
                     <DataActionBar
                         onSearch={handleSearch}
                         placeholder="Search Governance Action"
-                        className="!w-[500px]"
                     />
                     <ProposalFilterTab
                         onClick={handleFilterChange}
@@ -95,8 +94,8 @@ export default function GovernanceAction() {
                 </div>
                 <div>
                     <DropdownMenu>
-                        <span>Proposals per Page: </span>
-                        <DropdownMenuTrigger className="inline-flex">
+                        <span className="hidden md:inline-flex">Proposals per Page: </span>
+                        <DropdownMenuTrigger className="md:inline-flex hidden">
                             {searchParams.pageSize}
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="min-w-0">
@@ -165,7 +164,7 @@ const ProposalFilterTab = ({
     onClick?: (value: string) => void;
     defaultValue: string;
 }) => {
-    const triggerClassName = 'text-base border-gray-200 border-[1px] !h-full';
+    const triggerClassName = 'md:text-base border-gray-200 border-[1px] !h-full  text-sm rounded-full md:rounded-sm';
 
     return (
         <Tabs defaultValue={defaultValue} className="!m-0 !p-0">
