@@ -12,6 +12,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 
 import CustomTooltip from './CustomTooltip';
+import {cn} from '@app/components/lib/utils'
 
 // Import the UUID library
 
@@ -61,7 +62,7 @@ export default function CustomLineChart({
 
     return (
         <ResponsiveContainer>
-            <AreaChart data={chartData} className={className}>
+            <AreaChart data={chartData} className={cn(className , 'm-0 m-l-[-16] ml-[-16px] md:ml-0')}>
                 <defs>
                     <linearGradient
                         id={`colorUv-${uniqueId}`}
@@ -98,6 +99,7 @@ export default function CustomLineChart({
                         tickLine={false}
                         stroke="#A2A3A5"
                         allowDecimals={false}
+                        className={"text-[10px] md:text-lg"}
                     />
                 )}
                 {renderToolTip && (
@@ -131,6 +133,7 @@ export default function CustomLineChart({
                         stroke="#A2A3A5"
                         interval={xaxisInterval}
                         reversed={true}
+                        className={"text-[10px] md:text-lg"}
                     ></XAxis>
                 )}
             </AreaChart>

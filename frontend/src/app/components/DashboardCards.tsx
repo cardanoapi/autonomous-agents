@@ -81,14 +81,14 @@ const DashboardCards = () => {
     return (
         <div>
             {isLoading ? (
-                <>
-                    <DefaultOverViewCardSkeleton />
-                    <DefaultOverViewCardSkeleton />
-                    <DefaultOverViewCardSkeleton />
-                    <DefaultOverViewCardSkeleton />
-                </>
-            ) : (
                 <div className={"flex flex-col gap-y-4 md:grid  md:w-full md:grid-cols-4 md:gap-4"}>
+                    <DefaultOverViewCardSkeleton />
+                    <DefaultOverViewCardSkeleton />
+                    <DefaultOverViewCardSkeleton />
+                    <DefaultOverViewCardSkeleton />
+                </div>
+            ) : (
+                <div className={"flex flex-col gap-y-4 md:grid  md:w-full md:grid-cols-4 md:gap-4 md:min-h-36"}>
                     <OverViewAgentsCard
                         title="No of Agents"
                         totalAgents={agents.length || 'NA'}
