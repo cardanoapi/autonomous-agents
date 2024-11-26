@@ -22,7 +22,6 @@ const config = {
         },
         extend: {
             screens: {
-                xl: '1300px',
                 '3xl': '1620px',
                 '4xl': '1800px',
                 '5xl': '2000px'

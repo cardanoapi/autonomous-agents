@@ -73,7 +73,7 @@ export default function Home() {
     ];
 
     return (
-        <>
+        <div className={"flex flex-col"}>
             <Head>
                 <title>Dashboard</title>
             </Head>
@@ -140,6 +140,6 @@ export default function Home() {
                     </div>
                 </div>
             </Card>
-        </>
+        </div>
     );
 }

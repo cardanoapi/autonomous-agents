@@ -52,7 +52,7 @@ export default function OverViewGraphCard({
                     </div>
                     <span className={cn('h4 text-pretty', textColor)}>
                         {changeRate} %{' '}
-                        <span className="hidden text-xs xl:inline">(24 hours)</span>
+                        <span className="hidden text-xs 2xl:inline">(24 hours)</span>
                     </span>
                 </div>
                 <div className="3xl:w-30 absolute bottom-0 right-0 flex h-24 w-28 items-center gap-x-1 pr-4  pt-6 3xl:h-28 4xl:h-32 4xl:w-40 ">

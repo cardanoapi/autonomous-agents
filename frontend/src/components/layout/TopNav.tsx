@@ -18,8 +18,9 @@ import {
     currentAgentNameAtom
 } from '@app/store/localStore';
 import { Truncate } from '@app/utils/common/extra';
+import {cn} from '@app/components/lib/utils'
 
-export default function TopNav() {
+export default function TopNav({className} : {className? : string}) {
     const [currentAgentName] = useAtom(currentAgentNameAtom);
     const [adminAcesss] = useAtom(adminAccessAtom);
     const [, setAgents] = useAtom(agentsAtom);
@@ -74,7 +75,7 @@ export default function TopNav() {
     function renderTopNavSection() {
         const title = PageTitles[path];
         if (title) {
-            return <span className="h1">{title}</span>;
+            return <span className="h1 mt-2 md:mt-0">{title}</span>;
         } else {
             if (getPageTitleByRegexMatch('agents')) {
                 return (
@@ -109,7 +110,7 @@ export default function TopNav() {
     }
 
     return (
-        <div className="flex w-[full] items-center justify-between text-sm">
+        <div className={cn("flex w-[full] items-center justify-between text-sm" , className)}>
             {renderTopNavSection()}
             {adminAcesss && 'Admin'}
         </div>

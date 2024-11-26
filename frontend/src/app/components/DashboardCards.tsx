@@ -79,7 +79,7 @@ const DashboardCards = () => {
         isLoadingVoteMetric;
 
     return (
-        <div className="flex h-36 w-full grid-cols-4 gap-[12px] 2xl:gap-[25px]">
+        <div>
             {isLoading ? (
                 <>
                     <DefaultOverViewCardSkeleton />
@@ -88,7 +88,7 @@ const DashboardCards = () => {
                     <DefaultOverViewCardSkeleton />
                 </>
             ) : (
-                <>
+                <div className={"flex flex-col gap-y-4 md:grid  md:w-full md:grid-cols-4 md:gap-4"}>
                     <OverViewAgentsCard
                         title="No of Agents"
                         totalAgents={agents.length || 'NA'}
@@ -150,7 +150,7 @@ const DashboardCards = () => {
                                 : []
                         }
                     />
-                </>
+                </div>
             )}
         </div>
     );
