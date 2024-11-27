@@ -45,8 +45,8 @@ const AgentTabContent = ({
     }
     //Logs and History tab have their own Skeleton handled inside the component
     return (
-        <div className={cn('relative flex-1 rounded-lg bg-white p-8', className)}>
-            <ScrollArea className="h-[95%] w-full pb-4 pr-4 pt-10">
+        <div className={cn('relative h-full flex-1 rounded-lg bg-white md:p-8 p-6 pb-0', className)}>
+            <ScrollArea className="md:h-[95%] w-full md:pb-4 md:pr-4 md:pt-10 ">
                 {agentLoading ? (
                     selectedAgentTab === 'Overview' ||
                     selectedAgentTab === 'Manual Actions' ||

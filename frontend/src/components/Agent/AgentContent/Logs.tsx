@@ -88,7 +88,7 @@ export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
                             setCurrentFunction(strVal);
                         }}
                     />
-                    <div className="flex justify-center gap-2">
+                    <div className="justify-center gap-2 hidden md:flex">
                         {statusOptions.map((status: string, index) => (
                             <Badge
                                 key={index}
@@ -106,7 +106,7 @@ export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
                     </div>
                 </div>
             </ContentHeader>
-            <div className="mt-4 grid grid-cols-1 gap-2">
+            <div className="md:mt-4 grid grid-cols-1 gap-2">
                 {loadingLogs
                     ? Array.from({ length: 50 }).map((_, index) => (
                           <AgentLogCardSkeleton key={index} />
@@ -244,7 +244,7 @@ export const AgentLogCard = ({
             </div>
             <div
                 className={
-                    ' flex min-w-fit flex-col items-end justify-start gap-1 md:min-w-[200px]'
+                    ' flex min-w-fit flex-col items-end justify-start gap-1 md:min-w-[200px] absolute top-4 right-3 md:static'
                 }
             >
                 <Badge variant={getBadgeVariant()}>{getAgentExecutionStatus()}</Badge>

@@ -117,7 +117,7 @@ export default function GovernanceAction() {
                     </DropdownMenu>
                 </div>
             </div>
-            <ScrollArea className="h-proposalListHeight pr-4">
+            <ScrollArea className="h-proposalListHeight md:pr-4">
                 <div className="grid w-full grid-flow-row grid-cols-1 gap-8 py-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                     {!isLoading &&
                         data?.items?.map((proposal: any) => (

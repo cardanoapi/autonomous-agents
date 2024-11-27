@@ -79,7 +79,7 @@ export default function TopNav({className} : {className? : string}) {
         } else {
             if (getPageTitleByRegexMatch('agents')) {
                 return (
-                    <div className={'flex items-center gap-3 py-3'}>
+                    <div className={'flex items-center gap-3 md:py-3'}>
                         <AgentAvatar
                             hash={agentId}
                             size={40}

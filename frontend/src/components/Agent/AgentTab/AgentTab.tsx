@@ -28,13 +28,15 @@ const AgentTabSection = ({
     }, []);
 
     return (
-        <div
-            className={cn('flex  flex-col gap-2 rounded-lg bg-white py-6 ', className)}
-        >
-            {tabs.map((item, index) => (
-                <AgentTabItem key={index} item={item} />
-            ))}
-        </div>
+        <>
+            <div
+                className={cn('flex md:flex-col gap-2 rounded-lg md:bg-white md:py-6 p-1', className)}
+            >
+                {tabs.map((item, index) => (
+                    <AgentTabItem key={index} item={item} />
+                ))}
+            </div>
+        </>
     );
 };
 

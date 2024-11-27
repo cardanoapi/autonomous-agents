@@ -30,7 +30,7 @@ export default function AgentFunctionsComponent({
     const [triggerID, setTriggerID] = useState('');
 
     const toggleDialog = () => {
-        setDialogOpen(dialogOpen ? false : true);
+        setDialogOpen(!dialogOpen);
     };
 
     const postTriggerMutation = useMutation({
@@ -72,7 +72,7 @@ export default function AgentFunctionsComponent({
     };
 
     return (
-        <div className="flex flex-col gap-10 ">
+        <div className="flex flex-col gap-10 h-full bg-green-100">
             <div className="flex flex-col gap-4">
                 <HeaderContent>
                     <div className="flex w-full items-center justify-between bg-white">

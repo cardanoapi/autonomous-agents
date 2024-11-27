@@ -14,6 +14,7 @@ import { Button } from '../../atoms/Button';
 import CustomCopyBox from '../shared/CustomCopyBox';
 import AgentHistoryChart from '../shared/TriggerChart';
 import HeaderContent from './ContentHeader';
+import {cn} from '@app/components/lib/utils'
 
 interface AgentOverViewProps {
     agent?: IAgent;
@@ -50,7 +51,7 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({
         <CustomCopyBox
             title={title}
             content={content.toString()}
-            className={className + 'w-96 px-2 py-[6px]'}
+            className={className + 'w-32 md:w-96 px-2 py-[6px]'}
             showCopyIcon={showCopyIcon}
         />
     );
@@ -58,7 +59,7 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({
     return (
         <div className="flex h-full flex-col gap-10">
             <HeaderContent>
-                <div className="flex w-full items-center justify-between bg-white">
+                <div className="w-full items-center justify-between bg-white hidden md:flex">
                     <TextDisplayField
                         title="Agent Name"
                         content={agent?.name}
@@ -77,6 +78,7 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({
                 </div>
             </HeaderContent>
 
+            <div className={"flex flex-col-reverse md:flex-col gap-8"}>
             <div className="flex flex-col gap-8">
                 <div className="flex flex-col gap-4">
                     <div className="flex items-center gap-3">
@@ -149,11 +151,11 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({
                     <TriggerDataBox
                         triggerData={(LogsHistory && LogsHistory.items) || []}
                         lastActive={agent?.last_active}
+                        className={"hidden md:flex"}
                     />
                 </div>
             </div>
-            <div className="mt-8">
-                <AgentHistoryChart chartClassName="w-full h-[550px]" agent={agent} />
+            <AgentHistoryChart chartClassName="w-full md:h-[550px] h-[220px]" agent={agent} />
             </div>
         </div>
     );
@@ -164,11 +166,13 @@ export default AgentOverViewComponent;
 const TriggerDataBox = ({
     triggerData,
     lastActive,
-    numberOfBoxes = 24
+    numberOfBoxes = 24,
+    className
 }: {
     triggerData: IAgentTriggerHistory[];
     lastActive?: string;
     numberOfBoxes?: number;
+    className?: string;
 }) => {
     const dataSource = triggerData.map(
         (item) =>
@@ -211,7 +215,7 @@ const TriggerDataBox = ({
     };
 
     return (
-        <div className="flex w-full justify-between rounded-lg border-[1px] border-brand-border-100 px-10 py-6">
+        <div className={cn("flex w-full justify-between rounded-lg border-[1px] border-brand-border-100 px-10 py-6" , className)}>
             <div className="flex flex-col gap-2 ">
                 <div className="text-sm font-medium text-gray-600">Triggered</div>
                 <div className="text-[10px] text-gray-500 ">Last 24 triggers</div>

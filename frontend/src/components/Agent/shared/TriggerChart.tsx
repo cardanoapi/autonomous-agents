@@ -84,13 +84,13 @@ const AgentHistoryChart = ({
     return (
         <div
             className={cn(
-                'flex h-full w-full flex-col gap-2 rounded border border-brand-border-100 lg:p-6 2xl:p-10',
+                'flex h-full w-full flex-col gap-2 rounded border border-brand-border-100 lg:p-6 2xl:p-10 p-4',
                 chartClassName
             )}
         >
             <div className="flex justify-between">
-                <span className="title-1">Transactions</span>
-                <div className="flex gap-2">
+                <span className="md:title-1 h3 ">Transactions</span>
+                <div className="gap-2 hidden md:flex">
                     <AgentFunctionsDropDown
                         onChange={(stringValue: string) => {
                             setCurrentFunction(stringValue);
@@ -99,7 +99,7 @@ const AgentHistoryChart = ({
                     <DropdownMenu>
                         <DropdownMenuTrigger
                             border={true}
-                            className="flex min-w-40 justify-between"
+                            className="flex md:min-w-40 justify-between"
                         >
                             {currentChartFilterOption.placeholder}
                         </DropdownMenuTrigger>
