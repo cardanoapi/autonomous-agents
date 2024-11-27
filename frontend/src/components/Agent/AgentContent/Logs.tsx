@@ -159,12 +159,12 @@ export const AgentLogCard = ({
     return (
         <div
             className={cn(
-                `flex h-fit flex-row justify-between gap-4 rounded-lg bg-gray-100 px-3 py-2 drop-shadow-sm hover:bg-gray-200
-                `,
+                `flex h-fit flex-row justify-between gap-4 rounded-lg bg-gray-100 px-3 md:py-2 drop-shadow-sm hover:bg-gray-200
+                py-4`,
                 className
             )}
         >
-            <div className={'flex w-full flex-row items-start gap-8 '}>
+            <div className={'flex w-full md:flex-row flex-col items-start gap-8 '}>
                 {globalLog && (
                     <div className={'flex items-center gap-3 sm:min-w-[200px]'}>
                         <AgentAvatar
@@ -203,7 +203,7 @@ export const AgentLogCard = ({
                     </div>
                 )}
                 <div className={'flex w-full flex-col items-start gap-2'}>
-                    <div className={'flex flex-row items-center gap-1'}>
+                    <div className={'flex flex-row items-center gap-1 hidde'}>
                         <span className={'text-sm font-medium'}>
                             {MapFunctionNameAndViewName[history.functionName] ||
                                 history.functionName}
@@ -213,7 +213,7 @@ export const AgentLogCard = ({
                         </span>
                     </div>
                     {history.parameters && (
-                        <div className={'flex flex-col gap-0.5'}>
+                        <div className={'flex flex-col gap-0.5 '}>
                             <span className={'text-sm font-medium'}>Parameters</span>
                             {history.parameters?.map((param, index) => {
                                 return (
@@ -248,7 +248,7 @@ export const AgentLogCard = ({
                 }
             >
                 <Badge variant={getBadgeVariant()}>{getAgentExecutionStatus()}</Badge>
-                <span className={'text-xs'}>{formatTimestamp(history.timestamp)}</span>
+                <span className={'text-xs hidden md:flex'}>{formatTimestamp(history.timestamp)}</span>
             </div>
         </div>
     );
@@ -256,7 +256,7 @@ export const AgentLogCard = ({
 
 const InternalLogs = ({ history }: { history: IAgentTriggerHistory }) => {
     return (
-        <div className={'flex w-full flex-col gap-1'}>
+        <div className={'md:flex w-full flex-col gap-1 hidden'}>
             {history.internal?.map((internal: any, index: number) => {
                 return (
                     <div
@@ -339,7 +339,7 @@ const LogObjectParameter = ({
                     )
                 }
                 key={index}
-                className={` cursor-pointer truncate text-xs drop-shadow ${longTruncate ? 'w-fit sm:w-[250px] md:w-[550px]' : 'w-[100px] md:w-[400px]'}`}
+                className={` cursor-pointer truncate text-xs drop-shadow ${longTruncate ? ' w-[250px] md:w-[550px]' : 'w-[100px] md:w-[400px]'}`}
             >
                 {formatParameterName(param[0])} : {param[1]}
             </span>

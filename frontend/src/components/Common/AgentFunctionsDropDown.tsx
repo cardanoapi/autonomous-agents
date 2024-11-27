@@ -9,8 +9,9 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '../atoms/DropDownMenu';
+import {cn} from '@app/components/lib/utils'
 
-export default function AgentFunctionsDropDown({ onChange }: { onChange?: any }) {
+export default function AgentFunctionsDropDown({ onChange , className }: { onChange?: any , className?: string }) {
     const { data: agentFunctions = [] } = useQuery({
         queryKey: ['AgentFunctions'],
         queryFn: fetchFunctions
@@ -19,8 +20,8 @@ export default function AgentFunctionsDropDown({ onChange }: { onChange?: any })
     const [currentFunction, setCurrentFunction] = useState('None');
 
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger border={true} className="flex w-72 justify-between">
+        <DropdownMenu >
+            <DropdownMenuTrigger border={true} className={cn("flex w-72 justify-between" , className)}>
                 {currentFunction === 'None' ? 'Function' : currentFunction}
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-white">

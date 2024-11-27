@@ -20,6 +20,7 @@ import {
 import { SearchField } from '@app/components/atoms/SearchField';
 import PaginationBtns from '@app/components/molecules/PaginationBtns';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
+import DataActionBar from '@app/app/components/DataActionBar';
 
 export default function LogsPage() {
     // Object to store all state related to the query
@@ -123,10 +124,9 @@ export default function LogsPage() {
 
         return (
             <div className="flex items-center justify-between ">
-                <div className="flex gap-2">
-                    <SearchField
+                <div className="flex gap-2 flex-col md:flex-row">
+                    <DataActionBar
                         placeholder="Enter Agent ID"
-                        variant="secondary"
                         onSearch={(val: string) => {
                             setLogQueryState((prevState) => ({
                                 ...prevState,
@@ -141,8 +141,9 @@ export default function LogsPage() {
                                 currentFunction: strValue
                             }));
                         }}
+                        className = "hidden md:flex"
                     />
-                    <div className="flex justify-center gap-2">
+                    <div className="justify-center gap-2 hidden md:flex">
                         {statusOptions.map((status: string, index) => (
                             <Badge
                                 key={index}
@@ -159,7 +160,7 @@ export default function LogsPage() {
                         ))}
                     </div>
                 </div>
-                <div className="flex">
+                <div className="hidden md:flex">
                     <span>Rows per page :</span>
                     <DropdownMenu>
                         <DropdownMenuTrigger>
@@ -193,7 +194,7 @@ export default function LogsPage() {
             <div className="flex flex-grow flex-col">
                 <TopNav />
                 <div className="mt-6 flex-grow">
-                    <ScrollArea className="flex h-logsPageHeight max-h-logsList flex-col overflow-y-auto pr-4">
+                    <ScrollArea className="flex h-logsPageHeight max-h-logsList flex-col overflow-y-auto md:pr-4">
                         {loadingLogs
                             ? Array.from({ length: 50 }).map((_, index) => (
                                   <AgentLogCardSkeleton key={index} className="my-2" />
@@ -205,7 +206,7 @@ export default function LogsPage() {
                                           history={history}
                                           key={index}
                                           className="my-2 flex bg-white"
-                                          globalLog
+                                          globalLog={true}
                                       />
                                   )
                               )}
