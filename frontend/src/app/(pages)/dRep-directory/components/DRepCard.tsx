@@ -136,7 +136,7 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                         />
                     )}
                 </div>
-                <div className="flex gap-2 ">
+                <div className=" gap-2 hidden md:flex">
                 <Button
                         className="rounded-3xl"
                         variant={'cool'}
