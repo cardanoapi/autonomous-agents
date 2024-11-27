@@ -19,7 +19,7 @@ import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 import { QUERY_KEYS } from '@app/consts/queryKeys';
 
 import DRepCard, { DRepCardSkeleton } from './components/DRepCard';
-import EmptyIcon from '@app/components/icons/EmptyIcon';
+import EmptyIcon from '@app/assets/icons/EmptyIcon';
 
 interface IDrepFilterOption {
     placeholder: string;

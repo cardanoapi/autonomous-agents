@@ -5,7 +5,7 @@ import { AvailableFunctions, IFunctionsItem } from '@models/types/functions';
 import { useAtom } from 'jotai/index';
 
 import FormRenderer from '@app/components/Agent/FormRenderer/FormRenderer';
-import AgentsIcon from '@app/components/icons/AgentsIcon';
+import AgentsIcon from '@app/assets/icons/AgentsIcon';
 import { Dialog, DialogContent } from '@app/components/shadcn/dialog';
 import { errorAtom, selectedFunctionAtom } from '@app/store/atoms/formRenderer';
 

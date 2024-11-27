@@ -1,11 +1,11 @@
 import { ISideNavItem } from '@app/components/layout/SideNav/SideNavItem';
-import DashBoardIcon from '@app/components/icons/DashboardIcon';
-import AgentsIcon from '@app/components/icons/AgentsIcon';
-import TemplateIcon from '@app/components/icons/TemplatesIcon';
+import DashBoardIcon from '@app/assets/icons/DashboardIcon';
+import AgentsIcon from '@app/assets/icons/AgentsIcon';
+import TemplateIcon from '@app/assets/icons/TemplatesIcon';
 import { PATHS } from '@consts';
 import { Boxes } from 'lucide-react';
-import GovernanceActionIcon from '@app/components/icons/GovernanceActionIcon';
-import LogsIcon from '@app/components/icons/LogsIcon';
+import GovernanceActionIcon from '@app/assets/icons/GovernanceActionIcon';
+import LogsIcon from '@app/assets/icons/LogsIcon';
 
 export const SideNavItems: ISideNavItem[] = [
     {

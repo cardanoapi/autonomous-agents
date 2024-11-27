@@ -1,5 +1,5 @@
-import { TemplateEditIcon } from '@app/components/icons/TemplateEditIcon';
-import TemplateIcon from '@app/components/icons/TemplatesIcon';
+import { TemplateEditIcon } from '@app/assets/icons/TemplateEditIcon';
+import TemplateIcon from '@app/assets/icons/TemplatesIcon';
 
 import OverViewCard from './OverViewCard';
 

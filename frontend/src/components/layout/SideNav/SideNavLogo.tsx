@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import { Badge } from '@app/components/atoms/Badge';
-import Logo from '@app/components/icons/Logo';
+import Logo from '@app/assets/icons/Logo';
 import environments from '@app/configs/environments';
 
 const networkName =

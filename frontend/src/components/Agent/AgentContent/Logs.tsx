@@ -11,7 +11,7 @@ import { useAtom } from 'jotai';
 import { Copy } from 'lucide-react';
 
 import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
-import AgentsIcon from '@app/components/icons/AgentsIcon';
+import AgentsIcon from '@app/assets/icons/AgentsIcon';
 import { useCopyClipboard } from '@app/lib/hooks/useCopyToClipboard';
 import { agentsAtom } from '@app/store/localStore';
 import { Truncate } from '@app/utils/common/extra';
