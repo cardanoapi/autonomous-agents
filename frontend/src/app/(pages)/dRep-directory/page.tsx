@@ -19,6 +19,7 @@ import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 import { QUERY_KEYS } from '@app/consts/queryKeys';
 
 import DRepCard, { DRepCardSkeleton } from './components/DRepCard';
+import EmptyIcon from '@app/components/icons/EmptyIcon';
 
 interface IDrepFilterOption {
     placeholder: string;
@@ -153,6 +154,19 @@ export default function DRepDirectory() {
                     refCurrentPage={queryParams.page}
                 />
             </div>
+            {
+                data && data?.items?.length === 0 && (
+                    <div className="flex w-full h-full items-center justify-center">
+                        <EmptyIcon
+                            style={{
+                                height: "50%",
+                                width: "50%",
+                                fill: "#c8c8c8",
+                            }}
+                        />
+                    </div>
+                )
+            }
         </div>
     );
 }
