@@ -13,6 +13,9 @@ import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { formatDisplayDate } from '@app/utils/dateAndTimeUtils';
 
 import AgentsVoteDialogContent from './AgentsVoteDialogContent';
+import { useState } from 'react';
+import { useAtom } from 'jotai';
+import { currentConnectedWalletAtom } from '@app/store/localStore';
 
 interface ProposalCardProps {
     proposal: IProposalInternal;
@@ -51,6 +54,8 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
             '_blank'
         );
     };
+
+    const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom)
 
     return (
         <>
@@ -166,6 +171,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                         onClick={toggleDialog}
                         className="w-full rounded-[100px]"
                         variant={'primary'}
+                        disabled={currentConnectedWallet === null}
                     >
                         Vote
                     </Button>
