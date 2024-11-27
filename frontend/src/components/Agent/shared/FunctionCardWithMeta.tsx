@@ -43,7 +43,7 @@ const FunctionCardWithMeta = ({
 
     return (
         <div
-            className="group relative flex w-[300px] flex-col flex-wrap justify-between gap-2 rounded bg-brand-White-200 p-3 drop-shadow-md"
+            className="group relative flex w-full md:w-[300px] flex-col flex-wrap justify-between gap-2 rounded bg-brand-White-200 p-3 drop-shadow-md"
             key={`${config.id}`}
         >
             {enableContol && (

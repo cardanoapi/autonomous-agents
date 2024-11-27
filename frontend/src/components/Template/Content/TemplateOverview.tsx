@@ -166,7 +166,7 @@ const TemplateOverview = ({
 
     return (
         <div className="flex h-full w-full flex-col gap-4 ">
-            <div className="flex w-[60%] flex-col gap-4 2xl:w-[40%]">
+            <div className="flex w-full md:w-[60%] flex-col gap-4 2xl:w-[40%]">
                 <div className="flex flex-col gap-2">
                     <Label>Template Name</Label>
                     <Input
