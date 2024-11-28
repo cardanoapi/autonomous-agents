@@ -26,20 +26,27 @@ export function checkIfAgentWithEventTriggerTypeExists(
             globalState.eventTriggerTypeDetails = {
                 eventType: true,
                 function_name: config.action.function_name,
+                parameters: config.action.parameters,
             }
         }
     })
 }
 
 export function createActionDtoForEventTrigger(tx: any, index: number): Action {
+    const updatedParams = [
+        ...globalState.eventTriggerTypeDetails.parameters,
+        {
+            name: 'anchor',
+            value: {},
+        },
+        {
+            name: 'proposal',
+            value: `${Buffer.from(tx.hash, 'utf-8').toString('hex')}#${index}`,
+        },
+    ].reverse()
     return {
         function_name: globalState.eventTriggerTypeDetails.function_name,
-        parameters: [
-            {
-                name: 'proposal',
-                value: `${Buffer.from(tx.hash, 'utf-8').toString('hex')}#${index}`,
-            },
-        ],
+        parameters: updatedParams,
     }
 }
 

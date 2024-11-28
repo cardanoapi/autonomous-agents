@@ -10,4 +10,5 @@ export type AgentWalletDetails = {
 export type EventTriggerTypeDetails = {
     eventType: boolean
     function_name: string
+    parameters: Array<any>
 }

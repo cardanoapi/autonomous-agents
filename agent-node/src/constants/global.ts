@@ -7,6 +7,7 @@ export const globalState: {
     eventTriggerTypeDetails: {
         eventType: false,
         function_name: '',
+        parameters: [],
     },
     agentName: '',
 }

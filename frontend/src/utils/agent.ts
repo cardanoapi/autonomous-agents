@@ -13,7 +13,8 @@ export function isAgentActive({ last_active }: IAgent): boolean {
 
 export function getConfiguredAgentTrigger(
     func: AgentTriggerFunctionType,
-    value: string
+    value: string,
+    name?: string
 ): IAgentTrigger {
     const trigger = AGENT_TRIGGER[func];
 
@@ -29,6 +30,12 @@ export function getConfiguredAgentTrigger(
             };
 
         case 'voteOnProposal':
+            if (name) {
+                return {
+                    ...trigger,
+                    parameters: [{ ...trigger.parameters[0], name, value }]
+                };
+            }
             return { ...trigger, parameters: [{ ...trigger.parameters[0], value }] };
 
         default:

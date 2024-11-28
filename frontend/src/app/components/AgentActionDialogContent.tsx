@@ -28,7 +28,7 @@ const AgentsActionDialogContent = ({
     triggerType,
     functionId
 }: AgentsActionDialogContentProps) => {
-    const { activeAgents, isSubmitting, handleSelect, handleAction, selectedAgentIds } =
+    const { activeAgents, isSubmitting, handleSelect, handleAction, selectedAgents } =
         useAgentsAction(triggerType, handleClose, functionId);
 
     const [adminAccess] = useAtom(adminAccessAtom);
@@ -64,7 +64,7 @@ const AgentsActionDialogContent = ({
 
             <Button
                 onClick={handleAction}
-                disabled={isEmpty(selectedAgentIds)}
+                disabled={isEmpty(selectedAgents)}
                 className="mt-6 w-full rounded-3xl bg-brand-primaryBlue hover:bg-brand-navy hover:shadow-lg"
             >
                 {isSubmitting ? <CircularProgress className="h-5 w-5" /> : 'Continue'}
