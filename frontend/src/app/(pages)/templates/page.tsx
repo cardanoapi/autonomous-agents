@@ -65,7 +65,7 @@ const TemplatesPage = () => {
                     adminAccess={adminAccess}
                 />
             )}
-
+        <div className={"w-full h-full flex flex-col overflow-y-auto "}>
             {/* Template List */}
             <TemplateList
                 templates={templates}
@@ -73,6 +73,7 @@ const TemplatesPage = () => {
                 adminAccess={adminAccess}
                 currentConnectedWallet={currentConnectedWallet}
             />
+        </div>
         </>
     );
 };

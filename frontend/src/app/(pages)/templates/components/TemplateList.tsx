@@ -15,10 +15,10 @@ const TemplateList = ({
     currentConnectedWallet: any;
 }) => {
     const containerClass =
-        'grid grid-cols-1 sm:gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 4xl:grid-cols-5 3xl:pr-12 gap-3';
+        'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 4xl:grid-cols-5 3xl:pr-12 gap-4';
 
     return (
-        <div className="flex flex-col gap-y-[80px] pb-10 pt-5">
+        <div className="flex flex-col gap-y-20 pb-10">
             <div className="mt-2 flex flex-col gap-y-5">
                 {isLoading ? (
                     <div className={containerClass}>

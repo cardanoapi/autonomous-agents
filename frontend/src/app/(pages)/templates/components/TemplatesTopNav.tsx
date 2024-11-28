@@ -21,12 +21,12 @@ const TemplatesTopNav = ({
                     Templates({templatesCount})
                 </span>
                 <DataActionBar
-                    className="h-10 min-w-[420px]"
+                    className="h-10"
                     placeholder="Search Template Name "
                     onSearch={onSearch}
                 />
             </div>
-            <Link href="/templates/create-template">
+            <Link href="/templates/create-template" className={"hidden"}>
                 <Button
                     variant="primary"
                     className={cn('h-[36px] w-[145px]', adminAccess ? '' : '!hidden')}
