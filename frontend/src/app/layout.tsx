@@ -85,11 +85,11 @@ export default function RootLayout({
                     <Provider>
                         <ReactQueryProvider>
                             <Toaster />
-                            <div className="flex h-full w-full bg-gradient-to-r from-[#F8F9FC] via-[#F5F5FC] to-[#E9EAF8]">
-                                <SideNav/>
-                                <div className="h-screen w-full md:w-[calc(100%-256px)] 3xl:w-[calc(100%-290px)] flex-col px-[12px] pt-[3%] 2xl:px-[45px] overflow-x-auto">
+                            <div className="flex h-dvh w-dvh bg-brandDefault">
+                                <SideNav desktopClassName={"hidden md:flex w-[256px] 3xl:w-[290px]"}/>
+                                <div className={"w-full h-full px-3 2xl:px-10 pt-[3%] gap-8 flex flex-col"}>
                                      <TopNav />
-                                    <div className="mt-8">{children}</div>
+                                    {children}
                                 </div>
                             </div>
                             <ModalContainer />
