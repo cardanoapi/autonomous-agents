@@ -35,6 +35,7 @@ const AgentsContainer: React.FC<AgentsContainerProps> = ({
                           enableDelete={enableDelete}
                           no_of_successful_triggers={agent.no_of_successfull_triggers}
                           agentSecretKey={agent.secret_key}
+                          className={'sm:mr-1'}
                       />
                   ))}
         </div>

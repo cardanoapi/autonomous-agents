@@ -89,9 +89,8 @@ export default function AgentsPage() {
                 />
             )}
 
-            <ScrollArea
-                className="mt-5 overflow-y-auto py-4 md:max-h-agentsList md:pr-4"
-                scrollHideDelay={200}
+            <div
+                className="overflow-y-auto md:overflow-y-hidden md:py-4 md:pr-4 flex flex-col "
             >
                 <AgentsContainer
                     agentsList={otherAgents || []}
@@ -110,7 +109,7 @@ export default function AgentsPage() {
                         />
                     </div>
                 )}
-            </ScrollArea>
+            </div>
         </>
     );
 }

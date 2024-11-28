@@ -32,6 +32,7 @@ export interface IAgentCard {
     no_of_successful_triggers?: number;
     isActive?: boolean;
     agentSecretKey?: string;
+    className? : string;
 }
 
 export default function AgentCard({
@@ -44,7 +45,8 @@ export default function AgentCard({
     enableDelete = false,
     lastActive = '',
     isActive = false,
-    agentSecretKey = ''
+    agentSecretKey = '',
+    className,
 }: IAgentCard) {
     const router = useRouter();
     const { openModal } = useModal();
@@ -117,7 +119,7 @@ export default function AgentCard({
                 onClick={() => {
                     router.push(`/agents/${agentID}`);
                 }}
-                className="hover-transition-primary group relative flex  h-auto w-full cursor-pointer flex-col !gap-y-6 rounded-xl pl-5 pt-4 transition-all sm:min-h-[247px] sm:min-w-[261px]"
+                className={cn("hover-transition-primary group relative flex  h-auto w-full cursor-pointer flex-col !gap-y-6 rounded-xl pl-5 pt-4 transition-all sm:min-h-[247px] sm:min-w-[261px]" , className)}
             >
                 <AgentCardControls
                     enableRun={enableEdit}
