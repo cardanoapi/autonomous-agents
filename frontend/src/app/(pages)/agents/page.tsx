@@ -90,7 +90,7 @@ export default function AgentsPage() {
             )}
 
             <ScrollArea
-                className="mt-5 md:max-h-agentsList overflow-y-auto py-4 md:pr-4"
+                className="mt-5 overflow-y-auto py-4 md:max-h-agentsList md:pr-4"
                 scrollHideDelay={200}
             >
                 <AgentsContainer

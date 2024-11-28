@@ -15,12 +15,12 @@ const AgentsTopNav = ({
     onSearch?: any;
 }) => {
     return (
-        <div className="flex justify-between w-full">
+        <div className="flex w-full justify-between">
             <div className="flex items-center gap-x-4">
                 <span className="h1-new hidden md:block">Agents({numOfAgents})</span>
                 <DataActionBar
                     placeholder="Search Agent Name"
-                    className="h-10 md:min-w-[420px] !w-full"
+                    className="h-10 !w-full md:min-w-[420px]"
                     onSearch={onSearch}
                 ></DataActionBar>
             </div>

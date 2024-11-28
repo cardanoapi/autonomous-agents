@@ -1,17 +1,16 @@
 import { Typography } from '@mui/material';
+import { useAtom } from 'jotai';
 
 import { cn } from '@app/components/lib/utils';
 import { currentConnectedWalletAtom } from '@app/store/localStore';
-import { useAtom } from 'jotai';
 
 export default function ConnectedWalletCard({
-     className,
-    onDisconnect,
+    className,
+    onDisconnect
 }: {
     className?: string;
     onDisconnect?: any;
 }) {
-
     const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
 
     return (
@@ -22,7 +21,11 @@ export default function ConnectedWalletCard({
             )}
         >
             <div className="flex items-center gap-2">
-                <img src={currentConnectedWallet ? currentConnectedWallet.icon : ''} height={32} width={32}></img>
+                <img
+                    src={currentConnectedWallet ? currentConnectedWallet.icon : ''}
+                    height={32}
+                    width={32}
+                ></img>
                 <div className="h3 text-brand-Blue-200">Connected Wallet</div>
             </div>
             <div>

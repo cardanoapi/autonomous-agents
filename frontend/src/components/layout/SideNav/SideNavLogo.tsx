@@ -1,20 +1,17 @@
 import Link from 'next/link';
 
-import { Badge } from '@app/components/atoms/Badge';
 import Logo from '@app/assets/icons/Logo';
+import { Badge } from '@app/components/atoms/Badge';
 import environments from '@app/configs/environments';
 
 const networkName =
     environments.network.charAt(0).toUpperCase() + environments.network.slice(1);
-export default function SideNavLogo({renderLogo = true}:{renderLogo? : boolean}) {
+export default function SideNavLogo({ renderLogo = true }: { renderLogo?: boolean }) {
     return (
         <div className="flex flex-col gap-4 py-8 pb-2 pl-3">
             <Link href="/" className="flex flex-row items-center gap-x-2   ">
                 <div className="flex gap-2">
-                    {
-                        renderLogo &&
-                         <Logo height={48} width={48} />
-                    }
+                    {renderLogo && <Logo height={48} width={48} />}
                     <div>
                         <span className="h3 !bg-gradient-to-t from-zinc-500 to-zinc-900 !bg-clip-text !font-medium !text-transparent">
                             Autonomous

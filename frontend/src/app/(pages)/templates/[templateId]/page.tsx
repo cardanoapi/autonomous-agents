@@ -42,7 +42,7 @@ const EditTemplateCard = () => {
     return (
         <div className="mt-12 flex h-full w-full flex-col gap-6">
             <TemplateBreadCrumb templateName={template?.name} />
-            <div className="relative h-full w-full md:max-w-agentComponentWidth flex-1 rounded-lg bg-white p-8">
+            <div className="relative h-full w-full flex-1 rounded-lg bg-white p-8 md:max-w-agentComponentWidth">
                 {templateLoading && <Skeleton className=" h-[550px] w-full" />}
                 {template && (
                     <TemplateOverview template={template} enableEdit={adminAccess} />

@@ -59,7 +59,7 @@ export interface IUserStatusResponse {
     is_admin: boolean;
 }
 
-export const getUserStatus  = async (): Promise<IUserStatusResponse | false> => {
+export const getUserStatus = async (): Promise<IUserStatusResponse | false> => {
     try {
         const response = await axios.post<IUserStatusResponse>(
             `${baseAPIurl}/auth/status`,

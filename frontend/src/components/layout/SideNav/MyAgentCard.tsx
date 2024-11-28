@@ -1,26 +1,24 @@
-import { fetchMyAgent, IAgent } from '@api/agents';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { useRouter } from 'next/navigation';
 
-import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
-import { Skeleton } from '@app/components/shadcn/ui/skeleton';
+import { IAgent, fetchMyAgent } from '@api/agents';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai/index';
+
+import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
+import { cn } from '@app/components/lib/utils';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { adminAccessAtom, currentConnectedWalletAtom } from '@app/store/localStore';
-import { useRouter } from 'next/navigation';
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-import {cn} from '@app/components/lib/utils'
 
-export default function MyAgentCard({className} : {className?: string}) {
-
-
+export default function MyAgentCard({ className }: { className?: string }) {
     const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
     const [adminAccess] = useAtom(adminAccessAtom);
-    const router : AppRouterInstance = useRouter()
-
+    const router: AppRouterInstance = useRouter();
 
     const { data: agent } = useQuery({
         queryKey: ['myAgent'],
-        queryFn: async () : Promise<IAgent|null> => {
-            return fetchMyAgent()
+        queryFn: async (): Promise<IAgent | null> => {
+            return fetchMyAgent();
         },
         enabled: currentConnectedWallet !== null && !adminAccess,
         refetchOnWindowFocus: true,
@@ -31,8 +29,13 @@ export default function MyAgentCard({className} : {className?: string}) {
     if (!agent) return <MyAgentSkeleton />;
     return (
         <div
-            className={cn("flex items-center gap-x-4 gap-y-2 rounded-lg border-2 border-brand-Gray-400 p-2 hover:cursor-pointer hover:bg-gray-100" , className)}
-            onClick={() : void =>{router.push(`/agents/${agent?.id}`);}}
+            className={cn(
+                'flex items-center gap-x-4 gap-y-2 rounded-lg border-2 border-brand-Gray-400 p-2 hover:cursor-pointer hover:bg-gray-100',
+                className
+            )}
+            onClick={(): void => {
+                router.push(`/agents/${agent?.id}`);
+            }}
         >
             <div className="flex items-center">
                 <AgentAvatar

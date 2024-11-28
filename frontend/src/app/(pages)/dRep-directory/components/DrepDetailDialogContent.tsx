@@ -1,13 +1,13 @@
 import { IDRepInternal } from '@models/types';
+import { Typography } from '@mui/material';
 import { convertLovelaceToAda, hexToBech32 } from '@utils';
 import { CopyIcon, ExternalLink } from 'lucide-react';
 
 import { AppDialogContent } from '@app/app/components/AppDialog';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
+import { Truncate } from '@app/utils/common/extra';
 
 import { getDrepGivedName } from './DRepCard';
-import { Typography } from '@mui/material';
-import { Truncate } from '@app/utils/common/extra';
 
 export default function DrepDetailDialogContent({
     dRep,
@@ -38,7 +38,7 @@ export default function DrepDetailDialogContent({
                     onClick={redirectToGovTool}
                 />
             </div>
-            <div className="space-y-4 rounded-lg border border-gray-200 p-4 shadow-sm md:w-[520px] w-full">
+            <div className="w-full space-y-4 rounded-lg border border-gray-200 p-4 shadow-sm md:w-[520px]">
                 <div className="flex items-start justify-between">
                     <Typography className="max-w-xs truncate text-sm font-semibold text-gray-700">
                         Drep ID: {hexToBech32(dRep.drepId)}
@@ -114,7 +114,7 @@ const DRepDetails = ({ dRep }: { dRep: IDRepInternal }) => {
                     onClick={openExternalUrl}
                     className=" cursor-pointer text-blue-800"
                 >
-                    {Truncate(dRep.url , 10)}
+                    {Truncate(dRep.url, 10)}
                 </Typography>
             ) : (
                 <span>No URL available</span>
@@ -127,7 +127,9 @@ const DRepDetails = ({ dRep }: { dRep: IDRepInternal }) => {
             Latest Tx Hash:
             {dRep.latestTxHash ? (
                 <div className="flex w-80 items-center">
-                    <Typography className="truncate text-gray-800">{dRep.latestTxHash}</Typography>
+                    <Typography className="truncate text-gray-800">
+                        {dRep.latestTxHash}
+                    </Typography>
                     <CopyIcon
                         onClick={() =>
                             copyToClipboard(dRep.latestTxHash || '', 'Tx Hash copied')
@@ -145,7 +147,9 @@ const DRepDetails = ({ dRep }: { dRep: IDRepInternal }) => {
             MetaData Hash:
             {dRep.metadataHash ? (
                 <div className="flex w-64 items-center">
-                    <Typography className="truncate text-gray-800">{dRep.metadataHash}</Typography>
+                    <Typography className="truncate text-gray-800">
+                        {dRep.metadataHash}
+                    </Typography>
                     <CopyIcon
                         onClick={() =>
                             copyToClipboard(

@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { useAppDialog } from '@hooks';
 import { GovernanceActionFilter, IProposalInternal } from '@models/types/proposal';
 import { Typography } from '@mui/material';
+import { useAtom } from 'jotai';
 import { CopyIcon, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -10,11 +11,10 @@ import AppDialog from '@app/app/components/AppDialog';
 import { Button } from '@app/components/atoms/Button';
 import { cn } from '@app/components/lib/utils';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
+import { currentConnectedWalletAtom } from '@app/store/localStore';
 import { formatDisplayDate } from '@app/utils/dateAndTimeUtils';
 
 import AgentsVoteDialogContent from './AgentsVoteDialogContent';
-import { useAtom } from 'jotai';
-import { currentConnectedWalletAtom } from '@app/store/localStore';
 
 interface ProposalCardProps {
     proposal: IProposalInternal;
@@ -54,7 +54,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
         );
     };
 
-    const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom)
+    const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
 
     return (
         <>

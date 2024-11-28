@@ -39,7 +39,7 @@ export default function OverViewGraphCard({
 
     return (
         <OverViewCard title={title} value={totalValue}>
-            <div className="relative flex w-full items-center">
+            <div className="min-gap-8 relative flex w-full items-center overflow-clip">
                 <div className="b flex items-end gap-x-1">
                     <div className={cn('rounded-full p-1', bgColor)}>
                         {changeRate > 0 ? (

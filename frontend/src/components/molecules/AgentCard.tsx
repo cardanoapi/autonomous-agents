@@ -117,7 +117,7 @@ export default function AgentCard({
                 onClick={() => {
                     router.push(`/agents/${agentID}`);
                 }}
-                className="hover-transition-primary group relative flex  sm:min-h-[247px] sm:min-w-[261px] cursor-pointer flex-col !gap-y-6 rounded-xl pl-5 pt-4 transition-all w-full h-auto"
+                className="hover-transition-primary group relative flex  h-auto w-full cursor-pointer flex-col !gap-y-6 rounded-xl pl-5 pt-4 transition-all sm:min-h-[247px] sm:min-w-[261px]"
             >
                 <AgentCardControls
                     enableRun={enableEdit}

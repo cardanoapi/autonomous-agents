@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { bech32toHex } from '@utils';
 
 import DataActionBar from '@app/app/components/DataActionBar';
+import EmptyIcon from '@app/assets/icons/EmptyIcon';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -19,7 +20,6 @@ import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 import { QUERY_KEYS } from '@app/consts/queryKeys';
 
 import DRepCard, { DRepCardSkeleton } from './components/DRepCard';
-import EmptyIcon from '@app/assets/icons/EmptyIcon';
 
 interface IDrepFilterOption {
     placeholder: string;
@@ -90,9 +90,9 @@ export default function DRepDirectory() {
     }, [data]);
 
     return (
-        <div className="md:!mt-4 flex h-defaultPageHeightwithoutTopNav flex-col md:space-y-12 space-y-6">
+        <div className="flex h-defaultPageHeightwithoutTopNav flex-col space-y-6 md:!mt-4 md:space-y-12">
             <div className="flex items-center justify-between">
-                <div className="flex flex-col md:flex-row gap-2 ">
+                <div className="flex flex-col gap-2 md:flex-row ">
                     <DataActionBar
                         onSearch={handleSearch}
                         placeholder="Search DRep ID"
@@ -104,7 +104,7 @@ export default function DRepDirectory() {
                         defaultValue={DrepFilterOptions[0].value}
                     />
                 </div>
-                <div className={"hidden"}>
+                <div className={'hidden'}>
                     <DropdownMenu>
                         <span>Dreps per Page: </span>
                         <DropdownMenuTrigger className="inline-flex">
@@ -154,19 +154,17 @@ export default function DRepDirectory() {
                     refCurrentPage={queryParams.page}
                 />
             </div>
-            {
-                data && data?.items?.length === 0 && (
-                    <div className="flex w-full h-full items-center justify-center">
-                        <EmptyIcon
-                            style={{
-                                height: "50%",
-                                width: "50%",
-                                fill: "#c8c8c8",
-                            }}
-                        />
-                    </div>
-                )
-            }
+            {data && data?.items?.length === 0 && (
+                <div className="flex h-full w-full items-center justify-center">
+                    <EmptyIcon
+                        style={{
+                            height: '50%',
+                            width: '50%',
+                            fill: '#c8c8c8'
+                        }}
+                    />
+                </div>
+            )}
         </div>
     );
 }
@@ -185,7 +183,8 @@ const DrepFilterTab = ({
             onClick(value);
         }
     };
-    const triggerClassName = 'md:text-base border-gray-200 border-[1px] !h-full text-sm rounded-full md:rounded-sm';
+    const triggerClassName =
+        'md:text-base border-gray-200 border-[1px] !h-full text-sm rounded-full md:rounded-sm';
     return (
         <Tabs defaultValue={defaultValue} className="!m-0 !p-0">
             <TabsList className="!h-full !p-0">

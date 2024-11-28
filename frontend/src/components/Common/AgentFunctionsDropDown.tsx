@@ -3,15 +3,22 @@ import { useState } from 'react';
 import { IFunction, fetchFunctions } from '@api/functions';
 import { useQuery } from '@tanstack/react-query';
 
+import { cn } from '@app/components/lib/utils';
+
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '../atoms/DropDownMenu';
-import {cn} from '@app/components/lib/utils'
 
-export default function AgentFunctionsDropDown({ onChange , className }: { onChange?: any , className?: string }) {
+export default function AgentFunctionsDropDown({
+    onChange,
+    className
+}: {
+    onChange?: any;
+    className?: string;
+}) {
     const { data: agentFunctions = [] } = useQuery({
         queryKey: ['AgentFunctions'],
         queryFn: fetchFunctions
@@ -20,8 +27,11 @@ export default function AgentFunctionsDropDown({ onChange , className }: { onCha
     const [currentFunction, setCurrentFunction] = useState('None');
 
     return (
-        <DropdownMenu >
-            <DropdownMenuTrigger border={true} className={cn("flex w-72 justify-between" , className)}>
+        <DropdownMenu>
+            <DropdownMenuTrigger
+                border={true}
+                className={cn('flex w-72 justify-between', className)}
+            >
                 {currentFunction === 'None' ? 'Function' : currentFunction}
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-white">

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { IAgentTriggerHistory, fetchAllTriggerHistory } from '@api/triggerHistory';
 import { useQuery } from '@tanstack/react-query';
 
+import DataActionBar from '@app/app/components/DataActionBar';
 import {
     AgentLogCard,
     AgentLogCardSkeleton
@@ -20,7 +21,6 @@ import {
 import { SearchField } from '@app/components/atoms/SearchField';
 import PaginationBtns from '@app/components/molecules/PaginationBtns';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
-import DataActionBar from '@app/app/components/DataActionBar';
 
 export default function LogsPage() {
     // Object to store all state related to the query
@@ -124,7 +124,7 @@ export default function LogsPage() {
 
         return (
             <div className="flex items-center justify-between ">
-                <div className="flex gap-2 flex-col md:flex-row">
+                <div className="flex flex-col gap-2 md:flex-row">
                     <DataActionBar
                         placeholder="Enter Agent ID"
                         onSearch={(val: string) => {
@@ -141,9 +141,9 @@ export default function LogsPage() {
                                 currentFunction: strValue
                             }));
                         }}
-                        className = "hidden md:flex"
+                        className="hidden md:flex"
                     />
-                    <div className="justify-center gap-2 hidden md:flex">
+                    <div className="hidden justify-center gap-2 md:flex">
                         {statusOptions.map((status: string, index) => (
                             <Badge
                                 key={index}

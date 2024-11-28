@@ -1,22 +1,23 @@
-import { Skeleton } from '@app/components/shadcn/ui/skeleton';
+import React, { useState } from 'react';
+
+import { fecthTriggerHistoryMetric } from '@api/triggerHistoryMetric';
+import { useQuery } from '@tanstack/react-query';
+
+import {
+    IChartFilterOption,
+    chartFilterOptions,
+    convertDictToGraphDataFormat
+} from '@app/components/Chart/ChartFilter';
+import CustomLineChart, { ILineChartData } from '@app/components/Chart/CustomLineChart';
+import { Card } from '@app/components/atoms/Card';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
-import {
-    chartFilterOptions,
-    convertDictToGraphDataFormat,
-    IChartFilterOption
-} from '@app/components/Chart/ChartFilter';
-import CustomLineChart, { ILineChartData } from '@app/components/Chart/CustomLineChart';
-import { Card } from '@app/components/atoms/Card';
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { fecthTriggerHistoryMetric } from '@api/triggerHistoryMetric';
-import {cn} from '@app/components/lib/utils'
-
+import { cn } from '@app/components/lib/utils';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
 interface IDataSource {
     placeholder: string;
@@ -25,8 +26,7 @@ interface IDataSource {
     xAxisInterval: number;
 }
 
-export default function DashboardChart({className} : {className?: string}) {
-
+export default function DashboardChart({ className }: { className?: string }) {
     const { data: triggerHistoryMetric, isLoading: isLoading } = useQuery({
         queryKey: ['TriggerHistoyMetric'],
         queryFn: () => fecthTriggerHistoryMetric([]),
@@ -66,65 +66,62 @@ export default function DashboardChart({className} : {className?: string}) {
     ];
 
     return (
-        <Card className={cn("md:mt-4 flex flex-row gap-y-8 p-4 pb-12 2xl:mt-12 5xl:mt-16 pt-0 md:p-8 md:pb-16" , className)}>
-    <span className="h4 rotate-180 text-center [writing-mode:vertical-lr] hidden md:block">
-                    Transaction Volume
-    </span>
-    <div className="mt-5 w-full md:pr-6">
-        <div className="flex justify-between">
-            <span className="title-1">Transactions</span>
-
-            {isLoading ? (
-                <Skeleton className="h-8 w-40" />
-            ) : (
-                <DropdownMenu>
-                    <DropdownMenuTrigger
-                        border={true}
-                        className="md:flex min-w-40 justify-between hidden"
-                    >
-                        {dataSources[currentChartFilterOption].placeholder}
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="bg-white">
-                        {chartFilterOptions.map(
-                            (item: IChartFilterOption, index) => (
-                                <DropdownMenuItem
-                                    key={index}
-                                    onClick={() =>
-                                        setCurrentChartFilterOption(index)
-                                    }
-                                >
-                                    {item.placeholder}
-                                </DropdownMenuItem>
-                            )
-                        )}
-                    </DropdownMenuContent>
-                </DropdownMenu>
+        <Card
+            className={cn(
+                'flex flex-row',
+                className
             )}
-        </div>
-        <div className="mt-2 md:h-[calc(100vh-490px)] pt-4 5xl:h-[calc(100vh-520px)] 5xl:pr-6 5xl:pt-12 h-[200px]">
-            {isLoading ? (
-                <div className="h-full w-full pl-8 pt-6">
-                    <Skeleton className="h-full w-full" />
+        >
+<span className="h4 hidden rotate-180 text-center [writing-mode:vertical-lr] md:block">
+Transaction Volume
+</span>
+            <div className="w-full h-full flex flex-col md:pr-6 md:gap-y-8 gap-y-4">
+                <div className="flex justify-between">
+                    <span className="title-1 pl-4">Transactions</span>
+                    {isLoading ? (
+                        <Skeleton className="h-8 w-40" />
+                    ) : (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger
+                                border={true}
+                                className="hidden min-w-40 justify-between md:flex"
+                            >
+                                {dataSources[currentChartFilterOption].placeholder}
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="bg-white">
+                                {chartFilterOptions.map(
+                                    (item: IChartFilterOption, index) => (
+                                        <DropdownMenuItem
+                                            key={index}
+                                            onClick={() =>
+                                                setCurrentChartFilterOption(index)
+                                            }
+                                        >
+                                            {item.placeholder}
+                                        </DropdownMenuItem>
+                                    )
+                                )}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    )}
                 </div>
-            ) : (
-                <>
-                    <CustomLineChart
-                        chartData={
-                            dataSources[currentChartFilterOption].chartData
-                        }
-                        xaxisInterval={
-                            dataSources[currentChartFilterOption]
-                                .xAxisInterval
-                        }
-                    />
-                    <div className="mt-2 text-center text-sm md:text-base">
-                        Time (
-                        {dataSources[currentChartFilterOption].timeUnit})
-                    </div>
-                </>
-            )}
-        </div>
-    </div>
-</Card>
-    )
+                <div className={"flex md:h-full w-full flex-col h-[180px] p-1"}>
+                    {isLoading ? (
+                        <Skeleton className="h-full w-full" />
+                    ) : (
+                        <>
+                            <CustomLineChart
+                                chartData={
+                                    dataSources[currentChartFilterOption].chartData
+                                }
+                                xaxisInterval={
+                                    dataSources[currentChartFilterOption].xAxisInterval
+                                }
+                            />
+                        </>
+                    )}
+                </div>
+            </div>
+        </Card>
+    );
 }

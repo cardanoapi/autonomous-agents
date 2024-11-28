@@ -7,6 +7,7 @@ import { IAgentTriggerHistory, fetchAllTriggerHistory } from '@api/triggerHistor
 import { useQuery } from '@tanstack/react-query';
 import { hexToBech32 } from '@utils';
 
+import { cn } from '@app/components/lib/utils';
 import TextDisplayField from '@app/components/molecules/TextDisplayField';
 
 import { useModal } from '../../Modals/context';
@@ -14,7 +15,6 @@ import { Button } from '../../atoms/Button';
 import CustomCopyBox from '../shared/CustomCopyBox';
 import AgentHistoryChart from '../shared/TriggerChart';
 import HeaderContent from './ContentHeader';
-import {cn} from '@app/components/lib/utils'
 
 interface AgentOverViewProps {
     agent?: IAgent;
@@ -51,7 +51,7 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({
         <CustomCopyBox
             title={title}
             content={content.toString()}
-            className={className + 'w-32 md:w-96 px-2 py-[6px]'}
+            className={className + 'w-32 px-2 py-[6px] md:w-96'}
             showCopyIcon={showCopyIcon}
         />
     );
@@ -59,7 +59,7 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({
     return (
         <div className="flex h-full flex-col gap-10">
             <HeaderContent>
-                <div className="w-full items-center justify-between bg-white hidden md:flex">
+                <div className="hidden w-full items-center justify-between bg-white md:flex">
                     <TextDisplayField
                         title="Agent Name"
                         content={agent?.name}
@@ -78,84 +78,87 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({
                 </div>
             </HeaderContent>
 
-            <div className={"flex flex-col-reverse md:flex-col gap-8"}>
-            <div className="flex flex-col gap-8">
-                <div className="flex flex-col gap-4">
-                    <div className="flex items-center gap-3">
-                        {renderCustomCopyBox(
-                            'Successful Triggers',
-                            agent?.no_of_successfull_triggers || 0,
-                            '',
-                            false
-                        )}
-                        {renderCustomCopyBox(
-                            'Status',
-                            agent?.is_active ? 'Online' : 'Offline',
-                            '',
-                            false
-                        )}
+            <div className={'flex flex-col-reverse gap-8 md:flex-col'}>
+                <div className="flex flex-col gap-8">
+                    <div className="flex flex-col gap-4">
+                        <div className="flex items-center gap-3">
+                            {renderCustomCopyBox(
+                                'Successful Triggers',
+                                agent?.no_of_successfull_triggers || 0,
+                                '',
+                                false
+                            )}
+                            {renderCustomCopyBox(
+                                'Status',
+                                agent?.is_active ? 'Online' : 'Offline',
+                                '',
+                                false
+                            )}
+                        </div>
+                        <div className="flex items-center gap-3">
+                            {renderCustomCopyBox(
+                                'wallet address',
+                                agent?.agent_address || ''
+                            )}
+                            {renderCustomCopyBox(
+                                'wallet balance',
+                                `${Number(agent?.wallet_amount || 0).toFixed(2)} Ada`,
+                                '',
+                                false
+                            )}
+                        </div>
+                        <div className="flex items-center gap-3">
+                            {renderCustomCopyBox('drep id', agent?.drep_id || '')}
+                            {renderCustomCopyBox(
+                                'is drep registered',
+                                agent?.is_drep_registered ? 'Yes' : 'No',
+                                'w-fit',
+                                false
+                            )}
+                            {renderCustomCopyBox(
+                                'voting power',
+                                `${agent?.voting_power || 0} Ada`,
+                                'w-fit',
+                                false
+                            )}
+                        </div>
+                        <div className="flex items-center gap-3">
+                            {renderCustomCopyBox(
+                                'stake id',
+                                hexToBech32(agent?.drep_id || '', 'stake_test')
+                            )}
+                            {renderCustomCopyBox(
+                                'is stake registered',
+                                agent?.is_stake_registered ? 'Yes' : 'No',
+                                '',
+                                false
+                            )}
+                        </div>
+                        <div className="flex items-center gap-3">
+                            {renderCustomCopyBox(
+                                'delegated Drep',
+                                agent?.delegation?.drep_id || ''
+                            )}
+                            {renderCustomCopyBox(
+                                'delegated Pool',
+                                agent?.delegation?.pool_id || '',
+                                '',
+                                false
+                            )}
+                        </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                        {renderCustomCopyBox(
-                            'wallet address',
-                            agent?.agent_address || ''
-                        )}
-                        {renderCustomCopyBox(
-                            'wallet balance',
-                            `${Number(agent?.wallet_amount || 0).toFixed(2)} Ada`,
-                            '',
-                            false
-                        )}
-                    </div>
-                    <div className="flex items-center gap-3">
-                        {renderCustomCopyBox('drep id', agent?.drep_id || '')}
-                        {renderCustomCopyBox(
-                            'is drep registered',
-                            agent?.is_drep_registered ? 'Yes' : 'No',
-                            'w-fit',
-                            false
-                        )}
-                        {renderCustomCopyBox(
-                            'voting power',
-                            `${agent?.voting_power || 0} Ada`,
-                            'w-fit',
-                            false
-                        )}
-                    </div>
-                    <div className="flex items-center gap-3">
-                        {renderCustomCopyBox(
-                            'stake id',
-                            hexToBech32(agent?.drep_id || '', 'stake_test')
-                        )}
-                        {renderCustomCopyBox(
-                            'is stake registered',
-                            agent?.is_stake_registered ? 'Yes' : 'No',
-                            '',
-                            false
-                        )}
-                    </div>
-                    <div className="flex items-center gap-3">
-                        {renderCustomCopyBox(
-                            'delegated Drep',
-                            agent?.delegation?.drep_id || ''
-                        )}
-                        {renderCustomCopyBox(
-                            'delegated Pool',
-                            agent?.delegation?.pool_id || '',
-                            '',
-                            false
-                        )}
+                    <div>
+                        <TriggerDataBox
+                            triggerData={(LogsHistory && LogsHistory.items) || []}
+                            lastActive={agent?.last_active}
+                            className={'hidden md:flex'}
+                        />
                     </div>
                 </div>
-                <div>
-                    <TriggerDataBox
-                        triggerData={(LogsHistory && LogsHistory.items) || []}
-                        lastActive={agent?.last_active}
-                        className={"hidden md:flex"}
-                    />
-                </div>
-            </div>
-            <AgentHistoryChart chartClassName="w-full md:h-[550px] h-[220px]" agent={agent} />
+                <AgentHistoryChart
+                    chartClassName="w-full md:h-[550px] h-[220px]"
+                    agent={agent}
+                />
             </div>
         </div>
     );
@@ -215,7 +218,12 @@ const TriggerDataBox = ({
     };
 
     return (
-        <div className={cn("flex w-full justify-between rounded-lg border-[1px] border-brand-border-100 px-10 py-6" , className)}>
+        <div
+            className={cn(
+                'flex w-full justify-between rounded-lg border-[1px] border-brand-border-100 px-10 py-6',
+                className
+            )}
+        >
             <div className="flex flex-col gap-2 ">
                 <div className="text-sm font-medium text-gray-600">Triggered</div>
                 <div className="text-[10px] text-gray-500 ">Last 24 triggers</div>

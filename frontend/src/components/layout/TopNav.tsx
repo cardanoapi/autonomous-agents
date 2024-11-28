@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
 import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
+import { cn } from '@app/components/lib/utils';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { templateAtom } from '@app/store/atoms/template';
 import {
@@ -18,9 +19,8 @@ import {
     currentAgentNameAtom
 } from '@app/store/localStore';
 import { Truncate } from '@app/utils/common/extra';
-import {cn} from '@app/components/lib/utils'
 
-export default function TopNav({className} : {className? : string}) {
+export default function TopNav({ className }: { className?: string }) {
     const [currentAgentName] = useAtom(currentAgentNameAtom);
     const [adminAcesss] = useAtom(adminAccessAtom);
     const [, setAgents] = useAtom(agentsAtom);
@@ -110,7 +110,12 @@ export default function TopNav({className} : {className? : string}) {
     }
 
     return (
-        <div className={cn("flex w-[full] items-center justify-between text-sm" , className)}>
+        <div
+            className={cn(
+                'flex w-[full] items-center justify-between text-sm',
+                className
+            )}
+        >
             {renderTopNavSection()}
             {adminAcesss && 'Admin'}
         </div>

@@ -10,8 +10,8 @@ import { formatParameterName } from '@utils';
 import { useAtom } from 'jotai';
 import { Copy } from 'lucide-react';
 
-import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import AgentsIcon from '@app/assets/icons/AgentsIcon';
+import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import { useCopyClipboard } from '@app/lib/hooks/useCopyToClipboard';
 import { agentsAtom } from '@app/store/localStore';
 import { Truncate } from '@app/utils/common/extra';
@@ -88,7 +88,7 @@ export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
                             setCurrentFunction(strVal);
                         }}
                     />
-                    <div className="justify-center gap-2 hidden md:flex">
+                    <div className="hidden justify-center gap-2 md:flex">
                         {statusOptions.map((status: string, index) => (
                             <Badge
                                 key={index}
@@ -106,7 +106,7 @@ export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
                     </div>
                 </div>
             </ContentHeader>
-            <div className="md:mt-4 grid grid-cols-1 gap-2">
+            <div className="grid grid-cols-1 gap-2 md:mt-4">
                 {loadingLogs
                     ? Array.from({ length: 50 }).map((_, index) => (
                           <AgentLogCardSkeleton key={index} />
@@ -159,12 +159,12 @@ export const AgentLogCard = ({
     return (
         <div
             className={cn(
-                `flex h-fit flex-row justify-between gap-4 rounded-lg bg-gray-100 px-3 md:py-2 drop-shadow-sm hover:bg-gray-200
-                py-4`,
+                `flex h-fit flex-row justify-between gap-4 rounded-lg bg-gray-100 px-3 py-4 drop-shadow-sm hover:bg-gray-200
+                md:py-2`,
                 className
             )}
         >
-            <div className={'flex w-full md:flex-row flex-col items-start gap-8 '}>
+            <div className={'flex w-full flex-col items-start gap-8 md:flex-row '}>
                 {globalLog && (
                     <div className={'flex items-center gap-3 sm:min-w-[200px]'}>
                         <AgentAvatar
@@ -203,7 +203,7 @@ export const AgentLogCard = ({
                     </div>
                 )}
                 <div className={'flex w-full flex-col items-start gap-2'}>
-                    <div className={'flex flex-row items-center gap-1 hidde'}>
+                    <div className={'hidde flex flex-row items-center gap-1'}>
                         <span className={'text-sm font-medium'}>
                             {MapFunctionNameAndViewName[history.functionName] ||
                                 history.functionName}
@@ -244,11 +244,13 @@ export const AgentLogCard = ({
             </div>
             <div
                 className={
-                    ' flex min-w-fit flex-col items-end justify-start gap-1 md:min-w-[200px] absolute top-4 right-3 md:static'
+                    ' absolute right-3 top-4 flex min-w-fit flex-col items-end justify-start gap-1 md:static md:min-w-[200px]'
                 }
             >
                 <Badge variant={getBadgeVariant()}>{getAgentExecutionStatus()}</Badge>
-                <span className={'text-xs hidden md:flex'}>{formatTimestamp(history.timestamp)}</span>
+                <span className={'hidden text-xs md:flex'}>
+                    {formatTimestamp(history.timestamp)}
+                </span>
             </div>
         </div>
     );
@@ -256,7 +258,7 @@ export const AgentLogCard = ({
 
 const InternalLogs = ({ history }: { history: IAgentTriggerHistory }) => {
     return (
-        <div className={'md:flex w-full flex-col gap-1 hidden'}>
+        <div className={'hidden w-full flex-col gap-1 md:flex'}>
             {history.internal?.map((internal: any, index: number) => {
                 return (
                     <div

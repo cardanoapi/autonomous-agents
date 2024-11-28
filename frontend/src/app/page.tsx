@@ -1,38 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import React from 'react';
 
-import Head from 'next/head';
-
-import { fecthTriggerHistoryMetric } from '@api/triggerHistoryMetric';
-import { useQuery } from '@tanstack/react-query';
-
-import { convertDictToGraphDataFormat } from '@app/components/Chart/ChartFilter';
-import {
-    IChartFilterOption,
-    chartFilterOptions
-} from '@app/components/Chart/ChartFilter';
-import CustomLineChart from '@app/components/Chart/CustomLineChart';
-import { ILineChartData } from '@app/components/Chart/CustomLineChart';
-import { Card } from '@app/components/atoms/Card';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from '@app/components/atoms/DropDownMenu';
-import { Skeleton } from '@app/components/shadcn/ui/skeleton';
-
-import DashboardCards from './components/DashboardCards';
 import DashboardChart from '@app/components/Chart/DashboardChart';
 
+import DashboardCards from './components/DashboardCards';
 
 export default function Home() {
     return (
-        <div className={"flex md:flex-col flex-col-reverse"}>
-            <DashboardCards />
-            <DashboardChart className={"mb-4"}/>
+        <div className={'flex flex-col-reverse md:flex-col h-full w-full gap-y-4 2xl:gap-y-8 overflow-y-auto'}>
+            <DashboardCards
+                className={
+                    'flex flex-col h-full md:grid grid-cols-4 gap-4 md:h-36 md:w-full'
+                }
+            />
+            <DashboardChart className={'md:gap-y-8 py-4 md:p-8 md:h-[calc(100vh-300px)] px-1 h-fit'} />
         </div>
     );
 }

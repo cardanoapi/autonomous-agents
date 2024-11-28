@@ -1,7 +1,7 @@
 import { IAgent } from '@api/agents';
 
-import AgentRunnerTutorial from '@app/components/Agent/RunnerTutorial';
 import AgentsIcon from '@app/assets/icons/AgentsIcon';
+import AgentRunnerTutorial from '@app/components/Agent/RunnerTutorial';
 
 const AgentRunnerComponent = ({ agent }: { agent?: IAgent }) => {
     return (

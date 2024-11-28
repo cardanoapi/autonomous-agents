@@ -54,7 +54,7 @@
 }
 
 .title-1 {
-    @apply text-lg font-bold leading-7;
+    @apply md:text-lg font-bold leading-7 text-base;
 }
 
 .text-active {
