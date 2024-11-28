@@ -20,7 +20,7 @@ import { HamburgerMenuIcon } from '@radix-ui/react-icons';
 import {cn} from '@app/components/lib/utils'
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
 
-export default function SideNav({className} : {className?: string}) {
+export default function SideNav({mobileClassName , desktopClassName} : {mobileClassName? : string , desktopClassName? : string}) {
     const [loginDialogOpen, setLoginDialogOpen] = useState(false);
     const [currentConnectedWallet, setCurrentConnectedWallet] = useAtom(currentConnectedWalletAtom);
     const [sideNavOpen, setSideNavOpen] = useState<boolean>(false);
@@ -56,7 +56,7 @@ export default function SideNav({className} : {className?: string}) {
 
 
     return (
-        <div className={cn(className)}>
+        <div>
             <HamburgerMenuIcon  className={"md:hidden absolute top-4 right-4 font-black"} height={24} width={24} onClick={()=>setSideNavOpen(!sideNavOpen)}/>
 
             <WalletSignInDialog
@@ -66,10 +66,10 @@ export default function SideNav({className} : {className?: string}) {
             />
 
             {/* Desktop Navigation*/}
-            <nav className="h-screen overflow-wrap flex-col border-r-[0.5px] bg-white justify-between px-2 hidden md:flex w-[256px] overflow-hidden 3xl:w-[290px]">
-                <div>
+            <nav className={cn("h-full w-full flex flex-col border-r-[0.5px] bg-white justify-between px-2 " , desktopClassName)}>
+                <div className={"w-full flex flex-col"}>
                   <SideNavLogo />
-                    <ul className="mt-6 flex flex-col gap-y-4">
+                    <ul className="mt-6 flex flex-col gap-y-4 w-full">
                         {SideNavItems.map((Prop, index) => (
                             <SideNavItem key={index} Prop={Prop} />
                         ))}
@@ -95,21 +95,21 @@ export default function SideNav({className} : {className?: string}) {
                 {/* Overlay */}
                 {sideNavOpen && (
                     <div
-                        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 z-[998]"
+                        className={cn("fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 z-[998]", mobileClassName)}
                         onClick={() => setSideNavOpen(false)}
                     />
                 )}
                 <div
                     className={cn(
-                        "fixed top-0 left-0 h-screen w-64 bg-white flex flex-col justify-between z-[999] shadow-lg",
+                        "fixed top-0 left-0 h-full w-64 bg-white flex flex-col justify-between z-[999] shadow-lg",
                         "transition-transform duration-300 transform",
                         sideNavOpen ? "translate-x-0" : "-translate-x-full"
                     )}
                 >
-                    <nav className="h-screen w-full flex flex-col justify-between px-2">
+                    <nav className="h-full w-full flex flex-col justify-between px-2">
                         <div>
                             <SideNavLogo renderLogo={false}/>
-                            <ul className="mt-4 flex flex-col gap-y-4">
+                            <ul className="mt-4 flex flex-col gap-y-4 w-full">
                                 {SideNavItems.map((Prop, index) => (
                                     <SideNavItem key={index} Prop={Prop} onClick={()=>setSideNavOpen(false)}/>
                                 ))}
