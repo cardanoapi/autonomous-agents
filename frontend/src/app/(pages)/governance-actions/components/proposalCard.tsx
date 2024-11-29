@@ -60,17 +60,21 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
         <>
             <div className="relative flex w-full flex-col justify-between bg-transparent">
                 <div
-                    className={`flex h-full w-full flex-col gap-5 rounded-t-xl  ${isDataMissing ? 'shadow-bg-red-100 bg-red-100/40' : 'bg-brand-White-200'}  px-6 pb-6 pt-10`}
+                    className={`flex h-full w-full flex-col gap-5 rounded-t-xl  ${isDataMissing ? 'shadow-bg-red-100 bg-red-100/40' : 'bg-brand-White-200'}  px-6 pb-6 pt-8`}
                 >
-                    <ExternalLink
-                        className="absolute right-6 top-6 cursor-pointer text-gray-400 hover:text-brand-Blue-200"
-                        onClick={handleProposalExternalRedirect}
-                    />
+                    <div className={"flex justify-between gap-2"}>
                     <p
-                        className={`line-clamp-2 text-[18px]  font-semibold leading-[24px] ${isDataMissing && 'text-red-600'}`}
+                        className={`line-clamp-2 text-[18px]  font-semibold leading-[24px]  ${isDataMissing && 'text-red-600'}`}
                     >
                         {isDataMissing ? 'Title Missing' : proposal.title}
                     </p>
+                        <div className={"w-12 flex justify-end"}>
+                    <ExternalLink
+                        className="cursor-pointer text-gray-400 hover:text-brand-Blue-200 "
+                        onClick={handleProposalExternalRedirect}
+                    />
+                        </div>
+                    </div>
                     {proposal.abstract !== null && (
                         <div className="flex flex-col gap-1">
                             <p className="  text-xs font-medium  text-brand-Gray-50">

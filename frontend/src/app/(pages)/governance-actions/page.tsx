@@ -165,7 +165,7 @@ const ProposalFilterTab = ({
     defaultValue: string;
 }) => {
     const triggerClassName =
-        'md:text-base border-gray-200 border-[1px] !h-full  text-sm rounded-full md:rounded-sm';
+        'md:text-base border-gray-200 border-[1px] !h-full  text-sm rounded-full md:rounded-sm mr-1 md:mr-0';
 
     return (
         <Tabs defaultValue={defaultValue} className="!m-0 !p-0">
