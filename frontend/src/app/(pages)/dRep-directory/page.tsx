@@ -90,13 +90,13 @@ export default function DRepDirectory() {
     }, [data]);
 
     return (
-        <div className="flex h-defaultPageHeightwithoutTopNav flex-col space-y-6 md:!mt-4 md:space-y-12">
-            <div className="flex items-center justify-between">
+        <>
+            <div className="flex flex-wrap items-center justify-between flex-grow gap-y-2">
                 <div className="flex flex-col gap-2 md:flex-row ">
                     <DataActionBar
                         onSearch={handleSearch}
                         placeholder="Search DRep ID"
-                        className="md:w-[500px]"
+                        className="w-full"
                     />
                     <DrepFilterTab
                         onClick={handleFilterChange}
@@ -104,7 +104,7 @@ export default function DRepDirectory() {
                         defaultValue={DrepFilterOptions[0].value}
                     />
                 </div>
-                <div className={'hidden'}>
+                <div className={'hidden md:flex'}>
                     <DropdownMenu>
                         <span>Dreps per Page: </span>
                         <DropdownMenuTrigger className="inline-flex">
@@ -130,8 +130,7 @@ export default function DRepDirectory() {
                 </div>
             </div>
             {/* DRep list */}
-            <ScrollArea className="h-drepListHeight pb-4 md:pr-4">
-                <div className="flex flex-col space-y-4">
+            <div className="flex flex-col space-y-4 h-full w-full overflow-y-auto">
                     {!isLoading &&
                         data &&
                         data?.items?.map((dRep, index) => (
@@ -144,28 +143,15 @@ export default function DRepDirectory() {
                                 internalDRep={queryParams.drep_type === 'internal'}
                             />
                         ))}
-                </div>
-            </ScrollArea>
-
-            <div className="pagination-btn-position flex flex-row-reverse">
+            </div>
+            <div className= "flex flex-row-reverse">
                 <PaginationBtns
                     upperLimit={totalPage}
                     onPaginate={handlePaginationChange}
                     refCurrentPage={queryParams.page}
                 />
             </div>
-            {data && data?.items?.length === 0 && (
-                <div className="flex h-full w-full items-center justify-center">
-                    <EmptyIcon
-                        style={{
-                            height: '50%',
-                            width: '50%',
-                            fill: '#c8c8c8'
-                        }}
-                    />
-                </div>
-            )}
-        </div>
+        </>
     );
 }
 
@@ -184,7 +170,7 @@ const DrepFilterTab = ({
         }
     };
     const triggerClassName =
-        'md:text-base border-gray-200 border-[1px] !h-full text-sm rounded-full md:rounded-sm';
+        'md:text-base border-gray-200 border-[1px] !h-full text-sm mr-1 md:mr-0 rounded-full md:rounded-sm';
     return (
         <Tabs defaultValue={defaultValue} className="!m-0 !p-0">
             <TabsList className="!h-full !p-0">
