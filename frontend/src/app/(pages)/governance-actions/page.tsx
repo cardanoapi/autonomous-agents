@@ -79,8 +79,8 @@ export default function GovernanceAction() {
     }, [data, searchParams.pageSize]);
 
     return (
-        <div className="flex h-defaultPageHeightwithoutTopNav w-full flex-col gap-4">
-            <div className="flex items-center justify-between">
+        <>
+            <div className="flex items-center justify-between w-full flex-wrap gap-y-4">
                 <div className="flex flex-col gap-2 md:flex-row">
                     <DataActionBar
                         onSearch={handleSearch}
@@ -119,41 +119,39 @@ export default function GovernanceAction() {
                     </DropdownMenu>
                 </div>
             </div>
-            <ScrollArea className="h-proposalListHeight md:pr-4">
-                <div className="grid w-full grid-flow-row grid-cols-1 gap-8 py-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <div className="grid w-full grid-flow-row grid-cols-1 gap-8 py-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 h-full overflow-y-auto">
                     {!isLoading &&
                         data?.items?.map((proposal: any) => (
                             <ProposalCard key={proposal.id} proposal={proposal} />
                         ))}
-                    {isLoading && (
-                        <>
-                            {searchParams.proposal_type === 'internal'
-                                ? Array(10)
-                                      .fill(0)
-                                      .map((_, index) => (
-                                          <InternalProposalCardSkeleton key={index} />
-                                      ))
-                                : Array(10)
-                                      .fill(0)
-                                      .map((_, index) => (
-                                          <ExternalProposalCardSkeleton key={index} />
-                                      ))}
-                        </>
-                    )}
-                </div>
-                {!isLoading && data?.items?.length === 0 && (
-                    <EmptyGovActionPlaceholder className="h-full" />
-                )}
+                    {/*{isLoading && (*/}
+                    {/*    <>*/}
+                    {/*        {searchParams.proposal_type === 'internal'*/}
+                    {/*            ? Array(10)*/}
+                    {/*                  .fill(0)*/}
+                    {/*                  .map((_, index) => (*/}
+                    {/*                      <InternalProposalCardSkeleton key={index} />*/}
+                    {/*                  ))*/}
+                    {/*            : Array(10)*/}
+                    {/*                  .fill(0)*/}
+                    {/*                  .map((_, index) => (*/}
+                    {/*                      <ExternalProposalCardSkeleton key={index} />*/}
+                    {/*                  ))}*/}
+                    {/*    </>*/}
+                    {/*)}*/}
+            </div>
+            {/*{!isLoading && data?.items?.length === 0 && (*/}
+            {/*        <EmptyGovActionPlaceholder className="h-full" />*/}
+            {/*)}*/}
                 <div ref={ref} />
-            </ScrollArea>
-            <div className="pagination-btn-position flex flex-row-reverse">
+            <div className="flex flex-row-reverse">
                 <PaginationBtns
                     upperLimit={totalPage}
                     onPaginate={handlePaginationChange}
                     refCurrentPage={searchParams.page}
                 />
             </div>
-        </div>
+        </>
     );
 }
 

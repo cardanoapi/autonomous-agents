@@ -136,13 +136,13 @@ export default function DRepDirectory() {
                         data?.items?.map((dRep, index) => (
                             <DRepCard key={index} dRep={dRep} />
                         ))}
-                    {isLoading &&
-                        Array.from({ length: 10 }).map((_, i) => (
-                            <DRepCardSkeleton
-                                key={i}
-                                internalDRep={queryParams.drep_type === 'internal'}
-                            />
-                        ))}
+                    {/*{isLoading &&*/}
+                    {/*    Array.from({ length: 10 }).map((_, i) => (*/}
+                    {/*        <DRepCardSkeleton*/}
+                    {/*            key={i}*/}
+                    {/*            internalDRep={queryParams.drep_type === 'internal'}*/}
+                    {/*        />*/}
+                    {/*    ))}*/}
             </div>
             <div className= "flex flex-row-reverse">
                 <PaginationBtns
