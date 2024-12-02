@@ -117,7 +117,9 @@ export default function TopNav({ className }: { className?: string }) {
             )}
         >
             {renderTopNavSection()}
-            {adminAcesss && 'Admin'}
+            <span className="hidden md:flex">
+                {adminAcesss && 'Admin'}
+            </span>
         </div>
     );
 }
