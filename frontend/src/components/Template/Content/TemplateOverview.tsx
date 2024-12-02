@@ -165,7 +165,7 @@ const TemplateOverview = ({
     };
 
     return (
-        <div className="flex h-full w-full flex-col gap-4 ">
+        <div className="flex h-full w-full flex-col gap-4 relative">
             <div className="flex w-full flex-col gap-4 md:w-[60%] 2xl:w-[40%]">
                 <div className="flex flex-col gap-2">
                     <Label>Template Name</Label>
@@ -190,8 +190,8 @@ const TemplateOverview = ({
                     />
                 </div>
             </div>
-            <div className="flex flex-col">
-                <div className="relative flex w-fit items-center gap-2 p-2 pr-8">
+            <div className="flex flex-col h-full w-full">
+                <div className="relative flex w-fit items-center gap-2 p-2 pr-8 bg-">
                     <Label>Template Functions</Label>
                     {isEditing && (
                         <Plus
@@ -200,8 +200,7 @@ const TemplateOverview = ({
                         />
                     )}
                 </div>
-                <ScrollArea className="h-[320px] w-full overflow-y-auto px-2 py-2 2xl:h-[400px]">
-                    <div className="flex flex-row flex-wrap gap-6">
+                <div className="flex flex-row flex-wrap gap-4">
                         {templateDataCopy.template_configurations?.map(
                             (config, index) => (
                                 <FunctionCardWithMeta
@@ -216,11 +215,10 @@ const TemplateOverview = ({
                                 />
                             )
                         )}
-                    </div>
-                </ScrollArea>
+                </div>
             </div>
             {enableEdit && (
-                <div className="flex justify-end">
+                <div className="absolute top-2 right-0">
                     <EditBtns
                         isEditing={isEditing}
                         onSave={handleSaveTemplate}

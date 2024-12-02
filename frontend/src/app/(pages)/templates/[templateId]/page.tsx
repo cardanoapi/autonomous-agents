@@ -40,22 +40,24 @@ const EditTemplateCard = () => {
     }, [template]);
 
     return (
-        <div className="mt-12 flex h-full w-full flex-col gap-6">
+        <>
             <TemplateBreadCrumb templateName={template?.name} />
-            <div className="relative h-full w-full flex-1 rounded-lg bg-white p-8 md:max-w-agentComponentWidth">
-                {templateLoading && <Skeleton className=" h-[550px] w-full" />}
+            <div className="h-full w-full rounded-lg bg-white p-8 md:max-w-agentComponentWidth overflow-y-auto">
+                {templateLoading && <Skeleton className=" h-full w-full" />}
                 {template && (
                     <TemplateOverview template={template} enableEdit={adminAccess} />
                 )}
             </div>
-        </div>
+            <div>
+
+            </div>
+        </>
     );
 };
 
 const TemplateBreadCrumb = ({ templateName }: { templateName?: string }) => {
     const router = useRouter();
     return (
-        <div className="flex h-full flex-col gap-4">
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem
@@ -70,7 +72,6 @@ const TemplateBreadCrumb = ({ templateName }: { templateName?: string }) => {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-        </div>
     );
 };
 
