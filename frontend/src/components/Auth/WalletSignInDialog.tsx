@@ -107,13 +107,11 @@ export default function WalletSignInDialog({
         <div>
             <Dialog open={refDialogOpen || dialogOpen}>
                 <DialogContent
-                    className="max-w-4xl px-8 pb-24  focus:outline-none"
+                    className="max-w-4xl px-8 p-8 2xl:py-12  focus:outline-none"
                     defaultCross={false}
                 >
                     <div className="flex flex-col gap-y-4 ">
-                        <div className="mb-4 flex justify-end">
-                            <X onClick={onClose} className="hover:cursor-pointer" />
-                        </div>
+                        <X onClick={onClose} className="hover:cursor-pointer absolute top-4 right-4" />
                         <div className="mb-4 flex items-center justify-center gap-2">
                             <Wallet size={28} stroke="#2595FCFA" />
                             <span className="text-2xl font-semibold">
