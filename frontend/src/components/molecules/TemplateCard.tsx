@@ -92,7 +92,7 @@ function TemplateCardContent({
 
     return (
         <Card
-            className="hover-transition-primary group relative flex h-[137px] md:min-w-[240px] w-full flex-col justify-between gap-y-2 px-4 py-3 hover:cursor-pointer"
+            className="hover-transition-primary group relative flex h-[137px] xl:max-w-[271px] w-full flex-col justify-between gap-y-2 px-4 py-3 hover:cursor-pointer"
             onClick={onEdit}
         >
             <div>

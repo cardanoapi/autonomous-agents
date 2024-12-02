@@ -15,7 +15,7 @@ const TemplatesTopNav = ({
     adminAccess: boolean;
 }) => {
     return (
-        <div className="flex justify-between">
+        <div className="flex justify-between gap-y-2 flex-wrap">
             <div className="flex items-center justify-center gap-x-4">
                 <span className="hidden  text-lg font-medium md:block">
                     Templates({templatesCount})
@@ -26,7 +26,7 @@ const TemplatesTopNav = ({
                     onSearch={onSearch}
                 />
             </div>
-            <Link href="/templates/create-template" className={"hidden"}>
+            <Link href="/templates/create-template" >
                 <Button
                     variant="primary"
                     className={cn('h-[36px] w-[145px]', adminAccess ? '' : '!hidden')}

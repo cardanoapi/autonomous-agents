@@ -15,7 +15,7 @@ const TemplateList = ({
     currentConnectedWallet: any;
 }) => {
     const containerClass =
-        'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 4xl:grid-cols-5 3xl:pr-12 gap-4';
+        'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 gap-4';
 
     return (
         <div className="flex flex-col gap-y-20 md:pb-10">
