@@ -88,7 +88,7 @@ export default function RootLayout({
                             <div className="w-dvh flex h-dvh bg-brandDefault">
                                 <SideNav
                                     desktopClassName={
-                                        'hidden md:flex w-[256px] 3xl:w-[290px]'
+                                        'hidden md:flex w-[256px] '
                                     }
                                 />
                                 <div

@@ -90,7 +90,7 @@ export default function AgentsPage() {
             )}
 
             <div
-                className="overflow-y-auto md:overflow-y-hidden md:py-4 md:pr-4 flex flex-col "
+                className="overflow-y-auto md:py-4 flex flex-col w-full h-full"
             >
                 <AgentsContainer
                     agentsList={otherAgents || []}
@@ -99,7 +99,7 @@ export default function AgentsPage() {
                     loadingAgents={isLoading}
                 />
                 {currentConnectedWallet && !isLoading && myAgents.length > 0 && (
-                    <div className={cn(otherAgents.length > 0 && 'my-8')}>
+                    <div className={cn(otherAgents.length > 0 && 'my-8' , 'w-full h-full')}>
                         <span className="h1-new mb-4 inline-flex">My Agents</span>
                         <AgentsContainer
                             agentsList={myAgents || []}

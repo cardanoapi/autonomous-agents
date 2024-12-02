@@ -16,7 +16,7 @@ const AgentsContainer: React.FC<AgentsContainerProps> = ({
     loadingAgents = false
 }) => {
     return (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 3xl:pr-12 4xl:grid-cols-5 5xl:grid-cols-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 4xl:grid-cols-7 gap-4 ">
             {loadingAgents
                 ? Array.from({ length: 10 }).map((_, index) => (
                       <AgentCardSkeleton key={index} />
