@@ -123,16 +123,17 @@ export default function LogsPage() {
         const rowOptions = [10, 30, 50, 100];
 
         return (
-            <div className="flex items-center justify-between ">
-                <div className="flex flex-col gap-2 md:flex-row">
+            <div className="flex items-center justify-between w-full flex-wrap gap-y-2">
+                <div className="flex flex-col gap-2 md:flex-row flex-wrap items-center">
                     <DataActionBar
-                        placeholder="Enter Agent ID"
+                        placeholder="Search Log by Agent ID"
                         onSearch={(val: string) => {
                             setLogQueryState((prevState) => ({
                                 ...prevState,
                                 currentAgentID: val
                             }));
                         }}
+                        className={"!w-80"}
                     />
                     <AgentFunctionsDropDown
                         onChange={(strValue: string) => {
@@ -152,7 +153,7 @@ export default function LogsPage() {
                                         ? 'successPrimary'
                                         : 'primary'
                                 }
-                                className="flex w-20 justify-center"
+                                className="flex w-20 justify-center h-8"
                                 onClick={() => handleStatusChange(status)}
                             >
                                 {status}
@@ -190,11 +191,9 @@ export default function LogsPage() {
     };
 
     return (
-        <div className="flex flex-col justify-between ">
-            <div className="flex flex-grow flex-col">
-                <TopNav />
-                <div className="mt-6 flex-grow">
-                    <ScrollArea className="flex h-logsPageHeight max-h-logsList flex-col overflow-y-auto md:pr-4">
+        <>
+            <TopNav />
+            <div className="flex w-full h-full  flex-col overflow-y-auto md:pr-4">
                         {loadingLogs
                             ? Array.from({ length: 50 }).map((_, index) => (
                                   <AgentLogCardSkeleton key={index} className="my-2" />
@@ -205,17 +204,15 @@ export default function LogsPage() {
                                       <AgentLogCard
                                           history={history}
                                           key={index}
-                                          className="my-2 flex bg-white"
+                                          className="my-2 flex bg-white h-fit"
                                           globalLog={true}
                                       />
                                   )
                               )}
-                    </ScrollArea>
-                </div>
             </div>
-            <div className="flex flex-row-reverse pt-4">
+            <div className="flex flex-row-reverse ">
                 <PaginationBtns
-                    className="pagination-btn-position flex justify-center"
+                    className="flex justify-center"
                     onPaginate={(val: number) => {
                         setLogQueryState((prevState) => ({
                             ...prevState,
@@ -226,6 +223,6 @@ export default function LogsPage() {
                     upperLimit={logQueryState.totalPages}
                 />
             </div>
-        </div>
+        </>
     );
 }

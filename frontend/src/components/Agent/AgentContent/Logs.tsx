@@ -159,12 +159,12 @@ export const AgentLogCard = ({
     return (
         <div
             className={cn(
-                `flex h-fit flex-row justify-between gap-4 rounded-lg bg-gray-100 px-3 py-4 drop-shadow-sm hover:bg-gray-200
+                `flex h-fit flex-row justify-between gap-4 rounded-lg bg-gray-100 px-3 py-4 drop-shadow-sm hover:bg-gray-200 w-full
                 md:py-2`,
                 className
             )}
         >
-            <div className={'flex w-full flex-col items-start gap-8 md:flex-row '}>
+            <div className={'flex w-full flex-col items-start gap-8 md:flex-row flex-wrap lg:flex-nowrap'}>
                 {globalLog && (
                     <div className={'flex items-center gap-3 sm:min-w-[200px]'}>
                         <AgentAvatar
@@ -202,7 +202,7 @@ export const AgentLogCard = ({
                         </span>
                     </div>
                 )}
-                <div className={'flex w-full flex-col items-start gap-2'}>
+                <div className={'flex w-full flex-col items-start gap-2 flex-wrap'}>
                     <div className={'hidde flex flex-row items-center gap-1'}>
                         <span className={'text-sm font-medium'}>
                             {MapFunctionNameAndViewName[history.functionName] ||
@@ -213,7 +213,7 @@ export const AgentLogCard = ({
                         </span>
                     </div>
                     {history.parameters && (
-                        <div className={'flex flex-col gap-0.5 '}>
+                        <div className={'flex flex-col gap-0.5 overflow-hidden'}>
                             <span className={'text-sm font-medium'}>Parameters</span>
                             {history.parameters?.map((param, index) => {
                                 return (
@@ -244,7 +244,7 @@ export const AgentLogCard = ({
             </div>
             <div
                 className={
-                    ' absolute right-3 top-4 flex min-w-fit flex-col items-end justify-start gap-1 md:static md:min-w-[200px]'
+                    ' absolute right-3 top-2 flex min-w-fit flex-col items-end justify-start gap-1'
                 }
             >
                 <Badge variant={getBadgeVariant()}>{getAgentExecutionStatus()}</Badge>
@@ -301,7 +301,7 @@ const LogFunctionParameter = ({ param }: { param: any }) => {
     return (
         <div
             className={
-                'flex w-[220px] flex-row gap-1 truncate text-xs drop-shadow sm:w-[300px] lg:w-[550px]'
+                'flex w-[220px] flex-row gap-1 truncate text-xs drop-shadow sm:w-[250px] lg:w-[400px]'
             }
         >
             <span>{formatParameterName(param.name)} :</span>
@@ -341,7 +341,7 @@ const LogObjectParameter = ({
                     )
                 }
                 key={index}
-                className={` cursor-pointer truncate text-xs drop-shadow ${longTruncate ? ' w-[250px] md:w-[550px]' : 'w-[100px] md:w-[400px]'}`}
+                className={` cursor-pointer truncate text-xs drop-shadow ${longTruncate ? ' w-[250px] md:max-w-[320px]' : 'w-[100px] md:max-w-[280px]'}`}
             >
                 {formatParameterName(param[0])} : {param[1]}
             </span>
@@ -366,7 +366,7 @@ const TxHashComponent = ({ txHash }: { txHash: string }) => {
                     onClick={handleOnClickCopy}
                     className={
                         'cursor-pointer text-xs text-brand-Black-300/90 hover:!text-brand-Black-300/60 ' +
-                        'w-[120px] truncate sm:w-[200px] lg:w-[350px]'
+                        'w-[120px] truncate sm:w-[180px] lg:w-[300px]'
                     }
                 >
                     {txHash}
