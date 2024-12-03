@@ -28,16 +28,21 @@ const getBlockInfo = async (req: Request, res: Response) => {
           "Unable to retrieve the latest block information from the database.",
       });
     }
-
-    const latestBlockTime = latestBlock.time.toISOString();
-    const timeDiff = secondsSince(latestBlockTime);
+    
+    const blockInfo = {
+      blockHash: latestBlock.hash.toString("hex"),
+      blockNo: latestBlock.block_no,
+      slotNo: latestBlock.slot_no?.toString(),
+      blockTime: latestBlock.time.toISOString(),
+    };
+    const timeDiff = secondsSince(blockInfo.blockTime);
 
     if (timeDiff > 300) {
       return res.status(503).json({
         status: "Service Unavailable",
         details: {
+          ...blockInfo,
           currentTime: new Date().toISOString(),
-          latestBlockTime,
           secondsSinceLastUpdate: timeDiff,
         },
       });
@@ -46,8 +51,8 @@ const getBlockInfo = async (req: Request, res: Response) => {
     return res.status(200).json({
       status: "Healthy",
       details: {
+        ...blockInfo,
         currentTime: new Date().toISOString(),
-        latestBlockTime,
         secondsSinceLastUpdate: timeDiff,
       },
     });
