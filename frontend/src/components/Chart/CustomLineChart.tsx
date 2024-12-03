@@ -133,7 +133,7 @@ export default function CustomLineChart({
                         stroke="#A2A3A5"
                         interval={xaxisInterval}
                         reversed={true}
-                        className={"text-[10px] md:text-lg"}
+                        className={"text-[10px] xl:text-lg"}
                     ></XAxis>
                 )}
             </AreaChart>
