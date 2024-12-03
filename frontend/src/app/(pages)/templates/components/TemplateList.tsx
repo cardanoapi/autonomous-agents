@@ -1,16 +1,12 @@
 import { ITemplate } from '@api/templates';
 
 import TemplateCard from '@app/components/molecules/TemplateCard';
-import { TemplateCardSkeleton } from '@app/components/molecules/TemplateCard';
-
 const TemplateList = ({
     templates,
-    isLoading,
     adminAccess,
     currentConnectedWallet
 }: {
     templates: ITemplate[];
-    isLoading: boolean;
     adminAccess: boolean;
     currentConnectedWallet: any;
 }) => {
@@ -19,12 +15,7 @@ const TemplateList = ({
 
     return (
         <div className="flex flex-col gap-y-20 md:pb-10">
-            <div className="mt-2 flex flex-col gap-y-5 bg0re==">
-                {isLoading ? (
-                    <div className={containerClass}>
-                        <TemplateSkeletonContainer />
-                    </div>
-                ) : templates.length > 0 ? (
+            <div className="mt-2 flex flex-col gap-y-5">
                     <div className={containerClass}>
                         {templates.map((template: ITemplate, index: number) => (
                             <TemplateCard
@@ -36,24 +27,10 @@ const TemplateList = ({
                             />
                         ))}
                     </div>
-                ) : (
-                    <span>No Templates Found</span>
-                )}
             </div>
         </div>
     );
 };
 
-export const TemplateSkeletonContainer = () => {
-    return (
-        <>
-            {Array(10)
-                .fill(undefined)
-                .map((_, index: number) => (
-                    <TemplateCardSkeleton key={index} />
-                ))}
-        </>
-    );
-};
 
 export default TemplateList;

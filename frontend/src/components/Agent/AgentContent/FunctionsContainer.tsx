@@ -70,7 +70,7 @@ const AgentFunctionsDetailComponent = ({
     return (
         <div className="flex h-full flex-col gap-2">
             <div className="flex items-center gap-4"></div>
-            <div className="flex flex-row flex-wrap gap-6">
+            <div className="flex flex-row flex-wrap gap-6 justify-center">
                 {!agentConfigurations?.length ? (
                     <ErrorPlaceholder
                         title="No Functions"

@@ -17,12 +17,13 @@ import { IQueryParams } from '@app/utils/query';
 
 import TemplateList from './components/TemplateList';
 import TemplatesTopNav, { TemplatesTopNavSkeleton } from './components/TemplatesTopNav';
+import EmptyScreen from '@app/components/molecules/EmptyScreen';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
 const TemplatesPage = () => {
     const [templateCreated, setTemplateCreated] = useAtom(templateCreatedAtom);
     const [adminAccess] = useAtom(adminAccessAtom);
     const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
-    const [isFirstFetch, setIsFirstFetch] = useState<boolean>(true);
     const [queryParams, setQueryParams] = useState<IQueryParams>({
         page: 1,
         size: 50,
@@ -46,34 +47,32 @@ const TemplatesPage = () => {
         setQueryParams((prev) => ({ ...prev, search: value, page: 1 }));
     };
 
-    // Update first fetch flag
-    useEffect(() => {
-        if (isFirstFetch && templates.length > 0) {
-            setIsFirstFetch(false);
-        }
-    }, [templates, isFirstFetch]);
 
     return (
         <>
-            {/* Top Navigation */}
-            {isLoading && isFirstFetch ? (
-                <TemplatesTopNavSkeleton />
-            ) : (
-                <TemplatesTopNav
+            <TemplatesTopNav
                     onSearch={handleSearch}
                     templatesCount={templates.length}
                     adminAccess={adminAccess}
+             />  
+        {
+            isLoading && <Skeleton className="h-full w-full" />
+        }
+        {
+            !isLoading &&  templates.length === 0 && (
+                adminAccess ? ( <EmptyScreen msg='No Templates Found' linkMsg='Create a Template to get started' linkHref='/templates/create-template'/>) :
+                (<EmptyScreen msg="Templates Not Found"/>))
+        }
+        {
+            !isLoading &&  templates.length > 0 &&
+            <div className={"w-full h-full flex flex-col overflow-y-auto "}>
+                <TemplateList
+                    templates={templates}
+                    adminAccess={adminAccess}
+                    currentConnectedWallet={currentConnectedWallet}
                 />
-            )}
-        <div className={"w-full h-full flex flex-col overflow-y-auto "}>
-            {/* Template List */}
-            <TemplateList
-                templates={templates}
-                isLoading={isLoading && isFirstFetch}
-                adminAccess={adminAccess}
-                currentConnectedWallet={currentConnectedWallet}
-            />
-        </div>
+            </div>
+        }
         </>
     );
 };

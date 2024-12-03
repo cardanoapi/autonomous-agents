@@ -17,9 +17,6 @@ const TemplatesTopNav = ({
     return (
         <div className="flex justify-between gap-y-2 flex-wrap">
             <div className="flex items-center justify-center gap-x-4">
-                <span className="hidden  text-lg font-medium md:block">
-                    Templates({templatesCount})
-                </span>
                 <DataActionBar
                     className="h-10"
                     placeholder="Search Template Name "

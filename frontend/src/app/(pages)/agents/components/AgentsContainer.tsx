@@ -6,22 +6,16 @@ export interface AgentsContainerProps {
     agentsList: IAgent[];
     enableEdit: boolean;
     enableDelete: boolean;
-    loadingAgents?: boolean;
 }
 
 const AgentsContainer: React.FC<AgentsContainerProps> = ({
     agentsList,
     enableEdit,
     enableDelete,
-    loadingAgents = false
 }) => {
     return (
         <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 4xl:grid-cols-7 gap-4 ">
-            {loadingAgents
-                ? Array.from({ length: 10 }).map((_, index) => (
-                      <AgentCardSkeleton key={index} />
-                  ))
-                : agentsList.map((agent) => (
+            {agentsList.map((agent) => (
                       <AgentCard
                           key={agent.id}
                           agentName={agent.name || 'NA'}

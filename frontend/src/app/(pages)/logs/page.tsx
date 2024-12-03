@@ -21,6 +21,8 @@ import {
 import { SearchField } from '@app/components/atoms/SearchField';
 import PaginationBtns from '@app/components/molecules/PaginationBtns';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
+import EmptyScreen from '@app/components/molecules/EmptyScreen';
 
 export default function LogsPage() {
     // Object to store all state related to the query
@@ -133,7 +135,7 @@ export default function LogsPage() {
                                 currentAgentID: val
                             }));
                         }}
-                        className={"!w-80"}
+
                     />
                     <AgentFunctionsDropDown
                         onChange={(strValue: string) => {
@@ -193,23 +195,28 @@ export default function LogsPage() {
     return (
         <>
             <TopNav />
-            <div className="flex w-full h-full  flex-col overflow-y-auto md:pr-4">
-                        {loadingLogs
-                            ? Array.from({ length: 50 }).map((_, index) => (
-                                  <AgentLogCardSkeleton key={index} className="my-2" />
-                              ))
-                            : LogsHistory?.items.length > 0 &&
-                              LogsHistory.items.map(
-                                  (history: IAgentTriggerHistory, index: number) => (
-                                      <AgentLogCard
-                                          history={history}
-                                          key={index}
-                                          className="my-2 flex bg-white h-fit"
-                                          globalLog={true}
-                                      />
-                                  )
-                              )}
-            </div>
+            {
+                loadingLogs && <Skeleton className='w-full h-full'/>
+            }
+            {
+                !loadingLogs && LogsHistory?.items.length === 0 &&
+                <EmptyScreen msg="No logs found"/>
+            }
+            {
+                !loadingLogs && LogsHistory?.items.length > 0 &&
+                <div className="flex w-full h-full  flex-col overflow-y-auto md:pr-4">{
+                                LogsHistory.items.map(
+                                    (history: IAgentTriggerHistory, index: number) => (
+                                        <AgentLogCard
+                                            history={history}
+                                            key={index}
+                                            className="my-2 flex bg-white h-fit"
+                                            globalLog={true}
+                                        />
+                                    )
+                                )}
+                </div>
+            }
             <div className="flex flex-row-reverse ">
                 <PaginationBtns
                     className="flex justify-center"

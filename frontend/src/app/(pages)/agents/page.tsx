@@ -19,6 +19,8 @@ import { IQueryParams } from '@app/utils/query';
 
 import AgentsContainer from './components/AgentsContainer';
 import AgentsTopNav, { AgentsTopNavSkeleton } from './components/AgentsTopNav';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
+import EmptyScreen from '@app/components/molecules/EmptyScreen';
 
 export default function AgentsPage() {
     const [agentCreated, setAgentCreated] = useAtom(agentCreatedAtom);
@@ -26,8 +28,6 @@ export default function AgentsPage() {
     const [adminAccess] = useAtom(adminAccessAtom);
 
     const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
-
-    const [isFirstFetch, setIsFirstFetch] = useState<boolean>(true);
 
     const [queryParams, setQueryParams] = useState<IQueryParams>({
         page: 1,
@@ -55,13 +55,6 @@ export default function AgentsPage() {
         }
     }, [agentCreated]);
 
-    useEffect(() => {
-        // is Loading is set to true when query params change and the skeleton is renderd causing the  search value to default to none.
-        if (isFirstFetch) {
-            setIsFirstFetch(false);
-        }
-    }, [agents]);
-
     const otherAgents = useMemo(() => {
         return (
             agents?.filter(
@@ -79,37 +72,45 @@ export default function AgentsPage() {
     }, [agents, currentConnectedWallet?.address]);
     return (
         <>
-            {isLoading && isFirstFetch ? (
-                <AgentsTopNavSkeleton />
-            ) : (
-                <AgentsTopNav
+            <AgentsTopNav
                     numOfAgents={agents?.length || 0}
                     createAgentAccess={adminAccess}
                     onSearch={(value: string) => handleSearch(value)}
-                />
-            )}
-
-            <div
-                className="overflow-y-auto md:py-4 flex flex-col w-full h-full"
-            >
-                <AgentsContainer
-                    agentsList={otherAgents || []}
-                    enableEdit={adminAccess}
-                    enableDelete={adminAccess}
-                    loadingAgents={isLoading}
-                />
-                {currentConnectedWallet && !isLoading && myAgents.length > 0 && (
-                    <div className={cn(otherAgents.length > 0 && 'my-8' , 'w-full h-full')}>
-                        <span className="h1-new mb-4 inline-flex">My Agents</span>
-                        <AgentsContainer
-                            agentsList={myAgents || []}
-                            enableEdit={true}
-                            enableDelete={adminAccess}
-                            loadingAgents={false}
-                        />
-                    </div>
-                )}
-            </div>
+            />
+            {
+                isLoading && < Skeleton className='h-full w-full'/>
+            }
+            {
+                !isLoading && myAgents.length === 0 && (
+                    adminAccess ? (
+                    <EmptyScreen msg="No Agents Found" linkHref="/agents/create" linkMsg="Create an Agent to get started" />
+                    ) : (
+                    <EmptyScreen msg="No Agents Found" />
+                    )
+                )
+                }
+            {
+                !isLoading && myAgents.length > 0 && 
+                <div
+                    className="overflow-y-auto md:py-4 flex flex-col w-full h-full"
+                >
+                    <AgentsContainer
+                        agentsList={otherAgents || []}
+                        enableEdit={adminAccess}
+                        enableDelete={adminAccess}
+                    />
+                    {currentConnectedWallet && !isLoading && myAgents.length > 0 && (
+                        <div className={cn(otherAgents.length > 0 && 'my-8' , 'w-full h-full')}>
+                            <span className="h1-new mb-4 inline-flex">My Agents</span>
+                            <AgentsContainer
+                                agentsList={myAgents || []}
+                                enableEdit={true}
+                                enableDelete={adminAccess}
+                            />
+                        </div>
+                    )}
+                </div>
+            }
         </>
     );
 }
