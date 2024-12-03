@@ -14,9 +14,11 @@ import {
 
 export default function AgentFunctionsDropDown({
     onChange,
-    className
+    className,
+    value
 }: {
     onChange?: any;
+    value?: string;
     className?: string;
 }) {
     const { data: agentFunctions = [] } = useQuery({
@@ -32,8 +34,9 @@ export default function AgentFunctionsDropDown({
                 border={true}
                 className={cn('flex w-72 justify-between', className)}
             >
-                {currentFunction === 'None' ? 'Function' : currentFunction}
+                {value}
             </DropdownMenuTrigger>
+            
             <DropdownMenuContent className="bg-white">
                 <DropdownMenuItem
                     onClick={() => {

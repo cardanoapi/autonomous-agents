@@ -61,7 +61,7 @@ const TemplatesPage = () => {
         {
             !isLoading &&  templates.length === 0 && (
                 adminAccess ? ( <EmptyScreen msg='No Templates Found' linkMsg='Create a Template to get started' linkHref='/templates/create-template'/>) :
-                (<EmptyScreen msg="Templates Not Found"/>))
+                (<EmptyScreen msg="No Templates Found"/>))
         }
         {
             !isLoading &&  templates.length > 0 &&

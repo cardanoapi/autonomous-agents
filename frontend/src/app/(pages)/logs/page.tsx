@@ -23,6 +23,7 @@ import PaginationBtns from '@app/components/molecules/PaginationBtns';
 import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import EmptyScreen from '@app/components/molecules/EmptyScreen';
+import {cn} from '@app/components/lib/utils'
 
 export default function LogsPage() {
     // Object to store all state related to the query
@@ -122,21 +123,21 @@ export default function LogsPage() {
     }
 
     const TopNav = () => {
-        const rowOptions = [10, 30, 50, 100];
 
         return (
-            <div className="flex items-center justify-between w-full flex-wrap gap-y-2">
-                <div className="flex flex-col gap-2 md:flex-row flex-wrap items-center">
-                    <DataActionBar
-                        placeholder="Search Log by Agent ID"
-                        onSearch={(val: string) => {
-                            setLogQueryState((prevState) => ({
-                                ...prevState,
-                                currentAgentID: val
-                            }));
-                        }}
+                <div className="flex flex-col gap-2 md:flex-row">
+                    <div>
+                        <DataActionBar
+                            placeholder="Search Log by Agent ID"
+                            onSearch={(val: string) => {
+                                setLogQueryState((prevState) => ({
+                                    ...prevState,
+                                    currentAgentID: val
+                                }));
+                            }}
 
-                    />
+                        />
+                    </div>
                     <AgentFunctionsDropDown
                         onChange={(strValue: string) => {
                             setLogQueryState((prevState) => ({
@@ -144,9 +145,10 @@ export default function LogsPage() {
                                 currentFunction: strValue
                             }));
                         }}
-                        className="hidden md:flex"
+                        className="hidden md:flex w-64"
+                        value={logQueryState.currentFunction == 'None' ? 'Function' : logQueryState.currentFunction}
                     />
-                    <div className="hidden justify-center gap-2 md:flex">
+                    <div className="hidden gap-2 md:flex items-center justify-center">
                         {statusOptions.map((status: string, index) => (
                             <Badge
                                 key={index}
@@ -163,32 +165,6 @@ export default function LogsPage() {
                         ))}
                     </div>
                 </div>
-                <div className="hidden md:flex">
-                    <span>Rows per page :</span>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger>
-                            <span className="ml-1 w-6">
-                                {logQueryState.currentResponseSize}
-                            </span>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="!min-w-0">
-                            {rowOptions.map((row: number, index) => (
-                                <DropdownMenuItem
-                                    key={index}
-                                    onClick={() => {
-                                        setLogQueryState((prevState) => ({
-                                            ...prevState,
-                                            currentResponseSize: row
-                                        }));
-                                    }}
-                                >
-                                    {row}
-                                </DropdownMenuItem>
-                            ))}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            </div>
         );
     };
 
@@ -204,20 +180,20 @@ export default function LogsPage() {
             }
             {
                 !loadingLogs && LogsHistory?.items.length > 0 &&
-                <div className="flex w-full h-full  flex-col overflow-y-auto md:pr-4">{
+                <div className="flex w-full h-full flex-col overflow-y-auto md:pr-4">{
                                 LogsHistory.items.map(
                                     (history: IAgentTriggerHistory, index: number) => (
                                         <AgentLogCard
                                             history={history}
                                             key={index}
-                                            className="my-2 flex bg-white h-fit"
+                                            className="my-1 flex bg-white h-fit"
                                             globalLog={true}
                                         />
                                     )
                                 )}
                 </div>
             }
-            <div className="flex flex-row-reverse ">
+            <div className={cn("flex flex-row-reverse" , LogsHistory?.items.length === 0 && 'hidden')}>
                 <PaginationBtns
                     className="flex justify-center"
                     onPaginate={(val: number) => {
@@ -228,6 +204,15 @@ export default function LogsPage() {
                     }}
                     refCurrentPage={logQueryState.currentPage}
                     upperLimit={logQueryState.totalPages}
+                    rowsLabel={'Logs per page'}
+                    rowOptions={[10, 15, 20, 30]}
+                    onRowClick={(val: number) => {
+                        setLogQueryState((prevState) => ({
+                            ...prevState,
+                            currentResponseSize: val
+                        }));
+                    }}
+                    rowsPerPage={logQueryState.currentResponseSize}
                 />
             </div>
         </>

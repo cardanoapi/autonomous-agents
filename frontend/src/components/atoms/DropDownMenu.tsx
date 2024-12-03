@@ -3,7 +3,7 @@
 import * as React from 'react';
 
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
-import { Check, ChevronRight, Circle } from 'lucide-react';
+import { Check, ChevronRight, Circle , ChevronDown } from 'lucide-react';
 
 import PolygonIcon from '@app/assets/icons/Polygon';
 
@@ -23,11 +23,15 @@ const DropdownMenuTrigger = ({
     className,
     children,
     border = false,
+    useChevron = false,
+    iconSize = 16,
     ...props
 }: {
     children: React.ReactNode;
     border?: boolean;
     className?: string;
+    useChevron?: boolean;
+    iconSize?: number
 }) => (
     <DropdownMenuPrimitive.Trigger
         {...props}
@@ -39,7 +43,10 @@ const DropdownMenuTrigger = ({
         )}
     >
         {children}
-        <PolygonIcon />
+    {
+        useChevron ?  <ChevronDown size={iconSize}/> :  
+        <PolygonIcon/>
+    }
     </DropdownMenuPrimitive.Trigger>
 );
 

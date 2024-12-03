@@ -19,6 +19,7 @@ import { Tabs, TabsList, TabsTrigger } from '@app/components/molecules/Tabs';
 
 import ProposalCard from './components/proposalCard';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
+import {cn} from '@app/components/lib/utils'
 
 interface IProposalFilterOption {
     placeholder: string;
@@ -118,12 +119,22 @@ export default function GovernanceAction() {
                     <Skeleton className='w-full h-full'></Skeleton>
                 )
             }
-            <div ref={ref} />
-            <div className="flex flex-row-reverse">
+            <div className={cn("flex flex-row-reverse" , data?.items?.length === 0 && "hidden")}>
                 <PaginationBtns
                     upperLimit={totalPage}
                     onPaginate={handlePaginationChange}
                     refCurrentPage={searchParams.page}
+                    rowOptions={rowOptions}
+                    rowsLabel='Proposals per page'
+                    onRowClick={
+                        (row: number) =>
+                            setSearchParams((prev) => ({
+                                ...prev,
+                                pageSize: row,
+                                page: 1
+                            }))
+                    }
+                    rowsPerPage={searchParams.pageSize}
                 />
             </div>
         </>
@@ -158,24 +169,6 @@ const GovActionTopNav = ({
                     taboptions={proposalFilterOptions}
                     value={searchParams.proposal_type || proposalFilterOptions[0].value}
                 />
-            </div>
-            <div>
-                <DropdownMenu>
-                    <span className="hidden md:inline-flex">Proposals per Page: </span>
-                    <DropdownMenuTrigger className="hidden md:inline-flex">
-                        {searchParams.pageSize}
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="min-w-0">
-                        {rowOptions.map((row) => (
-                            <DropdownMenuItem
-                                key={row}
-                                onClick={() => dropDoenMenuItemONClick(row)}
-                            >
-                                {row}
-                            </DropdownMenuItem>
-                        ))}
-                    </DropdownMenuContent>
-                </DropdownMenu>
             </div>
         </div>
     );

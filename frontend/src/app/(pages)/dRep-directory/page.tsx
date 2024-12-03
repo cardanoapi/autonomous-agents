@@ -7,19 +7,15 @@ import { useQuery } from '@tanstack/react-query';
 import { bech32toHex } from '@utils';
 
 import DataActionBar from '@app/app/components/DataActionBar';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from '@app/components/atoms/DropDownMenu';
+
 import EmptyScreen from '@app/components/molecules/EmptyScreen';
 import PaginationBtns from '@app/components/molecules/PaginationBtns';
 import { Tabs, TabsList, TabsTrigger } from '@app/components/molecules/Tabs';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { QUERY_KEYS } from '@app/consts/queryKeys';
 
 import DRepCard from './components/DRepCard';
-import { Skeleton } from '@app/components/shadcn/ui/skeleton';
+import {cn} from '@app/components/lib/utils'
 
 interface IDrepFilterOption {
     placeholder: string;
@@ -38,7 +34,6 @@ const DrepFilterOptions: IDrepFilterOption[] = [
 ];
 
 export default function DRepDirectory() {
-
     const rowOptions = [10, 15, 20, 30];
     const [totalPage, setTotalPage] = useState<number>(1);
     const [rowsFilter, setRowsFilter] = useState<number>(rowOptions[0]);
@@ -57,7 +52,6 @@ export default function DRepDirectory() {
         staleTime: 5000
     });
 
-
     const handleSearch = (searchValue: string) => {
         setQueryParams({ ...queryParams, search: bech32toHex(searchValue), page: 1 });
     };
@@ -73,14 +67,12 @@ export default function DRepDirectory() {
         }));
     };
 
-
     useEffect(() => {
         if (data) {
             setTotalPage(Math.ceil(data?.total / queryParams.pageSize) || 1);
             setRowsFilter(queryParams.pageSize);
         }
     }, [data, queryParams.pageSize]);
-
 
     return (
         <>
@@ -93,15 +85,13 @@ export default function DRepDirectory() {
                 setQueryParams={setQueryParams}
                 rowsFilter={rowsFilter}
             />
-            {!isLoading && data &&
-                data?.items?.length > 0 &&
-                (
-                    <div className="flex h-full w-full flex-col space-y-4 overflow-y-auto">
-                        {
-                            data?.items?.map((dRep, index) => <DRepCard key={index} dRep={dRep} />)
-                        }
-                    </div>
-                )}
+            {!isLoading && data && data?.items?.length > 0 && (
+                <div className="flex h-full w-full flex-col space-y-4 overflow-y-auto">
+                    {data?.items?.map((dRep, index) => (
+                        <DRepCard key={index} dRep={dRep} />
+                    ))}
+                </div>
+            )}
             {!isLoading &&
                 data?.items?.length === 0 &&
                 queryParams.drep_type === 'internal' && (
@@ -111,22 +101,22 @@ export default function DRepDirectory() {
                         linkOnCLick={() => handleFilterChange('all')}
                     />
                 )}
-            
+
             {!isLoading &&
                 data?.items?.length === 0 &&
-                queryParams.drep_type === 'all' && (
-                    <EmptyScreen msg="No Dreps Found" />
-                )}
-            {
-                isLoading && (
-                    <Skeleton className='h-full w-full'/>
-                )
-            }
-            <div className="flex flex-row-reverse">
+                queryParams.drep_type === 'all' && <EmptyScreen msg="No Dreps Found" />}
+            {isLoading && <Skeleton className="h-full w-full" />}
+            <div className={cn("flex flex-row-reverse" , data?.items.length === 0 && "hidden")}>
                 <PaginationBtns
                     upperLimit={totalPage}
                     onPaginate={handlePaginationChange}
                     refCurrentPage={queryParams.page}
+                    rowsPerPage={queryParams.pageSize}
+                    rowOptions={rowOptions}
+                    onRowClick={(row : number) => {
+                        setQueryParams({ ...queryParams, pageSize: row , page: 1 });
+                    }}
+                    rowsLabel="Rows per page"
                 />
             </div>
         </>
@@ -163,30 +153,6 @@ const DRepTopNav = ({
                     taboptions={DrepFilterOptions}
                     value={queryParams.drep_type}
                 />
-            </div>
-            <div className={'hidden md:flex'}>
-                <DropdownMenu>
-                    <span>Dreps per Page: </span>
-                    <DropdownMenuTrigger className="inline-flex">
-                        {rowsFilter || rowOptions[0]}
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="min-w-0">
-                        {rowOptions.map((row: number) => (
-                            <DropdownMenuItem
-                                key={row}
-                                onClick={() =>
-                                    setQueryParams({
-                                        ...queryParams,
-                                        pageSize: row,
-                                        page: 1
-                                    })
-                                }
-                            >
-                                {row}
-                            </DropdownMenuItem>
-                        ))}
-                    </DropdownMenuContent>
-                </DropdownMenu>
             </div>
         </div>
     );
