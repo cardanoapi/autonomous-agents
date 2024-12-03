@@ -19,7 +19,7 @@ const TemplateList = ({
 
     return (
         <div className="flex flex-col gap-y-20 md:pb-10">
-            <div className="mt-2 flex flex-col gap-y-5">
+            <div className="mt-2 flex flex-col gap-y-5 bg0re==">
                 {isLoading ? (
                     <div className={containerClass}>
                         <TemplateSkeletonContainer />
