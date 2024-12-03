@@ -6,6 +6,7 @@ import delegationRoute from "./controllers/delegation";
 import drepRoute from "./controllers/drep";
 import addressRoute from "./controllers/address";
 import proposalRoute from "./controllers/proposal";
+import healthCheckRoute from "./health/healthCheck"
 import { errorHandler } from "./errors/AppError";
 import path from "path";
 import setupSwaggerUi from "./swagger-loader";
@@ -45,6 +46,7 @@ app.use('/api/stake-address', stakeAddrRoute);
 app.use('/api/drep',drepRoute)
 app.use('/api/address',addressRoute)
 app.use('/api/proposal',proposalRoute)
+app.use('/api/health', healthCheckRoute)
 
 setupSwaggerUi(app)
 const indexFile = path.resolve('.','./index.html')
