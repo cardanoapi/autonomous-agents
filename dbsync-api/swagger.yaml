@@ -481,4 +481,67 @@ paths:
           description: Invalid address provided
         '500':
           description: Internal server error
-
+  /api/health:
+    get:
+      summary: Check DBSync health status
+      description: Retrieves the latest block and checks if it was updated within the last 5 minutes.
+      operationId: getBlockInfo
+      responses:
+        '200':
+          description: DBSync service is healthy.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "Healthy"
+                  details:
+                    type: object
+                    properties:
+                      currentTime:
+                        type: string
+                        format: date-time
+                        example: "2024-12-03T12:34:56.789Z"
+                      latestBlockTime:
+                        type: string
+                        format: date-time
+                        example: "2024-12-03T12:30:00.123Z"
+                      secondsSinceLastUpdate:
+                        type: number
+                        example: 296
+        '503':
+          description: DBSync service is unavailable due to a delay in block updates.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "Service Unavailable"
+                  details:
+                    type: object
+                    properties:
+                      currentTime:
+                        type: string
+                        format: date-time
+                        example: "2024-12-03T12:34:56.789Z"
+                      latestBlockTime:
+                        type: string
+                        format: date-time
+                        example: "2024-12-03T12:25:00.123Z"
+                      secondsSinceLastUpdate:
+                        type: number
+                        example: 596
+        '500':
+          description: An error occurred while performing the health check.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "An error occurred while checking the DbSync status."
