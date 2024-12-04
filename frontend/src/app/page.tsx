@@ -8,7 +8,7 @@ import DashboardCards from './components/DashboardCards';
 
 export default function Home() {
     return (
-        <div className={'flex flex-col md:flex-col-reverse h-full w-full gap-y-4 2xl:gap-y-8 overflow-y-auto'}>
+        <div className={'flex flex-col md:flex-col-reverse h-full w-full gap-y-4 2xl:gap-y-6 overflow-y-auto  md:justify-end'}>
             <DashboardChart className={'md:gap-y-8 py-4 md:p-8 md:h-[calc(100vh-300px)] px-1 h-fit'} />
             <DashboardCards
                 className={

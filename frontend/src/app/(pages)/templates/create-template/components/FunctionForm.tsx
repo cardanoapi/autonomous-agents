@@ -179,7 +179,7 @@ export const FunctionForm = ({
     return (
         <Card
             className={cn(
-                ' flex h-full w-full md:min-h-[450px] md:min-w-[500px] flex-col justify-between bg-brand-Azure-400 !px-4',
+                ' flex h-full w-full md:min-h-[450px] md:min-w-[500px] flex-col justify-between bg-brand-Azure-400 !px-4 max-md:rounded-t-2xl',
                 renderFunctionSelector ? 'py-8' : 'py-4'
             )}
         >
@@ -187,7 +187,7 @@ export const FunctionForm = ({
                 className="absolute right-6 top-4 cursor-pointer"
                 onClick={() => onClose?.(functionState)}
             />
-            <div className="flex flex-col gap-y-4">
+            <div className="flex flex-col gap-y-4 max-md:gap-y-6">
                 {renderFunctionSelector ? (
                     <CardTitle className="flex flex-col gap-2">
                         <span className="h4">Function</span>

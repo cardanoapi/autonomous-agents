@@ -190,7 +190,8 @@ export default function CreateAgentForm() {
                             )}
                         />
                     </div>
-                    <SubmitButton disabled={submittingForm} />
+                    <SubmitButton disabled={submittingForm} placeholder='Create Agent' className=" w-36 h-[36px] rounded-none"
+                    />
                 </Card>
             </form>
         </Form>
