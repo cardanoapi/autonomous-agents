@@ -14,6 +14,7 @@ export interface IOption {
     label: string;
     disable?: boolean;
     extraValues?: any;
+    description?: string;
     /** fixed option that can't be removed. */
     fixed?: boolean;
 
