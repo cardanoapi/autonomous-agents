@@ -10,7 +10,7 @@ import { cn } from '@app/components/lib/utils';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { adminAccessAtom, currentConnectedWalletAtom } from '@app/store/localStore';
 
-export default function MyAgentCard({ className }: { className?: string }) {
+export default function MyAgentCard({ className , onClick }: { className?: string , onClick?: any}) {
     const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
     const [adminAccess] = useAtom(adminAccessAtom);
     const router: AppRouterInstance = useRouter();
@@ -34,6 +34,7 @@ export default function MyAgentCard({ className }: { className?: string }) {
                 className
             )}
             onClick={(): void => {
+                onClick?.();
                 router.push(`/agents/${agent?.id}`);
             }}
         >

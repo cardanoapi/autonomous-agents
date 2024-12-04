@@ -8,7 +8,7 @@ const networkName =
     environments.network.charAt(0).toUpperCase() + environments.network.slice(1);
 export default function SideNavLogo({ renderLogo = true }: { renderLogo?: boolean }) {
     return (
-        <div className="flex flex-col gap-4 py-8 pb-2 pl-3">
+        <div className="flex max-md:flex-row flex-col gap-4 py-8 pb-2 pl-3">
             <Link href="/" className="flex flex-row items-center gap-x-2   ">
                 <div className="flex gap-2">
                     {renderLogo && <Logo height={48} width={48} />}
@@ -24,7 +24,7 @@ export default function SideNavLogo({ renderLogo = true }: { renderLogo?: boolea
                 </div>
             </Link>
             <Badge
-                className="w-24 border border-gray-400 text-xs font-medium text-brand-Blue-200"
+                className="w-24 border border-gray-400 text-xs font-medium text-brand-Blue-200 max-md:h-8"
                 variant={'outline'}
             >
                 {networkName}

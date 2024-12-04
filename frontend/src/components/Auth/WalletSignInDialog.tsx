@@ -107,14 +107,17 @@ export default function WalletSignInDialog({
         <div>
             <Dialog open={refDialogOpen || dialogOpen}>
                 <DialogContent
-                    className="max-w-4xl px-8 p-8 2xl:py-12 py-10 focus:outline-none"
+                    className="w-full max-w-[90%] h-fit justify-self-end p-8 px-8 py-10 focus:outline-none sm:h-auto sm:w-auto sm:max-w-4xl sm:translate-y-[-50%] 2xl:py-12 rounded-2xl"
                     defaultCross={false}
                 >
-                    <div className="flex flex-col gap-y-4 ">
-                        <X onClick={onClose} className="hover:cursor-pointer absolute top-4 right-4" />
-                        <div className="mb-4 flex items-center justify-center gap-2">
-                            <Wallet size={28} stroke="#2595FCFA" />
-                            <span className="text-xl 2xl:text-2xl font-semibold">
+                    <div className="flex flex-col gap-y-4">
+                        <X
+                            onClick={onClose}
+                            className="absolute right-4 top-4 hover:cursor-pointer"
+                        />
+                        <div className="mb-4 flex items-center justify-center gap-1 ">
+                            <Wallet size={28} stroke="#2595FCFA"  className='hidden xl:flex '/>
+                            <span className="text-xl font-semibold  2xl:text-2xl text-center ">
                                 {' '}
                                 Select your{' '}
                                 <span className="text-blue-600">CIP-30</span> wallet
@@ -157,7 +160,7 @@ export default function WalletSignInDialog({
                                 variant={'primary'}
                                 size={'md'}
                                 className={cn(
-                                    'without-focus-visible w-48 2xl:min-w-56 py-4 2xl:py-6 2xl:text-xl text-base'
+                                    'without-focus-visible w-48 py-4 text-base 2xl:min-w-56 2xl:py-6 2xl:text-xl max-md:rounded-full'
                                 )}
                                 onClick={() => {
                                     if (currentSelectedWalletProvider === null) return;

@@ -16,7 +16,7 @@ export default function ConnectedWalletCard({
     return (
         <div
             className={cn(
-                'flex flex-col rounded-lg border-2 border-brand-Gray-400 p-2',
+                'flex flex-col rounded-lg border-2 border-brand-Gray-400 p-2 gap-1',
                 className
             )}
         >
@@ -33,7 +33,7 @@ export default function ConnectedWalletCard({
                     {currentConnectedWallet ? currentConnectedWallet.address : ''}
                 </Typography>
                 <span
-                    className="flex cursor-pointer justify-end text-xs text-brand-navy hover:text-brand-Blue-200"
+                    className="flex cursor-pointer justify-end text-xs text-brand-navy hover:text-brand-Blue-200 mt-1"
                     onClick={onDisconnect}
                 >
                     Disconnect

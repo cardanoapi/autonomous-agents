@@ -22,6 +22,9 @@ import { cn } from '@app/components/lib/utils';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
 import { adminAccessAtom, currentConnectedWalletAtom } from '@app/store/localStore';
+import { X } from 'lucide-react';
+import { set } from 'lodash';
+import { render } from 'nprogress';
 
 export default function SideNav({
     mobileClassName,
@@ -65,6 +68,32 @@ export default function SideNav({
         });
     };
 
+    const WalletandAgentCard = ({onConnectWallet , onDisconnect} : {onConnectWallet?: any , onDisconnect?: any} ) =>{
+        return (
+              currentConnectedWallet ? (
+                    <div className={'flex flex-col gap-y-2 pb-2'}>
+                        {!adminAccess && <MyAgentCard onClick={()=>setSideNavOpen(false)}/>}
+                        <ConnectedWalletCard onDisconnect={() => {
+                            onDisconnect()
+                            onConnectWallet && logoutUser()
+                        }}
+                           />
+                    </div>
+                ) : (
+                    <Button
+                        className="m-2 max-md:rounded-full"
+                        onClick={() => {
+                            onDisconnect && onDisconnect()
+                            setLoginDialogOpen(true)
+                        }}
+                        variant={'primary'}
+                    >
+                        Connect Wallet
+                    </Button>
+                )
+        )
+    }
+
     return (
         <div>
             <HamburgerMenuIcon
@@ -99,20 +128,7 @@ export default function SideNav({
                         ))}
                     </ul>
                 </div>
-                {currentConnectedWallet ? (
-                    <div className={'flex flex-col gap-y-2 pb-2'}>
-                        {!adminAccess && <MyAgentCard />}
-                        <ConnectedWalletCard onDisconnect={logoutUser} />
-                    </div>
-                ) : (
-                    <Button
-                        className="m-2"
-                        onClick={() => setLoginDialogOpen(true)}
-                        variant={'primary'}
-                    >
-                        Connect Wallet
-                    </Button>
-                )}
+                <WalletandAgentCard/>
             </nav>
             {/* Mobile Side Navigation */}
             <>
@@ -120,7 +136,7 @@ export default function SideNav({
                 {sideNavOpen && (
                     <div
                         className={cn(
-                            'fixed inset-0 z-[998] bg-black bg-opacity-50 transition-opacity duration-300',
+                            'md:hidden fixed inset-0 z-[998] bg-black bg-opacity-50 transition-opacity duration-300',
                             mobileClassName
                         )}
                         onClick={() => setSideNavOpen(false)}
@@ -128,12 +144,13 @@ export default function SideNav({
                 )}
                 <div
                     className={cn(
-                        'fixed left-0 top-0 z-[999] flex h-full w-64 flex-col justify-between bg-white shadow-lg',
-                        'transform transition-transform duration-300',
+                        'fixed left-0 top-0 z-[999] flex h-full w-full flex-col justify-between bg-white shadow-lg md:hidden',
+                        'transform transition-transform duration-300 rounded-t-2xl',
                         sideNavOpen ? 'translate-x-0' : '-translate-x-full'
                     )}
                 >
                     <nav className="flex h-full w-full flex-col justify-between px-2">
+                        <X className='absolute right-3 top-4' onClick={() => setSideNavOpen(false)}/>
                         <div>
                             <SideNavLogo renderLogo={false} />
                             <ul className="mt-4 flex w-full flex-col gap-y-4">
@@ -146,15 +163,7 @@ export default function SideNav({
                                 ))}
                             </ul>
                         </div>
-                        <Button
-                            className="m-2"
-                            onClick={() =>
-                                ErrorToast('Mobile Browsers are not supported!')
-                            }
-                            variant="primary"
-                        >
-                            Connect Wallet
-                        </Button>
+                        <WalletandAgentCard onDisconnect={() => setSideNavOpen(false)} onConnectWallet={() => setSideNavOpen(false)}/>
                     </nav>
                 </div>
             </>
