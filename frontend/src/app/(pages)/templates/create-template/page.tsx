@@ -159,7 +159,7 @@ export default function CreateTemplatePage() {
 
     return (
         <>
-            <Card className="flex min-h-[493px] w-[790px] flex-col gap-4">
+            <Card className="flex lg:min-h-[493px] lg:w-[780px] flex-col gap-4 max-md:p-6 max-md:py-4 max-md:pb-8">
                 <div>
                     <Label>Template Name </Label>
                     <Input
