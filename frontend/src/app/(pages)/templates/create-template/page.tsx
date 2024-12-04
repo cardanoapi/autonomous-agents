@@ -35,6 +35,7 @@ import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 import { FunctionCards } from './components/FunctionCards';
 import { FunctionForm } from './components/FunctionForm';
 import { mapFormFunctionToTriggerConfiguration } from './components/utils/FunctionMapper';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 export interface IFormFunctionInstance extends IFunctionsItem {
     index: string; // for identifying function instance , id attribute holds function name
@@ -57,6 +58,7 @@ interface IFormData {
 
 export default function CreateTemplatePage() {
     const router = useRouter();
+    const isFullScreen = useMediaQuery('(max-width:600px)');
     const [submittingForm, setSubmittingForm] = useState(false);
     const [, setTemplateCreated] = useAtom(templateCreatedAtom);
 
@@ -159,7 +161,7 @@ export default function CreateTemplatePage() {
 
     return (
         <>
-            <Card className="flex lg:min-h-[493px] lg:w-[780px] flex-col gap-4 max-md:p-6 max-md:py-4 max-md:pb-8">
+            <Card className="flex lg:min-h-[493px] lg:w-[780px] flex-col gap-4 max-md:p-6 max-md:py-4 max-md:pb-8 overflow-auto">
                 <div>
                     <Label>Template Name </Label>
                     <Input
@@ -203,16 +205,17 @@ export default function CreateTemplatePage() {
                     </DropdownMenu>
                 </div>
                 {/* Render Selcted Configured Functions */}
-                <div className="grid w-full grid-cols-2 gap-4">
+                <div className="md:grid w-full h-full overflow-y-auto  md:grid-cols-2 gap-y-4 gap-x-2 flex flex-col">
                     <FunctionCards
                         functions={mainState.functions}
                         onUnselect={handleDeleteFunction}
                         onEdit={handleEditFunction}
                     />
                 </div>
+                <div>
                 <Button
                     variant="primary"
-                    className="mt-6 w-36"
+                    className=" w-36 h-[36px]"
                     size="md"
                     type="submit"
                     onClick={() => {
@@ -227,9 +230,13 @@ export default function CreateTemplatePage() {
                 >
                     Create Template
                 </Button>
+                </div>
             </Card>
             {/*Dialog for function form*/}
-            <Dialog open={isDialogOpen}>
+            <Dialog
+                open={isDialogOpen}
+                fullScreen={isFullScreen}
+            >
                 <DialogContent className="!p-0">
                     {currentSelectedFunction && (
                         <FunctionForm

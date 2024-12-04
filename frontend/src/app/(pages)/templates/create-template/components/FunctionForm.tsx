@@ -179,7 +179,7 @@ export const FunctionForm = ({
     return (
         <Card
             className={cn(
-                'relative flex h-full min-h-[450px] min-w-[500px] flex-col justify-between bg-brand-Azure-400 !px-4',
+                ' flex h-full w-full md:min-h-[450px] md:min-w-[500px] flex-col justify-between bg-brand-Azure-400 !px-4',
                 renderFunctionSelector ? 'py-8' : 'py-4'
             )}
         >
@@ -218,7 +218,7 @@ export const FunctionForm = ({
                         <CustomCombobox
                             defaultValue={functionState.type || 'CRON'}
                             itemsList={['CRON', 'EVENT']}
-                            onSelect={(triggerType) =>
+                            onSelect={(triggerType : any) =>
                                 handleTypeChange(triggerType as TriggerType)
                             }
                             className={'w-24 rounded-md border-[2px] px-2'}
