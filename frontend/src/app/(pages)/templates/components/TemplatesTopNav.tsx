@@ -15,8 +15,8 @@ const TemplatesTopNav = ({
     adminAccess: boolean;
 }) => {
     return (
-        <div className="flex justify-between gap-y-2 flex-wrap">
-            <div className="flex items-center justify-center gap-x-4">
+        <div className="flex justify-between gap-y-2 gap-x-4">
+            <div className="flex items-center justify-center ">
                 <DataActionBar
                     className="h-10"
                     placeholder="Search Template Name "
@@ -26,7 +26,7 @@ const TemplatesTopNav = ({
             <Link href="/templates/create-template" >
                 <Button
                     variant="primary"
-                    className={cn('h-[36px] w-[145px]', adminAccess ? '' : '!hidden')}
+                    className={cn('h-[36px] w-[145px]  max-sm:!bg-transparent max-sm:text-brand-Blue-200 max-sm:p-0 max-sm:w-fit', adminAccess ? '' : '!hidden')}
                 >
                     Create Template
                 </Button>

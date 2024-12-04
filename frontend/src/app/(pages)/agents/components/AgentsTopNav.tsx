@@ -15,20 +15,19 @@ const AgentsTopNav = ({
     onSearch?: any;
 }) => {
     return (
-        <div className="flex w-full justify-between flex-wrap gap-y-2">
-            <div className="flex items-center gap-x-4">
+        <div className="flex w-full justify-between items-center gap-y-2 gap-x-4">
+            <div className="flex items-center">
                 <DataActionBar
                     placeholder="Search Agent Name"
                     className="h-10 !w-full"
                     onSearch={onSearch}
                 ></DataActionBar>
             </div>
-
             <Link href="/agents/create-agent">
                 <Button
                     variant="primary"
                     className={cn(
-                        'h-[36px] w-[145px]',
+                        'h-[36px] w-[145px] max-sm:!bg-transparent max-sm:text-brand-Blue-200 max-sm:p-0 max-sm:w-fit',
                         createAgentAccess ? '' : '!hidden'
                     )}
                 >

@@ -27,7 +27,7 @@ export default function DataActionBar({
                 placeholder={placeholder}
                 onChange={handleSearch}
                 className={
-                    'h-10  px-4 py-3 text-sm w-full rounded-lg 2xl:w-[500px] xl:w-[400px]'
+                    'h-10  px-4 py-3 text-sm w-full rounded-lg 2xl:w-[500px] xl:w-[400px] min-w-[50px]'
                 }
             />
         </div>
