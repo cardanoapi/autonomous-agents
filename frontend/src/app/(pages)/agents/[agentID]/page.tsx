@@ -49,7 +49,7 @@ export default function AgentPageById() {
 
     return (
         <>
-            <Breadcrumb className={'hidden md:flex md:mb-4'}>
+            <Breadcrumb className={'hidden md:mb-4 md:flex'}>
                 <BreadcrumbList>
                     <BreadcrumbItem
                         onClick={() => router.push('/agents')}
@@ -63,7 +63,7 @@ export default function AgentPageById() {
             </Breadcrumb>
             <div
                 className={
-                    'overflow-y-auto flex h-full w-full flex-col gap-4 md:h-[600px] md:flex-row 2xl:h-[700px] 4xl:h-[800px]'
+                    'flex h-full w-full flex-col gap-4 md:h-[600px] md:flex-row 2xl:h-[700px] 4xl:h-[800px] overflow-hidden'
                 }
             >
                 <AgentTabSection
@@ -74,7 +74,7 @@ export default function AgentPageById() {
                     agent={agent}
                     agentLoading={agentLoading}
                     enableEdit={adminAccess || agentOwnerIsUser}
-                    className="h-full w-full overflow-y-auto"
+                    className="h-full w-full overflow-hidden"
                 />
             </div>
         </>

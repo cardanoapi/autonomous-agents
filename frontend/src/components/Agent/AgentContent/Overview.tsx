@@ -57,15 +57,14 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({
     );
 
     return (
-        <div className="flex h-full flex-col gap-10">
-            <HeaderContent>
-                <div className="hidden w-full items-center justify-between bg-white md:flex">
-                    <TextDisplayField
+        <>
+            <HeaderContent className='flex justify-between'>
+                <TextDisplayField
                         title="Agent Name"
                         content={agent?.name}
                         textClassName="text-xl font-semibold"
                     />
-                    {!agent?.is_active && enableControl && (
+                {!agent?.is_active && enableControl && (
                         <Button
                             variant="primary"
                             onClick={handleAgentRun}
@@ -74,12 +73,10 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({
                         >
                             Run Agent
                         </Button>
-                    )}
-                </div>
+                )}
             </HeaderContent>
-
-            <div className={'flex flex-col-reverse gap-8 md:flex-col'}>
-                <div className="flex flex-col gap-8">
+            <div className={'flex flex-col-reverse  md:flex-col h-full w-full overflow-y-scroll justify-end md:justify-start'}>
+                <div className="flex flex-col gap-8 max-md:mt-4">
                     <div className="flex flex-col gap-4">
                         <div className="flex items-center gap-3">
                             {renderCustomCopyBox(
@@ -147,20 +144,20 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({
                             )}
                         </div>
                     </div>
-                    <div>
-                        <TriggerDataBox
+                </div>
+                <TriggerDataBox
                             triggerData={(LogsHistory && LogsHistory.items) || []}
                             lastActive={agent?.last_active}
                             className={'hidden md:flex'}
                         />
-                    </div>
-                </div>
+                <div className='w-full h-[250px] md:h-[550px]'>
                 <AgentHistoryChart
-                    chartClassName="w-full md:h-[550px] h-[220px]"
+                    chartClassName="w-full md:mt-8 "
                     agent={agent}
                 />
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 
@@ -224,7 +221,7 @@ const TriggerDataBox = ({
                 className
             )}
         >
-            <div className="flex flex-col gap-2 ">
+            <div className="flex flex-col gap-2 flex-wrap">
                 <div className="text-sm font-medium text-gray-600">Triggered</div>
                 <div className="text-[10px] text-gray-500 ">Last 24 triggers</div>
                 <div className="flex h-6 w-full gap-[6px]">

@@ -23,6 +23,7 @@ import { cn } from '../../lib/utils';
 import { Skeleton } from '../../shadcn/ui/skeleton';
 import ErrorPlaceholder from '../shared/ErrorPlaceholder';
 import ContentHeader from './ContentHeader';
+import EmptyScreen from '@app/components/molecules/EmptyScreen';
 
 export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
     const statusOptions = ['Success', 'Skipped', 'Failed'];
@@ -81,14 +82,15 @@ export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
     }
     return (
         <div className={'flex h-full w-full flex-col gap-4'}>
-            <ContentHeader>
+            <ContentHeader className='md:flex hidden'>
                 <div className="flex justify-end gap-4 pr-4 ">
                     <AgentFunctionsDropDown
                         onChange={(strVal: string) => {
                             setCurrentFunction(strVal);
                         }}
+                        value={currentFunction === 'None' ? 'Function' : MapFunctionNameAndViewName[currentFunction]}
                     />
-                    <div className="hidden justify-center gap-2 md:flex">
+                    <div className="justify-center gap-2 md:flex">
                         {statusOptions.map((status: string, index) => (
                             <Badge
                                 key={index}
@@ -123,11 +125,8 @@ export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
                       )}
             </div>
             {!loadingLogs && LogsHistory?.items.length === 0 && (
-                <ErrorPlaceholder
-                    className="absolute mt-4 h-full w-full border-0"
-                    title="No Matching logs found"
-                    content="Try changing the filters"
-                    icon={AgentsIcon}
+               <EmptyScreen
+                    msg="No logs found"
                 />
             )}
         </div>
@@ -159,12 +158,16 @@ export const AgentLogCard = ({
     return (
         <div
             className={cn(
-                `flex h-fit flex-row justify-between gap-4 rounded-lg bg-gray-100 px-3 py-4 drop-shadow-sm hover:bg-gray-200 w-full
+                `flex h-fit w-full flex-row justify-between gap-4 rounded-lg bg-gray-100 px-3 py-4 drop-shadow-sm hover:bg-gray-200
                 md:py-2`,
                 className
             )}
         >
-            <div className={'flex w-full flex-col items-start gap-8 md:flex-row flex-wrap lg:flex-nowrap'}>
+            <div
+                className={
+                    'flex w-full flex-col flex-wrap items-start gap-8 md:flex-row lg:flex-nowrap'
+                }
+            >
                 {globalLog && (
                     <div className={'flex items-center gap-3 sm:min-w-[200px]'}>
                         <AgentAvatar
@@ -202,7 +205,7 @@ export const AgentLogCard = ({
                         </span>
                     </div>
                 )}
-                <div className={'flex w-full flex-col items-start gap-2 flex-wrap'}>
+                <div className={'flex w-full flex-col flex-wrap items-start gap-2'}>
                     <div className={'hidde flex flex-row items-center gap-1'}>
                         <span className={'text-sm font-medium'}>
                             {MapFunctionNameAndViewName[history.functionName] ||

@@ -8,8 +8,6 @@ import AgentOverViewComponent from '@app/components/Agent/AgentContent/Overview'
 import { selectedAgentTabAtom } from '@app/store/localStore';
 
 import { cn } from '../../lib/utils';
-import { ScrollArea } from '../../shadcn/ui/scroll-area';
-import { Skeleton } from '../../shadcn/ui/skeleton';
 import AgentFunctionsComponent from '../AgentContent/Functions';
 import AgentLogComponent from '../AgentContent/Logs';
 import AgentSettingsComponent from '../AgentContent/Settings';
@@ -43,30 +41,17 @@ const AgentTabContent = ({
                 );
         }
     }
-    //Logs and History tab have their own Skeleton handled inside the component
+
     return (
         <div
             className={cn(
-                'relative h-full flex-1 rounded-lg bg-white p-6 pb-0 md:p-8',
+                'h-full w-full rounded-lg bg-white p-6  md:p-8 overflow-hidden relative !pb-20',
                 className
             )}
         >
-            <ScrollArea className="w-full md:h-[95%] md:pb-4 md:pr-4 md:pt-10 ">
-                {agentLoading ? (
-                    selectedAgentTab === 'Overview' ||
-                    selectedAgentTab === 'Manual Actions' ||
-                    selectedAgentTab === 'Settings' ? (
-                        <DefaultSkeleton />
-                    ) : null
-                ) : (
-                    getAgentSelectedTabComponent()
-                )}
-            </ScrollArea>
+            {getAgentSelectedTabComponent()}
         </div>
     );
 };
 
-export const DefaultSkeleton = () => {
-    return <Skeleton className="absolute h-full w-full"></Skeleton>;
-};
 export default AgentTabContent;

@@ -1,10 +1,12 @@
 import Link from "next/link"
 import EmptyBoxIcon from "@app/assets/icons/EmptyBoxIcon"
 
-export default function EmptyScreen({msg = "No Data" , linkHref , linkMsg , linkOnCLick} : {msg?: string , linkHref ?: string , linkMsg ?: string , linkOnCLick ?: any}) {
+export default function EmptyScreen({msg = "No Data" , linkHref , linkMsg , linkOnCLick , customIcon} : {msg?: string , linkHref ?: string , linkMsg ?: string , linkOnCLick ?: any , customIcon ?: any}) {
     return (
         <div className="w-full h-full justify-center items-center flex bg-brand-White-100 rounded-lg flex-col">
-            <EmptyBoxIcon/>
+            {
+                customIcon ? customIcon : <EmptyBoxIcon/>
+            }
             <span className="text-base xl:text-xl text-gray-500 font-mono">{msg}</span>
             {
                 linkMsg && linkHref && <Link href={linkHref} className="text-sm text-brand-Blue-200 mt-1 hover:cursor-pointer font-semibold">{linkMsg} </Link>

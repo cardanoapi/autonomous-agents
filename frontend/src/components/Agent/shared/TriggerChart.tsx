@@ -74,13 +74,6 @@ const AgentHistoryChart = ({
         refecthTriggerHistory();
     }, [currentFunction]);
 
-    if (isLoading)
-        return (
-            <div className={'flex h-[500px] w-full flex-col gap-10'}>
-                <Skeleton className={'h-5 w-[300px]'} />
-                <Skeleton className={'h-full w-full'} />
-            </div>
-        );
     return (
         <div
             className={cn(
@@ -88,13 +81,14 @@ const AgentHistoryChart = ({
                 chartClassName
             )}
         >
-            <div className="flex justify-between">
+            <div className="flex justify-between flex-wrap gap-2">
                 <span className="md:title-1 h3 ">Transactions</span>
                 <div className="hidden gap-2 md:flex">
                     <AgentFunctionsDropDown
                         onChange={(stringValue: string) => {
                             setCurrentFunction(stringValue);
                         }}
+                        value={currentFunction === 'None' ? 'Function' : currentFunction}
                     />
                     <DropdownMenu>
                         <DropdownMenuTrigger

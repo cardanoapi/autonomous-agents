@@ -11,6 +11,8 @@ import { errorAtom, selectedFunctionAtom } from '@app/store/atoms/formRenderer';
 
 import ErrorPlaceholder from '../shared/ErrorPlaceholder';
 import ContentHeader from './ContentHeader';
+import EmptyScreen from '@app/components/molecules/EmptyScreen';
+import OflineIcon from '@app/assets/icons/OflineIcon';
 
 const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
     const [openDialog, setOpenDialog] = useState(false);
@@ -34,8 +36,8 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
     };
 
     return (
-        <div className={'flex h-full w-full flex-col gap-2'}>
-            {agent?.is_active && (
+        <>
+            { agent?.is_active &&
                 <>
                     <ContentHeader>
                         <div className={'flex items-center gap-3'}>
@@ -45,7 +47,7 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
                         </div>
                     </ContentHeader>
 
-                    <div className={'flex flex-col gap-12 px-2'}>
+                    <div className={'flex flex-col gap-12 px-2 overflow-y-auto h-full w-full'}>
                         {AvailableFunctions.map((func) => {
                             return (
                                 <div key={func.group} className="flex flex-col gap-4">
@@ -95,7 +97,7 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
                         })}
                     </div>
                 </>
-            )}
+            }
             <Dialog open={openDialog} onOpenChange={handleOpenChange}>
                 <DialogContent
                     className={'!min-w-[650px] !p-0'}
@@ -110,14 +112,9 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
             {(agent?.is_active === false ||
                 agent?.is_active === null ||
                 agent?.is_active === undefined) && (
-                <ErrorPlaceholder
-                    className="absolute h-full w-full border-0 pr-2"
-                    title="Agent seems to be Offline"
-                    content="Run the Agent for Manual Actions."
-                    icon={AgentsIcon}
-                />
+                <EmptyScreen msg='Agent is not active' customIcon={<OflineIcon/>}/>
             )}
-        </div>
+        </>
     );
 };
 

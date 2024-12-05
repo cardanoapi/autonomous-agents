@@ -74,8 +74,8 @@ export default function SideNav({
                     <div className={'flex flex-col gap-y-2 pb-2'}>
                         {!adminAccess && <MyAgentCard onClick={()=>setSideNavOpen(false)}/>}
                         <ConnectedWalletCard onDisconnect={() => {
-                            onDisconnect()
-                            onConnectWallet && logoutUser()
+                            onDisconnect?.()
+                            logoutUser()
                         }}
                            />
                     </div>

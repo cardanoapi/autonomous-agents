@@ -81,7 +81,7 @@ export default function AgentsPage() {
                 isLoading && < Skeleton className='h-full w-full'/>
             }
             {
-                !isLoading && myAgents.length === 0 && (
+                !isLoading && agents && agents.length === 0 && (
                     adminAccess ? (
                     <EmptyScreen msg="No Agents Found" linkHref="/agents/create" linkMsg="Create an Agent to get started" />
                     ) : (
@@ -90,7 +90,7 @@ export default function AgentsPage() {
                 )
                 }
             {
-                !isLoading && myAgents.length > 0 && 
+                !isLoading && agents && agents?.length > 0 && 
                 <div
                     className="overflow-y-auto md:py-4 flex flex-col w-full h-full"
                 >

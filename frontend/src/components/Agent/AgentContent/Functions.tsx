@@ -9,6 +9,7 @@ import { useMutation } from '@tanstack/react-query';
 import { FunctionForm } from '@app/app/(pages)/templates/create-template/components/FunctionForm';
 import { mapFormFunctionToTriggerConfiguration } from '@app/app/(pages)/templates/create-template/components/utils/FunctionMapper';
 import { IFormFunctionInstance } from '@app/app/(pages)/templates/create-template/page';
+import EmptyScreen from '@app/components/molecules/EmptyScreen';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { Button } from '../../atoms/Button';
@@ -72,33 +73,42 @@ export default function AgentFunctionsComponent({
     };
 
     return (
-        <div className="flex h-full flex-col gap-10">
-            <div className="flex flex-col gap-4">
-                <HeaderContent>
-                    <div className="flex w-full items-center justify-between bg-white">
-                        <TextDisplayField
-                            title="Agent Name"
-                            content={'Saved Functions'}
-                            textClassName="text-xl font-semibold"
+        <>
+            <HeaderContent>
+                <div className="flex w-full items-center justify-between bg-white">
+                    <TextDisplayField
+                        title="Agent Name"
+                        content={'Saved Functions'}
+                        textClassName="text-xl font-semibold"
+                    />
+                    {enableControl && (
+                        <Button
+                            variant="primary"
+                            onClick={toggleDialog}
+                            size="sm"
+                            className="min-w-32 px-4"
+                        >
+                            Add Function
+                        </Button>
+                    )}
+                </div>
+            </HeaderContent>
+            {agent &&
+                agent.agent_configurations &&
+                agent?.agent_configurations.length === 0 && (
+                    <EmptyScreen msg="No Functions Found" />
+                )}
+            <div className="grid grid-cols-1 gap-y-4 h-full overflow-auto">
+                {agent &&
+                    agent.agent_configurations &&
+                    agent?.agent_configurations.length > 0 && (
+                        <AgentFunctionsDetailComponent
+                            agentConfigurations={agent?.agent_configurations || []}
+                            onClickDelete={handleDeleteTrigger}
+                            enableContol={enableControl}
+                            agent={agent || undefined}
                         />
-                        {enableControl && (
-                            <Button
-                                variant="primary"
-                                onClick={toggleDialog}
-                                size="sm"
-                                className="min-w-32 px-4"
-                            >
-                                Add Function
-                            </Button>
-                        )}
-                    </div>
-                </HeaderContent>
-                <AgentFunctionsDetailComponent
-                    agentConfigurations={agent?.agent_configurations || []}
-                    onClickDelete={handleDeleteTrigger}
-                    enableContol={enableControl}
-                    agent={agent || undefined}
-                />
+                    )}
             </div>
             <Dialog open={dialogOpen}>
                 <DialogContent className="relative bg-brand-Azure-400 !p-0">
@@ -127,6 +137,6 @@ export default function AgentFunctionsComponent({
                     />
                 </DialogContent>
             </Dialog>
-        </div>
+        </>
     );
 }

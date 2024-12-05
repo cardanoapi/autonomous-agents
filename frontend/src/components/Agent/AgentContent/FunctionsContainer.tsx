@@ -68,28 +68,17 @@ const AgentFunctionsDetailComponent = ({
     };
 
     return (
-        <div className="flex h-full flex-col gap-2">
-            <div className="flex items-center gap-4"></div>
-            <div className="flex flex-row flex-wrap gap-6 justify-center">
-                {!agentConfigurations?.length ? (
-                    <ErrorPlaceholder
-                        title="No Functions"
-                        content="Agent seems to have no functions configured."
-                        icon={OctagonAlert}
-                        className="absolute h-full w-full border-0"
+        <>
+            {agentConfigurations &&
+                agentConfigurations.map((config, index) => (
+                    <FunctionCardWithMeta
+                        config={config}
+                        onClickDelete={onClickDelete}
+                        enableContol={enableContol}
+                        handleClickEdit={handleClickEdit}
+                        key={index}
                     />
-                ) : (
-                    agentConfigurations.map((config, index) => (
-                        <FunctionCardWithMeta
-                            config={config}
-                            onClickDelete={onClickDelete}
-                            enableContol={enableContol}
-                            handleClickEdit={handleClickEdit}
-                            key={index}
-                        />
-                    ))
-                )}
-            </div>
+                ))}
             {currentFunction && (
                 <Dialog open={openDialog}>
                     <DialogContent className="!p-0">
@@ -106,7 +95,7 @@ const AgentFunctionsDetailComponent = ({
                     </DialogContent>
                 </Dialog>
             )}
-        </div>
+        </>
     );
 };
 
