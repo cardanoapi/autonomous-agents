@@ -18,8 +18,8 @@ import { Textarea } from '@app/components/atoms/Textarea';
 import { Label } from '@app/components/atoms/label';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
-import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
+import { useMediaQuery } from '@mui/material';
 
 import {
     AddFunctionDialog,
@@ -40,6 +40,7 @@ const TemplateOverview = ({
     const [addFunctionDialogOpen, setAddFunctionDialogOpen] = useState(false);
     const [deleteFunctionDialogOpen, setDeleteFunctionDialogOpen] = useState(false);
     const [templateDataCopy, setTemplateDataCopy] = useState<ITemplate>(template);
+    const isMobile = useMediaQuery('(max-width: 600px)');
 
     const [deleteIndex, setDeleteIndex] = useState(0);
 
@@ -218,7 +219,7 @@ const TemplateOverview = ({
                 </div>
             </div>
             {enableEdit && (
-                <div className="absolute top-2 right-0">
+                <div className="">
                     <EditBtns
                         isEditing={isEditing}
                         onSave={handleSaveTemplate}
@@ -232,17 +233,20 @@ const TemplateOverview = ({
                 toggleDialog={toggleDialog}
                 currentFunction={currentFunction}
                 handleFunctionUpdate={handleFunctionUpdate}
+                fullScreen={isMobile}
             />
             <AddFunctionDialog
                 dialogOpen={addFunctionDialogOpen}
                 toggleDialog={toggleAddFunctionDialog}
                 handleAddNewFunction={handleAddNewFunction}
+                fullScreen={isMobile}
             />
             <DeleteFunctionDialog
                 dialogOpen={deleteFunctionDialogOpen}
                 toggleDialog={toggleDeleteFunctionDialog}
                 deleteIndex={deleteIndex}
                 handleFunctionDelete={handleFunctionDelete}
+                fullScreen={isMobile}
             />
         </div>
     );

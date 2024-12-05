@@ -3,19 +3,22 @@ import { Dialog, DialogContent } from '@mui/material';
 import { FunctionForm } from '@app/app/(pages)/templates/create-template/components/FunctionForm';
 
 import ConfirmationBox from '../../molecules/ConfirmationBox';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const UpdateFunctionDialog = ({
     dialogOpen,
     currentFunction,
     toggleDialog,
-    handleFunctionUpdate
+    handleFunctionUpdate,
+    fullScreen = false
 }: {
     dialogOpen: boolean;
     currentFunction: any;
     toggleDialog: () => void;
     handleFunctionUpdate: (functionItem: any) => void;
+    fullScreen? : boolean
 }) => (
-    <Dialog open={dialogOpen}>
+    <Dialog open={dialogOpen} fullScreen={fullScreen}>
         <DialogContent className="!p-0">
             {currentFunction && (
                 <FunctionForm
@@ -33,13 +36,15 @@ const UpdateFunctionDialog = ({
 const AddFunctionDialog = ({
     dialogOpen,
     toggleDialog,
+    fullScreen = false,
     handleAddNewFunction
 }: {
     dialogOpen: boolean;
     toggleDialog: () => void;
     handleAddNewFunction: (functionItem: any) => void;
+    fullScreen?: boolean;
 }) => (
-    <Dialog open={dialogOpen}>
+    <Dialog open={dialogOpen} fullScreen={fullScreen}>
         <DialogContent className="!p-0">
             <FunctionForm
                 renderFunctionSelector={true}
@@ -56,14 +61,15 @@ const DeleteFunctionDialog = ({
     dialogOpen,
     deleteIndex,
     toggleDialog,
-    handleFunctionDelete
+    handleFunctionDelete,
 }: {
     dialogOpen: boolean;
     deleteIndex: number;
     toggleDialog: () => void;
     handleFunctionDelete: (index: number) => void;
+    fullScreen?: boolean
 }) => (
-    <Dialog open={dialogOpen}>
+    <Dialog open={dialogOpen} >
         <DialogContent>
             <ConfirmationBox
                 onAccept={() => handleFunctionDelete(deleteIndex)}

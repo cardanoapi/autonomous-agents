@@ -49,7 +49,6 @@ const EditTemplateCard = () => {
                 )}
             </div>
             <div>
-
             </div>
         </>
     );
