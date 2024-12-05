@@ -58,7 +58,7 @@ interface IFormData {
 
 export default function CreateTemplatePage() {
     const router = useRouter();
-    const isFullScreen = useMediaQuery('(max-width:600px)');
+    const isMobile = useMediaQuery('(max-width:600px)');
     const [submittingForm, setSubmittingForm] = useState(false);
     const [, setTemplateCreated] = useAtom(templateCreatedAtom);
 
@@ -235,7 +235,7 @@ export default function CreateTemplatePage() {
             {/*Dialog for function form*/}
             <Dialog
                 open={isDialogOpen}
-                fullScreen={isFullScreen}
+                fullScreen={isMobile}
             >
                 <DialogContent className="!p-0">
                     {currentSelectedFunction && (

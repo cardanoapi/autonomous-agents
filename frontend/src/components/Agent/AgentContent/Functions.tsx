@@ -4,6 +4,7 @@ import { IAgent } from '@api/agents';
 import { ITriggerCreateDto, deleteTrigger } from '@api/trigger';
 import { postTrigger } from '@api/trigger';
 import { Dialog, DialogContent } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { useMutation } from '@tanstack/react-query';
 
 import { FunctionForm } from '@app/app/(pages)/templates/create-template/components/FunctionForm';
@@ -29,6 +30,7 @@ export default function AgentFunctionsComponent({
     const [dialogOpen, setDialogOpen] = useState(false);
     const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
     const [triggerID, setTriggerID] = useState('');
+    const isMobile = useMediaQuery('(max-width: 600px)');
 
     const toggleDialog = () => {
         setDialogOpen(!dialogOpen);
@@ -98,7 +100,7 @@ export default function AgentFunctionsComponent({
                 agent?.agent_configurations.length === 0 && (
                     <EmptyScreen msg="No Functions Found" />
                 )}
-            <div className="grid grid-cols-1 gap-y-4 h-full overflow-auto">
+            <div className="grid w-fit gap-x-4 grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-y-4 overflow-auto">
                 {agent &&
                     agent.agent_configurations &&
                     agent?.agent_configurations.length > 0 && (
@@ -110,7 +112,7 @@ export default function AgentFunctionsComponent({
                         />
                     )}
             </div>
-            <Dialog open={dialogOpen}>
+            <Dialog open={dialogOpen} fullScreen={isMobile}>
                 <DialogContent className="relative bg-brand-Azure-400 !p-0">
                     <FunctionForm
                         onClose={toggleDialog}

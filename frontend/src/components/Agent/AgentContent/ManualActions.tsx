@@ -98,9 +98,9 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
                     </div>
                 </>
             }
-            <Dialog open={openDialog} onOpenChange={handleOpenChange}>
+            <Dialog open={openDialog} onOpenChange={handleOpenChange} >
                 <DialogContent
-                    className={'!min-w-[650px] !p-0'}
+                    className={'md:!min-w-[650px] !p-0 max-md:w-full max-sm:h-full overflow-hidden'}
                     onClickCloseIcon={() => handleOnClickCloseIcon()}
                 >
                     <FormRenderer

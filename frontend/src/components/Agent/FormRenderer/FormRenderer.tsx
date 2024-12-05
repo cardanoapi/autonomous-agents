@@ -80,11 +80,10 @@ const FormRenderer = ({
     }
 
     return (
-        <div className={'h-full max-h-[680px] w-full overflow-auto'}>
+        <div className={'h-full md:max-h-[680px] w-full'}>
             <div className={'px-6 py-2 text-lg font-medium'}>Manual Trigger</div>
-            <Separator className={''} />
-            <ScrollArea className={'h-modalHeight overflow-y-auto'}>
-                <div className={'flex flex-col gap-4 px-6 py-2'}>
+             <Separator className={''} />
+            <div className={'flex flex-col gap-4 px-6 py-2'}>
                     <div className={'flex flex-col gap-1'}>
                         <span className={'font-medium text-brand-Black-300'}>
                             {selectedFunction?.name}
@@ -109,8 +108,7 @@ const FormRenderer = ({
                             Trigger
                         </Button>
                     </div>
-                </div>
-            </ScrollArea>
+            </div> 
         </div>
     );
 };

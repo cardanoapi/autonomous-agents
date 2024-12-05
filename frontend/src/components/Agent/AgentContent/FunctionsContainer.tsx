@@ -19,8 +19,8 @@ import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { SuccessToast } from '../../molecules/CustomToasts';
 import { ErrorToast } from '../../molecules/CustomToasts';
-import ErrorPlaceholder from '../shared/ErrorPlaceholder';
 import FunctionCardWithMeta from '../shared/FunctionCardWithMeta';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const AgentFunctionsDetailComponent = ({
     agent,
@@ -67,6 +67,8 @@ const AgentFunctionsDetailComponent = ({
         }
     };
 
+    const isMobile = useMediaQuery('(max-width: 600px)');
+
     return (
         <>
             {agentConfigurations &&
@@ -80,7 +82,7 @@ const AgentFunctionsDetailComponent = ({
                     />
                 ))}
             {currentFunction && (
-                <Dialog open={openDialog}>
+                <Dialog open={openDialog} fullScreen={isMobile}>
                     <DialogContent className="!p-0">
                         <FunctionForm
                             currentFunction={currentFunction}
