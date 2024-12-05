@@ -22,7 +22,7 @@ function getClassName(view: ModalViewType) {
     switch (view) {
         case 'AgentManualTriggerView':
         case 'AgentRunnerView':
-            return 'w-full md:!min-w-[600px]';
+            return 'w-full md:!min-w-[600px] overflow-hidden flex ';
         default:
             return <></>;
     }
@@ -33,7 +33,7 @@ const ModalContainer = () => {
     return (
         <Dialog open={isOpen} onOpenChange={() => closeModal()}>
             <DialogContent
-                className={`max-w-none !p-0 ${getClassName(view)} w-fit`}
+                className={`max-w-none !p-0 ${getClassName(view)} w-fit max-sm:w-[95vw] `}
                 onClickCloseIcon={() => closeModal()}
             >
                 {getRenderComponent(view, modalProps)}
