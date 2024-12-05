@@ -49,7 +49,13 @@ const AgentTabContent = ({
                 className
             )}
         >
-            {getAgentSelectedTabComponent()}
+            {agentLoading ? (
+                <div className='flex h-full w-full items-center justify-center'>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-Blue-200"></div>
+                </div>
+            ) : (
+                getAgentSelectedTabComponent()
+            )}
         </div>
     );
 };

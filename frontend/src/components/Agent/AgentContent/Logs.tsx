@@ -108,22 +108,9 @@ export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
                     </div>
                 </div>
             </ContentHeader>
-            <div className="grid grid-cols-1 gap-2 md:mt-4">
-                {loadingLogs
-                    ? Array.from({ length: 50 }).map((_, index) => (
-                          <AgentLogCardSkeleton key={index} />
-                      ))
-                    : LogsHistory?.items.length > 0 &&
-                      LogsHistory.items.map(
-                          (history: IAgentTriggerHistory, index: number) => (
-                              <AgentLogCard
-                                  history={history}
-                                  key={index}
-                                  className="bg-gray-100"
-                              />
-                          )
-                      )}
-            </div>
+            {loadingLogs && (
+                <Skeleton className='w-full h-full'/>
+            )}
             {!loadingLogs && LogsHistory?.items.length === 0 && (
                <EmptyScreen
                     msg="No logs found"
