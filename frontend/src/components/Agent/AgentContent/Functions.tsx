@@ -100,18 +100,18 @@ export default function AgentFunctionsComponent({
                 agent?.agent_configurations.length === 0 && (
                     <EmptyScreen msg="No Functions Found" />
                 )}
-            <div className="grid w-fit grid-cols-1 gap-6 overflow-auto xl:grid-cols-2  2xl:grid-cols-3">
-                {agent &&
-                    agent.agent_configurations &&
-                    agent?.agent_configurations.length > 0 && (
+            {agent &&
+                agent.agent_configurations &&
+                agent?.agent_configurations.length > 0 && (
+                    <div className="grid h-full w-fit grid-cols-1 gap-6 overflow-auto xl:grid-cols-2  2xl:grid-cols-3">
                         <AgentFunctionsDetailComponent
                             agentConfigurations={agent?.agent_configurations || []}
                             onClickDelete={handleDeleteTrigger}
                             enableContol={enableControl}
                             agent={agent || undefined}
                         />
-                    )}
-            </div>
+                    </div>
+                )}
             <Dialog open={dialogOpen} fullScreen={isMobile}>
                 <DialogContent className="relative bg-brand-Azure-400 !p-0">
                     <FunctionForm
