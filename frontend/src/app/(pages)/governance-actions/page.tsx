@@ -95,7 +95,7 @@ export default function GovernanceAction() {
                 )}
             {!isLoading &&
                 data?.items?.length === 0 &&
-                searchParams.proposal_type === 'external' && (
+                searchParams.proposal_type !== 'internal' && (
                     <EmptyScreen msg="No External Proposals Found" />
                 )}
             {isLoading && <Skeleton className="h-full w-full"></Skeleton>}

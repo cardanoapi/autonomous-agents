@@ -98,7 +98,9 @@ export default function DRepDirectory() {
 
             {!isLoading &&
                 data?.items?.length === 0 &&
-                queryParams.drep_type === 'all' && <EmptyScreen msg="No Dreps Found" />}
+                queryParams.drep_type !== 'internal' && (
+                    <EmptyScreen msg="No Dreps Found" />
+                )}
             {isLoading && <Skeleton className="h-full w-full" />}
             <div
                 className={cn(
