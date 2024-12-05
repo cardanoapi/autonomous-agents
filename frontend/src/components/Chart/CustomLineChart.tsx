@@ -61,6 +61,16 @@ export default function CustomLineChart({
 
     const isMobile = useMediaQuery('(max-width: 600px)');
 
+    const getInterval = (x: number) => {
+        if (x < 10) {
+            return 1;
+        }
+        if (x < 30) {
+            return 5;
+        }
+        return 10;
+    };
+
     return (
         <ResponsiveContainer>
             <AreaChart data={chartData} className={cn(className , 'm-0 m-l-[-16] ml-[-16px] md:ml-0')}>
@@ -132,7 +142,7 @@ export default function CustomLineChart({
                         dx={-25}
                         fill="#2196F3"
                         stroke="#A2A3A5"
-                        interval={isMobile ? 1 : xaxisInterval}
+                        interval={isMobile ? getInterval(chartData?.length || 1) : xaxisInterval}
                         reversed={true}
                         className={"text-[10px] xl:text-lg"}
                     ></XAxis>
