@@ -84,7 +84,7 @@ Transaction Volume
                         <DropdownMenu>
                             <DropdownMenuTrigger
                                 border={true}
-                                className="hidden min-w-40 justify-between md:flex"
+                                className="md:min-w-40 justify-between md:flex max-md:text-xs max-md:mr-1"
                             >
                                 {dataSources[currentChartFilterOption].placeholder}
                             </DropdownMenuTrigger>
