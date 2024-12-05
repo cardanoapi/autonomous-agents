@@ -13,8 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import CustomTooltip from './CustomTooltip';
 import {cn} from '@app/components/lib/utils'
-
-// Import the UUID library
+import { useMediaQuery } from 'usehooks-ts';
 
 export interface ILineChartData {
     name: string;
@@ -59,6 +58,8 @@ export default function CustomLineChart({
     positionXToolTip?: number;
 }) {
     const uniqueId = uuidv4(); // Generate a unique ID for this chart instance
+
+    const isMobile = useMediaQuery('(max-width: 600px)');
 
     return (
         <ResponsiveContainer>
@@ -131,7 +132,7 @@ export default function CustomLineChart({
                         dx={-25}
                         fill="#2196F3"
                         stroke="#A2A3A5"
-                        interval={xaxisInterval}
+                        interval={isMobile ? 1 : xaxisInterval}
                         reversed={true}
                         className={"text-[10px] xl:text-lg"}
                     ></XAxis>
