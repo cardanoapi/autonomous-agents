@@ -1,25 +1,19 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+
 import { fetchProposals } from '@api/proposals';
 import { QUERY_KEYS } from '@consts';
 import { useQuery } from '@tanstack/react-query';
-import { useInView } from 'react-intersection-observer';
 
 import DataActionBar from '@app/app/components/DataActionBar';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from '@app/components/atoms/DropDownMenu';
+import { cn } from '@app/components/lib/utils';
 import EmptyScreen from '@app/components/molecules/EmptyScreen';
 import PaginationBtns from '@app/components/molecules/PaginationBtns';
 import { Tabs, TabsList, TabsTrigger } from '@app/components/molecules/Tabs';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
 import ProposalCard from './components/proposalCard';
-import { Skeleton } from '@app/components/shadcn/ui/skeleton';
-import {cn} from '@app/components/lib/utils'
 
 interface IProposalFilterOption {
     placeholder: string;
@@ -32,8 +26,6 @@ const proposalFilterOptions: IProposalFilterOption[] = [
 ];
 
 export default function GovernanceAction() {
-    const { ref } = useInView();
-
     const [searchParams, setSearchParams] = useState({
         page: 1,
         pageSize: 10,
@@ -83,18 +75,10 @@ export default function GovernanceAction() {
                 setSearchParams={setSearchParams}
                 searchParams={searchParams}
                 proposalFilterOptions={proposalFilterOptions}
-                rowOptions={rowOptions}
-                dropDoenMenuItemONClick={(row: number) =>
-                    setSearchParams((prev) => ({
-                        ...prev,
-                        pageSize: row,
-                        page: 1
-                    }))
-                }
             />
 
             {!isLoading && data?.items && data?.items?.length > 0 && (
-                <div className="grid h-full w-full grid-flow-row grid-cols-1 overflow-y-auto py-4 sm:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5 gap-8">
+                <div className="grid h-full w-full grid-flow-row grid-cols-1 gap-8 overflow-y-auto py-4 sm:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5">
                     {data?.items?.map((proposal: any) => (
                         <ProposalCard key={proposal.id} proposal={proposal} />
                     ))}
@@ -114,25 +98,25 @@ export default function GovernanceAction() {
                 searchParams.proposal_type === 'external' && (
                     <EmptyScreen msg="No External Proposals Found" />
                 )}
-            {
-                isLoading && (
-                    <Skeleton className='w-full h-full'></Skeleton>
-                )
-            }
-            <div className={cn("flex flex-row-reverse" , data?.items?.length === 0 && "hidden")}>
+            {isLoading && <Skeleton className="h-full w-full"></Skeleton>}
+            <div
+                className={cn(
+                    'flex flex-row-reverse',
+                    data?.items?.length === 0 && 'hidden'
+                )}
+            >
                 <PaginationBtns
                     upperLimit={totalPage}
                     onPaginate={handlePaginationChange}
                     refCurrentPage={searchParams.page}
                     rowOptions={rowOptions}
-                    rowsLabel='Proposals per page'
-                    onRowClick={
-                        (row: number) =>
-                            setSearchParams((prev) => ({
-                                ...prev,
-                                pageSize: row,
-                                page: 1
-                            }))
+                    rowsLabel="Proposals per page"
+                    onRowClick={(row: number) =>
+                        setSearchParams((prev) => ({
+                            ...prev,
+                            pageSize: row,
+                            page: 1
+                        }))
                     }
                     rowsPerPage={searchParams.pageSize}
                 />
@@ -145,17 +129,13 @@ const GovActionTopNav = ({
     handleSearch,
     handleFilterChange,
     searchParams,
-    proposalFilterOptions,
-    rowOptions,
-    dropDoenMenuItemONClick
+    proposalFilterOptions
 }: {
     handleSearch: (searchValue: string) => void;
     handleFilterChange: (filter: string) => void;
     setSearchParams: (params: any) => void;
     searchParams: any;
     proposalFilterOptions: IProposalFilterOption[];
-    rowOptions: number[];
-    dropDoenMenuItemONClick?: any;
 }) => {
     return (
         <div className="flex w-full flex-wrap items-center justify-between gap-y-4">

@@ -2,8 +2,8 @@ import { IAgentConfiguration, ICronTrigger } from '@api/agents';
 import { ITemplateConfiguration } from '@api/templates';
 import { TemplateFunctions } from '@models/types/functions';
 import { Edit, Trash2 } from 'lucide-react';
-import {cn} from '@app/components/lib/utils'
 
+import { cn } from '@app/components/lib/utils';
 import { convertCRONExpressionToReadableForm } from '@app/utils/dateAndTimeUtils';
 
 import CustomCopyBox from '../shared/CustomCopyBox';
@@ -19,7 +19,7 @@ const FunctionCardWithMeta = ({
     onClickDelete?: (configId: string) => void;
     enableContol?: boolean;
     handleClickEdit?: (config: IAgentConfiguration | ITemplateConfiguration) => void;
-    className?: string
+    className?: string;
 }) => {
     const getFunctionMetaData = (functionName: string) => {
         return TemplateFunctions.find((f) => f.id === functionName);
@@ -46,7 +46,10 @@ const FunctionCardWithMeta = ({
 
     return (
         <div
-            className={cn("group relative flex w-full flex-col flex-wrap justify-between gap-2 rounded bg-brand-White-200 p-3 drop-shadow-md md:w-[300px] max-h-[300px]" , className)}
+            className={cn(
+                'group relative flex max-h-[300px] w-full flex-col flex-wrap justify-between gap-2 rounded bg-brand-White-200 p-3 drop-shadow-md md:w-[300px]',
+                className
+            )}
             key={`${config.id}`}
         >
             {enableContol && (

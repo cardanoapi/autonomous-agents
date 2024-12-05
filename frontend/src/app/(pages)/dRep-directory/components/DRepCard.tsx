@@ -81,7 +81,7 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
     return (
         <>
             <div
-                className={`shadow-xs flex flex-wrap w-full rounded-lg border !border-none bg-white p-4 md:items-center md:justify-between ${isDataMissing && 'shadow-bg-red-100 bg-red-100/40'} flex-col items-start justify-start gap-y-4 md:flex-row`}
+                className={`shadow-xs flex w-full flex-wrap rounded-lg border !border-none bg-white p-4 md:items-center md:justify-between ${isDataMissing && 'shadow-bg-red-100 bg-red-100/40'} flex-col items-start justify-start gap-y-4 md:flex-row`}
             >
                 <div className="flex flex-col gap-y-4 space-x-0 sm:space-x-6 md:flex-row md:space-x-4 xl:space-x-12 2xl:space-x-10 4xl:space-x-20 ">
                     <div className="flex flex-col space-y-2 ">

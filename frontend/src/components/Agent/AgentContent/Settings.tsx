@@ -97,7 +97,7 @@ export default function AgentSettingsComponent({
 
     return (
         <>
-            <div className="flex w-full md:w-[60%] flex-col ">
+            <div className="flex w-full flex-col md:w-[60%] ">
                 <ContentHeader>
                     <div className="flex items-center gap-2">
                         <span className="h1">Saved Settings</span>
@@ -115,7 +115,7 @@ export default function AgentSettingsComponent({
                         }
                     />
                 </div>
-                <div className="flex flex-col gap-2 mt-4">
+                <div className="mt-4 flex flex-col gap-2">
                     <Label>Agent Instance</Label>
                     <NumberInput
                         value={agentData.instance}
@@ -127,7 +127,7 @@ export default function AgentSettingsComponent({
                         min={1}
                     />
                 </div>
-                <div className="flex flex-col gap-2 mt-4">
+                <div className="mt-4 flex flex-col gap-2">
                     <Label>Secret Key</Label>
                     <div className="flex items-center gap-2">
                         <Input
@@ -154,7 +154,7 @@ export default function AgentSettingsComponent({
                 </div>
             </div>
             {enableControl && (
-                <div className="absolute right-4 bottom-4">
+                <div className="absolute bottom-4 right-4">
                     {isEditing ? (
                         <div className="flex items-center gap-2">
                             <Button

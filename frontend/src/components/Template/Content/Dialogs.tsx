@@ -3,7 +3,6 @@ import { Dialog, DialogContent } from '@mui/material';
 import { FunctionForm } from '@app/app/(pages)/templates/create-template/components/FunctionForm';
 
 import ConfirmationBox from '../../molecules/ConfirmationBox';
-import useMediaQuery from '@mui/material/useMediaQuery';
 
 const UpdateFunctionDialog = ({
     dialogOpen,
@@ -16,7 +15,7 @@ const UpdateFunctionDialog = ({
     currentFunction: any;
     toggleDialog: () => void;
     handleFunctionUpdate: (functionItem: any) => void;
-    fullScreen? : boolean
+    fullScreen?: boolean;
 }) => (
     <Dialog open={dialogOpen} fullScreen={fullScreen}>
         <DialogContent className="!p-0">
@@ -61,15 +60,15 @@ const DeleteFunctionDialog = ({
     dialogOpen,
     deleteIndex,
     toggleDialog,
-    handleFunctionDelete,
+    handleFunctionDelete
 }: {
     dialogOpen: boolean;
     deleteIndex: number;
     toggleDialog: () => void;
     handleFunctionDelete: (index: number) => void;
-    fullScreen?: boolean
+    fullScreen?: boolean;
 }) => (
-    <Dialog open={dialogOpen} >
+    <Dialog open={dialogOpen}>
         <DialogContent>
             <ConfirmationBox
                 onAccept={() => handleFunctionDelete(deleteIndex)}

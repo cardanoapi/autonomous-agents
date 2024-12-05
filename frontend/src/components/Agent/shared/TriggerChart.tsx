@@ -13,7 +13,6 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
-import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
 import { IChartFilterOption, chartFilterOptions } from '../../Chart/ChartFilter';
 import { convertDictToGraphDataFormat } from '../../Chart/ChartFilter';
@@ -33,11 +32,7 @@ const AgentHistoryChart = ({
     const [chartDataSource, setChartDataSource] = useState<
         { count: number; values: Record<string, number> }[]
     >([]);
-    const {
-        data: triggerHistoryMetric,
-        isLoading: isLoading,
-        refetch: refecthTriggerHistory
-    } = useQuery({
+    const { data: triggerHistoryMetric, refetch: refecthTriggerHistory } = useQuery({
         queryKey: [`${agent?.id}TriggerHistoryMetric`],
         queryFn: () =>
             fecthTriggerHistoryMetric(
@@ -81,14 +76,16 @@ const AgentHistoryChart = ({
                 chartClassName
             )}
         >
-            <div className="flex justify-between flex-wrap gap-2">
+            <div className="flex flex-wrap justify-between gap-2">
                 <span className="md:title-1 h3 ">Transactions</span>
                 <div className="hidden gap-2 md:flex">
                     <AgentFunctionsDropDown
                         onChange={(stringValue: string) => {
                             setCurrentFunction(stringValue);
                         }}
-                        value={currentFunction === 'None' ? 'Function' : currentFunction}
+                        value={
+                            currentFunction === 'None' ? 'Function' : currentFunction
+                        }
                     />
                     <DropdownMenu>
                         <DropdownMenuTrigger

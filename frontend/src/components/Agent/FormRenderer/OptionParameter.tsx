@@ -42,7 +42,7 @@ const OptionsParameter = ({
                     defaultValue={
                         parameter && parameter.options ? parameter.options[0].name : ''
                     }
-                    onSelect={(optionName) => {
+                    onSelect={(optionName: string) => {
                         const option = parameter.options!.find(
                             (item) => item.name === optionName
                         );

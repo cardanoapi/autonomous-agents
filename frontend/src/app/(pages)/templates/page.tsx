@@ -8,6 +8,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
+import EmptyScreen from '@app/components/molecules/EmptyScreen';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import {
     adminAccessAtom,
     currentConnectedWalletAtom,
@@ -16,9 +18,7 @@ import {
 import { IQueryParams } from '@app/utils/query';
 
 import TemplateList from './components/TemplateList';
-import TemplatesTopNav, { TemplatesTopNavSkeleton } from './components/TemplatesTopNav';
-import EmptyScreen from '@app/components/molecules/EmptyScreen';
-import { Skeleton } from '@app/components/shadcn/ui/skeleton';
+import TemplatesTopNav from './components/TemplatesTopNav';
 
 const TemplatesPage = () => {
     const [templateCreated, setTemplateCreated] = useAtom(templateCreatedAtom);
@@ -47,32 +47,30 @@ const TemplatesPage = () => {
         setQueryParams((prev) => ({ ...prev, search: value, page: 1 }));
     };
 
-
     return (
         <>
-            <TemplatesTopNav
-                    onSearch={handleSearch}
-                    templatesCount={templates.length}
-                    adminAccess={adminAccess}
-             />  
-        {
-            isLoading && <Skeleton className="h-full w-full" />
-        }
-        {
-            !isLoading &&  templates.length === 0 && (
-                adminAccess ? ( <EmptyScreen msg='No Templates Found' linkMsg='Create a Template to get started' linkHref='/templates/create-template'/>) :
-                (<EmptyScreen msg="No Templates Found"/>))
-        }
-        {
-            !isLoading &&  templates.length > 0 &&
-            <div className={"w-full h-full flex flex-col overflow-y-auto "}>
-                <TemplateList
-                    templates={templates}
-                    adminAccess={adminAccess}
-                    currentConnectedWallet={currentConnectedWallet}
-                />
-            </div>
-        }
+            <TemplatesTopNav onSearch={handleSearch} adminAccess={adminAccess} />
+            {isLoading && <Skeleton className="h-full w-full" />}
+            {!isLoading &&
+                templates.length === 0 &&
+                (adminAccess ? (
+                    <EmptyScreen
+                        msg="No Templates Found"
+                        linkMsg="Create a Template to get started"
+                        linkHref="/templates/create-template"
+                    />
+                ) : (
+                    <EmptyScreen msg="No Templates Found" />
+                ))}
+            {!isLoading && templates.length > 0 && (
+                <div className={'flex h-full w-full flex-col overflow-y-auto '}>
+                    <TemplateList
+                        templates={templates}
+                        adminAccess={adminAccess}
+                        currentConnectedWallet={currentConnectedWallet}
+                    />
+                </div>
+            )}
         </>
     );
 };

@@ -9,11 +9,12 @@ import {
     XAxis,
     YAxis
 } from 'recharts';
+import { useMediaQuery } from 'usehooks-ts';
 import { v4 as uuidv4 } from 'uuid';
 
+import { cn } from '@app/components/lib/utils';
+
 import CustomTooltip from './CustomTooltip';
-import {cn} from '@app/components/lib/utils'
-import { useMediaQuery } from 'usehooks-ts';
 
 export interface ILineChartData {
     name: string;
@@ -73,7 +74,10 @@ export default function CustomLineChart({
 
     return (
         <ResponsiveContainer>
-            <AreaChart data={chartData} className={cn(className , 'm-0 m-l-[-16] ml-[-16px] md:ml-0')}>
+            <AreaChart
+                data={chartData}
+                className={cn(className, 'm-l-[-16] m-0 ml-[-16px] md:ml-0')}
+            >
                 <defs>
                     <linearGradient
                         id={`colorUv-${uniqueId}`}
@@ -110,7 +114,7 @@ export default function CustomLineChart({
                         tickLine={false}
                         stroke="#A2A3A5"
                         allowDecimals={false}
-                        className={"text-[10px] md:text-lg"}
+                        className={'text-[10px] md:text-lg'}
                     />
                 )}
                 {renderToolTip && (
@@ -142,9 +146,13 @@ export default function CustomLineChart({
                         dx={-25}
                         fill="#2196F3"
                         stroke="#A2A3A5"
-                        interval={isMobile ? getInterval(chartData?.length || 1) : xaxisInterval}
+                        interval={
+                            isMobile
+                                ? getInterval(chartData?.length || 1)
+                                : xaxisInterval
+                        }
                         reversed={true}
-                        className={"text-[10px] xl:text-lg"}
+                        className={'text-[10px] xl:text-lg'}
                     ></XAxis>
                 )}
             </AreaChart>

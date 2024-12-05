@@ -42,14 +42,13 @@ const EditTemplateCard = () => {
     return (
         <>
             <TemplateBreadCrumb templateName={template?.name} />
-            <div className="h-full w-full rounded-lg bg-white p-8 md:max-w-agentComponentWidth overflow-y-auto">
+            <div className="h-full w-full overflow-y-auto rounded-lg bg-white p-8 md:max-w-agentComponentWidth">
                 {templateLoading && <Skeleton className=" h-full w-full" />}
                 {template && (
                     <TemplateOverview template={template} enableEdit={adminAccess} />
                 )}
             </div>
-            <div>
-            </div>
+            <div></div>
         </>
     );
 };
@@ -57,20 +56,20 @@ const EditTemplateCard = () => {
 const TemplateBreadCrumb = ({ templateName }: { templateName?: string }) => {
     const router = useRouter();
     return (
-            <Breadcrumb>
-                <BreadcrumbList>
-                    <BreadcrumbItem
-                        onClick={() => router.push('/templates')}
-                        className="hover:cursor-pointer hover:text-brand-Blue-200"
-                    >
-                        Templates
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                        {Truncate(templateName || '', 30) || 'Template Name'}
-                    </BreadcrumbItem>
-                </BreadcrumbList>
-            </Breadcrumb>
+        <Breadcrumb>
+            <BreadcrumbList>
+                <BreadcrumbItem
+                    onClick={() => router.push('/templates')}
+                    className="hover:cursor-pointer hover:text-brand-Blue-200"
+                >
+                    Templates
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                    {Truncate(templateName || '', 30) || 'Template Name'}
+                </BreadcrumbItem>
+            </BreadcrumbList>
+        </Breadcrumb>
     );
 };
 

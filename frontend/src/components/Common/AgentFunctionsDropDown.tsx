@@ -26,7 +26,7 @@ export default function AgentFunctionsDropDown({
         queryFn: fetchFunctions
     });
 
-    const [currentFunction, setCurrentFunction] = useState('None');
+    const [currentFunction, setCurrentFunction] = useState('All');
 
     return (
         <DropdownMenu>
@@ -34,9 +34,9 @@ export default function AgentFunctionsDropDown({
                 border={true}
                 className={cn('flex w-72 justify-between', className)}
             >
-                {value}
+                {value || currentFunction}
             </DropdownMenuTrigger>
-            
+
             <DropdownMenuContent className="bg-white">
                 <DropdownMenuItem
                     onClick={() => {

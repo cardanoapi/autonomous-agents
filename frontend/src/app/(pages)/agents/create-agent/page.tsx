@@ -47,7 +47,7 @@ export default function CreateAgentForm() {
                     (item: ITemplate): IOption => ({
                         label: item.name,
                         value: item.id,
-                        description : item.description
+                        description: item.description
                     })
                 )
             );
@@ -92,7 +92,7 @@ export default function CreateAgentForm() {
             <form onSubmit={form.handleSubmit(onSubmit)}>
                 <Card
                     className={cn(
-                        'flex lg:min-h-[493px] lg:w-[780px] flex-col justify-between max-md:p-6 max-md:py-4 max-md:pb-8',
+                        'flex flex-col justify-between max-md:p-6 max-md:py-4 max-md:pb-8 lg:min-h-[493px] lg:w-[780px]',
                         selected.length === 0 ? 'pb-24' : ''
                     )}
                 >
@@ -190,7 +190,10 @@ export default function CreateAgentForm() {
                             )}
                         />
                     </div>
-                    <SubmitButton disabled={submittingForm} placeholder='Create Agent' className=" w-36 h-[36px] rounded-none"
+                    <SubmitButton
+                        disabled={submittingForm}
+                        placeholder="Create Agent"
+                        className=" h-[36px] w-36 rounded-none"
                     />
                 </Card>
             </form>

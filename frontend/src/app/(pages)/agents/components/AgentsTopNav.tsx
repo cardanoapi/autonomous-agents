@@ -6,16 +6,14 @@ import { cn } from '@app/components/lib/utils';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
 const AgentsTopNav = ({
-    numOfAgents,
     createAgentAccess,
     onSearch = () => {}
 }: {
-    numOfAgents: number;
     createAgentAccess: boolean;
     onSearch?: any;
 }) => {
     return (
-        <div className="flex w-full justify-between items-center gap-y-2 gap-x-4">
+        <div className="flex w-full items-center justify-between gap-x-4 gap-y-2">
             <div className="flex items-center">
                 <DataActionBar
                     placeholder="Search Agent Name"
@@ -27,7 +25,7 @@ const AgentsTopNav = ({
                 <Button
                     variant="primary"
                     className={cn(
-                        'h-[36px] w-[145px] max-sm:!bg-transparent max-sm:text-brand-Blue-200 max-sm:p-0 max-sm:w-fit',
+                        'h-[36px] w-[145px] max-sm:w-fit max-sm:!bg-transparent max-sm:p-0 max-sm:text-brand-Blue-200',
                         createAgentAccess ? '' : '!hidden'
                     )}
                 >

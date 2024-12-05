@@ -1,7 +1,13 @@
 import React from 'react';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { DropdownMenu , DropdownMenuTrigger , DropdownMenuContent , DropdownMenuItem } from '../atoms/DropDownMenu';
+
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '../atoms/DropDownMenu';
 import { cn } from '../lib/utils';
 
 interface PaginationBtnsProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -43,26 +49,25 @@ const PaginationBtns: React.FC<PaginationBtnsProps> = ({
     }
 
     return (
-        <div className='flex items-center justify-center'>
+        <div className="flex items-center justify-center">
             <DropdownMenu>
-                        <span className='text-xs'>{rowsLabel || 'Rows per page'} :  </span>
-                    <DropdownMenuTrigger className="inline-flex text-xs p-0 ml-1 gap-x-1" useChevron={true} iconSize={16}>
-                        {rowsPerPage || 1}
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="min-w-0">
-                        {rowOptions.map((row: number) => (
-                            <DropdownMenuItem
-                                key={row}
-                                onClick={() =>
-                                   onRowClick?.(row)
-                                }
-                            >
-                                {row}
-                            </DropdownMenuItem>
-                        ))}
-                    </DropdownMenuContent>
+                <span className="text-xs">{rowsLabel || 'Rows per page'} : </span>
+                <DropdownMenuTrigger
+                    className="ml-1 inline-flex gap-x-1 p-0 text-xs"
+                    useChevron={true}
+                    iconSize={16}
+                >
+                    {rowsPerPage || 1}
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="min-w-0">
+                    {rowOptions.map((row: number) => (
+                        <DropdownMenuItem key={row} onClick={() => onRowClick?.(row)}>
+                            {row}
+                        </DropdownMenuItem>
+                    ))}
+                </DropdownMenuContent>
             </DropdownMenu>
-            <div {...props} className={cn('flex items-center gap-x-2 ml-4', className)}>
+            <div {...props} className={cn('ml-4 flex items-center gap-x-2', className)}>
                 <div
                     className={cn(
                         chevronWrapper,

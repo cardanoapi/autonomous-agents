@@ -62,17 +62,17 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                 <div
                     className={`flex h-full w-full flex-col gap-5 rounded-t-xl  ${isDataMissing ? 'shadow-bg-red-100 bg-red-100/40' : 'bg-brand-White-200'}  px-6 pb-6 pt-8`}
                 >
-                    <div className={"flex justify-between gap-2"}>
-                    <p
-                        className={`line-clamp-2 text-[18px]  font-semibold leading-[24px]  ${isDataMissing && 'text-red-600'}`}
-                    >
-                        {isDataMissing ? 'Title Missing' : proposal.title}
-                    </p>
-                        <div className={"w-12 flex justify-end"}>
-                    <ExternalLink
-                        className="cursor-pointer text-gray-400 hover:text-brand-Blue-200 "
-                        onClick={handleProposalExternalRedirect}
-                    />
+                    <div className={'flex justify-between gap-2'}>
+                        <p
+                            className={`line-clamp-2 text-[18px]  font-semibold leading-[24px]  ${isDataMissing && 'text-red-600'}`}
+                        >
+                            {isDataMissing ? 'Title Missing' : proposal.title}
+                        </p>
+                        <div className={'flex w-12 justify-end'}>
+                            <ExternalLink
+                                className="cursor-pointer text-gray-400 hover:text-brand-Blue-200 "
+                                onClick={handleProposalExternalRedirect}
+                            />
                         </div>
                     </div>
                     {proposal.abstract !== null && (

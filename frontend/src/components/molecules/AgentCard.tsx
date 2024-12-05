@@ -10,7 +10,6 @@ import { PlayIcon, Trash2 } from 'lucide-react';
 
 import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import { cn } from '@app/components/lib/utils';
-import { Truncate } from '@app/utils/common/extra';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { useModal } from '../Modals/context';
@@ -19,7 +18,6 @@ import { Dialog, DialogContent } from '../atoms/Dialog';
 import { Skeleton } from '../shadcn/ui/skeleton';
 import ConfirmationBox from './ConfirmationBox';
 import { ErrorToast, SuccessToast } from './CustomToasts';
-import { Typography } from '@mui/material';
 
 export interface IAgentCard {
     agentName: string;
@@ -33,7 +31,7 @@ export interface IAgentCard {
     no_of_successful_triggers?: number;
     isActive?: boolean;
     agentSecretKey?: string;
-    className? : string;
+    className?: string;
 }
 
 export default function AgentCard({
@@ -47,7 +45,7 @@ export default function AgentCard({
     lastActive = '',
     isActive = false,
     agentSecretKey = '',
-    className,
+    className
 }: IAgentCard) {
     const router = useRouter();
     const { openModal } = useModal();
@@ -120,7 +118,10 @@ export default function AgentCard({
                 onClick={() => {
                     router.push(`/agents/${agentID}`);
                 }}
-                className={cn("hover-transition-primary group relative flex h-full w-full cursor-pointer flex-col !gap-y-6 rounded-xl p-4 transition-all sm:min-h-[247px] xl:max-w-[261px] " , className)}
+                className={cn(
+                    'hover-transition-primary group relative flex h-full w-full cursor-pointer flex-col !gap-y-6 rounded-xl p-4 transition-all sm:min-h-[247px] xl:max-w-[261px] ',
+                    className
+                )}
             >
                 <AgentCardControls
                     enableRun={enableEdit}
@@ -210,12 +211,12 @@ const AgentCardTitle = ({
     isActive?: boolean;
 }) => {
     return (
-        <div className={'flex items-center gap-3 w-full'}>
+        <div className={'flex w-full items-center gap-3'}>
             <AgentAvatar hash={agentID || ''} size={40} isActive={isActive || false} />
-            <div className="card-h2 flex flex-col w-full">
+            <div className="card-h2 flex w-full flex-col">
                 <span
                     className={
-                        'w-full no-wrap-truncate !overflow-hidden text-ellipsis !whitespace-nowrap !text-sm leading-normal'
+                        'no-wrap-truncate w-full !overflow-hidden text-ellipsis !whitespace-nowrap !text-sm leading-normal'
                     }
                 >
                     {agentName}

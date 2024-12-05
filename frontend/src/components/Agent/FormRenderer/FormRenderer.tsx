@@ -9,7 +9,6 @@ import { useAtom } from 'jotai';
 import FormParameters from '@app/components/Agent/FormRenderer/FormParameters';
 import { Button } from '@app/components/atoms/Button';
 import { ErrorToast, SuccessToast } from '@app/components/molecules/CustomToasts';
-import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 import { Separator } from '@app/components/shadcn/ui/separator';
 import { errorAtom, selectedFunctionAtom } from '@app/store/atoms/formRenderer';
 import {
@@ -80,35 +79,35 @@ const FormRenderer = ({
     }
 
     return (
-        <div className={'h-full md:max-h-[680px] w-full'}>
+        <div className={'h-full w-full md:max-h-[680px]'}>
             <div className={'px-6 py-2 text-lg font-medium'}>Manual Trigger</div>
-             <Separator className={''} />
+            <Separator className={''} />
             <div className={'flex flex-col gap-4 px-6 py-2'}>
-                    <div className={'flex flex-col gap-1'}>
-                        <span className={'font-medium text-brand-Black-300'}>
-                            {selectedFunction?.name}
-                        </span>
-                        <span className={'text-sm text-brand-Black-300/80'}>
-                            {selectedFunction?.description}
-                        </span>
-                    </div>
-                    {selectedFunction && selectedFunction.parameters && (
-                        <FormParameters parameters={selectedFunction.parameters} />
-                    )}
-                    <div className={'flex justify-end gap-2'}>
-                        <Button
-                            variant={'danger'}
-                            onClick={() => {
-                                closeModal(false);
-                            }}
-                        >
-                            Cancel
-                        </Button>
-                        <Button onClick={() => handleTrigger()} variant={'primary'}>
-                            Trigger
-                        </Button>
-                    </div>
-            </div> 
+                <div className={'flex flex-col gap-1'}>
+                    <span className={'font-medium text-brand-Black-300'}>
+                        {selectedFunction?.name}
+                    </span>
+                    <span className={'text-sm text-brand-Black-300/80'}>
+                        {selectedFunction?.description}
+                    </span>
+                </div>
+                {selectedFunction && selectedFunction.parameters && (
+                    <FormParameters parameters={selectedFunction.parameters} />
+                )}
+                <div className={'flex justify-end gap-2'}>
+                    <Button
+                        variant={'danger'}
+                        onClick={() => {
+                            closeModal(false);
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                    <Button onClick={() => handleTrigger()} variant={'primary'}>
+                        Trigger
+                    </Button>
+                </div>
+            </div>
         </div>
     );
 };

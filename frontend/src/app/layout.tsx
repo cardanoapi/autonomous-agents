@@ -93,10 +93,10 @@ export default function RootLayout({
                                 />
                                 <div
                                     className={
-                                        'flex h-full w-full flex-col gap-4 px-6 md:pt-10 py-2 2xl:px-8 pb-4 overflow-hidden'
+                                        'flex h-full w-full flex-col gap-4 overflow-hidden px-6 py-2 pb-4 md:pt-10 2xl:px-8'
                                     }
                                 >
-                                    <TopNav className={"mb-4"}/>
+                                    <TopNav className={'mb-4'} />
                                     {children}
                                 </div>
                             </div>

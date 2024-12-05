@@ -45,10 +45,13 @@ export default function SideNavItem({
                 )}
             />
             <span
-                className={cn('no-wrap-truncate w-full pl-4 text-sm font-medium max-md:text-lg', {
-                    'text-brand-Black-100': !isActive,
-                    'text-brand-Blue-200': isActive
-                })}
+                className={cn(
+                    'no-wrap-truncate w-full pl-4 text-sm font-medium max-md:text-lg',
+                    {
+                        'text-brand-Black-100': !isActive,
+                        'text-brand-Blue-200': isActive
+                    }
+                )}
             >
                 {Prop.title}
             </span>

@@ -9,7 +9,8 @@ import { useAtom } from 'jotai';
 
 import { cn } from '@app/components/lib/utils';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
-import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
+import EmptyScreen from '@app/components/molecules/EmptyScreen';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import {
     adminAccessAtom,
     agentCreatedAtom,
@@ -18,9 +19,7 @@ import {
 import { IQueryParams } from '@app/utils/query';
 
 import AgentsContainer from './components/AgentsContainer';
-import AgentsTopNav, { AgentsTopNavSkeleton } from './components/AgentsTopNav';
-import { Skeleton } from '@app/components/shadcn/ui/skeleton';
-import EmptyScreen from '@app/components/molecules/EmptyScreen';
+import AgentsTopNav from './components/AgentsTopNav';
 
 export default function AgentsPage() {
     const [agentCreated, setAgentCreated] = useAtom(agentCreatedAtom);
@@ -73,34 +72,36 @@ export default function AgentsPage() {
     return (
         <>
             <AgentsTopNav
-                    numOfAgents={agents?.length || 0}
-                    createAgentAccess={adminAccess}
-                    onSearch={(value: string) => handleSearch(value)}
+                createAgentAccess={adminAccess}
+                onSearch={(value: string) => handleSearch(value)}
             />
-            {
-                isLoading && < Skeleton className='h-full w-full'/>
-            }
-            {
-                !isLoading && agents && agents.length === 0 && (
-                    adminAccess ? (
-                    <EmptyScreen msg="No Agents Found" linkHref="/agents/create" linkMsg="Create an Agent to get started" />
-                    ) : (
+            {isLoading && <Skeleton className="h-full w-full" />}
+            {!isLoading &&
+                agents &&
+                agents.length === 0 &&
+                (adminAccess ? (
+                    <EmptyScreen
+                        msg="No Agents Found"
+                        linkHref="/agents/create"
+                        linkMsg="Create an Agent to get started"
+                    />
+                ) : (
                     <EmptyScreen msg="No Agents Found" />
-                    )
-                )
-                }
-            {
-                !isLoading && agents && agents?.length > 0 && 
-                <div
-                    className="overflow-y-auto md:py-4 flex flex-col w-full h-full"
-                >
+                ))}
+            {!isLoading && agents && agents?.length > 0 && (
+                <div className="flex h-full w-full flex-col overflow-y-auto md:py-4">
                     <AgentsContainer
                         agentsList={otherAgents || []}
                         enableEdit={adminAccess}
                         enableDelete={adminAccess}
                     />
                     {currentConnectedWallet && !isLoading && myAgents.length > 0 && (
-                        <div className={cn(otherAgents.length > 0 && 'my-8' , 'w-full h-full')}>
+                        <div
+                            className={cn(
+                                otherAgents.length > 0 && 'my-8',
+                                'h-full w-full'
+                            )}
+                        >
                             <span className="h1-new mb-4 inline-flex">My Agents</span>
                             <AgentsContainer
                                 agentsList={myAgents || []}
@@ -110,7 +111,7 @@ export default function AgentsPage() {
                         </div>
                     )}
                 </div>
-            }
+            )}
         </>
     );
 }

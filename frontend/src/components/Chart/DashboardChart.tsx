@@ -66,16 +66,11 @@ export default function DashboardChart({ className }: { className?: string }) {
     ];
 
     return (
-        <Card
-            className={cn(
-                'flex flex-row',
-                className
-            )}
-        >
-<span className="h4 hidden rotate-180 text-center [writing-mode:vertical-lr] md:block">
-Transaction Volume
-</span>
-            <div className="w-full h-full flex flex-col md:pr-6 md:gap-y-8 gap-y-4">
+        <Card className={cn('flex flex-row', className)}>
+            <span className="h4 hidden rotate-180 text-center [writing-mode:vertical-lr] md:block">
+                Transaction Volume
+            </span>
+            <div className="flex h-full w-full flex-col gap-y-4 md:gap-y-8 md:pr-6">
                 <div className="flex justify-between">
                     <span className="title-1 pl-4">Transactions</span>
                     {isLoading ? (
@@ -84,7 +79,7 @@ Transaction Volume
                         <DropdownMenu>
                             <DropdownMenuTrigger
                                 border={true}
-                                className="md:min-w-40 justify-between md:flex max-md:text-xs max-md:mr-1"
+                                className="justify-between max-md:mr-1 max-md:text-xs md:flex md:min-w-40"
                             >
                                 {dataSources[currentChartFilterOption].placeholder}
                             </DropdownMenuTrigger>
@@ -105,7 +100,7 @@ Transaction Volume
                         </DropdownMenu>
                     )}
                 </div>
-                <div className={"flex md:h-full w-full flex-col h-[180px] p-1"}>
+                <div className={'flex h-[180px] w-full flex-col p-1 md:h-full'}>
                     {isLoading ? (
                         <Skeleton className="h-full w-full" />
                     ) : (

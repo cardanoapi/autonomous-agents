@@ -10,6 +10,7 @@ import { IUserStatusResponse } from '@api/auth';
 import { HamburgerMenuIcon } from '@radix-ui/react-icons';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
+import { X } from 'lucide-react';
 
 import WalletSignInDialog from '@app/components/Auth/WalletSignInDialog';
 import { Button } from '@app/components/atoms/Button';
@@ -20,11 +21,7 @@ import SideNavItem from '@app/components/layout/SideNav/SideNavItem';
 import SideNavLogo from '@app/components/layout/SideNav/SideNavLogo';
 import { cn } from '@app/components/lib/utils';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
-import { ErrorToast } from '@app/components/molecules/CustomToasts';
 import { adminAccessAtom, currentConnectedWalletAtom } from '@app/store/localStore';
-import { X } from 'lucide-react';
-import { set } from 'lodash';
-import { render } from 'nprogress';
 
 export default function SideNav({
     mobileClassName,
@@ -68,31 +65,30 @@ export default function SideNav({
         });
     };
 
-    const WalletandAgentCard = ({onConnectWallet , onDisconnect} : {onConnectWallet?: any , onDisconnect?: any} ) =>{
-        return (
-              currentConnectedWallet ? (
-                    <div className={'flex flex-col gap-y-2 pb-2'}>
-                        {!adminAccess && <MyAgentCard onClick={()=>setSideNavOpen(false)}/>}
-                        <ConnectedWalletCard onDisconnect={() => {
-                            onDisconnect?.()
-                            logoutUser()
-                        }}
-                           />
-                    </div>
-                ) : (
-                    <Button
-                        className="m-2 max-md:rounded-full"
-                        onClick={() => {
-                            onDisconnect && onDisconnect()
-                            setLoginDialogOpen(true)
-                        }}
-                        variant={'primary'}
-                    >
-                        Connect Wallet
-                    </Button>
-                )
-        )
-    }
+    const WalletandAgentCard = ({ onDisconnect }: { onDisconnect?: any }) => {
+        return currentConnectedWallet ? (
+            <div className={'flex flex-col gap-y-2 pb-2'}>
+                {!adminAccess && <MyAgentCard onClick={() => setSideNavOpen(false)} />}
+                <ConnectedWalletCard
+                    onDisconnect={() => {
+                        onDisconnect?.();
+                        logoutUser();
+                    }}
+                />
+            </div>
+        ) : (
+            <Button
+                className="m-2 max-md:rounded-full"
+                onClick={() => {
+                    onDisconnect && onDisconnect();
+                    setLoginDialogOpen(true);
+                }}
+                variant={'primary'}
+            >
+                Connect Wallet
+            </Button>
+        );
+    };
 
     return (
         <div>
@@ -128,7 +124,7 @@ export default function SideNav({
                         ))}
                     </ul>
                 </div>
-                <WalletandAgentCard/>
+                <WalletandAgentCard />
             </nav>
             {/* Mobile Side Navigation */}
             <>
@@ -136,7 +132,7 @@ export default function SideNav({
                 {sideNavOpen && (
                     <div
                         className={cn(
-                            'md:hidden fixed inset-0 z-[998] bg-black bg-opacity-50 transition-opacity duration-300',
+                            'fixed inset-0 z-[998] bg-black bg-opacity-50 transition-opacity duration-300 md:hidden',
                             mobileClassName
                         )}
                         onClick={() => setSideNavOpen(false)}
@@ -145,12 +141,15 @@ export default function SideNav({
                 <div
                     className={cn(
                         'fixed left-0 top-0 z-[999] flex h-full w-full flex-col justify-between bg-white shadow-lg md:hidden',
-                        'transform transition-transform duration-300 rounded-t-2xl',
+                        'transform rounded-t-2xl transition-transform duration-300',
                         sideNavOpen ? 'translate-x-0' : '-translate-x-full'
                     )}
                 >
                     <nav className="flex h-full w-full flex-col justify-between px-2">
-                        <X className='absolute right-3 top-4' onClick={() => setSideNavOpen(false)}/>
+                        <X
+                            className="absolute right-3 top-4"
+                            onClick={() => setSideNavOpen(false)}
+                        />
                         <div>
                             <SideNavLogo renderLogo={false} />
                             <ul className="mt-4 flex w-full flex-col gap-y-4">
@@ -163,7 +162,9 @@ export default function SideNav({
                                 ))}
                             </ul>
                         </div>
-                        <WalletandAgentCard onDisconnect={() => setSideNavOpen(false)} onConnectWallet={() => setSideNavOpen(false)}/>
+                        <WalletandAgentCard
+                            onDisconnect={() => setSideNavOpen(false)}
+                        />
                     </nav>
                 </div>
             </>

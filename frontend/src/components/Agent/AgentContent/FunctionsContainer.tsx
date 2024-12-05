@@ -6,8 +6,8 @@ import { IAgentConfiguration } from '@api/agents';
 import { IAgent } from '@api/agents';
 import { updateTrigger } from '@api/trigger';
 import { Dialog, DialogContent } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { useMutation } from '@tanstack/react-query';
-import { OctagonAlert } from 'lucide-react';
 
 import { FunctionForm } from '@app/app/(pages)/templates/create-template/components/FunctionForm';
 import {
@@ -20,7 +20,6 @@ import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 import { SuccessToast } from '../../molecules/CustomToasts';
 import { ErrorToast } from '../../molecules/CustomToasts';
 import FunctionCardWithMeta from '../shared/FunctionCardWithMeta';
-import useMediaQuery from '@mui/material/useMediaQuery';
 
 const AgentFunctionsDetailComponent = ({
     agent,

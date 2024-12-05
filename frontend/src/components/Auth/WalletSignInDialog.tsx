@@ -107,7 +107,7 @@ export default function WalletSignInDialog({
         <div>
             <Dialog open={refDialogOpen || dialogOpen}>
                 <DialogContent
-                    className="w-full max-w-[90%] h-fit justify-self-end p-8 px-8 py-10 focus:outline-none sm:h-auto sm:w-auto sm:max-w-4xl sm:translate-y-[-50%] 2xl:py-12 rounded-2xl"
+                    className="h-fit w-full max-w-[90%] justify-self-end rounded-2xl p-8 px-8 py-10 focus:outline-none sm:h-auto sm:w-auto sm:max-w-4xl sm:translate-y-[-50%] 2xl:py-12"
                     defaultCross={false}
                 >
                     <div className="flex flex-col gap-y-4">
@@ -116,8 +116,12 @@ export default function WalletSignInDialog({
                             className="absolute right-4 top-4 hover:cursor-pointer"
                         />
                         <div className="mb-4 flex items-center justify-center gap-1 ">
-                            <Wallet size={28} stroke="#2595FCFA"  className='hidden xl:flex '/>
-                            <span className="text-xl font-semibold  2xl:text-2xl text-center ">
+                            <Wallet
+                                size={28}
+                                stroke="#2595FCFA"
+                                className="hidden xl:flex "
+                            />
+                            <span className="text-center text-xl  font-semibold 2xl:text-2xl ">
                                 {' '}
                                 Select your{' '}
                                 <span className="text-blue-600">CIP-30</span> wallet
@@ -160,7 +164,7 @@ export default function WalletSignInDialog({
                                 variant={'primary'}
                                 size={'md'}
                                 className={cn(
-                                    'without-focus-visible w-48 py-4 text-base 2xl:min-w-56 2xl:py-6 2xl:text-xl max-md:rounded-full'
+                                    'without-focus-visible w-48 py-4 text-base max-md:rounded-full 2xl:min-w-56 2xl:py-6 2xl:text-xl'
                                 )}
                                 onClick={() => {
                                     if (currentSelectedWalletProvider === null) return;

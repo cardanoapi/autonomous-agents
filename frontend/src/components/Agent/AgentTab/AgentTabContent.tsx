@@ -45,13 +45,13 @@ const AgentTabContent = ({
     return (
         <div
             className={cn(
-                'h-full w-full rounded-lg bg-white p-6  md:p-8 overflow-hidden relative !pb-20',
+                'relative h-full w-full overflow-hidden rounded-lg  bg-white p-6 !pb-20 md:p-8',
                 className
             )}
         >
             {agentLoading ? (
-                <div className='flex h-full w-full items-center justify-center'>
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-Blue-200"></div>
+                <div className="flex h-full w-full items-center justify-center">
+                    <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-brand-Blue-200"></div>
                 </div>
             ) : (
                 getAgentSelectedTabComponent()

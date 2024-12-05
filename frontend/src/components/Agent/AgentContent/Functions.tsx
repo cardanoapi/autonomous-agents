@@ -100,7 +100,7 @@ export default function AgentFunctionsComponent({
                 agent?.agent_configurations.length === 0 && (
                     <EmptyScreen msg="No Functions Found" />
                 )}
-            <div className="grid w-fit gap-6 grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3  overflow-auto">
+            <div className="grid w-fit grid-cols-1 gap-6 overflow-auto xl:grid-cols-2  2xl:grid-cols-3">
                 {agent &&
                     agent.agent_configurations &&
                     agent?.agent_configurations.length > 0 && (

@@ -6,24 +6,13 @@ import { IAgentTriggerHistory, fetchAllTriggerHistory } from '@api/triggerHistor
 import { useQuery } from '@tanstack/react-query';
 
 import DataActionBar from '@app/app/components/DataActionBar';
-import {
-    AgentLogCard,
-    AgentLogCardSkeleton
-} from '@app/components/Agent/AgentContent/Logs';
+import { AgentLogCard } from '@app/components/Agent/AgentContent/Logs';
 import AgentFunctionsDropDown from '@app/components/Common/AgentFunctionsDropDown';
 import { Badge } from '@app/components/atoms/Badge';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from '@app/components/atoms/DropDownMenu';
-import { SearchField } from '@app/components/atoms/SearchField';
-import PaginationBtns from '@app/components/molecules/PaginationBtns';
-import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
-import { Skeleton } from '@app/components/shadcn/ui/skeleton';
+import { cn } from '@app/components/lib/utils';
 import EmptyScreen from '@app/components/molecules/EmptyScreen';
-import {cn} from '@app/components/lib/utils'
+import PaginationBtns from '@app/components/molecules/PaginationBtns';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
 export default function LogsPage() {
     // Object to store all state related to the query
@@ -123,77 +112,80 @@ export default function LogsPage() {
     }
 
     const TopNav = () => {
-
         return (
-                <div className="flex flex-col gap-2 md:flex-row">
-                    <div>
-                        <DataActionBar
-                            placeholder="Search Log by Agent ID"
-                            onSearch={(val: string) => {
-                                setLogQueryState((prevState) => ({
-                                    ...prevState,
-                                    currentAgentID: val
-                                }));
-                            }}
-
-                        />
-                    </div>
-                    <AgentFunctionsDropDown
-                        onChange={(strValue: string) => {
+            <div className="flex flex-col gap-2 md:flex-row">
+                <div>
+                    <DataActionBar
+                        placeholder="Search Log by Agent ID"
+                        onSearch={(val: string) => {
                             setLogQueryState((prevState) => ({
                                 ...prevState,
-                                currentFunction: strValue
+                                currentAgentID: val
                             }));
                         }}
-                        className="hidden md:flex w-64"
-                        value={logQueryState.currentFunction == 'None' ? 'Function' : logQueryState.currentFunction}
                     />
-                    <div className="hidden gap-2 md:flex items-center justify-center">
-                        {statusOptions.map((status: string, index) => (
-                            <Badge
-                                key={index}
-                                variant={
-                                    logQueryState.statusPlaceholder === status
-                                        ? 'successPrimary'
-                                        : 'primary'
-                                }
-                                className="flex w-20 justify-center h-8"
-                                onClick={() => handleStatusChange(status)}
-                            >
-                                {status}
-                            </Badge>
-                        ))}
-                    </div>
                 </div>
+                <AgentFunctionsDropDown
+                    onChange={(strValue: string) => {
+                        setLogQueryState((prevState) => ({
+                            ...prevState,
+                            currentFunction: strValue
+                        }));
+                    }}
+                    className="hidden w-64 md:flex"
+                    value={
+                        logQueryState.currentFunction == 'None'
+                            ? 'Function'
+                            : logQueryState.currentFunction
+                    }
+                />
+                <div className="hidden items-center justify-center gap-2 md:flex">
+                    {statusOptions.map((status: string, index) => (
+                        <Badge
+                            key={index}
+                            variant={
+                                logQueryState.statusPlaceholder === status
+                                    ? 'successPrimary'
+                                    : 'primary'
+                            }
+                            className="flex h-8 w-20 justify-center"
+                            onClick={() => handleStatusChange(status)}
+                        >
+                            {status}
+                        </Badge>
+                    ))}
+                </div>
+            </div>
         );
     };
 
     return (
         <>
             <TopNav />
-            {
-                loadingLogs && <Skeleton className='w-full h-full'/>
-            }
-            {
-                !loadingLogs && LogsHistory?.items.length === 0 &&
-                <EmptyScreen msg="No logs found"/>
-            }
-            {
-                !loadingLogs && LogsHistory?.items.length > 0 &&
-                <div className="flex w-full h-full flex-col overflow-y-auto md:pr-4">{
-                                LogsHistory.items.map(
-                                    (history: IAgentTriggerHistory, index: number) => (
-                                        <AgentLogCard
-                                            history={history}
-                                            key={index}
-                                            className="my-1 flex bg-white h-fit"
-                                            globalLog={true}
-                                        />
-                                    )
-                                )}
+            {loadingLogs && <Skeleton className="h-full w-full" />}
+            {!loadingLogs && LogsHistory?.items.length === 0 && (
+                <EmptyScreen msg="No logs found" />
+            )}
+            {!loadingLogs && LogsHistory?.items.length > 0 && (
+                <div className="flex h-full w-full flex-col overflow-y-auto md:pr-4">
+                    {LogsHistory.items.map(
+                        (history: IAgentTriggerHistory, index: number) => (
+                            <AgentLogCard
+                                history={history}
+                                key={index}
+                                className="my-1 flex h-fit bg-white"
+                                globalLog={true}
+                            />
+                        )
+                    )}
                 </div>
-            }
-            <div className={cn("flex flex-row-reverse" , LogsHistory?.items.length === 0 && 'hidden')}>
+            )}
+            <div
+                className={cn(
+                    'flex flex-row-reverse',
+                    LogsHistory?.items.length === 0 && 'hidden'
+                )}
+            >
                 <PaginationBtns
                     className="flex justify-center"
                     onPaginate={(val: number) => {

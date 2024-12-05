@@ -10,8 +10,8 @@ import { formatParameterName } from '@utils';
 import { useAtom } from 'jotai';
 import { Copy } from 'lucide-react';
 
-import AgentsIcon from '@app/assets/icons/AgentsIcon';
 import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
+import EmptyScreen from '@app/components/molecules/EmptyScreen';
 import { useCopyClipboard } from '@app/lib/hooks/useCopyToClipboard';
 import { agentsAtom } from '@app/store/localStore';
 import { Truncate } from '@app/utils/common/extra';
@@ -21,9 +21,7 @@ import AgentFunctionsDropDown from '../../Common/AgentFunctionsDropDown';
 import { Badge } from '../../atoms/Badge';
 import { cn } from '../../lib/utils';
 import { Skeleton } from '../../shadcn/ui/skeleton';
-import ErrorPlaceholder from '../shared/ErrorPlaceholder';
 import ContentHeader from './ContentHeader';
-import EmptyScreen from '@app/components/molecules/EmptyScreen';
 
 export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
     const statusOptions = ['Success', 'Skipped', 'Failed'];
@@ -82,13 +80,17 @@ export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
     }
     return (
         <div className={'flex h-full w-full flex-col gap-4'}>
-            <ContentHeader className='md:flex hidden'>
+            <ContentHeader className="hidden md:flex">
                 <div className="flex justify-end gap-4 pr-4 ">
                     <AgentFunctionsDropDown
                         onChange={(strVal: string) => {
                             setCurrentFunction(strVal);
                         }}
-                        value={currentFunction === 'None' ? 'Function' : MapFunctionNameAndViewName[currentFunction]}
+                        value={
+                            currentFunction === 'None'
+                                ? 'Function'
+                                : MapFunctionNameAndViewName[currentFunction]
+                        }
                     />
                     <div className="justify-center gap-2 md:flex">
                         {statusOptions.map((status: string, index) => (
@@ -108,13 +110,9 @@ export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
                     </div>
                 </div>
             </ContentHeader>
-            {loadingLogs && (
-                <Skeleton className='w-full h-full'/>
-            )}
+            {loadingLogs && <Skeleton className="h-full w-full" />}
             {!loadingLogs && LogsHistory?.items.length === 0 && (
-               <EmptyScreen
-                    msg="No logs found"
-                />
+                <EmptyScreen msg="No logs found" />
             )}
         </div>
     );

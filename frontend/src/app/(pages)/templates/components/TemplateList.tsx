@@ -1,6 +1,7 @@
 import { ITemplate } from '@api/templates';
 
 import TemplateCard from '@app/components/molecules/TemplateCard';
+
 const TemplateList = ({
     templates,
     adminAccess,
@@ -16,21 +17,20 @@ const TemplateList = ({
     return (
         <div className="flex flex-col gap-y-20 md:pb-10">
             <div className="mt-2 flex flex-col gap-y-5">
-                    <div className={containerClass}>
-                        {templates.map((template: ITemplate, index: number) => (
-                            <TemplateCard
-                                key={index}
-                                template={template}
-                                enableDelete={
-                                    adminAccess && currentConnectedWallet !== null
-                                }
-                            />
-                        ))}
-                    </div>
+                <div className={containerClass}>
+                    {templates.map((template: ITemplate, index: number) => (
+                        <TemplateCard
+                            key={index}
+                            template={template}
+                            enableDelete={
+                                adminAccess && currentConnectedWallet !== null
+                            }
+                        />
+                    ))}
+                </div>
             </div>
         </div>
     );
 };
-
 
 export default TemplateList;

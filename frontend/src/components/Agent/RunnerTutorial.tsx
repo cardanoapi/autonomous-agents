@@ -16,9 +16,9 @@ const AgentRunnerTutorial = ({
     const dockerCommand = `docker run -d --pull always -e TOKEN=${convertToBase64(agentSecretKey)} cardanoapi/autonomous-agents:${environments.NEXT_PUBLIC_IMAGE_TAG}`;
 
     return (
-        <div className={'flex flex-col gap-6 w-full '}>
+        <div className={'flex w-full flex-col gap-6 '}>
             <span className={''}>Run this agent by following tutorial:</span>
-            <div className={'flex flex-col gap-2 w-full overflow-hidden'}>
+            <div className={'flex w-full flex-col gap-2 overflow-hidden'}>
                 <span className={'font-norm text-base text-brand-Black-100'}>
                     Using Docker:
                 </span>
@@ -29,7 +29,7 @@ const AgentRunnerTutorial = ({
                             SuccessToast('Docker Command Copied!');
                         }}
                         className={
-                            'w-full cursor-pointer rounded bg-blue-100 p-2 font-sans text-sm drop-shadow-sm hover:text-brand-Black-300/90 overflow-hidden '
+                            'w-full cursor-pointer overflow-hidden rounded bg-blue-100 p-2 font-sans text-sm drop-shadow-sm hover:text-brand-Black-300/90 '
                         }
                     >
                         {dockerCommand}

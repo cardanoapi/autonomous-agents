@@ -63,7 +63,7 @@ export default function AgentPageById() {
             </Breadcrumb>
             <div
                 className={
-                    'flex h-full w-full flex-col gap-4 md:h-[600px] md:flex-row 2xl:h-[700px] 4xl:h-[800px] overflow-hidden'
+                    'flex h-full w-full flex-col gap-4 overflow-hidden md:h-[600px] md:flex-row 2xl:h-[700px] 4xl:h-[800px]'
                 }
             >
                 <AgentTabSection
