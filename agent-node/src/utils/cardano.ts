@@ -33,3 +33,9 @@ export function loadRootKeyFromBuffer() {
     }
     return HdKey.fromBytes(rootKeyBuffer)
 }
+
+export function bech32toHex(bechAddress: string) {
+    const decodedId = bech32.decode(bechAddress, 100)
+    const data = bech32.fromWords(decodedId.words)
+    return Buffer.from(data).toString('hex')
+}
