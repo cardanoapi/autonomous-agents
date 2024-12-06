@@ -1,10 +1,10 @@
 import express from 'express'
 import { WebSocket } from 'ws'
-import { initKafkaConsumers } from './service/kafka_message_consumer'
-import { AgentManagerRPC } from './service/AgentManagerRPC'
-import { createBlockchainInstance } from './service/BlockchainService'
-import { ManagerWalletService } from './service/ManagerWallet'
-import { TxListener } from './service/TxListener'
+import { initKafkaConsumers } from './service/Listeners/KafkaMessageConsumer'
+import { AgentManagerRPC } from './service/Manager/AgentManagerRPC'
+import { createBlockchainInstance } from './service/Listeners/BlockchainService'
+import { ManagerWalletService } from './service/Manager/ManagerWallet'
+import { TxListener } from './service/Listeners/TxListener'
 import { parseRawBlockBody } from 'libcardano/cardano/ledger-serialization/transaction'
 import environments from "./config/environments";
 

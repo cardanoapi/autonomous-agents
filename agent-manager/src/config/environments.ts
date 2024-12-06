@@ -1,7 +1,6 @@
 const environments = {
     kuberApiKey: process.env.KUBER_API_KEY || '',
     kuberBaseUrl: process.env.KUBER_BASE_URL || 'https://sanchonet.kuber.cardanoapi.io/',
-    blockFrostBaseUrl: process.env.BLOCKFROST_BASE_URL||'',
     blockFrostApiKey: process.env.BLOCKFROST_API_KEY||'',
     enableBlockFrostSubmitApi: process.env.ENABLE_BLOCKFROST_SUBMIT_API?.toLowerCase() === 'true' ,
     managerWalletAddress: process.env.MANAGER_WALLET_ADDRESS || '',
@@ -9,7 +8,8 @@ const environments = {
     agentMnemonic: process.env.AGENT_MNEMONIC || '',
     metaDataBaseURL: process.env.METADATA_BASE_URL || 'https://metadata.cardanoapi.io',
     dbSyncBaseUrl: process.env.DB_SYNC_BASE_URL || 'https://dbsyncapi.agents.cardanoapi.io/api/',
-    port: process.env.PORT || '3001',
+    serverPort: process.env.SERVER_PORT || '3001',
+    networkName: process.env.NETWORK_NAME || 'sanchonet',
     kafka: {
         topicPrefix: process.env.KAFKA_TOPIC_PREFIX || '',
         consumerGroup: process.env.KAFKA_CONSUMER_GROUP || '',

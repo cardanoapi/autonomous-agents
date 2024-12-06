@@ -5,13 +5,13 @@ import {TxBuildAndSubmitBaseClass} from "./TxBuildAndSubmitBaseClass";
 export class Blockfrost extends TxBuildAndSubmitBaseClass {
     constructor() {
         super();
-        if (!environments.blockFrostApiKey || !environments.blockFrostBaseUrl) {
-            throw new Error('BlockFrost API key or URL not provided')
+        if (!environments.blockFrostApiKey ) {
+            throw new Error('BlockFrost API key not provided')
         }
     }
 
     async blockfrostSubmitTransaction(cborSignedTx: Buffer) {
-        const url = `${environments.blockFrostBaseUrl}/tx/submit`;
+        const url = `https://cardano-${environments.networkName}.blockfrost.io/api/v0/tx/submit`;
         const res = await fetch(url, {
             method: "POST",
             headers: {
