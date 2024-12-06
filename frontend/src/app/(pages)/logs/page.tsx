@@ -5,21 +5,14 @@ import { useEffect, useState } from 'react';
 import { IAgentTriggerHistory, fetchAllTriggerHistory } from '@api/triggerHistory';
 import { useQuery } from '@tanstack/react-query';
 
-import {
-    AgentLogCard,
-    AgentLogCardSkeleton
-} from '@app/components/Agent/AgentContent/Logs';
+import DataActionBar from '@app/app/components/DataActionBar';
+import { AgentLogCard } from '@app/components/Agent/AgentContent/Logs';
 import AgentFunctionsDropDown from '@app/components/Common/AgentFunctionsDropDown';
 import { Badge } from '@app/components/atoms/Badge';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from '@app/components/atoms/DropDownMenu';
-import { SearchField } from '@app/components/atoms/SearchField';
+import { cn } from '@app/components/lib/utils';
+import EmptyScreen from '@app/components/molecules/EmptyScreen';
 import PaginationBtns from '@app/components/molecules/PaginationBtns';
-import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
 export default function LogsPage() {
     // Object to store all state related to the query
@@ -119,14 +112,11 @@ export default function LogsPage() {
     }
 
     const TopNav = () => {
-        const rowOptions = [10, 30, 50, 100];
-
         return (
-            <div className="flex items-center justify-between ">
-                <div className="flex gap-2">
-                    <SearchField
-                        placeholder="Enter Agent ID"
-                        variant="secondary"
+            <div className="flex flex-col gap-2 md:flex-row">
+                <div>
+                    <DataActionBar
+                        placeholder="Search Log by Agent ID"
                         onSearch={(val: string) => {
                             setLogQueryState((prevState) => ({
                                 ...prevState,
@@ -134,87 +124,70 @@ export default function LogsPage() {
                             }));
                         }}
                     />
-                    <AgentFunctionsDropDown
-                        onChange={(strValue: string) => {
-                            setLogQueryState((prevState) => ({
-                                ...prevState,
-                                currentFunction: strValue
-                            }));
-                        }}
-                    />
-                    <div className="flex justify-center gap-2">
-                        {statusOptions.map((status: string, index) => (
-                            <Badge
-                                key={index}
-                                variant={
-                                    logQueryState.statusPlaceholder === status
-                                        ? 'successPrimary'
-                                        : 'primary'
-                                }
-                                className="flex w-20 justify-center"
-                                onClick={() => handleStatusChange(status)}
-                            >
-                                {status}
-                            </Badge>
-                        ))}
-                    </div>
                 </div>
-                <div className="flex">
-                    <span>Rows per page :</span>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger>
-                            <span className="ml-1 w-6">
-                                {logQueryState.currentResponseSize}
-                            </span>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="!min-w-0">
-                            {rowOptions.map((row: number, index) => (
-                                <DropdownMenuItem
-                                    key={index}
-                                    onClick={() => {
-                                        setLogQueryState((prevState) => ({
-                                            ...prevState,
-                                            currentResponseSize: row
-                                        }));
-                                    }}
-                                >
-                                    {row}
-                                </DropdownMenuItem>
-                            ))}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                <AgentFunctionsDropDown
+                    onChange={(strValue: string) => {
+                        setLogQueryState((prevState) => ({
+                            ...prevState,
+                            currentFunction: strValue
+                        }));
+                    }}
+                    className="hidden w-64 md:flex"
+                    value={
+                        logQueryState.currentFunction == 'None'
+                            ? 'Function'
+                            : logQueryState.currentFunction
+                    }
+                />
+                <div className="hidden items-center justify-center gap-2 md:flex">
+                    {statusOptions.map((status: string, index) => (
+                        <Badge
+                            key={index}
+                            variant={
+                                logQueryState.statusPlaceholder === status
+                                    ? 'successPrimary'
+                                    : 'primary'
+                            }
+                            className="flex h-8 w-20 justify-center"
+                            onClick={() => handleStatusChange(status)}
+                        >
+                            {status}
+                        </Badge>
+                    ))}
                 </div>
             </div>
         );
     };
 
     return (
-        <div className="flex flex-col justify-between ">
-            <div className="flex flex-grow flex-col">
-                <TopNav />
-                <div className="mt-6 flex-grow">
-                    <ScrollArea className="flex h-logsPageHeight max-h-logsList flex-col overflow-y-auto pr-4">
-                        {loadingLogs
-                            ? Array.from({ length: 50 }).map((_, index) => (
-                                  <AgentLogCardSkeleton key={index} className="my-2" />
-                              ))
-                            : LogsHistory?.items.length > 0 &&
-                              LogsHistory.items.map(
-                                  (history: IAgentTriggerHistory, index: number) => (
-                                      <AgentLogCard
-                                          history={history}
-                                          key={index}
-                                          className="my-2 flex bg-white"
-                                          globalLog
-                                      />
-                                  )
-                              )}
-                    </ScrollArea>
+        <>
+            <TopNav />
+            {loadingLogs && <Skeleton className="h-full w-full" />}
+            {!loadingLogs && LogsHistory?.items.length === 0 && (
+                <EmptyScreen msg="No logs found" />
+            )}
+            {!loadingLogs && LogsHistory?.items.length > 0 && (
+                <div className="flex h-full w-full flex-col overflow-y-auto md:pr-4">
+                    {LogsHistory.items.map(
+                        (history: IAgentTriggerHistory, index: number) => (
+                            <AgentLogCard
+                                history={history}
+                                key={index}
+                                className="my-1 flex h-fit bg-white"
+                                globalLog={true}
+                            />
+                        )
+                    )}
                 </div>
-            </div>
-            <div className="flex flex-row-reverse pt-4">
+            )}
+            <div
+                className={cn(
+                    'flex flex-row-reverse',
+                    LogsHistory?.items.length === 0 && 'hidden'
+                )}
+            >
                 <PaginationBtns
-                    className="pagination-btn-position flex justify-center"
+                    className="flex justify-center"
                     onPaginate={(val: number) => {
                         setLogQueryState((prevState) => ({
                             ...prevState,
@@ -223,8 +196,17 @@ export default function LogsPage() {
                     }}
                     refCurrentPage={logQueryState.currentPage}
                     upperLimit={logQueryState.totalPages}
+                    rowsLabel={'Logs per page'}
+                    rowOptions={[10, 15, 20, 30]}
+                    onRowClick={(val: number) => {
+                        setLogQueryState((prevState) => ({
+                            ...prevState,
+                            currentResponseSize: val
+                        }));
+                    }}
+                    rowsPerPage={logQueryState.currentResponseSize}
                 />
             </div>
-        </div>
+        </>
     );
 }

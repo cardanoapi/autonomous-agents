@@ -1,4 +1,7 @@
-export function Truncate(word: string, limit: number): string {
+export function Truncate(word: any, limit: number): string {
+    if (typeof word !== 'string') {
+        return '';
+    }
     return word.length > limit ? word.substring(0, limit) + '...' : word;
 }
 

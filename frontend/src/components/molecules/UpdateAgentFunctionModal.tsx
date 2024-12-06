@@ -181,7 +181,7 @@ const UpdateAgentFunctionModal = ({
                         <CustomCombobox
                             defaultValue={agentConfig?.type || 'CRON'}
                             itemsList={['CRON', 'EVENT']}
-                            onSelect={(triggerType) =>
+                            onSelect={(triggerType: any) =>
                                 handleTriggerTypeSelection(triggerType as TriggerType)
                             }
                             className={'w-fit rounded-md border-[2px] px-2'}

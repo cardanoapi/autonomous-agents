@@ -179,7 +179,7 @@ export const FunctionForm = ({
     return (
         <Card
             className={cn(
-                'relative flex h-full min-h-[450px] min-w-[500px] flex-col justify-between bg-brand-Azure-400 !px-4',
+                ' flex h-full w-full flex-col justify-between bg-brand-Azure-400 !px-4 max-md:rounded-t-2xl md:min-h-[450px] md:min-w-[500px]',
                 renderFunctionSelector ? 'py-8' : 'py-4'
             )}
         >
@@ -187,7 +187,7 @@ export const FunctionForm = ({
                 className="absolute right-6 top-4 cursor-pointer"
                 onClick={() => onClose?.(functionState)}
             />
-            <div className="flex flex-col gap-y-4">
+            <div className="flex flex-col gap-y-4 max-md:gap-y-6">
                 {renderFunctionSelector ? (
                     <CardTitle className="flex flex-col gap-2">
                         <span className="h4">Function</span>
@@ -218,7 +218,7 @@ export const FunctionForm = ({
                         <CustomCombobox
                             defaultValue={functionState.type || 'CRON'}
                             itemsList={['CRON', 'EVENT']}
-                            onSelect={(triggerType) =>
+                            onSelect={(triggerType: any) =>
                                 handleTypeChange(triggerType as TriggerType)
                             }
                             className={'w-24 rounded-md border-[2px] px-2'}

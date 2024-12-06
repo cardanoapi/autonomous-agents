@@ -4,12 +4,12 @@ import { IAgent } from '@api/agents';
 import { AvailableFunctions, IFunctionsItem } from '@models/types/functions';
 import { useAtom } from 'jotai/index';
 
+import OflineIcon from '@app/assets/icons/OflineIcon';
 import FormRenderer from '@app/components/Agent/FormRenderer/FormRenderer';
-import AgentsIcon from '@app/components/icons/AgentsIcon';
+import EmptyScreen from '@app/components/molecules/EmptyScreen';
 import { Dialog, DialogContent } from '@app/components/shadcn/dialog';
 import { errorAtom, selectedFunctionAtom } from '@app/store/atoms/formRenderer';
 
-import ErrorPlaceholder from '../shared/ErrorPlaceholder';
 import ContentHeader from './ContentHeader';
 
 const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
@@ -34,7 +34,7 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
     };
 
     return (
-        <div className={'flex h-full w-full flex-col gap-2'}>
+        <>
             {agent?.is_active && (
                 <>
                     <ContentHeader>
@@ -45,7 +45,11 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
                         </div>
                     </ContentHeader>
 
-                    <div className={'flex flex-col gap-12 px-2'}>
+                    <div
+                        className={
+                            'flex h-full w-full flex-col gap-12 overflow-y-auto px-2'
+                        }
+                    >
                         {AvailableFunctions.map((func) => {
                             return (
                                 <div key={func.group} className="flex flex-col gap-4">
@@ -98,7 +102,9 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
             )}
             <Dialog open={openDialog} onOpenChange={handleOpenChange}>
                 <DialogContent
-                    className={'!min-w-[650px] !p-0'}
+                    className={
+                        'overflow-hidden !p-0 max-md:w-full max-sm:h-full md:!min-w-[650px]'
+                    }
                     onClickCloseIcon={() => handleOnClickCloseIcon()}
                 >
                     <FormRenderer
@@ -110,14 +116,9 @@ const AgentManualTriggerComponent = ({ agent }: { agent?: IAgent }) => {
             {(agent?.is_active === false ||
                 agent?.is_active === null ||
                 agent?.is_active === undefined) && (
-                <ErrorPlaceholder
-                    className="absolute h-full w-full border-0 pr-2"
-                    title="Agent seems to be Offline"
-                    content="Run the Agent for Manual Actions."
-                    icon={AgentsIcon}
-                />
+                <EmptyScreen msg="Agent is not active" customIcon={<OflineIcon />} />
             )}
-        </div>
+        </>
     );
 };
 

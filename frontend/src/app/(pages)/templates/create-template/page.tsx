@@ -13,6 +13,7 @@ import {
     TemplateFunctions
 } from '@models/types/functions';
 import { Dialog, DialogContent } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { useMutation } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { v4 } from 'uuid';
@@ -57,6 +58,7 @@ interface IFormData {
 
 export default function CreateTemplatePage() {
     const router = useRouter();
+    const isMobile = useMediaQuery('(max-width:600px)');
     const [submittingForm, setSubmittingForm] = useState(false);
     const [, setTemplateCreated] = useAtom(templateCreatedAtom);
 
@@ -159,7 +161,7 @@ export default function CreateTemplatePage() {
 
     return (
         <>
-            <Card className="flex min-h-[493px] w-[790px] flex-col gap-4">
+            <Card className="flex flex-col gap-4 overflow-auto max-md:p-6 max-md:py-4 max-md:pb-8 lg:min-h-[493px] lg:w-[780px]">
                 <div>
                     <Label>Template Name </Label>
                     <Input
@@ -203,33 +205,35 @@ export default function CreateTemplatePage() {
                     </DropdownMenu>
                 </div>
                 {/* Render Selcted Configured Functions */}
-                <div className="grid w-full grid-cols-2 gap-4">
+                <div className="flex h-full w-full flex-col  gap-x-2 gap-y-4 overflow-y-auto md:grid md:grid-cols-2">
                     <FunctionCards
                         functions={mainState.functions}
                         onUnselect={handleDeleteFunction}
                         onEdit={handleEditFunction}
                     />
                 </div>
-                <Button
-                    variant="primary"
-                    className="mt-6 w-36"
-                    size="md"
-                    type="submit"
-                    onClick={() => {
-                        handleTemplateSubmit();
-                    }}
-                    disabled={
-                        submittingForm ||
-                        !mainState.functions.length ||
-                        !mainState.name ||
-                        !mainState.description
-                    }
-                >
-                    Create Template
-                </Button>
+                <div>
+                    <Button
+                        variant="primary"
+                        className=" h-[36px] w-36"
+                        size="md"
+                        type="submit"
+                        onClick={() => {
+                            handleTemplateSubmit();
+                        }}
+                        disabled={
+                            submittingForm ||
+                            !mainState.functions.length ||
+                            !mainState.name ||
+                            !mainState.description
+                        }
+                    >
+                        Create Template
+                    </Button>
+                </div>
             </Card>
             {/*Dialog for function form*/}
-            <Dialog open={isDialogOpen}>
+            <Dialog open={isDialogOpen} fullScreen={isMobile}>
                 <DialogContent className="!p-0">
                     {currentSelectedFunction && (
                         <FunctionForm

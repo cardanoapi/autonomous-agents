@@ -1,9 +1,11 @@
 import { IDRepInternal } from '@models/types';
+import { Typography } from '@mui/material';
 import { convertLovelaceToAda, hexToBech32 } from '@utils';
 import { CopyIcon, ExternalLink } from 'lucide-react';
 
 import { AppDialogContent } from '@app/app/components/AppDialog';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
+import { Truncate } from '@app/utils/common/extra';
 
 import { getDrepGivedName } from './DRepCard';
 
@@ -36,16 +38,16 @@ export default function DrepDetailDialogContent({
                     onClick={redirectToGovTool}
                 />
             </div>
-            <div className="space-y-4 rounded-lg border border-gray-200 p-4 shadow-sm md:w-[520px]">
+            <div className="w-full space-y-4 rounded-lg border border-gray-200 p-4 shadow-sm md:w-[520px]">
                 <div className="flex items-start justify-between">
-                    <p className="max-w-xs truncate text-sm font-semibold text-gray-700">
+                    <Typography className="max-w-xs truncate text-sm font-semibold text-gray-700">
                         Drep ID: {hexToBech32(dRep.drepId)}
-                    </p>
+                    </Typography>
                     <div className="flex gap-2">
                         {dRep.agentId && dRep.agentName && (
-                            <span className="inline-flex items-center rounded-full bg-gray-200 px-2 py-1 text-xs text-gray-800">
+                            <Typography className="inline-flex items-center rounded-full bg-gray-200 px-2 py-1 text-xs text-gray-800">
                                 Internal Drep
-                            </span>
+                            </Typography>
                         )}
                         {dRep.status === 'Active' && (
                             <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs text-green-800">
@@ -55,37 +57,37 @@ export default function DrepDetailDialogContent({
                     </div>
                 </div>
 
-                <p className="text-sm text-gray-800">
+                <Typography className="text-sm text-gray-800">
                     Voting Power: {formattedVotingPower} ADA
-                </p>
+                </Typography>
 
                 {dRep.references && dRep.references.length > 0 && (
-                    <p className="text-sm text-gray-800">
+                    <Typography className="text-sm text-gray-800">
                         References: {dRep.references.join(', ')}
-                    </p>
+                    </Typography>
                 )}
 
-                <p className="text-sm text-gray-700">
+                <Typography className="text-sm text-gray-700">
                     {dRep.bio || 'No bio available'}
-                </p>
+                </Typography>
 
                 <DRepDetails dRep={dRep} />
 
                 {dRep.agentId && dRep.agentName && (
                     <div className="space-y-1">
-                        <p className="text-sm text-gray-800">
+                        <Typography className="text-sm text-gray-800">
                             Agent ID: {dRep.agentId}
-                        </p>
-                        <p className="text-sm text-gray-800">
+                        </Typography>
+                        <Typography className="text-sm text-gray-800">
                             Agent Name: {dRep.agentName}
-                        </p>
+                        </Typography>
                     </div>
                 )}
                 {!dRep.givenName && (
-                    <p className="text-sm text-red-600">
+                    <Typography className="text-sm text-red-600">
                         The data used when this DRep was created has been formatted
                         incorrectly.
-                    </p>
+                    </Typography>
                 )}
             </div>
         </AppDialogContent>
@@ -105,19 +107,19 @@ const DRepDetails = ({ dRep }: { dRep: IDRepInternal }) => {
     };
 
     const renderExternalUrl = () => (
-        <div className="flex items-center gap-2 text-sm text-gray-700">
+        <Typography className="flex items-center gap-2 text-sm text-gray-700 ">
             External URL:
             {dRep.url ? (
-                <span
+                <Typography
                     onClick={openExternalUrl}
-                    className=" cursor-pointer truncate text-blue-800"
+                    className=" cursor-pointer text-blue-800"
                 >
-                    {dRep.url}
-                </span>
+                    {Truncate(dRep.url, 10)}
+                </Typography>
             ) : (
                 <span>No URL available</span>
             )}
-        </div>
+        </Typography>
     );
 
     const renderLatestTxHash = () => (
@@ -125,7 +127,9 @@ const DRepDetails = ({ dRep }: { dRep: IDRepInternal }) => {
             Latest Tx Hash:
             {dRep.latestTxHash ? (
                 <div className="flex w-80 items-center">
-                    <span className="truncate text-gray-800">{dRep.latestTxHash}</span>
+                    <Typography className="truncate text-gray-800">
+                        {dRep.latestTxHash}
+                    </Typography>
                     <CopyIcon
                         onClick={() =>
                             copyToClipboard(dRep.latestTxHash || '', 'Tx Hash copied')
@@ -139,11 +143,13 @@ const DRepDetails = ({ dRep }: { dRep: IDRepInternal }) => {
     );
 
     const renderMetaDataHash = () => (
-        <p className="flex items-center gap-2 text-sm text-gray-700">
+        <Typography className="flex items-center gap-2 text-sm text-gray-700">
             MetaData Hash:
             {dRep.metadataHash ? (
                 <div className="flex w-64 items-center">
-                    <span className="truncate text-gray-800">{dRep.metadataHash}</span>
+                    <Typography className="truncate text-gray-800">
+                        {dRep.metadataHash}
+                    </Typography>
                     <CopyIcon
                         onClick={() =>
                             copyToClipboard(
@@ -156,20 +162,20 @@ const DRepDetails = ({ dRep }: { dRep: IDRepInternal }) => {
             ) : (
                 <span>MetaData Hash not available</span>
             )}
-        </p>
+        </Typography>
     );
 
     const renderLatestRegistrationDate = () => (
-        <p className="flex items-center gap-2 text-sm text-gray-700">
+        <Typography className="flex items-center gap-2 text-sm text-gray-700">
             Latest Registration Date:
             {dRep.latestRegistrationDate ? (
-                <span className="truncate">
+                <Typography className="truncate">
                     {new Date(dRep.latestRegistrationDate).toLocaleString()}
-                </span>
+                </Typography>
             ) : (
                 <span>No latest registration date available</span>
             )}
-        </p>
+        </Typography>
     );
 
     return (

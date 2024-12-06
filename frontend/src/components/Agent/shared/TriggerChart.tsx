@@ -13,7 +13,6 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
-import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
 import { IChartFilterOption, chartFilterOptions } from '../../Chart/ChartFilter';
 import { convertDictToGraphDataFormat } from '../../Chart/ChartFilter';
@@ -33,11 +32,7 @@ const AgentHistoryChart = ({
     const [chartDataSource, setChartDataSource] = useState<
         { count: number; values: Record<string, number> }[]
     >([]);
-    const {
-        data: triggerHistoryMetric,
-        isLoading: isLoading,
-        refetch: refecthTriggerHistory
-    } = useQuery({
+    const { data: triggerHistoryMetric, refetch: refecthTriggerHistory } = useQuery({
         queryKey: [`${agent?.id}TriggerHistoryMetric`],
         queryFn: () =>
             fecthTriggerHistoryMetric(
@@ -74,32 +69,28 @@ const AgentHistoryChart = ({
         refecthTriggerHistory();
     }, [currentFunction]);
 
-    if (isLoading)
-        return (
-            <div className={'flex h-[500px] w-full flex-col gap-10'}>
-                <Skeleton className={'h-5 w-[300px]'} />
-                <Skeleton className={'h-full w-full'} />
-            </div>
-        );
     return (
         <div
             className={cn(
-                'flex h-full w-full flex-col gap-2 rounded border border-brand-border-100 lg:p-6 2xl:p-10',
+                'flex h-full w-full flex-col gap-2 rounded border border-brand-border-100 p-4 lg:p-6 2xl:p-10',
                 chartClassName
             )}
         >
-            <div className="flex justify-between">
-                <span className="title-1">Transactions</span>
-                <div className="flex gap-2">
+            <div className="flex flex-wrap justify-between gap-2">
+                <span className="md:title-1 h3 ">Transactions</span>
+                <div className="hidden gap-2 md:flex">
                     <AgentFunctionsDropDown
                         onChange={(stringValue: string) => {
                             setCurrentFunction(stringValue);
                         }}
+                        value={
+                            currentFunction === 'None' ? 'Function' : currentFunction
+                        }
                     />
                     <DropdownMenu>
                         <DropdownMenuTrigger
                             border={true}
-                            className="flex min-w-40 justify-between"
+                            className="flex justify-between md:min-w-40"
                         >
                             {currentChartFilterOption.placeholder}
                         </DropdownMenuTrigger>

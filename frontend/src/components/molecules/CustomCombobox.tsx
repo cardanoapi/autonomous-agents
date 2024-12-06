@@ -16,7 +16,7 @@ export function CustomCombobox({
 }: {
     defaultValue?: string;
     itemsList: Array<string>;
-    onSelect: (arg: string) => void;
+    onSelect: any;
     className?: string;
     isOpen?: boolean;
 }) {

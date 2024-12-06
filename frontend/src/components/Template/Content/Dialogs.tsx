@@ -8,14 +8,16 @@ const UpdateFunctionDialog = ({
     dialogOpen,
     currentFunction,
     toggleDialog,
-    handleFunctionUpdate
+    handleFunctionUpdate,
+    fullScreen = false
 }: {
     dialogOpen: boolean;
     currentFunction: any;
     toggleDialog: () => void;
     handleFunctionUpdate: (functionItem: any) => void;
+    fullScreen?: boolean;
 }) => (
-    <Dialog open={dialogOpen}>
+    <Dialog open={dialogOpen} fullScreen={fullScreen}>
         <DialogContent className="!p-0">
             {currentFunction && (
                 <FunctionForm
@@ -33,13 +35,15 @@ const UpdateFunctionDialog = ({
 const AddFunctionDialog = ({
     dialogOpen,
     toggleDialog,
+    fullScreen = false,
     handleAddNewFunction
 }: {
     dialogOpen: boolean;
     toggleDialog: () => void;
     handleAddNewFunction: (functionItem: any) => void;
+    fullScreen?: boolean;
 }) => (
-    <Dialog open={dialogOpen}>
+    <Dialog open={dialogOpen} fullScreen={fullScreen}>
         <DialogContent className="!p-0">
             <FunctionForm
                 renderFunctionSelector={true}
@@ -62,6 +66,7 @@ const DeleteFunctionDialog = ({
     deleteIndex: number;
     toggleDialog: () => void;
     handleFunctionDelete: (index: number) => void;
+    fullScreen?: boolean;
 }) => (
     <Dialog open={dialogOpen}>
         <DialogContent>
