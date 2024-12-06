@@ -1,7 +1,7 @@
-import getFaucetAdaForAddress, { faucetEnabled, fetchWalletBalance } from '../utils/fuacet'
-import { kuber } from './kuber_service'
-import environments from '../config/environments'
-import { TxListener } from './TxListener'
+import getFaucetAdaForAddress, { faucetEnabled, fetchWalletBalance } from '../../utils/fuacet'
+import environments from '../../config/environments'
+import { TxListener } from '../Listeners/TxListener'
+import {txSubmitter} from "../TxBuildAndSubmit/TxSubmitterService";
 
 export class ManagerWalletService {
     walletBalance: number = 0
@@ -73,7 +73,7 @@ export class ManagerWalletService {
                     outputs: request,
                 }
                 try {
-                    const res = await kuber.buildTx(body, true)
+                    const res = await txSubmitter.buildAndSubmitTx(body)
                     const transferredBalance = request.reduce(
                         (totalVal: number, item: any) => totalVal + item.value.split('A')[0],
                         0

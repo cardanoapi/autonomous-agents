@@ -1,12 +1,14 @@
-import environments from '../config/environments'
+import environments from '../../config/environments'
+import {TxBuildAndSubmitBaseClass} from "./TxBuildAndSubmitBaseClass";
 
-class Kuber {
+class Kuber extends TxBuildAndSubmitBaseClass {
     MAX_CONCURRENT_CALLS = 8
     active_calls = 0
     call_queue: Array<any> = []
     providerUrl: string
 
     constructor() {
+        super()
         const kuberUrl = environments.kuberBaseUrl
         if (!kuberUrl) {
             console.log('Kuber Url not provided.')
@@ -46,7 +48,7 @@ class Kuber {
         })
     }
 
-    async buildTx(txSpec: any, submit?: boolean): Promise<any> {
+    async buildTx(txSpec: any): Promise<any> {
         const KuberAPIKey = environments.kuberApiKey
         const headers: HeadersInit = {
             'content-type': 'application/json',
@@ -58,7 +60,27 @@ class Kuber {
         headers['api-key'] = KuberAPIKey
         return new Promise((resolve, reject) => {
             this.call_queue.push({
-                body: ['POST', `api/v1/tx${submit ? '?submit=true' : ''}`, JSON.stringify(txSpec), headers],
+                body: ['POST', `api/v1/tx`, JSON.stringify(txSpec), headers],
+                resolve,
+                reject,
+            })
+            this.handleApiCallQueue()
+        })
+    }
+
+    async buildAndSubmitTx(txSpec: any): Promise<any> {
+        const KuberAPIKey = environments.kuberApiKey
+        const headers: HeadersInit = {
+            'content-type': 'application/json',
+        }
+        if (!KuberAPIKey) {
+            console.error('No Api Key provided.')
+            process.exit(1)
+        }
+        headers['api-key'] = KuberAPIKey
+        return new Promise((resolve, reject) => {
+            this.call_queue.push({
+                body: ['POST', `api/v1/tx?submit=true`, JSON.stringify(txSpec), headers],
                 resolve,
                 reject,
             })

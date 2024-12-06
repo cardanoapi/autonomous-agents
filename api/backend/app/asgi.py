@@ -87,6 +87,7 @@ def get_application() -> FastAPI:
     origins = [
         "http://localhost:8080",
         "http://localhost:3000",
+        "http://localhost:3001",
         "https://agents.cardanoapi.io",
         "https://sanchonet.agents.cardanoapi.io",
         "https://preview.agents.cardanoapi.io",

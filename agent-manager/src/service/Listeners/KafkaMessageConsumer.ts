@@ -1,8 +1,8 @@
 import { Kafka, KafkaMessage } from 'kafkajs'
-import { ManagerService } from './ManagerService'
-import { AgentManagerRPC } from './AgentManagerRPC'
-import { fetchAgentConfiguration } from '../repository/agent_manager_repository'
-import environments from '../config/environments'
+import { ManagerService } from '../Manager/ManagerService'
+import { AgentManagerRPC } from '../Manager/AgentManagerRPC'
+import { fetchAgentConfiguration } from '../../repository/agent_manager_repository'
+import environments from '../../config/environments'
 
 const config = environments.kafka
 const configTopic = `${config.topicPrefix || config.prefix || 'agent'}-updates`
