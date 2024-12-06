@@ -6,15 +6,15 @@ import { createBlockchainInstance } from './service/BlockchainService'
 import { ManagerWalletService } from './service/ManagerWallet'
 import { TxListener } from './service/TxListener'
 import { parseRawBlockBody } from 'libcardano/cardano/ledger-serialization/transaction'
+import environments from "./config/environments";
 
 const app = express()
-const port = 3001
+const port = environments.port
 
 const server = app.listen(port, async () => {
     console.log(`Server is running on http://localhost:${port}`)
 
     const blockchain = createBlockchainInstance()
-
     const wss = new WebSocket.Server({ server })
     const txListener = new TxListener()
     const managerWallet = new ManagerWalletService(txListener)
