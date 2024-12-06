@@ -31,7 +31,7 @@ class LogicalFunctions {
     if (!this.typeHandlers.has(type)) {
       this.typeHandlers.set(type, {});
     }
-    const typeRegistry = this.typeHandlers.get(type)!;
+      const typeRegistry = this.typeHandlers.get(type)!;
 
     if (typeRegistry[operator]) {
       throw new Error(`Operator "${operator}" for type "${type}" is already registered.`);
@@ -52,6 +52,10 @@ class LogicalFunctions {
     if (this.typeHandlers.has(aClass)) {
       const aHandlers = this.typeHandlers.get(aClass)!;
       if (aHandlers[operator]) {
+        if (aClass === 'buffer' && !Buffer.isBuffer(b)){
+          const convertedBuffer = Buffer.from(b)
+          return aHandlers[operator](a, convertedBuffer);
+        }
         return aHandlers[operator](a, b);
       }
     }
@@ -60,6 +64,10 @@ class LogicalFunctions {
     if (this.typeHandlers.has(aClass.toLowerCase())) {
       const aHandlers = this.typeHandlers.get(aClass.toLowerCase())!;
       if (aHandlers[operator]) {
+        if (aClass.toLowerCase() === 'buffer' && !Buffer.isBuffer(b)){
+          const convertedBuffer = Buffer.from(b,'hex')
+          return aHandlers[operator](a, convertedBuffer);
+        }
         return aHandlers[operator](a, b);
       }
     }
