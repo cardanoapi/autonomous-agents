@@ -59,7 +59,7 @@ export function scheduleFunctions(
             const task = createTask(
                 runner,
                 manager,
-                action,
+                action as Action,
                 frequency,
                 probability,
                 instanceIndex
