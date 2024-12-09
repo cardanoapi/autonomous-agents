@@ -25,10 +25,11 @@ export class TxSubmitterService {
     }
 
     async buildAndSubmitTx(txSpec: any) {
+        // eslint-disable-next-line no-useless-catch
         try {
-            return  await this.submitter.buildAndSubmitTx(txSpec)
+            return await this.submitter.buildAndSubmitTx(txSpec)
         } catch (err) {
-            return err
+            throw err
         }
     }
 }
