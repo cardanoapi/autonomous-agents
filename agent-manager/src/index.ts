@@ -9,7 +9,7 @@ import { parseRawBlockBody } from 'libcardano/cardano/ledger-serialization/trans
 import environments from "./config/environments";
 
 const app = express()
-const port = environments.port
+const port = environments.serverPort
 
 const server = app.listen(port, async () => {
     console.log(`Server is running on http://localhost:${port}`)
