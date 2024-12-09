@@ -11,14 +11,14 @@ const AgentTabItem = ({ item }: { item: any }) => {
         <div
             onClick={() => setSelectedTab(item)}
             className={cn(
-                'relative flex cursor-pointer items-center gap-2 rounded p-2 px-4 text-brand-Black-100',
+                'relative flex cursor-pointer items-center gap-1 rounded p-2 text-xs text-brand-Black-100  md:gap-2 md:px-4 md:text-base',
                 selectedTab === item
                     ? ' text-brand-Blue-200'
                     : 'hover-transition-blue !text-brand-Black-100'
             )}
         >
             {selectedTab === item && (
-                <div className="absolute left-0 h-[60%] w-[6px] bg-brand-Blue-200 "></div>
+                <div className="absolute left-0 hidden h-[60%] w-[6px] bg-brand-Blue-200 md:flex"></div>
             )}
             {item}
         </div>

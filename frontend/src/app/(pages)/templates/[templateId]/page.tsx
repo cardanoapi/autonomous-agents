@@ -40,37 +40,36 @@ const EditTemplateCard = () => {
     }, [template]);
 
     return (
-        <div className="mt-12 flex h-full w-full flex-col gap-6">
+        <>
             <TemplateBreadCrumb templateName={template?.name} />
-            <div className="relative h-full max-w-agentComponentWidth flex-1 rounded-lg bg-white p-8">
-                {templateLoading && <Skeleton className=" h-[550px] w-full" />}
+            <div className="h-full w-full overflow-y-auto rounded-lg bg-white p-8 md:max-w-agentComponentWidth">
+                {templateLoading && <Skeleton className=" h-full w-full" />}
                 {template && (
                     <TemplateOverview template={template} enableEdit={adminAccess} />
                 )}
             </div>
-        </div>
+            <div></div>
+        </>
     );
 };
 
 const TemplateBreadCrumb = ({ templateName }: { templateName?: string }) => {
     const router = useRouter();
     return (
-        <div className="flex h-full flex-col gap-4">
-            <Breadcrumb>
-                <BreadcrumbList>
-                    <BreadcrumbItem
-                        onClick={() => router.push('/templates')}
-                        className="hover:cursor-pointer hover:text-brand-Blue-200"
-                    >
-                        Templates
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                        {Truncate(templateName || '', 30) || 'Template Name'}
-                    </BreadcrumbItem>
-                </BreadcrumbList>
-            </Breadcrumb>
-        </div>
+        <Breadcrumb>
+            <BreadcrumbList>
+                <BreadcrumbItem
+                    onClick={() => router.push('/templates')}
+                    className="hover:cursor-pointer hover:text-brand-Blue-200"
+                >
+                    Templates
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                    {Truncate(templateName || '', 30) || 'Template Name'}
+                </BreadcrumbItem>
+            </BreadcrumbList>
+        </Breadcrumb>
     );
 };
 

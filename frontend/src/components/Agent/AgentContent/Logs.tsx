@@ -11,7 +11,7 @@ import { useAtom } from 'jotai';
 import { Copy } from 'lucide-react';
 
 import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
-import AgentsIcon from '@app/components/icons/AgentsIcon';
+import EmptyScreen from '@app/components/molecules/EmptyScreen';
 import { useCopyClipboard } from '@app/lib/hooks/useCopyToClipboard';
 import { agentsAtom } from '@app/store/localStore';
 import { Truncate } from '@app/utils/common/extra';
@@ -21,7 +21,6 @@ import AgentFunctionsDropDown from '../../Common/AgentFunctionsDropDown';
 import { Badge } from '../../atoms/Badge';
 import { cn } from '../../lib/utils';
 import { Skeleton } from '../../shadcn/ui/skeleton';
-import ErrorPlaceholder from '../shared/ErrorPlaceholder';
 import ContentHeader from './ContentHeader';
 
 export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
@@ -81,14 +80,19 @@ export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
     }
     return (
         <div className={'flex h-full w-full flex-col gap-4'}>
-            <ContentHeader>
+            <ContentHeader className="hidden md:flex">
                 <div className="flex justify-end gap-4 pr-4 ">
                     <AgentFunctionsDropDown
                         onChange={(strVal: string) => {
                             setCurrentFunction(strVal);
                         }}
+                        value={
+                            currentFunction === 'None'
+                                ? 'Function'
+                                : MapFunctionNameAndViewName[currentFunction]
+                        }
                     />
-                    <div className="flex justify-center gap-2">
+                    <div className="justify-center gap-2 md:flex">
                         {statusOptions.map((status: string, index) => (
                             <Badge
                                 key={index}
@@ -106,29 +110,9 @@ export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
                     </div>
                 </div>
             </ContentHeader>
-            <div className="mt-4 grid grid-cols-1 gap-2">
-                {loadingLogs
-                    ? Array.from({ length: 50 }).map((_, index) => (
-                          <AgentLogCardSkeleton key={index} />
-                      ))
-                    : LogsHistory?.items.length > 0 &&
-                      LogsHistory.items.map(
-                          (history: IAgentTriggerHistory, index: number) => (
-                              <AgentLogCard
-                                  history={history}
-                                  key={index}
-                                  className="bg-gray-100"
-                              />
-                          )
-                      )}
-            </div>
+            {loadingLogs && <Skeleton className="h-full w-full" />}
             {!loadingLogs && LogsHistory?.items.length === 0 && (
-                <ErrorPlaceholder
-                    className="absolute mt-4 h-full w-full border-0"
-                    title="No Matching logs found"
-                    content="Try changing the filters"
-                    icon={AgentsIcon}
-                />
+                <EmptyScreen msg="No logs found" />
             )}
         </div>
     );
@@ -159,12 +143,16 @@ export const AgentLogCard = ({
     return (
         <div
             className={cn(
-                `flex h-fit flex-row justify-between gap-4 rounded-lg bg-gray-100 px-3 py-2 drop-shadow-sm hover:bg-gray-200
-                `,
+                `flex h-fit w-full flex-row justify-between gap-4 rounded-lg bg-gray-100 px-3 py-4 drop-shadow-sm hover:bg-gray-200
+                md:py-2`,
                 className
             )}
         >
-            <div className={'flex w-full flex-row items-start gap-8 '}>
+            <div
+                className={
+                    'flex w-full flex-col flex-wrap items-start gap-8 md:flex-row lg:flex-nowrap'
+                }
+            >
                 {globalLog && (
                     <div className={'flex items-center gap-3 sm:min-w-[200px]'}>
                         <AgentAvatar
@@ -202,8 +190,8 @@ export const AgentLogCard = ({
                         </span>
                     </div>
                 )}
-                <div className={'flex w-full flex-col items-start gap-2'}>
-                    <div className={'flex flex-row items-center gap-1'}>
+                <div className={'flex w-full flex-col flex-wrap items-start gap-2'}>
+                    <div className={'hidde flex flex-row items-center gap-1'}>
                         <span className={'text-sm font-medium'}>
                             {MapFunctionNameAndViewName[history.functionName] ||
                                 history.functionName}
@@ -213,7 +201,7 @@ export const AgentLogCard = ({
                         </span>
                     </div>
                     {history.parameters && (
-                        <div className={'flex flex-col gap-0.5'}>
+                        <div className={'flex flex-col gap-0.5 overflow-hidden'}>
                             <span className={'text-sm font-medium'}>Parameters</span>
                             {history.parameters?.map((param, index) => {
                                 return (
@@ -244,11 +232,13 @@ export const AgentLogCard = ({
             </div>
             <div
                 className={
-                    ' flex min-w-fit flex-col items-end justify-start gap-1 md:min-w-[200px]'
+                    ' absolute right-3 top-2 flex min-w-fit flex-col items-end justify-start gap-1'
                 }
             >
                 <Badge variant={getBadgeVariant()}>{getAgentExecutionStatus()}</Badge>
-                <span className={'text-xs'}>{formatTimestamp(history.timestamp)}</span>
+                <span className={'hidden text-xs md:flex'}>
+                    {formatTimestamp(history.timestamp)}
+                </span>
             </div>
         </div>
     );
@@ -256,7 +246,7 @@ export const AgentLogCard = ({
 
 const InternalLogs = ({ history }: { history: IAgentTriggerHistory }) => {
     return (
-        <div className={'flex w-full flex-col gap-1'}>
+        <div className={'hidden w-full flex-col gap-1 md:flex'}>
             {history.internal?.map((internal: any, index: number) => {
                 return (
                     <div
@@ -299,7 +289,7 @@ const LogFunctionParameter = ({ param }: { param: any }) => {
     return (
         <div
             className={
-                'flex w-[220px] flex-row gap-1 truncate text-xs drop-shadow sm:w-[300px] lg:w-[550px]'
+                'flex w-[220px] flex-row gap-1 truncate text-xs drop-shadow sm:w-[250px] lg:w-[400px]'
             }
         >
             <span>{formatParameterName(param.name)} :</span>
@@ -339,7 +329,7 @@ const LogObjectParameter = ({
                     )
                 }
                 key={index}
-                className={` cursor-pointer truncate text-xs drop-shadow ${longTruncate ? 'w-fit sm:w-[250px] md:w-[550px]' : 'w-[100px] md:w-[400px]'}`}
+                className={` cursor-pointer truncate text-xs drop-shadow ${longTruncate ? ' w-[250px] md:max-w-[320px]' : 'w-[100px] md:max-w-[280px]'}`}
             >
                 {formatParameterName(param[0])} : {param[1]}
             </span>
@@ -364,7 +354,7 @@ const TxHashComponent = ({ txHash }: { txHash: string }) => {
                     onClick={handleOnClickCopy}
                     className={
                         'cursor-pointer text-xs text-brand-Black-300/90 hover:!text-brand-Black-300/60 ' +
-                        'w-[120px] truncate sm:w-[200px] lg:w-[350px]'
+                        'w-[120px] truncate sm:w-[180px] lg:w-[300px]'
                     }
                 >
                     {txHash}

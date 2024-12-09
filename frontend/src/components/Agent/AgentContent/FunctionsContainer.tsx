@@ -6,8 +6,8 @@ import { IAgentConfiguration } from '@api/agents';
 import { IAgent } from '@api/agents';
 import { updateTrigger } from '@api/trigger';
 import { Dialog, DialogContent } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { useMutation } from '@tanstack/react-query';
-import { OctagonAlert } from 'lucide-react';
 
 import { FunctionForm } from '@app/app/(pages)/templates/create-template/components/FunctionForm';
 import {
@@ -19,7 +19,6 @@ import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { SuccessToast } from '../../molecules/CustomToasts';
 import { ErrorToast } from '../../molecules/CustomToasts';
-import ErrorPlaceholder from '../shared/ErrorPlaceholder';
 import FunctionCardWithMeta from '../shared/FunctionCardWithMeta';
 
 const AgentFunctionsDetailComponent = ({
@@ -67,31 +66,22 @@ const AgentFunctionsDetailComponent = ({
         }
     };
 
+    const isMobile = useMediaQuery('(max-width: 600px)');
+
     return (
-        <div className="flex h-full flex-col gap-2">
-            <div className="flex items-center gap-4"></div>
-            <div className="flex flex-row flex-wrap gap-6">
-                {!agentConfigurations?.length ? (
-                    <ErrorPlaceholder
-                        title="No Functions"
-                        content="Agent seems to have no functions configured."
-                        icon={OctagonAlert}
-                        className="absolute h-full w-full border-0"
+        <>
+            {agentConfigurations &&
+                agentConfigurations.map((config, index) => (
+                    <FunctionCardWithMeta
+                        config={config}
+                        onClickDelete={onClickDelete}
+                        enableContol={enableContol}
+                        handleClickEdit={handleClickEdit}
+                        key={index}
                     />
-                ) : (
-                    agentConfigurations.map((config, index) => (
-                        <FunctionCardWithMeta
-                            config={config}
-                            onClickDelete={onClickDelete}
-                            enableContol={enableContol}
-                            handleClickEdit={handleClickEdit}
-                            key={index}
-                        />
-                    ))
-                )}
-            </div>
+                ))}
             {currentFunction && (
-                <Dialog open={openDialog}>
+                <Dialog open={openDialog} fullScreen={isMobile}>
                     <DialogContent className="!p-0">
                         <FunctionForm
                             currentFunction={currentFunction}
@@ -106,7 +96,7 @@ const AgentFunctionsDetailComponent = ({
                     </DialogContent>
                 </Dialog>
             )}
-        </div>
+        </>
     );
 };
 

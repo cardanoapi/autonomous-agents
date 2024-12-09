@@ -22,7 +22,7 @@ const AgentAvatar = ({
 }) => {
     const src = generateIdentIcon(hash, size);
     return isLink ? (
-        <Link href={`/agents/${hash}`}>
+        <Link href={`/agents/${hash}`} className="w-fit">
             <div
                 className={
                     'relative cursor-pointer rounded-full bg-brand-Blue-300/10 p-1'

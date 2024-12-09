@@ -19,7 +19,7 @@ const OverViewCard: React.FC<IOverViewCard> = ({
     return (
         <Card
             className={cn(
-                'hover-transition-primary flex h-full w-full min-w-[269px] flex-col justify-between gap-y-0 p-4 pb-6',
+                'hover-transition-primary min-gap-y-2 flex h-full w-full flex-col justify-between gap-y-2 p-4 pb-6',
                 className
             )}
         >
@@ -27,7 +27,7 @@ const OverViewCard: React.FC<IOverViewCard> = ({
                 <div className="h4">{title}</div>
                 <div className="card-h1 pl-[2px]">{value}</div>
             </div>
-            {children}
+            <div>{children}</div>
         </Card>
     );
 };

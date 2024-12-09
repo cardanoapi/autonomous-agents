@@ -2,6 +2,12 @@ import React from 'react';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '../atoms/DropDownMenu';
 import { cn } from '../lib/utils';
 
 interface PaginationBtnsProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -9,10 +15,14 @@ interface PaginationBtnsProps extends React.HTMLAttributes<HTMLDivElement> {
     refCurrentPage?: number;
     upperLimit: number;
     onPaginate?: any;
+    rowsPerPage?: number;
+    rowsLabel?: string;
+    rowOptions?: number[];
+    onRowClick?: any;
 }
 
 const chevronWrapper =
-    'border-brand-Gray-100 border-[1px] rounded-lg px-[3px] py-[2px] hover:bg-gray-300';
+    'border-brand-Gray-100 border-[1px] rounded-md px-[3px] py-[2px] hover:bg-gray-300';
 
 const disableChevron = 'pointer-events-none bg-gray-200';
 
@@ -22,6 +32,10 @@ const PaginationBtns: React.FC<PaginationBtnsProps> = ({
     refCurrentPage = 1,
     upperLimit,
     onPaginate = () => {},
+    rowsLabel,
+    rowsPerPage,
+    rowOptions = [10, 15, 20, 30],
+    onRowClick,
     ...props
 }) => {
     const currentPage = refCurrentPage;
@@ -35,34 +49,53 @@ const PaginationBtns: React.FC<PaginationBtnsProps> = ({
     }
 
     return (
-        <div {...props} className={cn('flex items-center gap-x-2', className)}>
-            <div
-                className={cn(
-                    chevronWrapper,
-                    currentPage === lowerLimit ? disableChevron : ''
-                )}
-            >
-                <ChevronLeft
-                    size={18}
-                    stroke={lowerLimit === refCurrentPage ? '#868FA0' : '#464F60'}
-                    onClick={handleLeftClick}
-                />
-            </div>
-            <span className="text-center text-base ">
-                {refCurrentPage ? refCurrentPage : currentPage}
-                {upperLimit ? ` /${upperLimit}` : ''}
-            </span>
-            <div
-                className={cn(
-                    chevronWrapper,
-                    upperLimit === refCurrentPage ? disableChevron : ''
-                )}
-            >
-                <ChevronRight
-                    size={18}
-                    stroke={upperLimit === refCurrentPage ? '#868FA0' : '#464F60'}
-                    onClick={handleRightClick}
-                />
+        <div className="flex items-center justify-center">
+            <DropdownMenu>
+                <span className="text-xs">{rowsLabel || 'Rows per page'} : </span>
+                <DropdownMenuTrigger
+                    className="ml-1 inline-flex gap-x-1 p-0 text-xs"
+                    useChevron={true}
+                    iconSize={16}
+                >
+                    {rowsPerPage || 1}
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="min-w-0">
+                    {rowOptions.map((row: number) => (
+                        <DropdownMenuItem key={row} onClick={() => onRowClick?.(row)}>
+                            {row}
+                        </DropdownMenuItem>
+                    ))}
+                </DropdownMenuContent>
+            </DropdownMenu>
+            <div {...props} className={cn('ml-4 flex items-center gap-x-2', className)}>
+                <div
+                    className={cn(
+                        chevronWrapper,
+                        currentPage === lowerLimit ? disableChevron : ''
+                    )}
+                >
+                    <ChevronLeft
+                        size={14}
+                        stroke={lowerLimit === refCurrentPage ? '#868FA0' : '#464F60'}
+                        onClick={handleLeftClick}
+                    />
+                </div>
+                <span className="text-center text-xs ">
+                    {refCurrentPage ? refCurrentPage : currentPage}
+                    {upperLimit ? `/${upperLimit}` : ''}
+                </span>
+                <div
+                    className={cn(
+                        chevronWrapper,
+                        upperLimit === refCurrentPage ? disableChevron : ''
+                    )}
+                >
+                    <ChevronRight
+                        size={14}
+                        stroke={upperLimit === refCurrentPage ? '#868FA0' : '#464F60'}
+                        onClick={handleRightClick}
+                    />
+                </div>
             </div>
         </div>
     );

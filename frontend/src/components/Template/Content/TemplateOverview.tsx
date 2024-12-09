@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { ITemplate } from '@api/templates';
 import { ITemplateConfiguration } from '@api/templates';
 import { updateTemplateData } from '@api/templates';
+import { useMediaQuery } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { v4 } from 'uuid';
@@ -18,7 +19,6 @@ import { Textarea } from '@app/components/atoms/Textarea';
 import { Label } from '@app/components/atoms/label';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
-import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import {
@@ -40,6 +40,7 @@ const TemplateOverview = ({
     const [addFunctionDialogOpen, setAddFunctionDialogOpen] = useState(false);
     const [deleteFunctionDialogOpen, setDeleteFunctionDialogOpen] = useState(false);
     const [templateDataCopy, setTemplateDataCopy] = useState<ITemplate>(template);
+    const isMobile = useMediaQuery('(max-width: 600px)');
 
     const [deleteIndex, setDeleteIndex] = useState(0);
 
@@ -165,8 +166,8 @@ const TemplateOverview = ({
     };
 
     return (
-        <div className="flex h-full w-full flex-col gap-4 ">
-            <div className="flex w-[60%] flex-col gap-4 2xl:w-[40%]">
+        <div className="relative flex h-full w-full flex-col gap-4">
+            <div className="flex w-full flex-col gap-4 md:w-[60%] 2xl:w-[40%]">
                 <div className="flex flex-col gap-2">
                     <Label>Template Name</Label>
                     <Input
@@ -190,8 +191,8 @@ const TemplateOverview = ({
                     />
                 </div>
             </div>
-            <div className="flex flex-col">
-                <div className="relative flex w-fit items-center gap-2 p-2 pr-8">
+            <div className="flex h-full w-full flex-col">
+                <div className="bg- relative flex w-fit items-center gap-2 p-2 pr-8">
                     <Label>Template Functions</Label>
                     {isEditing && (
                         <Plus
@@ -200,27 +201,23 @@ const TemplateOverview = ({
                         />
                     )}
                 </div>
-                <ScrollArea className="h-[320px] w-full overflow-y-auto px-2 py-2 2xl:h-[400px]">
-                    <div className="flex flex-row flex-wrap gap-6">
-                        {templateDataCopy.template_configurations?.map(
-                            (config, index) => (
-                                <FunctionCardWithMeta
-                                    key={index}
-                                    config={config}
-                                    enableContol={isEditing}
-                                    handleClickEdit={handleFunctionEdit}
-                                    onClickDelete={() => {
-                                        setDeleteIndex(index);
-                                        toggleDeleteFunctionDialog();
-                                    }}
-                                />
-                            )
-                        )}
-                    </div>
-                </ScrollArea>
+                <div className="flex flex-row flex-wrap gap-4">
+                    {templateDataCopy.template_configurations?.map((config, index) => (
+                        <FunctionCardWithMeta
+                            key={index}
+                            config={config}
+                            enableContol={isEditing}
+                            handleClickEdit={handleFunctionEdit}
+                            onClickDelete={() => {
+                                setDeleteIndex(index);
+                                toggleDeleteFunctionDialog();
+                            }}
+                        />
+                    ))}
+                </div>
             </div>
             {enableEdit && (
-                <div className="flex justify-end">
+                <div className="">
                     <EditBtns
                         isEditing={isEditing}
                         onSave={handleSaveTemplate}
@@ -234,17 +231,20 @@ const TemplateOverview = ({
                 toggleDialog={toggleDialog}
                 currentFunction={currentFunction}
                 handleFunctionUpdate={handleFunctionUpdate}
+                fullScreen={isMobile}
             />
             <AddFunctionDialog
                 dialogOpen={addFunctionDialogOpen}
                 toggleDialog={toggleAddFunctionDialog}
                 handleAddNewFunction={handleAddNewFunction}
+                fullScreen={isMobile}
             />
             <DeleteFunctionDialog
                 dialogOpen={deleteFunctionDialogOpen}
                 toggleDialog={toggleDeleteFunctionDialog}
                 deleteIndex={deleteIndex}
                 handleFunctionDelete={handleFunctionDelete}
+                fullScreen={isMobile}
             />
         </div>
     );

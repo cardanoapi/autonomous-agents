@@ -107,16 +107,21 @@ export default function WalletSignInDialog({
         <div>
             <Dialog open={refDialogOpen || dialogOpen}>
                 <DialogContent
-                    className="max-w-4xl px-8 pb-24  focus:outline-none"
+                    className="h-fit w-full max-w-[90%] justify-self-end rounded-2xl p-8 px-8 py-10 focus:outline-none sm:h-auto sm:w-auto sm:max-w-4xl sm:translate-y-[-50%] 2xl:py-12"
                     defaultCross={false}
                 >
-                    <div className="flex flex-col gap-y-4 ">
-                        <div className="mb-4 flex justify-end">
-                            <X onClick={onClose} className="hover:cursor-pointer" />
-                        </div>
-                        <div className="mb-4 flex items-center justify-center gap-2">
-                            <Wallet size={28} stroke="#2595FCFA" />
-                            <span className="text-2xl font-semibold">
+                    <div className="flex flex-col gap-y-4">
+                        <X
+                            onClick={onClose}
+                            className="absolute right-4 top-4 hover:cursor-pointer"
+                        />
+                        <div className="mb-4 flex items-center justify-center gap-1 ">
+                            <Wallet
+                                size={28}
+                                stroke="#2595FCFA"
+                                className="hidden xl:flex "
+                            />
+                            <span className="text-center text-xl  font-semibold 2xl:text-2xl ">
                                 {' '}
                                 Select your{' '}
                                 <span className="text-blue-600">CIP-30</span> wallet
@@ -149,7 +154,7 @@ export default function WalletSignInDialog({
                                 <WalletProviderListEmptyMessage />
                             )}
                         </div>
-                        <div className="mt-4 px-4 text-center">
+                        <div className="mt-4 px-4 text-center text-sm 2xl:text-base ">
                             By connecting your Wallet , you agree to the{' '}
                             <span className={textHiglight}>Terms & Conditons </span> and{' '}
                             <span className={textHiglight}>Privacy Policy.</span>
@@ -157,9 +162,9 @@ export default function WalletSignInDialog({
                         <div className="mt-4 flex justify-center">
                             <Button
                                 variant={'primary'}
-                                size={'lg'}
+                                size={'md'}
                                 className={cn(
-                                    'without-focus-visible min-w-56 py-6 text-xl'
+                                    'without-focus-visible w-48 py-4 text-base max-md:rounded-full 2xl:min-w-56 2xl:py-6 2xl:text-xl'
                                 )}
                                 onClick={() => {
                                     if (currentSelectedWalletProvider === null) return;

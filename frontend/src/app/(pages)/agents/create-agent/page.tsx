@@ -46,7 +46,8 @@ export default function CreateAgentForm() {
                 templates.map(
                     (item: ITemplate): IOption => ({
                         label: item.name,
-                        value: item.id
+                        value: item.id,
+                        description: item.description
                     })
                 )
             );
@@ -91,7 +92,7 @@ export default function CreateAgentForm() {
             <form onSubmit={form.handleSubmit(onSubmit)}>
                 <Card
                     className={cn(
-                        'flex min-h-[493px] w-[790px] flex-col justify-between',
+                        'flex flex-col justify-between max-md:p-6 max-md:py-4 max-md:pb-8 lg:min-h-[493px] lg:w-[780px]',
                         selected.length === 0 ? 'pb-24' : ''
                     )}
                 >
@@ -148,7 +149,7 @@ export default function CreateAgentForm() {
                                 return (
                                     <SelectedCard
                                         name={option.label}
-                                        description={option.value}
+                                        description={option.description}
                                         key={index}
                                         handleEdit={() => {
                                             toast.error(
@@ -189,7 +190,11 @@ export default function CreateAgentForm() {
                             )}
                         />
                     </div>
-                    <SubmitButton disabled={submittingForm} />
+                    <SubmitButton
+                        disabled={submittingForm}
+                        placeholder="Create Agent"
+                        className=" h-[36px] w-36 rounded-none"
+                    />
                 </Card>
             </form>
         </Form>

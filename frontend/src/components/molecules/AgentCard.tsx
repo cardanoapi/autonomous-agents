@@ -10,7 +10,6 @@ import { PlayIcon, Trash2 } from 'lucide-react';
 
 import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import { cn } from '@app/components/lib/utils';
-import { Truncate } from '@app/utils/common/extra';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { useModal } from '../Modals/context';
@@ -32,6 +31,7 @@ export interface IAgentCard {
     no_of_successful_triggers?: number;
     isActive?: boolean;
     agentSecretKey?: string;
+    className?: string;
 }
 
 export default function AgentCard({
@@ -44,7 +44,8 @@ export default function AgentCard({
     enableDelete = false,
     lastActive = '',
     isActive = false,
-    agentSecretKey = ''
+    agentSecretKey = '',
+    className
 }: IAgentCard) {
     const router = useRouter();
     const { openModal } = useModal();
@@ -117,7 +118,10 @@ export default function AgentCard({
                 onClick={() => {
                     router.push(`/agents/${agentID}`);
                 }}
-                className="hover-transition-primary group relative flex  min-h-[247px] min-w-[261px] cursor-pointer flex-col !gap-y-6 rounded-xl pl-5 pt-4 transition-all "
+                className={cn(
+                    'hover-transition-primary group relative flex h-full w-full cursor-pointer flex-col !gap-y-6 rounded-xl p-4 transition-all sm:min-h-[247px] xl:max-w-[261px] ',
+                    className
+                )}
             >
                 <AgentCardControls
                     enableRun={enableEdit}
@@ -132,7 +136,7 @@ export default function AgentCard({
                     isActive={isActive}
                 />
 
-                <CardContent className="flex flex-col gap-y-2">
+                <CardContent className="flex flex-col gap-y-2 ">
                     {templateName && (
                         <span className="flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-center">
                             Template:{' '}
@@ -207,22 +211,15 @@ const AgentCardTitle = ({
     isActive?: boolean;
 }) => {
     return (
-        <div className={'flex items-center gap-3'}>
+        <div className={'flex w-full items-center gap-3'}>
             <AgentAvatar hash={agentID || ''} size={40} isActive={isActive || false} />
-            <div className="card-h2 flex flex-col">
+            <div className="card-h2 flex w-full flex-col">
                 <span
                     className={
-                        'w-36 !overflow-hidden text-ellipsis !whitespace-nowrap !text-sm leading-normal'
+                        'no-wrap-truncate w-full !overflow-hidden text-ellipsis !whitespace-nowrap !text-sm leading-normal'
                     }
                 >
                     {agentName}
-                </span>
-                <span
-                    className={
-                        'overflow-hidden !whitespace-nowrap text-[8px] leading-normal text-brand-Black-300/80'
-                    }
-                >
-                    {Truncate(agentID || '', 25)}
                 </span>
             </div>
         </div>

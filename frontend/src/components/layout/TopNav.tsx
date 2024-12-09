@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
 import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
+import { cn } from '@app/components/lib/utils';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { templateAtom } from '@app/store/atoms/template';
 import {
@@ -19,7 +20,7 @@ import {
 } from '@app/store/localStore';
 import { Truncate } from '@app/utils/common/extra';
 
-export default function TopNav() {
+export default function TopNav({ className }: { className?: string }) {
     const [currentAgentName] = useAtom(currentAgentNameAtom);
     const [adminAcesss] = useAtom(adminAccessAtom);
     const [, setAgents] = useAtom(agentsAtom);
@@ -74,11 +75,11 @@ export default function TopNav() {
     function renderTopNavSection() {
         const title = PageTitles[path];
         if (title) {
-            return <span className="h1">{title}</span>;
+            return <span className="h1 mt-2 md:mt-0">{title}</span>;
         } else {
             if (getPageTitleByRegexMatch('agents')) {
                 return (
-                    <div className={'flex items-center gap-3 py-3'}>
+                    <div className={'flex items-center gap-3 md:py-3'}>
                         <AgentAvatar
                             hash={agentId}
                             size={40}
@@ -109,9 +110,14 @@ export default function TopNav() {
     }
 
     return (
-        <div className="flex w-[full] items-center justify-between text-sm">
+        <div
+            className={cn(
+                'flex w-[full] items-center justify-between text-sm',
+                className
+            )}
+        >
             {renderTopNavSection()}
-            {adminAcesss && 'Admin'}
+            <span className="hidden md:flex">{adminAcesss && 'Admin'}</span>
         </div>
     );
 }

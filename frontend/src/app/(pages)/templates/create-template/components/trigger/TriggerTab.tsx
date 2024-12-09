@@ -154,7 +154,7 @@ export default function TriggerTab({
             <Card className="border-brand-gray-100 min-h-[160px] w-full border-[1px] bg-white p-0 pb-5">
                 <TabsContent value="Cron">
                     <Tabs defaultValue={defaultSelectedCronTab}>
-                        <TabsList className=" w-full justify-start gap-6 rounded-none border-b-[1px] bg-brand-Azure-400 pl-4">
+                        <TabsList className=" w-full justify-start  rounded-none border-b-[1px] bg-brand-Azure-400 pl-4">
                             <TabsTrigger value="Minute">Minute</TabsTrigger>
                             <TabsTrigger value="Hour">Hour</TabsTrigger>
                             <TabsTrigger value="Day">Day</TabsTrigger>
