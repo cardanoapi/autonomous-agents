@@ -68,7 +68,7 @@ class DrepService:
                 metadata_hash = drep_dict.get("metadataHash")
                 try:
                     async with session.get(
-                            f"{api_settings.METADATA_API}/metadata?url={url}&hash={metadata_hash}"
+                        f"{api_settings.METADATA_API}/metadata?url={url}&hash={metadata_hash}"
                     ) as metadata_resp:
                         metadata_resp_json = await metadata_resp.json()
                         if "hash" in metadata_resp_json:
@@ -129,7 +129,7 @@ class DrepService:
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(
-                        f"{api_settings.METADATA_API}/metadata?url={url}&hash={metadata_hash}"
+                    f"{api_settings.METADATA_API}/metadata?url={url}&hash={metadata_hash}"
                 ) as metadata_resp:
                     metadata_resp_json = await metadata_resp.json()
                     if "hash" in metadata_resp_json:
