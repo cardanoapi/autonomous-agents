@@ -262,8 +262,8 @@ paths:
             default: 10
           required: false
         - in: query
-          name: dRepId
-          description: Search by dRepId
+          name: search
+          description: Search by dRepId, dRepView or dRep Name
           schema:
             type: string
             default: ''
