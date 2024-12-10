@@ -7,11 +7,14 @@ export function convertToHexIfBech32(address: string): string {
     const data = bech32.fromWords(decoded.words);
     return Buffer.from(data).toString('hex');
   }
+  else if (address.length === 58 && (address.startsWith('22') || address.startsWith('23'))){
+    return address.slice(2)
+  }
   return address
 }
 
 export function isHexValue(value:string):boolean{
-  const hexRegex = /^[0-9a-fA-F]+$/;
+  const hexRegex = /^[0-9a-fA-F]{56}$/;
   return hexRegex.test(value);
 }
 

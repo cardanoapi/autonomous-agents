@@ -58,7 +58,7 @@ class DrepService:
     async def fetch_metadata(self, agent: Agent, index: int, agents: list[Any], session: ClientSession):
         drep_dict = {}
         drep_id = convert_base64_to_hex(agent.wallet_details[0].stake_key_hash)
-        async with session.get(f"{api_settings.DB_SYNC_API}/drep?dRepId={drep_id}") as response:
+        async with session.get(f"{api_settings.DB_SYNC_API}/drep?search={drep_id}") as response:
             response_json = await response.json()
             if response_json["items"]:
                 if drep_id == response_json["items"][0]["drepId"]:
@@ -68,7 +68,7 @@ class DrepService:
                 metadata_hash = drep_dict.get("metadataHash")
                 try:
                     async with session.get(
-                        f"{api_settings.METADATA_API}/metadata?url={url}&hash={metadata_hash}"
+                            f"{api_settings.METADATA_API}/metadata?url={url}&hash={metadata_hash}"
                     ) as metadata_resp:
                         metadata_resp_json = await metadata_resp.json()
                         if "hash" in metadata_resp_json:
@@ -84,7 +84,7 @@ class DrepService:
 
     async def fetch_external_dreps(self, page: int, page_size: int, search: str | None):
         if search:
-            fetchUrl = f"{api_settings.DB_SYNC_API}/drep?dRepId={search}"
+            fetchUrl = f"{api_settings.DB_SYNC_API}/drep?search={search}"
         else:
             fetchUrl = f"{api_settings.DB_SYNC_API}/drep?page={page}&size={page_size}"
 
@@ -129,7 +129,7 @@ class DrepService:
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(
-                    f"{api_settings.METADATA_API}/metadata?url={url}&hash={metadata_hash}"
+                        f"{api_settings.METADATA_API}/metadata?url={url}&hash={metadata_hash}"
                 ) as metadata_resp:
                     metadata_resp_json = await metadata_resp.json()
                     if "hash" in metadata_resp_json:

@@ -20,11 +20,8 @@ const getDrepList= async(req:Request,res:Response )=>{
   const page = req.query.page ? +req.query.page : 1
   const status = req.query.status ? req.query.status as DrepStatusType : undefined
   const sort = req.query.sort ? req.query.sort as DrepSortType : undefined
-  const dRepId =  convertToHexIfBech32(req.query.dRepId as string)
-  if ( dRepId && !isHexValue(dRepId)){
-    return res.status(400).json({message:'Provide a valid Drep ID'})
-  }
-  const { items,totalCount }  = await fetchDrepList(page,size,dRepId,status,sort)
+  const search =  convertToHexIfBech32(req.query.search as string)
+  const { items,totalCount }  = await fetchDrepList(page,size,search,status,sort)
   return res.status(200).json({total:totalCount,page,size,items})
 }
 
