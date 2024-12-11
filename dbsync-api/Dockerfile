@@ -1,4 +1,4 @@
-FROM node:20-alpine  as api_base
+FROM node:20-alpine  AS api_base
 WORKDIR /prisma
 RUN yarn add prisma
 
@@ -11,7 +11,7 @@ COPY ./prisma ./prisma
 RUN /prisma/node_modules/.bin/prisma generate
 
 
-FROM api_base as builder
+FROM api_base AS builder
 RUN yarn install
 COPY ./ ./
 RUN yarn build
@@ -20,7 +20,7 @@ RUN cp ./swagger.yaml ./dist
 
 
 FROM node:20-alpine
-
+RUN apk add openssl
 USER node
 
 WORKDIR /api
