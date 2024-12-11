@@ -3,6 +3,7 @@ import {Prisma} from "@prisma/client";
 import {formatResult} from "../helpers/formatter";
 import {DrepSortType, DrepStatusType} from "../types/drep";
 import {isHexValue} from "../helpers/validator";
+import drep from "../controllers/drep";
 
 export const fetchDrepList = async (page = 1, size = 10, search='', status?: DrepStatusType, sort?: DrepSortType) => {
     const result = await prisma.$queryRaw
@@ -338,4 +339,56 @@ export const fetchDrepDetails = async (drepId: string) => {
                ) as result;
     ` as Record<string, any>[];
     return result[0].result.drep_details ? result[0].result.drep_details : result[0].result
+}
+
+export const fetchDrepVoteDetails = async (dRepId:string) => {
+    const result = await prisma.$queryRaw
+        `
+            WITH DrepVoteDetails as (
+                SELECT DISTINCT ON (gp.id, voting_procedure.drep_voter)
+                concat(encode(gov_action_tx.hash, 'hex'), '#', gp.index) as govActionId,
+                gov_action_metadata.title as title,
+                voting_procedure.vote::text as voteType,
+                voting_anchor.url as voteAnchorUrl,
+                encode(voting_anchor.data_hash, 'hex') as voteAnchorHash,
+                block.epoch_no as epochNo,
+                block.time as time,
+                encode(vote_tx.hash, 'hex') as voteTxHash,
+                gp.type as govActionType
+            FROM voting_procedure
+                JOIN gov_action_proposal AS gp
+            ON gp.id = voting_procedure.gov_action_proposal_id
+                JOIN drep_hash
+                ON drep_hash.id = voting_procedure.drep_voter
+                LEFT JOIN voting_anchor
+                ON voting_anchor.id = voting_procedure.voting_anchor_id
+                JOIN tx AS gov_action_tx
+                ON gov_action_tx.id = gp.tx_id
+                JOIN tx AS vote_tx
+                ON vote_tx.id = voting_procedure.tx_id
+                JOIN block
+                ON block.id = vote_tx.block_id
+                LEFT JOIN off_chain_vote_data
+                ON off_chain_vote_data.voting_anchor_id = gp.voting_anchor_id
+                LEFT JOIN off_chain_vote_gov_action_data AS gov_action_metadata
+                ON gov_action_metadata.off_chain_vote_data_id = off_chain_vote_data.id
+            WHERE drep_hash.raw = decode(${dRepId}, 'hex')
+            ORDER BY gp.id, voting_procedure.drep_voter,block.time , voting_procedure.id DESC
+                ), TimeOrderedDrepVoteDetails as ( select * from DrepVoteDetails order by DrepVoteDetails.time desc)
+            SELECT
+                json_agg(
+                        json_build_object(
+                                'govActionId', TimeOrderedDrepVoteDetails.govActionId,
+                                'title', TimeOrderedDrepVoteDetails.title,
+                                'voteType', TimeOrderedDrepVoteDetails.voteType,
+                                'voteAnchorUrl', TimeOrderedDrepVoteDetails.voteAnchorUrl,
+                                'voteAnchorHash', TimeOrderedDrepVoteDetails.voteAnchorHash,
+                                'epochNo', TimeOrderedDrepVoteDetails.epochNo,
+                                'time', TimeOrderedDrepVoteDetails.time,
+                                'voteTxHash', TimeOrderedDrepVoteDetails.voteTxHash,
+                                'govActionType', TimeOrderedDrepVoteDetails.govActionType
+                        )
+                ) AS votes from TimeOrderedDrepVoteDetails
+        ` as Record<any, any>[]
+    return result[0].votes
 }

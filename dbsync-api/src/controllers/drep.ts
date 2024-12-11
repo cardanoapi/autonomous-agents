@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import { handlerWrapper } from "../errors/AppError";
 import { convertToHexIfBech32, isHexValue } from "../helpers/validator";
-import { fetchDrepDetails, fetchDrepList } from "../repository/drep";
+import {fetchDrepDetails, fetchDrepList, fetchDrepVoteDetails} from "../repository/drep";
 import { DrepSortType, DrepStatusType } from "../types/drep";
 
 const router = Router();
@@ -25,7 +25,17 @@ const getDrepList= async(req:Request,res:Response )=>{
   return res.status(200).json({total:totalCount,page,size,items})
 }
 
-router.get('/:id', handlerWrapper(getDrepDetails));
+const getDrepVoteDetails = async(req:Request,res:Response)=>{
+  const dRepId = convertToHexIfBech32(req.params.id as string)
+  if (dRepId && !isHexValue(dRepId)){
+    return res.status(400).json({message:'Provide a valid Drep ID'})
+  }
+  const result = await fetchDrepVoteDetails(dRepId)
+  return res.status(200).json(result);
+}
+
 router.get('/',handlerWrapper(getDrepList));
+router.get('/:id', handlerWrapper(getDrepDetails));
+router.get('/:id/vote',handlerWrapper(getDrepVoteDetails))
 
 export default router;
