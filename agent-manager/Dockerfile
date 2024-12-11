@@ -1,5 +1,5 @@
 # Use Node.js base image with a specific version (you can change this as needed)
-FROM node:18-alpine as base
+FROM node:18-alpine AS base
 
 # Set working directory in the container
 WORKDIR /app
@@ -11,7 +11,9 @@ COPY package.json yarn.lock ./
 RUN apk add --no-cache  py3-setuptools make python3 build-base \
     && yarn install --frozen-lockfile --production \
     && apk del  py3-setuptools make python3 build-base
-FROM base as builder
+
+
+FROM base AS builder
 # Copy the rest of the application code to the container
 RUN yarn install
 
@@ -22,7 +24,7 @@ RUN yarn build
 RUN pwd && ls
 
 FROM node:18-alpine
-
+RUN apk add openssl
 USER node
 
 WORKDIR /app
