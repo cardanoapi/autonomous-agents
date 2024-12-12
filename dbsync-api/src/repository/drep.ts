@@ -344,7 +344,7 @@ export const fetchDrepDetails = async (drepId: string) => {
 export const fetchDrepVoteDetails = async (dRepId:string) => {
     const result = await prisma.$queryRaw
         `
-            WITH DrepVoteDetails as (
+            WITH DrepVoteDetails as ( 
                 SELECT DISTINCT ON (gp.id, voting_procedure.drep_voter)
                 concat(encode(gov_action_tx.hash, 'hex'), '#', gp.index) as govActionId,
                 gov_action_metadata.title as title,
@@ -391,4 +391,49 @@ export const fetchDrepVoteDetails = async (dRepId:string) => {
                 ) AS votes from TimeOrderedDrepVoteDetails
         ` as Record<any, any>[]
     return result[0].votes
+}
+
+export const fetchDrepDelegationDetails = async(dRepId:string)=>{
+    const result = await prisma.$queryRaw`
+        with delegator as (select *, ROW_NUMBER() OVER (PARTITION BY addr_id order by tx_id desc) AS rn
+                           from delegation_vote as dv
+                                    join drep_hash as dh on dv.drep_hash_id = dh.id
+                           where dh.raw = decode(${dRepId}, 'hex'))
+        select json_build_object(
+                       'stake_address', addr.view,
+                       'utxoBalance', sum(uv.value),
+                       'time', b.time,
+                       'rewardBalance', (select sum(amount) as amount
+                                         from reward r
+                                         where r.addr_id = uv.stake_address_id
+                                           and r.earned_epoch
+                                             >
+                                               (select blka.epoch_no as epoch_no
+                                                from withdrawal w
+                                                         join tx txa on txa.id = w.tx_id
+                                                         join block blka on blka.id = txa.block_id
+                                                where w.addr_id = uv.stake_address_id
+                                                order by w.tx_id desc
+                           limit 1)),
+               'rewardRestBalance', (select sum(amount) as amount
+                                     from reward_rest r
+                                     where r.addr_id = uv.stake_address_id
+                                       and r.earned_epoch
+                                         >
+                                           (select blka.epoch_no as epoch_no
+                                            from withdrawal w
+                                                     join tx txa on txa.id = w.tx_id
+                                                     join block blka on blka.id = txa.block_id
+                                            where w.addr_id = uv.stake_address_id
+                                            order by w.tx_id desc
+                                            limit 1)))
+        from delegator
+                 join utxo_view as uv on delegator.addr_id = uv.stake_address_id
+                 join stake_address as addr on addr.id = uv.stake_address_id
+                 join tx on tx.id = delegator.tx_id
+                 join public.block b on tx.block_id = b.id
+        where delegator.rn = 1
+        group by uv.stake_address_id, addr.view, b.time
+    ` as  Record<any, any>[]
+    return result[0]
 }

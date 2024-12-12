@@ -274,6 +274,70 @@ paths:
         '500':
           description: Internal server error
 
+  /api/drep/{id}/delegation:
+    get:
+      summary: Get voting details by DRep ID
+      description: Retrieve voting details for a specific DRep ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Hex-encoded address or Bech32 address of DRep .
+          schema:
+            type: string
+            example: ""
+      responses:
+        '200':
+          description: Successfully retrieved voting details of given Drep
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  govActionId:
+                    type: string
+                    description: Unique identifier for the government action, combining hash and index.
+                    example: "8af0c0c97f532ebd72df62cf798ac19fc2ec952d411ece7de89#0"
+                  title:
+                    type: string
+                    nullable: true
+                    description: Title of the government action.
+                    example: 'Example Title'
+                  voteType:
+                    type: string
+                    description: Type of vote.
+                    example: "Abstain"
+                  voteAnchorUrl:
+                    type: string
+                    format: uri
+                    description: URL of the vote anchor.
+                    example: "https://example.com/aMBitupUUJucUCAg9sxVyHe4jjk41dzst9J"
+                  voteAnchorHash:
+                    type: string
+                    description: Hash of the vote anchor data.
+                    example: "d6086a79267ab5fb7b56c8ab77f1e0dff2c3"
+                  epochNo:
+                    type: integer
+                    description: Epoch number associated with the government action.
+                    example: 762
+                  time:
+                    type: string
+                    format: date-time
+                    description: Timestamp of the action.
+                    example: "2024-11-25T07:23:50"
+                  voteTxHash:
+                    type: string
+                    description: Transaction hash of the vote.
+                    example: "8d09be316ced784c1dd5bbcf7dccc0d63ea8de44b6e"
+                  govActionType:
+                    type: string
+                    description: Type of government action.
+                    example: "NoConfidence"
+        '404':
+          description: DRep ID not found
+        '500':
+          description: Internal server error
+
   /api/address/balance:
     get:
       summary: Get faucet balance for a given address
