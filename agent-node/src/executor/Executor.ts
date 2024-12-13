@@ -1,12 +1,12 @@
-import { AgentWalletDetails } from '../types/types'
-import { ManagerInterface } from '../service/ManagerInterfaceService'
-import { FunctionGroup, getHandlers } from './AgentFunctions'
-import { Builtins, FunctionContext, Key, Wallet } from './BaseFunction'
-import { TxListener } from './TxListener'
-import { generateProposalMetadataContent } from '../utils/metadataContent/proposalMetadataContent'
-import { generateRegisterDrepMetadataContent } from '../utils/metadataContent/drepMetadataContent'
-import { generateVoteMetadataContent } from '../utils/metadataContent/voteMetadataContent'
-import { rewardAddressBech32 } from '../utils/cardano'
+import {AgentWalletDetails} from '../types/types'
+import {ManagerInterface} from '../service/ManagerInterfaceService'
+import {FunctionGroup, getHandlers} from './AgentFunctions'
+import {Builtins, FunctionContext, Key, Wallet} from './BaseFunction'
+import {TxListener} from './TxListener'
+import {generateProposalMetadataContent} from '../utils/metadataContent/proposalMetadataContent'
+import {generateRegisterDrepMetadataContent} from '../utils/metadataContent/drepMetadataContent'
+import {generateVoteMetadataContent} from '../utils/metadataContent/voteMetadataContent'
+import {rewardAddressBech32} from '../utils/cardano'
 
 export interface CallLog {
     function: string
@@ -14,12 +14,14 @@ export interface CallLog {
     return?: any
     error?: Error | string
 }
+
 export class Executor {
     wallet: any
     readonly rpcInterface: ManagerInterface
     readonly functions: FunctionGroup
     readonly functionContext: FunctionContext
     txListener: TxListener
+
     constructor(
         wallet: any,
         rpcInterface: ManagerInterface,
@@ -116,19 +118,20 @@ export class Executor {
                     })
                 }
                 return new Promise((resolve, reject) => {
-                    txSubmissionHold.push({ request: spec, resolve, reject })
+                    txSubmissionHold.push({request: spec, resolve, reject})
                     console.log('Queue is : ', txSubmissionHold)
                     if (!isProcessing) {
                         processQueue(this.rpcInterface, this.txListener)
                     }
                 })
+
                 async function processQueue(
                     rpcInterface: ManagerInterface,
                     txListener: TxListener
                 ) {
                     isProcessing = true
                     while (txSubmissionHold.length > 0) {
-                        const { request, resolve, reject } =
+                        const {request, resolve, reject} =
                             txSubmissionHold.shift()
                         try {
                             const res = await rpcInterface.buildTx(
@@ -281,6 +284,9 @@ export class Executor {
             saveMetadata: async (content) => {
                 return await this.rpcInterface.saveMetadata(content)
             },
+            fetchMetadata: async (url: string, hash: string) => {
+                return await this.rpcInterface.fetchMetadata(url, hash)
+            },
             ...updatedBuiltins,
         } as Builtins
     }
@@ -296,7 +302,7 @@ export class Executor {
             return Promise.resolve([log])
         }
 
-        const newContext = { ...this.functionContext }
+        const newContext = {...this.functionContext}
         const builtinsProxy = this.makeProxy(newContext.builtins)
         newContext.builtins = builtinsProxy.proxy
         builtinsProxy.callLog.push(log)
@@ -327,5 +333,6 @@ export class Executor {
         }
         return Promise.resolve(builtinsProxy.callLog)
     }
+
     // newBlock(block) {}
 }
