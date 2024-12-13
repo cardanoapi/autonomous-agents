@@ -7,6 +7,7 @@ const environments = {
     managerWalletSigningKey: process.env.MANAGER_WALLET_SIGNING_KEY || '',
     agentMnemonic: process.env.AGENT_MNEMONIC || '',
     metaDataBaseURL: process.env.METADATA_BASE_URL || 'https://metadata.cardanoapi.io',
+    metaDataFetchBaseURL: process.env.METADATA_FETCH_BASE_URL || 'https://metadata.drep.id',
     dbSyncBaseUrl: process.env.DB_SYNC_BASE_URL || 'https://dbsyncapi.agents.cardanoapi.io/api/',
     serverPort: process.env.SERVER_PORT || '3001',
     networkName: process.env.NETWORK_NAME || 'sanchonet',
