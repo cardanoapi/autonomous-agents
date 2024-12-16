@@ -1,8 +1,6 @@
 from typing import Union, Optional, Any, Literal
-from pydantic import BaseModel, json
-from croniter import croniter
 
-from backend.app.exceptions import HTTPException
+from pydantic import BaseModel
 
 
 class CronTriggerDTO(BaseModel):
@@ -49,10 +47,10 @@ FilterNode = Union[Field, ChildrenFields]
 
 
 class EventTriggerDTO(BaseModel):
-    id: Union[str, list[str]]
-    parameters: list[FilterNode]
-    negate: bool
-    operator: BooleanOperator
+    id: Optional[Union[str, list[str]]]
+    parameters: Optional[list[FilterNode]]
+    negate: Optional[bool]
+    operator: Optional[BooleanOperator]
 
 
 ChildrenFields.update_forward_refs()  # To allow model to reference another model that has not been defined yet
