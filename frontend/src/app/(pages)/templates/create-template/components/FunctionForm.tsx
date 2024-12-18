@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import React from 'react';
 
 import { TriggerType } from '@api/agents';
@@ -7,7 +7,7 @@ import { Slider } from '@mui/material';
 import { X } from 'lucide-react';
 
 import { Button } from '@app/components/atoms/Button';
-import { Card, CardDescription, CardTitle } from '@app/components/atoms/Card';
+import { Card, CardTitle } from '@app/components/atoms/Card';
 import {
     Select,
     SelectContent,
@@ -19,8 +19,9 @@ import { CustomCombobox } from '@app/components/molecules/CustomCombobox';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
 
 import { IFormFunctionInstance } from '../page';
-import { renderParameters } from './trigger/ParameterRenderers';
-import TriggerTab from './trigger/TriggerTab';
+import { renderParameters } from './ParameterRenderers';
+import TriggerTab from './TriggerTab';
+import EventTab from './event/EventTab';
 
 interface IFunctionFormParams {
     currentFunction?: IFormFunctionInstance;
@@ -125,13 +126,11 @@ export const FunctionForm = ({
 
     const handleOnSave = () => {
         const validState = checkAllRequiredFieldsAreFilled();
-        console.log(functionState);
         validState && onSave?.(functionState);
     };
 
     const checkAllRequiredFieldsAreFilled = () => {
         if (functionState?.type === 'EVENT') {
-            //event type has no parameter for now
             return true;
         }
 
@@ -175,6 +174,16 @@ export const FunctionForm = ({
             setFunctionState(currentSelectedFunction);
         }
     };
+
+    useEffect(() => {
+        if (currentFunction && editMode) {
+            currentFunction.type === 'EVENT' &&
+                setFunctionState({
+                    ...functionState,
+                    eventValue: currentFunction.eventValue
+                });
+        }
+    }, []);
 
     return (
         <Card
@@ -227,9 +236,7 @@ export const FunctionForm = ({
                 </div>
                 {functionState?.parameters &&
                     renderParameters(
-                        functionState.type === 'CRON'
-                            ? functionState.parameters || []
-                            : functionState.eventParameters || [],
+                        functionState.parameters,
                         handleParameterChange,
                         handleNestedParameterChange,
                         handleOptionChange,
@@ -270,22 +277,28 @@ export const FunctionForm = ({
                     </>
                 )}
                 {functionState.type === 'EVENT' && (
-                    <Card className="bg-gray-200">
-                        <CardTitle>Event Trigger</CardTitle>
-                        <CardDescription>
-                            {functionState?.eventDescription}
-                        </CardDescription>
-                    </Card>
+                    <EventTab
+                        className="mt-4 w-full bg-white"
+                        onChange={(eventTrigger) => {
+                            setFunctionState({
+                                ...functionState,
+                                eventValue: eventTrigger
+                            });
+                        }}
+                        savedEventTrigger={functionState?.eventValue}
+                    />
                 )}
             </div>
-            <Button
-                variant="primary"
-                className="mt-6 min-w-36"
-                size="md"
-                onClick={() => functionState && handleOnSave()}
-            >
-                {btnPlaceholder || 'Save'}
-            </Button>
+            <div className="flex w-full justify-end">
+                <Button
+                    variant="primary"
+                    className="mt-2 w-36 "
+                    size="md"
+                    onClick={() => functionState && handleOnSave()}
+                >
+                    {btnPlaceholder || 'Save'}
+                </Button>
+            </div>
         </Card>
     );
 };

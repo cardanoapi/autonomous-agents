@@ -9,6 +9,32 @@ import { convertToQueryStr } from '@app/utils/common/extra';
 import { agentFormSchema } from '../app/(pages)/agents/create-agent/_form/schema';
 import { baseAPIurl } from './config';
 
+export type BooleanOperator = 'AND' | 'OR';
+export type ComparisonOperator = 'equals' | 'greaterThan' | 'lessThan' | 'in';
+
+export interface IFieldNode {
+    id: string | Array<string>;
+    value: any;
+    negate: boolean;
+    operator: ComparisonOperator;
+}
+
+export interface IBooleanNode {
+    id?: string | string[];
+    children: IFilterNode[];
+    negate: boolean;
+    operator: BooleanOperator;
+}
+
+export interface IEventTrigger {
+    id: string | string[];
+    children: IFilterNode[];
+    negate: boolean;
+    operator: BooleanOperator;
+}
+
+export type IFilterNode = IFieldNode | IBooleanNode;
+
 export type TriggerType = 'CRON' | 'MANUAL' | 'EVENT';
 
 export interface ISubParameter {
@@ -24,11 +50,6 @@ export interface IAgentAction {
 export interface ICronTrigger {
     frequency: string;
     probability: number;
-}
-
-export interface IEventTrigger {
-    event: 'VoteEvent';
-    parameters?: Array<ISubParameter>;
 }
 
 export interface IAgentConfiguration {

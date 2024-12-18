@@ -10,8 +10,8 @@ import {
     TabsTrigger
 } from '@app/components/molecules/Tabs';
 
-import CustomCron from './CustomCron';
-import DefaultCron from './DefaultCron';
+import CustomCron from './cron/CustomCron';
+import DefaultCron from './cron/DefaultCron';
 
 export interface ICronSetting {
     placeholder: string;

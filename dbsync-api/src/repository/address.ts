@@ -12,8 +12,3 @@ export const fetchFaucetBalance= async (address:string)=>{
   ` as Array<Record<string, number>>
   return result.length?+result[0].total_value:0
 }
-
-// UTXO SUM
-// + REWARD_REST
-// + REWARD
-// (aLSO MAKE SURE THAT IT IS NOT ALREADY WITHEDRAWAN BY SEEING THE WITHDRAWALS TABLE)

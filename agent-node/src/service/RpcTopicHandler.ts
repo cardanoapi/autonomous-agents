@@ -2,21 +2,23 @@ import { ManagerInterface } from './ManagerInterfaceService'
 import { TxListener } from '../executor/TxListener'
 import { BlockEvent } from 'libcardano/types'
 import { parseRawBlockBody } from 'libcardano/cardano/ledger-serialization/transaction'
-import { globalState } from '../constants/global'
 import { clearScheduledTasks, scheduleFunctions } from '../utils/scheduler'
-import {
-    checkIfAgentWithEventTriggerTypeExists,
-    createActionDtoForEventTrigger,
-} from '../utils/agent'
+import { checkIfAgentWithEventTriggerTypeExists } from '../utils/agent'
 import { ScheduledTask } from 'node-cron'
 import { AgentRunner } from '../executor/AgentRunner'
+import { EventTriggerHandler } from './EventTriggerHandler'
+import { formatEventFilter } from '../utils/eventFilterFormatter'
 
 export class RpcTopicHandler {
     managerInterface: ManagerInterface
     txListener: TxListener
+    eventTriggerHandlers: EventTriggerHandler
     constructor(managerInterface: ManagerInterface, txListener: TxListener) {
         this.managerInterface = managerInterface
         this.txListener = txListener
+        this.eventTriggerHandlers = new EventTriggerHandler(
+            this.managerInterface
+        )
     }
     handleEvent(
         eventName: string,
@@ -42,29 +44,7 @@ export class RpcTopicHandler {
             'txCount=' + transactions.length
         )
         this.txListener.onBlock({ ...block, body: transactions })
-        if (
-            globalState.eventTriggerTypeDetails.eventType &&
-            transactions.length
-        ) {
-            transactions.forEach((tx: any) => {
-                if (Array.isArray(tx.body.proposalProcedures)) {
-                    tx.body.proposalProcedures.forEach(
-                        (proposal: any, index: number) => {
-                            const { function_name, parameters } =
-                                createActionDtoForEventTrigger(tx, index)
-                            agentRunners.forEach((runner, index) => {
-                                runner.invokeFunction(
-                                    'EVENT',
-                                    index,
-                                    function_name,
-                                    ...(parameters as any)
-                                )
-                            })
-                        }
-                    )
-                }
-            })
-        }
+        this.eventTriggerHandlers.onBlock(transactions, agentRunners)
     }
     initial_config(
         message: any,
@@ -72,7 +52,13 @@ export class RpcTopicHandler {
         scheduledTasks: ScheduledTask[]
     ) {
         const { configurations } = message
-        checkIfAgentWithEventTriggerTypeExists(configurations)
+        const eventBasedActions = formatEventFilter(
+            checkIfAgentWithEventTriggerTypeExists(configurations)
+        )
+        console.log('hello : ', eventBasedActions)
+        if (eventBasedActions) {
+            this.eventTriggerHandlers.addEventActions(eventBasedActions)
+        }
         agentRunners.forEach((runner, index) => {
             scheduleFunctions(
                 this.managerInterface,
