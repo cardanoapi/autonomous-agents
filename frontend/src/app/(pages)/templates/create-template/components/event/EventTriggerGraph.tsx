@@ -103,7 +103,7 @@ export default function EventTriggerGraph({
                 width: getNodeWidth(text)
             });
 
-            data.parameters.forEach((param) => {
+            data.children.forEach((param) => {
                 // recursivelyAddNode(param, operatorId);
                 addNodesRecursively(param, rootId);
             });
@@ -116,7 +116,6 @@ export default function EventTriggerGraph({
     if (!data) {
         return <div className="h-full w-full bg-[#D2E0FB]"></div>;
     }
-
     return (
         <Canvas
             nodes={

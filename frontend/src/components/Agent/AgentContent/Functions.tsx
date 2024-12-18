@@ -1,8 +1,7 @@
 import { useState } from 'react';
 
 import { IAgent } from '@api/agents';
-import { ITriggerCreateDto, deleteTrigger } from '@api/trigger';
-import { postTrigger } from '@api/trigger';
+import { ITriggerCreateDto, deleteTrigger, postTrigger } from '@api/trigger';
 import { Dialog, DialogContent } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useMutation } from '@tanstack/react-query';
@@ -61,6 +60,7 @@ export default function AgentFunctionsComponent({
 
     const handlePostTrigger = (item: IFormFunctionInstance) => {
         const triggerData = mapFormFunctionToTriggerConfiguration(item);
+        console.log('triggerData', triggerData);
         triggerData && postTriggerMutation.mutate(triggerData);
     };
 
@@ -112,8 +112,8 @@ export default function AgentFunctionsComponent({
                         />
                     </div>
                 )}
-            <Dialog open={dialogOpen} fullScreen={isMobile}>
-                <DialogContent className="relative bg-brand-Azure-400 !p-0">
+            <Dialog open={dialogOpen} maxWidth={'xl'}>
+                <DialogContent className="relativebg-brand-Azure-400 !p-0">
                     <FunctionForm
                         onClose={toggleDialog}
                         onValueChange={() => {}}

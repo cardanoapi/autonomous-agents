@@ -13,7 +13,7 @@ export type BooleanOperator = 'AND' | 'OR';
 export type ComparisonOperator = 'equals' | 'greaterThan' | 'lessThan' | 'in';
 
 export interface IFieldNode {
-    id: string | string[];
+    id: string | Array<string>;
     value: any;
     negate: boolean;
     operator: ComparisonOperator;
@@ -28,7 +28,7 @@ export interface IBooleanNode {
 
 export interface IEventTrigger {
     id: string | string[];
-    parameters: IFilterNode[];
+    children: IFilterNode[];
     negate: boolean;
     operator: BooleanOperator;
 }

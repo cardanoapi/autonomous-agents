@@ -8,7 +8,7 @@ interface IEventFilterAtribute {
 export interface IEventFilter {
     id: string;
     label: string;
-    parameters: IEventFilterAtribute[];
+    children: IEventFilterAtribute[];
 }
 
 export interface IEvent {
@@ -17,45 +17,93 @@ export interface IEvent {
     filters: IEventFilter[];
 }
 
-export const Events: IEvent[] = [
+export interface ISchema {
+    id: string | string[];
+    label: string;
+    properties?: ISchema[];
+    type?: string;
+    validator?: (...args: any) => any;
+}
+
+export const transactionSchema: ISchema[] = [
     {
         id: 'tx',
-        label: 'transaction',
-        filters: [
+        label: 'Transaction',
+        type: 'object',
+        properties: [
+            // output
             {
-                id: 'output',
-                label: 'tx.ouput',
-                parameters: [
+                id: 'outputs',
+                label: 'Ouput',
+                type: 'object',
+                properties: [
                     {
-                        id: 'value',
-                        label: 'value',
-                        type: 'number'
+                        id: ['value', 'lovelace'],
+                        label: 'value.lovelace',
+                        type: 'bigint',
+                        validator: (arg: number) => true
                     },
                     {
-                        id: 'address',
+                        id: ['value', 'multiAsset'],
+                        label: 'value.multiAsset',
+                        type: 'map',
+                        validator: (arg: number) => true
+                    },
+                    // address
+                    {
+                        id: ['address', 'raw'],
                         label: 'address',
-                        type: 'string'
+                        type: 'string',
+                        validator: (arg: any) => true
                     },
                     {
-                        id: 'hash',
-                        label: 'hash',
-                        type: 'string'
-                    }
-                ]
-            },
-            {
-                id: 'input',
-                label: 'tx.input',
-                parameters: [
-                    {
-                        id: 'value',
-                        label: 'value',
-                        type: 'number'
+                        id: ['address', 'networkId'],
+                        label: 'address.networkId',
+                        type: 'number',
+                        validator: (arg: number) => true
                     },
                     {
-                        id: 'address',
-                        label: 'address',
-                        type: 'string'
+                        id: ['address', 'paymentPart', 'keyHash'],
+                        label: 'address.paymentCredential.keyHash',
+                        type: 'string',
+                        validator: (arg: number) => true
+                    },
+                    {
+                        id: ['address', 'paymentPart', 'scriptHash'],
+                        label: 'address.paymentCredential.scriptHash',
+                        type: 'string',
+                        validator: (arg: number) => true
+                    },
+                    {
+                        id: ['address', 'stakePart', 'keyHash'],
+                        label: 'address.stakeCredential.keyHash',
+                        type: 'string',
+                        validator: (arg: number) => true
+                    },
+                    {
+                        id: ['address', 'stakePart', 'scriptHash'],
+                        label: 'address.stakeCredential.scriptHash',
+                        type: 'string',
+                        validator: (arg: number) => true
+                    },
+                    {
+                        id: 'inlineDatum',
+                        label: 'InlineDatum',
+                        type: 'object'
+                    },
+                    //datumHash
+                    {
+                        id: 'datumHash',
+                        label: 'DatumHash',
+                        type: 'string',
+                        validator: (arg: any) => true
+                    },
+                    //referenceScript
+                    {
+                        id: 'referenceScript',
+                        label: 'ReferenceScript',
+                        type: 'object',
+                        validator: (arg: any) => true
                     }
                 ]
             }

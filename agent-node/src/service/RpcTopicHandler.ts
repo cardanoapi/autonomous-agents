@@ -7,6 +7,7 @@ import { checkIfAgentWithEventTriggerTypeExists } from '../utils/agent'
 import { ScheduledTask } from 'node-cron'
 import { AgentRunner } from '../executor/AgentRunner'
 import { EventTriggerHandler } from './EventTriggerHandler'
+import { formatEventFilter } from '../utils/eventFilterFormatter'
 
 export class RpcTopicHandler {
     managerInterface: ManagerInterface
@@ -51,8 +52,10 @@ export class RpcTopicHandler {
         scheduledTasks: ScheduledTask[]
     ) {
         const { configurations } = message
-        const eventBasedActions =
+        const eventBasedActions = formatEventFilter(
             checkIfAgentWithEventTriggerTypeExists(configurations)
+        )
+        console.log('hello : ', eventBasedActions)
         if (eventBasedActions) {
             this.eventTriggerHandlers.addEventActions(eventBasedActions)
         }

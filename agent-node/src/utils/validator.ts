@@ -1,8 +1,6 @@
-import {convertToBufferIfBech32} from './cardano'
-import {BooleanOperator, ComparisonOperator} from '../types/eventTriger'
-import * as buffer from "buffer";
-import {logicalFunctions} from "./operatorSupport";
-import {bech32} from "bech32";
+import { convertToBufferIfBech32 } from './cardano'
+import { BooleanOperator, ComparisonOperator } from '../types/eventTriger'
+import { logicalFunctions } from './operatorSupport'
 
 const NetworkName = ['preview', 'preprod', 'sanchonet']
 
@@ -44,15 +42,22 @@ export function compareValue(
     //   console.debug(`compareValue[${property_path.join('.')}] (${operator},${txPropertyVal}, ${objectProperty})`)
 
     const filterValue = convertToBufferIfBech32(objectProperty)
-    console.debug("filterValue=", filterValue);
-    const result = logicalFunctions.execute(operator, txPropertyVal, filterValue)
-
+    console.debug(
+        'filterValue=' + filterValue + ', txPropertyVal= ' + txPropertyVal
+    )
+    const result = logicalFunctions.execute(
+        operator,
+        txPropertyVal,
+        filterValue
+    )
 
     if (txPropertyVal.constructor.name == 'Buffer') {
-        console.debug(`compareValue[${property_path.join('.')}] (${operator},0x${txPropertyVal.toString('hex')}, ${objectProperty}) = ${result}`)
+        console.debug(
+            `compareValue[${property_path.join('.')}] (${operator},0x${txPropertyVal.toString('hex')}, ${objectProperty}) = ${result}`
+        )
     } else
-        console.debug(`compareValue[${property_path.join('.')}] (${operator},${txPropertyVal}, ${objectProperty}) = ${result}`)
+        console.debug(
+            `compareValue[${property_path.join('.')}] (${operator},${txPropertyVal}, ${objectProperty}) = ${result}`
+        )
     return result
-
-
 }

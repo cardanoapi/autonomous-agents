@@ -94,6 +94,7 @@ export interface ITriggerCreateDto {
 }
 
 export const postTrigger = async (agentID: string, triggerData: ITriggerCreateDto) => {
+    console.log('Req body: ', triggerData);
     const response = await axios.post(
         `${baseAPIurl}/agents/${agentID}/triggers`,
         triggerData,

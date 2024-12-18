@@ -2,8 +2,7 @@
 
 import React, { useState } from 'react';
 
-import { IAgentConfiguration } from '@api/agents';
-import { IAgent } from '@api/agents';
+import { IAgent, IAgentConfiguration } from '@api/agents';
 import { updateTrigger } from '@api/trigger';
 import { Dialog, DialogContent } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -17,8 +16,7 @@ import {
 import { IFormFunctionInstance } from '@app/app/(pages)/templates/create-template/page';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
-import { SuccessToast } from '../../molecules/CustomToasts';
-import { ErrorToast } from '../../molecules/CustomToasts';
+import { ErrorToast, SuccessToast } from '../../molecules/CustomToasts';
 import FunctionCardWithMeta from '../shared/FunctionCardWithMeta';
 
 const AgentFunctionsDetailComponent = ({
@@ -81,7 +79,7 @@ const AgentFunctionsDetailComponent = ({
                     />
                 ))}
             {currentFunction && (
-                <Dialog open={openDialog} fullScreen={isMobile}>
+                <Dialog open={openDialog} maxWidth={'xl'}>
                     <DialogContent className="!p-0">
                         <FunctionForm
                             currentFunction={currentFunction}

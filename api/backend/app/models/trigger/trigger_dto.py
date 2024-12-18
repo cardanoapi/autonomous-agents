@@ -26,7 +26,7 @@ class Action(BaseModel):
 # For Event Based Trigger
 
 BooleanOperator = Literal["AND", "OR"]
-ComparisonOperator = Literal["equals", "greaterThan", "lessThan", "in"]
+ComparisonOperator = Literal["equals", "greaterthan", "lessthan", "in"]
 
 
 class Field(BaseModel):
@@ -37,6 +37,7 @@ class Field(BaseModel):
 
 
 class ChildrenFields(BaseModel):
+    id: Optional[Union[str, list[str]]]
     children: list["FilterNode"]
     negate: bool
     operator: BooleanOperator
@@ -48,7 +49,7 @@ FilterNode = Union[Field, ChildrenFields]
 
 class EventTriggerDTO(BaseModel):
     id: Optional[Union[str, list[str]]]
-    parameters: Optional[list[FilterNode]]
+    children: Optional[list[FilterNode]]
     negate: Optional[bool]
     operator: Optional[BooleanOperator]
 

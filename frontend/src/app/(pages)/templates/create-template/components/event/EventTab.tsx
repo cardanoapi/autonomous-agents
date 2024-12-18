@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { IBooleanNode, IEventTrigger, IFieldNode } from '@api/agents';
-import { ChevronDown } from 'lucide-react';
-import { FileJson } from 'lucide-react';
+import { ChevronDown, FileJson } from 'lucide-react';
 
 import { Card } from '@app/components/atoms/Card';
 import { Checkbox } from '@app/components/atoms/Checkbox';
@@ -14,12 +13,12 @@ import {
 } from '@app/components/atoms/DropDownMenu';
 import { Input } from '@app/components/atoms/Input';
 import { cn } from '@app/components/lib/utils';
+import { CustomSelect } from '@app/components/molecules/CustomDropDown';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
 
-import { CustomSelect } from '../../../../../../components/molecules/CustomDropDown';
 import InfoCard from '../cards/InfoCard';
 import CustomEditor from './CustomEditor';
-import { Events, IEvent, IEventFilter } from './EventTrigger';
+import { ISchema, transactionSchema } from './EventTrigger';
 import NodeGraph from './EventTriggerGraph';
 
 const EventTab = ({
@@ -31,11 +30,9 @@ const EventTab = ({
     savedEventTrigger?: IEventTrigger;
     onChange?: (value: IEventTrigger) => void;
 }) => {
-    const [currentEvent, setCurrentEvent] = useState<IEvent | null>(null);
+    const [currentEvent, setCurrentEvent] = useState<ISchema | null>(null);
 
-    const [currentEventFilter, setCurrentEventFilter] = useState<IEventFilter | null>(
-        null
-    );
+    const [currentEventFilter, setCurrentEventFilter] = useState<ISchema | null>(null);
 
     const [isInfoVisible, setIsInfoVisible] = useState(false);
 
@@ -53,18 +50,17 @@ const EventTab = ({
 
     useEffect(() => {
         if (savedEventTrigger) {
-            const savedEvent = Events.find(
+            const savedEvent = transactionSchema.find(
                 (event) => event.id === savedEventTrigger?.id
             );
             if (savedEvent) {
                 setCurrentEvent(savedEvent);
             }
-            const lastEventFilter = savedEvent?.filters.find(
-                (filter) =>
-                    filter.id ===
-                    savedEventTrigger?.parameters[
-                        savedEventTrigger?.parameters.length - 1
-                    ]?.id
+            const lastEventFilter = savedEvent?.properties?.find(
+                (prop) =>
+                    prop.id ===
+                    savedEventTrigger?.children[savedEventTrigger?.children.length - 1]
+                        ?.id
             );
             if (lastEventFilter) {
                 setCurrentEventFilter(lastEventFilter);
@@ -73,12 +69,12 @@ const EventTab = ({
     }, []);
 
     const handleSelectEvent = (eventId: string) => {
-        const selectedEvent = Events.find((event) => event.id === eventId);
+        const selectedEvent = transactionSchema.find((tx) => tx.id === eventId);
         if (selectedEvent) {
             setCurrentEvent(selectedEvent);
             setFormData({
                 id: selectedEvent?.id,
-                parameters: [],
+                children: [],
                 negate: false,
                 operator: 'AND'
             });
@@ -86,8 +82,8 @@ const EventTab = ({
     };
 
     const handleSelectEventFilter = (eventFilterId: string) => {
-        const selectedEventFilter = currentEvent?.filters.find(
-            (filter) => filter.id === eventFilterId
+        const selectedEventFilter = currentEvent?.properties?.find(
+            (prop) => prop.id === eventFilterId
         );
         if (selectedEventFilter) {
             setCurrentEventFilter(selectedEventFilter);
@@ -101,8 +97,8 @@ const EventTab = ({
             formData &&
                 setFormData({
                     ...formData,
-                    parameters: [
-                        ...formData.parameters,
+                    children: [
+                        ...formData.children,
                         {
                             id: selectedEventFilter.id,
                             operator: 'AND',
@@ -116,13 +112,14 @@ const EventTab = ({
 
     const handleAddParameter = (parameterId: string) => {
         if (formData && currentEventFilter) {
-            const selectedParameter = Events.find((event) => event.id === formData.id)
-                ?.filters.find((filter) => filter.id === currentEventFilter?.id)
-                ?.parameters.find((param) => param.id === parameterId);
+            const selectedParameter = transactionSchema
+                .find((tx) => tx.id === formData.id)
+                ?.properties?.find((filter) => filter.id === currentEventFilter?.id)
+                ?.properties?.find((param) => param.id === parameterId);
             if (selectedParameter) {
                 const data = {
                     ...formData,
-                    parameters: formData.parameters.map((eventFilter) =>
+                    children: formData.children.map((eventFilter) =>
                         eventFilter.id === currentEventFilter?.id
                             ? {
                                   ...eventFilter,
@@ -149,7 +146,7 @@ const EventTab = ({
         if (formData && currentEventFilter) {
             const data = {
                 ...formData,
-                parameters: formData.parameters.map((eventFilter) =>
+                children: formData.children.map((eventFilter) =>
                     eventFilter.id === currentEventFilter?.id
                         ? {
                               ...eventFilter,
@@ -169,7 +166,7 @@ const EventTab = ({
         if (formData && currentEventFilter) {
             const data = {
                 ...formData,
-                parameters: formData.parameters.map((eventFilter) =>
+                children: formData.children.map((eventFilter) =>
                     eventFilter.id === currentEventFilter?.id
                         ? {
                               ...eventFilter,
@@ -191,7 +188,7 @@ const EventTab = ({
         if (formData && currentEventFilter) {
             const data = {
                 ...formData,
-                parameters: formData.parameters.map((eventFilter) =>
+                children: formData.children.map((eventFilter) =>
                     eventFilter.id === currentEventFilter?.id
                         ? {
                               ...eventFilter,
@@ -210,18 +207,20 @@ const EventTab = ({
     };
 
     const getNotSelectedEventFilters = () => {
-        return Events.find((event) => event.id === formData?.id)?.filters.filter(
-            (filter) => !formData?.parameters.find((param) => param.id === filter.id)
-        );
+        return transactionSchema
+            .find((tx) => tx.id === formData?.id)
+            ?.properties?.filter(
+                (prop) => !formData?.children.find((child) => child.id === prop.id)
+            );
     };
 
     const getNotSelectedEventFilterParameters = () => {
-        return currentEventFilter?.parameters.filter(
-            (param) =>
-                !formData?.parameters
+        return currentEventFilter?.properties?.filter(
+            (prop) =>
+                !formData?.children
                     .find((eventFilter) => eventFilter.id === currentEventFilter?.id)
                     //@ts-ignore
-                    ?.children.find((child: IFieldNode) => child.id === param.id)
+                    ?.children.find((child: IFieldNode) => child.id === prop.id)
         );
     };
 
@@ -246,9 +245,9 @@ const EventTab = ({
                 <CustomSelect
                     plusIcon={false}
                     className="w-64"
-                    options={Events.map((item) => ({
-                        label: item.label,
-                        value: item.id
+                    options={transactionSchema.map((txProp) => ({
+                        label: txProp.label,
+                        value: txProp.id
                     }))}
                     defaultValue={currentEvent?.label || 'Event'}
                     label="Event"
@@ -286,20 +285,20 @@ const EventTab = ({
                 <div className="mb-8 flex items-end justify-between">
                     <nav className="flex gap-4">
                         {formData &&
-                            formData?.parameters.map((param, index) => (
+                            formData?.children.map((child, index) => (
                                 <div
                                     key={index}
                                     className={cn(
                                         'cursor-pointer font-semibold',
                                         currentEventFilter &&
-                                            currentEventFilter.id === param.id &&
+                                            currentEventFilter.id === child.id &&
                                             'text-brand-Blue-200 underline underline-offset-4'
                                     )}
                                     onClick={() =>
-                                        handleSelectEventFilter(param.id as string)
+                                        handleSelectEventFilter(child.id as string)
                                     }
                                 >
-                                    {param.id}
+                                    {child.id}
                                 </div>
                             ))}
                     </nav>
@@ -317,7 +316,7 @@ const EventTab = ({
                     />
                 </div>
                 {currentEventFilter &&
-                    formData?.parameters.map((param, index) => {
+                    formData?.children.map((param, index) => {
                         if (param.id === currentEventFilter?.id) {
                             return (
                                 <div key={index}>
@@ -325,7 +324,7 @@ const EventTab = ({
                                         (child, childIndex) => (
                                             <div
                                                 key={childIndex}
-                                                className="flex w-[75%] flex-col gap-4"
+                                                className="flex w-full flex-col gap-4"
                                             >
                                                 {
                                                     <RenderEventChildForm
@@ -350,6 +349,9 @@ const EventTab = ({
                                                                 value
                                                             );
                                                         }}
+                                                        validator={
+                                                            currentEventFilter.validator
+                                                        }
                                                     />
                                                 }
                                             </div>
@@ -380,27 +382,52 @@ const RenderEventChildForm = ({
     eventFilterParam,
     onValueChange,
     onOperatorChange,
-    onNegateChange
+    onNegateChange,
+    validator
 }: {
     eventFilterParam: IFieldNode;
     onValueChange?: (value: any) => void;
     onOperatorChange?: (value: any) => void;
     onNegateChange?: (value: boolean) => void;
+    validator?: (...args: any) => any;
 }) => {
     const [localOperator, setLocalOperator] = useState<string>(
         eventFilterParam.operator
     );
 
-    const operators = ['equals', 'greaterThan', 'lessThan', 'in'];
+    const [errMsg, setErrMsg] = useState<string>('');
+
+    useEffect(() => {
+        const clearErrMsg = setTimeout(() => {
+            setErrMsg('');
+        }, 3000);
+        return () => {
+            clearTimeout(clearErrMsg);
+        };
+    }, [errMsg]);
+
+    const operators = ['equals', 'greaterthan', 'lessthan', 'in'];
 
     const handleOperatorChange = (operator: string) => {
         setLocalOperator(operator);
         onOperatorChange?.(operator);
     };
 
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        // if (validator && validator(e.target.value)) {
+        //     onValueChange?.(e.target.value);
+        // } else {
+        //     setErrMsg('Kei Error occured');
+        // }
+        onValueChange?.(e.target.value);
+    };
     return (
         <div className="mb-2 flex items-center gap-4">
-            <span className="mt-2 min-w-32">{eventFilterParam.id}</span>
+            <span className="mt-2 min-w-96 truncate">
+                {Array.isArray(eventFilterParam.id)
+                    ? (eventFilterParam.id as string[]).join('.')
+                    : eventFilterParam.id}
+            </span>
             <div className="flex items-center gap-2">
                 <span className="mt-2">negate</span>
                 <Checkbox
@@ -434,8 +461,9 @@ const RenderEventChildForm = ({
             <Input
                 className="w-full rounded-none border-b-2 border-l-0 border-r-0 border-t-0 border-black bg-transparent focus:outline-none focus:ring-0"
                 defaultValue={eventFilterParam.value}
-                onChange={(e) => onValueChange?.(e.target.value)}
+                onChange={handleInputChange}
             />
+            {errMsg && <span className="text-red-500">{errMsg}</span>}
         </div>
     );
 };
