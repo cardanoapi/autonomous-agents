@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { IBooleanNode, IEventTrigger, IFieldNode } from '@api/agents';
+import { Events as transactionSchema } from 'libcardano/spec/properties';
 import { ChevronDown, FileJson } from 'lucide-react';
 
 import { Card } from '@app/components/atoms/Card';
@@ -15,10 +16,12 @@ import { Input } from '@app/components/atoms/Input';
 import { cn } from '@app/components/lib/utils';
 import { CustomSelect } from '@app/components/molecules/CustomDropDown';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
+import { areArraysEqual } from '@app/utils/common/array';
+import { Close } from '@app/views/atoms/Icons/Close';
 
 import InfoCard from '../cards/InfoCard';
 import CustomEditor from './CustomEditor';
-import { ISchema, transactionSchema } from './EventTrigger';
+import { ISchema } from './EventTrigger';
 import NodeGraph from './EventTriggerGraph';
 
 const EventTab = ({
@@ -110,12 +113,28 @@ const EventTab = ({
         }
     };
 
+    function getSelectedParameter(parameterId: string | string[]) {
+        const selectedProperty = transactionSchema
+            .find((tx) => tx.id === formData!.id)
+            ?.properties?.find((filter) => filter.id === currentEventFilter?.id);
+        let selectedParameter: any = selectedProperty?.properties?.find((prop) => {
+            if (Array.isArray(parameterId)) {
+                return prop.id === parameterId[0];
+            } else {
+                return prop.id === parameterId;
+            }
+        });
+        if (selectedParameter && 'properties' in selectedParameter) {
+            selectedParameter = getNestedProperties(selectedParameter)?.find((prop) =>
+                areArraysEqual(prop.id as string[], parameterId as string[])
+            );
+        }
+        return selectedParameter;
+    }
+
     const handleAddParameter = (parameterId: string) => {
         if (formData && currentEventFilter) {
-            const selectedParameter = transactionSchema
-                .find((tx) => tx.id === formData.id)
-                ?.properties?.find((filter) => filter.id === currentEventFilter?.id)
-                ?.properties?.find((param) => param.id === parameterId);
+            const selectedParameter = getSelectedParameter(parameterId);
             if (selectedParameter) {
                 const data = {
                     ...formData,
@@ -214,13 +233,48 @@ const EventTab = ({
             );
     };
 
+    function getNestedProperties(obj: ISchema) {
+        const result: ISchema[] = [];
+        const txObjectOperators = obj.operators;
+
+        function recursiveFlatten(property: ISchema, parentId: any = []) {
+            const { id, type, properties } = property;
+            const newId: string[] = [...parentId, id];
+
+            if (properties && Array.isArray(properties)) {
+                properties.forEach((child) => recursiveFlatten(child, newId));
+            } else {
+                result.push({
+                    id: newId,
+                    label: newId.join('.'),
+                    type,
+                    operators: txObjectOperators
+                });
+            }
+        }
+
+        recursiveFlatten(obj);
+        return result;
+    }
+
+    const getFlattenEventFilterParams = () => {
+        return currentEventFilter?.properties
+            ?.map((prop) => getNestedProperties(prop))
+            .flat();
+    };
+
     const getNotSelectedEventFilterParameters = () => {
-        return currentEventFilter?.properties?.filter(
-            (prop) =>
-                !formData?.children
-                    .find((eventFilter) => eventFilter.id === currentEventFilter?.id)
-                    //@ts-ignore
-                    ?.children.find((child: IFieldNode) => child.id === prop.id)
+        return (
+            currentEventFilter &&
+            getFlattenEventFilterParams()?.filter(
+                (prop: ISchema) =>
+                    !formData?.children
+                        .find(
+                            (eventFilter) => eventFilter.id === currentEventFilter?.id
+                        )
+                        //@ts-ignore
+                        ?.children.find((child: IFieldNode) => child.id === prop.id)
+            )
         );
     };
 
@@ -305,10 +359,12 @@ const EventTab = ({
                     <CustomSelect
                         className="w-64"
                         options={
-                            getNotSelectedEventFilterParameters()?.map((item) => ({
-                                label: item.label,
-                                value: item.id
-                            })) || []
+                            getNotSelectedEventFilterParameters()?.map(
+                                (item: ISchema) => ({
+                                    label: item.label,
+                                    value: item.id
+                                })
+                            ) || []
                         }
                         disabled={currentEventFilter === null}
                         defaultValue={` Add Parameters`}
@@ -422,8 +478,8 @@ const RenderEventChildForm = ({
         onValueChange?.(e.target.value);
     };
     return (
-        <div className="mb-2 flex items-center gap-4">
-            <span className="mt-2 min-w-96 truncate">
+        <div className="group mb-2 flex items-center gap-4">
+            <span className="mt-2 min-w-80 truncate">
                 {Array.isArray(eventFilterParam.id)
                     ? (eventFilterParam.id as string[]).join('.')
                     : eventFilterParam.id}
@@ -464,6 +520,9 @@ const RenderEventChildForm = ({
                 onChange={handleInputChange}
             />
             {errMsg && <span className="text-red-500">{errMsg}</span>}
+            <Close
+                className={'invisible h-10 w-10 cursor-pointer group-hover:visible'}
+            />
         </div>
     );
 };
