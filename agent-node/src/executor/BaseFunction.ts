@@ -67,6 +67,7 @@ export interface Builtins {
     ) => Promise<any>
     loadFunds: (amount: number) => Promise<any>
     saveMetadata: (content: string) => Promise<any>
+    fetchMetadata: (url: string,hash:string) => Promise<any>
 }
 
 export interface Helpers {

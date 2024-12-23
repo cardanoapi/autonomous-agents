@@ -85,4 +85,9 @@ export class RPCTopicHandler {
                 throw err
             })
     }
+
+    fetchMetadata(connection_id: string, args: any[]) {
+        const [url, hash] = args
+        return metaDataService.fetchMetadata(url, hash)
+    }
 }

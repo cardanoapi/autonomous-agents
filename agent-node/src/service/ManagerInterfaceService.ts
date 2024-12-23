@@ -1,5 +1,5 @@
-import { RpcV1 } from 'libcardano/network/Rpc'
-import { ILog } from './TriggerActionHandler'
+import {RpcV1} from 'libcardano/network/Rpc'
+import {ILog} from './TriggerActionHandler'
 
 export class ManagerInterface {
     rpc: RpcV1
@@ -11,9 +11,11 @@ export class ManagerInterface {
     buildTx(tx: any, submit: boolean): Promise<any> {
         return this.rpc.callMethod('buildTx', tx, submit)
     }
+
     submitTx(tx: any) {
         return this.rpc.callMethod('submitTx', tx)
     }
+
     logTx(log_data: ILog): void {
         return this.rpc.fireMethod('logEvent', log_data)
     }
@@ -32,5 +34,9 @@ export class ManagerInterface {
 
     checkAndSaveDrepRegistration(drepId: string) {
         this.rpc.fireMethod('checkAndSaveDrepRegistration', drepId)
+    }
+
+    fetchMetadata(url: string, hash: string): Promise<any> {
+        return this.rpc.callMethod('fetchMetadata', url, hash)
     }
 }
