@@ -1,29 +1,29 @@
 'use client';
 
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
-import {IAgent} from '@api/agents';
-import {IAgentTriggerHistory, fetchAllTriggerHistory} from '@api/triggerHistory';
-import {MapFunctionNameAndViewName} from '@consts';
-import {useQuery} from '@tanstack/react-query';
-import {formatParameterName} from '@utils';
-import {useAtom} from 'jotai';
-import {Copy} from 'lucide-react';
+import { IAgent } from '@api/agents';
+import { IAgentTriggerHistory, fetchAllTriggerHistory } from '@api/triggerHistory';
+import { MapFunctionNameAndViewName } from '@consts';
+import { useQuery } from '@tanstack/react-query';
+import { formatParameterName } from '@utils';
+import { useAtom } from 'jotai';
+import { Copy } from 'lucide-react';
 
 import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import EmptyScreen from '@app/components/molecules/EmptyScreen';
-import {useCopyClipboard} from '@app/lib/hooks/useCopyToClipboard';
-import {agentsAtom} from '@app/store/localStore';
-import {Truncate} from '@app/utils/common/extra';
-import {formatTimestamp} from '@app/utils/dateAndTimeUtils';
+import { useCopyClipboard } from '@app/lib/hooks/useCopyToClipboard';
+import { agentsAtom } from '@app/store/localStore';
+import { Truncate } from '@app/utils/common/extra';
+import { formatTimestamp } from '@app/utils/dateAndTimeUtils';
 
 import AgentFunctionsDropDown from '../../Common/AgentFunctionsDropDown';
-import {Badge} from '../../atoms/Badge';
-import {cn} from '../../lib/utils';
-import {Skeleton} from '../../shadcn/ui/skeleton';
+import { Badge } from '../../atoms/Badge';
+import { cn } from '../../lib/utils';
+import { Skeleton } from '../../shadcn/ui/skeleton';
 import ContentHeader from './ContentHeader';
 
-export const AgentLogComponent = ({agent}: { agent?: IAgent }) => {
+export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
     const statusOptions = ['Success', 'Skipped', 'Failed'];
     const [statusPlaceholder, setStatusPlaceholder] = useState('None');
     const [currentFunction, setCurrentFunction] = useState('None');
@@ -111,24 +111,31 @@ export const AgentLogComponent = ({agent}: { agent?: IAgent }) => {
                     </div>
                 </div>
             </ContentHeader>
-            {loadingLogs && <Skeleton className="h-full w-full"/>}
+            {loadingLogs && <Skeleton className="h-full w-full" />}
             {!loadingLogs && LogsHistory?.items.length === 0 ? (
-                <EmptyScreen msg="No logs found"/>
-            ) : <div className={'h-full w-full overflow-y-scroll space-y-2 px-2'}>
-                {LogsHistory?.items?.map((history: IAgentTriggerHistory) => {
-                    return <AgentLogCard className={'w-full'} key={history.id} history={history}/>
-                })}
-
-            </div>}
+                <EmptyScreen msg="No logs found" />
+            ) : (
+                <div className={'h-full w-full space-y-2 overflow-y-scroll px-2'}>
+                    {LogsHistory?.items?.map((history: IAgentTriggerHistory) => {
+                        return (
+                            <AgentLogCard
+                                className={'w-full'}
+                                key={history.id}
+                                history={history}
+                            />
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 };
 
 export const AgentLogCard = ({
-                                 history,
-                                 className,
-                                 globalLog = false
-                             }: {
+    history,
+    className,
+    globalLog = false
+}: {
     history: IAgentTriggerHistory;
     className?: string;
     globalLog?: boolean;
@@ -175,7 +182,7 @@ export const AgentLogCard = ({
                                     (agents &&
                                         agents[history.agentId] &&
                                         agents[history.agentId].name) ||
-                                    '',
+                                        '',
                                     20
                                 )}
                                 &nbsp; #{history.instanceIndex}
@@ -212,13 +219,13 @@ export const AgentLogCard = ({
                             <span className={'text-sm font-medium'}>Parameters</span>
                             {history.parameters?.map((param, index) => {
                                 return (
-                                    <LogFunctionParameter param={param} key={index}/>
+                                    <LogFunctionParameter param={param} key={index} />
                                 );
                             })}
                         </div>
                     )}
                     {history.result ? (
-                        <div className={'flex flex-col gap-0.5 w-full'}>
+                        <div className={'flex w-full flex-col gap-0.5'}>
                             <span className={'text-sm font-medium'}>Result</span>
                             {history.txHash || !history.message ? (
                                 <LogObjectParameter
@@ -226,15 +233,17 @@ export const AgentLogCard = ({
                                     params={history.result}
                                 />
                             ) : (
-                                <span className={'text-xs w-full pr-4 break-all'}>{history.message}</span>
+                                <span className={'w-full break-all pr-4 text-xs'}>
+                                    {history.message}
+                                </span>
                             )}
                         </div>
                     ) : history.txHash ? (
-                        <TxHashComponent txHash={history.txHash}/>
+                        <TxHashComponent txHash={history.txHash} />
                     ) : (
                         <span className={'text-xs'}>{history.message}</span>
                     )}
-                    {history.internal && <InternalLogs history={history}/>}
+                    {history.internal && <InternalLogs history={history} />}
                 </div>
             </div>
             <div
@@ -251,7 +260,7 @@ export const AgentLogCard = ({
     );
 };
 
-const InternalLogs = ({history}: { history: IAgentTriggerHistory }) => {
+const InternalLogs = ({ history }: { history: IAgentTriggerHistory }) => {
     return (
         <div className={'hidden w-full flex-col gap-1 md:flex'}>
             {history.internal?.map((internal: any, index: number) => {
@@ -271,7 +280,7 @@ const InternalLogs = ({history}: { history: IAgentTriggerHistory }) => {
                                     internal.function_name}
                             </span>
                             {internal.txHash && (
-                                <TxHashComponent txHash={internal.txHash}/>
+                                <TxHashComponent txHash={internal.txHash} />
                             )}
                             {internal.message && (
                                 <span className={'text-xs'}>{internal.message}</span>
@@ -284,8 +293,8 @@ const InternalLogs = ({history}: { history: IAgentTriggerHistory }) => {
     );
 };
 
-const LogFunctionParameter = ({param}: { param: any }) => {
-    const {copyToClipboard} = useCopyClipboard();
+const LogFunctionParameter = ({ param }: { param: any }) => {
+    const { copyToClipboard } = useCopyClipboard();
     if (typeof param === 'string') {
         return <span className={'text-xs'}>{param}</span>;
     }
@@ -310,7 +319,7 @@ const LogFunctionParameter = ({param}: { param: any }) => {
             ) : (
                 <div className={'flex flex-col gap-1 '}>
                     <span className={'h-2'}></span>
-                    <LogObjectParameter params={param.value}/>
+                    <LogObjectParameter params={param.value} />
                 </div>
             )}
         </div>
@@ -318,13 +327,13 @@ const LogFunctionParameter = ({param}: { param: any }) => {
 };
 
 const LogObjectParameter = ({
-                                params,
-                                longTruncate = false
-                            }: {
+    params,
+    longTruncate = false
+}: {
     params: Record<any, any>;
     longTruncate?: boolean;
 }) => {
-    const {copyToClipboard} = useCopyClipboard();
+    const { copyToClipboard } = useCopyClipboard();
 
     return Object.entries(params).map((param, index) => {
         return (
@@ -344,8 +353,8 @@ const LogObjectParameter = ({
     });
 };
 
-const TxHashComponent = ({txHash}: { txHash: string }) => {
-    const {copyToClipboard} = useCopyClipboard();
+const TxHashComponent = ({ txHash }: { txHash: string }) => {
+    const { copyToClipboard } = useCopyClipboard();
     const handleOnClickCopy = () => {
         copyToClipboard(txHash, 'Transaction Hash Copied!');
     };
@@ -378,7 +387,7 @@ const TxHashComponent = ({txHash}: { txHash: string }) => {
 
 export default AgentLogComponent;
 
-export const AgentLogCardSkeleton = ({className}: { className?: string }) => {
+export const AgentLogCardSkeleton = ({ className }: { className?: string }) => {
     return (
         <div
             className={cn(
@@ -388,20 +397,20 @@ export const AgentLogCardSkeleton = ({className}: { className?: string }) => {
         >
             <div className="flex items-start gap-8">
                 <div className="flex items-center gap-3 sm:min-w-[200px]">
-                    <Skeleton className="h-8 w-8 rounded-full"/>
+                    <Skeleton className="h-8 w-8 rounded-full" />
                     <div className="flex flex-col">
-                        <Skeleton className="h-4 w-32 rounded"/>
-                        <Skeleton className="mt-1 h-3 w-48 rounded"/>
+                        <Skeleton className="h-4 w-32 rounded" />
+                        <Skeleton className="mt-1 h-3 w-48 rounded" />
                     </div>
                 </div>
                 <div className="flex flex-col items-start gap-2">
-                    <Skeleton className="h-4 w-40 rounded"/>
-                    <Skeleton className="mt-1 h-3 w-64 rounded"/>
+                    <Skeleton className="h-4 w-40 rounded" />
+                    <Skeleton className="mt-1 h-3 w-64 rounded" />
                 </div>
             </div>
             <div className="flex min-w-fit flex-col items-end justify-start gap-1 md:min-w-[200px]">
-                <Skeleton className="h-4 w-24 rounded"/>
-                <Skeleton className="mt-1 h-3 w-20 rounded"/>
+                <Skeleton className="h-4 w-24 rounded" />
+                <Skeleton className="mt-1 h-3 w-20 rounded" />
             </div>
         </div>
     );

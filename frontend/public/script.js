@@ -30,7 +30,7 @@
       b = "true" === m(f + "exclude-search"),
       v = m(f + "domains") || "",
       S = v.split(",").map((t => t.trim())),
-      w = `${(p||"https://umami.sireto.io"||l.src.split("/").slice(0,-1).join("/")).replace(/\/$/,"")}/api/send`,
+      w = `${(p||l.src.split("/").slice(0,-1).join("/")).replace(/\/$/,"")}/api/send`,
       N = `${e}x${a}`,
       T = /data-umami-event-([\w-_]+)/,
       A = f + "umami-event",
