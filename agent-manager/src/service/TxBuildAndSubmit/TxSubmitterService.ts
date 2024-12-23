@@ -1,23 +1,22 @@
-import {kuber, KuberType} from "./KuberService";
-import { Blockfrost, BlockFrostType} from "./BlockFrostService";
-import environments from "../../config/environments";
+import { kuber, KuberType } from './KuberService'
+import { Blockfrost, BlockFrostType } from './BlockFrostService'
+import environments from '../../config/environments'
 
 export type TxSubmitterType = 'Kuber' | 'Blockfrost'
 
 let txSubmitterService: TxSubmitterService
 
 function getTxSubmitter(txSubmitterType: TxSubmitterType) {
-    console.log('TxSubmitterType : ',txSubmitterType)
+    console.log('TxSubmitterType : ', txSubmitterType)
     switch (txSubmitterType) {
         case 'Kuber':
-            return kuber;
+            return kuber
         case 'Blockfrost':
             return new Blockfrost()
     }
 }
 
 export class TxSubmitterService {
-
     submitter: KuberType | BlockFrostType
 
     constructor(txSubmitterType: TxSubmitterType) {

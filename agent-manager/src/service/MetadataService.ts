@@ -22,7 +22,7 @@ class MetadataService {
         }
     }
 
-    async fetchMetadata(url:string,hash:string){
+    async fetchMetadata(url: string, hash: string) {
         const res = await fetch(`${this.metadataFetchBaseUrl}/api/metadata?url=${url}&hash=${hash}`, {
             method: 'GET',
         })

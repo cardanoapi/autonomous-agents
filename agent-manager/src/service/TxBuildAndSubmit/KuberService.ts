@@ -1,5 +1,5 @@
 import environments from '../../config/environments'
-import {TxBuildAndSubmitBaseClass} from "./TxBuildAndSubmitBaseClass";
+import { TxBuildAndSubmitBaseClass } from './TxBuildAndSubmitBaseClass'
 
 class Kuber extends TxBuildAndSubmitBaseClass {
     MAX_CONCURRENT_CALLS = 8
