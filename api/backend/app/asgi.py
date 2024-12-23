@@ -137,15 +137,18 @@ def get_test_application() -> FastAPI:
 
 
 def setup_apm(app):
-    environment=os.environ.get('ELASTIC_APM_ENVIRONMENT')
-    service_name= os.environ.get('ELASTIC_APM_SERVICE_NAME')
-    if os.environ.get('ELASTIC_APM_SERVER_URL') :
+    environment = os.environ.get("ELASTIC_APM_ENVIRONMENT")
+    service_name = os.environ.get("ELASTIC_APM_SERVICE_NAME")
+    if os.environ.get("ELASTIC_APM_SERVER_URL"):
         from elasticapm.contrib.starlette import make_apm_client, ElasticAPM
-        apm = make_apm_client({
-            'ENVIRONMENT': environment if environment else 'local',
-            'SERVICE_NAME': service_name if service_name else 'autonomous-agents-backend',
-            'CAPTURE_BODY': all,
-        })
+
+        apm = make_apm_client(
+            {
+                "ENVIRONMENT": environment if environment else "local",
+                "SERVICE_NAME": service_name if service_name else "autonomous-agents-backend",
+                "CAPTURE_BODY": all,
+            }
+        )
         app.add_middleware(ElasticAPM, client=apm)
     else:
         logger.info("Elastic APM is disabled")

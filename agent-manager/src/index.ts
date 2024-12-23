@@ -1,6 +1,6 @@
-
+process.env.ELASTIC_APM_LOG_LEVEL='warning'
 process.env.ELASTIC_APM_SERVICE_NAME='autonomous-agents-manager'
-process.env.ELASTIC_APM_ENVIRONMENT='local'
+process.env.ELASTIC_APM_ENVIRONMENT=process.env.ELASTIC_APM_ENVIRONMENT || 'local'
 import * as dotenv from 'dotenv'
 dotenv.config()
 import * as agent from 'elastic-apm-node/start'; agent;

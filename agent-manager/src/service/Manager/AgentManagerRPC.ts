@@ -11,7 +11,7 @@ import {ManagerWalletService} from './ManagerWallet'
 import {Server} from 'ws'
 import {generateRootKey} from '../../utils/cardano'
 import {RPCTopicHandler} from "../RPCTopicHandler";
-import { captureError, startTransaction } from "../../config/tracer";
+import { apmConfig, captureError, startTransaction } from "../../config/tracer";
 
 
 export interface ILog {
@@ -102,7 +102,6 @@ export class AgentManagerRPC extends WsRpcServer {
 
     protected async validateEventBroadcast(connection_id: string, topic: string, message: any): Promise<boolean> {
         // TODO: handle the event emitted
-        console.log('Event from client', connection_id, topic, message)
         if (topic === 'active_connection') {
             await updateLastActiveTimestamp(connection_id)
         }
@@ -123,9 +122,11 @@ export class AgentManagerRPC extends WsRpcServer {
                 const {instanceCount, agentIndex, agentName} = config
                 const rootKeyBuffer = await generateRootKey(agentIndex || 0)
                 client.emit('instance_count', {instanceCount, rootKeyBuffer, agentName})
+                if(apmConfig)
+                {
+                    (config as any).apm=apmConfig
+                }
 
-                if( process.env.APM)
-                (config as any)
                 client.emit('initial_config', config)
             })
             .catch((error) => {

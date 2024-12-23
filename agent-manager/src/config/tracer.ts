@@ -3,7 +3,7 @@ import { ParameterizedMessageObject, Span, Transaction } from "elastic-apm-node"
 export const apm = require('elastic-apm-node')
 
 
-function apmConfig(){
+function readConfig(){
   if(process.env.ELASTIC_APM_SERVER_URL && process.env.ELASTIC_APM_API_KEY && process.env.ELASTIC_APM_ENVIRONMENT){
    return {
      ELASTIC_APM_SERVER_URL: process.env.ELASTIC_APM_SERVER_URL,
@@ -12,6 +12,7 @@ function apmConfig(){
    }
   }
 }
+export const  apmConfig=readConfig()
 
 export const startTransaction= (...args: any[]): Transaction=>{
   return apm.startTransaction(...args);
