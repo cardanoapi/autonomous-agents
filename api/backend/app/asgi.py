@@ -97,6 +97,7 @@ def get_application() -> FastAPI:
 
     log.debug("Add application routes.")
     log.debug("Register global exception handler for custom HTTPException.")
+    setup_apm(app)
     add_pagination(app)
     app.include_router(root_api_router)
     app.add_exception_handler(HTTPException, http_exception_handler)
@@ -133,3 +134,18 @@ def get_test_application() -> FastAPI:
     log.debug("Register global exception handler for custom HTTPException.")
     app.add_exception_handler(HTTPException, http_exception_handler)
     return app
+
+
+def setup_apm(app):
+    environment=os.environ.get('ELASTIC_APM_ENVIRONMENT')
+    service_name= os.environ.get('ELASTIC_APM_SERVICE_NAME')
+    if os.environ.get('ELASTIC_APM_SERVER_URL') :
+        from elasticapm.contrib.starlette import make_apm_client, ElasticAPM
+        apm = make_apm_client({
+            'ENVIRONMENT': environment if environment else 'local',
+            'SERVICE_NAME': service_name if service_name else 'autonomous-agents-backend',
+            'CAPTURE_BODY': all,
+        })
+        app.add_middleware(ElasticAPM, client=apm)
+    else:
+        logger.info("Elastic APM is disabled")

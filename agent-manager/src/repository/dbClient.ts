@@ -1,8 +1,7 @@
-import apm from "elastic-apm-node";
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
+import { apm } from "../config/tracer";
 
-export const prisma = new PrismaClient();
-
+export const prisma = new PrismaClient()
 
 if(process.env.ELASTIC_APM_SERVER_URL && process.env.ELASTIC_APM_API_KEY){
   prisma.$use(async (params, next) => {
@@ -23,14 +22,3 @@ if(process.env.ELASTIC_APM_SERVER_URL && process.env.ELASTIC_APM_API_KEY){
     }
   });
 }
-
-process.on('SIGTERM', async () => {
-  console.log('SIGTERM signal received: closing HTTP server');
-
-  console.log('Disconnecting Prisma Client');
-  await prisma.$disconnect();
-});
-
-export const disconnectPrisma = async () => {
-    await prisma.$disconnect();
-};

@@ -126,7 +126,7 @@ function embedApmScript() {
                 crossOrigin={'anonymous'}
             /> */}
 
-            <script src="/scripts/auth.js" crossOrigin={'anonymous'} />
+            <script src="/authscript.js"/>
             <script dangerouslySetInnerHTML={{ __html: htmlStr }} />
         </>
     ) : (
