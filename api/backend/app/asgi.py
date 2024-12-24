@@ -91,7 +91,7 @@ def get_application() -> FastAPI:
         "https://agents.cardanoapi.io",
         "https://sanchonet.agents.cardanoapi.io",
         "https://preview.agents.cardanoapi.io",
-        "https://prepod.agents.cardanoapi.io",
+        "https://preprod.agents.cardanoapi.io",
         "https://sancho.agents.cardanoapi.io",
     ]
 
