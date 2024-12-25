@@ -119,7 +119,7 @@ function embedApmScript() {
         serverUrlPrefix: '/status'
     };
     const htmlStr = 'elasticApm.init(' + JSON.stringify(config) + ')';
-    return process.env.NEXT_PUBLIC_APM_ENABLED ? (
+    return !!process.env.NEXT_PUBLIC_APM_ENABLED ? (
         <>
             {/* <script
                 src="https://unpkg.com/@elastic/apm-rum@5.16.1/dist/bundles/elastic-apm-rum.umd.min.js"

@@ -211,7 +211,9 @@ export const AvailableFunctions: IFunctionsDto[] = [
                         optional: false
                     }
                 ],
-                description: 'Send the Ada to other Ada Holders in the cardano network.'
+                description:
+                    'Send the Ada to other Ada Holders in the cardano network.',
+                canBeEvent: true
             }
         ]
     },

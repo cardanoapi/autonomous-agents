@@ -16,7 +16,8 @@ export interface IFieldNode {
     id: string | Array<string>;
     value: any;
     negate: boolean;
-    operator: ComparisonOperator;
+    operators: string[];
+    validator: (...args: any) => any;
 }
 
 export interface IBooleanNode {

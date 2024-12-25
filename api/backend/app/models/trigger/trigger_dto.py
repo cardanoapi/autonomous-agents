@@ -26,7 +26,7 @@ class Action(BaseModel):
 # For Event Based Trigger
 
 BooleanOperator = Literal["AND", "OR"]
-ComparisonOperator = Literal["equals", "greaterthan", "lessthan", "in"]
+ComparisonOperator = Literal["equals", "greaterthan", "lessthan", "in","gt","gte","lt","lte","ne","eq","contains"]
 
 
 class Field(BaseModel):
@@ -34,6 +34,7 @@ class Field(BaseModel):
     value: Any
     negate: bool
     operator: ComparisonOperator
+    operators: list[ComparisonOperator]
 
 
 class ChildrenFields(BaseModel):

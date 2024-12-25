@@ -1,6 +1,8 @@
 import { bech32 } from 'bech32';
 import { CIP30Instance } from 'kuber-client/types';
 
+import { ISchema } from '@app/app/(pages)/templates/create-template/components/event/EventTrigger';
+
 export const convertLovelaceToAda = (lovelace?: number) => {
     if (lovelace) {
         return Number((lovelace / 1e6).toFixed(3));
@@ -32,4 +34,33 @@ export function bech32toHex(bechAddress: string) {
         return Buffer.from(data).toString('hex');
     }
     return bechAddress;
+}
+
+export function getNestedTxProperties(obj: ISchema) {
+    const result: ISchema[] = [];
+    const txObjectOperators = obj.operators
+        ? Array.isArray(obj.operators)
+            ? obj.operators
+            : [obj.operators]
+        : ['eq'];
+
+    function recursiveFlatten(property: ISchema, parentId: any = []) {
+        const { id, type, properties, validator } = property;
+        const newId: string[] = [...parentId, id];
+
+        if (properties && Array.isArray(properties)) {
+            properties.forEach((child) => recursiveFlatten(child, newId));
+        } else {
+            result.push({
+                id: newId,
+                label: newId.join('.'),
+                type,
+                operators: txObjectOperators,
+                validator
+            });
+        }
+    }
+
+    recursiveFlatten(obj);
+    return result;
 }
