@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { IBooleanNode, IEventTrigger, IFieldNode } from '@api/agents';
 import { getNestedTxProperties } from '@utils';
 import { Events as transactionSchema } from 'libcardano/spec/properties';
-import { ChevronDown, FileJson } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 import NodeGraph from '@app/app/(pages)/templates/create-template/components/event/EventTriggerGraph';
 import { Card } from '@app/components/atoms/Card';
@@ -15,10 +15,12 @@ import {
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
 import { Input } from '@app/components/atoms/Input';
+import { Label } from '@app/components/atoms/label';
 import { cn } from '@app/components/lib/utils';
 import { CustomCombobox } from '@app/components/molecules/CustomCombobox';
 import { CustomSelect } from '@app/components/molecules/CustomDropDown';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
+import { Switch } from '@app/components/shadcn/ui/switch';
 import { areArraysEqual } from '@app/utils/common/array';
 import { Close } from '@app/views/atoms/Icons/Close';
 
@@ -294,12 +296,6 @@ const EventTab = ({
 
     return (
         <div className={cn('flex w-full flex-col gap-4 rounded-lg p-4', className)}>
-            <div className="absolute right-8 flex gap-2 rounded-md bg-gray-200 p-2">
-                <FileJson
-                    className={cn('cursor-pointer', proMode && 'text-brand-Blue-200')}
-                    onClick={() => setProMode(!proMode)}
-                />
-            </div>
             <div className={'flex justify-between'}>
                 <div className="flex items-center gap-2">
                     <CustomSelect
@@ -328,19 +324,6 @@ const EventTab = ({
                         onSelect={handleAddEventFilter}
                         disabled={currentEvent === null}
                     />
-                    {/*<CustomSelect*/}
-                    {/*    className="w-64"*/}
-                    {/*    options={*/}
-                    {/*        getNotSelectedEventFilterParameters()?.map((item: ISchema) => ({*/}
-                    {/*            label: item.label,*/}
-                    {/*            value: item.id*/}
-                    {/*        })) || []*/}
-                    {/*    }*/}
-                    {/*    label={'Event Filter Parameters'}*/}
-                    {/*    disabled={currentEventFilter === null}*/}
-                    {/*    defaultValue={` Add Parameters`}*/}
-                    {/*    onSelect={handleAddParameter}*/}
-                    {/*/>*/}
                     <div className={'flex flex-col gap-4'}>
                         <h1 className={'text-sm'}>Event Filter Parameters</h1>
                         <CustomCombobox
@@ -369,8 +352,8 @@ const EventTab = ({
                     />
                 </div>
                 <div className="flex items-center space-x-2">
-                    <Label htmlFor="airplane-mode">Airplane Mode</Label>
-                    <Switch id="airplane-mode" />
+                    <Label htmlFor="airplane-mode">Editor Pro Mode</Label>
+                    <Switch onClick={() => setProMode(!proMode)} id="airplane-mode" />
                 </div>
             </div>
             <Card className="min-h-[200px] bg-gray-200">
@@ -442,20 +425,16 @@ const EventTab = ({
                         }
                     })}
             </Card>
-            <div className="h-[600px] w-full items-center scroll-auto">
-                <NodeGraph data={formData} />
-            </div>
-            <div
-                className={cn(
-                    'transition-duration-300 fixed right-4 top-1/2 h-[80vh] w-[500px] -translate-y-1/2 transition-all ease-in-out',
-                    !proMode && 'hidden'
+            <div className="h-[600px] w-[1200px] items-center scroll-auto">
+                {proMode ? (
+                    <CustomEditor
+                        defaultValue={formData}
+                        onClose={() => setProMode(false)}
+                        onValueChange={updateFormDataFromEditor}
+                    />
+                ) : (
+                    <NodeGraph data={formData} />
                 )}
-            >
-                <CustomEditor
-                    defaultValue={formData}
-                    onClose={() => setProMode(false)}
-                    onValueChange={updateFormDataFromEditor}
-                />
             </div>
         </div>
     );
