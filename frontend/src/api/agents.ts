@@ -17,6 +17,7 @@ export interface IFieldNode {
     value: any;
     negate: boolean;
     operators: string[];
+    operator: string;
     validator: (...args: any) => any;
 }
 

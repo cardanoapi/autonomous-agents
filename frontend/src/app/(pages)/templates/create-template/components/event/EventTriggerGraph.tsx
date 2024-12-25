@@ -28,6 +28,13 @@ export default function EventTriggerGraph({
         return strList.join('.');
     };
 
+    const shouldDisplayBooleanOperator = (operator: string, obj: IFilterNode) => {
+        if (['AND', 'OR'].includes(operator)) {
+            if ('children' in obj && obj.children.length <= 1) return '';
+        }
+        return operator;
+    };
+
     useEffect(() => {
         const newNodes: NodeData[] = [];
         const newEdges: EdgeData[] = [];
@@ -66,7 +73,9 @@ export default function EventTriggerGraph({
             if (obj.id) {
                 const currentId = parentId + '.' + reduceStr(obj.id);
 
-                let nodeText = reduceStr(obj.id) + ` ( ${obj.operator} ) `;
+                let nodeText =
+                    reduceStr(obj.id) +
+                    ` ${shouldDisplayBooleanOperator(obj.operator, obj) ? ` ( ${obj.operator} )` : ''} `;
                 if ('value' in obj) {
                     nodeText = nodeText + obj.value;
                 }
@@ -95,8 +104,12 @@ export default function EventTriggerGraph({
         if (data) {
             const rootId = reduceString(data.id);
             const text = data.negate
-                ? 'NOT ( ' + data.id + ` ( ${data.operator} ) ` + ')'
-                : data.id + ` ( ${data.operator} ) `;
+                ? 'NOT ( ' +
+                  data.id +
+                  ` ${shouldDisplayBooleanOperator(data.operator, data) ? ` ( ${data.operator} )` : ''} ` +
+                  ')'
+                : data.id +
+                  `${shouldDisplayBooleanOperator(data.operator, data) ? ` ( ${data.operator} )` : ''}`;
             newNodes.push({
                 id: rootId,
                 text: text,

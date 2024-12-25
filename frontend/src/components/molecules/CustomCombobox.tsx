@@ -53,7 +53,7 @@ export function CustomCombobox({
 
     useEffect(() => {
         itemsList && setItems(itemsList);
-    }, []);
+    }, [itemsList]);
 
     useEffect(() => {
         value && onSelect(value);
@@ -61,7 +61,7 @@ export function CustomCombobox({
 
     const handleOnChange = (searchValue: string) => {
         const newItems = itemsList.filter((item: string) =>
-            item.toLowerCase().includes(searchValue)
+            item.toLowerCase().includes(searchValue.toLowerCase())
         );
         setItems(newItems);
         setSearchValue(searchValue);

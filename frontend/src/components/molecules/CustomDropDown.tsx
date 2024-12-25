@@ -80,8 +80,11 @@ export const CustomSelect = ({
     <div className={cn('flex w-full flex-col gap-3', className)}>
         {label && <span className="h4">{label}</span>}
         <Select
+            value={''}
             defaultValue={defaultValue}
-            onValueChange={(item) => onSelect(item)}
+            onValueChange={(item) => {
+                onSelect(item);
+            }}
             disabled={disabled}
         >
             <SelectTrigger

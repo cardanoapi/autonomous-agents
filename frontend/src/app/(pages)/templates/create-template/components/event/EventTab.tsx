@@ -6,6 +6,7 @@ import { Events as transactionSchema } from 'libcardano/spec/properties';
 import { ChevronDown } from 'lucide-react';
 
 import NodeGraph from '@app/app/(pages)/templates/create-template/components/event/EventTriggerGraph';
+import { Button } from '@app/components/atoms/Button';
 import { Card } from '@app/components/atoms/Card';
 import { Checkbox } from '@app/components/atoms/Checkbox';
 import {
@@ -22,6 +23,7 @@ import { CustomSelect } from '@app/components/molecules/CustomDropDown';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
 import { Switch } from '@app/components/shadcn/ui/switch';
 import { areArraysEqual } from '@app/utils/common/array';
+import { capitalizeFirstLetter } from '@app/utils/common/extra';
 import { Close } from '@app/views/atoms/Icons/Close';
 
 import InfoCard from '../cards/InfoCard';
@@ -280,7 +282,13 @@ const EventTab = ({
                             (eventFilter) => eventFilter.id === currentEventFilter?.id
                         )
                         //@ts-ignore
-                        ?.children.find((child: IFieldNode) => child.id === prop.id)
+                        ?.children.find(
+                            (child: IFieldNode) =>
+                                !checkIfStringOrArrayOfStringIdsAreEqual(
+                                    child.id,
+                                    prop.id
+                                )
+                        )
             )
         );
     };
@@ -292,6 +300,30 @@ const EventTab = ({
         } catch (error) {
             ErrorToast('Invalid JSON');
         }
+    };
+
+    function checkIfStringOrArrayOfStringIdsAreEqual(
+        id1: string | string[],
+        id2: string | string[]
+    ) {
+        if (Array.isArray(id1)) {
+            return !Array.isArray(id2) || !areArraysEqual(id1, id2);
+        } else {
+            return Array.isArray(id2) || id1 !== id2;
+        }
+    }
+
+    const removeEventFilter = (filterId?: string | string[]) => {
+        if (!filterId || !formData?.children) return;
+        formData.children = formData?.children.filter(
+            (child) =>
+                child.id && checkIfStringOrArrayOfStringIdsAreEqual(filterId, child.id)
+        );
+        setFormData({ ...formData });
+        formData &&
+            formData.children &&
+            formData.children.length &&
+            handleSelectEventFilter(formData.children.slice(-1)[0].id as string);
     };
 
     return (
@@ -377,6 +409,13 @@ const EventTab = ({
                                 </div>
                             ))}
                     </nav>
+                    <Button
+                        onClick={() => removeEventFilter(currentEventFilter?.id)}
+                        className={'rounded px-1 py-1 !text-xs'}
+                        size={'sm'}
+                    >
+                        Remove Event Filter
+                    </Button>
                 </div>
                 {currentEventFilter &&
                     formData?.children.map((param, index) => {
@@ -429,7 +468,6 @@ const EventTab = ({
                 {proMode ? (
                     <CustomEditor
                         defaultValue={formData}
-                        onClose={() => setProMode(false)}
                         onValueChange={updateFormDataFromEditor}
                     />
                 ) : (
@@ -559,7 +597,7 @@ function transformLabelForOperators(operator: string) {
         case 'eq':
             return 'Equals';
         default:
-            return operator.toUpperCase();
+            return capitalizeFirstLetter(operator);
     }
 }
 

@@ -12,3 +12,7 @@ export function convertToQueryStr(page: number, size: number, search: string) {
         search: search
     }).toString();
 }
+
+export function capitalizeFirstLetter(word: string) {
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+}
