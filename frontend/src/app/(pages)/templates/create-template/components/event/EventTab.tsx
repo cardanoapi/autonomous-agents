@@ -1,33 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { IBooleanNode, IEventTrigger, IFieldNode } from '@api/agents';
 import { getNestedTxProperties } from '@utils';
 import { Events as transactionSchema } from 'libcardano/spec/properties';
-import { ChevronDown } from 'lucide-react';
 
-import NodeGraph from '@app/app/(pages)/templates/create-template/components/event/EventTriggerGraph';
+import EventTabRenderer from '@app/app/(pages)/templates/create-template/components/event/EventTabRenderer';
+import RenderEventChildForm from '@app/app/(pages)/templates/create-template/components/event/RenderEventChildForm';
+import { checkIfStringOrArrayOfStringIdsAreEqual } from '@app/app/(pages)/templates/create-template/components/utils/array';
 import { Button } from '@app/components/atoms/Button';
 import { Card } from '@app/components/atoms/Card';
-import { Checkbox } from '@app/components/atoms/Checkbox';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from '@app/components/atoms/DropDownMenu';
-import { Input } from '@app/components/atoms/Input';
 import { Label } from '@app/components/atoms/label';
 import { cn } from '@app/components/lib/utils';
 import { CustomCombobox } from '@app/components/molecules/CustomCombobox';
 import { CustomSelect } from '@app/components/molecules/CustomDropDown';
-import { ErrorToast } from '@app/components/molecules/CustomToasts';
 import { Switch } from '@app/components/shadcn/ui/switch';
 import { areArraysEqual } from '@app/utils/common/array';
-import { capitalizeFirstLetter } from '@app/utils/common/extra';
-import { Close } from '@app/views/atoms/Icons/Close';
 
 import InfoCard from '../cards/InfoCard';
-import CustomEditor from './CustomEditor';
 import { ISchema } from './EventTrigger';
 
 const EventTab = ({
@@ -95,10 +84,9 @@ const EventTab = ({
             (prop) => prop.id === eventFilterId
         );
         if (selectedEventFilter) {
-            // console.log("before: ", selectedEventFilter)
-            if (!selectedEventFilter.properties ){
-                const {id,label,type,validator} = selectedEventFilter
-                selectedEventFilter.properties=[{id,label,type,validator}]
+            if (!selectedEventFilter.properties) {
+                const { id, label, type, validator } = selectedEventFilter;
+                selectedEventFilter.properties = [{ id, label, type, validator }];
             }
             setCurrentEventFilter(selectedEventFilter);
             return selectedEventFilter;
@@ -240,7 +228,7 @@ const EventTab = ({
         }
     };
 
-    const handleParaNegationChange = (parameterId: string, negate: boolean) => {
+    const handleParamNegationChange = (parameterId: string, negate: boolean) => {
         if (formData && currentEventFilter) {
             const data = {
                 ...formData,
@@ -297,26 +285,6 @@ const EventTab = ({
         );
     };
 
-    const updateFormDataFromEditor = (data: any) => {
-        try {
-            const parsedData = JSON.parse(data);
-            setFormData(parsedData);
-        } catch (error) {
-            ErrorToast('Invalid JSON');
-        }
-    };
-
-    function checkIfStringOrArrayOfStringIdsAreEqual(
-        id1: string | string[],
-        id2: string | string[]
-    ) {
-        if (Array.isArray(id1)) {
-            return !Array.isArray(id2) || !areArraysEqual(id1, id2);
-        } else {
-            return Array.isArray(id2) || id1 !== id2;
-        }
-    }
-
     const removeEventFilter = (filterId?: string | string[]) => {
         if (!filterId || !formData?.children) return;
         formData.children = formData?.children.filter(
@@ -326,283 +294,187 @@ const EventTab = ({
         setFormData({ ...formData });
         formData &&
             formData.children &&
-            formData.children.length &&
-            handleSelectEventFilter(formData.children.slice(-1)[0].id as string);
+            formData.children.length ?
+            handleSelectEventFilter(formData.children.slice(-1)[0].id as string):setCurrentEventFilter(null)
     };
+
+    const memoizedEventFilterParams = useMemo(
+        () =>
+            getNotSelectedEventFilterParameters()?.map((item: ISchema) => {
+                return { id: item.id, label: item.label };
+            }) || [],
+        [formData]
+    );
+
+    const memoizedEventFilters = useMemo(
+        () =>
+            getNotSelectedEventFilters()?.map((item) => ({
+                id: item.id,
+                label: item.label
+            })) || [],
+        [formData]
+    );
 
     return (
         <div className={cn('flex w-full flex-col gap-4 rounded-lg p-4', className)}>
-            <div className={'flex justify-between'}>
-                <div className="flex items-center gap-2">
-                    <CustomSelect
-                        plusIcon={false}
-                        className="w-64"
-                        options={transactionSchema.map((txProp) => ({
-                            label: txProp.label,
-                            value: txProp.id
-                        }))}
-                        defaultValue={currentEvent?.label || 'Event'}
-                        label="Event"
-                        onSelect={handleSelectEvent}
-                        disabled={currentEvent !== null}
-                    />
-                    <CustomSelect
-                        plusIcon={true}
-                        className="w-64"
-                        options={
-                            getNotSelectedEventFilters()?.map((item) => ({
-                                label: item.label,
-                                value: item.id
-                            })) || []
-                        }
-                        defaultValue={`${currentEvent?.label || 'Event'} filters`}
-                        label="Event Filter"
-                        onSelect={handleAddEventFilter}
-                        disabled={currentEvent === null}
-                    />
-                    <div className={'flex flex-col gap-4'}>
-                        <h1 className={'text-sm'}>Event Filter Parameters</h1>
-                        <CustomCombobox
-                            addSearchOption
-                            disabled={currentEventFilter === null}
-                            itemsList={
-                                getNotSelectedEventFilterParameters()?.map(
-                                    (item: ISchema) => item.label
-                                ) || []
-                            }
-                            onSelect={(selectedParam: string) => {
-                                const splittedParamArray = selectedParam.split('.');
-                                handleAddParameter(splittedParamArray);
+            <div className="flex items-center space-x-2">
+                <Label htmlFor="airplane-mode">Pro Mode</Label>
+                <Switch onClick={() => setProMode(!proMode)} id="airplane-mode" />
+            </div>
+            {proMode ? (
+                <></>
+            ) : (
+                <>
+                    <div className="flex items-center gap-2">
+                        <CustomSelect
+                            plusIcon={false}
+                            className="w-64"
+                            options={transactionSchema.map((txProp) => ({
+                                label: txProp.label,
+                                value: txProp.id
+                            }))}
+                            defaultValue={currentEvent?.label || 'Event'}
+                            label="Event"
+                            onSelect={handleSelectEvent}
+                            disabled={currentEvent !== null}
+                        />
+                        <div className={'flex flex-col gap-4'}>
+                            <h1 className={'text-sm'}>Event Filter Parameters</h1>
+                            <CustomCombobox
+                                addSearchOption
+                                disabled={currentEvent === null}
+                                itemsList={memoizedEventFilters}
+                                onSelect={(value: string) => {
+                                    handleAddEventFilter(value);
+                                }}
+                                defaultValue={{ id: 'label', label: 'Event Filter' }}
+                            />
+                        </div>
+                        <div className={'flex flex-col gap-4'}>
+                            <h1 className={'text-sm'}>Event Filter Parameters</h1>
+                            <CustomCombobox
+                                addSearchOption
+                                disabled={currentEventFilter === null}
+                                itemsList={memoizedEventFilterParams}
+                                onSelect={(value: string[]) => {
+                                    // const splittedParamArray =
+                                    //     dotSeperatedParamString.split('.');
+                                    handleAddParameter(value);
+                                }}
+                                defaultValue={{
+                                    id: 'label',
+                                    label: 'Search Parameter'
+                                }}
+                            />
+                        </div>
+                        <InfoCard
+                            onMouseEnter={() => {
+                                setIsInfoVisible(true);
                             }}
-                            defaultValue={'Search Parameter'}
+                            onMouseLeave={() => {
+                                setIsInfoVisible(false);
+                            }}
+                            visible={isInfoVisible}
                         />
                     </div>
-                    <InfoCard
-                        onMouseEnter={() => {
-                            setIsInfoVisible(true);
-                        }}
-                        onMouseLeave={() => {
-                            setIsInfoVisible(false);
-                        }}
-                        visible={isInfoVisible}
-                    />
-                </div>
-                <div className="flex items-center space-x-2">
-                    <Label htmlFor="airplane-mode">Editor Pro Mode</Label>
-                    <Switch onClick={() => setProMode(!proMode)} id="airplane-mode" />
-                </div>
-            </div>
-            <Card className="min-h-[200px] bg-gray-200">
-                <div className="mb-8 flex items-end justify-between">
-                    <nav className="flex gap-4">
-                        {formData &&
-                            formData?.children.map((child, index) => (
-                                <div
-                                    key={index}
-                                    className={cn(
-                                        'cursor-pointer font-semibold',
-                                        currentEventFilter &&
-                                            currentEventFilter.id === child.id &&
-                                            'text-brand-Blue-200 underline underline-offset-4'
-                                    )}
-                                    onClick={() =>
-                                        handleSelectEventFilter(child.id as string)
-                                    }
-                                >
-                                    {child.id}
-                                </div>
-                            ))}
-                    </nav>
-                    <Button
-                        onClick={() => removeEventFilter(currentEventFilter?.id)}
-                        className={'rounded px-1 py-1 !text-xs'}
-                        size={'sm'}
-                    >
-                        Remove Event Filter
-                    </Button>
-                </div>
-                {currentEventFilter &&
-                    formData?.children.map((param, index) => {
-                        if (param.id === currentEventFilter?.id) {
-                            return (
-                                <div key={index}>
-                                    {(param as IBooleanNode).children?.map(
-                                        (child, childIndex) => (
-                                            <div
-                                                key={childIndex}
-                                                className="flex w-full flex-col gap-4"
-                                            >
-                                                {
-                                                    <RenderEventChildForm
-                                                        eventFilterParam={
-                                                            child as IFieldNode
-                                                        }
-                                                        onValueChange={(value) => {
-                                                            handleParamValueChange(
-                                                                child.id as string,
-                                                                value
-                                                            );
-                                                        }}
-                                                        onOperatorChange={(value) => {
-                                                            handleParamOperatorChange(
-                                                                child.id as string,
-                                                                value
-                                                            );
-                                                        }}
-                                                        onNegateChange={(value) => {
-                                                            handleParaNegationChange(
-                                                                child.id as string,
-                                                                value
-                                                            );
-                                                        }}
-                                                        onDeleteParameter={
-                                                            handleDeleteParameter
-                                                        }
-                                                    />
-                                                }
-                                            </div>
-                                        )
-                                    )}
-                                </div>
-                            );
-                        }
-                    })}
-            </Card>
-            <div className="h-[600px] w-[1200px] items-center scroll-auto">
-                {proMode ? (
-                    <CustomEditor
-                        defaultValue={formData}
-                        onValueChange={updateFormDataFromEditor}
-                    />
-                ) : (
-                    <NodeGraph data={formData} />
-                )}
-            </div>
-        </div>
-    );
-};
-
-const RenderEventChildForm = ({
-    eventFilterParam,
-    onValueChange,
-    onOperatorChange,
-    onNegateChange,
-    onDeleteParameter
-}: {
-    eventFilterParam: IFieldNode;
-    onValueChange?: (value: any) => void;
-    onOperatorChange?: (value: any) => void;
-    onNegateChange?: (value: boolean) => void;
-    onDeleteParameter?: (...args: any) => void;
-}) => {
-    const [localOperator, setLocalOperator] = useState<string>(
-        eventFilterParam.operators[0]
-    );
-
-    useEffect(() => {
-        localOperator && onOperatorChange?.(localOperator);
-    }, [localOperator]);
-
-    const [errMsg, setErrMsg] = useState<string>('');
-
-    useEffect(() => {
-        const clearErrMsg = setTimeout(() => {
-            setErrMsg('');
-        }, 3000);
-        return () => {
-            clearTimeout(clearErrMsg);
-        };
-    }, [errMsg]);
-
-    const handleOperatorChange = (operator: string) => {
-        setLocalOperator(operator);
-        onOperatorChange?.(operator);
-    };
-
-    const handleOnDeleteParam = (paramId: string | string[]) => {
-        onDeleteParameter && onDeleteParameter(paramId);
-    };
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!eventFilterParam?.validator(e.target.value)) {
-            setErrMsg('Error occured');
-        }
-        onValueChange?.(e.target.value);
-    };
-    return (
-        <div className={'flex flex-col gap-1'}>
-            <div className="group mb-2 flex items-center gap-4">
-                <span className="mt-2 min-w-80 truncate">
-                    {Array.isArray(eventFilterParam.id)
-                        ? (eventFilterParam.id as string[]).join('.')
-                        : eventFilterParam.id}
-                </span>
-                <div className="flex items-center gap-2">
-                    <span className="mt-2">negate</span>
-                    <Checkbox
-                        className="mt-2"
-                        onCheckedChange={onNegateChange}
-                        checked={eventFilterParam.negate}
-                    />
-                </div>
-                <DropdownMenu>
-                    <DropdownMenuTrigger
-                        disableIcon={true}
-                        className="mt-2 min-w-32 rounded border-none !p-0"
-                    >
-                        <span className="flex w-full justify-between">
-                            {transformLabelForOperators(localOperator)}
-                            <ChevronDown size={24} />
-                        </span>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="!z-[9999]">
-                        {eventFilterParam.operators.map((operator, index) => (
-                            <DropdownMenuItem
-                                key={index}
-                                className="!z-[9999] m-0 w-full"
-                                onClick={() => handleOperatorChange(operator)}
+                    <Card className="min-h-[200px] bg-gray-200">
+                        <div className="mb-8 flex items-end justify-between">
+                            <nav className="flex gap-4">
+                                {formData &&
+                                    formData?.children.map((child, index) => (
+                                        <div
+                                            key={index}
+                                            className={cn(
+                                                'cursor-pointer font-semibold',
+                                                currentEventFilter &&
+                                                    currentEventFilter.id ===
+                                                        child.id &&
+                                                    'text-brand-Blue-200 underline underline-offset-4'
+                                            )}
+                                            onClick={() =>
+                                                handleSelectEventFilter(
+                                                    child.id as string
+                                                )
+                                            }
+                                        >
+                                            {child.id}
+                                        </div>
+                                    ))}
+                            </nav>
+                            <Button
+                                onClick={() =>
+                                    removeEventFilter(currentEventFilter?.id)
+                                }
+                                className={'rounded px-2 py-1 !text-xs'}
+                                size={'sm'}
                             >
-                                {transformLabelForOperators(operator)}
-                            </DropdownMenuItem>
-                        ))}
-                    </DropdownMenuContent>
-                </DropdownMenu>
-                <Input
-                    className="w-full rounded-none border-b-2 border-l-0 border-r-0 border-t-0 border-black bg-transparent focus:outline-none focus:ring-0"
-                    defaultValue={eventFilterParam.value}
-                    onChange={handleInputChange}
-                />
-                <Close
-                    onClick={() => handleOnDeleteParam(eventFilterParam.id)}
-                    className={
-                        'invisible relative top-2 h-10 w-10 cursor-pointer group-hover:visible'
-                    }
-                />
-            </div>
-            {errMsg && (
-                <div className="flex w-3/4 justify-end text-sm text-red-500">
-                    {errMsg}
-                </div>
+                                Remove Event Filter
+                            </Button>
+                        </div>
+                        {currentEventFilter &&
+                            formData?.children.map((param, index) => {
+                                if (param.id === currentEventFilter?.id) {
+                                    return (
+                                        <div key={index}>
+                                            {(param as IBooleanNode).children?.map(
+                                                (child, childIndex) => (
+                                                    <div
+                                                        key={childIndex}
+                                                        className="flex w-full flex-col gap-4"
+                                                    >
+                                                        {
+                                                            <RenderEventChildForm
+                                                                eventFilterParam={
+                                                                    child as IFieldNode
+                                                                }
+                                                                onValueChange={(
+                                                                    value
+                                                                ) => {
+                                                                    handleParamValueChange(
+                                                                        child.id as string,
+                                                                        value
+                                                                    );
+                                                                }}
+                                                                onOperatorChange={(
+                                                                    value
+                                                                ) => {
+                                                                    handleParamOperatorChange(
+                                                                        child.id as string,
+                                                                        value
+                                                                    );
+                                                                }}
+                                                                onNegateChange={(
+                                                                    value
+                                                                ) => {
+                                                                    handleParamNegationChange(
+                                                                        child.id as string,
+                                                                        value
+                                                                    );
+                                                                }}
+                                                                onDeleteParameter={
+                                                                    handleDeleteParameter
+                                                                }
+                                                            />
+                                                        }
+                                                    </div>
+                                                )
+                                            )}
+                                        </div>
+                                    );
+                                }
+                            })}
+                    </Card>
+                </>
             )}
+            {
+                <EventTabRenderer
+                    displayMonacoEditor={proMode}
+                    formData={formData}
+                    onEditorValueChange={(value) => setFormData(value)}
+                />
+            }
         </div>
     );
 };
-
-function transformLabelForOperators(operator: string) {
-    switch (operator) {
-        case 'lt':
-            return 'Less Than';
-        case 'gt':
-            return 'Greater Than';
-        case 'gte':
-            return 'Great Than Or Equals To';
-        case 'lte':
-            return 'Less Than Or Equals To';
-        case 'eq':
-            return 'Equals';
-        default:
-            return capitalizeFirstLetter(operator);
-    }
-}
 
 export default EventTab;

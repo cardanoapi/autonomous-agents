@@ -72,7 +72,7 @@ export const FunctionForm = ({
         updateFunctionState({
             cronValue,
             selectedCronOption: defaultSelected,
-            congifuredCronSettings: configuredSettings
+            configuredCronSettings: configuredSettings
         });
     };
 
@@ -120,8 +120,8 @@ export const FunctionForm = ({
     };
 
     const handleOptionChange = (optionValue: any) => {
-        const updatedFuctionState = { ...functionState, optionValue: optionValue };
-        updateFunctionState(updatedFuctionState);
+        const updatedFunctionState = { ...functionState, optionValue: optionValue };
+        updateFunctionState(updatedFunctionState);
     };
 
     const handleOnSave = () => {
@@ -225,8 +225,8 @@ export const FunctionForm = ({
                 <div className="flex w-full justify-end">
                     {functionState && functionState.canBeEvent && (
                         <CustomCombobox
-                            defaultValue={functionState.type || 'CRON'}
-                            itemsList={['CRON', 'EVENT']}
+                            defaultValue={{id:functionState.type || 'CRON',label:functionState.type || 'CRON'}}
+                            itemsList={[{id:'CRON',label:'CRON'}, {id:'EVENT',label:'EVENT'}]}
                             onSelect={(triggerType: any) =>
                                 handleTypeChange(triggerType as TriggerType)
                             }
@@ -250,7 +250,7 @@ export const FunctionForm = ({
                             defaultCron={cronExpression}
                             onChange={handleCronChange}
                             previousConfiguredSettings={
-                                functionState?.congifuredCronSettings
+                                functionState?.configuredCronSettings
                             }
                             previousSelectedOption={functionState?.selectedCronOption}
                             defaultToCustomTab={editMode}

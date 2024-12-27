@@ -17,6 +17,7 @@ const OptionsParameter = ({
     paramIndex: number;
 }) => {
     const [selectedFunction, setSelectedFunction] = useAtom(selectedFunctionAtom);
+
     function renderParamsComponent(parameter: IParameter) {
         switch (parameter.type) {
             case 'number':
@@ -32,15 +33,26 @@ const OptionsParameter = ({
                 return <ListParameter paramIndex={paramIndex} parameter={parameter} />;
         }
     }
+
     const [selectedOption, setSelectedOption] = useState<IParameterOption | null>(null);
     return (
         <div className={'flex flex-col gap-4'}>
             {parameter && parameter.options && (
                 <CustomCombobox
                     isOpen
-                    itemsList={parameter?.options?.map((option) => option.name) || []}
+                    itemsList={
+                        parameter?.options?.map((option) => ({
+                            id: option.name,
+                            label: option.name
+                        })) || []
+                    }
                     defaultValue={
-                        parameter && parameter.options ? parameter.options[0].name : ''
+                        parameter && parameter.options
+                            ? {
+                                  id: parameter.options[0].name,
+                                  label: parameter.options[0].name
+                              }
+                            : { id: '', label: '' }
                     }
                     onSelect={(optionName: string) => {
                         const option = parameter.options!.find(

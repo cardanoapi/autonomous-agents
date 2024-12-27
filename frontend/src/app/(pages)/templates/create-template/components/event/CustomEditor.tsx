@@ -6,7 +6,7 @@ export default function CustomEditor({
     onValueChange
 }: {
     defaultValue: IEventTrigger | null;
-    onValueChange: (data: IEventTrigger) => void;
+    onValueChange: (data: string) => void;
 }) {
     return (
         <>
@@ -14,11 +14,15 @@ export default function CustomEditor({
                 height={'100%'}
                 width={'100%'}
                 defaultLanguage="json"
-                className="rounded-xl"
+                className="bg-brand-vscode !rounded-xl !py-4"
                 // defaultValue={JSON.stringify(defaultValue, null, 2) || ''}
                 theme="vs-dark"
-                value={JSON.stringify(defaultValue, null, 2) || '{}'}
-                onChange={(data) => data && onValueChange(JSON.parse(data))}
+                value={
+                    defaultValue
+                        ? JSON.stringify(defaultValue, null, 2)
+                        : '{"Welcome to Autonomous Agent Testing.": "Try Disabling Pro mode and use graph for initial state"}'
+                }
+                onChange={(data) => data && onValueChange(data)}
             ></Editor>
         </>
     );

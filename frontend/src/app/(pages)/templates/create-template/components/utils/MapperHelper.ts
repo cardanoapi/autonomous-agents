@@ -1,5 +1,6 @@
 import { ISubParameter } from '@api/agents';
 import { IParameter, IParameterOption } from '@models/types/functions';
+import {capitalizeFirstLetter} from "@app/utils/common/extra";
 
 export const mapParamValueToKeyValuePair = (params: IParameter[]): ISubParameter[] => {
     return params.map((param) => ({
@@ -55,3 +56,20 @@ export const mapKeyValuePairToParamValue = (
                 : subParam.value
     }));
 };
+
+export function transformLabelForOperators(operator: string) {
+    switch (operator) {
+        case 'lt':
+            return 'Less Than';
+        case 'gt':
+            return 'Greater Than';
+        case 'gte':
+            return 'Great Than Or Equals To';
+        case 'lte':
+            return 'Less Than Or Equals To';
+        case 'eq':
+            return 'Equals';
+        default:
+            return capitalizeFirstLetter(operator);
+    }
+}

@@ -1,11 +1,16 @@
 'use client';
 
 import * as React from 'react';
-import { useEffect, useRef } from 'react';
+import {useEffect, useRef} from 'react';
 
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 import { cn } from '@app/components/lib/utils';
+
+interface ItemSchema {
+    id:string|string[];
+    label:string
+}
 
 export function CustomCombobox({
     defaultValue,
@@ -16,18 +21,18 @@ export function CustomCombobox({
     addSearchOption = false,
     disabled = false
 }: {
-    defaultValue?: string;
-    itemsList: Array<string>;
-    onSelect: any;
+    defaultValue?: ItemSchema;
+    itemsList: Array<ItemSchema>;
+    onSelect: (value:any)=>void;
     className?: string;
     isOpen?: boolean;
     addSearchOption?: boolean;
     disabled?: boolean;
 }) {
     const [open, setOpen] = React.useState(isOpen);
-    const [value, setValue] = React.useState(defaultValue || '');
+    const [value, setValue] = React.useState(defaultValue || null);
     const [searchValue, setSearchValue] = React.useState('');
-    const [items, setItems] = React.useState<Array<string>>(itemsList);
+    const [items, setItems] = React.useState<Array<ItemSchema>>(itemsList);
 
     const modalRef = useRef<HTMLDivElement>(null);
 
@@ -48,20 +53,16 @@ export function CustomCombobox({
     }, [open]);
 
     useEffect(() => {
-        defaultValue && setValue(defaultValue);
-    }, [defaultValue]);
-
-    useEffect(() => {
         itemsList && setItems(itemsList);
     }, [itemsList]);
 
     useEffect(() => {
-        value && onSelect(value);
+        value && onSelect(value.id);
     }, [value]);
 
     const handleOnChange = (searchValue: string) => {
-        const newItems = itemsList.filter((item: string) =>
-            item.toLowerCase().includes(searchValue.toLowerCase())
+        const newItems = itemsList.filter((item) =>
+            item.label.toLowerCase().includes(searchValue.toLowerCase())
         );
         setItems(newItems);
         setSearchValue(searchValue);
@@ -85,13 +86,13 @@ export function CustomCombobox({
                             disabled ? 'cursor-not-allowed' : ''
                         )}
                         type="text"
-                        placeholder={value}
+                        placeholder={value?value.label:''}
                         value={searchValue}
                         onClick={() => setOpen(true)}
                         onChange={(e) => handleOnChange(e.target.value)}
                     />
                 ) : (
-                    <span>{value ? value : ' Select Function Name'}</span>
+                    <span>{value ? value.label : ' Select Function Name'}</span>
                 )}
                 {addSearchOption ? <></> : open ? <ChevronUp /> : <ChevronDown />}
             </div>
@@ -103,22 +104,22 @@ export function CustomCombobox({
                         addSearchOption ? '-left-1/2 w-fit min-w-[600px]' : 'w-full'
                     )}
                 >
-                    {items.map((item: string) => {
+                    {items.map((item) => {
                         return (
                             <div
                                 onClick={() => {
                                     if (addSearchOption) {
-                                        onSelect(item);
+                                        onSelect(item.id);
                                         setSearchValue('');
                                     } else {
                                         setValue(item);
                                     }
                                     setOpen(false);
                                 }}
-                                key={item}
+                                key={item.label}
                                 className={'px-2 hover:bg-gray-200'}
                             >
-                                {item}
+                                {item.label}
                             </div>
                         );
                     })}

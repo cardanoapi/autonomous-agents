@@ -45,7 +45,7 @@ export interface IFormFunctionInstance extends IFunctionsItem {
     optionValue?: IParameterOption;
     //for saving cron settings
     selectedCronOption?: string;
-    congifuredCronSettings?: any;
+    configuredCronSettings?: any;
     //To be compatible with IAgentConfiuration
     agent_id?: string;
 }
