@@ -1,6 +1,6 @@
-import { IEventBasedAction } from '../types/eventTriger'
+import {IBooleanNode, IEventBasedAction} from '../types/eventTriger'
 
-function restructureData(obj: any) {
+function flattenIds(obj: any) {
     const ids: any = []
 
     function flattenChildren(node: any) {
@@ -32,6 +32,16 @@ function restructureData(obj: any) {
     }
 }
 
+function flattenFilterChildWithParentId(data: IBooleanNode){
+    data.children = data.children.map((child)=>{
+        if ("children" in child && child.children.length ===1 && child.children[0].id === child.id){
+            return child.children[0]
+        }
+        return child
+    })
+    return data
+}
+
 export function formatEventFilter(data: IEventBasedAction[]) {
     return data.map((item) => {
         return {
@@ -39,8 +49,8 @@ export function formatEventFilter(data: IEventBasedAction[]) {
             eventTrigger: {
                 ...('children' in item.eventTrigger
                     ? item.eventTrigger.children.length == 1
-                        ? restructureData(item.eventTrigger)
-                        : item.eventTrigger
+                        ? flattenIds(flattenFilterChildWithParentId(item.eventTrigger))
+                        : flattenFilterChildWithParentId(item.eventTrigger)
                     : item.eventTrigger),
             },
         }

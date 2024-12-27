@@ -113,7 +113,10 @@ export class EventTriggerHandler {
         }
 
         let result
-        const propertyValue = targetObject[nodes[0]]
+        let propertyValue = targetObject[nodes[0]]
+        if (!propertyValue){
+            propertyValue = targetObject[nodes[0]+'s']
+        }
         parent_nodes.push(nodes[0])
 
         const subArray = nodes.slice(1)

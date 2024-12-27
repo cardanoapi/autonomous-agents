@@ -95,6 +95,11 @@ const EventTab = ({
             (prop) => prop.id === eventFilterId
         );
         if (selectedEventFilter) {
+            // console.log("before: ", selectedEventFilter)
+            if (!selectedEventFilter.properties ){
+                const {id,label,type,validator} = selectedEventFilter
+                selectedEventFilter.properties=[{id,label,type,validator}]
+            }
             setCurrentEventFilter(selectedEventFilter);
             return selectedEventFilter;
         }
@@ -139,7 +144,6 @@ const EventTab = ({
     }
 
     const handleAddParameter = (parameterId: string | string[]) => {
-        console.log('Added param is : ', parameterId);
         if (formData && currentEventFilter) {
             const selectedParameter = getSelectedParameter(parameterId);
             if (selectedParameter) {

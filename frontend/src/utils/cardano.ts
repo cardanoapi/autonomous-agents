@@ -63,21 +63,25 @@ export function getNestedTxProperties(obj: ISchema) {
         : ['eq'];
 
     function recursiveFlatten(property: ISchema, parentId: any = []) {
-        const { id, type, properties, validator } = property;
+        const { id, type, properties, validator , operators} = property;
         const newId: string[] = [...parentId, id];
+        const newProp = {
+            id: newId,
+            label: newId.join('.'),
+            type,
+            operators: getOperatorList(
+                txObjectOperators as TxOperators[],
+                type as TxPropTypes
+            ),
+            validator
+        }
         if (properties && Array.isArray(properties)) {
+            if (operators){
+                result.push(newProp)
+            }
             properties.forEach((child) => recursiveFlatten(child, newId));
         } else {
-            result.push({
-                id: newId,
-                label: newId.join('.'),
-                type,
-                operators: getOperatorList(
-                    txObjectOperators as TxOperators[],
-                    type as TxPropTypes
-                ),
-                validator
-            });
+            result.push(newProp);
         }
     }
 

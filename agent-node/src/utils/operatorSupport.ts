@@ -18,6 +18,9 @@ const operatorNameToSymbol: Record<string, string> = {
     lte: '<=',
     ne: '!=',
     eq: '==',
+
+//     js suport
+    contains: 'contains'
 }
 class LogicalFunctions {
     private typeHandlers: Map<string, Record<string, TypeHandler>>
@@ -111,7 +114,7 @@ class LogicalFunctions {
 const _logicalFunctions = new LogicalFunctions()
 
 // Register handlers for numbers
-_logicalFunctions.register('number', '==', (a: number, b: number) => a === b)
+_logicalFunctions.register('number', '==', (a: number, b: number) => a == b)
 _logicalFunctions.register('number', '!=', (a: number, b: number) => a !== b)
 _logicalFunctions.register('number', '>', (a: number, b: number) => a > b)
 _logicalFunctions.register('number', '<', (a: number, b: number) => a < b)
@@ -119,12 +122,13 @@ _logicalFunctions.register('number', '>=', (a: number, b: number) => a >= b)
 _logicalFunctions.register('number', '<=', (a: number, b: number) => a <= b)
 
 // Register handlers for strings
-_logicalFunctions.register('string', '==', (a: string, b: string) => a === b)
+_logicalFunctions.register('string', '==', (a: string, b: string) => a == b)
 _logicalFunctions.register('string', '!=', (a: string, b: string) => a !== b)
 _logicalFunctions.register('string', '>', (a: string, b: string) => a > b)
 _logicalFunctions.register('string', '<', (a: string, b: string) => a < b)
 _logicalFunctions.register('string', '>=', (a: string, b: string) => a >= b)
 _logicalFunctions.register('string', '<=', (a: string, b: string) => a <= b)
+_logicalFunctions.register('string','contains',(a:string,b:string)=> a.includes(b) || b.includes(a))
 
 // Register handlers for buffers
 _logicalFunctions.register('buffer', '==', (a: Buffer, b: Buffer) =>
