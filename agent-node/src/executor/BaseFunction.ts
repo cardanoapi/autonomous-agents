@@ -1,3 +1,6 @@
+import {Transaction} from "libcardano/cardano/ledger-serialization/transaction";
+import {DecodedBlock} from "./TxListener";
+
 export interface Key {
     private: string
     public: string
@@ -75,12 +78,19 @@ export interface Helpers {
     generateVoteMetadataContent: () => string
 }
 
+export interface EventContext{
+    tx: Transaction;
+    block: DecodedBlock;
+    confirmation: number
+}
+
 export interface FunctionContext {
     wallet: Wallet
     kuber: KuberApi
     builtins: Builtins
     agentName: string
-    helpers: Helpers
+    helpers: Helpers,
+    event ?: EventContext
 }
 
 // Create a restricted execution environment

@@ -44,7 +44,7 @@ export class RpcTopicHandler {
             'txCount=' + transactions.length
         )
         this.txListener.onBlock({ ...block, body: transactions })
-        this.eventTriggerHandlers.onBlock(transactions, agentRunners)
+        this.eventTriggerHandlers.onBlock({ ...block, body: transactions }, agentRunners)
     }
     initial_config(
         message: any,

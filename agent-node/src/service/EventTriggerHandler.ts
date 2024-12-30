@@ -8,6 +8,7 @@ import {
     IFieldNode,
     IFilterNode,
 } from '../types/eventTriger'
+import { DecodedBlock } from '../executor/TxListener'
 
 export class EventTriggerHandler {
     eventBasedActions: IEventBasedAction[] = []
@@ -17,13 +18,18 @@ export class EventTriggerHandler {
         this.managerInterface = managerInterface
     }
 
-    onBlock(transactions: Transaction[], agentRunners: AgentRunner[]) {
+    onBlock(block: DecodedBlock, agentRunners: AgentRunner[]) {
         if (this.eventBasedActions.length) {
-            transactions.forEach((tx: Transaction) => {
+            block.body.forEach((tx: Transaction) => {
                 this.eventBasedActions.forEach((eventBasedAction) => {
                     const handler = (this as any)['transactionHandler']
                     if (handler !== undefined && handler !== 'constructor') {
-                        handler.bind(this)(tx, eventBasedAction, agentRunners)
+                        handler.bind(this)(
+                            tx,
+                            eventBasedAction,
+                            block,
+                            agentRunners
+                        )
                     }
                 })
             })
@@ -33,6 +39,7 @@ export class EventTriggerHandler {
     transactionHandler(
         tx: Transaction,
         eventBasedAction: IEventBasedAction,
+        block: DecodedBlock,
         agentRunners?: AgentRunner[]
     ) {
         let result
@@ -64,8 +71,14 @@ export class EventTriggerHandler {
                     'output_address_' + index + ' ' + o.address.toBech32()
                 )
             })
+            const eventContext = {
+                tx,
+                block,
+                confirmation: 1,
+            }
             agentRunners.forEach((runner, index) => {
-                runner.invokeFunction(
+                runner.invokeFunctionWithEventContext(
+                    eventContext,
                     'EVENT',
                     index,
                     function_name,
@@ -114,8 +127,8 @@ export class EventTriggerHandler {
 
         let result
         let propertyValue = targetObject[nodes[0]]
-        if (!propertyValue){
-            propertyValue = targetObject[nodes[0]+'s']
+        if (!propertyValue) {
+            propertyValue = targetObject[nodes[0] + 's']
         }
         parent_nodes.push(nodes[0])
 

@@ -1,7 +1,12 @@
 import { AgentWalletDetails } from '../types/types'
 import { ManagerInterface } from '../service/ManagerInterfaceService'
 import { FunctionGroup, getHandlers } from './AgentFunctions'
-import { Builtins, FunctionContext, Key, Wallet } from './BaseFunction'
+import {
+    Builtins,
+    FunctionContext,
+    Key,
+    Wallet,
+} from './BaseFunction'
 import { TxListener } from './TxListener'
 import { generateProposalMetadataContent } from '../utils/metadataContent/proposalMetadataContent'
 import { generateRegisterDrepMetadataContent } from '../utils/metadataContent/drepMetadataContent'
@@ -14,12 +19,14 @@ export interface CallLog {
     return?: any
     error?: Error | string
 }
+
 export class Executor {
     wallet: any
     readonly rpcInterface: ManagerInterface
     readonly functions: FunctionGroup
     readonly functionContext: FunctionContext
     txListener: TxListener
+
     constructor(
         wallet: any,
         rpcInterface: ManagerInterface,
@@ -122,6 +129,7 @@ export class Executor {
                         processQueue(this.rpcInterface, this.txListener)
                     }
                 })
+
                 async function processQueue(
                     rpcInterface: ManagerInterface,
                     txListener: TxListener
@@ -285,7 +293,15 @@ export class Executor {
         } as Builtins
     }
 
-    invokeFunction(name: string, ...args: any): Promise<CallLog[]> {
+    async invokeFunction(name: string, ...args: any): Promise<CallLog[]> {
+        return await this.invokeFunctionWithContext({}, name, ...args)
+    }
+
+    invokeFunctionWithContext(
+        context: any,
+        name: string,
+        ...args: any
+    ): Promise<CallLog[]> {
         const f: any | undefined = this.functions.functions[name]
         const log: CallLog = {
             function: name,
@@ -296,7 +312,7 @@ export class Executor {
             return Promise.resolve([log])
         }
 
-        const newContext = { ...this.functionContext }
+        const newContext = { ...this.functionContext, ...context }
         const builtinsProxy = this.makeProxy(newContext.builtins)
         newContext.builtins = builtinsProxy.proxy
         builtinsProxy.callLog.push(log)
@@ -327,5 +343,6 @@ export class Executor {
         }
         return Promise.resolve(builtinsProxy.callLog)
     }
+
     // newBlock(block) {}
 }

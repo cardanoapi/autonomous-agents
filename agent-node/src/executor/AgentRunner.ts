@@ -7,6 +7,7 @@ import { loadRootKeyFromBuffer } from '../utils/cardano'
 import { HdWallet } from 'libcardano'
 import { AgentWalletDetails } from '../types/types'
 import { globalState } from '../constants/global'
+import { EventContext } from './BaseFunction'
 
 export class AgentRunner {
     executor: Executor
@@ -22,10 +23,31 @@ export class AgentRunner {
         method: string,
         ...args: any
     ) {
-
         this.executor.invokeFunction(method, ...args).then((result) => {
             saveTxLog(result, this.managerInterface, triggerType, instanceIndex)
         })
+    }
+
+    invokeFunctionWithEventContext(
+        context: EventContext,
+        triggerType: TriggerType,
+        instanceIndex: number,
+        method: string,
+        ...args: any[]
+    ) {
+        const eventContext = {
+            event: context,
+        }
+        this.executor
+            .invokeFunctionWithContext(eventContext, method, ...args)
+            .then((result) => {
+                saveTxLog(
+                    result,
+                    this.managerInterface,
+                    triggerType,
+                    instanceIndex
+                )
+            })
     }
 
     async remakeContext(index: number) {
