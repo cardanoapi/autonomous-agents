@@ -38,20 +38,35 @@ export function bech32toHex(bechAddress: string) {
 
 type TxPropTypes = 'string' | 'array' | 'object' | 'number' | 'bigint';
 
-type TxOperators = 'in' | 'gt' | 'gte' | 'lt' | 'lte' | 'ne' | 'eq' | 'contains';
+type TxOperators =
+    | 'in'
+    | 'gt'
+    | 'gte'
+    | 'lt'
+    | 'lte'
+    | 'ne'
+    | 'eq'
+    | 'contains'
+    | 'exists';
 
 function getOperatorList(operators: TxOperators[], type: TxPropTypes) {
+    let localOperators: string[];
     switch (type) {
         case 'string':
-            return operators.filter((op) => ['contains', 'eq'].includes(op));
+            localOperators = operators.filter((op) => ['contains', 'eq'].includes(op));
+            break;
         case 'number':
         case 'bigint':
-            return operators.filter((op) =>
+            localOperators = operators.filter((op) =>
                 ['lt', 'gte', 'lte', 'gt', 'eq'].includes(op)
             );
+            break;
         default:
-            return operators;
+            localOperators = operators;
+            break;
     }
+    localOperators = [...localOperators, 'exists'];
+    return localOperators;
 }
 
 export function getNestedTxProperties(obj: ISchema) {
@@ -63,7 +78,7 @@ export function getNestedTxProperties(obj: ISchema) {
         : ['eq'];
 
     function recursiveFlatten(property: ISchema, parentId: any = []) {
-        const { id, type, properties, validator , operators} = property;
+        const { id, type, properties, validator, operators } = property;
         const newId: string[] = [...parentId, id];
         const newProp = {
             id: newId,
@@ -74,10 +89,10 @@ export function getNestedTxProperties(obj: ISchema) {
                 type as TxPropTypes
             ),
             validator
-        }
+        };
         if (properties && Array.isArray(properties)) {
-            if (operators){
-                result.push(newProp)
+            if (operators) {
+                result.push(newProp);
             }
             properties.forEach((child) => recursiveFlatten(child, newId));
         } else {

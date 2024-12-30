@@ -48,6 +48,11 @@ class LogicalFunctions {
 
     // Execute the logical operation, checking the types/classes of the operands
     execute(operator: string, a: any, b: any): boolean {
+
+        if (operator === 'exists'){
+            return !!a
+        }
+
         const aClass = a.constructor ? a.constructor.name : typeof a
         const bClass = b.constructor ? b.constructor.name : typeof b
 

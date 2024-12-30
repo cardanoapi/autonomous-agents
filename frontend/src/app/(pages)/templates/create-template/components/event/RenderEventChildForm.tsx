@@ -30,7 +30,7 @@ const RenderEventChildForm = ({
     onDeleteParameter?: (...args: any) => void;
 }) => {
     const [localOperator, setLocalOperator] = useState<string>(
-        eventFilterParam.operators[0]
+        eventFilterParam.operator || 'eq'
     );
     const [value, setValue] = useState(eventFilterParam.value);
 
@@ -47,7 +47,7 @@ const RenderEventChildForm = ({
     const [debouncedVal] = useDebounceValue(value, 500);
 
     useEffect(() => {
-        if (debouncedVal && !eventFilterParam?.validator(debouncedVal)) {
+        if (debouncedVal && eventFilterParam?.validator && !eventFilterParam?.validator(debouncedVal)) {
             setErrMsg(`Error occured on ${paramId}`);
             return;
         }
@@ -93,9 +93,9 @@ const RenderEventChildForm = ({
                 <DropdownMenu>
                     <DropdownMenuTrigger
                         disableIcon={true}
-                        className="mt-2 min-w-32 rounded border-none !p-0"
+                        className="mt-2 min-w-20 rounded border-none !p-0"
                     >
-                        <span className="flex w-full justify-between">
+                        <span className="flex w-full justify-end gap-4">
                             {transformLabelForOperators(localOperator)}
                             <ChevronDown size={24} />
                         </span>

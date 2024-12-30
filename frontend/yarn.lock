@@ -12350,10 +12350,10 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-libcardano@^1.4.15-browser:
-  version "1.4.15-browser"
-  resolved "https://registry.yarnpkg.com/libcardano/-/libcardano-1.4.15-browser.tgz#7149ee3a60dbb922475f4923ae9d96bb491685d1"
-  integrity sha512-2kV3t6DGPj8mCi+pfou2JaXnb5ZcGKPoILxynDXT079iKS1YB6RnffSDdtKvXpi5zNmq1sXIYNYuvHZIbDvqKg==
+libcardano@^1.4.16-browser:
+  version "1.4.16-browser"
+  resolved "https://registry.yarnpkg.com/libcardano/-/libcardano-1.4.16-browser.tgz#5f88b3834458019063490cb0c0931c0371cea2d4"
+  integrity sha512-E4+bULOKzoG0RwbEhbXEN2UZBkkVBts4MPTbrPgrxrpMAlLIIF8lhYhnz+13jFdVE+re2DCqs9qYSJU+imr+OQ==
   dependencies:
     "@cardano-sdk/crypto" "^0.1.30"
     "@noble/curves" "^1.6.0"

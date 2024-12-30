@@ -125,10 +125,15 @@ export class EventTriggerHandler {
             nodes = [nodes]
         }
 
+        if (targetObject == null && filterNode.operator === 'exists') {
+            return false
+        }
+
         let result
         let propertyValue = targetObject[nodes[0]]
         if (!propertyValue) {
             propertyValue = targetObject[nodes[0] + 's']
+            if (!propertyValue) return false
         }
         parent_nodes.push(nodes[0])
 

@@ -292,10 +292,9 @@ const EventTab = ({
                 child.id && checkIfStringOrArrayOfStringIdsAreEqual(filterId, child.id)
         );
         setFormData({ ...formData });
-        formData &&
-            formData.children &&
-            formData.children.length ?
-            handleSelectEventFilter(formData.children.slice(-1)[0].id as string):setCurrentEventFilter(null)
+        formData && formData.children && formData.children.length
+            ? handleSelectEventFilter(formData.children.slice(-1)[0].id as string)
+            : setCurrentEventFilter(null);
     };
 
     const memoizedEventFilterParams = useMemo(
@@ -303,7 +302,7 @@ const EventTab = ({
             getNotSelectedEventFilterParameters()?.map((item: ISchema) => {
                 return { id: item.id, label: item.label };
             }) || [],
-        [formData,handleSelectEventFilter]
+        [formData, currentEventFilter]
     );
 
     const memoizedEventFilters = useMemo(

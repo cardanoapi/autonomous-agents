@@ -60,16 +60,16 @@ export const mapKeyValuePairToParamValue = (
 export function transformLabelForOperators(operator: string) {
     switch (operator) {
         case 'lt':
-            return 'Less Than';
+            return '<';
         case 'gt':
-            return 'Greater Than';
+            return '>';
         case 'gte':
-            return 'Great Than Or Equals To';
+            return '>=';
         case 'lte':
-            return 'Less Than Or Equals To';
+            return '<=';
         case 'eq':
-            return 'Equals';
+            return '==';
         default:
-            return capitalizeFirstLetter(operator);
+            return operator;
     }
 }
