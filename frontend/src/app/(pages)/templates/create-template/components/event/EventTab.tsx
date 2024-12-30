@@ -303,7 +303,7 @@ const EventTab = ({
             getNotSelectedEventFilterParameters()?.map((item: ISchema) => {
                 return { id: item.id, label: item.label };
             }) || [],
-        [formData]
+        [formData,handleSelectEventFilter]
     );
 
     const memoizedEventFilters = useMemo(

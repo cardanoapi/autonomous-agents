@@ -1,27 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
+import { IFieldNode } from '@api/agents';
+import { ChevronDown } from 'lucide-react';
+import { useDebounceValue } from 'usehooks-ts';
 
-
-import { IFieldNode } from "@api/agents";
-import { ChevronDown } from "lucide-react";
-
-
-
-import { Checkbox } from "@app/components/atoms/Checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@app/components/atoms/DropDownMenu";
-import { Input } from "@app/components/atoms/Input";
+import { Checkbox } from '@app/components/atoms/Checkbox';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@app/components/atoms/DropDownMenu';
+import { Input } from '@app/components/atoms/Input';
 import { Close } from '@app/views/atoms/Icons/Close';
 
 import { transformLabelForOperators } from '../utils/MapperHelper';
 
-
 const RenderEventChildForm = ({
-                                  eventFilterParam,
-                                  onValueChange,
-                                  onOperatorChange,
-                                  onNegateChange,
-                                  onDeleteParameter
-                              }: {
+    eventFilterParam,
+    onValueChange,
+    onOperatorChange,
+    onNegateChange,
+    onDeleteParameter
+}: {
     eventFilterParam: IFieldNode;
     onValueChange?: (value: any) => void;
     onOperatorChange?: (value: any) => void;
@@ -31,12 +32,27 @@ const RenderEventChildForm = ({
     const [localOperator, setLocalOperator] = useState<string>(
         eventFilterParam.operators[0]
     );
+    const [value, setValue] = useState(eventFilterParam.value);
+
+    const paramId = Array.isArray(eventFilterParam.id)
+        ? (eventFilterParam.id as string[]).join('.')
+        : eventFilterParam.id;
 
     useEffect(() => {
         localOperator && onOperatorChange?.(localOperator);
     }, [localOperator]);
 
     const [errMsg, setErrMsg] = useState<string>('');
+
+    const [debouncedVal] = useDebounceValue(value, 500);
+
+    useEffect(() => {
+        if (debouncedVal && !eventFilterParam?.validator(debouncedVal)) {
+            setErrMsg(`Error occured on ${paramId}`);
+            return;
+        }
+        onValueChange?.(debouncedVal);
+    }, [debouncedVal]);
 
     useEffect(() => {
         const clearErrMsg = setTimeout(() => {
@@ -57,19 +73,15 @@ const RenderEventChildForm = ({
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!eventFilterParam?.validator(e.target.value)) {
-            setErrMsg('Error occured');
-        }
-        onValueChange?.(e.target.value);
+        const inputVal = e.target.value;
+        setValue(inputVal);
+        setErrMsg('');
     };
+
     return (
         <div className={'flex flex-col gap-1'}>
             <div className="group mb-2 flex items-center gap-4">
-                <span className="mt-2 min-w-80 truncate">
-                    {Array.isArray(eventFilterParam.id)
-                        ? (eventFilterParam.id as string[]).join('.')
-                        : eventFilterParam.id}
-                </span>
+                <span className="mt-2 min-w-80 truncate">{paramId}</span>
                 <div className="flex items-center gap-2">
                     <span className="mt-2">negate</span>
                     <Checkbox
@@ -104,6 +116,7 @@ const RenderEventChildForm = ({
                     className="w-full rounded-none border-b-2 border-l-0 border-r-0 border-t-0 border-black bg-transparent focus:outline-none focus:ring-0"
                     defaultValue={eventFilterParam.value}
                     onChange={handleInputChange}
+                    value={value}
                 />
                 <Close
                     onClick={() => handleOnDeleteParam(eventFilterParam.id)}
@@ -121,4 +134,4 @@ const RenderEventChildForm = ({
     );
 };
 
-export default RenderEventChildForm
+export default RenderEventChildForm;
