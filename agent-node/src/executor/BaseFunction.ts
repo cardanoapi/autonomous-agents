@@ -90,7 +90,8 @@ export interface FunctionContext {
     builtins: Builtins
     agentName: string
     helpers: Helpers,
-    event ?: EventContext
+    event ?: EventContext,
+    filter?: any
 }
 
 // Create a restricted execution environment

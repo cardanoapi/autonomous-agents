@@ -1,12 +1,7 @@
 import { AgentWalletDetails } from '../types/types'
 import { ManagerInterface } from '../service/ManagerInterfaceService'
 import { FunctionGroup, getHandlers } from './AgentFunctions'
-import {
-    Builtins,
-    FunctionContext,
-    Key,
-    Wallet,
-} from './BaseFunction'
+import { Builtins, FunctionContext, Key, Wallet } from './BaseFunction'
 import { TxListener } from './TxListener'
 import { generateProposalMetadataContent } from '../utils/metadataContent/proposalMetadataContent'
 import { generateRegisterDrepMetadataContent } from '../utils/metadataContent/drepMetadataContent'
@@ -295,6 +290,20 @@ export class Executor {
 
     async invokeFunction(name: string, ...args: any): Promise<CallLog[]> {
         return await this.invokeFunctionWithContext({}, name, ...args)
+    }
+
+    filterFunctionParams(name: string, context: any): Promise<any> {
+        const f: any | undefined = this.functions.filters[name]
+        if (f === undefined) {
+            return Promise.reject(new Error('Filter not defined'))
+        }
+        const newContext = { ...this.functionContext, ...context }
+        try {
+            const result: any = f(newContext)
+            return Promise.resolve(result)
+        } catch (err) {
+            return Promise.reject(err)
+        }
     }
 
     invokeFunctionWithContext(

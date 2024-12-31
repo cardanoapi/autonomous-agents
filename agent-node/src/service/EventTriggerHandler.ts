@@ -9,6 +9,7 @@ import {
     IFilterNode,
 } from '../types/eventTriger'
 import { DecodedBlock } from '../executor/TxListener'
+import {reconstructTxFromPaths} from "../utils/event/eventFilterFormatter";
 
 export class EventTriggerHandler {
     eventBasedActions: IEventBasedAction[] = []
@@ -43,6 +44,7 @@ export class EventTriggerHandler {
         agentRunners?: AgentRunner[]
     ) {
         let result
+        const matchedTxPath: any = []
         try {
             console.log(
                 'Tx:',
@@ -55,7 +57,8 @@ export class EventTriggerHandler {
             result = this.solveNode(
                 { tx: tx.body, transaction: tx.body },
                 eventBasedAction.eventTrigger,
-                []
+                [],
+                matchedTxPath
             )
             console.log('tx=', tx.hash.toString('hex'), 'solution=', result)
         } catch (e) {
@@ -63,14 +66,14 @@ export class EventTriggerHandler {
             return
         }
 
+        const matchedEventContext = reconstructTxFromPaths(
+            { tx: tx.body },
+            matchedTxPath
+        )
+
         const { function_name, parameters } =
             eventBasedAction.triggeringFunction
         if (result && agentRunners) {
-            tx.body.outputs.map((o, index) => {
-                console.log(
-                    'output_address_' + index + ' ' + o.address.toBech32()
-                )
-            })
             const eventContext = {
                 tx,
                 block,
@@ -78,6 +81,7 @@ export class EventTriggerHandler {
             }
             agentRunners.forEach((runner, index) => {
                 runner.invokeFunctionWithEventContext(
+                    matchedEventContext,
                     eventContext,
                     'EVENT',
                     index,
@@ -91,13 +95,15 @@ export class EventTriggerHandler {
     solveNode(
         targetObject: any,
         filterNode: IFilterNode,
-        parentNodes: string[]
+        parentNodes: string[],
+        matchedTxPath: any
     ) {
         return this.solveNodeInternal(
             targetObject,
             filterNode,
             filterNode.id,
-            parentNodes
+            parentNodes,
+            matchedTxPath
         )
     }
 
@@ -105,7 +111,8 @@ export class EventTriggerHandler {
         targetObject: any,
         filterNode: IFilterNode,
         nodes: string[] | string | undefined,
-        parent_nodes: string[]
+        parent_nodes: string[],
+        matchedTxPath: any
     ): boolean {
         if (nodes === undefined || nodes.length == 0) {
             const result =
@@ -113,12 +120,14 @@ export class EventTriggerHandler {
                     ? this.solveBooleanNode(
                           targetObject,
                           filterNode,
-                          parent_nodes
+                          parent_nodes,
+                          matchedTxPath
                       )
                     : this.solveFieldNode(
                           targetObject,
                           filterNode,
-                          parent_nodes
+                          parent_nodes,
+                          matchedTxPath
                       )
             return filterNode.negate ? !result : result
         } else if (typeof nodes === 'string') {
@@ -150,7 +159,8 @@ export class EventTriggerHandler {
                     node,
                     filterNode,
                     subArray,
-                    parent_nodes
+                    parent_nodes,
+                    matchedTxPath
                 )
                 console.log(parent_nodes.join('.'), ': result=', result)
                 return result
@@ -161,7 +171,8 @@ export class EventTriggerHandler {
                 propertyValue,
                 filterNode,
                 subArray,
-                parent_nodes
+                parent_nodes,
+                matchedTxPath
             )
         }
         parent_nodes.pop()
@@ -171,7 +182,8 @@ export class EventTriggerHandler {
     solveBooleanNode(
         targetObject: any,
         filterNode: IBooleanNode,
-        parent_nodes: string[] = []
+        parent_nodes: string[] = [],
+        matchedTxPath: any
     ): boolean {
         const orOperator = (a: boolean, b: boolean) => a || b
         let operator = orOperator
@@ -185,7 +197,8 @@ export class EventTriggerHandler {
                     targetObject,
                     node,
                     node.id,
-                    parent_nodes
+                    parent_nodes,
+                    matchedTxPath
                 )
             )
         }, operator !== orOperator)
@@ -203,17 +216,24 @@ export class EventTriggerHandler {
     solveFieldNode(
         targetObject: any,
         filterNode: IFieldNode,
-        parent_nodes: string[]
+        parent_nodes: string[],
+        matchedTxPath: any
     ): boolean {
-        return compareValue(
+        const result = compareValue(
             filterNode.operator,
             filterNode.value,
             targetObject,
             parent_nodes
         )
+        if (result) {
+            const matchKey = parent_nodes.join('.') || 'root'
+            matchedTxPath.push(matchKey)
+        }
+        return result
     }
 
     addEventActions(actions: IEventBasedAction[]) {
         this.eventBasedActions = actions
     }
 }
+

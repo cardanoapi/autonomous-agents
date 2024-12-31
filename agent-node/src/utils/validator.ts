@@ -61,3 +61,10 @@ export function compareValue(
         )
     return result
 }
+
+export function customReplacer(key: any, value: any) {
+    if (typeof value === 'bigint') {
+        return value.toString() // Convert BigInt to string
+    }
+    return value // Return the value unchanged for other types
+}

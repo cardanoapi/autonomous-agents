@@ -21,6 +21,7 @@ export default async function handler(
             anchor: anchorData,
         },
     }
+
     return await context.wallet
         .buildAndSubmit(req, true)
         .then((v) => v)
@@ -37,4 +38,21 @@ export default async function handler(
                 throw e
             }
         })
+}
+
+export function filter(context: FunctionContext) {
+    if (!context.filter || !context.event) return null
+    const tx = context.event.tx
+    try {
+        const filters = context.filter['proposalProcedures']
+        const matchedFilterIndexes = filters.map((i: any) => !!i.matchedIndex)
+        return matchedFilterIndexes.length
+            ? matchedFilterIndexes.map((p: any, index: number) => ({
+                  name: 'proposalId',
+                  value: `${tx.hash.toString('hex')}#${index}`,
+              }))
+            : null
+    } catch (err) {
+        return null
+    }
 }

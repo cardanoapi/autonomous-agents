@@ -7,7 +7,7 @@ import { checkIfAgentWithEventTriggerTypeExists } from '../utils/agent'
 import { ScheduledTask } from 'node-cron'
 import { AgentRunner } from '../executor/AgentRunner'
 import { EventTriggerHandler } from './EventTriggerHandler'
-import { formatEventFilter } from '../utils/eventFilterFormatter'
+import { formatEventFilter } from '../utils/event/eventFilterFormatter'
 
 export class RpcTopicHandler {
     managerInterface: ManagerInterface

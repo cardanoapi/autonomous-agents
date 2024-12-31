@@ -7,6 +7,7 @@ export interface FunctionHolder {
 export interface FunctionGroup {
     functions: FunctionHolder
     builtins: FunctionHolder
+    filters: FunctionHolder
 }
 // Helper function to require modules with extensions automatically
 function requireModule(filePath: string) {
@@ -27,6 +28,7 @@ function requireModule(filePath: string) {
 function loadHandlersSync(directory: string): FunctionGroup {
     const handlers: FunctionHolder = {}
     const builtins: FunctionHolder = {}
+    const filters: FunctionHolder = {}
 
     // Get the list of files in the directory
     const files = fs.readdirSync(directory)
@@ -44,11 +46,15 @@ function loadHandlersSync(directory: string): FunctionGroup {
                 const module: any = requireModule(filePath)
                 // Check if the module exports a `handler` function
                 const handler = module.handler || module.default
+                const filter = module.filter
                 if (typeof handler === 'function') {
                     handlers[baseFileName] = handler
                 }
                 if (module.builtin || handler.name == 'builtin') {
                     builtins[baseFileName] = module.builtin || module.default
+                }
+                if (filter && typeof filter == "function"){
+                    filters[baseFileName] = filter
                 }
             } catch (error) {
                 console.error(
@@ -62,6 +68,7 @@ function loadHandlersSync(directory: string): FunctionGroup {
     return {
         functions: handlers,
         builtins: builtins,
+        filters: filters
     }
 }
 

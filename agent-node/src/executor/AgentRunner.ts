@@ -12,6 +12,7 @@ import { EventContext } from './BaseFunction'
 export class AgentRunner {
     executor: Executor
     managerInterface: ManagerInterface
+
     constructor(managerInterface: ManagerInterface, txListener: TxListener) {
         this.managerInterface = managerInterface
         this.executor = new Executor(null, managerInterface, txListener)
@@ -28,7 +29,8 @@ export class AgentRunner {
         })
     }
 
-    invokeFunctionWithEventContext(
+    async invokeFunctionWithEventContext(
+        eventFilterContext: any,
         context: EventContext,
         triggerType: TriggerType,
         instanceIndex: number,
@@ -37,17 +39,24 @@ export class AgentRunner {
     ) {
         const eventContext = {
             event: context,
+            filter: eventFilterContext,
         }
-        this.executor
-            .invokeFunctionWithContext(eventContext, method, ...args)
-            .then((result) => {
-                saveTxLog(
-                    result,
-                    this.managerInterface,
-                    triggerType,
-                    instanceIndex
-                )
-            })
+        const params = await this.executor
+            .filterFunctionParams(method, eventContext)
+            .catch((err) => console.error('Function Invocation Error: ', err))
+
+        if (params) {
+            this.executor
+                .invokeFunctionWithContext(eventContext, method, ...params)
+                .then((result) => {
+                    saveTxLog(
+                        result,
+                        this.managerInterface,
+                        triggerType,
+                        instanceIndex
+                    )
+                })
+        }
     }
 
     async remakeContext(index: number) {
