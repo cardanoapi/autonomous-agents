@@ -6,10 +6,13 @@ import { createBlockchainInstance } from './service/Listeners/BlockchainService'
 import { ManagerWalletService } from './service/Manager/ManagerWallet'
 import { TxListener } from './service/Listeners/TxListener'
 import { parseRawBlockBody } from 'libcardano/cardano/ledger-serialization/transaction'
-import environments from "./config/environments";
+import environments from './config/environments'
+import healthCheck from './controller/health'
 
 const app = express()
 const port = environments.serverPort
+
+app.use('/health', healthCheck)
 
 const server = app.listen(port, async () => {
     console.log(`Server is running on http://localhost:${port}`)
@@ -35,6 +38,7 @@ const server = app.listen(port, async () => {
     })
     await initKafkaConsumers(manager)
 })
+
 server.on('error', (e) => {
     console.error('Server error:', e)
     process.exit(1)
