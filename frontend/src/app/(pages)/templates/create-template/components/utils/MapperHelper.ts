@@ -1,6 +1,5 @@
 import { ISubParameter } from '@api/agents';
 import { IParameter, IParameterOption } from '@models/types/functions';
-import {capitalizeFirstLetter} from "@app/utils/common/extra";
 
 export const mapParamValueToKeyValuePair = (params: IParameter[]): ISubParameter[] => {
     return params.map((param) => ({

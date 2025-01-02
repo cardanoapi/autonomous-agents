@@ -1,4 +1,4 @@
-import {areArraysEqual} from "@app/utils/common/array";
+import { areArraysEqual } from '@app/utils/common/array';
 
 export function checkIfStringOrArrayOfStringIdsAreEqual(
     id1: string | string[],

@@ -15,7 +15,7 @@ export default async function handler(
         if (stakeKey.startsWith('stake')) {
             const statkeKeyHex = bech32toHex(stakeKey)
             updatedWithdrawal = {
-                ['e0'+statkeKeyHex]: withdrawal[stakeKey],
+                ['e0' + statkeKeyHex]: withdrawal[stakeKey],
             }
         }
     }

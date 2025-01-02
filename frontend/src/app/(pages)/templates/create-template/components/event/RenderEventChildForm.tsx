@@ -47,7 +47,11 @@ const RenderEventChildForm = ({
     const [debouncedVal] = useDebounceValue(value, 500);
 
     useEffect(() => {
-        if (debouncedVal && eventFilterParam?.validator && !eventFilterParam?.validator(debouncedVal)) {
+        if (
+            debouncedVal &&
+            eventFilterParam?.validator &&
+            !eventFilterParam?.validator(debouncedVal)
+        ) {
             setErrMsg(`Error occured on ${paramId}`);
             return;
         }

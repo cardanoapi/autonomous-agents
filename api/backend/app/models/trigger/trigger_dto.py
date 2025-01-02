@@ -27,7 +27,8 @@ class Action(BaseModel):
 
 BooleanOperator = Literal["AND", "OR"]
 ComparisonOperator = Literal[
-    "equals", "greaterthan", "lessthan", "in", "gt", "gte", "lt", "lte", "ne", "eq", "contains", "exists"]
+    "equals", "greaterthan", "lessthan", "in", "gt", "gte", "lt", "lte", "ne", "eq", "contains", "exists"
+]
 
 
 class Field(BaseModel):

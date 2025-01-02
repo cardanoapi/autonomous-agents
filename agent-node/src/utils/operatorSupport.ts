@@ -19,8 +19,8 @@ const operatorNameToSymbol: Record<string, string> = {
     ne: '!=',
     eq: '==',
 
-//     js suport
-    contains: 'contains'
+    //     js suport
+    contains: 'contains',
 }
 class LogicalFunctions {
     private typeHandlers: Map<string, Record<string, TypeHandler>>
@@ -48,8 +48,7 @@ class LogicalFunctions {
 
     // Execute the logical operation, checking the types/classes of the operands
     execute(operator: string, a: any, b: any): boolean {
-
-        if (operator === 'exists'){
+        if (operator === 'exists') {
             return !!a
         }
 
@@ -133,7 +132,11 @@ _logicalFunctions.register('string', '>', (a: string, b: string) => a > b)
 _logicalFunctions.register('string', '<', (a: string, b: string) => a < b)
 _logicalFunctions.register('string', '>=', (a: string, b: string) => a >= b)
 _logicalFunctions.register('string', '<=', (a: string, b: string) => a <= b)
-_logicalFunctions.register('string','contains',(a:string,b:string)=> a.includes(b) || b.includes(a))
+_logicalFunctions.register(
+    'string',
+    'contains',
+    (a: string, b: string) => a.includes(b) || b.includes(a)
+)
 
 // Register handlers for buffers
 _logicalFunctions.register('buffer', '==', (a: Buffer, b: Buffer) =>

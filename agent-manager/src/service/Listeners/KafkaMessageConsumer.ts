@@ -14,12 +14,14 @@ const brokers = config.brokers
     .filter((x) => x && x.length > 0)
 const groupId = config.consumerGroup || `${config.prefix || 'agent'}-manager`
 
-export const kafka = new Kafka({
+const kafka = new Kafka({
     clientId: config.clientId ? config.clientId : `${config.prefix || 'agent'}-manager`,
     brokers, // Update with your Kafka broker address
 })
 
-const consumer = kafka.consumer({ groupId })
+export const consumer = kafka.consumer({
+    groupId,
+})
 
 export async function initKafkaConsumers(manager: AgentManagerRPC) {
     console.log('[Kafka]', `brokers:${brokers}, groupId:${groupId}, topics:${topicList}`)
@@ -74,3 +76,10 @@ export async function initKafkaConsumers(manager: AgentManagerRPC) {
         },
     })
 }
+
+const { HEARTBEAT } = consumer.events
+let lastHeartbeat: number = 0
+consumer.on(HEARTBEAT, ({ timestamp }) => {
+    lastHeartbeat = timestamp
+})
+export const fetchConsumerLatestHeartbeat = () => lastHeartbeat

@@ -1,5 +1,5 @@
-import {Transaction} from "libcardano/cardano/ledger-serialization/transaction";
-import {DecodedBlock} from "./TxListener";
+import { Transaction } from 'libcardano/cardano/ledger-serialization/transaction'
+import { DecodedBlock } from './TxListener'
 
 export interface Key {
     private: string
@@ -78,9 +78,9 @@ export interface Helpers {
     generateVoteMetadataContent: () => string
 }
 
-export interface EventContext{
-    tx: Transaction;
-    block: DecodedBlock;
+export interface EventContext {
+    tx: Transaction
+    block: DecodedBlock
     confirmation: number
 }
 
@@ -89,8 +89,8 @@ export interface FunctionContext {
     kuber: KuberApi
     builtins: Builtins
     agentName: string
-    helpers: Helpers,
-    event ?: EventContext,
+    helpers: Helpers
+    event?: EventContext
     filter?: any
 }
 

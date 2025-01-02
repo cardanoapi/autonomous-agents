@@ -1,34 +1,23 @@
-import { kafka, topicList } from '../Listeners/KafkaMessageConsumer'
+import { consumer, fetchConsumerLatestHeartbeat } from '../Listeners/KafkaMessageConsumer'
 
 export async function checkKafkaStatus() {
-    const admin = kafka.admin()
     try {
-        // Connect to Kafka
-        await admin.connect()
+        const lastHeartbeat = fetchConsumerLatestHeartbeat()
+        const isHealthy = async () => {
+            // so it is healthy
+            if (Date.now() - lastHeartbeat < 10000) {
+                return true
+            }
 
-        // Fetch metadata
-        const metadata = await admin.fetchTopicMetadata({ topics: [] })
-        console.log('Metadata:', metadata)
-
-        const clusterInfo = await admin.describeCluster()
-        console.log('ClusterInfo : ', clusterInfo)
-
-        // Optionally check for specific topics
-        const missingTopics = topicList.filter((topic) => !metadata.topics.find((t: any) => t.name === topic))
-
-        if (missingTopics.length > 0) {
-            console.error('Missing topics:', missingTopics)
-            return { status: 'error', message: `Missing topics: ${missingTopics.join(', ')}` }
+            try {
+                const { state } = await consumer.describeGroup()
+                return ['CompletingRebalance', 'PreparingRebalance'].includes(state)
+            } catch (err) {
+                return false
+            }
         }
-
-        return { status: 'ok', message: 'Kafka is in sync and working.' }
+        return isHealthy()
     } catch (error: any) {
-        console.error('Error connecting to Kafka:', error)
-        return { status: 'error', message: `Error: ${error.message}` }
-    } finally {
-        await admin.disconnect()
+        throw new Error('Error connecting to Kafka:', error.message ? error.message : error)
     }
 }
-
-// Example usage
-checkKafkaStatus().then((status) => console.log('Kafka Status:', status))

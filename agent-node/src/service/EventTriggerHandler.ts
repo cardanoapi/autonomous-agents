@@ -9,7 +9,7 @@ import {
     IFilterNode,
 } from '../types/eventTriger'
 import { DecodedBlock } from '../executor/TxListener'
-import {reconstructTxFromPaths} from "../utils/event/eventFilterFormatter";
+import { reconstructTxFromPaths } from '../utils/event/eventFilterFormatter'
 
 export class EventTriggerHandler {
     eventBasedActions: IEventBasedAction[] = []
@@ -236,4 +236,3 @@ export class EventTriggerHandler {
         this.eventBasedActions = actions
     }
 }
-

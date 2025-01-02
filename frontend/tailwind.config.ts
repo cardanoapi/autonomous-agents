@@ -91,7 +91,7 @@ const config = {
                         100: '#FFECD4',
                         200: '#FF660F'
                     },
-                    vscode:"#1E1E1E"
+                    vscode: '#1E1E1E'
                 }
             },
             height: {

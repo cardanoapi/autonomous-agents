@@ -1,14 +1,30 @@
 import { Router, Request, Response } from 'express'
 import { handlerWrapper } from '../utils/asyncWrapper'
 import { checkKafkaStatus } from '../service/healthCheck/kafka'
+import { cardanoNodeStatus } from '../service/healthCheck/cardanoNode'
 
 const router = Router()
 
-function healthCheck(req: Request, res: Response) {
-    checkKafkaStatus()
-        .then((a) => console.log('Success : ', a))
-        .catch((err) => console.log('Error: ', err))
-    return res.status(200).send({ Msg: 'OK ' })
+async function healthCheck(req: Request, res: Response) {
+    try {
+        const isKafkaHealthy = await checkKafkaStatus()
+        const nodeStatus = cardanoNodeStatus.checkStatus()
+        return res.status(isKafkaHealthy && nodeStatus.isHealthy ? 200 : 503).send({
+            isHealthy: isKafkaHealthy && nodeStatus.isHealthy,
+            details: {
+                kafka: {
+                    isHealthy: isKafkaHealthy,
+                },
+                cardanoNode: {
+                    isHealthy: nodeStatus.isHealthy,
+                    secsSinceLastBlock: cardanoNodeStatus.lastTimeStamp,
+                    lastBlock: nodeStatus.block,
+                },
+            },
+        })
+    } catch (err: any) {
+        return res.status(500).send(err.message ? err.message : err)
+    }
 }
 
 router.get('/', handlerWrapper(healthCheck))

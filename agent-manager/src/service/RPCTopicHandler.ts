@@ -1,10 +1,10 @@
-import {ManagerWalletService} from "./Manager/ManagerWallet";
-import {txSubmitter} from "./TxBuildAndSubmit/TxSubmitterService";
-import {kuber} from "./TxBuildAndSubmit/KuberService";
-import {saveTriggerHistory, updateAgentDrepRegistration} from "../repository/trigger_history_repository";
-import {ILog} from "./Manager/AgentManagerRPC";
-import {metaDataService} from "./MetadataService";
-import {dbSync} from "./DbSyncService";
+import { ManagerWalletService } from './Manager/ManagerWallet'
+import { txSubmitter } from './TxBuildAndSubmit/TxSubmitterService'
+import { kuber } from './TxBuildAndSubmit/KuberService'
+import { saveTriggerHistory, updateAgentDrepRegistration } from '../repository/trigger_history_repository'
+import { ILog } from './Manager/AgentManagerRPC'
+import { metaDataService } from './MetadataService'
+import { dbSync } from './DbSyncService'
 
 export class RPCTopicHandler {
     managerWallet
@@ -13,11 +13,7 @@ export class RPCTopicHandler {
         this.managerWallet = managerWallet
     }
 
-    handleEvent(
-        eventName: string,
-        connection_id: string,
-        args: any,
-    ) {
+    handleEvent(eventName: string, connection_id: string, args: any) {
         const handler = (this as any)[eventName]
         if (handler === undefined || eventName === 'constructor') {
             console.error('Unknown event type', eventName, 'received')

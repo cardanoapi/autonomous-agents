@@ -53,7 +53,7 @@ function loadHandlersSync(directory: string): FunctionGroup {
                 if (module.builtin || handler.name == 'builtin') {
                     builtins[baseFileName] = module.builtin || module.default
                 }
-                if (filter && typeof filter == "function"){
+                if (filter && typeof filter == 'function') {
                     filters[baseFileName] = filter
                 }
             } catch (error) {
@@ -68,7 +68,7 @@ function loadHandlersSync(directory: string): FunctionGroup {
     return {
         functions: handlers,
         builtins: builtins,
-        filters: filters
+        filters: filters,
     }
 }
 

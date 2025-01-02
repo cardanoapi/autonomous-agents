@@ -8,7 +8,7 @@ import { ManagerInterface } from '../service/ManagerInterfaceService'
 import { CallLog } from '../executor/Executor'
 import { ILog, InternalLog } from '../service/TriggerActionHandler'
 import { DateTime } from 'luxon'
-import { IEventBasedAction, IFilterNode } from "../types/eventTriger";
+import { IEventBasedAction, IFilterNode } from '../types/eventTriger'
 
 export function getParameterValue(
     parameters: ActionParameter[] = [],

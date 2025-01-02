@@ -8,11 +8,14 @@ import { TxListener } from './service/Listeners/TxListener'
 import { parseRawBlockBody } from 'libcardano/cardano/ledger-serialization/transaction'
 import environments from './config/environments'
 import healthCheck from './controller/health'
+import { cardanoNodeStatus } from './service/healthCheck/cardanoNode'
+import blockfrostHealth from './controller/blockfrostHealth'
 
 const app = express()
 const port = environments.serverPort
 
 app.use('/health', healthCheck)
+app.use('/blockfrost/health', blockfrostHealth)
 
 const server = app.listen(port, async () => {
     console.log(`Server is running on http://localhost:${port}`)
@@ -29,6 +32,7 @@ const server = app.listen(port, async () => {
 
     blockchain.start()
     blockchain.blockChain.on('extendBlock', (block) => {
+        cardanoNodeStatus.onBlockTimeStamp(Date.now(), block)
         console.log(
             `[Blockchain] RollForward blockNo=${block.blockNo} hash=${block.headerHash.toString('hex')} slot=${block.slotNo}`
         )

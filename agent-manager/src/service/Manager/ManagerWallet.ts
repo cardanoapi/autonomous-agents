@@ -1,7 +1,7 @@
 import getFaucetAdaForAddress, { faucetEnabled, fetchWalletBalance } from '../../utils/fuacet'
 import environments from '../../config/environments'
 import { TxListener } from '../Listeners/TxListener'
-import {txSubmitter} from "../TxBuildAndSubmit/TxSubmitterService";
+import { txSubmitter } from '../TxBuildAndSubmit/TxSubmitterService'
 
 export class ManagerWalletService {
     walletBalance: number = 0

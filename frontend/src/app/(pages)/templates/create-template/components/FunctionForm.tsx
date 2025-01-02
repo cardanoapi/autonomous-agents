@@ -225,8 +225,14 @@ export const FunctionForm = ({
                 <div className="flex w-full justify-end">
                     {functionState && functionState.canBeEvent && (
                         <CustomCombobox
-                            defaultValue={{id:functionState.type || 'CRON',label:functionState.type || 'CRON'}}
-                            itemsList={[{id:'CRON',label:'CRON'}, {id:'EVENT',label:'EVENT'}]}
+                            defaultValue={{
+                                id: functionState.type || 'CRON',
+                                label: functionState.type || 'CRON'
+                            }}
+                            itemsList={[
+                                { id: 'CRON', label: 'CRON' },
+                                { id: 'EVENT', label: 'EVENT' }
+                            ]}
                             onSelect={(triggerType: any) =>
                                 handleTypeChange(triggerType as TriggerType)
                             }

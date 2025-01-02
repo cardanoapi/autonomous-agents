@@ -5,7 +5,6 @@ import React, { useState } from 'react';
 import { IAgent, IAgentConfiguration } from '@api/agents';
 import { updateTrigger } from '@api/trigger';
 import { Dialog, DialogContent } from '@mui/material';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { useMutation } from '@tanstack/react-query';
 
 import { FunctionForm } from '@app/app/(pages)/templates/create-template/components/FunctionForm';
@@ -63,8 +62,6 @@ const AgentFunctionsDetailComponent = ({
             updateTemplate.mutateAsync(data);
         }
     };
-
-    const isMobile = useMediaQuery('(max-width: 600px)');
 
     return (
         <>

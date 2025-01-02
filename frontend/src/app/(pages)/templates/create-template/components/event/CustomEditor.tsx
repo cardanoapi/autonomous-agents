@@ -14,7 +14,7 @@ export default function CustomEditor({
                 height={'100%'}
                 width={'100%'}
                 defaultLanguage="json"
-                className="bg-brand-vscode !rounded-xl !py-4"
+                className="!rounded-xl bg-brand-vscode !py-4"
                 // defaultValue={JSON.stringify(defaultValue, null, 2) || ''}
                 theme="vs-dark"
                 value={

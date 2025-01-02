@@ -1,15 +1,15 @@
 'use client';
 
 import * as React from 'react';
-import {useEffect, useRef} from 'react';
+import { useEffect, useRef } from 'react';
 
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 import { cn } from '@app/components/lib/utils';
 
 interface ItemSchema {
-    id:string|string[];
-    label:string
+    id: string | string[];
+    label: string;
 }
 
 export function CustomCombobox({
@@ -23,7 +23,7 @@ export function CustomCombobox({
 }: {
     defaultValue?: ItemSchema;
     itemsList: Array<ItemSchema>;
-    onSelect: (value:any)=>void;
+    onSelect: (value: any) => void;
     className?: string;
     isOpen?: boolean;
     addSearchOption?: boolean;
@@ -86,7 +86,7 @@ export function CustomCombobox({
                             disabled ? 'cursor-not-allowed' : ''
                         )}
                         type="text"
-                        placeholder={value?value.label:''}
+                        placeholder={value ? value.label : ''}
                         value={searchValue}
                         onClick={() => setOpen(true)}
                         onChange={(e) => handleOnChange(e.target.value)}

@@ -1,16 +1,16 @@
-import {IncomingMessage} from 'http'
+import { IncomingMessage } from 'http'
 import {
     fetchAgentConfiguration,
     getAgentIdBySecret,
     updateLastActiveTimestamp,
 } from '../../repository/agent_manager_repository'
-import {WsRpcServer} from '../../lib/WsRpcServer'
-import {RpcV1} from 'libcardano/network/Rpc'
-import {TriggerType} from '../../repository/trigger_history_repository'
-import {ManagerWalletService} from './ManagerWallet'
-import {Server} from 'ws'
-import {generateRootKey} from '../../utils/cardano'
-import {RPCTopicHandler} from "../RPCTopicHandler";
+import { WsRpcServer } from '../../lib/WsRpcServer'
+import { RpcV1 } from 'libcardano/network/Rpc'
+import { TriggerType } from '../../repository/trigger_history_repository'
+import { ManagerWalletService } from './ManagerWallet'
+import { Server } from 'ws'
+import { generateRootKey } from '../../utils/cardano'
+import { RPCTopicHandler } from '../RPCTopicHandler'
 
 export interface ILog {
     function_name: string
@@ -74,9 +74,9 @@ export class AgentManagerRPC extends WsRpcServer {
                     return
                 }
 
-                const {instanceCount, agentIndex, agentName} = config
+                const { instanceCount, agentIndex, agentName } = config
                 const rootKeyBuffer = await generateRootKey(agentIndex || 0)
-                client.emit('instance_count', {instanceCount, rootKeyBuffer, agentName})
+                client.emit('instance_count', { instanceCount, rootKeyBuffer, agentName })
 
                 client.emit('initial_config', config)
             })

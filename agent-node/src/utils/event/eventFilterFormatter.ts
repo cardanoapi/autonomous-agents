@@ -1,5 +1,5 @@
-import {IBooleanNode, IEventBasedAction} from '../../types/eventTriger'
-import {customReplacer} from "../validator";
+import { IBooleanNode, IEventBasedAction } from '../../types/eventTriger'
+import { customReplacer } from '../validator'
 
 function flattenIds(obj: any) {
     const ids: any = []
@@ -33,9 +33,13 @@ function flattenIds(obj: any) {
     }
 }
 
-function flattenFilterChildWithParentId(data: IBooleanNode){
-    data.children = data.children.map((child)=>{
-        if ("children" in child && child.children.length ===1 && child.children[0].id === child.id){
+function flattenFilterChildWithParentId(data: IBooleanNode) {
+    data.children = data.children.map((child) => {
+        if (
+            'children' in child &&
+            child.children.length === 1 &&
+            child.children[0].id === child.id
+        ) {
             return child.children[0]
         }
         return child
@@ -50,7 +54,9 @@ export function formatEventFilter(data: IEventBasedAction[]) {
             eventTrigger: {
                 ...('children' in item.eventTrigger
                     ? item.eventTrigger.children.length == 1
-                        ? flattenIds(flattenFilterChildWithParentId(item.eventTrigger))
+                        ? flattenIds(
+                              flattenFilterChildWithParentId(item.eventTrigger)
+                          )
                         : flattenFilterChildWithParentId(item.eventTrigger)
                     : item.eventTrigger),
             },
@@ -113,5 +119,3 @@ export function reconstructTxFromPaths(tx: any, matchingPaths: any) {
 
     return newTx
 }
-
-

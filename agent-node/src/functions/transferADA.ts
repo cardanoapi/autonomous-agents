@@ -19,5 +19,3 @@ export default async function handler(
             throw err
         })
 }
-
-

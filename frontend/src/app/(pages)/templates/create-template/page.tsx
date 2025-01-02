@@ -13,7 +13,6 @@ import {
     TemplateFunctions
 } from '@models/types/functions';
 import { Dialog, DialogContent } from '@mui/material';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { useMutation } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { v4 } from 'uuid';
@@ -58,7 +57,6 @@ interface IFormData {
 
 export default function CreateTemplatePage() {
     const router = useRouter();
-    const isMobile = useMediaQuery('(max-width:600px)');
     const [submittingForm, setSubmittingForm] = useState(false);
     const [, setTemplateCreated] = useAtom(templateCreatedAtom);
 
