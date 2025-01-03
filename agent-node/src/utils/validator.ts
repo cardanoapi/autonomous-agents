@@ -1,4 +1,3 @@
-import { convertToBufferIfBech32 } from './cardano'
 import { BooleanOperator, ComparisonOperator } from '../types/eventTriger'
 import { logicalFunctions } from './operatorSupport'
 
@@ -31,14 +30,8 @@ export function compareValue(
     txPropertyVal: any,
     property_path: string[]
 ) {
-    // if(txPropertyVal.constructor.name == 'Buffer')
-    //   console.debug(`compareValue[${property_path.join('.')}] (${operator},0x${txPropertyVal.toString('hex')}, ${objectProperty})`)
-    // else
-    //   console.debug(`compareValue[${property_path.join('.')}] (${operator},${txPropertyVal}, ${objectProperty})`)
-
-    const filterValue = convertToBufferIfBech32(objectProperty)
-    console.debug('filterValue=' + filterValue + ', txPropertyVal= ' + txPropertyVal)
-    const result = logicalFunctions.execute(operator, txPropertyVal, filterValue)
+    console.debug('filterValue=' + objectProperty + ', txPropertyVal= ' + txPropertyVal)
+    const result = logicalFunctions.execute(operator, txPropertyVal, objectProperty)
 
     if (txPropertyVal.constructor.name == 'Buffer') {
         console.debug(

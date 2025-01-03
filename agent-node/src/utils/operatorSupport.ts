@@ -64,6 +64,12 @@ class LogicalFunctions {
                 if (aClass === 'buffer' && !Buffer.isBuffer(b)) {
                     const convertedBuffer = Buffer.from(b)
                     return aHandlers[operator](a, convertedBuffer)
+                } else if (aClass === 'Value' && bClass !== 'Value') {
+                    const convertedTypeValueOperand = a.constructor.fromString(b)
+                    return aHandlers[operator](a, convertedTypeValueOperand)
+                } else if (aClass === 'ShelleyAddress' && bClass !== 'ShelleyAddress') {
+                    const convertedTypeValueOperand = a.constructor.fromAny(b)
+                    return aHandlers[operator](a, convertedTypeValueOperand)
                 }
                 return aHandlers[operator](a, b)
             }
@@ -76,6 +82,12 @@ class LogicalFunctions {
                 if (aClass.toLowerCase() === 'buffer' && !Buffer.isBuffer(b)) {
                     const convertedBuffer = Buffer.from(b, 'hex')
                     return aHandlers[operator](a, convertedBuffer)
+                } else if (aClass === 'Value' && bClass !== 'Value') {
+                    const convertedTypeValueOperand = a.constructor.fromString(b)
+                    return aHandlers[operator](a, convertedTypeValueOperand)
+                } else if (aClass === 'ShelleyAddress' && bClass !== 'ShelleyAddress') {
+                    const convertedTypeValueOperand = a.constructor.fromAny(b)
+                    return aHandlers[operator](a, convertedTypeValueOperand)
                 }
                 return aHandlers[operator](a, b)
             }
@@ -86,6 +98,28 @@ class LogicalFunctions {
             const bHandlers = this.typeHandlers.get(bClass)!
             if (bHandlers[operator]) {
                 return bHandlers[operator](a, b)
+            }
+        }
+
+        // check for static method fromString()
+        if (a.constructor.fromString && a.constructor.compare) {
+            try {
+                const convertedOperandB = a.constructor.fromString(b)
+                return a.constructor.compare(convertedOperandB)
+            } catch (err) {
+                console.error(`Operand B of type ${bClass} could not be converted to class ${aClass}`)
+                return false
+            }
+        }
+
+        // check for static method fromAny()
+        if (a.constructor.fromAny && a.constructor.compare) {
+            try {
+                const convertedOperandB = a.constructor.fromAny(b)
+                return a.constructor.compare(convertedOperandB)
+            } catch (err) {
+                console.error(`Operand B of type ${bClass} could not be converted to class ${aClass}`)
+                return false
             }
         }
 
@@ -119,12 +153,21 @@ _logicalFunctions.register('string', 'contains', (a: string, b: string) => a.inc
 
 // Register handlers for buffers
 _logicalFunctions.register('buffer', '==', (a: Buffer, b: Buffer) => a.equals(b))
-
 _logicalFunctions.register('buffer', '!=', (a: Buffer, b: Buffer) => !a.equals(b))
-
 _logicalFunctions.register('buffer', '>', (a: Buffer, b: Buffer) => a.compare(b) > 0)
 _logicalFunctions.register('buffer', '<', (a: Buffer, b: Buffer) => a.compare(b) < 0)
 _logicalFunctions.register('buffer', '>=', (a: Buffer, b: Buffer) => a.compare(b) >= 0)
 _logicalFunctions.register('buffer', '<=', (a: Buffer, b: Buffer) => a.compare(b) <= 0)
+
+// Register handlers for type Value
+_logicalFunctions.register('Value', '==', (a: any, b: any) => a.equals(b))
+_logicalFunctions.register('Value', '!=', (a: any, b: any) => !a.equals(b))
+_logicalFunctions.register('Value', '>', (a: any, b: any) => a.greaterThan(b))
+_logicalFunctions.register('Value', '<', (a: any, b: any) => a.lessThan(b))
+_logicalFunctions.register('Value', '>=', (a: any, b: any) => a.greaterThanOrEqualsTo(b))
+_logicalFunctions.register('Value', '<=', (a: any, b: any) => a.lessThanOrEqualsTo(b))
+
+// Register handlers for type ShelleyAddress
+_logicalFunctions.register('ShelleyAddress', '==', (a: any, b: any) => a.equals(b))
 
 export const logicalFunctions = _logicalFunctions
