@@ -13,11 +13,13 @@ export class RpcTopicHandler {
     managerInterface: ManagerInterface
     txListener: TxListener
     eventTriggerHandlers: EventTriggerHandler
+
     constructor(managerInterface: ManagerInterface, txListener: TxListener) {
         this.managerInterface = managerInterface
         this.txListener = txListener
         this.eventTriggerHandlers = new EventTriggerHandler(this.managerInterface)
     }
+
     handleEvent(
         eventName: string,
         message: any,
@@ -44,6 +46,7 @@ export class RpcTopicHandler {
         this.txListener.onBlock({ ...block, body: transactions })
         this.eventTriggerHandlers.onBlock({ ...block, body: transactions }, agentRunners)
     }
+
     initial_config(message: any, agentRunners: Array<AgentRunner>, scheduledTasks: ScheduledTask[]) {
         const { configurations } = message
         const eventBasedActions = formatEventFilter(checkIfAgentWithEventTriggerTypeExists(configurations))
@@ -54,6 +57,7 @@ export class RpcTopicHandler {
             scheduleFunctions(this.managerInterface, runner, configurations, index, scheduledTasks)
         })
     }
+
     config_updated(message: any, agentRunners: Array<AgentRunner>, scheduledTasks: ScheduledTask[]) {
         const { instanceCount, configurations } = message
         if (instanceCount != agentRunners.length) {
@@ -70,7 +74,10 @@ export class RpcTopicHandler {
                     })
             }
         }
-        checkIfAgentWithEventTriggerTypeExists(configurations)
+        const eventBasedActions = formatEventFilter(checkIfAgentWithEventTriggerTypeExists(configurations))
+        if (eventBasedActions) {
+            this.eventTriggerHandlers.addEventActions(eventBasedActions)
+        }
         clearScheduledTasks(scheduledTasks)
         agentRunners.forEach((runner, index) => {
             scheduleFunctions(this.managerInterface, runner, configurations, index, scheduledTasks)
@@ -78,5 +85,6 @@ export class RpcTopicHandler {
     }
 
     agent_keys(message: any) {}
+
     instance_count(args: any) {}
 }

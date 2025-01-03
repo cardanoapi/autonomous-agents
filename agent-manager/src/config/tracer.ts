@@ -1,6 +1,8 @@
 import { ParameterizedMessageObject, Span, Transaction } from 'elastic-apm-node'
 
-import apm from 'elastic-apm-node'
+import apmAgent from 'elastic-apm-node'
+
+export const apm = apmAgent
 
 function readConfig() {
     if (process.env.ELASTIC_APM_SERVER_URL && process.env.ELASTIC_APM_API_KEY && process.env.ELASTIC_APM_ENVIRONMENT) {

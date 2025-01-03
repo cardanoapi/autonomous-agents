@@ -1,3 +1,5 @@
+import { ShelleyAddress, Value } from 'libcardano'
+
 type TypeHandler = (a: any, b: any) => boolean
 
 const operatorNameToSymbol: Record<string, string> = {
@@ -160,14 +162,14 @@ _logicalFunctions.register('buffer', '>=', (a: Buffer, b: Buffer) => a.compare(b
 _logicalFunctions.register('buffer', '<=', (a: Buffer, b: Buffer) => a.compare(b) <= 0)
 
 // Register handlers for type Value
-_logicalFunctions.register('Value', '==', (a: any, b: any) => a.equals(b))
-_logicalFunctions.register('Value', '!=', (a: any, b: any) => !a.equals(b))
-_logicalFunctions.register('Value', '>', (a: any, b: any) => a.greaterThan(b))
-_logicalFunctions.register('Value', '<', (a: any, b: any) => a.lessThan(b))
-_logicalFunctions.register('Value', '>=', (a: any, b: any) => a.greaterThanOrEqualsTo(b))
-_logicalFunctions.register('Value', '<=', (a: any, b: any) => a.lessThanOrEqualsTo(b))
+_logicalFunctions.register('Value', '==', (a: Value, b: Value) => a.equals(b))
+_logicalFunctions.register('Value', '!=', (a: Value, b: Value) => !a.equals(b))
+_logicalFunctions.register('Value', '>', (a: Value, b: Value) => a.greaterThan(b))
+_logicalFunctions.register('Value', '<', (a: Value, b: Value) => a.lessThan(b))
+_logicalFunctions.register('Value', '>=', (a: Value, b: Value) => a.greaterThanOrEqualsTo(b))
+_logicalFunctions.register('Value', '<=', (a: Value, b: Value) => a.lessThanOrEqualsTo(b))
 
 // Register handlers for type ShelleyAddress
-_logicalFunctions.register('ShelleyAddress', '==', (a: any, b: any) => a.equals(b))
+_logicalFunctions.register('ShelleyAddress', '==', (a: ShelleyAddress, b: ShelleyAddress) => a.equals(b))
 
 export const logicalFunctions = _logicalFunctions
