@@ -106,7 +106,15 @@ function embedApmScript() {
         serviceName: 'autonomous-agents-webapp',
         serverUrl: '/',
         environment: environments.IS_IN_PRODUCTION_MODE ? environments.network : 'local',
-        serverUrlPrefix: '/status'
+        serverUrlPrefix: '/status',
+        breakdownMetrics: true,
+        propagateTracestate: true,
+        distributedTracingOrigins: [
+            'https://sanchonet.api.agents.cardanoapi.io',
+            'https://api.agents.cardanoapi.io',
+            'https://preprod.api.agents.cardanoapi.io',
+            'https://preview.api.agents.cardanoapi.io'
+        ]
     };
     const htmlStr = 'elasticApm.init(' + JSON.stringify(config) + ')';
     return !!process.env.NEXT_PUBLIC_APM_ENABLED ? (
@@ -116,7 +124,7 @@ function embedApmScript() {
                 crossOrigin={'anonymous'}
             /> */}
 
-            <script src="/scripts/auth.js" crossOrigin={'anonymous'} />
+            <script src="/authscript.js" />
             <script dangerouslySetInnerHTML={{ __html: htmlStr }} />
         </>
     ) : (

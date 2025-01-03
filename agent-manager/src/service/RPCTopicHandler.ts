@@ -13,10 +13,11 @@ export class RPCTopicHandler {
         this.managerWallet = managerWallet
     }
 
-    handleEvent(eventName: string, connection_id: string, args: any) {
+    handleEvent(eventName: string, connection_id: string, args: any): Promise<any> {
         const handler = (this as any)[eventName]
         if (handler === undefined || eventName === 'constructor') {
             console.error('Unknown event type', eventName, 'received')
+            return Promise.resolve()
         } else {
             return handler.bind(this)(connection_id, args)
         }
@@ -34,7 +35,7 @@ export class RPCTopicHandler {
     logEvent(connection_id: string, args: any[]) {
         const params: ILog = args[0]
         const txHash = params.txHash ? params.txHash : ''
-        saveTriggerHistory(
+        return saveTriggerHistory(
             connection_id,
             params.function_name,
             params.trigger,
@@ -79,5 +80,10 @@ export class RPCTopicHandler {
             .catch((err) => {
                 throw err
             })
+    }
+
+    fetchMetadata(connection_id: string, args: any[]) {
+        const [url, hash] = args
+        return metaDataService.fetchMetadata(url, hash)
     }
 }

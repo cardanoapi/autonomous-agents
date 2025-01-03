@@ -25,6 +25,7 @@ WORKDIR /app
 COPY --from=prod /app/node_modules ./node_modules
 
 COPY --from=builder  /app/entrypoint.sh /app/next-i18next.config.js /app/next.config.mjs ./
+COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/ ./.next
 
 EXPOSE 3000

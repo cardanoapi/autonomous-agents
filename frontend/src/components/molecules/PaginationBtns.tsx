@@ -46,7 +46,7 @@ const PaginationBtns: React.FC<PaginationBtnsProps> = ({
         <div className="flex items-center justify-center">
             <DropdownMenu>
                 <span className="text-xs">{rowsLabel || 'Rows per page'} : </span>
-                <DropdownMenuTrigger className="ml-1 inline-flex gap-x-1 p-0 text-xs" useChevron={true} iconSize={16}>
+                <DropdownMenuTrigger className="ml-1 inline-flex gap-x-1 p-0 text-xs" renderChevronIcon >
                     {rowsPerPage || 1}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="min-w-0">

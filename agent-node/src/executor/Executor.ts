@@ -237,6 +237,9 @@ export class Executor {
             saveMetadata: async (content) => {
                 return await this.rpcInterface.saveMetadata(content)
             },
+            fetchMetadata: async (url: string, hash: string) => {
+                return await this.rpcInterface.fetchMetadata(url, hash)
+            },
             ...updatedBuiltins,
         } as Builtins
     }

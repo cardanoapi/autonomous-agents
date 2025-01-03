@@ -1,7 +1,5 @@
 import { JsonValue } from '@prisma/client/runtime/library'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import { prisma } from './dbClient'
 
 export async function getAgentIdBySecret(agentSecret: Buffer): Promise<string | null> {
     return prisma.agent

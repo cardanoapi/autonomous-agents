@@ -1,4 +1,9 @@
-import "dotenv/config"; // Ensure environment variables are loaded
+process.env.ELASTIC_APM_SERVICE_NAME='cardano-dbsync-api'
+process.env.ELASTIC_APM_ENVIRONMENT=process.env.ELASTIC_APM_ENVIRONMENT || 'local'
+process.env.ELASTIC_APM_LOG_LEVEL='warning'
+import { configDotenv } from 'dotenv'
+configDotenv()
+import * as agent from 'elastic-apm-node/start'; agent;
 import express, { Request, Response } from "express";
 import http from "http";
 import stakeAddrRoute from "./controllers/stakeAddress";
@@ -21,7 +26,7 @@ const dynamicCors = (req:Request, res:Response, next:any) => {
     // Allow requests from any origin but with credentials
     res.header('Access-Control-Allow-Origin', origin || '*');
     res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Tracestate, Traceparent');
     res.header('Access-Control-Allow-Credentials', 'true');
   
     // Handle preflight requests

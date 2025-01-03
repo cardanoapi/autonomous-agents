@@ -52,6 +52,7 @@ export interface Builtins {
     callWebhook: (url: string, data: Record<any, any> | any[] | string) => Promise<any>
     loadFunds: (amount: number) => Promise<any>
     saveMetadata: (content: string) => Promise<any>
+    fetchMetadata: (url: string, hash: string) => Promise<any>
 }
 
 export interface Helpers {

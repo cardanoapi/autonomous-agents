@@ -42,7 +42,6 @@ export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
         refetchOnMount: true
     });
 
-    console.log('logs: ', LogsHistory);
     function handleStatusChange(status: string) {
         if (status === statusPlaceholder) {
             setStatusPlaceholder('None');
