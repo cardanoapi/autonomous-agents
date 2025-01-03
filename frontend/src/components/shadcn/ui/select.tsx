@@ -2,12 +2,7 @@
 
 import * as React from 'react';
 
-import {
-    CaretSortIcon,
-    CheckIcon,
-    ChevronDownIcon,
-    ChevronUpIcon
-} from '@radix-ui/react-icons';
+import { CaretSortIcon, CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
 import * as SelectPrimitive from '@radix-ui/react-select';
 
 import { cn } from '@app/components/lib/utils';
@@ -44,10 +39,7 @@ const SelectScrollUpButton = React.forwardRef<
 >(({ className, ...props }, ref) => (
     <SelectPrimitive.ScrollUpButton
         ref={ref}
-        className={cn(
-            'flex cursor-default items-center justify-center py-1',
-            className
-        )}
+        className={cn('flex cursor-default items-center justify-center py-1', className)}
         {...props}
     >
         <ChevronUpIcon />
@@ -61,10 +53,7 @@ const SelectScrollDownButton = React.forwardRef<
 >(({ className, ...props }, ref) => (
     <SelectPrimitive.ScrollDownButton
         ref={ref}
-        className={cn(
-            'flex cursor-default items-center justify-center py-1',
-            className
-        )}
+        className={cn('flex cursor-default items-center justify-center py-1', className)}
         {...props}
     >
         <ChevronDownIcon />
@@ -108,11 +97,7 @@ const SelectLabel = React.forwardRef<
     React.ElementRef<typeof SelectPrimitive.Label>,
     React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
 >(({ className, ...props }, ref) => (
-    <SelectPrimitive.Label
-        ref={ref}
-        className={cn('px-2 py-1.5 text-sm font-semibold', className)}
-        {...props}
-    />
+    <SelectPrimitive.Label ref={ref} className={cn('px-2 py-1.5 text-sm font-semibold', className)} {...props} />
 ));
 SelectLabel.displayName = SelectPrimitive.Label.displayName;
 
@@ -142,11 +127,7 @@ const SelectSeparator = React.forwardRef<
     React.ElementRef<typeof SelectPrimitive.Separator>,
     React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
 >(({ className, ...props }, ref) => (
-    <SelectPrimitive.Separator
-        ref={ref}
-        className={cn('bg-muted -mx-1 my-1 h-px', className)}
-        {...props}
-    />
+    <SelectPrimitive.Separator ref={ref} className={cn('bg-muted -mx-1 my-1 h-px', className)} {...props} />
 ));
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 

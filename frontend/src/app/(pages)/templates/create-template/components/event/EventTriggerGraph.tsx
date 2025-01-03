@@ -10,12 +10,7 @@ interface NodeGraphProps {
     maxWidth?: number;
 }
 
-export default function EventTriggerGraph({
-    data,
-    className,
-    maxHeight,
-    maxWidth
-}: NodeGraphProps) {
+export default function EventTriggerGraph({ data, className, maxHeight, maxWidth }: NodeGraphProps) {
     const [nodes, setNodes] = useState<NodeData[]>([]);
     const [edges, setEdges] = useState<EdgeData[]>([]);
 
@@ -108,8 +103,7 @@ export default function EventTriggerGraph({
                   data.id +
                   ` ${shouldDisplayBooleanOperator(data.operator, data) ? ` ( ${data.operator} )` : ''} ` +
                   ')'
-                : data.id +
-                  `${shouldDisplayBooleanOperator(data.operator, data) ? ` ( ${data.operator} )` : ''}`;
+                : data.id + `${shouldDisplayBooleanOperator(data.operator, data) ? ` ( ${data.operator} )` : ''}`;
             newNodes.push({
                 id: rootId,
                 text: text,
@@ -132,13 +126,13 @@ export default function EventTriggerGraph({
     return (
         <Canvas
             nodes={
-                Array.from(new Set(nodes.map((node) => JSON.stringify(node)))).map(
-                    (node) => JSON.parse(node)
+                Array.from(new Set(nodes.map((node) => JSON.stringify(node)))).map((node) =>
+                    JSON.parse(node)
                 ) as NodeData[]
             } //ensure nodes are unique
             edges={
-                Array.from(new Set(edges.map((edge) => JSON.stringify(edge)))).map(
-                    (edge) => JSON.parse(edge)
+                Array.from(new Set(edges.map((edge) => JSON.stringify(edge)))).map((edge) =>
+                    JSON.parse(edge)
                 ) as EdgeData[]
             } // ensure edges are unique
             pannable={true}

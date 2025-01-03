@@ -38,28 +38,17 @@ export function bech32toHex(bechAddress: string) {
 
 type TxPropTypes = 'string' | 'array' | 'object' | 'number' | 'bigint';
 
-type TxOperators =
-    | 'in'
-    | 'gt'
-    | 'gte'
-    | 'lt'
-    | 'lte'
-    | 'ne'
-    | 'eq'
-    | 'contains'
-    | 'exists';
+type TxOperators = 'in' | 'gt' | 'gte' | 'lt' | 'lte' | 'ne' | 'eq' | 'contains' | 'exists';
 
 function getOperatorList(operators: TxOperators[], type: TxPropTypes) {
     let localOperators: string[];
     switch (type) {
         case 'string':
-            localOperators = operators.filter((op) => ['contains', 'eq'].includes(op));
+            localOperators = ['contains', 'eq'];
             break;
         case 'number':
         case 'bigint':
-            localOperators = operators.filter((op) =>
-                ['lt', 'gte', 'lte', 'gt', 'eq'].includes(op)
-            );
+            localOperators = ['lt', 'gte', 'lte', 'gt', 'eq'];
             break;
         default:
             localOperators = operators;
@@ -71,11 +60,6 @@ function getOperatorList(operators: TxOperators[], type: TxPropTypes) {
 
 export function getNestedTxProperties(obj: ISchema) {
     const result: ISchema[] = [];
-    const txObjectOperators = obj.operators
-        ? Array.isArray(obj.operators)
-            ? obj.operators
-            : [obj.operators]
-        : ['eq'];
 
     function recursiveFlatten(property: ISchema, parentId: any = []) {
         const { id, type, properties, validator, operators } = property;
@@ -84,10 +68,7 @@ export function getNestedTxProperties(obj: ISchema) {
             id: newId,
             label: newId.join('.'),
             type,
-            operators: getOperatorList(
-                txObjectOperators as TxOperators[],
-                type as TxPropTypes
-            ),
+            operators: getOperatorList(obj.operators ? (obj.operators as TxOperators[]) : [], type as TxPropTypes),
             validator
         };
         if (properties && Array.isArray(properties)) {

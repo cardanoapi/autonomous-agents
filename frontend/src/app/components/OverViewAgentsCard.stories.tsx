@@ -20,13 +20,6 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
     args: {
         className: 'w-[269px] h-[143px]',
-        children: (
-            <OverViewAgentsCard
-                title="Total Agents"
-                totalAgents={200}
-                activeAgents={172}
-                inactiveAgents={38}
-            />
-        )
+        children: <OverViewAgentsCard title="Total Agents" totalAgents={200} activeAgents={172} inactiveAgents={38} />
     }
 };

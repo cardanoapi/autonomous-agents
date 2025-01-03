@@ -16,9 +16,7 @@ export class RpcTopicHandler {
     constructor(managerInterface: ManagerInterface, txListener: TxListener) {
         this.managerInterface = managerInterface
         this.txListener = txListener
-        this.eventTriggerHandlers = new EventTriggerHandler(
-            this.managerInterface
-        )
+        this.eventTriggerHandlers = new EventTriggerHandler(this.managerInterface)
     }
     handleEvent(
         eventName: string,
@@ -44,39 +42,19 @@ export class RpcTopicHandler {
             'txCount=' + transactions.length
         )
         this.txListener.onBlock({ ...block, body: transactions })
-        this.eventTriggerHandlers.onBlock(
-            { ...block, body: transactions },
-            agentRunners
-        )
+        this.eventTriggerHandlers.onBlock({ ...block, body: transactions }, agentRunners)
     }
-    initial_config(
-        message: any,
-        agentRunners: Array<AgentRunner>,
-        scheduledTasks: ScheduledTask[]
-    ) {
+    initial_config(message: any, agentRunners: Array<AgentRunner>, scheduledTasks: ScheduledTask[]) {
         const { configurations } = message
-        const eventBasedActions = formatEventFilter(
-            checkIfAgentWithEventTriggerTypeExists(configurations)
-        )
-        console.log('hello : ', eventBasedActions)
+        const eventBasedActions = formatEventFilter(checkIfAgentWithEventTriggerTypeExists(configurations))
         if (eventBasedActions) {
             this.eventTriggerHandlers.addEventActions(eventBasedActions)
         }
         agentRunners.forEach((runner, index) => {
-            scheduleFunctions(
-                this.managerInterface,
-                runner,
-                configurations,
-                index,
-                scheduledTasks
-            )
+            scheduleFunctions(this.managerInterface, runner, configurations, index, scheduledTasks)
         })
     }
-    config_updated(
-        message: any,
-        agentRunners: Array<AgentRunner>,
-        scheduledTasks: ScheduledTask[]
-    ) {
+    config_updated(message: any, agentRunners: Array<AgentRunner>, scheduledTasks: ScheduledTask[]) {
         const { instanceCount, configurations } = message
         if (instanceCount != agentRunners.length) {
             if (instanceCount < agentRunners.length) {
@@ -86,10 +64,7 @@ export class RpcTopicHandler {
                 Array(increasedRunner)
                     .fill('')
                     .forEach(async (item, index) => {
-                        const runner = new AgentRunner(
-                            this.managerInterface,
-                            this.txListener
-                        )
+                        const runner = new AgentRunner(this.managerInterface, this.txListener)
                         await runner.remakeContext(agentRunners.length + index)
                         agentRunners.push(runner)
                     })
@@ -98,13 +73,7 @@ export class RpcTopicHandler {
         checkIfAgentWithEventTriggerTypeExists(configurations)
         clearScheduledTasks(scheduledTasks)
         agentRunners.forEach((runner, index) => {
-            scheduleFunctions(
-                this.managerInterface,
-                runner,
-                configurations,
-                index,
-                scheduledTasks
-            )
+            scheduleFunctions(this.managerInterface, runner, configurations, index, scheduledTasks)
         })
     }
 

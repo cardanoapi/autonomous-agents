@@ -6,9 +6,7 @@ export default async function handler(
     withdrawal: Record<string, any>,
     anchor: Record<string, string>
 ) {
-    const { dataHash, url } = await context.builtins.saveMetadata(
-        context.helpers.generateProposalMetadataContent()
-    )
+    const { dataHash, url } = await context.builtins.saveMetadata(context.helpers.generateProposalMetadataContent())
     let updatedWithdrawal = withdrawal
     if (withdrawal) {
         const stakeKey = Object.keys(withdrawal)[0]
@@ -19,10 +17,7 @@ export default async function handler(
             }
         }
     }
-    const anchorData =
-        anchor && anchor['url'] && anchor['dataHash']
-            ? anchor
-            : { url, dataHash }
+    const anchorData = anchor && anchor['url'] && anchor['dataHash'] ? anchor : { url, dataHash }
     const req = {
         proposals: [
             {

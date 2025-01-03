@@ -48,10 +48,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
     };
 
     const handleProposalExternalRedirect = () => {
-        window.open(
-            `https://govtool.cardanoapi.io/connected/governance_actions/${proposal.txHash}`,
-            '_blank'
-        );
+        window.open(`https://govtool.cardanoapi.io/connected/governance_actions/${proposal.txHash}`, '_blank');
     };
 
     const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
@@ -77,29 +74,16 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                     </div>
                     {proposal.abstract !== null && (
                         <div className="flex flex-col gap-1">
-                            <p className="  text-xs font-medium  text-brand-Gray-50">
-                                Abstract
-                            </p>
-                            <p className="line-clamp-2 text-sm text-brand-Black-300">
-                                {proposal.abstract}
-                            </p>
+                            <p className="  text-xs font-medium  text-brand-Gray-50">Abstract</p>
+                            <p className="line-clamp-2 text-sm text-brand-Black-300">{proposal.abstract}</p>
                         </div>
                     )}
-                    <div
-                        className={cn(
-                            proposal.agentName
-                                ? 'rounded-lg border border-gray-200 p-4 shadow-sm'
-                                : ''
-                        )}
-                    >
+                    <div className={cn(proposal.agentName ? 'rounded-lg border border-gray-200 p-4 shadow-sm' : '')}>
                         <div className="flex flex-col gap-2">
                             {proposal.agentName && (
                                 <p className="cursor-pointer text-sm font-semibold text-gray-700">
                                     Agent Name :{' '}
-                                    <span
-                                        className="hover:text-brand-Blue-200"
-                                        onClick={handleAgentRedirect}
-                                    >
+                                    <span className="hover:text-brand-Blue-200" onClick={handleAgentRedirect}>
                                         {proposal.agentName}
                                     </span>
                                 </p>
@@ -116,9 +100,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                                 </div>
                             )}
 
-                            <p className="mt-2 text-xs font-medium text-gray-500">
-                                Governance Action Type
-                            </p>
+                            <p className="mt-2 text-xs font-medium text-gray-500">Governance Action Type</p>
 
                             <div className="mt-1 flex gap-2">
                                 <span className="rounded-full bg-blue-100 px-4 py-1 text-xs text-blue-700">
@@ -138,32 +120,25 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                         <div className="space-x-1 bg-brand-lightBlue bg-opacity-50 py-[6px] text-center ">
                             <span>Submitted:</span>
                             <span className="font-medium">
-                                {proposal.createdDate &&
-                                    formatDisplayDate(proposal.createdDate)}
+                                {proposal.createdDate && formatDisplayDate(proposal.createdDate)}
                             </span>
                             <span>(Epoch {proposal.createdEpochNo})</span>
                         </div>
                         <p className="space-x-1 py-[6px] text-center">
                             <span>Expires:</span>
                             <span className="font-medium">
-                                {proposal.createdDate &&
-                                    formatDisplayDate(proposal?.expiryDate)}
+                                {proposal.createdDate && formatDisplayDate(proposal?.expiryDate)}
                             </span>
                             <span>(Epoch {proposal.expiryEpochNo})</span>
                         </p>
                     </div>
                     <div className="flex flex-col gap-1">
-                        <p className="text-xs font-medium text-[#8E908E]">
-                            Governance Action Id
-                        </p>
+                        <p className="text-xs font-medium text-[#8E908E]">Governance Action Id</p>
                         <div className="flex justify-between gap-2 text-brand-primaryBlue">
                             <Typography className="text-sm" noWrap>
                                 {proposalId}
                             </Typography>
-                            <div
-                                onClick={handleCopyGovernanceActionId}
-                                className="cursor-pointer"
-                            >
+                            <div onClick={handleCopyGovernanceActionId} className="cursor-pointer">
                                 <CopyIcon className="h-5 w-5 " />
                             </div>
                         </div>
@@ -182,10 +157,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
             </div>
             {/* Dialogs */}
             <AppDialog isOpen={isOpen} toggleDialog={toggleDialog}>
-                <AgentsVoteDialogContent
-                    handleClose={toggleDialog}
-                    proposalId={proposalId}
-                />
+                <AgentsVoteDialogContent handleClose={toggleDialog} proposalId={proposalId} />
             </AppDialog>
         </>
     );

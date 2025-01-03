@@ -17,25 +17,16 @@ const GroupParams = ({
 
     function checkForErrMsg(index: number) {
         if (parameter.optional) {
-            return (
-                checkIfParameterIsRequired(index) && !parameter.parameters![index].value
-            );
+            return checkIfParameterIsRequired(index) && !parameter.parameters![index].value;
         }
-        return (
-            checkIfParameterIsRequired(index) &&
-            !parameter.parameters![index].value &&
-            isError
-        );
+        return checkIfParameterIsRequired(index) && !parameter.parameters![index].value && isError;
     }
 
     function checkIfParameterIsRequired(index: number) {
         if (parameter.optional) {
             const isAnyFieldFilled =
                 parameter.parameters?.some(
-                    (param) =>
-                        param.value !== '' &&
-                        param.value !== undefined &&
-                        param.value !== null
+                    (param) => param.value !== '' && param.value !== undefined && param.value !== null
                 ) || false;
             return isAnyFieldFilled ? !parameter.parameters![index].optional : false;
         } else {
@@ -43,10 +34,7 @@ const GroupParams = ({
         }
     }
 
-    const handleInputChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
-        index: number
-    ) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const updatedParam = { ...parameter };
         updatedParam.parameters![index] = {
             ...parameter.parameters![index],
@@ -58,26 +46,14 @@ const GroupParams = ({
     return (
         <div className={'flex flex-col'}>
             <span>
-                {parameter.description}{' '}
-                {parameter.optional ? (
-                    <></>
-                ) : (
-                    <span className={'text-lg text-red-500'}>*</span>
-                )}
+                {parameter.description} {parameter.optional ? <></> : <span className={'text-lg text-red-500'}>*</span>}
             </span>
             <div className={'flex flex-row gap-4'}>
                 {parameter.parameters?.length &&
                     parameter.parameters?.map((param, index) => {
                         return (
-                            <div
-                                key={`${param.name}-${index}`}
-                                className={'flex flex-col gap-1'}
-                            >
-                                <div
-                                    className={
-                                        'flex flex-row items-start gap-1 text-sm'
-                                    }
-                                >
+                            <div key={`${param.name}-${index}`} className={'flex flex-col gap-1'}>
+                                <div className={'flex flex-row items-start gap-1 text-sm'}>
                                     {param.description}{' '}
                                     {checkIfParameterIsRequired(index) ? (
                                         <span className={'text-red-500'}>*</span>
@@ -90,9 +66,7 @@ const GroupParams = ({
                                     onChange={(e) => handleInputChange(e, index)}
                                 />
                                 {checkForErrMsg(index) && (
-                                    <span className={'text-xs text-red-500'}>
-                                        This field is required.
-                                    </span>
+                                    <span className={'text-xs text-red-500'}>This field is required.</span>
                                 )}
                             </div>
                         );

@@ -35,12 +35,12 @@ function flattenIds(obj: any) {
 
 function flattenFilterChildWithParentId(data: IBooleanNode) {
     data.children = data.children.map((child) => {
-        if (
-            'children' in child &&
-            child.children.length === 1 &&
-            child.children[0].id === child.id
-        ) {
-            return child.children[0]
+        if ('children' in child && child.children.length) {
+            const similarChild = child.children.find((c) => c.id === child.id)
+            if (similarChild) {
+                return similarChild
+            }
+            return child
         }
         return child
     })
@@ -54,9 +54,7 @@ export function formatEventFilter(data: IEventBasedAction[]) {
             eventTrigger: {
                 ...('children' in item.eventTrigger
                     ? item.eventTrigger.children.length == 1
-                        ? flattenIds(
-                              flattenFilterChildWithParentId(item.eventTrigger)
-                          )
+                        ? flattenIds(flattenFilterChildWithParentId(item.eventTrigger))
                         : flattenFilterChildWithParentId(item.eventTrigger)
                     : item.eventTrigger),
             },
@@ -87,21 +85,14 @@ export function reconstructTxFromPaths(tx: any, matchingPaths: any) {
 
                 source = source[arrayIndex]
                 target[targetArrayId] = [
-                    ...target[targetArrayId].filter(
-                        (o: any) => !!o.matchedIndex
-                    ),
+                    ...target[targetArrayId].filter((o: any) => !!o.matchedIndex),
                     { ...source, matchedIndex: arrayIndex },
                 ]
             } else {
                 // Regular key handling
                 if (isLastKey) {
-                    if (
-                        typeof source[key] === 'object' &&
-                        source[key] !== null
-                    ) {
-                        target[key] = JSON.parse(
-                            JSON.stringify(source[key], customReplacer, 2)
-                        ) // Deep copy
+                    if (typeof source[key] === 'object' && source[key] !== null) {
+                        target[key] = JSON.parse(JSON.stringify(source[key], customReplacer, 2)) // Deep copy
                     } else {
                         target[key] = source[key]
                     }

@@ -133,21 +133,13 @@ export default function LogsPage() {
                         }));
                     }}
                     className="hidden w-64 md:flex"
-                    value={
-                        logQueryState.currentFunction == 'None'
-                            ? 'Function'
-                            : logQueryState.currentFunction
-                    }
+                    value={logQueryState.currentFunction == 'None' ? 'Function' : logQueryState.currentFunction}
                 />
                 <div className="hidden items-center justify-center gap-2 md:flex">
                     {statusOptions.map((status: string, index) => (
                         <Badge
                             key={index}
-                            variant={
-                                logQueryState.statusPlaceholder === status
-                                    ? 'successPrimary'
-                                    : 'primary'
-                            }
+                            variant={logQueryState.statusPlaceholder === status ? 'successPrimary' : 'primary'}
                             className="flex h-8 w-20 justify-center"
                             onClick={() => handleStatusChange(status)}
                         >
@@ -163,29 +155,20 @@ export default function LogsPage() {
         <>
             <TopNav />
             {loadingLogs && <Skeleton className="h-full w-full" />}
-            {!loadingLogs && LogsHistory?.items.length === 0 && (
-                <EmptyScreen msg="No logs found" />
-            )}
+            {!loadingLogs && LogsHistory?.items.length === 0 && <EmptyScreen msg="No logs found" />}
             {!loadingLogs && LogsHistory?.items.length > 0 && (
                 <div className="flex h-full w-full flex-col overflow-y-auto md:pr-4">
-                    {LogsHistory.items.map(
-                        (history: IAgentTriggerHistory, index: number) => (
-                            <AgentLogCard
-                                history={history}
-                                key={index}
-                                className="my-1 flex h-fit bg-white"
-                                globalLog={true}
-                            />
-                        )
-                    )}
+                    {LogsHistory.items.map((history: IAgentTriggerHistory, index: number) => (
+                        <AgentLogCard
+                            history={history}
+                            key={index}
+                            className="my-1 flex h-fit bg-white"
+                            globalLog={true}
+                        />
+                    ))}
                 </div>
             )}
-            <div
-                className={cn(
-                    'flex flex-row-reverse',
-                    LogsHistory?.items.length === 0 && 'hidden'
-                )}
-            >
+            <div className={cn('flex flex-row-reverse', LogsHistory?.items.length === 0 && 'hidden')}>
                 <PaginationBtns
                     className="flex justify-center"
                     onPaginate={(val: number) => {

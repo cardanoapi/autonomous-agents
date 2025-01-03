@@ -4,8 +4,7 @@ import Logo from '@app/assets/icons/Logo';
 import { Badge } from '@app/components/atoms/Badge';
 import environments from '@app/configs/environments';
 
-const networkName =
-    environments.network.charAt(0).toUpperCase() + environments.network.slice(1);
+const networkName = environments.network.charAt(0).toUpperCase() + environments.network.slice(1);
 export default function SideNavLogo({ renderLogo = true }: { renderLogo?: boolean }) {
     return (
         <div className="flex flex-col gap-4 py-8 pb-2 pl-3 max-md:flex-row">

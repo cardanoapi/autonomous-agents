@@ -14,11 +14,7 @@ export interface Wallet {
     stakeKey: Key
     rewardAddress: string
     drepId: string
-    buildAndSubmit(
-        spec: any,
-        stakeSigning?: boolean,
-        saveDrepStatus?: boolean
-    ): Promise<any>
+    buildAndSubmit(spec: any, stakeSigning?: boolean, saveDrepStatus?: boolean): Promise<any>
     signTx(txRaw: Buffer, stakeSigning?: boolean): Buffer
 }
 
@@ -46,28 +42,14 @@ export type DelegationTarget =
 
 export interface Builtins {
     stakeDeRegistration: () => Promise<any>
-    transferADA: (
-        address: string,
-        amount: string | number | Record<string, any>
-    ) => Promise<any>
-    waitTxConfirmation: (
-        txId: string,
-        confirmation: number,
-        timeoutMs: number
-    ) => Promise<unknown>
+    transferADA: (address: string, amount: string | number | Record<string, any>) => Promise<any>
+    waitTxConfirmation: (txId: string, confirmation: number, timeoutMs: number) => Promise<unknown>
     dRepRegistration: (anchor?: OffchainData) => Promise<any>
     dRepDeRegistration: () => Promise<any>
     registerStake: () => Promise<any>
-    voteOnProposal: (
-        proposal: string,
-        vote: boolean | string | undefined,
-        anchor?: OffchainData
-    ) => Promise<void>
+    voteOnProposal: (proposal: string, vote: boolean | string | undefined, anchor?: OffchainData) => Promise<void>
     abstainDelegation: (target: DelegationTarget) => Promise<any>
-    callWebhook: (
-        url: string,
-        data: Record<any, any> | any[] | string
-    ) => Promise<any>
+    callWebhook: (url: string, data: Record<any, any> | any[] | string) => Promise<any>
     loadFunds: (amount: number) => Promise<any>
     saveMetadata: (content: string) => Promise<any>
 }
@@ -95,10 +77,7 @@ export interface FunctionContext {
 }
 
 // Create a restricted execution environment
-export const restrictedExecution = function (
-    functionString: string,
-    context: Record<string, any>
-) {
+export const restrictedExecution = function (functionString: string, context: Record<string, any>) {
     // Provide only necessary globals and variables within a sandbox
     const restrictedGlobals = {
         Math,

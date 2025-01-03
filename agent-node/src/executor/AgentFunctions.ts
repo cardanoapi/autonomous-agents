@@ -57,10 +57,7 @@ function loadHandlersSync(directory: string): FunctionGroup {
                     filters[baseFileName] = filter
                 }
             } catch (error) {
-                console.error(
-                    `Failed to load handler from file ${filePath}:`,
-                    error
-                )
+                console.error(`Failed to load handler from file ${filePath}:`, error)
             }
         }
     })

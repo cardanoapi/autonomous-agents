@@ -40,16 +40,10 @@ const ProbabilityInput = ({
 
     return (
         <div className={'flex flex-col gap-2'}>
-            <div
-                className={
-                    'relative flex w-fit flex-row items-center rounded border  border-brand-Black-300 px-1'
-                }
-            >
+            <div className={'relative flex w-fit flex-row items-center rounded border  border-brand-Black-300 px-1'}>
                 <input
                     value={value}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        handleProbabilityChange(e.target.value)
-                    }
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleProbabilityChange(e.target.value)}
                     className={'w-[140px] px-1 py-2 text-center outline-none'}
                     type={'text'}
                 />
@@ -65,11 +59,7 @@ const ProbabilityInput = ({
                 </div>
             </div>
 
-            {errorMsg ? (
-                <span className={' text-xs text-red-500'}>{errorMsg}</span>
-            ) : (
-                <span className={'h-4'}></span>
-            )}
+            {errorMsg ? <span className={' text-xs text-red-500'}>{errorMsg}</span> : <span className={'h-4'}></span>}
         </div>
     );
 };

@@ -21,10 +21,7 @@ interface AgentOverViewProps {
     enableControl?: boolean;
 }
 
-const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({
-    agent,
-    enableControl
-}) => {
+const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent, enableControl }) => {
     const { data: LogsHistory } = useQuery({
         queryKey: [`${agent?.id}LogsHistory`, 1, 24, agent?.id],
         queryFn: fetchAllTriggerHistory,
@@ -59,18 +56,9 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({
     return (
         <>
             <HeaderContent className="flex justify-between">
-                <TextDisplayField
-                    title="Agent Name"
-                    content={agent?.name}
-                    textClassName="text-xl font-semibold"
-                />
+                <TextDisplayField title="Agent Name" content={agent?.name} textClassName="text-xl font-semibold" />
                 {!agent?.is_active && enableControl && (
-                    <Button
-                        variant="primary"
-                        onClick={handleAgentRun}
-                        size="sm"
-                        className="min-w-32 px-4"
-                    >
+                    <Button variant="primary" onClick={handleAgentRun} size="sm" className="min-w-32 px-4">
                         Run Agent
                     </Button>
                 )}
@@ -89,18 +77,10 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({
                                 '',
                                 false
                             )}
-                            {renderCustomCopyBox(
-                                'Status',
-                                agent?.is_active ? 'Online' : 'Offline',
-                                '',
-                                false
-                            )}
+                            {renderCustomCopyBox('Status', agent?.is_active ? 'Online' : 'Offline', '', false)}
                         </div>
                         <div className="flex items-center gap-3">
-                            {renderCustomCopyBox(
-                                'wallet address',
-                                agent?.agent_address || ''
-                            )}
+                            {renderCustomCopyBox('wallet address', agent?.agent_address || '')}
                             {renderCustomCopyBox(
                                 'wallet balance',
                                 `${Number(agent?.wallet_amount || 0).toFixed(2)} Ada`,
@@ -116,18 +96,10 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({
                                 'w-fit',
                                 false
                             )}
-                            {renderCustomCopyBox(
-                                'voting power',
-                                `${agent?.voting_power || 0} Ada`,
-                                'w-fit',
-                                false
-                            )}
+                            {renderCustomCopyBox('voting power', `${agent?.voting_power || 0} Ada`, 'w-fit', false)}
                         </div>
                         <div className="flex items-center gap-3">
-                            {renderCustomCopyBox(
-                                'stake id',
-                                hexToBech32(agent?.drep_id || '', 'stake_test')
-                            )}
+                            {renderCustomCopyBox('stake id', hexToBech32(agent?.drep_id || '', 'stake_test'))}
                             {renderCustomCopyBox(
                                 'is stake registered',
                                 agent?.is_stake_registered ? 'Yes' : 'No',
@@ -136,16 +108,8 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({
                             )}
                         </div>
                         <div className="flex items-center gap-3">
-                            {renderCustomCopyBox(
-                                'delegated Drep',
-                                agent?.delegation?.drep_id || ''
-                            )}
-                            {renderCustomCopyBox(
-                                'delegated Pool',
-                                agent?.delegation?.pool_id || '',
-                                '',
-                                false
-                            )}
+                            {renderCustomCopyBox('delegated Drep', agent?.delegation?.drep_id || '')}
+                            {renderCustomCopyBox('delegated Pool', agent?.delegation?.pool_id || '', '', false)}
                         </div>
                     </div>
                 </div>
@@ -176,12 +140,7 @@ const TriggerDataBox = ({
     className?: string;
 }) => {
     const dataSource = triggerData.map(
-        (item) =>
-            (item.status && item.success
-                ? 'success'
-                : item.status
-                  ? 'failed'
-                  : 'skipped') as string
+        (item) => (item.status && item.success ? 'success' : item.status ? 'failed' : 'skipped') as string
     );
 
     {
@@ -195,18 +154,8 @@ const TriggerDataBox = ({
         }
     }
 
-    const customBox = (
-        status: string,
-        width?: string,
-        height?: string,
-        index?: number
-    ) => {
-        const bgColor =
-            status === 'success'
-                ? 'bg-green-500'
-                : status === 'failed'
-                  ? 'bg-red-500'
-                  : 'bg-gray-400';
+    const customBox = (status: string, width?: string, height?: string, index?: number) => {
+        const bgColor = status === 'success' ? 'bg-green-500' : status === 'failed' ? 'bg-red-500' : 'bg-gray-400';
         return (
             <div
                 className={`${bgColor} ${width ? width : 'w-full'} ${height ? height : 'h-full'} rounded-lg hover:cursor-pointer`}
@@ -228,20 +177,14 @@ const TriggerDataBox = ({
                 <div className="flex h-6 w-full gap-[6px]">
                     {dataSource
                         .reverse()
-                        .map((status: string, index: number) =>
-                            customBox(status, `w-3`, `h-full`, index)
-                        )}
+                        .map((status: string, index: number) => customBox(status, `w-3`, `h-full`, index))}
                 </div>
             </div>
             <div className="flex w-full items-center justify-center">
                 <div className="flex flex-col items-center gap-8">
-                    <div className="items-center text-sm font-medium text-gray-600">
-                        Last Active
-                    </div>
+                    <div className="items-center text-sm font-medium text-gray-600">Last Active</div>
                     <div className="items-center text-xs text-gray-500">
-                        {lastActive
-                            ? new Date(lastActive).toDateString()
-                            : 'Not Activated'}
+                        {lastActive ? new Date(lastActive).toDateString() : 'Not Activated'}
                     </div>
                 </div>
             </div>

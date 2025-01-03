@@ -27,10 +27,7 @@ export class AgentRpc extends RpcV1 {
     handleMethodCall(method: string, args: any[]) {
         this.handlers['methodCall'](method, args)
     }
-    on(
-        eventType: 'methodCall',
-        handler: (method: string, args: any[]) => any
-    ): void
+    on(eventType: 'methodCall', handler: (method: string, args: any[]) => any): void
     on(eventType: 'event', handler: (topic: string, message: any) => void): void
     on(eventType: AgentEventType, handler: any): void {
         this.handlers[eventType] = handler

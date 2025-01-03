@@ -14,12 +14,8 @@ const AgentFunctionCard = ({ func, agentId }: { func: IFunction; agentId: string
                 'flex h-[130px] w-full cursor-pointer flex-col gap-2 rounded-md bg-gray-100 px-3 py-2 drop-shadow-md hover:bg-gray-200 lg:w-[300px]'
             }
         >
-            <span className={'text-base font-normal text-brand-Black-100/90'}>
-                {func.name}
-            </span>
-            <span className={'text-xs text-brand-Black-300/80'}>
-                {func?.description || 'No Description'}
-            </span>
+            <span className={'text-base font-normal text-brand-Black-100/90'}>{func.name}</span>
+            <span className={'text-xs text-brand-Black-300/80'}>{func?.description || 'No Description'}</span>
         </div>
     );
 };

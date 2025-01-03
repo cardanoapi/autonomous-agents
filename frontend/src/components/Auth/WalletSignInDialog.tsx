@@ -61,8 +61,7 @@ export default function WalletSignInDialog({
 
     const router = useRouter();
 
-    const [currentSelectedWalletProvider, setCurrentSelectedWalletProvider] =
-        useState<CIP30Provider | null>(null);
+    const [currentSelectedWalletProvider, setCurrentSelectedWalletProvider] = useState<CIP30Provider | null>(null);
     const [connectingWallet, setConnectingWallet] = useState<boolean>(false);
 
     async function enableWallet(wallet: CIP30Provider, disabletoast: boolean = false) {
@@ -111,21 +110,12 @@ export default function WalletSignInDialog({
                     defaultCross={false}
                 >
                     <div className="flex flex-col gap-y-4">
-                        <X
-                            onClick={onClose}
-                            className="absolute right-4 top-4 hover:cursor-pointer"
-                        />
+                        <X onClick={onClose} className="absolute right-4 top-4 hover:cursor-pointer" />
                         <div className="mb-4 flex items-center justify-center gap-1 ">
-                            <Wallet
-                                size={28}
-                                stroke="#2595FCFA"
-                                className="hidden xl:flex "
-                            />
+                            <Wallet size={28} stroke="#2595FCFA" className="hidden xl:flex " />
                             <span className="text-center text-xl  font-semibold 2xl:text-2xl ">
                                 {' '}
-                                Select your{' '}
-                                <span className="text-blue-600">CIP-30</span> wallet
-                                provider
+                                Select your <span className="text-blue-600">CIP-30</span> wallet provider
                             </span>
                         </div>
                         <div className="flex items-center justify-center gap-x-4">
@@ -136,16 +126,10 @@ export default function WalletSignInDialog({
                                             wallet={wallet}
                                             onClick={(wallet: CIP30Provider) =>
                                                 currentSelectedWalletProvider === wallet
-                                                    ? setCurrentSelectedWalletProvider(
-                                                          null
-                                                      )
-                                                    : setCurrentSelectedWalletProvider(
-                                                          wallet
-                                                      )
+                                                    ? setCurrentSelectedWalletProvider(null)
+                                                    : setCurrentSelectedWalletProvider(wallet)
                                             }
-                                            selected={
-                                                currentSelectedWalletProvider === wallet
-                                            }
+                                            selected={currentSelectedWalletProvider === wallet}
                                             disabled={connectingWallet}
                                         />
                                     </div>
@@ -221,11 +205,7 @@ function WalletProviderListEmptyMessage() {
             <OctagonAlert />
             <span>
                 No Wallets found ! Click here to see a list of{' '}
-                <Link
-                    href={cip30walletsListLink}
-                    target="_blank"
-                    className="underline-offset-5 underline"
-                >
+                <Link href={cip30walletsListLink} target="_blank" className="underline-offset-5 underline">
                     CIP-30 Supported Wallets.{' '}
                 </Link>
             </span>

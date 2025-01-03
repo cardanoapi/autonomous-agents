@@ -35,15 +35,7 @@ export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
         refetch: refetchLogsHistory,
         isLoading: loadingLogs
     } = useQuery({
-        queryKey: [
-            `${agent?.id}LogsHistory`,
-            1,
-            50,
-            agent?.id,
-            currentFunction,
-            currentStatus,
-            currentSuccess
-        ],
+        queryKey: [`${agent?.id}LogsHistory`, 1, 50, agent?.id, currentFunction, currentStatus, currentSuccess],
         queryFn: fetchAllTriggerHistory,
         refetchInterval: 60000,
         refetchOnWindowFocus: true,
@@ -88,21 +80,13 @@ export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
                         onChange={(strVal: string) => {
                             setCurrentFunction(strVal);
                         }}
-                        value={
-                            currentFunction === 'None'
-                                ? 'Function'
-                                : MapFunctionNameAndViewName[currentFunction]
-                        }
+                        value={currentFunction === 'None' ? 'Function' : MapFunctionNameAndViewName[currentFunction]}
                     />
                     <div className="justify-center gap-2 md:flex">
                         {statusOptions.map((status: string, index) => (
                             <Badge
                                 key={index}
-                                variant={
-                                    statusPlaceholder === status
-                                        ? 'successPrimary'
-                                        : 'primary'
-                                }
+                                variant={statusPlaceholder === status ? 'successPrimary' : 'primary'}
                                 className="flex w-20 justify-center"
                                 onClick={() => handleStatusChange(status)}
                             >
@@ -118,13 +102,7 @@ export const AgentLogComponent = ({ agent }: { agent?: IAgent }) => {
             ) : (
                 <div className={'h-full w-full space-y-2 overflow-y-scroll px-2'}>
                     {LogsHistory?.items?.map((history: IAgentTriggerHistory) => {
-                        return (
-                            <AgentLogCard
-                                className={'w-full'}
-                                key={history.id}
-                                history={history}
-                            />
-                        );
+                        return <AgentLogCard className={'w-full'} key={history.id} history={history} />;
                     })}
                 </div>
             )}
@@ -163,36 +141,19 @@ export const AgentLogCard = ({
                 className
             )}
         >
-            <div
-                className={
-                    'flex w-full flex-col flex-wrap items-start gap-8 md:flex-row lg:flex-nowrap'
-                }
-            >
+            <div className={'flex w-full flex-col flex-wrap items-start gap-8 md:flex-row lg:flex-nowrap'}>
                 {globalLog && (
                     <div className={'flex items-center gap-3 sm:min-w-[200px]'}>
-                        <AgentAvatar
-                            activeStatus={false}
-                            hash={history.agentId}
-                            size={20}
-                            isActive={false}
-                            isLink
-                        />
+                        <AgentAvatar activeStatus={false} hash={history.agentId} size={20} isActive={false} isLink />
                         <div className="card-h2 flex basis-4/5 flex-col truncate">
                             <span className={'w-11/12 truncate text-sm leading-normal'}>
                                 {Truncate(
-                                    (agents &&
-                                        agents[history.agentId] &&
-                                        agents[history.agentId].name) ||
-                                        '',
+                                    (agents && agents[history.agentId] && agents[history.agentId].name) || '',
                                     20
                                 )}
                                 &nbsp; #{history.instanceIndex}
                             </span>
-                            <span
-                                className={
-                                    'text-[10px] leading-normal text-brand-Black-300/80'
-                                }
-                            >
+                            <span className={'text-[10px] leading-normal text-brand-Black-300/80'}>
                                 {Truncate(history.agentId || '', 25)}
                             </span>
                         </div>
@@ -200,28 +161,21 @@ export const AgentLogCard = ({
                 )}
                 {!globalLog && (
                     <div>
-                        <span className={'text-sm font-medium'}>
-                            #{history.instanceIndex}
-                        </span>
+                        <span className={'text-sm font-medium'}>#{history.instanceIndex}</span>
                     </div>
                 )}
                 <div className={'flex w-full flex-col flex-wrap items-start gap-2'}>
                     <div className={'hidde flex flex-row items-center gap-1'}>
                         <span className={'text-sm font-medium'}>
-                            {MapFunctionNameAndViewName[history.functionName] ||
-                                history.functionName}
+                            {MapFunctionNameAndViewName[history.functionName] || history.functionName}
                         </span>
-                        <span className={'rounded bg-blue-200 p-1 text-[8px]'}>
-                            {history.triggerType || 'CRON'}
-                        </span>
+                        <span className={'rounded bg-blue-200 p-1 text-[8px]'}>{history.triggerType || 'CRON'}</span>
                     </div>
                     {history.parameters && (
                         <div className={'flex flex-col gap-0.5 overflow-hidden'}>
                             <span className={'text-sm font-medium'}>Parameters</span>
                             {history.parameters?.map((param, index) => {
-                                return (
-                                    <LogFunctionParameter param={param} key={index} />
-                                );
+                                return <LogFunctionParameter param={param} key={index} />;
                             })}
                         </div>
                     )}
@@ -229,14 +183,9 @@ export const AgentLogCard = ({
                         <div className={'flex w-full flex-col gap-0.5'}>
                             <span className={'text-sm font-medium'}>Result</span>
                             {history.txHash || !history.message ? (
-                                <LogObjectParameter
-                                    longTruncate
-                                    params={history.result}
-                                />
+                                <LogObjectParameter longTruncate params={history.result} />
                             ) : (
-                                <span className={'w-full break-all pr-4 text-xs'}>
-                                    {history.message}
-                                </span>
+                                <span className={'w-full break-all pr-4 text-xs'}>{history.message}</span>
                             )}
                         </div>
                     ) : history.txHash ? (
@@ -247,15 +196,9 @@ export const AgentLogCard = ({
                     {history.internal && <InternalLogs history={history} />}
                 </div>
             </div>
-            <div
-                className={
-                    ' absolute right-3 top-2 flex min-w-fit flex-col items-end justify-start gap-1'
-                }
-            >
+            <div className={' absolute right-3 top-2 flex min-w-fit flex-col items-end justify-start gap-1'}>
                 <Badge variant={getBadgeVariant()}>{getAgentExecutionStatus()}</Badge>
-                <span className={'hidden text-xs md:flex'}>
-                    {formatTimestamp(history.timestamp)}
-                </span>
+                <span className={'hidden text-xs md:flex'}>{formatTimestamp(history.timestamp)}</span>
             </div>
         </div>
     );
@@ -268,24 +211,15 @@ const InternalLogs = ({ history }: { history: IAgentTriggerHistory }) => {
                 return (
                     <div
                         key={index}
-                        className={
-                            'flex h-[45px] flex-row gap-1 border-0 border-t-2 border-brand-Black-200/30 p-0.5'
-                        }
+                        className={'flex h-[45px] flex-row gap-1 border-0 border-t-2 border-brand-Black-200/30 p-0.5'}
                     >
-                        <div
-                            className={`h-full w-1 ${internal.success ? 'bg-green-500' : 'bg-red-500'}`}
-                        ></div>
+                        <div className={`h-full w-1 ${internal.success ? 'bg-green-500' : 'bg-red-500'}`}></div>
                         <div className={'flex flex-col gap-0.5'}>
                             <span className={'text-sm font-medium'}>
-                                {MapFunctionNameAndViewName[internal.function_name] ||
-                                    internal.function_name}
+                                {MapFunctionNameAndViewName[internal.function_name] || internal.function_name}
                             </span>
-                            {internal.txHash && (
-                                <TxHashComponent txHash={internal.txHash} />
-                            )}
-                            {internal.message && (
-                                <span className={'text-xs'}>{internal.message}</span>
-                            )}
+                            {internal.txHash && <TxHashComponent txHash={internal.txHash} />}
+                            {internal.message && <span className={'text-xs'}>{internal.message}</span>}
                         </div>
                     </div>
                 );
@@ -304,17 +238,10 @@ const LogFunctionParameter = ({ param }: { param: any }) => {
     };
 
     return (
-        <div
-            className={
-                'flex w-[220px] flex-row gap-1 truncate text-xs drop-shadow sm:w-[250px] lg:w-[400px]'
-            }
-        >
+        <div className={'flex w-[220px] flex-row gap-1 truncate text-xs drop-shadow sm:w-[250px] lg:w-[400px]'}>
             <span>{formatParameterName(param.name)} :</span>
             {typeof param.value === 'string' ? (
-                <span
-                    className={'w-full cursor-pointer truncate'}
-                    onClick={handleOnCopy}
-                >
+                <span className={'w-full cursor-pointer truncate'} onClick={handleOnCopy}>
                     {param.value}
                 </span>
             ) : (
@@ -327,13 +254,7 @@ const LogFunctionParameter = ({ param }: { param: any }) => {
     );
 };
 
-const LogObjectParameter = ({
-    params,
-    longTruncate = false
-}: {
-    params: Record<any, any>;
-    longTruncate?: boolean;
-}) => {
+const LogObjectParameter = ({ params, longTruncate = false }: { params: Record<any, any>; longTruncate?: boolean }) => {
     const { copyToClipboard } = useCopyClipboard();
 
     return (
@@ -341,12 +262,7 @@ const LogObjectParameter = ({
         Object.entries(params).map((param, index) => {
             return (
                 <span
-                    onClick={() =>
-                        copyToClipboard(
-                            param[1],
-                            `${formatParameterName(param[0])} copied!`
-                        )
-                    }
+                    onClick={() => copyToClipboard(param[1], `${formatParameterName(param[0])} copied!`)}
                     key={index}
                     className={` cursor-pointer truncate text-xs drop-shadow ${longTruncate ? ' w-[250px] md:max-w-[320px]' : 'w-[100px] md:max-w-[280px]'}`}
                 >
@@ -364,11 +280,7 @@ const TxHashComponent = ({ txHash }: { txHash: string }) => {
     };
     return (
         <>
-            <div
-                className={
-                    'flex flex-row items-center gap-1 truncate text-sm font-medium '
-                }
-            >
+            <div className={'flex flex-row items-center gap-1 truncate text-sm font-medium '}>
                 <h1>TxHash :</h1>
                 <span
                     onClick={handleOnClickCopy}
@@ -379,11 +291,7 @@ const TxHashComponent = ({ txHash }: { txHash: string }) => {
                 >
                     {txHash}
                 </span>
-                <Copy
-                    color="#A1A1A1"
-                    className=" h-4 w-4 hover:cursor-pointer"
-                    onClick={handleOnClickCopy}
-                />
+                <Copy color="#A1A1A1" className=" h-4 w-4 hover:cursor-pointer" onClick={handleOnClickCopy} />
             </div>
         </>
     );

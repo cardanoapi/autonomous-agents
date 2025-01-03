@@ -21,21 +21,13 @@ export default function OverViewGraphCard({
     theme = 'Primary'
 }: IOverViewTemplatesCard) {
     const isNeutral = changeRate === 0;
-    const iconColor = isNeutral
-        ? '#B0B0B0'
-        : theme === 'Primary'
-          ? '#FF660F'
-          : '#007900';
+    const iconColor = isNeutral ? '#B0B0B0' : theme === 'Primary' ? '#FF660F' : '#007900';
     const textColor = isNeutral
         ? 'text-gray-500'
         : theme === 'Primary'
           ? 'text-brand-Orange-200'
           : 'text-brand-Green-200';
-    const bgColor = isNeutral
-        ? 'bg-gray-200'
-        : theme === 'Primary'
-          ? 'bg-brand-Orange-100'
-          : 'bg-brand-Green-100';
+    const bgColor = isNeutral ? 'bg-gray-200' : theme === 'Primary' ? 'bg-brand-Orange-100' : 'bg-brand-Green-100';
 
     return (
         <OverViewCard title={title} value={totalValue}>
@@ -51,8 +43,7 @@ export default function OverViewGraphCard({
                         )}
                     </div>
                     <span className={cn('h4 text-pretty', textColor)}>
-                        {changeRate} %{' '}
-                        <span className="hidden text-xs 2xl:inline">(24 hours)</span>
+                        {changeRate} % <span className="hidden text-xs 2xl:inline">(24 hours)</span>
                     </span>
                 </div>
                 <div className="3xl:w-30 absolute bottom-0 right-0 flex h-24 w-28 items-center gap-x-1 pr-4  pt-6 3xl:h-28 4xl:h-32 4xl:w-40 ">

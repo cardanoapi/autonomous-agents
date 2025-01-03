@@ -26,9 +26,7 @@ const joyrideSlice = createSlice({
             state.joyrides[action.payload].finished = true;
             state.joyrides[action.payload].run = false;
 
-            const isAnyRunning = Object.values(state.joyrides).some(
-                (joyride) => joyride.run
-            );
+            const isAnyRunning = Object.values(state.joyrides).some((joyride) => joyride.run);
             state.isAnyJoyrideRunning = isAnyRunning;
         },
         setJoyrideState: (state, action: PayloadAction<JoyrideStateWithoutSteps>) => {
@@ -36,9 +34,7 @@ const joyrideSlice = createSlice({
             // @ts-ignore
             state.joyrides[id] = joyrideState;
 
-            const isAnyRunning = Object.values(state.joyrides).some(
-                (joyride) => joyride.run
-            );
+            const isAnyRunning = Object.values(state.joyrides).some((joyride) => joyride.run);
             state.isAnyJoyrideRunning = isAnyRunning;
         }
     }

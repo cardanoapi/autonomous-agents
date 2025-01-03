@@ -1,9 +1,6 @@
 import { FunctionContext } from '../executor/BaseFunction'
 
-export default async function handler(
-    context: FunctionContext,
-    delegation: any
-) {
+export default async function handler(context: FunctionContext, delegation: any) {
     let drep = ''
     if (typeof delegation === 'string') {
         drep = delegation

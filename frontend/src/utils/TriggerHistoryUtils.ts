@@ -1,9 +1,7 @@
 import { IAgentTriggerHistory } from '@api/triggerHistory';
 
 export function filterSuccessTriggers(triggers: IAgentTriggerHistory[]) {
-    const filteredTriggers = triggers.filter(
-        (trigger: IAgentTriggerHistory) => trigger.success === true
-    );
+    const filteredTriggers = triggers.filter((trigger: IAgentTriggerHistory) => trigger.success === true);
     return filteredTriggers;
 }
 
@@ -11,13 +9,9 @@ export function calculateTriggerChangeRateforLast24Hours(
     // Calculates Change rate for Last 24 hours with last 48-24 hours.
     triggers: IAgentTriggerHistory[]
 ) {
-    const last24HourSuccessTransactionsCount =
-        getSuccessTriggersforLast24Hours(triggers).length;
+    const last24HourSuccessTransactionsCount = getSuccessTriggersforLast24Hours(triggers).length;
 
-    const prior24HourSuccessTransactionsCount = filterSuccessTriggersByDate(
-        triggers,
-        getYesterdayDate()
-    ).length;
+    const prior24HourSuccessTransactionsCount = filterSuccessTriggersByDate(triggers, getYesterdayDate()).length;
 
     if (prior24HourSuccessTransactionsCount === 0) {
         return last24HourSuccessTransactionsCount === 0 ? 0 : 100;
@@ -29,10 +23,7 @@ export function calculateTriggerChangeRateforLast24Hours(
     return changeRate;
 }
 
-export function filterSuccessTriggersByDate(
-    triggers: IAgentTriggerHistory[],
-    targetDate: string
-) {
+export function filterSuccessTriggersByDate(triggers: IAgentTriggerHistory[], targetDate: string) {
     const filteredTriggers = triggers.filter((trigger) => {
         const datePart = trigger.timestamp.split('T')[0];
         return datePart === targetDate && trigger.success === true;
@@ -46,10 +37,7 @@ export function getSuccessTriggersforLast24Hours(triggers: IAgentTriggerHistory[
     return successfullTriggers;
 }
 
-export function accumulateSuccessfullTriggersforLast24Hours(
-    triggers: IAgentTriggerHistory[],
-    n: number
-) {
+export function accumulateSuccessfullTriggersforLast24Hours(triggers: IAgentTriggerHistory[], n: number) {
     // Accumulates Last 24 Hours Successfull Transactions by n Hour difference in an Array and returns it
     // n should be less then 24!
     const last24HourSuccessTransactions = getSuccessTriggersforLast24Hours(triggers);

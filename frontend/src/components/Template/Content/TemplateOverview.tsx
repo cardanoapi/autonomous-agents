@@ -21,20 +21,10 @@ import { ErrorToast } from '@app/components/molecules/CustomToasts';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
-import {
-    AddFunctionDialog,
-    DeleteFunctionDialog,
-    UpdateFunctionDialog
-} from './Dialogs';
+import { AddFunctionDialog, DeleteFunctionDialog, UpdateFunctionDialog } from './Dialogs';
 import EditBtns from './EditBtns';
 
-const TemplateOverview = ({
-    template,
-    enableEdit
-}: {
-    template: ITemplate;
-    enableEdit?: boolean;
-}) => {
+const TemplateOverview = ({ template, enableEdit }: { template: ITemplate; enableEdit?: boolean }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [addFunctionDialogOpen, setAddFunctionDialogOpen] = useState(false);
@@ -57,8 +47,7 @@ const TemplateOverview = ({
         }
     });
 
-    const [currentFunction, setCurrentFunctionItem] =
-        useState<IFormFunctionInstance | null>(null);
+    const [currentFunction, setCurrentFunctionItem] = useState<IFormFunctionInstance | null>(null);
 
     const toggleEdit = () => {
         setIsEditing(!isEditing);
@@ -87,16 +76,12 @@ const TemplateOverview = ({
     };
 
     const handleFunctionUpdate = (functionItem: IFormFunctionInstance) => {
-        const convertedFunction = mapFormFunctionToTemplateConfiguration(
-            functionItem,
-            template.id
-        );
+        const convertedFunction = mapFormFunctionToTemplateConfiguration(functionItem, template.id);
 
         if (templateDataCopy.template_configurations) {
-            const newConfigurations: ITemplateConfiguration[] =
-                templateDataCopy.template_configurations.map((config) =>
-                    config.id === functionItem.id ? convertedFunction : config
-                );
+            const newConfigurations: ITemplateConfiguration[] = templateDataCopy.template_configurations.map(
+                (config) => (config.id === functionItem.id ? convertedFunction : config)
+            );
 
             setTemplateDataCopy({
                 ...templateDataCopy,
@@ -108,10 +93,9 @@ const TemplateOverview = ({
 
     const handleFunctionDelete = (index: number) => {
         if (templateDataCopy.template_configurations) {
-            const newConfigurations: ITemplateConfiguration[] =
-                templateDataCopy.template_configurations.filter(
-                    (config, i) => i !== index
-                );
+            const newConfigurations: ITemplateConfiguration[] = templateDataCopy.template_configurations.filter(
+                (config, i) => i !== index
+            );
             setTemplateDataCopy({
                 ...templateDataCopy,
                 template_configurations: newConfigurations
@@ -123,15 +107,9 @@ const TemplateOverview = ({
     const validateData = () => {
         if (!templateDataCopy.name || templateDataCopy.name.length === 0) {
             ErrorToast('Template Name is required');
-        } else if (
-            !templateDataCopy.template_configurations ||
-            templateDataCopy.template_configurations.length === 0
-        ) {
+        } else if (!templateDataCopy.template_configurations || templateDataCopy.template_configurations.length === 0) {
             ErrorToast('At least one function is required');
-        } else if (
-            !templateDataCopy.description ||
-            templateDataCopy.description.length === 0
-        ) {
+        } else if (!templateDataCopy.description || templateDataCopy.description.length === 0) {
             ErrorToast('Template description is required');
         } else {
             return true;
@@ -146,10 +124,7 @@ const TemplateOverview = ({
         };
         setTemplateDataCopy({
             ...templateDataCopy,
-            template_configurations: [
-                ...(templateDataCopy.template_configurations || []),
-                convertedConfiguration
-            ]
+            template_configurations: [...(templateDataCopy.template_configurations || []), convertedConfiguration]
         });
         toggleAddFunctionDialog();
     };

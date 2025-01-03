@@ -11,8 +11,7 @@ const TemplateList = ({
     adminAccess: boolean;
     currentConnectedWallet: any;
 }) => {
-    const containerClass =
-        'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 gap-4';
+    const containerClass = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 gap-4';
 
     return (
         <div className="flex flex-col gap-y-20 md:pb-10">
@@ -22,9 +21,7 @@ const TemplateList = ({
                         <TemplateCard
                             key={index}
                             template={template}
-                            enableDelete={
-                                adminAccess && currentConnectedWallet !== null
-                            }
+                            enableDelete={adminAccess && currentConnectedWallet !== null}
                         />
                     ))}
                 </div>

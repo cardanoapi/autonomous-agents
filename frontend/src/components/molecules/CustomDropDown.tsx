@@ -4,12 +4,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger
-} from '@app/components/atoms/Select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@app/components/atoms/Select';
 import { cn } from '@app/components/lib/utils';
 
 export const CustomDropDown = ({
@@ -37,16 +32,9 @@ export const CustomDropDown = ({
             >
                 {defaultValue}
             </DropdownMenuTrigger>
-            <DropdownMenuContent
-                className="z-[9999] w-full max-w-none bg-white"
-                sideOffset={0}
-            >
+            <DropdownMenuContent className="z-[9999] w-full max-w-none bg-white" sideOffset={0}>
                 {options.map((item) => (
-                    <DropdownMenuItem
-                        key={item}
-                        onClick={() => onSelect(item)}
-                        className="z-[9999] m-0 w-full"
-                    >
+                    <DropdownMenuItem key={item} onClick={() => onSelect(item)} className="z-[9999] m-0 w-full">
                         {item}
                     </DropdownMenuItem>
                 ))}

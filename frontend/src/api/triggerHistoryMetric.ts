@@ -20,14 +20,11 @@ export const fecthTriggerHistoryMetric = async (
 ): Promise<ITriggerHistoryMetric> => {
     let fetchURL = `${baseAPIurl}/trigger-metric`;
     if (functions.length > 0) {
-        const queryParams = functions
-            .map((func) => `function_name=${encodeURIComponent(func)}`)
-            .join('&');
+        const queryParams = functions.map((func) => `function_name=${encodeURIComponent(func)}`).join('&');
         fetchURL += `?${queryParams}`;
     }
     if (agent_id && agent_id?.length >= 0) {
-        fetchURL +=
-            functions.length == 0 ? `?agent_id=${agent_id}` : `&agent_id=${agent_id}`;
+        fetchURL += functions.length == 0 ? `?agent_id=${agent_id}` : `&agent_id=${agent_id}`;
     }
     const res = fetch(fetchURL);
     const data = (await res).json();

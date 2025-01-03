@@ -34,12 +34,7 @@ function mergeObjectsValueIntoSingleObject(
 ) {
     const objectsMap = new Map()
     values.forEach((val) =>
-        objectsMap.set(
-            val[recordString1],
-            recordString2Type === 'number'
-                ? +val[recordString2]
-                : val[recordString2]
-        )
+        objectsMap.set(val[recordString1], recordString2Type === 'number' ? +val[recordString2] : val[recordString2])
     )
     return Object.fromEntries(objectsMap)
 }
@@ -87,15 +82,10 @@ export async function triggerAction(
                 throw err
             })
         case 'stakeDelegation':
-            body = transactionBuilder.stakeDelegation(
-                getParameterValue(parameters, 'drep') || 'abstain'
-            )
+            body = transactionBuilder.stakeDelegation(getParameterValue(parameters, 'drep') || 'abstain')
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 if (err && err.message.includes('StakeKeyNotRegisteredDELEG')) {
-                    triggerHandler.setTriggerOnQueue(
-                        { function_name: 'registerStake', parameters: [] },
-                        'INTERNAL'
-                    )
+                    triggerHandler.setTriggerOnQueue({ function_name: 'registerStake', parameters: [] }, 'INTERNAL')
                     triggerHandler.setTriggerOnQueue(
                         {
                             function_name: 'stakeDelegation',
@@ -113,19 +103,12 @@ export async function triggerAction(
             anchor = getParameterValue(parameters, 'anchor') || []
             anchorUrl = getParameterValue(anchor, 'url') || ''
             anchorDataHash = getParameterValue(anchor, 'dataHash') || ''
-            body = transactionBuilder.voteOnProposal(
-                proposal,
-                anchorUrl,
-                anchorDataHash
-            )
+            body = transactionBuilder.voteOnProposal(proposal, anchorUrl, anchorDataHash)
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 if (err && err.message.includes('GovActionsDoNotExist')) {
                     throw new Error('Governance Action Proposal doesnot exist')
                 } else if (err && err.message.includes('VotersDoNotExist')) {
-                    triggerHandler.setTriggerOnQueue(
-                        { function_name: 'dRepRegistration', parameters: [] },
-                        'INTERNAL'
-                    )
+                    triggerHandler.setTriggerOnQueue({ function_name: 'dRepRegistration', parameters: [] }, 'INTERNAL')
                     triggerHandler.setTriggerOnQueue(
                         {
                             function_name: 'voteOnProposal',
@@ -150,15 +133,10 @@ export async function triggerAction(
             anchor = getParameterValue(parameters, 'anchor') || []
             anchorUrl = getParameterValue(anchor, 'url')
             anchorDataHash = getParameterValue(anchor, 'dataHash')
-            newConstitution =
-                getParameterValue(parameters, 'newConstitution') || []
+            newConstitution = getParameterValue(parameters, 'newConstitution') || []
             newConstitutionUrl = getParameterValue(newConstitution, 'url')
-            newConstitutionDataHAsh = getParameterValue(
-                newConstitution,
-                'dataHash'
-            )
-            guardRailScript =
-                getParameterValue(parameters, 'guardrailScript') || undefined
+            newConstitutionDataHAsh = getParameterValue(newConstitution, 'dataHash')
+            guardRailScript = getParameterValue(parameters, 'guardrailScript') || undefined
             body = transactionBuilder.proposalNewConstitution(
                 anchorUrl,
                 anchorDataHash,
@@ -189,11 +167,7 @@ export async function triggerAction(
                 'amount',
                 'number'
             )
-            body = transactionBuilder.treasuryWithdrawal(
-                anchorUrl,
-                anchorDataHash,
-                withdrawal
-            )
+            body = transactionBuilder.treasuryWithdrawal(anchorUrl, anchorDataHash, withdrawal)
             return managerInterface.buildTx(body, true).catch((err: Error) => {
                 throw err
             })
@@ -226,10 +200,7 @@ export async function triggerAction(
         case 'dRepRegistration':
             body = transactionBuilder.dRepRegistration()
             return managerInterface.buildTx(body, true).catch((err: Error) => {
-                if (
-                    err &&
-                    err.message.includes('ConwayDRepAlreadyRegistered')
-                ) {
+                if (err && err.message.includes('ConwayDRepAlreadyRegistered')) {
                     throw new Error(`Drep is already registered`)
                 } else {
                     throw err
@@ -256,10 +227,7 @@ export async function triggerAction(
         case 'stakeDeRegistration':
             body = transactionBuilder.stakeDeRegistration()
             return managerInterface.buildTx(body, true).catch((err: Error) => {
-                if (
-                    err &&
-                    err.message.includes('Stake address is not registered')
-                ) {
+                if (err && err.message.includes('Stake address is not registered')) {
                     throw new Error('Stake Address is not registered.')
                 } else {
                     throw err

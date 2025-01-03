@@ -5,12 +5,7 @@ import * as React from 'react';
 import { Pie, PieChart } from 'recharts';
 
 import { Card } from '@app/components/shadcn/ui/card';
-import {
-    ChartConfig,
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent
-} from '@app/components/shadcn/ui/chart';
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@app/components/shadcn/ui/chart';
 
 export interface TransactionPieChartProps {
     className?: string;
@@ -48,12 +43,7 @@ const chartConfig: ChartConfig = {
     }
 };
 
-export default function TransactionPieChart({
-    className,
-    success,
-    skipped,
-    failed
-}: TransactionPieChartProps) {
+export default function TransactionPieChart({ className, success, skipped, failed }: TransactionPieChartProps) {
     const chartData: IPieChartData[] = React.useMemo(() => {
         if (success + skipped + failed === 0) {
             return [{ status: 'Not Activated ', total: 1, fill: 'var(--color-none)' }];
@@ -79,15 +69,9 @@ export default function TransactionPieChart({
 
     return (
         <Card className={`${className}`}>
-            <ChartContainer
-                config={chartConfig}
-                className="mx-auto aspect-square max-h-[250px]"
-            >
+            <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]">
                 <PieChart>
-                    <ChartTooltip
-                        cursor={false}
-                        content={<ChartTooltipContent hideLabel />}
-                    />
+                    <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
                     <Pie
                         data={chartData}
                         dataKey="total"

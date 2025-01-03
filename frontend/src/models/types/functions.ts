@@ -1,12 +1,4 @@
-export type ParameterType =
-    | 'string'
-    | 'number'
-    | 'object'
-    | 'options'
-    | 'hash'
-    | 'url'
-    | 'list'
-    | 'function';
+export type ParameterType = 'string' | 'number' | 'object' | 'options' | 'hash' | 'url' | 'list' | 'function';
 
 type groupTypes = 'Certificates' | 'Vote' | 'Payment' | 'Governance Proposal';
 
@@ -59,8 +51,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
             {
                 id: 'dRepRegistration',
                 name: 'DRep registration',
-                description:
-                    'This will register you as Decentralized Representative (DRep) on the Cardano network.',
+                description: 'This will register you as Decentralized Representative (DRep) on the Cardano network.',
                 parameters: [
                     {
                         id: 'anchor',
@@ -87,8 +78,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
             {
                 id: 'dRepDeRegistration',
                 name: 'DRep de-registration',
-                description:
-                    'This will retire you as Decentralized Representative (DRep) on the Cardano network.'
+                description: 'This will retire you as Decentralized Representative (DRep) on the Cardano network.'
             },
             {
                 id: 'registerStake',
@@ -211,8 +201,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
                         optional: false
                     }
                 ],
-                description:
-                    'Send the Ada to other Ada Holders in the cardano network.',
+                description: 'Send the Ada to other Ada Holders in the cardano network.',
                 canBeEvent: true
             }
         ]
@@ -371,8 +360,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
                         ]
                     }
                 ],
-                description:
-                    'Propose no confidence on the current constitutional committee'
+                description: 'Propose no confidence on the current constitutional committee'
             },
             {
                 id: 'updateCommittee',

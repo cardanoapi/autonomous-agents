@@ -12,6 +12,7 @@ import {
     DropdownMenuTrigger
 } from '@app/components/atoms/DropDownMenu';
 import { Input } from '@app/components/atoms/Input';
+import { cn } from '@app/components/lib/utils';
 import { Close } from '@app/views/atoms/Icons/Close';
 
 import { transformLabelForOperators } from '../utils/MapperHelper';
@@ -29,9 +30,7 @@ const RenderEventChildForm = ({
     onNegateChange?: (value: boolean) => void;
     onDeleteParameter?: (...args: any) => void;
 }) => {
-    const [localOperator, setLocalOperator] = useState<string>(
-        eventFilterParam.operator || 'eq'
-    );
+    const [localOperator, setLocalOperator] = useState<string>(eventFilterParam.operator || 'eq');
     const [value, setValue] = useState(eventFilterParam.value);
 
     const paramId = Array.isArray(eventFilterParam.id)
@@ -47,11 +46,7 @@ const RenderEventChildForm = ({
     const [debouncedVal] = useDebounceValue(value, 500);
 
     useEffect(() => {
-        if (
-            debouncedVal &&
-            eventFilterParam?.validator &&
-            !eventFilterParam?.validator(debouncedVal)
-        ) {
+        if (debouncedVal && eventFilterParam?.validator && !eventFilterParam?.validator(debouncedVal)) {
             setErrMsg(`Error occured on ${paramId}`);
             return;
         }
@@ -88,17 +83,10 @@ const RenderEventChildForm = ({
                 <span className="mt-2 min-w-80 truncate">{paramId}</span>
                 <div className="flex items-center gap-2">
                     <span className="mt-2">negate</span>
-                    <Checkbox
-                        className="mt-2"
-                        onCheckedChange={onNegateChange}
-                        checked={eventFilterParam.negate}
-                    />
+                    <Checkbox className="mt-2" onCheckedChange={onNegateChange} checked={eventFilterParam.negate} />
                 </div>
                 <DropdownMenu>
-                    <DropdownMenuTrigger
-                        disableIcon={true}
-                        className="mt-2 min-w-20 rounded border-none !p-0"
-                    >
+                    <DropdownMenuTrigger disableIcon={true} className="mt-2 min-w-20 rounded border-none !p-0">
                         <span className="flex w-full justify-end gap-4">
                             {transformLabelForOperators(localOperator)}
                             <ChevronDown size={24} />
@@ -116,24 +104,25 @@ const RenderEventChildForm = ({
                         ))}
                     </DropdownMenuContent>
                 </DropdownMenu>
-                <Input
-                    className="w-full rounded-none border-b-2 border-l-0 border-r-0 border-t-0 border-black bg-transparent focus:outline-none focus:ring-0"
-                    defaultValue={eventFilterParam.value}
-                    onChange={handleInputChange}
-                    value={value}
-                />
+                {localOperator !== 'exists' ? (
+                    <Input
+                        className="w-full rounded-none border-b-2 border-l-0 border-r-0 border-t-0 border-black bg-transparent focus:outline-none focus:ring-0"
+                        defaultValue={eventFilterParam.value}
+                        onChange={handleInputChange}
+                        value={value}
+                    />
+                ) : (
+                    <></>
+                )}
                 <Close
                     onClick={() => handleOnDeleteParam(eventFilterParam.id)}
-                    className={
-                        'invisible relative top-2 h-10 w-10 cursor-pointer group-hover:visible'
-                    }
+                    className={cn(
+                        'invisible cursor-pointer group-hover:visible',
+                        localOperator === 'exists' ? 'h-5 w-5' : 'h-10 w-10 '
+                    )}
                 />
             </div>
-            {errMsg && (
-                <div className="flex w-3/4 justify-end text-sm text-red-500">
-                    {errMsg}
-                </div>
-            )}
+            {errMsg && <div className="flex w-3/4 justify-end text-sm text-red-500">{errMsg}</div>}
         </div>
     );
 };

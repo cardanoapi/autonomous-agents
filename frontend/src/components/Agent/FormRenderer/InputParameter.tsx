@@ -7,13 +7,7 @@ import { useDebounceValue } from 'usehooks-ts';
 import { Input } from '@app/components/atoms/Input';
 import { errorAtom, selectedFunctionAtom } from '@app/store/atoms/formRenderer';
 
-const InputParameter = ({
-    parameter,
-    paramIndex
-}: {
-    parameter: IParameter;
-    paramIndex: number;
-}) => {
+const InputParameter = ({ parameter, paramIndex }: { parameter: IParameter; paramIndex: number }) => {
     const [selectedFunction, setSelectedFunction] = useAtom(selectedFunctionAtom);
     const [errorIndex] = useAtom(errorAtom);
 

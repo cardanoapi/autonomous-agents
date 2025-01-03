@@ -18,22 +18,12 @@ const EditBtns = ({
                     <Button className="w-[100px]" onClick={onCancel} size={'md'}>
                         Cancel
                     </Button>
-                    <Button
-                        className="w-[100px]"
-                        onClick={onSave}
-                        size={'md'}
-                        variant={'primary'}
-                    >
+                    <Button className="w-[100px]" onClick={onSave} size={'md'} variant={'primary'}>
                         Save
                     </Button>
                 </>
             ) : (
-                <Button
-                    className="w-[100px]"
-                    onClick={onEdit}
-                    size={'md'}
-                    variant={'primary'}
-                >
+                <Button className="w-[100px]" onClick={onEdit} size={'md'} variant={'primary'}>
                     Edit
                 </Button>
             )}

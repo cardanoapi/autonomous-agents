@@ -8,12 +8,7 @@ import { X } from 'lucide-react';
 
 import { Button } from '@app/components/atoms/Button';
 import { Card, CardTitle } from '@app/components/atoms/Card';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger
-} from '@app/components/atoms/Select';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@app/components/atoms/Select';
 import { cn } from '@app/components/lib/utils';
 import { CustomCombobox } from '@app/components/molecules/CustomCombobox';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
@@ -49,9 +44,7 @@ export const FunctionForm = ({
             type: 'CRON' as TriggerType
         }
     );
-    const [cronExpression] = useState(
-        currentFunction?.cronValue?.frequency || '* * * * *'
-    );
+    const [cronExpression] = useState(currentFunction?.cronValue?.frequency || '* * * * *');
 
     const updateFunctionState = (updates: Partial<IFormFunctionInstance>) => {
         if (!functionState) return;
@@ -60,11 +53,7 @@ export const FunctionForm = ({
         onValueChange?.(updatedFunction);
     };
 
-    const handleCronChange = (
-        cronValueListFormat: string[],
-        defaultSelected: string,
-        configuredSettings: any
-    ) => {
+    const handleCronChange = (cronValueListFormat: string[], defaultSelected: string, configuredSettings: any) => {
         const cronValue = {
             frequency: cronValueListFormat.join(' '),
             probability: functionState?.cronValue?.probability || 100
@@ -99,19 +88,13 @@ export const FunctionForm = ({
         updateFunctionState(newFunciontState);
     };
 
-    const handleNestedParameterChange = (
-        parentId: string,
-        subParamId: string,
-        newValue: any
-    ) => {
+    const handleNestedParameterChange = (parentId: string, subParamId: string, newValue: any) => {
         const updatedParameters = functionState?.parameters?.map((param) =>
             param.id === parentId
                 ? {
                       ...param,
                       parameters: param.parameters?.map((subParam) =>
-                          subParam.id === subParamId
-                              ? { ...subParam, value: newValue }
-                              : subParam
+                          subParam.id === subParamId ? { ...subParam, value: newValue } : subParam
                       )
                   }
                 : param
@@ -134,10 +117,7 @@ export const FunctionForm = ({
             return true;
         }
 
-        if (
-            functionState?.parameters?.[0].type === 'options' &&
-            !functionState.optionValue
-        ) {
+        if (functionState?.parameters?.[0].type === 'options' && !functionState.optionValue) {
             ErrorToast('Please select an option');
             return false;
         }
@@ -148,10 +128,7 @@ export const FunctionForm = ({
                 validState = false;
             }
             item.parameters?.forEach((subItem) => {
-                if (
-                    (subItem.optional === false && !subItem.value) ||
-                    subItem.value === ''
-                ) {
+                if ((subItem.optional === false && !subItem.value) || subItem.value === '') {
                     validState = false;
                 }
             });
@@ -161,9 +138,7 @@ export const FunctionForm = ({
     };
 
     const handleFunctionsSelect = (functionID: string) => {
-        const selectedFunction = TemplateFunctions.find(
-            (func) => func.id === functionID
-        );
+        const selectedFunction = TemplateFunctions.find((func) => func.id === functionID);
         if (selectedFunction) {
             const currentSelectedFunction = {
                 ...selectedFunction,
@@ -192,19 +167,12 @@ export const FunctionForm = ({
                 renderFunctionSelector ? 'py-8' : 'py-4'
             )}
         >
-            <X
-                className="absolute right-6 top-4 cursor-pointer"
-                onClick={() => onClose?.(functionState)}
-            />
+            <X className="absolute right-6 top-4 cursor-pointer" onClick={() => onClose?.(functionState)} />
             <div className="flex flex-col gap-y-4 max-md:gap-y-6">
                 {renderFunctionSelector ? (
                     <CardTitle className="flex flex-col gap-2">
                         <span className="h4">Function</span>
-                        <Select
-                            onValueChange={(value: string) =>
-                                handleFunctionsSelect(value)
-                            }
-                        >
+                        <Select onValueChange={(value: string) => handleFunctionsSelect(value)}>
                             <SelectTrigger className="flex items-center justify-between bg-white px-2 py-1 text-start">
                                 {functionState?.name}
                             </SelectTrigger>
@@ -218,9 +186,7 @@ export const FunctionForm = ({
                         </Select>
                     </CardTitle>
                 ) : (
-                    <CardTitle className="!h1 text-center">
-                        {functionState?.name}
-                    </CardTitle>
+                    <CardTitle className="!h1 text-center">{functionState?.name}</CardTitle>
                 )}
                 <div className="flex w-full justify-end">
                     {functionState && functionState.canBeEvent && (
@@ -233,9 +199,7 @@ export const FunctionForm = ({
                                 { id: 'CRON', label: 'CRON' },
                                 { id: 'EVENT', label: 'EVENT' }
                             ]}
-                            onSelect={(triggerType: any) =>
-                                handleTypeChange(triggerType as TriggerType)
-                            }
+                            onSelect={(triggerType: any) => handleTypeChange(triggerType as TriggerType)}
                             className={'w-24 rounded-md border-[2px] px-2'}
                         />
                     )}
@@ -255,28 +219,20 @@ export const FunctionForm = ({
                             onlyCronTriggerTab
                             defaultCron={cronExpression}
                             onChange={handleCronChange}
-                            previousConfiguredSettings={
-                                functionState?.configuredCronSettings
-                            }
+                            previousConfiguredSettings={functionState?.configuredCronSettings}
                             previousSelectedOption={functionState?.selectedCronOption}
                             defaultToCustomTab={editMode}
                         />
                         <div className="px-4">
                             <span className="h4 text-center">
                                 Trigger Probability:{' '}
-                                <span className="text-brand-Blue-200">
-                                    {functionState?.cronValue?.probability} %
-                                </span>
+                                <span className="text-brand-Blue-200">{functionState?.cronValue?.probability} %</span>
                             </span>
                             <Slider
                                 value={functionState?.cronValue?.probability || 100}
                                 valueLabelDisplay="auto"
                                 onChange={(_, newValue) =>
-                                    handleProbabilityChange(
-                                        typeof newValue === 'number'
-                                            ? newValue
-                                            : newValue[0]
-                                    )
+                                    handleProbabilityChange(typeof newValue === 'number' ? newValue : newValue[0])
                                 }
                             />
                         </div>

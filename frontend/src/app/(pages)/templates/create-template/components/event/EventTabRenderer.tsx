@@ -16,9 +16,7 @@ const EventTabRenderer = ({
     formData: IEventTrigger | null;
     onEditorValueChange: (value: IEventTrigger) => void;
 }) => {
-    const [editorValue, setEditorValue] = useState(
-        formData ? JSON.stringify(formData) : ''
-    );
+    const [editorValue, setEditorValue] = useState(formData ? JSON.stringify(formData) : '');
     const handleOnEditorValueChange = (value: string) => {
         setEditorValue(value);
     };
@@ -38,10 +36,7 @@ const EventTabRenderer = ({
     return (
         <div className="h-[600px] w-[1200px] items-center scroll-auto">
             {displayMonacoEditor ? (
-                <CustomEditor
-                    defaultValue={formData}
-                    onValueChange={handleOnEditorValueChange}
-                />
+                <CustomEditor defaultValue={formData} onValueChange={handleOnEditorValueChange} />
             ) : (
                 <NodeGraph data={formData} />
             )}

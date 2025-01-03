@@ -56,9 +56,7 @@ function connectToManagerWebSocket() {
     const scheduledTasks: ScheduledTask[] = []
     ws = new WebSocket(`${wsUrl}/${agentSecret}`)
     const clientPipe = new WsClientPipe(ws)
-    const rpcChannel = new AgentRpc(
-        new CborDuplex(clientPipe, cborxBackend(true))
-    )
+    const rpcChannel = new AgentRpc(new CborDuplex(clientPipe, cborxBackend(true)))
     const managerInterface = new ManagerInterface(rpcChannel)
     const txListener = new TxListener()
 
@@ -101,9 +99,7 @@ function connectToManagerWebSocket() {
             attemptReconnect()
             clearInterval(interval)
         }
-        console.log(
-            `Disconnected from the server (code: ${code}, reason: ${reason}).`
-        )
+        console.log(`Disconnected from the server (code: ${code}, reason: ${reason}).`)
     })
 
     ws.on('error', (err: any) => {
@@ -129,17 +125,12 @@ function attemptReconnect() {
                 connectToManagerWebSocket()
                 isReconnecting = false
                 if (reconnectAttempts <= maxReconnectAttempts) {
-                    console.log(
-                        `Attempting to reconnect... (${reconnectAttempts}/${maxReconnectAttempts})`
-                    )
+                    console.log(`Attempting to reconnect... (${reconnectAttempts}/${maxReconnectAttempts})`)
                 }
             }, 10000)
-            maxReconnectAttempts >= reconnectAttempts &&
-                console.log('Waiting for 10 seconds before reconnecting')
+            maxReconnectAttempts >= reconnectAttempts && console.log('Waiting for 10 seconds before reconnecting')
         } else {
-            console.error(
-                'Max reconnect attempts reached. Exiting application.'
-            )
+            console.error('Max reconnect attempts reached. Exiting application.')
             process.exit(1)
         }
     }

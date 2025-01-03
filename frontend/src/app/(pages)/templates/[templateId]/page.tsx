@@ -10,12 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
 import TemplateOverview from '@app/components/Template/Content/TemplateOverview';
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbList,
-    BreadcrumbSeparator
-} from '@app/components/atoms/Breadcrumb';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from '@app/components/atoms/Breadcrumb';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { templateAtom } from '@app/store/atoms/template';
 import { adminAccessAtom } from '@app/store/localStore';
@@ -44,9 +39,7 @@ const EditTemplateCard = () => {
             <TemplateBreadCrumb templateName={template?.name} />
             <div className="h-full w-full overflow-y-auto rounded-lg bg-white p-8 md:max-w-agentComponentWidth">
                 {templateLoading && <Skeleton className=" h-full w-full" />}
-                {template && (
-                    <TemplateOverview template={template} enableEdit={adminAccess} />
-                )}
+                {template && <TemplateOverview template={template} enableEdit={adminAccess} />}
             </div>
             <div></div>
         </>
@@ -65,9 +58,7 @@ const TemplateBreadCrumb = ({ templateName }: { templateName?: string }) => {
                     Templates
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                    {Truncate(templateName || '', 30) || 'Template Name'}
-                </BreadcrumbItem>
+                <BreadcrumbItem>{Truncate(templateName || '', 30) || 'Template Name'}</BreadcrumbItem>
             </BreadcrumbList>
         </Breadcrumb>
     );

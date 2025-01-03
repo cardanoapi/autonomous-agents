@@ -61,9 +61,7 @@ export function CustomCombobox({
     }, [value]);
 
     const handleOnChange = (searchValue: string) => {
-        const newItems = itemsList.filter((item) =>
-            item.label.toLowerCase().includes(searchValue.toLowerCase())
-        );
+        const newItems = itemsList.filter((item) => item.label.toLowerCase().includes(searchValue.toLowerCase()));
         setItems(newItems);
         setSearchValue(searchValue);
     };

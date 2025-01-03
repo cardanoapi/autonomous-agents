@@ -13,11 +13,7 @@ import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import { cn } from '@app/components/lib/utils';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { templateAtom } from '@app/store/atoms/template';
-import {
-    adminAccessAtom,
-    agentsAtom,
-    currentAgentNameAtom
-} from '@app/store/localStore';
+import { adminAccessAtom, agentsAtom, currentAgentNameAtom } from '@app/store/localStore';
 import { Truncate } from '@app/utils/common/extra';
 
 export default function TopNav({ className }: { className?: string }) {
@@ -83,12 +79,7 @@ export default function TopNav({ className }: { className?: string }) {
                         <AgentAvatar
                             hash={agentId}
                             size={40}
-                            isActive={
-                                (agents &&
-                                    agents.find((item) => item.id === agentId)
-                                        ?.is_active) ||
-                                false
-                            }
+                            isActive={(agents && agents.find((item) => item.id === agentId)?.is_active) || false}
                         />
                         <div className="card-h2">{Truncate(currentAgentName, 20)}</div>
                     </div>
@@ -101,21 +92,12 @@ export default function TopNav({ className }: { className?: string }) {
         }
     }
 
-    if (
-        !template?.name &&
-        getPageTitleByRegexMatch('templates') &&
-        path !== '/templates/create-template'
-    ) {
+    if (!template?.name && getPageTitleByRegexMatch('templates') && path !== '/templates/create-template') {
         return <Skeleton className="h-8 w-[140px]" />;
     }
 
     return (
-        <div
-            className={cn(
-                'flex w-[full] items-center justify-between text-sm',
-                className
-            )}
-        >
+        <div className={cn('flex w-[full] items-center justify-between text-sm', className)}>
             {renderTopNavSection()}
             <span className="hidden md:flex">{adminAcesss && 'Admin'}</span>
         </div>

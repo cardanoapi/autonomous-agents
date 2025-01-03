@@ -2,14 +2,7 @@ import React from 'react';
 
 export function Twitter(props: React.SVGAttributes<SVGElement>) {
     return (
-        <svg
-            width="26"
-            height="26"
-            viewBox="0 0 26 26"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            {...props}
-        >
+        <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
             <path
                 d="M13 0C20.1786 0 26 5.8214 26 13C26 20.1786 20.1786 26 13 26C5.8214 26 0 20.1786 0 13C0 5.8214 5.8214 0 13 0Z"
                 fill="#1DA1F2"

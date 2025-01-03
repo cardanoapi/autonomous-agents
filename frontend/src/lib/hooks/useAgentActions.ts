@@ -9,11 +9,7 @@ import { getConfiguredAgentTrigger, isAgentActive } from '@utils';
 import { ErrorToast, SuccessToast } from '@app/components/molecules/CustomToasts';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
-export const useAgentsAction = (
-    triggerType: AgentTriggerFunctionType,
-    handleClose: () => void,
-    value: string
-) => {
+export const useAgentsAction = (triggerType: AgentTriggerFunctionType, handleClose: () => void, value: string) => {
     const [selectedAgentIds, setSelectedAgentIds] = useState<string[]>([]);
     const { data: agents, isLoading } = useQuery<IAgent[]>({
         queryKey: [QUERY_KEYS.useFetchAgentsKey],
@@ -21,11 +17,7 @@ export const useAgentsAction = (
     });
 
     const actionMutation = useMutation({
-        mutationFn: (agentId: string) =>
-            manualTriggerForAgent(
-                agentId,
-                getConfiguredAgentTrigger(triggerType, value)
-            ),
+        mutationFn: (agentId: string) => manualTriggerForAgent(agentId, getConfiguredAgentTrigger(triggerType, value)),
         onSuccess: () => {
             queryClient.refetchQueries({ queryKey: ['agents'] });
             SuccessToast(`${triggerType} has been successfully triggered.`);
@@ -52,9 +44,7 @@ export const useAgentsAction = (
     };
 
     const handleAction = async () => {
-        const promises = selectedAgentIds.map((agentId) =>
-            actionMutation.mutateAsync(agentId)
-        );
+        const promises = selectedAgentIds.map((agentId) => actionMutation.mutateAsync(agentId));
         await Promise.all(promises);
     };
 

@@ -31,8 +31,7 @@ const AgentFunctionsDetailComponent = ({
 }) => {
     const [openDialog, setOpenDialog] = useState(false);
 
-    const [currentFunction, setCurrentFunction] =
-        useState<IFormFunctionInstance | null>(null);
+    const [currentFunction, setCurrentFunction] = useState<IFormFunctionInstance | null>(null);
 
     const updateTemplate = useMutation({
         mutationFn: (data: IAgentConfiguration) => updateTrigger(data),

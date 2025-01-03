@@ -4,15 +4,11 @@ import { IParameter, IParameterOption } from '@models/types/functions';
 export const mapParamValueToKeyValuePair = (params: IParameter[]): ISubParameter[] => {
     return params.map((param) => ({
         name: param.id || param.name,
-        value: param.parameters
-            ? convertToKeyValuePairObject(param.parameters)
-            : param.value
+        value: param.parameters ? convertToKeyValuePairObject(param.parameters) : param.value
     }));
 };
 
-export const convertToKeyValuePairObject = (
-    params: IParameter[]
-): Record<string, any> => {
+export const convertToKeyValuePairObject = (params: IParameter[]): Record<string, any> => {
     return params.reduce(
         (obj, param) => {
             obj[param.id] = param.value;
@@ -21,10 +17,7 @@ export const convertToKeyValuePairObject = (
         {} as Record<string, any>
     );
 };
-export const mapOptionToKeyValuePair = (
-    option: IParameterOption,
-    name = ''
-): ISubParameter => {
+export const mapOptionToKeyValuePair = (option: IParameterOption, name = ''): ISubParameter => {
     if (option.parameters) {
         return {
             name: name || option.name,
@@ -37,9 +30,7 @@ export const mapOptionToKeyValuePair = (
     };
 };
 
-export const mapKeyValuePairToParamValue = (
-    subParams: ISubParameter[]
-): IParameter[] => {
+export const mapKeyValuePairToParamValue = (subParams: ISubParameter[]): IParameter[] => {
     return subParams.map((subParam) => ({
         id: subParam.name,
         type: 'string',

@@ -12,9 +12,7 @@ interface IPendingTx {
     block: DecodedBlock | null
 }
 
-function checkAndResolvePendingTx(
-    pendingTxs: Record<string, Array<IPendingTx>>
-) {
+function checkAndResolvePendingTx(pendingTxs: Record<string, Array<IPendingTx>>) {
     Object.keys(pendingTxs).forEach((key) => {
         const txs = pendingTxs[key]
         txs.map((tx) => {
@@ -75,15 +73,11 @@ export class TxListener {
                         return tx.hash.toString('hex') === txId
                     })
                 })
-                if (
-                    txMatchedIndex + confirmation_count >
-                    this.MAX_BLOCK_COUNT
-                ) {
+                if (txMatchedIndex + confirmation_count > this.MAX_BLOCK_COUNT) {
                     this.pendingTxs[txId].push({
                         resolve,
                         index: 0,
-                        destinationIndex:
-                            confirmation_count - (10 - txMatchedIndex),
+                        destinationIndex: confirmation_count - (10 - txMatchedIndex),
                         block: this.blocks[txMatchedIndex],
                     })
                 } else {

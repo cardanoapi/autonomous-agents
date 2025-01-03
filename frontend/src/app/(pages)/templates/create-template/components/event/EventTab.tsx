@@ -34,9 +34,7 @@ const EventTab = ({
 
     const [isInfoVisible, setIsInfoVisible] = useState(false);
 
-    const [formData, setFormData] = useState<IEventTrigger | null>(
-        savedEventTrigger || null
-    );
+    const [formData, setFormData] = useState<IEventTrigger | null>(savedEventTrigger || null);
 
     const [proMode, setProMode] = useState(false);
 
@@ -48,17 +46,12 @@ const EventTab = ({
 
     useEffect(() => {
         if (savedEventTrigger) {
-            const savedEvent = transactionSchema.find(
-                (event) => event.id === savedEventTrigger?.id
-            );
+            const savedEvent = transactionSchema.find((event) => event.id === savedEventTrigger?.id);
             if (savedEvent) {
                 setCurrentEvent(savedEvent);
             }
             const lastEventFilter = savedEvent?.properties?.find(
-                (prop) =>
-                    prop.id ===
-                    savedEventTrigger?.children[savedEventTrigger?.children.length - 1]
-                        ?.id
+                (prop) => prop.id === savedEventTrigger?.children[savedEventTrigger?.children.length - 1]?.id
             );
             if (lastEventFilter) {
                 setCurrentEventFilter(lastEventFilter);
@@ -80,13 +73,26 @@ const EventTab = ({
     };
 
     const handleSelectEventFilter = (eventFilterId: string) => {
-        const selectedEventFilter = currentEvent?.properties?.find(
-            (prop) => prop.id === eventFilterId
-        );
+        const selectedEventFilter = currentEvent?.properties?.find((prop) => prop.id === eventFilterId);
         if (selectedEventFilter) {
             if (!selectedEventFilter.properties) {
                 const { id, label, type, validator } = selectedEventFilter;
                 selectedEventFilter.properties = [{ id, label, type, validator }];
+            } else {
+                const { id, label, type, validator, properties } = selectedEventFilter;
+                const idExists = selectedEventFilter.properties.find((p) => p.id === id);
+                if (!idExists) {
+                    selectedEventFilter.properties = [
+                        ...properties,
+                        {
+                            id,
+                            label,
+                            type,
+                            validator,
+                            operators: ['exists']
+                        }
+                    ];
+                }
             }
             setCurrentEventFilter(selectedEventFilter);
             return selectedEventFilter;
@@ -148,10 +154,11 @@ const EventTab = ({
                                           id: selectedParameter.id,
                                           operators: selectedParameter.operators
                                               ? selectedParameter.operators
-                                              : ['eq'],
+                                              : ['exists'],
                                           validator: selectedParameter.validator,
                                           value: '',
-                                          negate: false
+                                          negate: false,
+                                          operator: 'exists'
                                       }
                                   ]
                               }
@@ -173,10 +180,7 @@ const EventTab = ({
                           ...eventFilter,
                           children: eventFilter.children.filter((child) => {
                               if (Array.isArray(child.id)) {
-                                  return !areArraysEqual(
-                                      child.id as string[],
-                                      parameterId as string[]
-                                  );
+                                  return !areArraysEqual(child.id as string[], parameterId as string[]);
                               } else return child.id !== parameterId;
                           })
                       }
@@ -216,9 +220,7 @@ const EventTab = ({
                               ...eventFilter,
                               //@ts-ignore
                               children: eventFilter.children.map((child) =>
-                                  child.id === parameterId
-                                      ? { ...child, operator: operator }
-                                      : child
+                                  child.id === parameterId ? { ...child, operator: operator } : child
                               )
                           }
                         : eventFilter
@@ -238,9 +240,7 @@ const EventTab = ({
                               ...eventFilter,
                               //@ts-ignore
                               children: eventFilter.children.map((child) =>
-                                  child.id === parameterId
-                                      ? { ...child, negate: negate }
-                                      : child
+                                  child.id === parameterId ? { ...child, negate: negate } : child
                               )
                           }
                         : eventFilter
@@ -253,15 +253,11 @@ const EventTab = ({
     const getNotSelectedEventFilters = () => {
         return transactionSchema
             .find((tx) => tx.id === formData?.id)
-            ?.properties?.filter(
-                (prop) => !formData?.children.find((child) => child.id === prop.id)
-            );
+            ?.properties?.filter((prop) => !formData?.children.find((child) => child.id === prop.id));
     };
 
     const getFlattenEventFilterParams = () => {
-        return currentEventFilter?.properties
-            ?.map((prop) => getNestedTxProperties(prop))
-            .flat();
+        return currentEventFilter?.properties?.map((prop) => getNestedTxProperties(prop)).flat();
     };
 
     const getNotSelectedEventFilterParameters = () => {
@@ -270,16 +266,10 @@ const EventTab = ({
             getFlattenEventFilterParams()?.filter(
                 (prop: ISchema) =>
                     !formData?.children
-                        .find(
-                            (eventFilter) => eventFilter.id === currentEventFilter?.id
-                        )
+                        .find((eventFilter) => eventFilter.id === currentEventFilter?.id)
                         //@ts-ignore
                         ?.children.find(
-                            (child: IFieldNode) =>
-                                !checkIfStringOrArrayOfStringIdsAreEqual(
-                                    child.id,
-                                    prop.id
-                                )
+                            (child: IFieldNode) => !checkIfStringOrArrayOfStringIdsAreEqual(child.id, prop.id)
                         )
             )
         );
@@ -288,8 +278,7 @@ const EventTab = ({
     const removeEventFilter = (filterId?: string | string[]) => {
         if (!filterId || !formData?.children) return;
         formData.children = formData?.children.filter(
-            (child) =>
-                child.id && checkIfStringOrArrayOfStringIdsAreEqual(filterId, child.id)
+            (child) => child.id && checkIfStringOrArrayOfStringIdsAreEqual(filterId, child.id)
         );
         setFormData({ ...formData });
         formData && formData.children && formData.children.length
@@ -386,24 +375,17 @@ const EventTab = ({
                                             className={cn(
                                                 'cursor-pointer font-semibold',
                                                 currentEventFilter &&
-                                                    currentEventFilter.id ===
-                                                        child.id &&
+                                                    currentEventFilter.id === child.id &&
                                                     'text-brand-Blue-200 underline underline-offset-4'
                                             )}
-                                            onClick={() =>
-                                                handleSelectEventFilter(
-                                                    child.id as string
-                                                )
-                                            }
+                                            onClick={() => handleSelectEventFilter(child.id as string)}
                                         >
                                             {child.id}
                                         </div>
                                     ))}
                             </nav>
                             <Button
-                                onClick={() =>
-                                    removeEventFilter(currentEventFilter?.id)
-                                }
+                                onClick={() => removeEventFilter(currentEventFilter?.id)}
                                 className={'rounded px-2 py-1 !text-xs'}
                                 size={'sm'}
                             >
@@ -415,49 +397,25 @@ const EventTab = ({
                                 if (param.id === currentEventFilter?.id) {
                                     return (
                                         <div key={index}>
-                                            {(param as IBooleanNode).children?.map(
-                                                (child, childIndex) => (
-                                                    <div
-                                                        key={childIndex}
-                                                        className="flex w-full flex-col gap-4"
-                                                    >
-                                                        {
-                                                            <RenderEventChildForm
-                                                                eventFilterParam={
-                                                                    child as IFieldNode
-                                                                }
-                                                                onValueChange={(
-                                                                    value
-                                                                ) => {
-                                                                    handleParamValueChange(
-                                                                        child.id as string,
-                                                                        value
-                                                                    );
-                                                                }}
-                                                                onOperatorChange={(
-                                                                    value
-                                                                ) => {
-                                                                    handleParamOperatorChange(
-                                                                        child.id as string,
-                                                                        value
-                                                                    );
-                                                                }}
-                                                                onNegateChange={(
-                                                                    value
-                                                                ) => {
-                                                                    handleParamNegationChange(
-                                                                        child.id as string,
-                                                                        value
-                                                                    );
-                                                                }}
-                                                                onDeleteParameter={
-                                                                    handleDeleteParameter
-                                                                }
-                                                            />
-                                                        }
-                                                    </div>
-                                                )
-                                            )}
+                                            {(param as IBooleanNode).children?.map((child, childIndex) => (
+                                                <div key={childIndex} className="flex w-full flex-col gap-4">
+                                                    {
+                                                        <RenderEventChildForm
+                                                            eventFilterParam={child as IFieldNode}
+                                                            onValueChange={(value) => {
+                                                                handleParamValueChange(child.id as string, value);
+                                                            }}
+                                                            onOperatorChange={(value) => {
+                                                                handleParamOperatorChange(child.id as string, value);
+                                                            }}
+                                                            onNegateChange={(value) => {
+                                                                handleParamNegationChange(child.id as string, value);
+                                                            }}
+                                                            onDeleteParameter={handleDeleteParameter}
+                                                        />
+                                                    }
+                                                </div>
+                                            ))}
                                         </div>
                                     );
                                 }

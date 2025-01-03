@@ -9,13 +9,7 @@ import ObjectParameter from '@app/components/Agent/FormRenderer/ObjectParameter'
 import { CustomCombobox } from '@app/components/molecules/CustomCombobox';
 import { selectedFunctionAtom } from '@app/store/atoms/formRenderer';
 
-const OptionsParameter = ({
-    parameter,
-    paramIndex
-}: {
-    parameter: IParameter;
-    paramIndex: number;
-}) => {
+const OptionsParameter = ({ parameter, paramIndex }: { parameter: IParameter; paramIndex: number }) => {
     const [selectedFunction, setSelectedFunction] = useAtom(selectedFunctionAtom);
 
     function renderParamsComponent(parameter: IParameter) {
@@ -26,9 +20,7 @@ const OptionsParameter = ({
             case 'url':
                 return <InputParameter paramIndex={paramIndex} parameter={parameter} />;
             case 'object':
-                return (
-                    <ObjectParameter paramIndex={paramIndex} parameter={parameter} />
-                );
+                return <ObjectParameter paramIndex={paramIndex} parameter={parameter} />;
             case 'list':
                 return <ListParameter paramIndex={paramIndex} parameter={parameter} />;
         }
@@ -55,13 +47,9 @@ const OptionsParameter = ({
                             : { id: '', label: '' }
                     }
                     onSelect={(optionName: string) => {
-                        const option = parameter.options!.find(
-                            (item) => item.name === optionName
-                        );
+                        const option = parameter.options!.find((item) => item.name === optionName);
                         if (option && selectedFunction && selectedFunction.parameters) {
-                            selectedFunction.parameters[paramIndex].parameters = [
-                                option
-                            ];
+                            selectedFunction.parameters[paramIndex].parameters = [option];
                             setSelectedFunction({ ...selectedFunction });
                         }
                         option && setSelectedOption(option);
@@ -72,9 +60,7 @@ const OptionsParameter = ({
                 renderParamsComponent(selectedOption as IParameter)
             ) : (
                 <div className={'py-2'}>
-                    {selectedOption
-                        ? `Selected ${selectedOption.name}`
-                        : 'No Options Selected Yet'}
+                    {selectedOption ? `Selected ${selectedOption.name}` : 'No Options Selected Yet'}
                 </div>
             )}
         </div>

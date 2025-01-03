@@ -11,10 +11,7 @@ import { Button } from '@app/components/atoms/Button';
 import { ErrorToast, SuccessToast } from '@app/components/molecules/CustomToasts';
 import { Separator } from '@app/components/shadcn/ui/separator';
 import { errorAtom, selectedFunctionAtom } from '@app/store/atoms/formRenderer';
-import {
-    extractAnswerFromForm,
-    validateForDifferentType
-} from '@app/utils/formRenderer';
+import { extractAnswerFromForm, validateForDifferentType } from '@app/utils/formRenderer';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 const FormRenderer = ({
@@ -28,10 +25,8 @@ const FormRenderer = ({
     const [selectedFunction] = useAtom(selectedFunctionAtom);
     const [, setErrorIndex] = useAtom(errorAtom);
     const agentMutation = useMutation({
-        mutationFn: (data: {
-            agentId: string;
-            agentFunction: AgentTriggerRequestData;
-        }) => manualTriggerForAgent(data.agentId, data.agentFunction),
+        mutationFn: (data: { agentId: string; agentFunction: AgentTriggerRequestData }) =>
+            manualTriggerForAgent(data.agentId, data.agentFunction),
         onSuccess: () => {
             queryClient.refetchQueries({ queryKey: ['agents'] });
             SuccessToast(
@@ -45,18 +40,14 @@ const FormRenderer = ({
         }
     });
     const handleTrigger = async () => {
-        const errorIndexes = await checkIfRequiredFieldIsEmpty(
-            selectedFunction?.parameters
-        );
+        const errorIndexes = await checkIfRequiredFieldIsEmpty(selectedFunction?.parameters);
         setErrorIndex(errorIndexes);
         if (!errorIndexes.length) {
             const params = extractAnswerFromForm(selectedFunction);
             await agentMutation.mutateAsync({
                 agentId: agent?.id || '',
                 agentFunction: {
-                    function_name:
-                        (selectedFunction?.id as AgentTriggerFunctionType) ||
-                        'transferADA',
+                    function_name: (selectedFunction?.id as AgentTriggerFunctionType) || 'transferADA',
                     parameters: params
                 }
             });
@@ -84,12 +75,8 @@ const FormRenderer = ({
             <Separator className={''} />
             <div className={'flex flex-col gap-4 px-6 py-2'}>
                 <div className={'flex flex-col gap-1'}>
-                    <span className={'font-medium text-brand-Black-300'}>
-                        {selectedFunction?.name}
-                    </span>
-                    <span className={'text-sm text-brand-Black-300/80'}>
-                        {selectedFunction?.description}
-                    </span>
+                    <span className={'font-medium text-brand-Black-300'}>{selectedFunction?.name}</span>
+                    <span className={'text-sm text-brand-Black-300/80'}>{selectedFunction?.description}</span>
                 </div>
                 {selectedFunction && selectedFunction.parameters && (
                     <FormParameters parameters={selectedFunction.parameters} />

@@ -7,13 +7,8 @@ export default async function handler(
     add: Record<any, any>,
     remove: Array<any>
 ) {
-    const { dataHash, url } = await context.builtins.saveMetadata(
-        context.helpers.generateProposalMetadataContent()
-    )
-    const anchorData =
-        anchor && anchor['url'] && anchor['dataHash']
-            ? anchor
-            : { url, dataHash }
+    const { dataHash, url } = await context.builtins.saveMetadata(context.helpers.generateProposalMetadataContent())
+    const anchorData = anchor && anchor['url'] && anchor['dataHash'] ? anchor : { url, dataHash }
     const req = {
         proposals: [
             {

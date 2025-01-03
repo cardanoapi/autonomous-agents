@@ -32,9 +32,7 @@ export default function CreateAgentForm() {
     const [, setAgentCreated] = useAtom(agentCreatedAtom);
     const [submittingForm, setSubmittingForm] = useState(false);
 
-    const [agentTemplateOptions, setAgentTemplateOptions] = useState<IOption[] | []>(
-        []
-    );
+    const [agentTemplateOptions, setAgentTemplateOptions] = useState<IOption[] | []>([]);
     const { data: templates } = useQuery<ITemplate[]>({
         queryKey: ['templates'],
         queryFn: () => fetchTemplates({ page: 1, size: 50, search: '' })
@@ -118,9 +116,7 @@ export default function CreateAgentForm() {
                             name="agentTemplate"
                             render={({}) => (
                                 <FormItem>
-                                    <Label className="inline-flex">
-                                        Agent Template
-                                    </Label>
+                                    <Label className="inline-flex">Agent Template</Label>
                                     <FormControl>
                                         <div className="h-[40px] w-full">
                                             <MultipleSelector
@@ -131,10 +127,7 @@ export default function CreateAgentForm() {
                                                 ref={multiSelectorRef}
                                                 onChange={(option: IOption) => {
                                                     setSelected([option]);
-                                                    form.setValue(
-                                                        'agentTemplate',
-                                                        option.value
-                                                    );
+                                                    form.setValue('agentTemplate', option.value);
                                                 }}
                                                 onUnselect={unselectOption}
                                             />
@@ -152,14 +145,10 @@ export default function CreateAgentForm() {
                                         description={option.description}
                                         key={index}
                                         handleEdit={() => {
-                                            toast.error(
-                                                'Template Editing is currently unavailable.'
-                                            );
+                                            toast.error('Template Editing is currently unavailable.');
                                         }}
                                         handleUnselect={() => {
-                                            multiSelectorRef.current.handleUnselect(
-                                                option
-                                            );
+                                            multiSelectorRef.current.handleUnselect(option);
                                             form.resetField('agentTemplate');
                                         }}
                                     />
@@ -172,17 +161,13 @@ export default function CreateAgentForm() {
                             name="numberOfAgents"
                             render={({ field }) => (
                                 <FormItem>
-                                    <Label className="inline-flex">
-                                        Number of Agents
-                                    </Label>
+                                    <Label className="inline-flex">Number of Agents</Label>
                                     <FormControl>
                                         <NumberInput
                                             className="h-[38px] w-[138px]"
                                             {...field}
                                             type="number"
-                                            onChange={(e) =>
-                                                field.onChange(parseInt(e.target.value))
-                                            }
+                                            onChange={(e) => field.onChange(parseInt(e.target.value))}
                                             min={1}
                                         />
                                     </FormControl>

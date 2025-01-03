@@ -11,12 +11,7 @@ export interface IOverViewAgentsCard {
     inactive: number | string;
 }
 
-export default function OverViewTriggerCard({
-    title,
-    total,
-    active,
-    inactive
-}: IOverViewAgentsCard) {
+export default function OverViewTriggerCard({ title, total, active, inactive }: IOverViewAgentsCard) {
     return (
         <Card className="hover-transition-primary flex h-full w-full min-w-[269px] flex-col justify-between gap-y-0 p-4 pb-6">
             <OverViewCardTitle title={title} value={total} />

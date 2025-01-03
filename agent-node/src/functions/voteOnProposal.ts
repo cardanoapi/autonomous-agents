@@ -5,13 +5,8 @@ export default async function handler(
     proposal: Record<string, any>,
     anchor: Record<string, any>
 ) {
-    const { dataHash, url } = await context.builtins.saveMetadata(
-        context.helpers.generateVoteMetadataContent()
-    )
-    const anchorData =
-        anchor && anchor['url'] && anchor['dataHash']
-            ? anchor
-            : { url, dataHash }
+    const { dataHash, url } = await context.builtins.saveMetadata(context.helpers.generateVoteMetadataContent())
+    const anchorData = anchor && anchor['url'] && anchor['dataHash'] ? anchor : { url, dataHash }
     const req = {
         vote: {
             voter: context.wallet.drepId,
@@ -53,6 +48,7 @@ export function filter(context: FunctionContext) {
               }))
             : null
     } catch (err) {
+        console.error('VoteOnProposalFilterError : ', err)
         return null
     }
 }

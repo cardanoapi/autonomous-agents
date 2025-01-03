@@ -82,34 +82,25 @@ export default function AgentFunctionsComponent({
                         textClassName="text-xl font-semibold"
                     />
                     {enableControl && (
-                        <Button
-                            variant="primary"
-                            onClick={toggleDialog}
-                            size="sm"
-                            className="min-w-32 px-4"
-                        >
+                        <Button variant="primary" onClick={toggleDialog} size="sm" className="min-w-32 px-4">
                             Add Function
                         </Button>
                     )}
                 </div>
             </HeaderContent>
-            {agent &&
-                agent.agent_configurations &&
-                agent?.agent_configurations.length === 0 && (
-                    <EmptyScreen msg="No Functions Found" />
-                )}
-            {agent &&
-                agent.agent_configurations &&
-                agent?.agent_configurations.length > 0 && (
-                    <div className="grid h-full w-fit grid-cols-1 gap-6 overflow-auto xl:grid-cols-2  2xl:grid-cols-3">
-                        <AgentFunctionsDetailComponent
-                            agentConfigurations={agent?.agent_configurations || []}
-                            onClickDelete={handleDeleteTrigger}
-                            enableContol={enableControl}
-                            agent={agent || undefined}
-                        />
-                    </div>
-                )}
+            {agent && agent.agent_configurations && agent?.agent_configurations.length === 0 && (
+                <EmptyScreen msg="No Functions Found" />
+            )}
+            {agent && agent.agent_configurations && agent?.agent_configurations.length > 0 && (
+                <div className="grid h-full w-fit grid-cols-1 gap-6 overflow-auto xl:grid-cols-2  2xl:grid-cols-3">
+                    <AgentFunctionsDetailComponent
+                        agentConfigurations={agent?.agent_configurations || []}
+                        onClickDelete={handleDeleteTrigger}
+                        enableContol={enableControl}
+                        agent={agent || undefined}
+                    />
+                </div>
+            )}
             <Dialog open={dialogOpen} maxWidth={'xl'}>
                 <DialogContent className="relativebg-brand-Azure-400 !p-0">
                     <FunctionForm
@@ -123,10 +114,7 @@ export default function AgentFunctionsComponent({
                     />
                 </DialogContent>
             </Dialog>
-            <Dialog
-                open={openDeleteConfirmation}
-                onClose={() => setOpenDeleteConfirmation(false)}
-            >
+            <Dialog open={openDeleteConfirmation} onClose={() => setOpenDeleteConfirmation(false)}>
                 <DialogContent>
                     <ConfirmationBox
                         msg="Are you sure you want to delete this function? This action cannot be undone! "

@@ -3,15 +3,12 @@ import { IFunctionsItem, IParameter } from '@models/types/functions';
 
 export function checkIfToFillAnyOneField(parameter: IParameter) {
     return parameter.parameters
-        ? !parameter?.optional &&
-              parameter.parameters?.every((param) => param?.optional)
+        ? !parameter?.optional && parameter.parameters?.every((param) => param?.optional)
         : false;
 }
 
 export function checkIfAllFieldsAreEmptyOrFilled(params?: IParameter[]) {
-    const isSomeFieldFilled = params?.some(
-        (param) => param.value != '' && param.value != undefined
-    );
+    const isSomeFieldFilled = params?.some((param) => param.value != '' && param.value != undefined);
     if (isSomeFieldFilled && params) {
         return params.every((param) => param.value != '' && param.value != undefined);
     }
@@ -31,9 +28,7 @@ export function validateForListType(param: IParameter) {
     if (!param.items) return false;
     if (param.optional) {
         return param.items.every((item) => {
-            const isAllFieldsEmptyOrFilled = checkIfAllFieldsAreEmptyOrFilled(
-                item.parameters
-            );
+            const isAllFieldsEmptyOrFilled = checkIfAllFieldsAreEmptyOrFilled(item.parameters);
             if (!isAllFieldsEmptyOrFilled) {
                 return checkIfAllRequiredFieldAreFilled(item.parameters);
             }
@@ -68,14 +63,10 @@ export async function validateForObjectType(param: IParameter) {
     if (param.optional) {
         return checkIfAllFieldsAreEmptyOrFilled(param.parameters);
     } else {
-        const allRequiredFieldFilled = checkIfAllRequiredFieldAreFilled(
-            param.parameters
-        );
+        const allRequiredFieldFilled = checkIfAllRequiredFieldAreFilled(param.parameters);
         if (!allRequiredFieldFilled) return false;
         else {
-            return param.parameters?.some(
-                (param) => param.value != '' && param.value != undefined
-            );
+            return param.parameters?.some((param) => param.value != '' && param.value != undefined);
         }
     }
 }
@@ -97,10 +88,7 @@ export async function validateForOptionType(param: IParameter) {
 }
 
 export function validateForInputType(parameter: IParameter) {
-    return !(
-        !parameter.optional &&
-        (parameter.value === '' || parameter.value === undefined)
-    );
+    return !(!parameter.optional && (parameter.value === '' || parameter.value === undefined));
 }
 
 export async function validateForDifferentType(param: IParameter) {
@@ -125,9 +113,7 @@ export function extractAnswerFromList(param: IParameter) {
     const filteredItems = param.items
         ? param.items.filter((item) => {
               return item.parameters
-                  ? item.parameters.every(
-                        (param) => param.value != '' && param.value != undefined
-                    )
+                  ? item.parameters.every((param) => param.value != '' && param.value != undefined)
                   : false;
           })
         : [];
@@ -137,9 +123,7 @@ export function extractAnswerFromList(param: IParameter) {
             filteredItems.forEach((item) => {
                 answerMap.set(
                     item.parameters![0].value,
-                    item.parameters![1].type === 'number'
-                        ? +item.parameters![1].value
-                        : -item.parameters![1].value
+                    item.parameters![1].type === 'number' ? +item.parameters![1].value : -item.parameters![1].value
                 );
             });
             return Object.fromEntries(answerMap);
@@ -156,9 +140,7 @@ export function extractAnswerFromList(param: IParameter) {
 
 export function extractAnswerFromObject(param: IParameter) {
     const paramsMap = new Map();
-    param.parameters?.forEach((param) =>
-        paramsMap.set(param.id, param.type === 'number' ? +param.value : param.value)
-    );
+    param.parameters?.forEach((param) => paramsMap.set(param.id, param.type === 'number' ? +param.value : param.value));
     return Object.fromEntries(paramsMap);
 }
 

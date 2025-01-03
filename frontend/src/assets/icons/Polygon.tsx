@@ -8,12 +8,7 @@ function PolygonIcon({ width = 12, height = 12, className = '' }: IPolygonIcon) 
             xmlns="http://www.w3.org/2000/svg"
             className={className}
         >
-            <path
-                id="Polygon 3"
-                d="M5.62859 9L0.171463 0L11.0857 0L5.62859 9Z"
-                fill="black"
-                fillOpacity="0.76"
-            />
+            <path id="Polygon 3" d="M5.62859 9L0.171463 0L11.0857 0L5.62859 9Z" fill="black" fillOpacity="0.76" />
         </svg>
     );
 }

@@ -11,16 +11,11 @@ export function validateToken(token: string) {
     if (token.split('_')[1].includes('undefined')) {
         return 'Not a valid token. Missing secret key'
     }
-    if (!NetworkName.includes(token.split('_')[0]))
-        return 'Not a valid network name'
+    if (!NetworkName.includes(token.split('_')[0])) return 'Not a valid network name'
     return ''
 }
 
-export function reduceBooleanArray(
-    bools: Array<boolean>,
-    reducer: BooleanOperator,
-    negate: boolean
-): boolean {
+export function reduceBooleanArray(bools: Array<boolean>, reducer: BooleanOperator, negate: boolean): boolean {
     let reducedBooleanLogic
     if (reducer === 'AND') {
         reducedBooleanLogic = bools.reduce((acc, bool) => acc && bool, true)
@@ -42,14 +37,8 @@ export function compareValue(
     //   console.debug(`compareValue[${property_path.join('.')}] (${operator},${txPropertyVal}, ${objectProperty})`)
 
     const filterValue = convertToBufferIfBech32(objectProperty)
-    console.debug(
-        'filterValue=' + filterValue + ', txPropertyVal= ' + txPropertyVal
-    )
-    const result = logicalFunctions.execute(
-        operator,
-        txPropertyVal,
-        filterValue
-    )
+    console.debug('filterValue=' + filterValue + ', txPropertyVal= ' + txPropertyVal)
+    const result = logicalFunctions.execute(operator, txPropertyVal, filterValue)
 
     if (txPropertyVal.constructor.name == 'Buffer') {
         console.debug(

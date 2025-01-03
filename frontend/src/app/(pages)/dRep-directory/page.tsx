@@ -81,33 +81,22 @@ export default function DRepDirectory() {
             />
             {!isLoading && data && data?.items?.length > 0 && (
                 <div className="flex h-full w-full flex-col space-y-4 overflow-y-auto">
-                    {data?.items?.map((dRep, index) => (
-                        <DRepCard key={index} dRep={dRep} />
-                    ))}
+                    {data?.items?.map((dRep, index) => <DRepCard key={index} dRep={dRep} />)}
                 </div>
             )}
-            {!isLoading &&
-                data?.items?.length === 0 &&
-                queryParams.drep_type === 'internal' && (
-                    <EmptyScreen
-                        msg="No Internal Dreps Found"
-                        linkMsg="View all Dreps"
-                        linkOnCLick={() => handleFilterChange('all')}
-                    />
-                )}
+            {!isLoading && data?.items?.length === 0 && queryParams.drep_type === 'internal' && (
+                <EmptyScreen
+                    msg="No Internal Dreps Found"
+                    linkMsg="View all Dreps"
+                    linkOnCLick={() => handleFilterChange('all')}
+                />
+            )}
 
-            {!isLoading &&
-                data?.items?.length === 0 &&
-                queryParams.drep_type !== 'internal' && (
-                    <EmptyScreen msg="No Dreps Found" />
-                )}
+            {!isLoading && data?.items?.length === 0 && queryParams.drep_type !== 'internal' && (
+                <EmptyScreen msg="No Dreps Found" />
+            )}
             {isLoading && <Skeleton className="h-full w-full" />}
-            <div
-                className={cn(
-                    'flex flex-row-reverse',
-                    data?.items.length === 0 && 'hidden'
-                )}
-            >
+            <div className={cn('flex flex-row-reverse', data?.items.length === 0 && 'hidden')}>
                 <PaginationBtns
                     upperLimit={totalPage}
                     onPaginate={handlePaginationChange}
@@ -138,11 +127,7 @@ const DRepTopNav = ({
     return (
         <div className="flex flex-wrap items-center justify-between">
             <div className="flex flex-col gap-2 md:flex-row ">
-                <DataActionBar
-                    onSearch={handleSearch}
-                    placeholder="Search DRep ID"
-                    className="w-full"
-                />
+                <DataActionBar onSearch={handleSearch} placeholder="Search DRep ID" className="w-full" />
                 <DrepFilterTab
                     onClick={handleFilterChange}
                     taboptions={DrepFilterOptions}

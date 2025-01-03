@@ -26,8 +26,7 @@ export const currentAgentNameAtom = atom('Agent Profile');
 
 export const adminAccessAtom = atomWithStorage<boolean>('adminAccess', false);
 
-export const currentConnectedWalletAtom =
-    atomWithStorage<ICurrentConnectedWallet | null>('currentWallet', null);
+export const currentConnectedWalletAtom = atomWithStorage<ICurrentConnectedWallet | null>('currentWallet', null);
 
 export const agentWithActiveStatus = atom<Record<string, boolean> | null>(null);
 

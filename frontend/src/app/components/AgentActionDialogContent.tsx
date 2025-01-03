@@ -28,18 +28,17 @@ const AgentsActionDialogContent = ({
     triggerType,
     functionId
 }: AgentsActionDialogContentProps) => {
-    const { activeAgents, isSubmitting, handleSelect, handleAction, selectedAgentIds } =
-        useAgentsAction(triggerType, handleClose, functionId);
+    const { activeAgents, isSubmitting, handleSelect, handleAction, selectedAgentIds } = useAgentsAction(
+        triggerType,
+        handleClose,
+        functionId
+    );
 
     const [adminAccess] = useAtom(adminAccessAtom);
     const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
 
     function filterUserOwnedAgents(agents: IAgent[]) {
-        return adminAccess
-            ? agents
-            : agents.filter(
-                  (agent) => agent.userAddress === currentConnectedWallet?.address
-              );
+        return adminAccess ? agents : agents.filter((agent) => agent.userAddress === currentConnectedWallet?.address);
     }
 
     const userOwnedAgents = filterUserOwnedAgents(activeAgents);
@@ -52,11 +51,7 @@ const AgentsActionDialogContent = ({
                 ) : (
                     <div className="flex flex-col gap-2">
                         {userOwnedAgents.map((agent) => (
-                            <AgentSelector
-                                key={agent.id}
-                                agent={agent}
-                                handleSelect={handleSelect}
-                            />
+                            <AgentSelector key={agent.id} agent={agent} handleSelect={handleSelect} />
                         ))}
                     </div>
                 )}

@@ -22,6 +22,7 @@ const operatorNameToSymbol: Record<string, string> = {
     //     js suport
     contains: 'contains',
 }
+
 class LogicalFunctions {
     private typeHandlers: Map<string, Record<string, TypeHandler>>
 
@@ -38,9 +39,7 @@ class LogicalFunctions {
         const typeRegistry = this.typeHandlers.get(type)!
 
         if (typeRegistry[operator]) {
-            throw new Error(
-                `Operator "${operator}" for type "${type}" is already registered.`
-            )
+            throw new Error(`Operator "${operator}" for type "${type}" is already registered.`)
         }
 
         typeRegistry[operator] = handler
@@ -90,27 +89,11 @@ class LogicalFunctions {
             }
         }
 
-        // If still not found, try for primitive types such as number, string, etc.
-        if (this.typeHandlers.has('number')) {
-            const numberHandlers = this.typeHandlers.get('number')!
-            if (numberHandlers[operator]) {
-                return numberHandlers[operator](a, b)
-            }
-        }
-
-        console.log(
-            'typeHandlers',
-            JSON.stringify(Array.from(this.typeHandlers.keys()), undefined, 2)
-        )
-        console.log(
-            'typeHandlersvalues',
-            JSON.stringify(Array.from(this.typeHandlers.values()), undefined, 2)
-        )
+        console.log('typeHandlers', JSON.stringify(Array.from(this.typeHandlers.keys()), undefined, 2))
+        console.log('typeHandlersvalues', JSON.stringify(Array.from(this.typeHandlers.values()), undefined, 2))
 
         // If operator is not found for the types of operands, throw an error
-        throw new Error(
-            `Operator "${operator}" is not supported for operands of types "${aClass}" and "${bClass}".`
-        )
+        throw new Error(`Operator "${operator}" is not supported for operands of types "${aClass}" and "${bClass}".`)
     }
 }
 
@@ -132,40 +115,16 @@ _logicalFunctions.register('string', '>', (a: string, b: string) => a > b)
 _logicalFunctions.register('string', '<', (a: string, b: string) => a < b)
 _logicalFunctions.register('string', '>=', (a: string, b: string) => a >= b)
 _logicalFunctions.register('string', '<=', (a: string, b: string) => a <= b)
-_logicalFunctions.register(
-    'string',
-    'contains',
-    (a: string, b: string) => a.includes(b) || b.includes(a)
-)
+_logicalFunctions.register('string', 'contains', (a: string, b: string) => a.includes(b) || b.includes(a))
 
 // Register handlers for buffers
-_logicalFunctions.register('buffer', '==', (a: Buffer, b: Buffer) =>
-    a.equals(b)
-)
-_logicalFunctions.register(
-    'buffer',
-    '!=',
-    (a: Buffer, b: Buffer) => !a.equals(b)
-)
-_logicalFunctions.register(
-    'buffer',
-    '>',
-    (a: Buffer, b: Buffer) => a.compare(b) > 0
-)
-_logicalFunctions.register(
-    'buffer',
-    '<',
-    (a: Buffer, b: Buffer) => a.compare(b) < 0
-)
-_logicalFunctions.register(
-    'buffer',
-    '>=',
-    (a: Buffer, b: Buffer) => a.compare(b) >= 0
-)
-_logicalFunctions.register(
-    'buffer',
-    '<=',
-    (a: Buffer, b: Buffer) => a.compare(b) <= 0
-)
+_logicalFunctions.register('buffer', '==', (a: Buffer, b: Buffer) => a.equals(b))
+
+_logicalFunctions.register('buffer', '!=', (a: Buffer, b: Buffer) => !a.equals(b))
+
+_logicalFunctions.register('buffer', '>', (a: Buffer, b: Buffer) => a.compare(b) > 0)
+_logicalFunctions.register('buffer', '<', (a: Buffer, b: Buffer) => a.compare(b) < 0)
+_logicalFunctions.register('buffer', '>=', (a: Buffer, b: Buffer) => a.compare(b) >= 0)
+_logicalFunctions.register('buffer', '<=', (a: Buffer, b: Buffer) => a.compare(b) <= 0)
 
 export const logicalFunctions = _logicalFunctions

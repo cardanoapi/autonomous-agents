@@ -7,20 +7,13 @@ export interface IOverViewAgentsCard {
     inactiveAgents: number | string;
 }
 
-export default function OverViewAgentsCard({
-    title,
-    totalAgents,
-    activeAgents,
-    inactiveAgents
-}: IOverViewAgentsCard) {
+export default function OverViewAgentsCard({ title, totalAgents, activeAgents, inactiveAgents }: IOverViewAgentsCard) {
     return (
         <OverViewCard title={title} value={totalAgents}>
             <div className="flex w-full items-center gap-x-8 overflow-x-clip 4xl:gap-x-16">
                 <div className="flex w-32 items-center gap-x-2 sm:w-fit">
                     <ActiveBall />
-                    <div className="card-h4 !text-brand-Green-200">
-                        {activeAgents} Running
-                    </div>
+                    <div className="card-h4 !text-brand-Green-200">{activeAgents} Running</div>
                 </div>
                 <div className="flex items-center gap-x-1">
                     <InactiveBall />

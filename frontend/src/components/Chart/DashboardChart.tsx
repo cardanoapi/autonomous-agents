@@ -39,10 +39,7 @@ export default function DashboardChart({ className }: { className?: string }) {
         {
             placeholder: 'Last Hour',
             timeUnit: 'Mins',
-            chartData: convertDictToGraphDataFormat(
-                triggerHistoryMetric?.last_hour_successful_triggers || [],
-                'Mins'
-            ),
+            chartData: convertDictToGraphDataFormat(triggerHistoryMetric?.last_hour_successful_triggers || [], 'Mins'),
             xAxisInterval: 5
         },
         {
@@ -57,10 +54,7 @@ export default function DashboardChart({ className }: { className?: string }) {
         {
             placeholder: 'Last 7 Days',
             timeUnit: 'Days',
-            chartData: convertDictToGraphDataFormat(
-                triggerHistoryMetric?.last_week_successful_triggers || [],
-                'Days'
-            ),
+            chartData: convertDictToGraphDataFormat(triggerHistoryMetric?.last_week_successful_triggers || [], 'Days'),
             xAxisInterval: 0
         }
     ];
@@ -84,18 +78,11 @@ export default function DashboardChart({ className }: { className?: string }) {
                                 {dataSources[currentChartFilterOption].placeholder}
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="bg-white">
-                                {chartFilterOptions.map(
-                                    (item: IChartFilterOption, index) => (
-                                        <DropdownMenuItem
-                                            key={index}
-                                            onClick={() =>
-                                                setCurrentChartFilterOption(index)
-                                            }
-                                        >
-                                            {item.placeholder}
-                                        </DropdownMenuItem>
-                                    )
-                                )}
+                                {chartFilterOptions.map((item: IChartFilterOption, index) => (
+                                    <DropdownMenuItem key={index} onClick={() => setCurrentChartFilterOption(index)}>
+                                        {item.placeholder}
+                                    </DropdownMenuItem>
+                                ))}
                             </DropdownMenuContent>
                         </DropdownMenu>
                     )}
@@ -106,12 +93,8 @@ export default function DashboardChart({ className }: { className?: string }) {
                     ) : (
                         <>
                             <CustomLineChart
-                                chartData={
-                                    dataSources[currentChartFilterOption].chartData
-                                }
-                                xaxisInterval={
-                                    dataSources[currentChartFilterOption].xAxisInterval
-                                }
+                                chartData={dataSources[currentChartFilterOption].chartData}
+                                xaxisInterval={dataSources[currentChartFilterOption].xAxisInterval}
                             />
                         </>
                     )}

@@ -100,11 +100,7 @@ export interface IAgent {
     secret_key?: string;
 }
 
-export const fetchAgents = async (params: {
-    page: number;
-    size: number;
-    search: string;
-}): Promise<IAgent[]> => {
+export const fetchAgents = async (params: { page: number; size: number; search: string }): Promise<IAgent[]> => {
     const { page, size, search } = params;
 
     const queryString = convertToQueryStr(page, size, search);
@@ -205,10 +201,7 @@ export interface AgentTriggerRequestData {
     parameters: Array<any>;
 }
 
-export const manualTriggerForAgent = async (
-    agentId: string,
-    data: AgentTriggerRequestData
-) => {
+export const manualTriggerForAgent = async (agentId: string, data: AgentTriggerRequestData) => {
     const url = `${baseAPIurl}/agents/${agentId}/trigger`;
     try {
         const response = await axios.post(url, data, {

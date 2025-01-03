@@ -41,36 +41,23 @@ export function convertDictToGraphDataFormat(
 
     switch (chartUnit) {
         case 'Mins':
-            timeStampCalculator = (val: number) =>
-                new Date(Date.now() - val * 60000).toTimeString();
+            timeStampCalculator = (val: number) => new Date(Date.now() - val * 60000).toTimeString();
             xAxisTickGenerator = (val: number) => {
                 const date = new Date(Date.now() - val * 60000);
-                return (
-                    appendZeroIfRequired(date.getHours()) +
-                    ':' +
-                    appendZeroIfRequired(date.getMinutes())
-                );
+                return appendZeroIfRequired(date.getHours()) + ':' + appendZeroIfRequired(date.getMinutes());
             };
             break;
         case 'Hours':
-            timeStampCalculator = (val: number) =>
-                new Date(Date.now() - val * 3600000).toTimeString();
+            timeStampCalculator = (val: number) => new Date(Date.now() - val * 3600000).toTimeString();
             xAxisTickGenerator = (val: number) => {
                 const date = new Date(Date.now() - val * 3600000);
-                return (
-                    appendZeroIfRequired(date.getHours()) +
-                    ':' +
-                    appendZeroIfRequired(date.getMinutes())
-                );
+                return appendZeroIfRequired(date.getHours()) + ':' + appendZeroIfRequired(date.getMinutes());
             };
             break;
         case 'Days':
-            timeStampCalculator = (val: number) =>
-                new Date(Date.now() - val * 86400000).toDateString();
+            timeStampCalculator = (val: number) => new Date(Date.now() - val * 86400000).toDateString();
             xAxisTickGenerator = (val: number) => {
-                const dateParts = new Date(Date.now() - val * 86400000)
-                    .toDateString()
-                    .split(' ');
+                const dateParts = new Date(Date.now() - val * 86400000).toDateString().split(' ');
                 return dateParts.slice(1, 3).join(' ');
             };
             break;

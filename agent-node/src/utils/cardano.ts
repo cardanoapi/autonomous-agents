@@ -13,26 +13,15 @@ export function rewardAddressRawBytes(network: number, stakevkh: string) {
     return result
 }
 
-export function rewardAddressBech32(
-    networkId: number,
-    stakevkh: string
-): string {
+export function rewardAddressBech32(networkId: number, stakevkh: string): string {
     const prefix = networkId == 0 ? 'stake_test' : 'stake'
-    return bech32.encode(
-        prefix,
-        bech32.toWords(Buffer.from(rewardAddressRawBytes(networkId, stakevkh))),
-        200
-    )
+    return bech32.encode(prefix, bech32.toWords(Buffer.from(rewardAddressRawBytes(networkId, stakevkh))), 200)
 }
 
 export function convertToBufferIfBech32(address: any): Buffer | string | any {
     if (!address) return ''
     else if (typeof address !== 'string') return address
-    else if (
-        address.includes('stake') ||
-        address.includes('drep') ||
-        address.includes('addr')
-    ) {
+    else if (address.includes('stake') || address.includes('drep') || address.includes('addr')) {
         const decoded = bech32.decode(address, 1000)
         const data = bech32.fromWords(decoded.words)
         return Buffer.from(data)

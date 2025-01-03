@@ -10,17 +10,8 @@ import { useAtom } from 'jotai';
 
 import AgentTabSection from '@app/components/Agent/AgentTab/AgentTab';
 import AgentTabContent from '@app/components/Agent/AgentTab/AgentTabContent';
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbList,
-    BreadcrumbSeparator
-} from '@app/components/atoms/Breadcrumb';
-import {
-    adminAccessAtom,
-    currentAgentNameAtom,
-    currentConnectedWalletAtom
-} from '@app/store/localStore';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from '@app/components/atoms/Breadcrumb';
+import { adminAccessAtom, currentAgentNameAtom, currentConnectedWalletAtom } from '@app/store/localStore';
 
 export default function AgentPageById() {
     const [, setCurrentAgentName] = useAtom(currentAgentNameAtom);

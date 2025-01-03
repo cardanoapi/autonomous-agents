@@ -1,12 +1,7 @@
 import { Action } from '../service/triggerService'
 
 export type BooleanOperator = 'AND' | 'OR'
-export type ComparisonOperator =
-    | 'equals'
-    | 'greaterThan'
-    | 'lessThan'
-    | 'in'
-    | 'exists'
+export type ComparisonOperator = 'equals' | 'greaterThan' | 'lessThan' | 'in' | 'exists'
 
 export interface IEventBasedAction {
     eventTrigger: IBooleanNode | IFieldNode

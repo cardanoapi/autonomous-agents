@@ -13,11 +13,7 @@ export default function InfoCard({
 }) {
     return (
         <div className="group relative  mb-2 flex self-end">
-            <Info
-                className="hover:text-gray-400"
-                onMouseEnter={onMouseEnter}
-                onMouseLeave={onMouseLeave}
-            />
+            <Info className="hover:text-gray-400" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} />
             <span
                 className={cn(
                     'absolute left-10 top-4 hidden w-64 rounded bg-gray-100 p-4 shadow transition-opacity duration-200',

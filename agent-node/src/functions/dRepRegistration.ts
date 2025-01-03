@@ -1,13 +1,8 @@
 import { FunctionContext } from '../executor/BaseFunction'
 
 export default async function builtin(context: FunctionContext, anchor: any) {
-    const { dataHash, url } = await context.builtins.saveMetadata(
-        context.helpers.generateDrepMetadataContent()
-    )
-    const anchorData =
-        anchor && anchor['url'] && anchor['dataHash']
-            ? anchor
-            : { url, dataHash }
+    const { dataHash, url } = await context.builtins.saveMetadata(context.helpers.generateDrepMetadataContent())
+    const anchorData = anchor && anchor['url'] && anchor['dataHash'] ? anchor : { url, dataHash }
     const req = {
         certificates: [
             {

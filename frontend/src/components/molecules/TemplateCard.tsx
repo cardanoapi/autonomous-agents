@@ -20,10 +20,7 @@ export interface ITemplateCard {
     enableDelete?: boolean;
 }
 
-export default function TemplateCard({
-    template,
-    enableDelete = false
-}: ITemplateCard) {
+export default function TemplateCard({ template, enableDelete = false }: ITemplateCard) {
     const router = useRouter();
     const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -51,9 +48,7 @@ export default function TemplateCard({
                 enableDelete={enableDelete}
                 onEdit={() => router.push(`/templates/${template.id}`)}
                 onDelete={() => setDialogOpen(true)}
-                templateTriggerNames={returnTriggersList(
-                    template.template_configurations || []
-                )}
+                templateTriggerNames={returnTriggersList(template.template_configurations || [])}
             />
             <DeleteTemplateDialog
                 isOpen={dialogOpen}
@@ -64,13 +59,7 @@ export default function TemplateCard({
     );
 }
 
-function TemplateCardContent({
-    template,
-    enableDelete,
-    onEdit,
-    onDelete,
-    templateTriggerNames
-}: any) {
+function TemplateCardContent({ template, enableDelete, onEdit, onDelete, templateTriggerNames }: any) {
     const TriggersDiv = () => {
         return (
             <div className="card-h4 flex items-center gap-3">
@@ -106,9 +95,7 @@ function TemplateCardContent({
                     {Truncate(template.description, 60)}
                 </CardDescription>
                 <CardContent className="mt-3 flex flex-col gap-y-0">
-                    <span className="card-h4">
-                        Functions : {template?.template_configurations?.length || 0}
-                    </span>
+                    <span className="card-h4">Functions : {template?.template_configurations?.length || 0}</span>
                     <TriggersDiv />
                 </CardContent>
             </div>
@@ -117,8 +104,7 @@ function TemplateCardContent({
 }
 
 function TemplateCardHeader({ templateName, enableDelete, onDelete }: any) {
-    const iconClass =
-        'absolute -top-1 h-5 w-5 -right-1 hidden hover:cursor-pointer group-hover:flex z-20 bg-white';
+    const iconClass = 'absolute -top-1 h-5 w-5 -right-1 hidden hover:cursor-pointer group-hover:flex z-20 bg-white';
 
     return (
         <div className="relative z-10 flex justify-between gap-4">

@@ -39,11 +39,7 @@ export interface ICreateTemplateRequestDTO {
     template_triggers: ITriggerCreateDto[];
 }
 
-export const fetchTemplates = async (params: {
-    page: number;
-    size: number;
-    search: string;
-}): Promise<ITemplate[]> => {
+export const fetchTemplates = async (params: { page: number; size: number; search: string }): Promise<ITemplate[]> => {
     const { page, size, search } = params;
 
     const queryString = convertToQueryStr(page, size, search);
@@ -63,11 +59,7 @@ export const fetchTemplatebyID = async (templateID: string): Promise<ITemplate> 
     return await res.json();
 };
 
-export const postTemplateData = async ({
-    data
-}: {
-    data: ICreateTemplateRequestDTO;
-}) => {
+export const postTemplateData = async ({ data }: { data: ICreateTemplateRequestDTO }) => {
     try {
         const response = await axios.post(
             `${baseAPIurl}/templates`,

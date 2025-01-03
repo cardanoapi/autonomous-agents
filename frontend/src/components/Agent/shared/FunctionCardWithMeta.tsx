@@ -25,9 +25,7 @@ const FunctionCardWithMeta = ({
         return TemplateFunctions.find((f) => f.id === functionName);
     };
     const renderConfigMeta = (config: IAgentConfiguration | ITemplateConfiguration) => {
-        const functionMetaData = getFunctionMetaData(
-            config.action?.function_name || ''
-        );
+        const functionMetaData = getFunctionMetaData(config.action?.function_name || '');
 
         return (
             <>
@@ -37,9 +35,7 @@ const FunctionCardWithMeta = ({
                         {config.type}
                     </span>
                 </span>
-                <span className="text-[10px] text-gray-700">
-                    {functionMetaData?.description || 'No description'}
-                </span>
+                <span className="text-[10px] text-gray-700">{functionMetaData?.description || 'No description'}</span>
             </>
         );
     };
@@ -82,9 +78,7 @@ const FunctionCardWithMeta = ({
                         />
                         <CustomCopyBox
                             title="Cron Expression"
-                            content={convertCRONExpressionToReadableForm(
-                                (config.data as ICronTrigger).frequency
-                            )}
+                            content={convertCRONExpressionToReadableForm((config.data as ICronTrigger).frequency)}
                             className="w-auto"
                             showCopyIcon={false}
                         />

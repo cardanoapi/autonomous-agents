@@ -1,26 +1,16 @@
-import {
-    Action,
-    ActionParameter,
-    Configuration,
-    TriggerType,
-} from '../service/triggerService'
+import { Action, ActionParameter, Configuration, TriggerType } from '../service/triggerService'
 import { ManagerInterface } from '../service/ManagerInterfaceService'
 import { CallLog } from '../executor/Executor'
 import { ILog, InternalLog } from '../service/TriggerActionHandler'
 import { DateTime } from 'luxon'
 import { IEventBasedAction, IFilterNode } from '../types/eventTriger'
 
-export function getParameterValue(
-    parameters: ActionParameter[] = [],
-    name: string
-): any {
+export function getParameterValue(parameters: ActionParameter[] = [], name: string): any {
     const param = parameters.find((param) => param && param.name === name)
     return param ? param.value : ''
 }
 
-export function checkIfAgentWithEventTriggerTypeExists(
-    configurations: Configuration[]
-) {
+export function checkIfAgentWithEventTriggerTypeExists(configurations: Configuration[]) {
     const eventBasedAction: IEventBasedAction[] = []
     configurations.forEach((config) => {
         if (config.type === 'EVENT') {
@@ -69,9 +59,7 @@ export function saveTxLog(
                 txLog.txHash = mainLog.return.hash
             } else if (mainLog.error) {
                 txLog.result = mainLog.error
-                txLog.message =
-                    mainLog.error &&
-                    ((mainLog.error as Error).message ?? mainLog.error)
+                txLog.message = mainLog.error && ((mainLog.error as Error).message ?? mainLog.error)
                 txLog.success = false
             }
             callLogs.length &&
@@ -87,8 +75,7 @@ export function saveTxLog(
                         internalLog.txHash = log.return.hash
                     } else if (log.error) {
                         internalLog.result = log.error
-                        internalLog.message =
-                            log.error && (log.error.message ?? log.error)
+                        internalLog.message = log.error && (log.error.message ?? log.error)
                         internalLog.success = false
                     }
                     internalLog.timeStamp = DateTime.utc().toISO()

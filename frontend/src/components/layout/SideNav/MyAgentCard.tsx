@@ -10,13 +10,7 @@ import { cn } from '@app/components/lib/utils';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 import { adminAccessAtom, currentConnectedWalletAtom } from '@app/store/localStore';
 
-export default function MyAgentCard({
-    className,
-    onClick
-}: {
-    className?: string;
-    onClick?: any;
-}) {
+export default function MyAgentCard({ className, onClick }: { className?: string; onClick?: any }) {
     const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
     const [adminAccess] = useAtom(adminAccessAtom);
     const router: AppRouterInstance = useRouter();
@@ -45,18 +39,11 @@ export default function MyAgentCard({
             }}
         >
             <div className="flex items-center">
-                <AgentAvatar
-                    hash={agent.id}
-                    size={32}
-                    isActive={agent.is_active || false}
-                    isLink={false}
-                />
+                <AgentAvatar hash={agent.id} size={32} isActive={agent.is_active || false} isLink={false} />
             </div>
             <div className="flex flex-col">
                 <span className="h3 text-brand-Blue-200">My Agent</span>
-                <span className="break-all text-xs text-brand-Black-200">
-                    {agent.name}
-                </span>
+                <span className="break-all text-xs text-brand-Black-200">{agent.name}</span>
             </div>
         </div>
     );

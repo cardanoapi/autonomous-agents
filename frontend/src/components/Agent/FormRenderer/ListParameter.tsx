@@ -8,13 +8,7 @@ import { useDebounceValue } from 'usehooks-ts';
 import { Input } from '@app/components/atoms/Input';
 import { errorAtom, selectedFunctionAtom } from '@app/store/atoms/formRenderer';
 
-const ListParameter = ({
-    paramIndex,
-    parameter
-}: {
-    paramIndex: number;
-    parameter: IParameter;
-}) => {
+const ListParameter = ({ paramIndex, parameter }: { paramIndex: number; parameter: IParameter }) => {
     const [selectedFunction, setSelectedFunction] = useAtom(selectedFunctionAtom);
     const [errorIndex] = useAtom(errorAtom);
     const [items, setItems] = useState<Array<ItemObject>>(parameter.items || []);
@@ -75,9 +69,7 @@ const ListParameter = ({
         if (items && items.length) {
             const paramLength = items.length;
             items?.map((item, index) => {
-                const isParamsFieldEmpty = item.parameters!.every(
-                    (param) => param.value === ''
-                );
+                const isParamsFieldEmpty = item.parameters!.every((param) => param.value === '');
                 if (isParamsFieldEmpty && paramLength > 1 && index != paramLength - 1) {
                     isEmpty = true;
                 }
@@ -126,14 +118,9 @@ const ListParameter = ({
                     <div className={'grid grid-cols-11 gap-4'}>
                         {items[0]?.parameters?.map((param) => {
                             return (
-                                <div
-                                    key={param.id}
-                                    className={'col-span-5 flex flex-row gap-1'}
-                                >
+                                <div key={param.id} className={'col-span-5 flex flex-row gap-1'}>
                                     <span>{param.name}</span>
-                                    {!parameter.optional && (
-                                        <span className={'text-red-500 '}>*</span>
-                                    )}
+                                    {!parameter.optional && <span className={'text-red-500 '}>*</span>}
                                 </div>
                             );
                         })}
@@ -142,18 +129,11 @@ const ListParameter = ({
                 {items &&
                     items.map((item, index) => {
                         return (
-                            <div
-                                key={index}
-                                className={' relative grid grid-cols-11 gap-2'}
-                            >
+                            <div key={index} className={' relative grid grid-cols-11 gap-2'}>
                                 {item.parameters && (
                                     <ItemsObjectParameter
-                                        defaultValues={
-                                            items.length ? items[index].parameters : []
-                                        }
-                                        handleOnChange={(params) =>
-                                            handleOnChangeParams(params, index)
-                                        }
+                                        defaultValues={items.length ? items[index].parameters : []}
+                                        handleOnChange={(params) => handleOnChangeParams(params, index)}
                                         parameters={item.parameters}
                                     />
                                 )}
@@ -174,9 +154,7 @@ const ListParameter = ({
                 <div className={`flex justify-center `}>
                     <div
                         className={` w-fit rounded p-0.5 hover:bg-gray-200 ${checkIfFieldIsRequired() ? 'cursor-pointer' : 'cursor-not-allowed'}`}
-                        onClick={
-                            checkIfFieldIsRequired() ? handleClickPlusIcon : () => {}
-                        }
+                        onClick={checkIfFieldIsRequired() ? handleClickPlusIcon : () => {}}
                     >
                         <PlusIcon />
                     </div>
@@ -203,10 +181,7 @@ const ItemsObjectParameter = ({
         }
     }, [defaultValues]);
 
-    const handleInputChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
-        index: number
-    ) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         e.preventDefault();
         const updatedParam = params[index];
         updatedParam.value = e.target.value;
@@ -218,12 +193,7 @@ const ItemsObjectParameter = ({
     function checkIfFieldIsRequired(parameter: IParameter) {
         const isAnyFieldFilled = params.some((param) => param.value !== '');
         if (isAnyFieldFilled) {
-            return (
-                !parameter.value &&
-                !params
-                    .filter((param) => !param.optional)
-                    .every((param) => param.value !== '')
-            );
+            return !parameter.value && !params.filter((param) => !param.optional).every((param) => param.value !== '');
         }
         return false;
     }
@@ -246,9 +216,7 @@ const ItemsObjectParameter = ({
                             onChange={(e) => handleInputChange(e, index)}
                             type={param.type === 'number' ? 'number' : 'text'}
                         />
-                        {checkIfFieldIsRequired(param) && (
-                            <span className={' text-red-500'}>*</span>
-                        )}
+                        {checkIfFieldIsRequired(param) && <span className={' text-red-500'}>*</span>}
                     </div>
                 );
             })}
