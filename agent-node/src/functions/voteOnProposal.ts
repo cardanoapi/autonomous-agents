@@ -42,9 +42,9 @@ export function filter(context: FunctionContext) {
         const filters = context.filter['proposalProcedures']
         const matchedFilterIndexes = filters.map((i: any) => !!i.matchedIndex)
         return matchedFilterIndexes.length
-            ? matchedFilterIndexes.map((p: any, index: number) => ({
+            ? matchedFilterIndexes.map((p: any) => ({
                   name: 'proposalId',
-                  value: `${tx.hash.toString('hex')}#${index}`,
+                  value: `${tx.hash.toString('hex')}#${p.matchedIndex}`,
               }))
             : null
     } catch (err) {
