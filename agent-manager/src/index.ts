@@ -21,8 +21,8 @@ import environments from './config/environments'
 const app = express()
 const port = environments.serverPort
 
-app.use('/health', healthCheck)
-app.use('/blockfrost/health', blockfrostHealth)
+app.use('/api/health', healthCheck)
+app.use('/api/blockfrost/health', blockfrostHealth)
 
 const server = app.listen(port, async () => {
     console.log(`Server is running on http://localhost:${port}`)
