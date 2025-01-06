@@ -864,9 +864,9 @@ buffers@~0.1.1:
   integrity sha512-9q/rDEGSb/Qsvv2qvzIzdluL5k7AaJOTrw23z9reQthrbF7is4CtlT0DXyO1oei2DCp4uojjzQ7igaSHp1kAEQ==
 
 bufferutil@^4.0.1:
-  version "4.0.8"
-  resolved "https://registry.yarnpkg.com/bufferutil/-/bufferutil-4.0.8.tgz#1de6a71092d65d7766c4d8a522b261a6e787e8ea"
-  integrity sha512-4T53u4PdgsXqKaIctwF8ifXlRTTmEPJ8iEPWFdGZvcf7sbwYo6FKFEX9eNNAnzFZ7EzJAQ3CJeOtCRA4rDp7Pw==
+  version "4.0.9"
+  resolved "https://registry.yarnpkg.com/bufferutil/-/bufferutil-4.0.9.tgz#6e81739ad48a95cad45a279588e13e95e24a800a"
+  integrity sha512-WDtdLmJvAuNNPzByAYpRo2rF1Mmradw6gvWsQKf63476DDXmomT9zUiGypLcG4ibIM67vhAj8jJRdbmEws2Aqw==
   dependencies:
     node-gyp-build "^4.3.0"
 
@@ -2010,10 +2010,10 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-libcardano@1.4.17:
-  version "1.4.17"
-  resolved "https://registry.yarnpkg.com/libcardano/-/libcardano-1.4.17.tgz#56d915d1368d8f8fa1ad451351cb31dcd5b9ea3a"
-  integrity sha512-UVYcNgoy+zNGYBJMeTuU23OXFggTB5wgH2i+nMpfmb14/bEuaeQ0muLpGQp+sr18PCK7DZQQGz+PdS3bLhSNjQ==
+libcardano@1.4.19:
+  version "1.4.19"
+  resolved "https://registry.yarnpkg.com/libcardano/-/libcardano-1.4.19.tgz#9859f65ca9dd40c2ba0b5a13b525efbd03f0143c"
+  integrity sha512-xe4/2I1rDiYekUv09qWNgNbdmlTUJrQvgqBnQ2DlrmoU5jHp97pizWatL2U2Js1C+FibWqUXIT2h+kIvh4WPLA==
   dependencies:
     "@cardano-sdk/crypto" "^0.1.30"
     "@noble/curves" "^1.6.0"
@@ -2417,9 +2417,9 @@ mute-stream@^1.0.0, mute-stream@~1.0.0:
   integrity sha512-avsJQhyd+680gKXyG/sQc0nXaC6rBkPOfyHYcFb9+hdkqQkR9bdnkJ0AMZhke0oesPqIO+mFFJ+IdBc7mst4IA==
 
 nan@^2.14.1:
-  version "2.20.0"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.20.0.tgz#08c5ea813dd54ed16e5bd6505bf42af4f7838ca3"
-  integrity sha512-bk3gXBZDGILuuo/6sKtr0DQmSThYHLtNCdSdXk9YkxD/jK6X2vmCyyXBBxyqZ4XcnzTyYEAThfX3DCEnLf6igw==
+  version "2.22.0"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.22.0.tgz#31bc433fc33213c97bad36404bb68063de604de3"
+  integrity sha512-nbajikzWTMwsW+eSsNm3QwlOs7het9gGJU5dDZzRTQGk03vyBOauxgI4VakDzE0PtsGTmXPsXTbbjVhRwR5mpw==
 
 nanoassert@^2.0.0:
   version "2.0.0"
@@ -2466,9 +2466,9 @@ node-cron@^3.0.3:
     uuid "8.3.2"
 
 node-gyp-build@^4.3.0:
-  version "4.8.2"
-  resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-4.8.2.tgz#4f802b71c1ab2ca16af830e6c1ea7dd1ad9496fa"
-  integrity sha512-IRUxE4BVsHWXkV/SFOut4qTlagw2aM8T5/vnTsmrHJvVoKueJHRc/JaFND7QDDc61kLYUJ6qlZM3sqTSyx2dTw==
+  version "4.8.4"
+  resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-4.8.4.tgz#8a70ee85464ae52327772a90d66c6077a900cfc8"
+  integrity sha512-LA4ZjwlnUblHVgq0oBF3Jl/6h/Nvs5fzBLwdEF4nuxnFdsfajde4WfxtJr3CaiH+F6ewcIB/q4jQ4UzPyid+CQ==
 
 node-gyp@^9.0.0, node-gyp@^9.4.1:
   version "9.4.1"

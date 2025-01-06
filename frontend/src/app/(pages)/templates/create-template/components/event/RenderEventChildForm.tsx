@@ -32,6 +32,15 @@ const RenderEventChildForm = ({
 }) => {
     const [localOperator, setLocalOperator] = useState<string>(eventFilterParam.operator || 'eq');
     const [value, setValue] = useState(eventFilterParam.value);
+    const [deleteBtnClicked,setDeleteBtnClicked] = useState(false)
+
+    useEffect(() => {
+        if (deleteBtnClicked) {
+            setLocalOperator(eventFilterParam.operator || 'eq');
+            setValue(eventFilterParam.value);
+        }
+        setDeleteBtnClicked(false)
+    }, [deleteBtnClicked]);
 
     const paramId = Array.isArray(eventFilterParam.id)
         ? (eventFilterParam.id as string[]).join('.')
@@ -47,8 +56,7 @@ const RenderEventChildForm = ({
 
     useEffect(() => {
         if (debouncedVal && eventFilterParam?.validator && !eventFilterParam?.validator(debouncedVal)) {
-            setErrMsg(`Error occured on ${paramId}`);
-            return;
+            return setErrMsg(`Error occured on ${paramId}`);
         }
         onValueChange?.(debouncedVal);
     }, [debouncedVal]);
@@ -69,6 +77,7 @@ const RenderEventChildForm = ({
 
     const handleOnDeleteParam = (paramId: string | string[]) => {
         onDeleteParameter && onDeleteParameter(paramId);
+        setDeleteBtnClicked(true)
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,10 +113,10 @@ const RenderEventChildForm = ({
                         ))}
                     </DropdownMenuContent>
                 </DropdownMenu>
+                <span className={'text-red-500'}>{eventFilterParam.value}</span>
                 {localOperator !== 'exists' ? (
                     <Input
                         className="w-full rounded-none border-b-2 border-l-0 border-r-0 border-t-0 border-black bg-transparent focus:outline-none focus:ring-0"
-                        defaultValue={eventFilterParam.value}
                         onChange={handleInputChange}
                         value={value}
                     />

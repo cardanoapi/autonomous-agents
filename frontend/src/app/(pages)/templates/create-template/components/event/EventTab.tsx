@@ -392,34 +392,33 @@ const EventTab = ({
                                 Remove Event Filter
                             </Button>
                         </div>
-                        {currentEventFilter &&
-                            formData?.children.map((param, index) => {
-                                if (param.id === currentEventFilter?.id) {
-                                    return (
-                                        <div key={index}>
-                                            {(param as IBooleanNode).children?.map((child, childIndex) => (
-                                                <div key={childIndex} className="flex w-full flex-col gap-4">
-                                                    {
-                                                        <RenderEventChildForm
-                                                            eventFilterParam={child as IFieldNode}
-                                                            onValueChange={(value) => {
-                                                                handleParamValueChange(child.id as string, value);
-                                                            }}
-                                                            onOperatorChange={(value) => {
-                                                                handleParamOperatorChange(child.id as string, value);
-                                                            }}
-                                                            onNegateChange={(value) => {
-                                                                handleParamNegationChange(child.id as string, value);
-                                                            }}
-                                                            onDeleteParameter={handleDeleteParameter}
-                                                        />
-                                                    }
-                                                </div>
-                                            ))}
-                                        </div>
-                                    );
-                                }
-                            })}
+                        {formData?.children.map((param, index) => {
+                            if (param.id === currentEventFilter?.id) {
+                                return (
+                                    <div key={index}>
+                                        {(param as IBooleanNode).children?.map((child, childIndex) => (
+                                            <div key={childIndex} className="flex w-full flex-col gap-4">
+                                                {
+                                                    <RenderEventChildForm
+                                                        eventFilterParam={child as IFieldNode}
+                                                        onValueChange={(value) => {
+                                                            handleParamValueChange(child.id as string, value);
+                                                        }}
+                                                        onOperatorChange={(value) => {
+                                                            handleParamOperatorChange(child.id as string, value);
+                                                        }}
+                                                        onNegateChange={(value) => {
+                                                            handleParamNegationChange(child.id as string, value);
+                                                        }}
+                                                        onDeleteParameter={handleDeleteParameter}
+                                                    />
+                                                }
+                                            </div>
+                                        ))}
+                                    </div>
+                                );
+                            }
+                        })}
                     </Card>
                 </>
             )}
