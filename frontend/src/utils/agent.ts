@@ -10,7 +10,7 @@ export function isAgentActive({ last_active }: IAgent): boolean {
     return diffInSeconds <= 33;
 }
 
-export function getConfiguredAgentTrigger(func: AgentTriggerFunctionType, value: string): IAgentTrigger {
+export function getConfiguredAgentTrigger(func: AgentTriggerFunctionType, value: string, name?: string): IAgentTrigger {
     const trigger = AGENT_TRIGGER[func];
 
     if (!trigger) {
@@ -25,6 +25,12 @@ export function getConfiguredAgentTrigger(func: AgentTriggerFunctionType, value:
             };
 
         case 'voteOnProposal':
+            if (name) {
+                return {
+                    ...trigger,
+                    parameters: [{ ...trigger.parameters[0], name, value }]
+                };
+            }
             return { ...trigger, parameters: [{ ...trigger.parameters[0], value }] };
 
         default:

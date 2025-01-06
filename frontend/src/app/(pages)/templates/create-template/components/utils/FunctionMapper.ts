@@ -7,7 +7,7 @@ import { IParameter, IParameterOption, TemplateFunctions } from '@models/types/f
 
 import { IFormFunctionInstance } from '../../page';
 import {
-    // mapKeyValuePairToParamValue,
+    mapKeyValuePairToParamValue, // mapKeyValuePairToParamValue,
     mapOptionToKeyValuePair,
     mapParamValueToKeyValuePair
 } from './MapperHelper';
@@ -25,7 +25,7 @@ export const mapFormFunctionToTriggerConfiguration = (item: IFormFunctionInstanc
                 type: item.type,
                 action: {
                     function_name: item.id,
-                    parameters: mapParamValueToKeyValuePair(item.parameters || [])
+                    parameters: item.optionValue ? [mapOptionToKeyValuePair(item.optionValue, 'vote')] : []
                 },
                 data: item.eventValue
             };
@@ -41,6 +41,22 @@ export const mapFormFunctionToTriggerConfiguration = (item: IFormFunctionInstanc
             },
             data: commonData
         };
+    }
+
+    if (item.id == 'voteOnProposal' && item.type == 'CRON' && item.optionValue) {
+        alert(item.optionValue.id);
+        item.parameters =
+            item.parameters?.map((param) => {
+                if (param.type === 'options') {
+                    return {
+                        name: param.name,
+                        id: param.id || 'vote',
+                        type: 'string',
+                        value: item.optionValue?.id || 'yes'
+                    };
+                }
+                return param;
+            }) || item.parameters;
     }
 
     return {
@@ -141,6 +157,9 @@ export const mapTriggerConfigurationToFormFunction = (
           }
         : undefined;
 
+    const eventParameters =
+        trigger.type === 'EVENT' ? mapKeyValuePairToParamValue(trigger.action.parameters || []) : undefined;
+
     const final_obj = {
         id: trigger.action.function_name,
         index: '',
@@ -153,10 +172,13 @@ export const mapTriggerConfigurationToFormFunction = (
         optionValue:
             baseFunction?.parameters && baseFunction?.parameters[0].type === 'options'
                 ? populateOptionValue(trigger.action.parameters[0])
-                : undefined,
+                : (trigger.type === 'EVENT' ? eventParameters && populateOptionValue(eventParameters[0]) : undefined) ||
+                  undefined,
         selectedCronOption: undefined,
         congifuredCronSettings: undefined,
-        agent_id: (trigger as IAgentConfiguration).agent_id || undefined
+        agent_id: (trigger as IAgentConfiguration).agent_id || undefined,
+        eventDescription: baseFunction.eventDescription,
+        eventParameters: baseFunction.eventParameters
     };
 
     return final_obj;

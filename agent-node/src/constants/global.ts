@@ -1,10 +1,10 @@
 import { IEventBasedAction } from '../types/eventTriger'
 
 export const globalState: {
-    eventTypeDetails: IEventBasedAction[]
+    eventTriggerTypeDetails: IEventBasedAction[]
     agentName: string
 } = {
-    eventTypeDetails: [],
+    eventTriggerTypeDetails: [],
     agentName: '',
 }
 

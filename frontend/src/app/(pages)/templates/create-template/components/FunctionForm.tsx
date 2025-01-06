@@ -79,7 +79,6 @@ export const FunctionForm = ({
         const updatedParameters = functionState?.parameters?.map((param) =>
             param.id === paramId ? { ...param, value: newValue } : param
         );
-        console.log(updatedParameters);
         updateFunctionState({ parameters: updatedParameters });
     };
 
@@ -114,16 +113,25 @@ export const FunctionForm = ({
 
     const checkAllRequiredFieldsAreFilled = () => {
         if (functionState?.type === 'EVENT') {
+            if (functionState.id === 'voteOnProposal') {
+                if (!functionState.optionValue) {
+                    ErrorToast('Please select an option');
+                    return false;
+                }
+            }
             return true;
         }
 
-        if (functionState?.parameters?.[0].type === 'options' && !functionState.optionValue) {
+        if (functionState?.parameters?.some((param) => param.type === 'options') && !functionState.optionValue) {
             ErrorToast('Please select an option');
             return false;
         }
 
         let validState = true;
         functionState?.parameters?.forEach((item) => {
+            if (item.type === 'options' && functionState.optionValue) {
+                return;
+            }
             if ((item.optional === false && !item.value) || item.value === '') {
                 validState = false;
             }
@@ -204,14 +212,13 @@ export const FunctionForm = ({
                         />
                     )}
                 </div>
-                {functionState?.parameters &&
-                    renderParameters(
-                        functionState.parameters,
-                        handleParameterChange,
-                        handleNestedParameterChange,
-                        handleOptionChange,
-                        functionState.optionValue
-                    )}
+                {renderParameters(
+                    (functionState.type === 'CRON' ? functionState.parameters : functionState.eventParameters) || [],
+                    handleParameterChange,
+                    handleNestedParameterChange,
+                    handleOptionChange,
+                    functionState.optionValue
+                )}
 
                 {functionState.type === 'CRON' && (
                     <>

@@ -37,6 +37,7 @@ export interface IParameterOption {
     name: string;
     type: ParameterType;
     parameters?: IParameter[];
+    value?: string;
 }
 
 export interface ItemObject {
@@ -171,13 +172,59 @@ export const AvailableFunctions: IFunctionsDto[] = [
                                 type: 'hash'
                             }
                         ]
+                    },
+                    {
+                        id: 'vote',
+                        name: 'Vote',
+                        type: 'options',
+                        options: [
+                            {
+                                id: 'yes',
+                                name: 'Yes',
+                                type: 'function'
+                            },
+                            {
+                                id: 'no',
+                                name: 'No',
+                                type: 'function'
+                            },
+                            {
+                                id: 'abstain',
+                                name: 'Abstain',
+                                type: 'function'
+                            }
+                        ],
+                        optional: false
                     }
                 ],
                 canBeEvent: true,
                 eventName: 'VoteEvent',
-                eventParameters: [],
+                eventParameters: [
+                    {
+                        id: 'vote',
+                        name: 'Vote',
+                        type: 'options',
+                        options: [
+                            {
+                                id: 'yes',
+                                name: 'Yes',
+                                type: 'string'
+                            },
+                            {
+                                id: 'no',
+                                name: 'No',
+                                type: 'string'
+                            },
+                            {
+                                id: 'abstain',
+                                name: 'Abstain',
+                                type: 'string'
+                            }
+                        ]
+                    }
+                ],
                 eventDescription:
-                    'This Vote event will be triggered when any new Proposal is created on the network. The Agent will vote "No" on the proposal. (No parameters required)'
+                    'This agent will automatically cast a vote on any proposal that is created on the network while it is active. '
             }
         ]
     },
@@ -258,6 +305,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
                         optional: true
                     }
                 ],
+                canBeEvent: true,
                 description:
                     "Submit a new constitution for the Cardano network. Outline fundamental principles and guidelines to shape the ecosystem's future."
             },
@@ -285,6 +333,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
                         ]
                     }
                 ],
+                canBeEvent: true,
                 description:
                     'Submit a proposal to share crucial information or updates with the Cardano community to drive informed decision-making.'
             },
@@ -360,6 +409,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
                         ]
                     }
                 ],
+                canBeEvent: true,
                 description: 'Propose no confidence on the current constitutional committee'
             },
             {
@@ -446,6 +496,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
                         description: 'RemoveFrom Committee'
                     }
                 ],
+                canBeEvent: true,
                 description:
                     'A proposal to modify the membership, signature threshold, or terms of the constitutional committee.'
             }

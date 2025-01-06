@@ -187,7 +187,7 @@ const EventTab = ({
                     : eventFilter;
             })
         };
-        setFormData({...data});
+        setFormData({ ...data });
     };
 
     const handleParamValueChange = (parameterId: string, value: any) => {
