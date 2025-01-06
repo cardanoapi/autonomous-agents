@@ -27,7 +27,7 @@
         "express": "^4.19.2",
         "kafkajs": "^2.2.4",
         "kuber-client": "^3.0.3",
-        "libcardano": "1.4.3",
+        "libcardano": "1.4.11",
         "luxon": "^3.4.4",
         "prisma": "^5.13.0",
         "swagger-jsdoc": "^6.2.8",

@@ -26,29 +26,19 @@ const AgentTabContent = ({
     const [selectedAgentTab] = useAtom(selectedAgentTabAtom);
 
     function getAgentSelectedTabComponent() {
-        if (selectedAgentTab === 'Overview')
-            return <AgentOverViewComponent agent={agent} enableControl={enableEdit} />;
+        if (selectedAgentTab === 'Overview') return <AgentOverViewComponent agent={agent} enableControl={enableEdit} />;
         else if (selectedAgentTab === 'Functions')
             return <AgentFunctionsComponent agent={agent} enableControl={enableEdit} />;
-        else if (selectedAgentTab === 'Logs')
-            return <AgentLogComponent agent={agent} />;
+        else if (selectedAgentTab === 'Logs') return <AgentLogComponent agent={agent} />;
         else if (enableEdit) {
-            if (selectedAgentTab === 'Manual Actions')
-                return <AgentManualTriggerComponent agent={agent} />;
+            if (selectedAgentTab === 'Manual Actions') return <AgentManualTriggerComponent agent={agent} />;
             else if (selectedAgentTab === 'Settings')
-                return (
-                    <AgentSettingsComponent agent={agent} enableControl={enableEdit} />
-                );
+                return <AgentSettingsComponent agent={agent} enableControl={enableEdit} />;
         }
     }
 
     return (
-        <div
-            className={cn(
-                'relative h-full w-full overflow-hidden rounded-lg  bg-white p-6 !pb-20 md:p-8',
-                className
-            )}
-        >
+        <div className={cn('relative h-full w-full overflow-hidden rounded-lg  bg-white p-6 !pb-20 md:p-8', className)}>
             {agentLoading ? (
                 <div className="flex h-full w-full items-center justify-center">
                     <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-brand-Blue-200"></div>

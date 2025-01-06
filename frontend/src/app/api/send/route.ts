@@ -31,13 +31,7 @@ export async function POST(request: Request) {
             status: response.status
         });
     } catch (error: any) {
-        console.error(
-            'Error calling Umami API:',
-            error.message || error.error || error
-        );
-        return NextResponse.json(
-            { error: 'Failed to call Umami API' },
-            { status: 500 }
-        );
+        console.error('Error calling Umami API:', error.message || error.error || error);
+        return NextResponse.json({ error: 'Failed to call Umami API' }, { status: 500 });
     }
 }

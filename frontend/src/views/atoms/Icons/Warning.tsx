@@ -2,14 +2,7 @@ import React from 'react';
 
 export function Warning(props: React.SVGAttributes<any>) {
     return (
-        <svg
-            width="18"
-            height="17"
-            viewBox="0 0 18 17"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            {...props}
-        >
+        <svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
             <path
                 d="M9.90485 5.61505C9.90485 6.11478 9.49975 6.51989 9.00002 6.51989C8.50029 6.51989 8.09518 6.11478 8.09518 5.61505C8.09518 5.11533 8.50029 4.71022 9.00002 4.71022C9.49975 4.71022 9.90485 5.11533 9.90485 5.61505Z"
                 fill="currentColor"

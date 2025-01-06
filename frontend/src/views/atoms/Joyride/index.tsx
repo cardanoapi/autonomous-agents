@@ -1,15 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import Jr, {
-    ACTIONS,
-    BeaconRenderProps,
-    CallBackProps,
-    EVENTS,
-    LIFECYCLE,
-    STATUS,
-    Step,
-    Styles
-} from 'react-joyride';
+import Jr, { ACTIONS, BeaconRenderProps, CallBackProps, EVENTS, LIFECYCLE, STATUS, Step, Styles } from 'react-joyride';
 
 import { JoyrideState } from '@app/models/dtos/joyride';
 import { useAppDispatch, useAppSelector } from '@app/store/hooks';
@@ -204,9 +195,7 @@ export default function Joyride({
             scrollToFirstStep={scrollToFirstStep}
             scrollOffset={scrollOffset}
             // @ts-ignore
-            beaconComponent={
-                BeaconComponent as unknown as React.ReactElement<BeaconRenderProps>
-            }
+            beaconComponent={BeaconComponent as unknown as React.ReactElement<BeaconRenderProps>}
             continuous={continuous}
             showProgress={showProgress}
             spotlightClicks={spotlightClicks}

@@ -19,26 +19,12 @@ import { convertDictToGraphDataFormat } from '../../Chart/ChartFilter';
 import AgentFunctionsDropDown from '../../Common/AgentFunctionsDropDown';
 import { cn } from '../../lib/utils';
 
-const AgentHistoryChart = ({
-    agent,
-    chartClassName
-}: {
-    agent?: IAgent;
-    chartClassName?: string;
-}) => {
-    const [currentChartFilterOption, setCurrentChartFilterOption] = useState(
-        chartFilterOptions[2]
-    );
-    const [chartDataSource, setChartDataSource] = useState<
-        { count: number; values: Record<string, number> }[]
-    >([]);
+const AgentHistoryChart = ({ agent, chartClassName }: { agent?: IAgent; chartClassName?: string }) => {
+    const [currentChartFilterOption, setCurrentChartFilterOption] = useState(chartFilterOptions[2]);
+    const [chartDataSource, setChartDataSource] = useState<{ count: number; values: Record<string, number> }[]>([]);
     const { data: triggerHistoryMetric, refetch: refecthTriggerHistory } = useQuery({
         queryKey: [`${agent?.id}TriggerHistoryMetric`],
-        queryFn: () =>
-            fecthTriggerHistoryMetric(
-                currentFunction === 'None' ? [] : [currentFunction],
-                agent?.id
-            )
+        queryFn: () => fecthTriggerHistoryMetric(currentFunction === 'None' ? [] : [currentFunction], agent?.id)
     });
 
     const [currentFunction, setCurrentFunction] = useState('None');
@@ -47,19 +33,13 @@ const AgentHistoryChart = ({
         if (triggerHistoryMetric !== undefined) {
             switch (currentChartFilterOption.placeholder) {
                 case 'Last Hour':
-                    setChartDataSource(
-                        triggerHistoryMetric.last_hour_successful_triggers
-                    );
+                    setChartDataSource(triggerHistoryMetric.last_hour_successful_triggers);
                     break;
                 case 'Last 24 Hours':
-                    setChartDataSource(
-                        triggerHistoryMetric.last_24hour_successful_triggers
-                    );
+                    setChartDataSource(triggerHistoryMetric.last_24hour_successful_triggers);
                     break;
                 case 'Last 7 Days':
-                    setChartDataSource(
-                        triggerHistoryMetric.last_week_successful_triggers
-                    );
+                    setChartDataSource(triggerHistoryMetric.last_week_successful_triggers);
                     break;
             }
         }
@@ -83,34 +63,27 @@ const AgentHistoryChart = ({
                         onChange={(stringValue: string) => {
                             setCurrentFunction(stringValue);
                         }}
-                        value={
-                            currentFunction === 'None' ? 'Function' : currentFunction
-                        }
+                        value={currentFunction === 'None' ? 'Function' : currentFunction}
                     />
                     <DropdownMenu>
-                        <DropdownMenuTrigger
-                            border={true}
-                            className="flex justify-between md:min-w-40"
-                        >
+                        <DropdownMenuTrigger border={true} className="flex justify-between md:min-w-40">
                             {currentChartFilterOption.placeholder}
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-white">
-                            {chartFilterOptions.map(
-                                (item: IChartFilterOption, index) => (
-                                    <DropdownMenuItem
-                                        onClick={() => {
-                                            setCurrentChartFilterOption({
-                                                placeholder: item.placeholder,
-                                                unit: item.unit,
-                                                xaxisInterval: item.xaxisInterval
-                                            });
-                                        }}
-                                        key={index}
-                                    >
-                                        {item.placeholder}
-                                    </DropdownMenuItem>
-                                )
-                            )}
+                            {chartFilterOptions.map((item: IChartFilterOption, index) => (
+                                <DropdownMenuItem
+                                    onClick={() => {
+                                        setCurrentChartFilterOption({
+                                            placeholder: item.placeholder,
+                                            unit: item.unit,
+                                            xaxisInterval: item.xaxisInterval
+                                        });
+                                    }}
+                                    key={index}
+                                >
+                                    {item.placeholder}
+                                </DropdownMenuItem>
+                            ))}
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
@@ -119,10 +92,7 @@ const AgentHistoryChart = ({
                 <CustomLineChart
                     chartData={
                         triggerHistoryMetric !== undefined
-                            ? convertDictToGraphDataFormat(
-                                  chartDataSource || [],
-                                  currentChartFilterOption.unit
-                              )
+                            ? convertDictToGraphDataFormat(chartDataSource || [], currentChartFilterOption.unit)
                             : []
                     }
                     xaxisInterval={currentChartFilterOption.xaxisInterval}

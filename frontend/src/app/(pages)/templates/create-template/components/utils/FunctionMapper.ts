@@ -1,42 +1,35 @@
-import { IAgentConfiguration, ISubParameter } from '@api/agents';
+import { IAgentConfiguration, IEventTrigger, ISubParameter } from '@api/agents';
 import { TriggerType } from '@api/agents';
 import { ICronTrigger } from '@api/agents';
 import { ITemplateConfiguration } from '@api/templates';
 import { ITriggerCreateDto } from '@api/trigger';
-import {
-    IParameter,
-    IParameterOption,
-    TemplateFunctions
-} from '@models/types/functions';
+import { IParameter, IParameterOption, TemplateFunctions } from '@models/types/functions';
 
 import { IFormFunctionInstance } from '../../page';
 import {
-    mapKeyValuePairToParamValue,
+    mapKeyValuePairToParamValue, // mapKeyValuePairToParamValue,
     mapOptionToKeyValuePair,
     mapParamValueToKeyValuePair
 } from './MapperHelper';
 
 // For converting function data from form to Trigger Create DTO Format.
-export const mapFormFunctionToTriggerConfiguration = (
-    item: IFormFunctionInstance
-): ITriggerCreateDto => {
+export const mapFormFunctionToTriggerConfiguration = (item: IFormFunctionInstance): ITriggerCreateDto => {
     const commonData = {
         probability: (item.cronValue?.probability || 100) / 100,
         frequency: item.cronValue?.frequency || '* * * * *'
     };
 
     if (item.type === 'EVENT') {
-        return {
-            type: item.type,
-            action: {
-                function_name: item.id,
-                parameters: mapParamValueToKeyValuePair(item.eventParameters || [])
-            },
-            data: {
-                event: 'VoteEvent',
-                parameters: mapParamValueToKeyValuePair(item.eventParameters || [])
-            }
-        };
+        if (item.eventValue) {
+            return {
+                type: item.type,
+                action: {
+                    function_name: item.id,
+                    parameters: item.optionValue ? [mapOptionToKeyValuePair(item.optionValue, 'voteType')] : []
+                },
+                data: item.eventValue
+            };
+        }
     }
 
     if (item.id === 'delegation') {
@@ -44,12 +37,26 @@ export const mapFormFunctionToTriggerConfiguration = (
             type: item.type,
             action: {
                 function_name: item.id,
-                parameters: item.optionValue
-                    ? [mapOptionToKeyValuePair(item.optionValue, 'delegation_params')]
-                    : []
+                parameters: item.optionValue ? [mapOptionToKeyValuePair(item.optionValue, 'delegation_params')] : []
             },
             data: commonData
         };
+    }
+
+    if (item.id == 'voteOnProposal' && item.type == 'CRON' && item.optionValue) {
+        alert(item.optionValue.id);
+        item.parameters =
+            item.parameters?.map((param) => {
+                if (param.type === 'options') {
+                    return {
+                        name: param.name,
+                        id: param.id || 'vote',
+                        type: 'string',
+                        value: item.optionValue?.id || 'yes'
+                    };
+                }
+                return param;
+            }) || item.parameters;
     }
 
     return {
@@ -66,9 +73,7 @@ export const mapFormFunctionToTriggerConfiguration = (
 export const mapTriggerConfigurationToFormFunction = (
     trigger: ITriggerCreateDto | IAgentConfiguration
 ): IFormFunctionInstance => {
-    const baseFunction = TemplateFunctions.find(
-        (f) => f.id === trigger.action.function_name
-    );
+    const baseFunction = TemplateFunctions.find((f) => f.id === trigger.action.function_name);
 
     if (!baseFunction) {
         throw new Error(
@@ -76,21 +81,12 @@ export const mapTriggerConfigurationToFormFunction = (
         );
     }
 
-    const populateParameters = (
-        baseParams: IParameter[],
-        triggerParams: ISubParameter[]
-    ): IParameter[] => {
+    const populateParameters = (baseParams: IParameter[], triggerParams: ISubParameter[]): IParameter[] => {
         const obj = baseParams.map((baseParam) => {
-            const matchingTriggerParam = triggerParams.find(
-                (param) => param.name == baseParam.id
-            );
+            const matchingTriggerParam = triggerParams.find((param) => param.name == baseParam.id);
 
             // populate upper layer
-            if (
-                matchingTriggerParam &&
-                baseParam.type !== 'options' &&
-                baseParam.type !== 'object'
-            ) {
+            if (matchingTriggerParam && baseParam.type !== 'options' && baseParam.type !== 'object') {
                 return {
                     ...baseParam,
                     value: matchingTriggerParam.value
@@ -99,19 +95,14 @@ export const mapTriggerConfigurationToFormFunction = (
 
             // for nested object type
             if (matchingTriggerParam && baseParam.type === 'object') {
-                const combinedSubTriggerParams = Object.entries(
-                    matchingTriggerParam.value
-                ).map(([key, value]) => ({
+                const combinedSubTriggerParams = Object.entries(matchingTriggerParam.value).map(([key, value]) => ({
                     name: key,
                     value: value
                 }));
 
                 const nested_obj = {
                     ...baseParam,
-                    parameters: populateParameters(
-                        baseParam.parameters || [],
-                        combinedSubTriggerParams
-                    )
+                    parameters: populateParameters(baseParam.parameters || [], combinedSubTriggerParams)
                 };
 
                 return nested_obj;
@@ -159,8 +150,7 @@ export const mapTriggerConfigurationToFormFunction = (
         };
     };
 
-    const cronValue: ICronTrigger | undefined = (trigger.data as ICronTrigger)
-        ?.probability
+    const cronValue: ICronTrigger | undefined = (trigger.data as ICronTrigger)?.probability
         ? {
               probability: (trigger.data as ICronTrigger).probability * 100,
               frequency: (trigger.data as ICronTrigger).frequency
@@ -168,43 +158,33 @@ export const mapTriggerConfigurationToFormFunction = (
         : undefined;
 
     const eventParameters =
-        trigger.type === 'EVENT'
-            ? mapKeyValuePairToParamValue(trigger.action.parameters || [])
-            : undefined;
+        trigger.type === 'EVENT' ? mapKeyValuePairToParamValue(trigger.action.parameters || []) : undefined;
 
     const final_obj = {
         id: trigger.action.function_name,
         index: '',
         name: baseFunction.name,
         description: baseFunction.description,
-        parameters: populateParameters(
-            baseFunction.parameters || [],
-            trigger.action.parameters || []
-        ),
+        parameters: populateParameters(baseFunction.parameters || [], trigger.action.parameters || []),
         type: trigger.type as TriggerType,
         cronValue,
-        eventValue:
-            trigger.type === 'EVENT'
-                ? {
-                      event: (trigger.data as any).event,
-                      parameters: eventParameters
-                  }
-                : undefined,
+        eventValue: trigger.type === 'EVENT' ? (trigger.data as IEventTrigger) : undefined,
         optionValue:
             baseFunction?.parameters && baseFunction?.parameters[0].type === 'options'
                 ? populateOptionValue(trigger.action.parameters[0])
-                : undefined,
+                : (trigger.type === 'EVENT' ? eventParameters && populateOptionValue(eventParameters[0]) : undefined) ||
+                  undefined,
         selectedCronOption: undefined,
         congifuredCronSettings: undefined,
-        agent_id: (trigger as IAgentConfiguration).agent_id || undefined
+        agent_id: (trigger as IAgentConfiguration).agent_id || undefined,
+        eventDescription: baseFunction.eventDescription,
+        eventParameters: baseFunction.eventParameters
     };
 
     return final_obj;
 };
 
-export const mapAgentConfigurationToFormFunction = (
-    agentConfiguration: IAgentConfiguration
-): IFormFunctionInstance => {
+export const mapAgentConfigurationToFormFunction = (agentConfiguration: IAgentConfiguration): IFormFunctionInstance => {
     const convertedObj = mapTriggerConfigurationToFormFunction({
         action: agentConfiguration.action,
         data: agentConfiguration.data,
@@ -215,9 +195,7 @@ export const mapAgentConfigurationToFormFunction = (
     return convertedObj;
 };
 
-export const mapFormFunctionToAgentConfiguration = (
-    formFuncion: IFormFunctionInstance
-): IAgentConfiguration => {
+export const mapFormFunctionToAgentConfiguration = (formFuncion: IFormFunctionInstance): IAgentConfiguration => {
     const functionMetaData = TemplateFunctions.find((f) => f.name === formFuncion.name);
 
     // Ids are different. Meta data id and actual trigger id
@@ -238,9 +216,7 @@ export const mapFormFunctionToTemplateConfiguration = (
     formFunction: IFormFunctionInstance,
     template_id: string
 ): ITemplateConfiguration => {
-    const functionMetaData = TemplateFunctions.find(
-        (f) => f.name === formFunction.name
-    );
+    const functionMetaData = TemplateFunctions.find((f) => f.name === formFunction.name);
 
     const convertedObj = mapFormFunctionToTriggerConfiguration({
         ...formFunction,

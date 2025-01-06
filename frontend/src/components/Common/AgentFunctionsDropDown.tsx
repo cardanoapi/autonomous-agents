@@ -5,12 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { cn } from '@app/components/lib/utils';
 
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from '../atoms/DropDownMenu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../atoms/DropDownMenu';
 
 export default function AgentFunctionsDropDown({
     onChange,
@@ -30,10 +25,7 @@ export default function AgentFunctionsDropDown({
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger
-                border={true}
-                className={cn('flex w-72 justify-between', className)}
-            >
+            <DropdownMenuTrigger border={true} className={cn('flex w-72 justify-between', className)}>
                 {value || currentFunction}
             </DropdownMenuTrigger>
 

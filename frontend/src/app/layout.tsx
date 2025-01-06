@@ -51,11 +51,7 @@ export default function RootLayout({
         <html lang="en" className="">
             <head>
                 {process.env.NEXT_PUBLIC_UMAMI_ENABLED ? (
-                    <script
-                        defer
-                        src="/script.js"
-                        data-website-id="4a162fd2-d6ec-403e-8a69-7927e2f0db3f"
-                    ></script>
+                    <script defer src="/script.js" data-website-id="4a162fd2-d6ec-403e-8a69-7927e2f0db3f"></script>
                 ) : (
                     <></>
                 )}
@@ -86,11 +82,7 @@ export default function RootLayout({
                         <ReactQueryProvider>
                             <Toaster />
                             <div className="w-dvh flex h-dvh bg-brandDefault">
-                                <SideNav
-                                    desktopClassName={
-                                        'hidden md:flex md:w-[256px] 2xl:w-[290px]'
-                                    }
-                                />
+                                <SideNav desktopClassName={'hidden md:flex md:w-[256px] 2xl:w-[290px]'} />
                                 <div
                                     className={
                                         'flex h-full w-full flex-col gap-4 overflow-hidden px-6 py-2 pb-4 md:pt-10 2xl:px-8'
@@ -113,28 +105,26 @@ function embedApmScript() {
     const config = {
         serviceName: 'autonomous-agents-webapp',
         serverUrl: '/',
-        environment: environments.IS_IN_PRODUCTION_MODE
-            ? environments.network
-            : 'local',
+        environment: environments.IS_IN_PRODUCTION_MODE ? environments.network : 'local',
         serverUrlPrefix: '/status',
         breakdownMetrics: true,
         propagateTracestate: true,
         distributedTracingOrigins: [
-          "https://sanchonet.api.agents.cardanoapi.io",
-            "https://api.agents.cardanoapi.io",
-            "https://preprod.api.agents.cardanoapi.io",
-            "https://preview.api.agents.cardanoapi.io"
-        ],
+            'https://sanchonet.api.agents.cardanoapi.io',
+            'https://api.agents.cardanoapi.io',
+            'https://preprod.api.agents.cardanoapi.io',
+            'https://preview.api.agents.cardanoapi.io'
+        ]
     };
     const htmlStr = 'elasticApm.init(' + JSON.stringify(config) + ')';
-    return process.env.NEXT_PUBLIC_APM_ENABLED ? (
+    return !!process.env.NEXT_PUBLIC_APM_ENABLED ? (
         <>
             {/* <script
                 src="https://unpkg.com/@elastic/apm-rum@5.16.1/dist/bundles/elastic-apm-rum.umd.min.js"
                 crossOrigin={'anonymous'}
             /> */}
 
-            <script src="/authscript.js"/>
+            <script src="/authscript.js" />
             <script dangerouslySetInnerHTML={{ __html: htmlStr }} />
         </>
     ) : (

@@ -1,11 +1,6 @@
 import axios from 'axios';
 
-import {
-    IAgentAction,
-    IAgentConfiguration,
-    ICronTrigger,
-    IEventTrigger
-} from './agents';
+import { IAgentAction, IAgentConfiguration, ICronTrigger, IEventTrigger } from './agents';
 import { baseAPIurl } from './config';
 
 export interface ITrigger {
@@ -46,9 +41,7 @@ export const fetchtriggersbyTemplateID = async (templateID: string) => {
     return await res.json();
 };
 
-export const fetchTransactionsCountByAgentID = async (
-    agentID: string
-): Promise<ITransactionsCount> => {
+export const fetchTransactionsCountByAgentID = async (agentID: string): Promise<ITransactionsCount> => {
     const res = await fetch(`${baseAPIurl}/transaction-counts/${agentID}`);
     if (!res.ok) {
         throw new Error('Trigger Fetch failed: Network Error');
@@ -94,16 +87,13 @@ export interface ITriggerCreateDto {
 }
 
 export const postTrigger = async (agentID: string, triggerData: ITriggerCreateDto) => {
-    const response = await axios.post(
-        `${baseAPIurl}/agents/${agentID}/triggers`,
-        triggerData,
-        {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            withCredentials: true
-        }
-    );
+    console.log('Req body: ', triggerData);
+    const response = await axios.post(`${baseAPIurl}/agents/${agentID}/triggers`, triggerData, {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        withCredentials: true
+    });
     return response.data;
 };
 

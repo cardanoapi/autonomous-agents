@@ -43,12 +43,7 @@ export const SearchField = React.forwardRef<HTMLInputElement, SearchFieldProps>(
         return (
             <div className={cn(SearchFieldVariants({ variant, className }))}>
                 <Search size={16} />
-                <Comp
-                    className="w-[90%] bg-transparent outline-none"
-                    ref={ref}
-                    {...props}
-                    onChange={handleChange}
-                />
+                <Comp className="w-[90%] bg-transparent outline-none" ref={ref} {...props} onChange={handleChange} />
             </div>
         );
     }

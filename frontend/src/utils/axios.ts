@@ -10,11 +10,7 @@ axiosClient.interceptors.response.use(
     (response: any) => response,
     async (error: any) =>
         Promise.reject(
-            (error.response &&
-                error.response.data &&
-                error.response.data.message &&
-                error) ||
-                'Something went wrong'
+            (error.response && error.response.data && error.response.data.message && error) || 'Something went wrong'
         )
 );
 

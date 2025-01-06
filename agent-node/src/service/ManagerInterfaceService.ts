@@ -1,5 +1,5 @@
-import {RpcV1} from 'libcardano/network/Rpc'
-import {ILog} from './TriggerActionHandler'
+import { RpcV1 } from 'libcardano/network/Rpc'
+import { ILog } from './TriggerActionHandler'
 
 export class ManagerInterface {
     rpc: RpcV1

@@ -2,26 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 
 import { Input } from '@app/components/atoms/Input';
 
-export default function CustomCron({
-    customCron,
-    onChange
-}: {
-    customCron?: string[];
-    onChange?: any;
-}) {
+export default function CustomCron({ customCron, onChange }: { customCron?: string[]; onChange?: any }) {
     const [seconds, setSeconds] = useState(customCron ? customCron[0] : '*');
     const [minutes, setMinutes] = useState(customCron ? customCron[1] : '*');
     const [hours, setHours] = useState(customCron ? customCron[2] : '*');
     const [months, setMonths] = useState(customCron ? customCron[3] : '*');
     const [years, setYears] = useState(customCron ? customCron[4] : '*');
 
-    const [, setCron] = useState([
-        `${seconds}`,
-        `${minutes}`,
-        `${hours}`,
-        `${months}`,
-        `${years}`
-    ]);
+    const [, setCron] = useState([`${seconds}`, `${minutes}`, `${hours}`, `${months}`, `${years}`]);
 
     const isFirstRender = useRef(true);
 
@@ -31,13 +19,7 @@ export default function CustomCron({
             return;
         }
 
-        const newCron = [
-            `${seconds}`,
-            `${minutes}`,
-            `${hours}`,
-            `${months}`,
-            `${years}`
-        ];
+        const newCron = [`${seconds}`, `${minutes}`, `${hours}`, `${months}`, `${years}`];
         setCron(newCron);
         onChange?.(newCron);
     }, [seconds, minutes, hours, months, years]);

@@ -23,7 +23,7 @@
         "bech32": "^2.0.0",
         "dotenv": "^16.4.5",
         "kuber-client": "^2.0.0",
-        "libcardano": "1.4.2",
+        "libcardano": "1.4.19",
         "luxon": "^3.4.4",
         "node-cron": "^3.0.3",
         "ws": "^8.18.0"

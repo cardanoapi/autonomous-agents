@@ -12,18 +12,11 @@ export interface ISideNavItem {
     hidden?: boolean;
 }
 
-export default function SideNavItem({
-    Prop,
-    onClick
-}: {
-    Prop: ISideNavItem;
-    onClick?: any;
-}) {
+export default function SideNavItem({ Prop, onClick }: { Prop: ISideNavItem; onClick?: any }) {
     const currentPath = usePathname();
 
     const isActive =
-        (currentPath.includes(Prop.href) && Prop.href.length > 2) ||
-        (Prop.href.length === 1 && currentPath === '/');
+        (currentPath.includes(Prop.href) && Prop.href.length > 2) || (Prop.href.length === 1 && currentPath === '/');
 
     if (Prop.hidden) {
         return <></>;
@@ -38,20 +31,12 @@ export default function SideNavItem({
                 { 'bg-brand-Blue-100': isActive }
             )}
         >
-            <Prop.icon
-                className={cn(
-                    isActive ? 'text-brand-Blue-200' : 'text-gray-500',
-                    'min-w-4'
-                )}
-            />
+            <Prop.icon className={cn(isActive ? 'text-brand-Blue-200' : 'text-gray-500', 'min-w-4')} />
             <span
-                className={cn(
-                    'no-wrap-truncate w-full pl-4 text-sm font-medium max-md:text-lg',
-                    {
-                        'text-brand-Black-100': !isActive,
-                        'text-brand-Blue-200': isActive
-                    }
-                )}
+                className={cn('no-wrap-truncate w-full pl-4 text-sm font-medium max-md:text-lg', {
+                    'text-brand-Black-100': !isActive,
+                    'text-brand-Blue-200': isActive
+                })}
             >
                 {Prop.title}
             </span>

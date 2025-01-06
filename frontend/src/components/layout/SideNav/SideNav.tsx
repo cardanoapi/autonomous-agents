@@ -31,9 +31,7 @@ export default function SideNav({
     desktopClassName?: string;
 }) {
     const [loginDialogOpen, setLoginDialogOpen] = useState(false);
-    const [currentConnectedWallet, setCurrentConnectedWallet] = useAtom(
-        currentConnectedWalletAtom
-    );
+    const [currentConnectedWallet, setCurrentConnectedWallet] = useAtom(currentConnectedWalletAtom);
     const [sideNavOpen, setSideNavOpen] = useState<boolean>(false);
     const [adminAccess, setAdminAccess] = useAtom(adminAccessAtom);
     const router: AppRouterInstance = useRouter();
@@ -146,25 +144,16 @@ export default function SideNav({
                     )}
                 >
                     <nav className="flex h-full w-full flex-col justify-between px-2">
-                        <X
-                            className="absolute right-3 top-4"
-                            onClick={() => setSideNavOpen(false)}
-                        />
+                        <X className="absolute right-3 top-4" onClick={() => setSideNavOpen(false)} />
                         <div>
                             <SideNavLogo renderLogo={false} />
                             <ul className="mt-4 flex w-full flex-col gap-y-4">
                                 {SideNavItems.map((Prop, index) => (
-                                    <SideNavItem
-                                        key={index}
-                                        Prop={Prop}
-                                        onClick={() => setSideNavOpen(false)}
-                                    />
+                                    <SideNavItem key={index} Prop={Prop} onClick={() => setSideNavOpen(false)} />
                                 ))}
                             </ul>
                         </div>
-                        <WalletandAgentCard
-                            onDisconnect={() => setSideNavOpen(false)}
-                        />
+                        <WalletandAgentCard onDisconnect={() => setSideNavOpen(false)} />
                     </nav>
                 </div>
             </>

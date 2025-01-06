@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import React from 'react';
 
 import { TriggerType } from '@api/agents';
@@ -7,20 +7,16 @@ import { Slider } from '@mui/material';
 import { X } from 'lucide-react';
 
 import { Button } from '@app/components/atoms/Button';
-import { Card, CardDescription, CardTitle } from '@app/components/atoms/Card';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger
-} from '@app/components/atoms/Select';
+import { Card, CardTitle } from '@app/components/atoms/Card';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@app/components/atoms/Select';
 import { cn } from '@app/components/lib/utils';
 import { CustomCombobox } from '@app/components/molecules/CustomCombobox';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
 
 import { IFormFunctionInstance } from '../page';
-import { renderParameters } from './trigger/ParameterRenderers';
-import TriggerTab from './trigger/TriggerTab';
+import { renderParameters } from './ParameterRenderers';
+import TriggerTab from './TriggerTab';
+import EventTab from './event/EventTab';
 
 interface IFunctionFormParams {
     currentFunction?: IFormFunctionInstance;
@@ -48,9 +44,7 @@ export const FunctionForm = ({
             type: 'CRON' as TriggerType
         }
     );
-    const [cronExpression] = useState(
-        currentFunction?.cronValue?.frequency || '* * * * *'
-    );
+    const [cronExpression] = useState(currentFunction?.cronValue?.frequency || '* * * * *');
 
     const updateFunctionState = (updates: Partial<IFormFunctionInstance>) => {
         if (!functionState) return;
@@ -59,11 +53,7 @@ export const FunctionForm = ({
         onValueChange?.(updatedFunction);
     };
 
-    const handleCronChange = (
-        cronValueListFormat: string[],
-        defaultSelected: string,
-        configuredSettings: any
-    ) => {
+    const handleCronChange = (cronValueListFormat: string[], defaultSelected: string, configuredSettings: any) => {
         const cronValue = {
             frequency: cronValueListFormat.join(' '),
             probability: functionState?.cronValue?.probability || 100
@@ -71,7 +61,7 @@ export const FunctionForm = ({
         updateFunctionState({
             cronValue,
             selectedCronOption: defaultSelected,
-            congifuredCronSettings: configuredSettings
+            configuredCronSettings: configuredSettings
         });
     };
 
@@ -89,28 +79,21 @@ export const FunctionForm = ({
         const updatedParameters = functionState?.parameters?.map((param) =>
             param.id === paramId ? { ...param, value: newValue } : param
         );
-        console.log(updatedParameters);
         updateFunctionState({ parameters: updatedParameters });
     };
 
     const handleTypeChange = (type: string) => {
-        const newFunciontState = { ...functionState, type: type as TriggerType };
-        updateFunctionState(newFunciontState);
+        const newFunctionState = { ...functionState, type: type as TriggerType };
+        updateFunctionState(newFunctionState);
     };
 
-    const handleNestedParameterChange = (
-        parentId: string,
-        subParamId: string,
-        newValue: any
-    ) => {
+    const handleNestedParameterChange = (parentId: string, subParamId: string, newValue: any) => {
         const updatedParameters = functionState?.parameters?.map((param) =>
             param.id === parentId
                 ? {
                       ...param,
                       parameters: param.parameters?.map((subParam) =>
-                          subParam.id === subParamId
-                              ? { ...subParam, value: newValue }
-                              : subParam
+                          subParam.id === subParamId ? { ...subParam, value: newValue } : subParam
                       )
                   }
                 : param
@@ -119,40 +102,41 @@ export const FunctionForm = ({
     };
 
     const handleOptionChange = (optionValue: any) => {
-        const updatedFuctionState = { ...functionState, optionValue: optionValue };
-        updateFunctionState(updatedFuctionState);
+        const updatedFunctionState = { ...functionState, optionValue: optionValue };
+        updateFunctionState(updatedFunctionState);
     };
 
     const handleOnSave = () => {
         const validState = checkAllRequiredFieldsAreFilled();
-        console.log(functionState);
         validState && onSave?.(functionState);
     };
 
     const checkAllRequiredFieldsAreFilled = () => {
         if (functionState?.type === 'EVENT') {
-            //event type has no parameter for now
+            if (functionState.id === 'voteOnProposal') {
+                if (!functionState.optionValue) {
+                    ErrorToast('Please select an option');
+                    return false;
+                }
+            }
             return true;
         }
 
-        if (
-            functionState?.parameters?.[0].type === 'options' &&
-            !functionState.optionValue
-        ) {
+        if (functionState?.parameters?.some((param) => param.type === 'options') && !functionState.optionValue) {
             ErrorToast('Please select an option');
             return false;
         }
 
         let validState = true;
         functionState?.parameters?.forEach((item) => {
+            if (item.type === 'options' && functionState.optionValue) {
+                return;
+            }
             if ((item.optional === false && !item.value) || item.value === '') {
                 validState = false;
             }
             item.parameters?.forEach((subItem) => {
-                if (
-                    (subItem.optional === false && !subItem.value) ||
-                    subItem.value === ''
-                ) {
+                if ((subItem.optional === false && !subItem.value) || subItem.value === '') {
                     validState = false;
                 }
             });
@@ -162,9 +146,7 @@ export const FunctionForm = ({
     };
 
     const handleFunctionsSelect = (functionID: string) => {
-        const selectedFunction = TemplateFunctions.find(
-            (func) => func.id === functionID
-        );
+        const selectedFunction = TemplateFunctions.find((func) => func.id === functionID);
         if (selectedFunction) {
             const currentSelectedFunction = {
                 ...selectedFunction,
@@ -176,6 +158,16 @@ export const FunctionForm = ({
         }
     };
 
+    useEffect(() => {
+        if (currentFunction && editMode) {
+            currentFunction.type === 'EVENT' &&
+                setFunctionState({
+                    ...functionState,
+                    eventValue: currentFunction.eventValue
+                });
+        }
+    }, []);
+
     return (
         <Card
             className={cn(
@@ -183,19 +175,12 @@ export const FunctionForm = ({
                 renderFunctionSelector ? 'py-8' : 'py-4'
             )}
         >
-            <X
-                className="absolute right-6 top-4 cursor-pointer"
-                onClick={() => onClose?.(functionState)}
-            />
+            <X className="absolute right-6 top-4 cursor-pointer" onClick={() => onClose?.(functionState)} />
             <div className="flex flex-col gap-y-4 max-md:gap-y-6">
                 {renderFunctionSelector ? (
                     <CardTitle className="flex flex-col gap-2">
                         <span className="h4">Function</span>
-                        <Select
-                            onValueChange={(value: string) =>
-                                handleFunctionsSelect(value)
-                            }
-                        >
+                        <Select onValueChange={(value: string) => handleFunctionsSelect(value)}>
                             <SelectTrigger className="flex items-center justify-between bg-white px-2 py-1 text-start">
                                 {functionState?.name}
                             </SelectTrigger>
@@ -209,32 +194,31 @@ export const FunctionForm = ({
                         </Select>
                     </CardTitle>
                 ) : (
-                    <CardTitle className="!h1 text-center">
-                        {functionState?.name}
-                    </CardTitle>
+                    <CardTitle className="!h1 text-center">{functionState?.name}</CardTitle>
                 )}
                 <div className="flex w-full justify-end">
                     {functionState && functionState.canBeEvent && (
                         <CustomCombobox
-                            defaultValue={functionState.type || 'CRON'}
-                            itemsList={['CRON', 'EVENT']}
-                            onSelect={(triggerType: any) =>
-                                handleTypeChange(triggerType as TriggerType)
-                            }
+                            defaultValue={{
+                                id: functionState.type || 'CRON',
+                                label: functionState.type || 'CRON'
+                            }}
+                            itemsList={[
+                                { id: 'CRON', label: 'CRON' },
+                                { id: 'EVENT', label: 'EVENT' }
+                            ]}
+                            onSelect={(triggerType: any) => handleTypeChange(triggerType as TriggerType)}
                             className={'w-24 rounded-md border-[2px] px-2'}
                         />
                     )}
                 </div>
-                {functionState?.parameters &&
-                    renderParameters(
-                        functionState.type === 'CRON'
-                            ? functionState.parameters || []
-                            : functionState.eventParameters || [],
-                        handleParameterChange,
-                        handleNestedParameterChange,
-                        handleOptionChange,
-                        functionState.optionValue
-                    )}
+                {renderParameters(
+                    (functionState.type === 'CRON' ? functionState.parameters : functionState.eventParameters) || [],
+                    handleParameterChange,
+                    handleNestedParameterChange,
+                    handleOptionChange,
+                    functionState.optionValue
+                )}
 
                 {functionState.type === 'CRON' && (
                     <>
@@ -242,50 +226,48 @@ export const FunctionForm = ({
                             onlyCronTriggerTab
                             defaultCron={cronExpression}
                             onChange={handleCronChange}
-                            previousConfiguredSettings={
-                                functionState?.congifuredCronSettings
-                            }
+                            previousConfiguredSettings={functionState?.configuredCronSettings}
                             previousSelectedOption={functionState?.selectedCronOption}
                             defaultToCustomTab={editMode}
                         />
                         <div className="px-4">
                             <span className="h4 text-center">
                                 Trigger Probability:{' '}
-                                <span className="text-brand-Blue-200">
-                                    {functionState?.cronValue?.probability} %
-                                </span>
+                                <span className="text-brand-Blue-200">{functionState?.cronValue?.probability} %</span>
                             </span>
                             <Slider
                                 value={functionState?.cronValue?.probability || 100}
                                 valueLabelDisplay="auto"
                                 onChange={(_, newValue) =>
-                                    handleProbabilityChange(
-                                        typeof newValue === 'number'
-                                            ? newValue
-                                            : newValue[0]
-                                    )
+                                    handleProbabilityChange(typeof newValue === 'number' ? newValue : newValue[0])
                                 }
                             />
                         </div>
                     </>
                 )}
                 {functionState.type === 'EVENT' && (
-                    <Card className="bg-gray-200">
-                        <CardTitle>Event Trigger</CardTitle>
-                        <CardDescription>
-                            {functionState?.eventDescription}
-                        </CardDescription>
-                    </Card>
+                    <EventTab
+                        className="mt-4 w-full bg-white"
+                        onChange={(eventTrigger) => {
+                            setFunctionState({
+                                ...functionState,
+                                eventValue: eventTrigger
+                            });
+                        }}
+                        savedEventTrigger={functionState?.eventValue}
+                    />
                 )}
             </div>
-            <Button
-                variant="primary"
-                className="mt-6 min-w-36"
-                size="md"
-                onClick={() => functionState && handleOnSave()}
-            >
-                {btnPlaceholder || 'Save'}
-            </Button>
+            <div className="flex w-full justify-end">
+                <Button
+                    variant="primary"
+                    className="mt-2 w-36 "
+                    size="md"
+                    onClick={() => functionState && handleOnSave()}
+                >
+                    {btnPlaceholder || 'Save'}
+                </Button>
+            </div>
         </Card>
     );
 };

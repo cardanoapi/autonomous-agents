@@ -10,12 +10,7 @@ export interface IOverViewCard {
     className?: string;
 }
 
-const OverViewCard: React.FC<IOverViewCard> = ({
-    title,
-    value,
-    children,
-    className
-}) => {
+const OverViewCard: React.FC<IOverViewCard> = ({ title, value, children, className }) => {
     return (
         <Card
             className={cn(

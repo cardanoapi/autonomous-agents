@@ -6,10 +6,7 @@ import { Select, SelectContent, SelectItem } from '@app/components/atoms/Select'
 import { Label } from '@app/components/atoms/label';
 import { NumberInput } from '@app/components/molecules/NumberInput';
 
-export const RenderStringParameter = (
-    param: IParameter,
-    onValueChange: (id: string, value: any) => void
-) => (
+export const RenderStringParameter = (param: IParameter, onValueChange: (id: string, value: any) => void) => (
     <div className="flex w-full flex-col gap-2">
         <Label className="h4">
             {param.name}
@@ -23,10 +20,7 @@ export const RenderStringParameter = (
     </div>
 );
 
-export const RenderNumberParameter = (
-    param: IParameter,
-    onValueChange: (id: string, value: any) => void
-) => (
+export const RenderNumberParameter = (param: IParameter, onValueChange: (id: string, value: any) => void) => (
     <div className="flex w-full flex-col gap-2">
         <Label className="h4">
             {param.name}
@@ -54,16 +48,12 @@ export const RenderObjectParameter = (
                 <div key={subIndex} className="flex items-center gap-4">
                     <Label className="h4">
                         {subParam.name}
-                        {subParam.optional == false && (
-                            <span className="text-red-500">*</span>
-                        )}
+                        {subParam.optional == false && <span className="text-red-500">*</span>}
                     </Label>
                     <Input
                         defaultValue={subParam.value}
                         className="w-full"
-                        onChange={(e) =>
-                            onNestedValueChange(param.id, subParam.id, e.target.value)
-                        }
+                        onChange={(e) => onNestedValueChange(param.id, subParam.id, e.target.value)}
                     />
                 </div>
             ))}
@@ -95,9 +85,7 @@ export const RenderOptionsParameter = (
     };
 
     const handleOptionChange = (optionValue: any) => {
-        const currentOption = param.options?.find(
-            (option) => option.name === optionValue
-        );
+        const currentOption = param.options?.find((option) => option.name === optionValue);
         onOptionChange?.(currentOption);
     };
 
@@ -121,10 +109,7 @@ export const RenderOptionsParameter = (
                 </SelectContent>
             </Select>
             {defaultOptionValue?.parameters &&
-                renderParameters(
-                    defaultOptionValue.parameters,
-                    handleSelectedOptionParamChange
-                )}
+                renderParameters(defaultOptionValue.parameters, handleSelectedOptionParamChange)}
         </div>
     );
 };
@@ -142,21 +127,14 @@ export const renderParameters = (
     <div className="flex flex-col gap-4">
         {parameters.map((param, index) => (
             <div key={index}>
-                {param.type === 'string' ||
-                param.type === 'hash' ||
-                param.type === 'url'
+                {param.type === 'string' || param.type === 'hash' || param.type === 'url'
                     ? RenderStringParameter(param, onValueChange)
                     : param.type === 'number'
                       ? RenderNumberParameter(param, onValueChange)
-                      : (param.type === 'object' || param.type === 'list') &&
-                          param.parameters
+                      : (param.type === 'object' || param.type === 'list') && param.parameters
                         ? RenderObjectParameter(param, onNestedValueChange!)
                         : param.type === 'options' && param.options
-                          ? RenderOptionsParameter(
-                                param,
-                                handleOptionChange,
-                                optionValue || null
-                            )
+                          ? RenderOptionsParameter(param, handleOptionChange, optionValue || null)
                           : null}
             </div>
         ))}

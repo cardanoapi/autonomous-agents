@@ -2,8 +2,7 @@ import cn from 'classnames';
 
 export type LoaderSizeTypes = 'large' | 'medium' | 'small';
 export type LoaderVariantTypes = 'blink' | 'scaleUp' | 'moveUp';
-export interface LoaderTypes
-    extends React.HTMLAttributes<HTMLDivElement | HTMLSpanElement> {
+export interface LoaderTypes extends React.HTMLAttributes<HTMLDivElement | HTMLSpanElement> {
     tag?: 'div' | 'span';
     size?: LoaderSizeTypes;
     variant?: LoaderVariantTypes;
@@ -27,9 +26,7 @@ function handleLoaderPosition(size: LoaderSizeTypes) {
 }
 
 function handleVariantClasses(variant: LoaderVariantTypes, size: LoaderSizeTypes) {
-    return variant === 'moveUp' && size === 'small'
-        ? 'animate-move-up-small'
-        : variants[variant];
+    return variant === 'moveUp' && size === 'small' ? 'animate-move-up-small' : variants[variant];
 }
 
 export default function Loader({
@@ -42,11 +39,7 @@ export default function Loader({
     const Component = tag;
     return (
         <Component
-            className={cn(
-                'flex items-center gap-2',
-                variant === 'moveUp' && handleLoaderPosition(size),
-                className
-            )}
+            className={cn('flex items-center gap-2', variant === 'moveUp' && handleLoaderPosition(size), className)}
         >
             <span
                 className={cn(

@@ -6,22 +6,14 @@ import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import environments from '@app/configs/environments';
 import { convertToBase64 } from '@app/utils/base64converter';
 
-const AgentRunnerTutorial = ({
-    agentSecretKey,
-    showToken
-}: {
-    agentSecretKey: string;
-    showToken?: boolean;
-}) => {
+const AgentRunnerTutorial = ({ agentSecretKey, showToken }: { agentSecretKey: string; showToken?: boolean }) => {
     const dockerCommand = `docker run -d --pull always -e TOKEN=${convertToBase64(agentSecretKey)} cardanoapi/autonomous-agents:${environments.NEXT_PUBLIC_IMAGE_TAG}`;
 
     return (
         <div className={'flex w-full flex-col gap-6 '}>
             <span className={''}>Run this agent by following tutorial:</span>
             <div className={'flex w-full flex-col gap-2 overflow-hidden'}>
-                <span className={'font-norm text-base text-brand-Black-100'}>
-                    Using Docker:
-                </span>
+                <span className={'font-norm text-base text-brand-Black-100'}>Using Docker:</span>
                 <div className={'flex w-full items-center gap-1 overflow-hidden'}>
                     <div
                         onClick={() => {
@@ -46,8 +38,7 @@ const AgentRunnerTutorial = ({
                 <span className={'text-xs'}>
                     Note:{' '}
                     <span>
-                        If you dont have docker installed then you can install it from
-                        here{' '}
+                        If you dont have docker installed then you can install it from here{' '}
                         <Link
                             className={'text-blue-500'}
                             target={'_blank'}
@@ -58,17 +49,11 @@ const AgentRunnerTutorial = ({
                     </span>
                 </span>
                 {showToken && (
-                    <div
-                        className={
-                            'flex flex-row items-end gap-2 pt-2 text-sm font-normal text-brand-Black-300'
-                        }
-                    >
+                    <div className={'flex flex-row items-end gap-2 pt-2 text-sm font-normal text-brand-Black-300'}>
                         Token :
                         <div
                             onClick={() => {
-                                navigator.clipboard.writeText(
-                                    convertToBase64(agentSecretKey)
-                                );
+                                navigator.clipboard.writeText(convertToBase64(agentSecretKey));
                                 SuccessToast('Token Copied!');
                             }}
                             className={'cursor-pointer text-xs'}

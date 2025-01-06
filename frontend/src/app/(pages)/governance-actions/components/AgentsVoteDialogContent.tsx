@@ -5,10 +5,7 @@ interface AgentsVoteDialogContentProps {
     proposalId: string;
 }
 
-const AgentsVoteDialogContent = ({
-    handleClose,
-    proposalId
-}: AgentsVoteDialogContentProps) => {
+const AgentsVoteDialogContent = ({ handleClose, proposalId }: AgentsVoteDialogContentProps) => {
     return (
         <AgentsActionDialogContent
             title="Vote on Proposal"

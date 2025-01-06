@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client'
 import { DateTime } from 'luxon'
 import { v4 as uuidv4 } from 'uuid'
-import { prisma } from "./dbClient";
-
+import { prisma } from './dbClient'
 
 export type TriggerType = 'CRON' | 'MANUAL' | 'EVENT' | 'INTERNAL'
 

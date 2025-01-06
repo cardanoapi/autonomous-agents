@@ -5,7 +5,7 @@ import { Label } from '@app/components/atoms/label';
 import { cn } from '@app/components/lib/utils';
 import { NumberInput } from '@app/components/molecules/NumberInput';
 
-import { ICronSetting, IInputSetting } from './TriggerTab';
+import { ICronSetting, IInputSetting } from '../TriggerTab';
 
 export default function DefaultCron({
     cronSetting,
@@ -85,11 +85,8 @@ export default function DefaultCron({
                             });
                         }}
                         defaultValue={
-                            configuredSettings?.find(
-                                (item) =>
-                                    item.name ===
-                                    `${cronSetting.placeholder}-option-two`
-                            )?.value || '1'
+                            configuredSettings?.find((item) => item.name === `${cronSetting.placeholder}-option-two`)
+                                ?.value || '1'
                         }
                         disabled={selected !== `${cronSetting.placeholder}-option-two`}
                     />{' '}
@@ -136,14 +133,10 @@ export default function DefaultCron({
                         }}
                         defaultValue={
                             configuredSettings?.find(
-                                (item) =>
-                                    item.name ===
-                                    `${cronSetting.placeholder}-option-three-start`
+                                (item) => item.name === `${cronSetting.placeholder}-option-three-start`
                             )?.value || '1'
                         }
-                        disabled={
-                            selected !== `${cronSetting.placeholder}-option-three`
-                        }
+                        disabled={selected !== `${cronSetting.placeholder}-option-three`}
                     />
                     {cronSetting.placeholder} and
                     <NumberInput
@@ -166,14 +159,10 @@ export default function DefaultCron({
                         }}
                         defaultValue={
                             configuredSettings?.find(
-                                (item) =>
-                                    item.name ===
-                                    `${cronSetting.placeholder}-option-three-end`
+                                (item) => item.name === `${cronSetting.placeholder}-option-three-end`
                             )?.value || '1'
                         }
-                        disabled={
-                            selected !== `${cronSetting.placeholder}-option-three`
-                        }
+                        disabled={selected !== `${cronSetting.placeholder}-option-three`}
                     />
                     {cronSetting.placeholder}
                 </Label>

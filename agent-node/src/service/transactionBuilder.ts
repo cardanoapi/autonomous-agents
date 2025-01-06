@@ -9,21 +9,15 @@ export class AgentTransactionBuilder {
 
     constructor(agentWalletDetails: AgentWalletDetails) {
         this.agentWalletDetails = agentWalletDetails
-        this.kuber = new Kuber(
-            this.agentWalletDetails.agent_address,
-            this.agentWalletDetails.payment_signing_key
-        )
+        this.kuber = new Kuber(this.agentWalletDetails.agent_address, this.agentWalletDetails.payment_signing_key)
     }
 
     public static setInstance(agentWalletDetails: AgentWalletDetails) {
-        AgentTransactionBuilder.agentTxBuilderInstance =
-            new AgentTransactionBuilder(agentWalletDetails)
+        AgentTransactionBuilder.agentTxBuilderInstance = new AgentTransactionBuilder(agentWalletDetails)
     }
 
     public static getInstance() {
-        return AgentTransactionBuilder.agentTxBuilderInstance
-            ? AgentTransactionBuilder.agentTxBuilderInstance
-            : null
+        return AgentTransactionBuilder.agentTxBuilderInstance ? AgentTransactionBuilder.agentTxBuilderInstance : null
     }
 
     transferADA(receiverAddress: string, ADA = 10) {
@@ -39,12 +33,7 @@ export class AgentTransactionBuilder {
     dRepRegistration() {
         const req = {
             inputs: this.agentWalletDetails.agent_address,
-            certificates: [
-                Kuber.generateCert(
-                    'registerdrep',
-                    this.agentWalletDetails.stake_verification_key_hash
-                ),
-            ],
+            certificates: [Kuber.generateCert('registerdrep', this.agentWalletDetails.stake_verification_key_hash)],
         }
         return this.kuber.signTx(req, this.agentWalletDetails.stake_signing_key)
     }
@@ -52,12 +41,7 @@ export class AgentTransactionBuilder {
     dRepDeRegistration() {
         const req = {
             inputs: this.agentWalletDetails.agent_address,
-            certificates: [
-                Kuber.generateCert(
-                    'deregisterdrep',
-                    this.agentWalletDetails.stake_verification_key_hash
-                ),
-            ],
+            certificates: [Kuber.generateCert('deregisterdrep', this.agentWalletDetails.stake_verification_key_hash)],
         }
         return this.kuber.signTx(req, this.agentWalletDetails.stake_signing_key)
     }
@@ -65,28 +49,19 @@ export class AgentTransactionBuilder {
     stakeDelegation(drepId: string) {
         const req = {
             certificates: [
-                Kuber.generateCert(
-                    'delegate',
-                    this.agentWalletDetails.payment_verification_key_hash,
-                    drepId
-                ),
+                Kuber.generateCert('delegate', this.agentWalletDetails.payment_verification_key_hash, drepId),
             ],
         }
         return this.kuber.signTx(req, this.agentWalletDetails.stake_signing_key)
     }
 
     noConfidence(anchorUrl: string, anchorDataHash: string) {
-        const rewardAddress = this.kuber.rewardAddressBech32(
-            0,
-            this.agentWalletDetails.stake_verification_key_hash
-        )
+        const rewardAddress = this.kuber.rewardAddressBech32(0, this.agentWalletDetails.stake_verification_key_hash)
         const infoProposal = {
             refundAccount: rewardAddress,
             anchor: {
                 url: anchorUrl || 'https://bit.ly/3zCH2HL',
-                dataHash:
-                    anchorDataHash ||
-                    '1111111111111111111111111111111111111111111111111111111111111111',
+                dataHash: anchorDataHash || '1111111111111111111111111111111111111111111111111111111111111111',
             },
         }
         return this.kuber.signTx({
@@ -94,22 +69,13 @@ export class AgentTransactionBuilder {
         })
     }
 
-    treasuryWithdrawal(
-        anchorUrl: string,
-        anchorDataHash: string,
-        withdrawal: Record<string, number>
-    ) {
-        const rewardAddress = this.kuber.rewardAddressBech32(
-            0,
-            this.agentWalletDetails.stake_verification_key_hash
-        )
+    treasuryWithdrawal(anchorUrl: string, anchorDataHash: string, withdrawal: Record<string, number>) {
+        const rewardAddress = this.kuber.rewardAddressBech32(0, this.agentWalletDetails.stake_verification_key_hash)
         const infoProposal = {
             refundAccount: rewardAddress,
             anchor: {
                 url: anchorUrl || 'https://bit.ly/3zCH2HL',
-                dataHash:
-                    anchorDataHash ||
-                    '1111111111111111111111111111111111111111111111111111111111111111',
+                dataHash: anchorDataHash || '1111111111111111111111111111111111111111111111111111111111111111',
             },
             withdraw: withdrawal,
         }
@@ -126,17 +92,12 @@ export class AgentTransactionBuilder {
         addingCommittee: Record<string, number>,
         removingCommittee: Array<string>
     ) {
-        const rewardAddress = this.kuber.rewardAddressBech32(
-            0,
-            this.agentWalletDetails.stake_verification_key_hash
-        )
+        const rewardAddress = this.kuber.rewardAddressBech32(0, this.agentWalletDetails.stake_verification_key_hash)
         const infoProposal = {
             refundAccount: rewardAddress,
             anchor: {
                 url: anchorUrl || 'https://bit.ly/3zCH2HL',
-                dataHash:
-                    anchorDataHash ||
-                    '1111111111111111111111111111111111111111111111111111111111111111',
+                dataHash: anchorDataHash || '1111111111111111111111111111111111111111111111111111111111111111',
             },
             updatecommittee: {
                 add: addingCommittee,
@@ -159,10 +120,7 @@ export class AgentTransactionBuilder {
         newConstitutionDataHash: string,
         guardRailScript: string | undefined
     ) {
-        const rewardAddress = this.kuber.rewardAddressBech32(
-            0,
-            this.agentWalletDetails.stake_verification_key_hash
-        )
+        const rewardAddress = this.kuber.rewardAddressBech32(0, this.agentWalletDetails.stake_verification_key_hash)
         const req = {
             proposals: [
                 {
@@ -184,12 +142,7 @@ export class AgentTransactionBuilder {
 
     registerStake() {
         const req = {
-            certificates: [
-                Kuber.generateCert(
-                    'registerstake',
-                    this.agentWalletDetails.stake_verification_key_hash
-                ),
-            ],
+            certificates: [Kuber.generateCert('registerstake', this.agentWalletDetails.stake_verification_key_hash)],
         }
         return this.kuber.signTx(req, this.agentWalletDetails.stake_signing_key)
     }
@@ -202,12 +155,7 @@ export class AgentTransactionBuilder {
                 value: '10A',
                 addChange: true,
             },
-            certificates: [
-                Kuber.generateCert(
-                    'deregisterstake',
-                    this.agentWalletDetails.stake_verification_key_hash
-                ),
-            ],
+            certificates: [Kuber.generateCert('deregisterstake', this.agentWalletDetails.stake_verification_key_hash)],
         }
         return this.kuber.signTx(req, this.agentWalletDetails.stake_signing_key)
     }
@@ -224,9 +172,7 @@ export class AgentTransactionBuilder {
             },
             anchor: {
                 url: anchorUrl || 'https://bit.ly/3zCH2HL',
-                dataHash:
-                    anchorDataHash ||
-                    '1111111111111111111111111111111111111111111111111111111111111111',
+                dataHash: anchorDataHash || '1111111111111111111111111111111111111111111111111111111111111111',
             },
         }
         return this.kuber.signTx({
@@ -255,11 +201,7 @@ export class AgentTransactionBuilder {
     abstainDelegation() {
         const req = {
             certificates: [
-                Kuber.generateCert(
-                    'delegate',
-                    this.agentWalletDetails.stake_verification_key_hash,
-                    'abstain'
-                ),
+                Kuber.generateCert('delegate', this.agentWalletDetails.stake_verification_key_hash, 'abstain'),
             ],
         }
         return this.kuber.signTx(req, this.agentWalletDetails.stake_signing_key)

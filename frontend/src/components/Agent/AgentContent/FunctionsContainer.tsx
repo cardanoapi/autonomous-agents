@@ -2,11 +2,9 @@
 
 import React, { useState } from 'react';
 
-import { IAgentConfiguration } from '@api/agents';
-import { IAgent } from '@api/agents';
+import { IAgent, IAgentConfiguration } from '@api/agents';
 import { updateTrigger } from '@api/trigger';
 import { Dialog, DialogContent } from '@mui/material';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { useMutation } from '@tanstack/react-query';
 
 import { FunctionForm } from '@app/app/(pages)/templates/create-template/components/FunctionForm';
@@ -17,8 +15,7 @@ import {
 import { IFormFunctionInstance } from '@app/app/(pages)/templates/create-template/page';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
-import { SuccessToast } from '../../molecules/CustomToasts';
-import { ErrorToast } from '../../molecules/CustomToasts';
+import { ErrorToast, SuccessToast } from '../../molecules/CustomToasts';
 import FunctionCardWithMeta from '../shared/FunctionCardWithMeta';
 
 const AgentFunctionsDetailComponent = ({
@@ -34,8 +31,7 @@ const AgentFunctionsDetailComponent = ({
 }) => {
     const [openDialog, setOpenDialog] = useState(false);
 
-    const [currentFunction, setCurrentFunction] =
-        useState<IFormFunctionInstance | null>(null);
+    const [currentFunction, setCurrentFunction] = useState<IFormFunctionInstance | null>(null);
 
     const updateTemplate = useMutation({
         mutationFn: (data: IAgentConfiguration) => updateTrigger(data),
@@ -58,15 +54,11 @@ const AgentFunctionsDetailComponent = ({
     };
 
     const handleUpdate = (functionData: IFormFunctionInstance) => {
-        console.log(functionData);
-
         if (functionData.agent_id) {
             const data = mapFormFunctionToAgentConfiguration(functionData);
             updateTemplate.mutateAsync(data);
         }
     };
-
-    const isMobile = useMediaQuery('(max-width: 600px)');
 
     return (
         <>
@@ -81,7 +73,7 @@ const AgentFunctionsDetailComponent = ({
                     />
                 ))}
             {currentFunction && (
-                <Dialog open={openDialog} fullScreen={isMobile}>
+                <Dialog open={openDialog} maxWidth={'xl'}>
                     <DialogContent className="!p-0">
                         <FunctionForm
                             currentFunction={currentFunction}

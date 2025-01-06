@@ -15,9 +15,7 @@ export interface IUserResponse {
     isSuperUser: boolean;
 }
 
-export const SendLoginRequest = async (
-    signedData: ISignedData
-): Promise<IUserResponse> => {
+export const SendLoginRequest = async (signedData: ISignedData): Promise<IUserResponse> => {
     if (!signedData) {
         throw new Error('Signed data is null');
     }

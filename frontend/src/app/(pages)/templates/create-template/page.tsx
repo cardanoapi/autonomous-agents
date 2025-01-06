@@ -7,13 +7,8 @@ import { useRouter } from 'next/navigation';
 
 import { ICronTrigger, IEventTrigger, TriggerType } from '@api/agents';
 import { ICreateTemplateRequestDTO, postTemplateData } from '@api/templates';
-import {
-    IFunctionsItem,
-    IParameterOption,
-    TemplateFunctions
-} from '@models/types/functions';
+import { IFunctionsItem, IParameterOption, TemplateFunctions } from '@models/types/functions';
 import { Dialog, DialogContent } from '@mui/material';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { useMutation } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 import { v4 } from 'uuid';
@@ -33,8 +28,8 @@ import { ErrorToast } from '@app/components/molecules/CustomToasts';
 import { templateCreatedAtom } from '@app/store/localStore';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
-import { FunctionCards } from './components/FunctionCards';
 import { FunctionForm } from './components/FunctionForm';
+import { FunctionCards } from './components/cards/FunctionCards';
 import { mapFormFunctionToTriggerConfiguration } from './components/utils/FunctionMapper';
 
 export interface IFormFunctionInstance extends IFunctionsItem {
@@ -45,7 +40,7 @@ export interface IFormFunctionInstance extends IFunctionsItem {
     optionValue?: IParameterOption;
     //for saving cron settings
     selectedCronOption?: string;
-    congifuredCronSettings?: any;
+    configuredCronSettings?: any;
     //To be compatible with IAgentConfiuration
     agent_id?: string;
 }
@@ -58,7 +53,6 @@ interface IFormData {
 
 export default function CreateTemplatePage() {
     const router = useRouter();
-    const isMobile = useMediaQuery('(max-width:600px)');
     const [submittingForm, setSubmittingForm] = useState(false);
     const [, setTemplateCreated] = useAtom(templateCreatedAtom);
 
@@ -69,8 +63,7 @@ export default function CreateTemplatePage() {
     });
 
     const templateMutation = useMutation({
-        mutationFn: (data: ICreateTemplateRequestDTO) =>
-            postTemplateData({ data: data }),
+        mutationFn: (data: ICreateTemplateRequestDTO) => postTemplateData({ data: data }),
         onSuccess: () => {
             new Promise((resolve) => setTimeout(resolve, 1000));
             queryClient.refetchQueries({ queryKey: ['templates'] });
@@ -83,8 +76,7 @@ export default function CreateTemplatePage() {
         }
     });
 
-    const [currentSelectedFunction, setCurrentSelectedFunction] =
-        useState<IFormFunctionInstance | null>(null);
+    const [currentSelectedFunction, setCurrentSelectedFunction] = useState<IFormFunctionInstance | null>(null);
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -107,9 +99,7 @@ export default function CreateTemplatePage() {
     };
 
     const handleDeleteFunction = (inputFunction: IFormFunctionInstance) => {
-        const newFunctions = mainState.functions.filter(
-            (functionItem) => functionItem.index !== inputFunction.index
-        );
+        const newFunctions = mainState.functions.filter((functionItem) => functionItem.index !== inputFunction.index);
         setMainState({
             ...mainState,
             functions: newFunctions
@@ -122,9 +112,7 @@ export default function CreateTemplatePage() {
         const newFunctions = mainState.functions.map((functionItem) =>
             functionItem.index === item.index ? item : functionItem
         );
-        const indexExists = newFunctions.some(
-            (functionItem) => functionItem.index === item.index
-        );
+        const indexExists = newFunctions.some((functionItem) => functionItem.index === item.index);
         if (!indexExists) {
             newFunctions.push(item);
         }
@@ -151,9 +139,7 @@ export default function CreateTemplatePage() {
         const templateRequest: ICreateTemplateRequestDTO = {
             name: mainState.name,
             description: mainState.description,
-            template_triggers: mainState.functions.map((func) =>
-                mapFormFunctionToTriggerConfiguration(func)
-            )
+            template_triggers: mainState.functions.map((func) => mapFormFunctionToTriggerConfiguration(func))
         };
         setSubmittingForm(true);
         templateMutation.mutate(templateRequest);
@@ -177,9 +163,7 @@ export default function CreateTemplatePage() {
                         placeholder="Text..."
                         className="mt-3 h-[123px] w-full"
                         value={mainState.description}
-                        onChange={(e) =>
-                            handleUpdateMainState('description', e.target.value)
-                        }
+                        onChange={(e) => handleUpdateMainState('description', e.target.value)}
                     />
                 </div>
                 <div>
@@ -189,18 +173,11 @@ export default function CreateTemplatePage() {
                             Add Function
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="min-w-[--radix-popper-anchor-width]  hover:cursor-pointer">
-                            {TemplateFunctions.map(
-                                (templateFunction, index: number) => (
-                                    <DropdownMenuItem
-                                        onClick={() =>
-                                            handleAddFunction(templateFunction)
-                                        }
-                                        key={index}
-                                    >
-                                        {templateFunction.name}
-                                    </DropdownMenuItem>
-                                )
-                            )}
+                            {TemplateFunctions.map((templateFunction, index: number) => (
+                                <DropdownMenuItem onClick={() => handleAddFunction(templateFunction)} key={index}>
+                                    {templateFunction.name}
+                                </DropdownMenuItem>
+                            ))}
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
@@ -222,10 +199,7 @@ export default function CreateTemplatePage() {
                             handleTemplateSubmit();
                         }}
                         disabled={
-                            submittingForm ||
-                            !mainState.functions.length ||
-                            !mainState.name ||
-                            !mainState.description
+                            submittingForm || !mainState.functions.length || !mainState.name || !mainState.description
                         }
                     >
                         Create Template
@@ -233,7 +207,7 @@ export default function CreateTemplatePage() {
                 </div>
             </Card>
             {/*Dialog for function form*/}
-            <Dialog open={isDialogOpen} fullScreen={isMobile}>
+            <Dialog open={isDialogOpen} fullWidth maxWidth="xl">
                 <DialogContent className="!p-0">
                     {currentSelectedFunction && (
                         <FunctionForm

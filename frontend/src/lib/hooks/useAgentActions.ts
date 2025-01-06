@@ -4,28 +4,39 @@ import { IAgent, fetchAgents, manualTriggerForAgent } from '@api/agents';
 import { QUERY_KEYS } from '@consts';
 import { AgentTriggerFunctionType } from '@models/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { getConfiguredAgentTrigger, isAgentActive } from '@utils';
+import { isAgentActive } from '@utils';
 
 import { ErrorToast, SuccessToast } from '@app/components/molecules/CustomToasts';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
-export const useAgentsAction = (
-    triggerType: AgentTriggerFunctionType,
-    handleClose: () => void,
-    value: string
-) => {
-    const [selectedAgentIds, setSelectedAgentIds] = useState<string[]>([]);
+export type VoteType = 'Yes' | 'No' | 'Abstain';
+
+export interface IAgentVote {
+    agentId: string;
+    voteType: VoteType;
+}
+
+function getAgentVoteData(voteType: VoteType, proposal: string) {
+    return {
+        function_name: 'voteOnProposal' as AgentTriggerFunctionType,
+        parameters: [
+            { name: 'proposal', value: proposal },
+            { name: 'anchor', value: {} },
+            { name: 'voteType', value: voteType }
+        ]
+    };
+}
+
+export const useAgentsAction = (triggerType: AgentTriggerFunctionType, handleClose: () => void, value: string) => {
+    const [selectedAgentIdsWithVoteType, setSelectedAgentIdsWithVoteType] = useState<IAgentVote[]>([]);
     const { data: agents, isLoading } = useQuery<IAgent[]>({
         queryKey: [QUERY_KEYS.useFetchAgentsKey],
         queryFn: async () => fetchAgents({ page: 1, size: 100, search: '' })
     });
 
     const actionMutation = useMutation({
-        mutationFn: (agentId: string) =>
-            manualTriggerForAgent(
-                agentId,
-                getConfiguredAgentTrigger(triggerType, value)
-            ),
+        mutationFn: (agentVote: IAgentVote) =>
+            manualTriggerForAgent(agentVote.agentId, getAgentVoteData(agentVote.voteType, value)),
         onSuccess: () => {
             queryClient.refetchQueries({ queryKey: ['agents'] });
             SuccessToast(`${triggerType} has been successfully triggered.`);
@@ -43,23 +54,23 @@ export const useAgentsAction = (
         return agents?.filter((agent) => isAgentActive(agent)) || [];
     }, [agents]);
 
-    const handleSelect = (checked: boolean | string, agent: IAgent) => {
+    const handleSelect = (checked: boolean | string, currentAgent: IAgentVote) => {
         if (checked) {
-            setSelectedAgentIds((prev) => [...prev, agent.id]);
+            setSelectedAgentIdsWithVoteType((prev) => [...prev, currentAgent]);
         } else {
-            setSelectedAgentIds((prev) => prev.filter((id) => id !== agent.id));
+            setSelectedAgentIdsWithVoteType((prev) =>
+                prev.filter((prevAgent) => prevAgent.agentId !== currentAgent.agentId)
+            );
         }
     };
 
     const handleAction = async () => {
-        const promises = selectedAgentIds.map((agentId) =>
-            actionMutation.mutateAsync(agentId)
-        );
+        const promises = selectedAgentIdsWithVoteType.map((votingAgent) => actionMutation.mutateAsync(votingAgent));
         await Promise.all(promises);
     };
 
     useEffect(() => {
-        return () => setSelectedAgentIds([]);
+        return () => setSelectedAgentIdsWithVoteType([]);
     }, []);
 
     return {
@@ -68,6 +79,6 @@ export const useAgentsAction = (
         isSubmitting,
         handleSelect,
         handleAction,
-        selectedAgentIds
+        selectedAgentIds: selectedAgentIdsWithVoteType
     };
 };

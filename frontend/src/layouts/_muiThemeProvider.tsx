@@ -15,9 +15,7 @@ const MuiThemeProvider = ({ children }: MuiThemeProviderProps) => {
     const [currentTheme, setCurrentTheme] = useState(darkTheme);
 
     useEffect(() => {
-        resolvedTheme === 'light'
-            ? setCurrentTheme(lightTheme)
-            : setCurrentTheme(darkTheme);
+        resolvedTheme === 'light' ? setCurrentTheme(lightTheme) : setCurrentTheme(darkTheme);
     }, [resolvedTheme]);
 
     return (

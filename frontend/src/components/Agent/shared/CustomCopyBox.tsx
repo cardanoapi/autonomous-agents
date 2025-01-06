@@ -24,9 +24,7 @@ const CustomCopyBox = ({
     };
 
     return (
-        <div
-            className={cn('flex w-fit flex-col justify-between rounded-lg', className)}
-        >
+        <div className={cn('flex w-fit flex-col justify-between rounded-lg', className)}>
             <div className="text-[10px] text-gray-500">{title}</div>
             <div className="flex w-full items-center justify-between gap-2 text-ellipsis text-sm">
                 {content === '' ? (
@@ -35,9 +33,7 @@ const CustomCopyBox = ({
                     <span
                         className={cn(
                             'overflow-hidden text-ellipsis text-nowrap text-xs font-medium ',
-                            copyOnContentClick
-                                ? 'cursor-pointer hover:text-brand-Blue-200'
-                                : ''
+                            copyOnContentClick ? 'cursor-pointer hover:text-brand-Blue-200' : ''
                         )}
                         onClick={copyOnContentClick ? handleCopy : () => {}}
                     >
@@ -46,11 +42,7 @@ const CustomCopyBox = ({
                 )}
                 {showCopyIcon && content !== '' && (
                     <div className="cursor-pointer">
-                        <CopyIcon
-                            size={16}
-                            onClick={handleCopy}
-                            className={iconClassName}
-                        />
+                        <CopyIcon size={16} onClick={handleCopy} className={iconClassName} />
                     </div>
                 )}
             </div>

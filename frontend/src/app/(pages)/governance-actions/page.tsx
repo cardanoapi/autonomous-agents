@@ -34,10 +34,7 @@ export default function GovernanceAction() {
         search: ''
     });
 
-    const queryKey = useMemo(
-        () => [QUERY_KEYS.useGetInfoProposalListKey, searchParams],
-        [searchParams]
-    );
+    const queryKey = useMemo(() => [QUERY_KEYS.useGetInfoProposalListKey, searchParams], [searchParams]);
 
     const { data, isLoading } = useQuery({
         queryKey,
@@ -79,32 +76,21 @@ export default function GovernanceAction() {
 
             {!isLoading && data?.items && data?.items?.length > 0 && (
                 <div className="grid h-full w-full grid-flow-row grid-cols-1 gap-8 overflow-y-auto py-4 sm:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5">
-                    {data?.items?.map((proposal: any) => (
-                        <ProposalCard key={proposal.id} proposal={proposal} />
-                    ))}
+                    {data?.items?.map((proposal: any) => <ProposalCard key={proposal.id} proposal={proposal} />)}
                 </div>
             )}
-            {!isLoading &&
-                data?.items?.length === 0 &&
-                searchParams.proposal_type === 'internal' && (
-                    <EmptyScreen
-                        msg="No Internal Proposals Found"
-                        linkMsg="View all proposals"
-                        linkOnCLick={() => handleFilterChange('all')}
-                    />
-                )}
-            {!isLoading &&
-                data?.items?.length === 0 &&
-                searchParams.proposal_type !== 'internal' && (
-                    <EmptyScreen msg="No External Proposals Found" />
-                )}
+            {!isLoading && data?.items?.length === 0 && searchParams.proposal_type === 'internal' && (
+                <EmptyScreen
+                    msg="No Internal Proposals Found"
+                    linkMsg="View all proposals"
+                    linkOnCLick={() => handleFilterChange('all')}
+                />
+            )}
+            {!isLoading && data?.items?.length === 0 && searchParams.proposal_type !== 'internal' && (
+                <EmptyScreen msg="No External Proposals Found" />
+            )}
             {isLoading && <Skeleton className="h-full w-full"></Skeleton>}
-            <div
-                className={cn(
-                    'flex flex-row-reverse',
-                    data?.items?.length === 0 && 'hidden'
-                )}
-            >
+            <div className={cn('flex flex-row-reverse', data?.items?.length === 0 && 'hidden')}>
                 <PaginationBtns
                     upperLimit={totalPage}
                     onPaginate={handlePaginationChange}
@@ -140,10 +126,7 @@ const GovActionTopNav = ({
     return (
         <div className="flex w-full flex-wrap items-center justify-between gap-y-4">
             <div className="flex flex-col gap-2 md:flex-row">
-                <DataActionBar
-                    onSearch={handleSearch}
-                    placeholder="Search Governance Action"
-                />
+                <DataActionBar onSearch={handleSearch} placeholder="Search Governance Action" />
                 <ProposalFilterTab
                     onClick={handleFilterChange}
                     taboptions={proposalFilterOptions}

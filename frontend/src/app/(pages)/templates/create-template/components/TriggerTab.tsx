@@ -3,15 +3,10 @@
 import React, { useEffect, useState } from 'react';
 
 import { Card } from '@app/components/atoms/Card';
-import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger
-} from '@app/components/molecules/Tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@app/components/molecules/Tabs';
 
-import CustomCron from './CustomCron';
-import DefaultCron from './DefaultCron';
+import CustomCron from './cron/CustomCron';
+import DefaultCron from './cron/DefaultCron';
 
 export interface ICronSetting {
     placeholder: string;
@@ -57,11 +52,7 @@ export default function TriggerTab({
     onlyCronTriggerTab,
     defaultToCustomTab = false
 }: {
-    onChange?: (
-        cronExpression: string[],
-        configuredSettings: string,
-        selectedTab: any
-    ) => void;
+    onChange?: (cronExpression: string[], configuredSettings: string, selectedTab: any) => void;
     defaultCron?: any;
     previousSelectedOption?: string;
     previousConfiguredSettings?: IInputSetting[];
@@ -71,9 +62,7 @@ export default function TriggerTab({
     defaultToCustomTab?: boolean;
 }) {
     const [cron, setCron] = useState<string[]>(
-        typeof defaultCron === 'string'
-            ? defaultCron.split(' ')
-            : defaultCron || ['*', '*', '*', '*', '*']
+        typeof defaultCron === 'string' ? defaultCron.split(' ') : defaultCron || ['*', '*', '*', '*', '*']
     );
 
     /* State for persisiting custom cron settings when switching tabs*/
@@ -81,14 +70,10 @@ export default function TriggerTab({
 
     /* state for persisiting user cron settings when switching tabs*/
 
-    const [defaultSelected, setDefaultSelected] = useState(
-        previousSelectedOption || 'Minute-option-one'
-    );
+    const [defaultSelected, setDefaultSelected] = useState(previousSelectedOption || 'Minute-option-one');
 
     const defaultSelectedCronTab =
-        (defaultToCustomTab && 'Custom') ||
-        previousSelectedOption?.split('-')[0] ||
-        'Minute';
+        (defaultToCustomTab && 'Custom') || previousSelectedOption?.split('-')[0] || 'Minute';
 
     const initialSettings: IInputSetting[] = [
         { name: 'Minute-option-two', value: 1 },
@@ -143,10 +128,7 @@ export default function TriggerTab({
                     <TabsTrigger value="Cron" onClick={() => setSelectedTab?.('CRON')}>
                         Cron Trigger
                     </TabsTrigger>
-                    <TabsTrigger
-                        value="Event"
-                        onClick={() => setSelectedTab?.('EVENT')}
-                    >
+                    <TabsTrigger value="Event" onClick={() => setSelectedTab?.('EVENT')}>
                         Event Trigger
                     </TabsTrigger>
                 </TabsList>
@@ -175,10 +157,7 @@ export default function TriggerTab({
                                 </TabsContent>
                             ))}
                             <TabsContent value="Custom">
-                                <CustomCron
-                                    customCron={cron}
-                                    onChange={onChangeCustomCron}
-                                />
+                                <CustomCron customCron={cron} onChange={onChangeCustomCron} />
                             </TabsContent>
                         </div>
                     </Tabs>

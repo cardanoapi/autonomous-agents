@@ -20,10 +20,7 @@ export default function EmptyScreen({
             {customIcon ? customIcon : <EmptyBoxIcon />}
             <span className="font-mono text-base text-gray-500 xl:text-xl">{msg}</span>
             {linkMsg && linkHref && (
-                <Link
-                    href={linkHref}
-                    className="mt-1 text-sm font-semibold text-brand-Blue-200 hover:cursor-pointer"
-                >
+                <Link href={linkHref} className="mt-1 text-sm font-semibold text-brand-Blue-200 hover:cursor-pointer">
                     {linkMsg}{' '}
                 </Link>
             )}

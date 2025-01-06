@@ -11,11 +11,7 @@ import { cn } from '@app/components/lib/utils';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import EmptyScreen from '@app/components/molecules/EmptyScreen';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
-import {
-    adminAccessAtom,
-    agentCreatedAtom,
-    currentConnectedWalletAtom
-} from '@app/store/localStore';
+import { adminAccessAtom, agentCreatedAtom, currentConnectedWalletAtom } from '@app/store/localStore';
 import { IQueryParams } from '@app/utils/query';
 
 import AgentsContainer from './components/AgentsContainer';
@@ -55,26 +51,15 @@ export default function AgentsPage() {
     }, [agentCreated]);
 
     const otherAgents = useMemo(() => {
-        return (
-            agents?.filter(
-                (agent) => agent.userAddress !== currentConnectedWallet?.address
-            ) || []
-        );
+        return agents?.filter((agent) => agent.userAddress !== currentConnectedWallet?.address) || [];
     }, [agents, currentConnectedWallet?.address]);
 
     const myAgents = useMemo(() => {
-        return (
-            agents?.filter(
-                (agent) => agent.userAddress === currentConnectedWallet?.address
-            ) || []
-        );
+        return agents?.filter((agent) => agent.userAddress === currentConnectedWallet?.address) || [];
     }, [agents, currentConnectedWallet?.address]);
     return (
         <>
-            <AgentsTopNav
-                createAgentAccess={adminAccess}
-                onSearch={(value: string) => handleSearch(value)}
-            />
+            <AgentsTopNav createAgentAccess={adminAccess} onSearch={(value: string) => handleSearch(value)} />
             {isLoading && <Skeleton className="h-full w-full" />}
             {!isLoading &&
                 agents &&
@@ -96,18 +81,9 @@ export default function AgentsPage() {
                         enableDelete={adminAccess}
                     />
                     {currentConnectedWallet && !isLoading && myAgents.length > 0 && (
-                        <div
-                            className={cn(
-                                otherAgents.length > 0 && 'my-8',
-                                'h-full w-full'
-                            )}
-                        >
+                        <div className={cn(otherAgents.length > 0 && 'my-8', 'h-full w-full')}>
                             <span className="h1-new mb-4 inline-flex">My Agents</span>
-                            <AgentsContainer
-                                agentsList={myAgents || []}
-                                enableEdit={true}
-                                enableDelete={adminAccess}
-                            />
+                            <AgentsContainer agentsList={myAgents || []} enableEdit={true} enableDelete={adminAccess} />
                         </div>
                     )}
                 </div>

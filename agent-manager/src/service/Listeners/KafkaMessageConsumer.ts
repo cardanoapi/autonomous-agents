@@ -7,7 +7,7 @@ import environments from '../../config/environments'
 const config = environments.kafka
 const configTopic = `${config.topicPrefix || config.prefix || 'agent'}-updates`
 const triggerTopic = `${config.topicPrefix || config.prefix || 'agent'}-triggers`
-const topicList = [configTopic, triggerTopic]
+export const topicList = [configTopic, triggerTopic]
 const brokers = config.brokers
     .split(',')
     .map((x) => x.trim())
@@ -19,7 +19,9 @@ const kafka = new Kafka({
     brokers, // Update with your Kafka broker address
 })
 
-const consumer = kafka.consumer({ groupId })
+export const consumer = kafka.consumer({
+    groupId,
+})
 
 export async function initKafkaConsumers(manager: AgentManagerRPC) {
     console.log('[Kafka]', `brokers:${brokers}, groupId:${groupId}, topics:${topicList}`)
@@ -74,3 +76,10 @@ export async function initKafkaConsumers(manager: AgentManagerRPC) {
         },
     })
 }
+
+const { HEARTBEAT } = consumer.events
+let lastHeartbeat: number = 0
+consumer.on(HEARTBEAT, ({ timestamp }) => {
+    lastHeartbeat = timestamp
+})
+export const fetchConsumerLatestHeartbeat = () => lastHeartbeat

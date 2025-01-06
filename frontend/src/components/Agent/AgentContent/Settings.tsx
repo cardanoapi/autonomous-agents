@@ -88,11 +88,7 @@ export default function AgentSettingsComponent({
     };
 
     const AgnetDataCanBeChanged = () => {
-        return (
-            agent &&
-            agentData.agentName === agent?.name &&
-            agentData.instance === agent?.instance
-        );
+        return agent && agentData.agentName === agent?.name && agentData.instance === agent?.instance;
     };
 
     return (
@@ -110,9 +106,7 @@ export default function AgentSettingsComponent({
                         value={agentData.agentName}
                         className="mx-[2px]"
                         viewOnly={!isEditing}
-                        onChange={(e: any) =>
-                            setAgentData({ ...agentData, agentName: e.target.value })
-                        }
+                        onChange={(e: any) => setAgentData({ ...agentData, agentName: e.target.value })}
                     />
                 </div>
                 <div className="mt-4 flex flex-col gap-2">
@@ -121,9 +115,7 @@ export default function AgentSettingsComponent({
                         value={agentData.instance}
                         className="mx-[2px]"
                         viewOnly={!isEditing}
-                        onChange={(e: any) =>
-                            setAgentData({ ...agentData, instance: e.target.value })
-                        }
+                        onChange={(e: any) => setAgentData({ ...agentData, instance: e.target.value })}
                         min={1}
                     />
                 </div>
@@ -131,11 +123,7 @@ export default function AgentSettingsComponent({
                     <Label>Secret Key</Label>
                     <div className="flex items-center gap-2">
                         <Input
-                            value={
-                                showSecret
-                                    ? agent?.secret_key || ''
-                                    : '*'.repeat(agent?.secret_key?.length || 10)
-                            }
+                            value={showSecret ? agent?.secret_key || '' : '*'.repeat(agent?.secret_key?.length || 10)}
                             className="mx-[2px]"
                             viewOnly={true}
                         />
@@ -145,10 +133,7 @@ export default function AgentSettingsComponent({
                                 className="cursor-pointer text-gray-400"
                             />
                         ) : (
-                            <Eye
-                                onClick={() => setShowSecret(!showSecret)}
-                                className="cursor-pointer text-gray-400"
-                            />
+                            <Eye onClick={() => setShowSecret(!showSecret)} className="cursor-pointer text-gray-400" />
                         )}
                     </div>
                 </div>
@@ -157,12 +142,7 @@ export default function AgentSettingsComponent({
                 <div className="absolute bottom-4 right-4">
                     {isEditing ? (
                         <div className="flex items-center gap-2">
-                            <Button
-                                variant={'secondary'}
-                                size={'sm'}
-                                className="min-w-32"
-                                onClick={handleCancel}
-                            >
+                            <Button variant={'secondary'} size={'sm'} className="min-w-32" onClick={handleCancel}>
                                 Cancel
                             </Button>
                             <Button
@@ -176,12 +156,7 @@ export default function AgentSettingsComponent({
                             </Button>
                         </div>
                     ) : (
-                        <Button
-                            variant={'primary'}
-                            size={'sm'}
-                            className="min-w-32"
-                            onClick={toggleEdit}
-                        >
+                        <Button variant={'primary'} size={'sm'} className="min-w-32" onClick={toggleEdit}>
                             Edit
                         </Button>
                     )}

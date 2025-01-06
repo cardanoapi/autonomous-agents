@@ -18,10 +18,7 @@ export class WsClientPipe extends Pipe<any, any> {
         })
     }
 
-    write(
-        chunk: any,
-        cb?: ((error?: Error | undefined) => void) | undefined
-    ): boolean {
+    write(chunk: any, cb?: ((error?: Error | undefined) => void) | undefined): boolean {
         this.ws.send(chunk, { binary: true }, cb)
         return true
     }

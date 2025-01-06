@@ -1,11 +1,6 @@
 import { bech32 } from 'bech32'
 
-type CertificateType =
-    | 'registerstake'
-    | 'registerdrep'
-    | 'deregisterdrep'
-    | 'delegate'
-    | 'deregisterstake'
+type CertificateType = 'registerstake' | 'registerdrep' | 'deregisterdrep' | 'delegate' | 'deregisterstake'
 
 export type TxSubmitResponse = {
     cborHex: string
@@ -28,11 +23,7 @@ export class Kuber {
     }
 
     static generateCert(type: CertificateType, key: string, dRep: string = '') {
-        if (
-            type === 'registerstake' ||
-            type === 'deregisterdrep' ||
-            type === 'deregisterstake'
-        ) {
+        if (type === 'registerstake' || type === 'deregisterdrep' || type === 'deregisterstake') {
             return {
                 type: type,
                 key: key,
@@ -43,8 +34,7 @@ export class Kuber {
                 key: key,
                 anchor: {
                     url: 'https://bit.ly/3zCH2HL',
-                    dataHash:
-                        '1111111111111111111111111111111111111111111111111111111111111111',
+                    dataHash: '1111111111111111111111111111111111111111111111111111111111111111',
                 },
             }
         } else if (type === 'delegate' && dRep) {
@@ -91,12 +81,6 @@ export class Kuber {
 
     rewardAddressBech32(networkId: number, stakevkh: string): string {
         const prefix = networkId == 0 ? 'stake_test' : 'stake'
-        return bech32.encode(
-            prefix,
-            bech32.toWords(
-                Buffer.from(this.rewardAddressRawBytes(networkId, stakevkh))
-            ),
-            200
-        )
+        return bech32.encode(prefix, bech32.toWords(Buffer.from(this.rewardAddressRawBytes(networkId, stakevkh))), 200)
     }
 }

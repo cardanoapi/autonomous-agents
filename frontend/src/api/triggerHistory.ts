@@ -18,13 +18,8 @@ export interface IAgentTriggerHistory {
     result?: any;
 }
 
-export const fetchAgentTriggerHistoryById = async (
-    agentId: string,
-    pageItemsSize: number
-) => {
-    const res = await fetch(
-        `${baseAPIurl}/trigger-history?agent_id=${agentId}&size=${pageItemsSize}`
-    );
+export const fetchAgentTriggerHistoryById = async (agentId: string, pageItemsSize: number) => {
+    const res = await fetch(`${baseAPIurl}/trigger-history?agent_id=${agentId}&size=${pageItemsSize}`);
     if (!res.ok) {
         throw new Error('Trigger Fetch failed: Network Error');
     }
@@ -41,9 +36,7 @@ export const fetchTransactionCountOfAgentById = async (agentId: string) => {
 
 export const fetchTriggerHistoryByFunctionName = async (functionName: string) => {
     const encodedFunctionName = encodeURI(functionName);
-    const res = await fetch(
-        `${baseAPIurl}/trigger-history?function_name=${encodedFunctionName}`
-    );
+    const res = await fetch(`${baseAPIurl}/trigger-history?function_name=${encodedFunctionName}`);
     if (!res.ok) {
         throw new Error('Trigger Fetch Failed: Network Error');
     }
@@ -53,9 +46,7 @@ export const fetchTriggerHistoryByFunctionName = async (functionName: string) =>
 
 export const fetchAllTriggerHistory = async ({
     queryKey
-}: QueryFunctionContext<
-    [string, number?, number?, string?, string?, string?, string?]
->) => {
+}: QueryFunctionContext<[string, number?, number?, string?, string?, string?, string?]>) => {
     const [, page, size = 50, agentID, functionName, status, success] = queryKey;
 
     let fetchURL = `${baseAPIurl}/trigger-history?page=${page}&size=${size}`;

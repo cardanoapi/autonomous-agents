@@ -46,9 +46,7 @@ export const environments = {
     // build-time configs
     BASE_DEPLOY_PATH,
 
-    FORM_PRIVACY_POLICY_URL:
-        process.env.FORM_PRIVACY_POLICY_URL ??
-        'https://bettercollected.com/privacy-policy',
+    FORM_PRIVACY_POLICY_URL: process.env.FORM_PRIVACY_POLICY_URL ?? 'https://bettercollected.com/privacy-policy',
 
     // run-time configg
     GA_MEASUREMENT_ID: process.env.GA_MEASUREMENT_ID,
@@ -67,12 +65,10 @@ export const environments = {
     ELASTIC_APM_SERVER_URL: process.env.ELASTIC_APM_SERVER_URL,
     ELASTIC_APM_SERVICE_NAME: process.env.ELASTIC_APM_SERVICE_NAME,
     ELASTIC_APM_ENVIRONMENT: process.env.ELASTIC_APM_ENVIRONMENT,
-    APM_ENABLED:
-        process.env.ELASTIC_APM_SERVER_URL && process.env.ELASTIC_APM_SERVICE_NAME,
+    APM_ENABLED: process.env.ELASTIC_APM_SERVER_URL && process.env.ELASTIC_APM_SERVICE_NAME,
     NEXT_PUBLIC_IMAGE_TAG: process.env.NEXT_PUBLIC_IMAGE_TAG ?? 'dev',
     GOVTOOL_BASE_URL: 'https://govtool.cardanoapi.io',
-    NEXT_PUBLIC_ENABLE_AGENT_INSTANCE:
-        process.env.NEXT_PUBLIC_ENABLE_AGENT_INSTANCE === 'true' || false
+    NEXT_PUBLIC_ENABLE_AGENT_INSTANCE: process.env.NEXT_PUBLIC_ENABLE_AGENT_INSTANCE === 'true' || false
 };
 
 if (typeof window !== 'undefined') {

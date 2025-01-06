@@ -1,7 +1,4 @@
-export function generateRegisterDrepMetadataContent(
-    drepName: string,
-    paymentAddress: string
-) {
+export function generateRegisterDrepMetadataContent(drepName: string, paymentAddress: string) {
     return JSON.stringify({
         '@context': {
             '@language': 'en-us',
@@ -15,8 +12,7 @@ export function generateRegisterDrepMetadataContent(
                         '@id': 'CIP119:references',
                         '@container': '@set',
                         '@context': {
-                            GovernanceMetadata:
-                                'CIP100:GovernanceMetadataReference',
+                            GovernanceMetadata: 'CIP100:GovernanceMetadataReference',
                             Identity: 'CIP100:IdentityReference',
                             Link: 'CIP100:LinkReference',
                             Other: 'CIP100:OtherReference',
@@ -60,8 +56,7 @@ export function generateRegisterDrepMetadataContent(
         hashAlgorithm: 'blake2b-256',
         body: {
             givenName: `${drepName}`,
-            motivations:
-                'This Drep is generated automatically by autonomous-agent-testing',
+            motivations: 'This Drep is generated automatically by autonomous-agent-testing',
             objectives: 'This is the automatically generated DRep for testing.',
             paymentAddress: `${paymentAddress}`,
             qualifications: 'Known for running test in cardano blockchain.',

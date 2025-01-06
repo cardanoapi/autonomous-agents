@@ -7,13 +7,7 @@ interface LogoProps {
 
 const Logo: React.FC<LogoProps> = ({ height = 65, width = 65 }) => {
     return (
-        <svg
-            width={width}
-            height={height}
-            viewBox="0 0 65 65"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-        >
+        <svg width={width} height={height} viewBox="0 0 65 65" fill="none" xmlns="http://www.w3.org/2000/svg">
             st
             <ellipse
                 cx="32.4999"

@@ -6,25 +6,17 @@ export default async function handler(
     newConstitution: any,
     guardRailScript: any
 ) {
-    const { dataHash, url } = await context.builtins.saveMetadata(
-        context.helpers.generateProposalMetadataContent()
-    )
-    const anchorData =
-        anchor && anchor['url'] && anchor['dataHash']
-            ? anchor
-            : { url, dataHash }
+    const { dataHash, url } = await context.builtins.saveMetadata(context.helpers.generateProposalMetadataContent())
+    const anchorData = anchor && anchor['url'] && anchor['dataHash'] ? anchor : { url, dataHash }
     const newConstitutionData =
-        newConstitution['url'] && newConstitution['dataHash']
-            ? newConstitution
-            : { url, dataHash }
+        newConstitution['url'] && newConstitution['dataHash'] ? newConstitution : { url, dataHash }
     const req = {
         proposals: [
             {
                 anchor: anchorData,
                 newconstitution: {
                     ...newConstitutionData,
-                    scriptHash:
-                        'db1bc3c3f99ce68977ceaf27ab4dd917123ef9e73f85c304236eab23',
+                    scriptHash: 'db1bc3c3f99ce68977ceaf27ab4dd917123ef9e73f85c304236eab23',
                 },
                 refundAccount: context.wallet.rewardAddress,
             },

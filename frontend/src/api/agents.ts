@@ -9,6 +9,34 @@ import { convertToQueryStr } from '@app/utils/common/extra';
 import { agentFormSchema } from '../app/(pages)/agents/create-agent/_form/schema';
 import { baseAPIurl } from './config';
 
+export type BooleanOperator = 'AND' | 'OR';
+export type ComparisonOperator = 'equals' | 'greaterThan' | 'lessThan' | 'in';
+
+export interface IFieldNode {
+    id: string | Array<string>;
+    value: any;
+    negate: boolean;
+    operators: string[];
+    operator: string;
+    validator: (...args: any) => any;
+}
+
+export interface IBooleanNode {
+    id?: string | string[];
+    children: IFilterNode[];
+    negate: boolean;
+    operator: BooleanOperator;
+}
+
+export interface IEventTrigger {
+    id: string | string[];
+    children: IFilterNode[];
+    negate: boolean;
+    operator: BooleanOperator;
+}
+
+export type IFilterNode = IFieldNode | IBooleanNode;
+
 export type TriggerType = 'CRON' | 'MANUAL' | 'EVENT';
 
 export interface ISubParameter {
@@ -24,11 +52,6 @@ export interface IAgentAction {
 export interface ICronTrigger {
     frequency: string;
     probability: number;
-}
-
-export interface IEventTrigger {
-    event: 'VoteEvent';
-    parameters?: Array<ISubParameter>;
 }
 
 export interface IAgentConfiguration {
@@ -77,11 +100,7 @@ export interface IAgent {
     secret_key?: string;
 }
 
-export const fetchAgents = async (params: {
-    page: number;
-    size: number;
-    search: string;
-}): Promise<IAgent[]> => {
+export const fetchAgents = async (params: { page: number; size: number; search: string }): Promise<IAgent[]> => {
     const { page, size, search } = params;
 
     const queryString = convertToQueryStr(page, size, search);
@@ -182,10 +201,7 @@ export interface AgentTriggerRequestData {
     parameters: Array<any>;
 }
 
-export const manualTriggerForAgent = async (
-    agentId: string,
-    data: AgentTriggerRequestData
-) => {
+export const manualTriggerForAgent = async (agentId: string, data: AgentTriggerRequestData) => {
     const url = `${baseAPIurl}/agents/${agentId}/trigger`;
     try {
         const response = await axios.post(url, data, {

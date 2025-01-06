@@ -10,11 +10,7 @@ import { useAtom } from 'jotai';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import EmptyScreen from '@app/components/molecules/EmptyScreen';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
-import {
-    adminAccessAtom,
-    currentConnectedWalletAtom,
-    templateCreatedAtom
-} from '@app/store/localStore';
+import { adminAccessAtom, currentConnectedWalletAtom, templateCreatedAtom } from '@app/store/localStore';
 import { IQueryParams } from '@app/utils/query';
 
 import TemplateList from './components/TemplateList';

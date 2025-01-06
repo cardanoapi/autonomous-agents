@@ -18,12 +18,7 @@ export default function ThemeProvider({
     emotionCache?: EmotionCache;
 }>) {
     return (
-        <NextThemeProvider
-            attribute="class"
-            enableSystem={true}
-            forcedTheme="light"
-            defaultTheme="light"
-        >
+        <NextThemeProvider attribute="class" enableSystem={true} forcedTheme="light" defaultTheme="light">
             <CacheProvider value={emotionCache}>
                 <MuiThemeProvider>
                     {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}

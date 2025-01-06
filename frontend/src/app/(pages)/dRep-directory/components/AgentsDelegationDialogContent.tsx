@@ -5,10 +5,7 @@ interface AgentsDelegationDialogContentProps {
     handleClose: () => void;
 }
 
-export default function AgentsDelegationDialogContent({
-    dRepId,
-    handleClose
-}: AgentsDelegationDialogContentProps) {
+export default function AgentsDelegationDialogContent({ dRepId, handleClose }: AgentsDelegationDialogContentProps) {
     return (
         <AgentsActionDialogContent
             title="Delegate to DRep"

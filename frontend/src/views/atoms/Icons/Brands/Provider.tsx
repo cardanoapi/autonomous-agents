@@ -12,20 +12,9 @@ const darkSvg = (
         style={svgStyle}
     >
         <defs>
-            <filter
-                x="-50%"
-                y="-50%"
-                width="200%"
-                height="200%"
-                filterUnits="objectBoundingBox"
-                id="filter-1"
-            >
+            <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-1">
                 <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1" />
-                <feGaussianBlur
-                    stdDeviation="0.5"
-                    in="shadowOffsetOuter1"
-                    result="shadowBlurOuter1"
-                />
+                <feGaussianBlur stdDeviation="0.5" in="shadowOffsetOuter1" result="shadowBlurOuter1" />
                 <feColorMatrix
                     values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.168 0"
                     in="shadowBlurOuter1"
@@ -33,11 +22,7 @@ const darkSvg = (
                     result="shadowMatrixOuter1"
                 />
                 <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter2" />
-                <feGaussianBlur
-                    stdDeviation="0.5"
-                    in="shadowOffsetOuter2"
-                    result="shadowBlurOuter2"
-                />
+                <feGaussianBlur stdDeviation="0.5" in="shadowOffsetOuter2" result="shadowBlurOuter2" />
                 <feColorMatrix
                     values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.084 0"
                     in="shadowBlurOuter2"
@@ -53,20 +38,10 @@ const darkSvg = (
             <rect id="path-2" x="0" y="0" width="40" height="40" rx="2" />
             <rect id="path-3" x="5" y="5" width="38" height="38" rx="1" />
         </defs>
-        <g
-            id="Google-Button"
-            stroke="none"
-            strokeWidth="1"
-            fill="none"
-            fillRule="evenodd"
-        >
+        <g id="Google-Button" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
             <g id="9-PATCH" transform="translate(-608.000000, -219.000000)" />
             <g id="btn_google_dark_normal" transform="translate(-1.000000, -1.000000)">
-                <g
-                    id="button"
-                    transform="translate(4.000000, 4.000000)"
-                    filter="url(#filter-1)"
-                >
+                <g id="button" transform="translate(4.000000, 4.000000)" filter="url(#filter-1)">
                     <g id="button-bg">
                         <use fill="#4285F4" fillRule="evenodd" />
                         <use fill="none" />
@@ -119,20 +94,9 @@ const lightSvg = (
         style={svgStyle}
     >
         <defs>
-            <filter
-                x="-50%"
-                y="-50%"
-                width="200%"
-                height="200%"
-                filterUnits="objectBoundingBox"
-                id="filter-1"
-            >
+            <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-1">
                 <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1" />
-                <feGaussianBlur
-                    stdDeviation="0.5"
-                    in="shadowOffsetOuter1"
-                    result="shadowBlurOuter1"
-                />
+                <feGaussianBlur stdDeviation="0.5" in="shadowOffsetOuter1" result="shadowBlurOuter1" />
                 <feColorMatrix
                     values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.168 0"
                     in="shadowBlurOuter1"
@@ -140,11 +104,7 @@ const lightSvg = (
                     result="shadowMatrixOuter1"
                 />
                 <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter2" />
-                <feGaussianBlur
-                    stdDeviation="0.5"
-                    in="shadowOffsetOuter2"
-                    result="shadowBlurOuter2"
-                />
+                <feGaussianBlur stdDeviation="0.5" in="shadowOffsetOuter2" result="shadowBlurOuter2" />
                 <feColorMatrix
                     values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.084 0"
                     in="shadowBlurOuter2"
@@ -159,20 +119,10 @@ const lightSvg = (
             </filter>
             <rect id="path-2" x="0" y="0" width="40" height="40" rx="2" />
         </defs>
-        <g
-            id="Google-Button"
-            stroke="none"
-            strokeWidth="1"
-            fill="none"
-            fillRule="evenodd"
-        >
+        <g id="Google-Button" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
             <g id="9-PATCH" transform="translate(-608.000000, -160.000000)" />
             <g id="btn_google_light_normal" transform="translate(-1.000000, -1.000000)">
-                <g
-                    id="button"
-                    transform="translate(4.000000, 4.000000)"
-                    filter="url(#filter-1)"
-                >
+                <g id="button" transform="translate(4.000000, 4.000000)" filter="url(#filter-1)">
                     <g id="button-bg">
                         <use fill="#FFFFFF" fillRule="evenodd" />
                         <use fill="none" />
@@ -221,18 +171,9 @@ const disabledSvg = (
         <defs>
             <rect id="path-1" x="0" y="0" width="40" height="40" rx="2" />
         </defs>
-        <g
-            id="Google-Button"
-            stroke="none"
-            strokeWidth="1"
-            fill="none"
-            fillRule="evenodd"
-        >
+        <g id="Google-Button" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
             <g id="9-PATCH" transform="translate(-788.000000, -219.000000)" />
-            <g
-                id="btn_google_dark_disabled"
-                transform="translate(-1.000000, -1.000000)"
-            >
+            <g id="btn_google_dark_disabled" transform="translate(-1.000000, -1.000000)">
                 <g id="button" transform="translate(4.000000, 4.000000)">
                     <g id="button-bg">
                         <use fillOpacity="0.08" fill="#000000" fillRule="evenodd" />
@@ -278,8 +219,7 @@ interface IProviderIconProps {
 }
 
 export const ProviderIcon = ({ disabled, type }: IProviderIconProps) => {
-    const getEnabledIcon =
-        type === 'dark' ? darkSvg : type === 'light' ? lightSvg : typeformSvg;
+    const getEnabledIcon = type === 'dark' ? darkSvg : type === 'light' ? lightSvg : typeformSvg;
     const getDisabledIcon = type === 'typeform' ? typeformSvg : disabledSvg;
 
     return (

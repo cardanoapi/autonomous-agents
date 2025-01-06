@@ -104,8 +104,7 @@ export default function AgentCard({
             <div className="flex flex-col gap-y-2">
                 {agentDetails.map(({ placeholder, value }, index) => (
                     <span key={index} className="!text-xs">
-                        {placeholder} :{' '}
-                        <span className="text-active text-xs">{value}</span>
+                        {placeholder} : <span className="text-active text-xs">{value}</span>
                     </span>
                 ))}
             </div>
@@ -130,11 +129,7 @@ export default function AgentCard({
                     onDelete={handleAgentDelete}
                 />
 
-                <AgentCardTitle
-                    agentName={agentName}
-                    agentID={agentID || ''}
-                    isActive={isActive}
-                />
+                <AgentCardTitle agentName={agentName} agentID={agentID || ''} isActive={isActive} />
 
                 <CardContent className="flex flex-col gap-y-2 ">
                     {templateName && (
@@ -148,9 +143,7 @@ export default function AgentCard({
 
                     {renderAgentDetails(agentDetails)}
 
-                    <div className="pb-0">
-                        {renderAgentDetails(agentTriggerDetails)}
-                    </div>
+                    <div className="pb-0">{renderAgentDetails(agentTriggerDetails)}</div>
                 </CardContent>
             </Card>
             <DeleteAgentDialog
@@ -178,24 +171,12 @@ const AgentCardControls = ({
     onDelete: any;
 }) => {
     return (
-        <div
-            className={cn(
-                'absolute right-3 justify-end gap-1 bg-white',
-                enableRun ? 'flex' : 'hidden'
-            )}
-        >
-            <PlayIcon
-                color="#A1A1A1"
-                className="hidden hover:cursor-pointer group-hover:flex"
-                onClick={onRun}
-            />
+        <div className={cn('absolute right-3 justify-end gap-1 bg-white', enableRun ? 'flex' : 'hidden')}>
+            <PlayIcon color="#A1A1A1" className="hidden hover:cursor-pointer group-hover:flex" onClick={onRun} />
             <Trash2
                 color="#A1A1A1"
                 onClick={onDelete}
-                className={cn(
-                    'hidden  hover:cursor-pointer group-hover:flex',
-                    !enableDelete ? '!hidden' : ''
-                )}
+                className={cn('hidden  hover:cursor-pointer group-hover:flex', !enableDelete ? '!hidden' : '')}
             />
         </div>
     );
@@ -226,15 +207,7 @@ const AgentCardTitle = ({
     );
 };
 
-const DeleteAgentDialog = ({
-    dialogOpen,
-    onAccept,
-    onClose
-}: {
-    dialogOpen: boolean;
-    onAccept: any;
-    onClose: any;
-}) => {
+const DeleteAgentDialog = ({ dialogOpen, onAccept, onClose }: { dialogOpen: boolean; onAccept: any; onClose: any }) => {
     return (
         <Dialog open={dialogOpen}>
             <DialogContent defaultCross={true} disableBG={false}>

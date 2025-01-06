@@ -54,11 +54,7 @@ const DashboardCards = ({ className }: { className?: string }) => {
 
     const { data: proposalMetric } = useQuery({
         queryKey: ['proposalMetric'],
-        queryFn: async () =>
-            fecthTriggerHistoryMetric([
-                'createInfoGovAction',
-                'proposalNewConstitution'
-            ])
+        queryFn: async () => fecthTriggerHistoryMetric(['createInfoGovAction', 'proposalNewConstitution'])
     });
 
     const { data: voteMetric } = useQuery({
@@ -76,10 +72,7 @@ const DashboardCards = ({ className }: { className?: string }) => {
                 title="No of Agents"
                 totalAgents={agents.length || 'NA'}
                 activeAgents={activeAgents?.online_agents_count || 0}
-                inactiveAgents={Math.max(
-                    0,
-                    agents.length - activeAgents?.online_agents_count || 0
-                )}
+                inactiveAgents={Math.max(0, agents.length - activeAgents?.online_agents_count || 0)}
             />
             <OverViewTemplatesCard
                 title="No of Templates"
@@ -89,21 +82,12 @@ const DashboardCards = ({ className }: { className?: string }) => {
             />
             <OverViewGraphCard
                 title="No of Proposals"
-                totalValue={
-                    (proposalMetric &&
-                        getTotalValue(
-                            proposalMetric.last_24hour_successful_triggers
-                        )) ||
-                    0
-                }
-                changeRate={
-                    (proposalMetric && proposalMetric.today_fluctuation_rate) || 0
-                }
+                totalValue={(proposalMetric && getTotalValue(proposalMetric.last_24hour_successful_triggers)) || 0}
+                changeRate={(proposalMetric && proposalMetric.today_fluctuation_rate) || 0}
                 graphData={
                     proposalMetric !== undefined
                         ? convertArrayToGraphDataFormat(
-                              proposalMetric.last_24hour_successful_triggers.toReversed() ||
-                                  [],
+                              proposalMetric.last_24hour_successful_triggers.toReversed() || [],
                               6
                           )
                         : []
@@ -111,18 +95,13 @@ const DashboardCards = ({ className }: { className?: string }) => {
             />
             <OverViewGraphCard
                 title="No of Votes"
-                totalValue={
-                    (voteMetric &&
-                        getTotalValue(voteMetric.last_24hour_successful_triggers)) ||
-                    0
-                }
+                totalValue={(voteMetric && getTotalValue(voteMetric.last_24hour_successful_triggers)) || 0}
                 changeRate={(voteMetric && voteMetric.today_fluctuation_rate) || 0}
                 theme="Secondary"
                 graphData={
                     voteMetric !== undefined
                         ? convertArrayToGraphDataFormat(
-                              voteMetric.last_24hour_successful_triggers.toReversed() ||
-                                  [],
+                              voteMetric.last_24hour_successful_triggers.toReversed() || [],
                               6
                           )
                         : []

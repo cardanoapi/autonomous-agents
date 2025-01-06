@@ -48,10 +48,7 @@ export class TriggerActionHandler {
     }
 
     setTimeOut() {
-        console.log(
-            'Timout initialized of 80 second... , TriggerQueue ',
-            this.triggerQueue
-        )
+        console.log('Timout initialized of 80 second... , TriggerQueue ', this.triggerQueue)
         this.timeOut = setTimeout(() => {
             if (this.triggerQueue.length) {
                 this.triggerQueue = removeRedundantTrigger(this.triggerQueue)
@@ -88,13 +85,7 @@ export class TriggerActionHandler {
             success: true,
             instanceIndex: 0,
         }
-        triggerAction(
-            this,
-            this.managerInterface,
-            action['function_name'],
-            action['parameters'],
-            triggerType
-        )
+        triggerAction(this, this.managerInterface, action['function_name'], action['parameters'], triggerType)
             .then((res) => {
                 console.log('Tx Hash of res is : ', res)
                 if (res) {
@@ -133,8 +124,7 @@ function removeRedundantTrigger(triggerQueue: Array<ITrigger>) {
     const secondTrigger = triggerQueue.at(1)
     if (
         firstTrigger?.triggerType === secondTrigger?.triggerType &&
-        firstTrigger?.action.function_name ===
-            secondTrigger?.action.function_name
+        firstTrigger?.action.function_name === secondTrigger?.action.function_name
     ) {
         triggerQueue.shift()
     }
