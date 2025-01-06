@@ -174,7 +174,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
                         ]
                     },
                     {
-                        id: 'vote',
+                        id: 'voteType',
                         name: 'Vote',
                         type: 'options',
                         options: [
@@ -201,7 +201,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
                 eventName: 'VoteEvent',
                 eventParameters: [
                     {
-                        id: 'vote',
+                        id: 'voteType',
                         name: 'Vote',
                         type: 'options',
                         options: [

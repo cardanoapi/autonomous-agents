@@ -54,8 +54,6 @@ const AgentFunctionsDetailComponent = ({
     };
 
     const handleUpdate = (functionData: IFormFunctionInstance) => {
-        console.log(functionData);
-
         if (functionData.agent_id) {
             const data = mapFormFunctionToAgentConfiguration(functionData);
             updateTemplate.mutateAsync(data);

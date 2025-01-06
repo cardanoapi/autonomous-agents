@@ -64,7 +64,7 @@ export class EventTriggerHandler {
                     'EVENT',
                     index,
                     function_name,
-                    ...parameters
+                    parameters
                 )
             })
         }

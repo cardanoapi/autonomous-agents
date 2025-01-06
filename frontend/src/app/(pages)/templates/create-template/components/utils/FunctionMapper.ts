@@ -25,7 +25,7 @@ export const mapFormFunctionToTriggerConfiguration = (item: IFormFunctionInstanc
                 type: item.type,
                 action: {
                     function_name: item.id,
-                    parameters: item.optionValue ? [mapOptionToKeyValuePair(item.optionValue, 'vote')] : []
+                    parameters: item.optionValue ? [mapOptionToKeyValuePair(item.optionValue, 'voteType')] : []
                 },
                 data: item.eventValue
             };

@@ -30,11 +30,12 @@ export class AgentRunner {
         triggerType: TriggerType,
         instanceIndex: number,
         method: string,
-        ...args: any[]
+        parameters: any[]
     ) {
         const eventContext = {
             event: context,
             filter: eventFilterContext,
+            parameters,
         }
         const params = await this.executor
             .filterFunctionParams(method, eventContext)

@@ -113,9 +113,9 @@ export function formatDatetoHumanReadable(inputDate: string | number): string {
 }
 
 export function formatParameterName(name: string) {
-    const transformedName = name.replace('_', ' ');
+    const transformedName = name?.replace('_', ' ');
     return transformedName
-        .split(' ')
+        ?.split(' ')
         .map((word) => {
             return word[0].toUpperCase() + word.substring(1);
         })

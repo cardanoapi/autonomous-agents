@@ -58,7 +58,6 @@ export default function AgentFunctionsComponent({
 
     const handlePostTrigger = (item: IFormFunctionInstance) => {
         const triggerData = mapFormFunctionToTriggerConfiguration(item);
-        console.log('triggerData', triggerData);
         triggerData && postTriggerMutation.mutate(triggerData);
     };
 

@@ -5,34 +5,44 @@ export interface Key {
     private: string
     public: string
     pubKeyHash: string
+
     signRaw(data: Buffer): Buffer
+
     verify(signature: Buffer): Buffer
 }
+
 export interface Wallet {
     address: string
     paymentKey: Key
     stakeKey: Key
     rewardAddress: string
     drepId: string
+
     buildAndSubmit(spec: any, stakeSigning?: boolean, saveDrepStatus?: boolean): Promise<any>
+
     signTx(txRaw: Buffer, stakeSigning?: boolean): Buffer
 }
 
 export interface KuberApi {
     buildTx(spec: any): Promise<any>
+
     buildAndSubmit(spec: any): Promise<any>
 }
+
 // types.ts
 
 export interface TxInfo {
     txId: string
     cborHex: string
+
     [key: string]: any // Allows for additional properties
 }
+
 export interface OffchainData {
     url: string
     hash: string
 }
+
 export type DelegationTarget =
     | 'abstain'
     | 'no-confidence'
@@ -75,6 +85,7 @@ export interface FunctionContext {
     helpers: Helpers
     event?: EventContext
     filter?: any
+    parameters?: { name: string; value: string }[]
 }
 
 // Create a restricted execution environment

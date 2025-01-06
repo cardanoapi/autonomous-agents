@@ -83,8 +83,8 @@ export const FunctionForm = ({
     };
 
     const handleTypeChange = (type: string) => {
-        const newFunciontState = { ...functionState, type: type as TriggerType };
-        updateFunctionState(newFunciontState);
+        const newFunctionState = { ...functionState, type: type as TriggerType };
+        updateFunctionState(newFunctionState);
     };
 
     const handleNestedParameterChange = (parentId: string, subParamId: string, newValue: any) => {
