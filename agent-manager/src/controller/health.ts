@@ -58,6 +58,9 @@ async function healthCheck(req: Request, res: Response) {
                 database: {
                     isHealthy: isDatabaseHealthy,
                 },
+                metadata:{
+                    isHealthy:isMetadataHealthy
+                }
             },
         })
     } catch (err: any) {
