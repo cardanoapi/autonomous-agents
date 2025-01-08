@@ -44,6 +44,7 @@ class KafkaService:
     async def stop(self):
         if settings.KAFKA_ENABLED:
             await self.producer.stop()
+            await self.consumer.stop()
 
     async def publish_message(self, topic: str, message: str, key: Optional[str]):
         if settings.KAFKA_ENABLED:
