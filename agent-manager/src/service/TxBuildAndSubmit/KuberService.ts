@@ -24,7 +24,7 @@ class Kuber extends TxBuildAndSubmitBaseClass {
         try {
             return JSON.parse(str)
         } catch (e: any) {
-            throw `KubærApi response JSON parse failed : ${e.message || e} : ${str}`
+            throw `KuberApi response JSON parse failed : ${e.message || e} : ${str}`
         }
     }
 

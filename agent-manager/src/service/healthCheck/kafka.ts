@@ -4,7 +4,6 @@ export async function checkKafkaStatus() {
     try {
         const lastHeartbeat = fetchConsumerLatestHeartbeat()
         const isHealthy = async () => {
-            // so it is healthy
             if (Date.now() - lastHeartbeat < 10000) {
                 return true
             }
