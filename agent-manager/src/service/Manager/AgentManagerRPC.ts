@@ -103,7 +103,7 @@ export class AgentManagerRPC extends WsRpcServer {
     }
 
     protected async validateEventBroadcast(connection_id: string, topic: string, message: any): Promise<boolean> {
-        console.debug("message : ",message)
+        console.debug('message : ', message)
         // TODO: handle the event emitted
         if (topic === 'active_connection') {
             await updateLastActiveTimestamp(connection_id)
