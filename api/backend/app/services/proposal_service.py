@@ -66,7 +66,7 @@ class ProposalService:
     async def add_metadata_and_agent_detail_in_internal_proposal(
         self, proposal: TriggerHistoryDto, index: int, results: list[Any]
     ):
-        url = f"{api_settings.DB_SYNC_API}/proposal?proposal={proposal.txHash}"
+        url = f"{api_settings.DB_SYNC_BASE_URL}/proposal?proposal={proposal.txHash}"
         proposal_data = await self._fetch_proposal_data(url)
         if not proposal_data:
             results[index] = ""
@@ -83,9 +83,9 @@ class ProposalService:
             results[index] = proposal_dict
 
     async def get_external_proposals(self, page: int, pageSize: int, sort: str, search: str | None = None):
-        search_url = f"{api_settings.DB_SYNC_API}/proposal?page={page}&size={pageSize}&sort={sort}"
+        search_url = f"{api_settings.DB_SYNC_BASE_URL}/proposal?page={page}&size={pageSize}&sort={sort}"
         if search:
-            search_url = f"{api_settings.DB_SYNC_API}/proposal?proposal={search}"
+            search_url = f"{api_settings.DB_SYNC_BASE_URL}/proposal?proposal={search}"
 
         async with aiohttp.ClientSession() as session:
             async with session.get(search_url) as response:
@@ -126,7 +126,7 @@ class ProposalService:
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(
-                    f"{api_settings.METADATA_API}/metadata?url={url}&hash={metadata_hash}"
+                    f"{api_settings.METADATA_BASE_URL}/metadata?url={url}&hash={metadata_hash}"
                 ) as metadata_resp:
                     metadata_resp_json = await metadata_resp.json()
                     if "hash" in metadata_resp_json:

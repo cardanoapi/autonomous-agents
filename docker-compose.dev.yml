@@ -25,8 +25,8 @@ services:
       - DOCS_URL=/api/docs
       - AGENT_MNEMONIC='group shadow belt culture garage sport demand target twist tribe milk dumb divide mango bench fantasy okay unfair error twice struggle naive squirrel romance'
       - KAFKA_ENABLED='True'
-      - METADATA_API='https://metadata.drep.id/api'
-      - DB_SYNC_API='https://dbsyncapi.agents.cardanoapi.io/api'
+      - METADATA_BASE_URL='https://metadata.drep.id/api'
+      - DB_SYNC_BASE_URL='http://dbsync:9000/api'
     depends_on:
       - postgres
       - kafka
@@ -49,10 +49,10 @@ services:
       - CLIENT_ID=my-app
       - CARDANO_NODE_URL=172.31.0.4:3004
       - KUBER_BASE_URL='https://sanchonet.kuber.cardanoapi.io'
-      - KUBER_API_KEY='l3HSdpCx86BOZFEvHspmYZ8KiVOnnvJDLKkC7JMVKUu9pZlV0Ld0qbn3pTQ3ER'
-      - MANAGER_WALLET_ADDRESS=addr_test1qrd3hs7rlxwwdzthe6hj026dmyt3y0heuulctscyydh2kguh4xfmpjqkd25vfq69hcvj27jqyk4hvnyxu7vma2c4kvps8eh2m3
-      - MANAGER_WALLET_SIGNING_KEY=addr_sk14wrrctnv9cyr05vjnwrjcs7mujzuxf4zj5nm7fna5nx7fxrnrupqwhwycx
-      - FAUCET_API_KEY=ayEO6dlVF18oTslr9eIMUNgE35GqVfFz
+      - KUBER_API_KEY=l3HSdpCx86BOZFEvHspmYZ8KiVOnnvJDLKkC7JMVKUu9pZlV0Ld0qbn3pTQ3ER
+      - MANAGER_WALLET_ADDRESS=
+      - MANAGER_WALLET_SIGNING_KEY=
+      - FAUCET_API_KEY=
       - AGENT_MNEMONIC='group shadow belt culture garage sport demand target twist tribe milk dumb divide mango bench fantasy okay unfair error twice struggle naive squirrel romance'
       - METADATA_BASE_URL='https://metadata.drep.id'
       - DB_SYNC_BASE_URL='https://dbsyncapi.agents.cardanoapi.io/api'
@@ -62,7 +62,19 @@ services:
       - SERVER_PORT=3002
       - NETWORK_NAME='sanchonet'
 
-#  #Agent (build image)
+# DbSync
+  dbsync:
+    build:
+      context: ./dbsync-api
+      dockerfile: Dockerfile
+    ports:
+      - "9000:9000"
+    environment:
+      - PORT=9000
+      - CORS_ENABLE=true
+      - DATABASE_URL=postgres://dbsync:9PW%fj36ozwm^8u@mVwoh!uE&R@172.31.0.4:8433/dbsync_sanchonet
+
+  #  #Agent (build image)
 #  agent:
 #    build:
 #      context: ./agent-node
