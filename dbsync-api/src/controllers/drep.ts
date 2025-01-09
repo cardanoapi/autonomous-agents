@@ -9,7 +9,7 @@ import {
     fetchDrepVoteDetails,
 } from '../repository/drep'
 import { DrepSortType, DrepStatusType } from '../types/drep'
-import { fetchDelegationDetail } from '../repository/delegation'
+import { fetchDelegationDetail, fetchDelegationRewardBalance } from '../repository/delegation'
 import { fetchStakeAddressId, fetchStakeAddressUtxoSum } from '../repository/stakeAddress'
 
 const router = Router()
@@ -67,7 +67,6 @@ const getDrepLiveVotingPower = async (req: Request, res: Response) => {
     }
     const result = await fetchDrepDelegationDetails(dRepId)
     const delegatorStakeAddresses = result.map((res: any) => res.stakeAddress)
-    const activeDelegators: Record<string, bigint> = {} 
     let totalValue = BigInt(0)
 
     for (let i = 0; i < delegatorStakeAddresses.length; i++) {
@@ -86,17 +85,17 @@ const getDrepLiveVotingPower = async (req: Request, res: Response) => {
         } else if (convertToHexIfBech32(delegatorInfo.drep.drep_id) === dRepId) {
             const stakeAddressId = await fetchStakeAddressId(address)
             if (stakeAddressId) {
+                const rewards = await fetchDelegationRewardBalance(stakeAddressId)
+                const rewardBalance = rewards.rewardbalance == null ? BigInt(0) : BigInt(rewards.rewardbalance)
+                const restRewardBalance =
+                    rewards.rewardrestbalance == null ? BigInt(0) : BigInt(rewards.rewardrestbalance)
                 const value = BigInt(await fetchStakeAddressUtxoSum(stakeAddressId))
-                activeDelegators[delegatorStakeAddresses[i]] = value
-                totalValue += value
+                totalValue += value + rewardBalance + restRewardBalance
             }
         }
     }
     const votingPower = {
         votingPower: totalValue.toString(),
-        activeDelegators: Object.fromEntries(
-            Object.entries(activeDelegators).map(([key, value]) => [key, value.toString()])
-        ),
     }
     return res.status(200).json(votingPower)
 }

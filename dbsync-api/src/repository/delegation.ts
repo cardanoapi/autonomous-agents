@@ -1,4 +1,4 @@
-import { prisma } from "../config/db";
+import { prisma } from '../config/db'
 
 export const fetchDelegationDetail=async (address:string)=>{
   const result  = await prisma.$queryRaw`
@@ -32,5 +32,34 @@ export const fetchDelegationDetail=async (address:string)=>{
                           'pool',(SELECT row_to_json(latest_pool_delegation) FROM latest_pool_delegation)
           ) AS result;
   ` as Record<string,any>[];
-  return result[0].result
+    return result[0].result
+}
+
+export async function fetchDelegationRewardBalance(stakeaddressid: bigint) {
+    const result = (await prisma.$queryRaw`
+      SELECT 
+        (SELECT SUM(amount) 
+         FROM reward r
+         WHERE r.addr_id = ${stakeaddressid}
+           AND r.earned_epoch > 
+             (SELECT blka.epoch_no
+              FROM withdrawal w
+              JOIN tx txa ON txa.id = w.tx_id
+              JOIN block blka ON blka.id = txa.block_id
+              WHERE w.addr_id = ${stakeaddressid}
+              ORDER BY w.tx_id DESC
+              LIMIT 1)) AS rewardBalance,
+  
+        (SELECT SUM(amount) 
+         FROM reward_rest r
+         WHERE r.addr_id = ${stakeaddressid}
+           AND r.earned_epoch > 
+             (SELECT blka.epoch_no
+              FROM withdrawal w
+              JOIN tx txa ON txa.id = w.tx_id
+              JOIN block blka ON blka.id = txa.block_id
+              WHERE w.addr_id = ${stakeaddressid}
+              ORDER BY w.tx_id DESC
+              LIMIT 1)) AS rewardRestBalance`) as Record<string, any>[]
+    return result[0]
 }
