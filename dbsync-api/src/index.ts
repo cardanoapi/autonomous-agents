@@ -12,6 +12,7 @@ import drepRoute from "./controllers/drep";
 import addressRoute from "./controllers/address";
 import proposalRoute from "./controllers/proposal";
 import healthCheckRoute from "./health/healthCheck"
+import govActionRoute from './controllers/govActions'
 import { errorHandler } from "./errors/AppError";
 import path from "path";
 import setupSwaggerUi from "./swagger-loader";
@@ -52,6 +53,7 @@ app.use('/api/drep',drepRoute)
 app.use('/api/address',addressRoute)
 app.use('/api/proposal',proposalRoute)
 app.use('/api/health', healthCheckRoute)
+app.use('/api/govAction', govActionRoute)
 
 setupSwaggerUi(app)
 const indexFile = path.resolve('.','./index.html')
@@ -81,7 +83,7 @@ prisma.$connect().then(()=>{
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-}).catch(e=>{
+}).catch((e:any)=>{
   console.error("Database conn failed",e)
 })
 
