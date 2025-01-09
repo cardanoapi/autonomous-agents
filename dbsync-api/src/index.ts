@@ -53,7 +53,7 @@ app.use('/api/drep',drepRoute)
 app.use('/api/address',addressRoute)
 app.use('/api/proposal',proposalRoute)
 app.use('/api/health', healthCheckRoute)
-app.use('/api/govAction', govActionRoute)
+app.use('/api/gov-action', govActionRoute)
 
 setupSwaggerUi(app)
 const indexFile = path.resolve('.','./index.html')

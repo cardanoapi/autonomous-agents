@@ -1,734 +1,832 @@
 openapi: 3.0.0
 info:
-  title: Stake Address API
-  version: 1.0.0
-  description: API for retrieving stake registration and deregistration information by address.
+    title: Stake Address API
+    version: 1.0.0
+    description: API for retrieving stake registration and deregistration information by address.
 
 paths:
-  /api/stake-address:
-    get:
-      summary: Retrieve stake address information
-      description: Get the latest stake registration and deregistration for a given stake address.
-      parameters:
-        - name: address
-          in: query
-          required: true
-          description: The stake address in hexadecimal or Bech32 format.
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful response with stake address data.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  registration:
-                    type: object
-                    nullable: true
-                    properties:
-                      epoch_no:
-                        type: integer
-                        description: Epoch number.
-                      slot_no:
-                        type: integer
-                        description: Slot number.
-                      block_no:
-                        type: integer
-                        description: Slot Number.
-                      time:
-                        type: string
-                        description: Time of transaction.
-                      tx_hash:
-                        type: string
-                        description: Transaction hash.
-                  deregistration:
-                    type: object
-                    nullable: true
-                    properties:
-                      epoch_no:
-                        type: integer
-                        description: Epoch number.
-                      slot_no:
-                        type: integer
-                        description: Slot number.
-                      block_no:
-                        type: integer
-                        description: Slot Number.
-                      time:
-                        type: string
-                        description: Time of transaction.
-                      tx_hash:
-                        type: string
-                        description: Transaction hash.
-        '400':
-          description: Bad Request. The request is missing required parameters or has invalid data.
-        '404':
-          description: Not Found. The stake address does not exist in the database.
-        '500':
-          description: Internal Server Error. An unexpected error occurred while processing the request.
+    /api/stake-address:
+        get:
+            summary: Retrieve stake address information
+            description: Get the latest stake registration and deregistration for a given stake address.
+            parameters:
+                - name: address
+                  in: query
+                  required: true
+                  description: The stake address in hexadecimal or Bech32 format.
+                  schema:
+                      type: string
+            responses:
+                '200':
+                    description: Successful response with stake address data.
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    registration:
+                                        type: object
+                                        nullable: true
+                                        properties:
+                                            epoch_no:
+                                                type: integer
+                                                description: Epoch number.
+                                            slot_no:
+                                                type: integer
+                                                description: Slot number.
+                                            block_no:
+                                                type: integer
+                                                description: Slot Number.
+                                            time:
+                                                type: string
+                                                description: Time of transaction.
+                                            tx_hash:
+                                                type: string
+                                                description: Transaction hash.
+                                    deregistration:
+                                        type: object
+                                        nullable: true
+                                        properties:
+                                            epoch_no:
+                                                type: integer
+                                                description: Epoch number.
+                                            slot_no:
+                                                type: integer
+                                                description: Slot number.
+                                            block_no:
+                                                type: integer
+                                                description: Slot Number.
+                                            time:
+                                                type: string
+                                                description: Time of transaction.
+                                            tx_hash:
+                                                type: string
+                                                description: Transaction hash.
+                '400':
+                    description: Bad Request. The request is missing required parameters or has invalid data.
+                '404':
+                    description: Not Found. The stake address does not exist in the database.
+                '500':
+                    description: Internal Server Error. An unexpected error occurred while processing the request.
 
-  /api/delegation:
-    get:
-      summary: Get latest delegation information
-      description: Fetches the latest delegation and pool delegation details for the given address.
-      operationId: getDelegation
-      parameters:
-        - name: address
-          in: query
-          required: true
-          description: Bech32 or hex-encoded address to query.
-          schema:
-            type: string
-            example: ""
-      responses:
-        '200':
-          description: Successful response with delegation and pool information.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  drep:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        drep_id:
-                          type: string
-                          description: The view of the DRep.
-                        epoch_no:
-                          type: integer
-                          description: The epoch number of the delegation.
-                        slot_no:
-                          type: integer
-                          description: The slot number of the delegation.
-                        block_no:
-                          type: integer
-                          description: The block number.
-                        time:
-                          type: string
-                          format: date-time
-                          description: The time of the block.
-                        tx_hash:
-                          type: string
-                          description: The transaction hash.
-                  pool:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        pool_id:
-                          type: string
-                          description: The view of the pool.
-                        epoch_no:
-                          type: integer
-                          description: The epoch number of the delegation.
-                        slot_no:
-                          type: integer
-                          description: The slot number.
-                        block_no:
-                          type: integer
-                          description: The block number.
-                        time:
-                          type: string
-                          format: date-time
-                          description: The time of the block.
-                        tx_hash:
-                          type: string
-                          description: The transaction hash.
+    /api/delegation:
+        get:
+            summary: Get latest delegation information
+            description: Fetches the latest delegation and pool delegation details for the given address.
+            operationId: getDelegation
+            parameters:
+                - name: address
+                  in: query
+                  required: true
+                  description: Bech32 or hex-encoded address to query.
+                  schema:
+                      type: string
+                      example: ''
+            responses:
+                '200':
+                    description: Successful response with delegation and pool information.
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    drep:
+                                        type: array
+                                        items:
+                                            type: object
+                                            properties:
+                                                drep_id:
+                                                    type: string
+                                                    description: The view of the DRep.
+                                                epoch_no:
+                                                    type: integer
+                                                    description: The epoch number of the delegation.
+                                                slot_no:
+                                                    type: integer
+                                                    description: The slot number of the delegation.
+                                                block_no:
+                                                    type: integer
+                                                    description: The block number.
+                                                time:
+                                                    type: string
+                                                    format: date-time
+                                                    description: The time of the block.
+                                                tx_hash:
+                                                    type: string
+                                                    description: The transaction hash.
+                                    pool:
+                                        type: array
+                                        items:
+                                            type: object
+                                            properties:
+                                                pool_id:
+                                                    type: string
+                                                    description: The view of the pool.
+                                                epoch_no:
+                                                    type: integer
+                                                    description: The epoch number of the delegation.
+                                                slot_no:
+                                                    type: integer
+                                                    description: The slot number.
+                                                block_no:
+                                                    type: integer
+                                                    description: The block number.
+                                                time:
+                                                    type: string
+                                                    format: date-time
+                                                    description: The time of the block.
+                                                tx_hash:
+                                                    type: string
+                                                    description: The transaction hash.
 
-        '400':
-          description: Bad request. The `address` query parameter is missing or invalid.
-        '500':
-          description: Internal server error.
+                '400':
+                    description: Bad request. The `address` query parameter is missing or invalid.
+                '500':
+                    description: Internal server error.
 
-  /api/drep/{id}:
-    get:
-      summary: Get DRep details
-      description: Fetches DRep details including registration status, metadata, voting power, and transaction hashes for the provided address.
-      operationId: getDrepDetails
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: Hex-encoded address or Bech32 address of DRep .
-          schema:
-            type: string
-            example: ""
-      responses:
-        '200':
-          description: Successful response with DRep and SoleVoter details.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  hasScript:
-                    type: boolean
-                    description: whether the drep has script or not
-                  isRegisteredAsDRep:
-                    type: boolean
-                    description: Whether the address is currently registered as a DRep.
-                  wasRegisteredAsDRep:
-                    type: boolean
-                    description: Whether the address was previously registered as a DRep.
-                  isRegisteredAsSoleVoter:
-                    type: boolean
-                    description: Whether the address is currently registered as a Sole Voter.
-                  wasRegisteredAsSoleVoter:
-                    type: boolean
-                    description: Whether the address was previously registered as a Sole Voter.
-                  deposit:
-                    type: integer
-                    description: The current deposit value.
-                  url:
-                    type: string
-                    description: The metadata URL.
-                  dataHash:
-                    type: string
-                    description: Hash of the metadata.
-                  votingPower:
-                    type: integer
-                    description: The current voting power.
-                  dRepRegisterTxHash:
-                    type: string
-                    description: Transaction hash for DRep registration.
-                  dRepRetireTxHash:
-                    type: string
-                    description: Transaction hash for DRep retirement.
-                  soleVoterRegisterTxHash:
-                    type: string
-                    description: Transaction hash for Sole Voter registration.
-                  soleVoterRetireTxHash:
-                    type: string
-                    description: Transaction hash for Sole Voter retirement.
+    /api/drep/{id}:
+        get:
+            summary: Get DRep details
+            description: Fetches DRep details including registration status, metadata, voting power, and transaction hashes for the provided address.
+            operationId: getDrepDetails
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  description: Hex-encoded address or Bech32 address of DRep .
+                  schema:
+                      type: string
+                      example: ''
+            responses:
+                '200':
+                    description: Successful response with DRep and SoleVoter details.
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    hasScript:
+                                        type: boolean
+                                        description: whether the drep has script or not
+                                    isRegisteredAsDRep:
+                                        type: boolean
+                                        description: Whether the address is currently registered as a DRep.
+                                    wasRegisteredAsDRep:
+                                        type: boolean
+                                        description: Whether the address was previously registered as a DRep.
+                                    isRegisteredAsSoleVoter:
+                                        type: boolean
+                                        description: Whether the address is currently registered as a Sole Voter.
+                                    wasRegisteredAsSoleVoter:
+                                        type: boolean
+                                        description: Whether the address was previously registered as a Sole Voter.
+                                    deposit:
+                                        type: integer
+                                        description: The current deposit value.
+                                    url:
+                                        type: string
+                                        description: The metadata URL.
+                                    dataHash:
+                                        type: string
+                                        description: Hash of the metadata.
+                                    votingPower:
+                                        type: integer
+                                        description: The current voting power.
+                                    dRepRegisterTxHash:
+                                        type: string
+                                        description: Transaction hash for DRep registration.
+                                    dRepRetireTxHash:
+                                        type: string
+                                        description: Transaction hash for DRep retirement.
+                                    soleVoterRegisterTxHash:
+                                        type: string
+                                        description: Transaction hash for Sole Voter registration.
+                                    soleVoterRetireTxHash:
+                                        type: string
+                                        description: Transaction hash for Sole Voter retirement.
 
-        '400':
-          description: Bad Request. Address is invalid or missing.
-        '500':
-          description: Internal Server Error. Something went wrong with the query or database.
+                '400':
+                    description: Bad Request. Address is invalid or missing.
+                '500':
+                    description: Internal Server Error. Something went wrong with the query or database.
 
-  /api/drep/{id}/vote:
-    get:
-      summary: Get voting details by DRep ID
-      description: Retrieve voting details for a specific DRep ID.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: Hex-encoded address or Bech32 address of DRep .
-          schema:
-            type: string
-            example: ""
-      responses:
-        '200':
-          description: Successfully retrieved voting details of given Drep
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  govActionId:
-                    type: string
-                    description: Unique identifier for the government action, combining hash and index.
-                    example: "8af0c0c97f532ebd72df62cf798ac19fc2ec952d411ece7de89#0"
-                  title:
-                    type: string
-                    nullable: true
-                    description: Title of the government action.
-                    example: 'Example Title'
-                  voteType:
-                    type: string
-                    description: Type of vote.
-                    example: "Abstain"
-                  voteAnchorUrl:
-                    type: string
-                    format: uri
-                    description: URL of the vote anchor.
-                    example: "https://example.com/aMBitupUUJucUCAg9sxVyHe4jjk41dzst9J"
-                  voteAnchorHash:
-                    type: string
-                    description: Hash of the vote anchor data.
-                    example: "d6086a79267ab5fb7b56c8ab77f1e0dff2c3"
-                  epochNo:
-                    type: integer
-                    description: Epoch number associated with the government action.
-                    example: 762
-                  time:
-                    type: string
-                    format: date-time
-                    description: Timestamp of the action.
-                    example: "2024-11-25T07:23:50"
-                  voteTxHash:
-                    type: string
-                    description: Transaction hash of the vote.
-                    example: "8d09be316ced784c1dd5bbcf7dccc0d63ea8de44b6e"
-                  govActionType:
-                    type: string
-                    description: Type of government action.
-                    example: "NoConfidence"
-        '404':
-          description: DRep ID not found
-        '500':
-          description: Internal server error
+    /api/drep/{id}/vote:
+        get:
+            summary: Get voting details by DRep ID
+            description: Retrieve voting details for a specific DRep ID.
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  description: Hex-encoded address or Bech32 address of DRep .
+                  schema:
+                      type: string
+                      example: ''
+            responses:
+                '200':
+                    description: Successfully retrieved voting details of given Drep
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    govActionId:
+                                        type: string
+                                        description: Unique identifier for the government action, combining hash and index.
+                                        example: '8af0c0c97f532ebd72df62cf798ac19fc2ec952d411ece7de89#0'
+                                    title:
+                                        type: string
+                                        nullable: true
+                                        description: Title of the government action.
+                                        example: 'Example Title'
+                                    voteType:
+                                        type: string
+                                        description: Type of vote.
+                                        example: 'Abstain'
+                                    voteAnchorUrl:
+                                        type: string
+                                        format: uri
+                                        description: URL of the vote anchor.
+                                        example: 'https://example.com/aMBitupUUJucUCAg9sxVyHe4jjk41dzst9J'
+                                    voteAnchorHash:
+                                        type: string
+                                        description: Hash of the vote anchor data.
+                                        example: 'd6086a79267ab5fb7b56c8ab77f1e0dff2c3'
+                                    epochNo:
+                                        type: integer
+                                        description: Epoch number associated with the government action.
+                                        example: 762
+                                    time:
+                                        type: string
+                                        format: date-time
+                                        description: Timestamp of the action.
+                                        example: '2024-11-25T07:23:50'
+                                    voteTxHash:
+                                        type: string
+                                        description: Transaction hash of the vote.
+                                        example: '8d09be316ced784c1dd5bbcf7dccc0d63ea8de44b6e'
+                                    govActionType:
+                                        type: string
+                                        description: Type of government action.
+                                        example: 'NoConfidence'
+                '404':
+                    description: DRep ID not found
+                '500':
+                    description: Internal server error
 
-  /api/drep/{id}/delegation:
-    get:
-      summary: Get delegation details by DRep ID
-      description: Retrieve delegation details for a specific DRep ID.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: Hex-encoded address or Bech32 address of DRep .
-          schema:
-            type: string
-            example: ""
-      responses:
-        '200':
-          description: Successfully retrieved voting details of given Drep
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  utxoBalance:
-                    type: integer
-                    example: 427648
-                  currentDrepDelegateTime:
-                    type: string
-                    format: date-time
-                    example: "2024-08-12T03:45:09"
-                  rewardBalance:
-                    type: integer
-                    example: 962929301
-                  rewardRestBalance:
-                    type: integer
-                    nullable: true
-                    example: null
-                  drepView:
-                    type: string
-                    example: "drep1z5cun68mz0jcemz0yyzqnmcxu4fl5q42dv5qvk"
-                  prevDrepTxHash:
-                    type: string
-                    example: "d91c7c464025f3331a361344f36add9813819dd2d68"
-                  prevDrepEpochNo:
-                    type: integer
-                    example: 664
-                  prevDrepDelegateTime:
-                    type: string
-                    format: date-time
-                    example: "2024-08-19T03:18:29"
-                  stakeAddress:
-                    type: string
-                    example: "stake_tes2rfluhuwyk9saaw8hamx8044manhx9tqang8k5"
-                  prevDrepName:
-                    type: string
-                    example: "Name"
-                  prevDrepImage:
-                    type: string
-                    example: ""
-                  hasScript:
-                    type: boolean
-                    example: false
-        '404':
-          description: DRep ID not found
-        '500':
-          description: Internal server error
+    /api/drep/{id}/delegation:
+        get:
+            summary: Get delegation details by DRep ID
+            description: Retrieve delegation details for a specific DRep ID.
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  description: Hex-encoded address or Bech32 address of DRep .
+                  schema:
+                      type: string
+                      example: ''
+            responses:
+                '200':
+                    description: Successfully retrieved voting details of given Drep
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    utxoBalance:
+                                        type: integer
+                                        example: 427648
+                                    currentDrepDelegateTime:
+                                        type: string
+                                        format: date-time
+                                        example: '2024-08-12T03:45:09'
+                                    rewardBalance:
+                                        type: integer
+                                        example: 962929301
+                                    rewardRestBalance:
+                                        type: integer
+                                        nullable: true
+                                        example: null
+                                    drepView:
+                                        type: string
+                                        example: 'drep1z5cun68mz0jcemz0yyzqnmcxu4fl5q42dv5qvk'
+                                    prevDrepTxHash:
+                                        type: string
+                                        example: 'd91c7c464025f3331a361344f36add9813819dd2d68'
+                                    prevDrepEpochNo:
+                                        type: integer
+                                        example: 664
+                                    prevDrepDelegateTime:
+                                        type: string
+                                        format: date-time
+                                        example: '2024-08-19T03:18:29'
+                                    stakeAddress:
+                                        type: string
+                                        example: 'stake_tes2rfluhuwyk9saaw8hamx8044manhx9tqang8k5'
+                                    prevDrepName:
+                                        type: string
+                                        example: 'Name'
+                                    prevDrepImage:
+                                        type: string
+                                        example: ''
+                                    hasScript:
+                                        type: boolean
+                                        example: false
+                '404':
+                    description: DRep ID not found
+                '500':
+                    description: Internal server error
 
-  /api/drep/{id}/registration:
-    get:
-      summary: Get registration details by DRep ID
-      description: Retrieve registration details for a specific DRep ID.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: Hex-encoded address or Bech32 address of DRep .
-          schema:
-            type: string
-            example: ""
-      responses:
-        '200':
-          description: Successfully retrieved voting details of given Drep
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  url:
-                    type: string
-                    example: "https://xyz.com/drep-id/data/main/preview/test"
-                  deposit:
-                    type: integer
-                    nullable: true
-                    example: null
-                  drepName:
-                    type: string
-                    example: "name"
-                  time:
-                    type: string
-                    format: date-time
-                    example: "2024-12-12T08:11:03.000Z"
-        '404':
-          description: DRep ID not found
-        '500':
-          description: Internal server error
+    /api/drep/{id}/registration:
+        get:
+            summary: Get registration details by DRep ID
+            description: Retrieve registration details for a specific DRep ID.
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  description: Hex-encoded address or Bech32 address of DRep .
+                  schema:
+                      type: string
+                      example: ''
+            responses:
+                '200':
+                    description: Successfully retrieved voting details of given Drep
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    url:
+                                        type: string
+                                        example: 'https://xyz.com/drep-id/data/main/preview/test'
+                                    deposit:
+                                        type: integer
+                                        nullable: true
+                                        example: null
+                                    drepName:
+                                        type: string
+                                        example: 'name'
+                                    time:
+                                        type: string
+                                        format: date-time
+                                        example: '2024-12-12T08:11:03.000Z'
+                '404':
+                    description: DRep ID not found
+                '500':
+                    description: Internal server error
 
-  /api/address/balance:
-    get:
-      summary: Get faucet balance for a given address
-      description: Retrieves the balance for a specified stake address.
-      parameters:
-        - in: query
-          name: address
-          schema:
-            type: string
-          required: true
-          description: The stake address in hex format to query the balance.
-      responses:
-        '200':
-          description: The faucet balance for the given address
-          content:
-            application/json:
-              schema:
-                type: integer
-                description: The balance in lovelace (smallest unit of ADA)
-                example: 1000000000
-        '400':
-          description: Invalid address provided
-        '500':
-          description: Internal server error
-  /api/drep:
-    get:
-      summary: Fetch DRep list
-      description: Fetches the drep list.
-      parameters:
-        - in: query
-          name: page
-          schema:
-            type: number
-            default: 1
-          required: false
-        - in: query
-          name: sort
-          schema:
-            type: string
-            enum: [ VotingPower, RegistrationDate ]
-        - in: query
-          name: status
-          schema:
-            type: string
-            enum: [ Active, Inactive, Retired ]
-        - in: query
-          name: size
-          schema:
-            type: number
-            default: 10
-          required: false
-        - in: query
-          name: search
-          description: Search by dRepId, dRepView or dRep Name
-          schema:
-            type: string
-            default: ''
-          required: false
-      responses:
-        200:
-          description: "A paginated list of DRep details."
-          content:
-            application/json:
-              schema:
-                type: "object"
-                properties:
-                  items:
-                    type: "array"
-                    items:
-                      type: "object"
-                      properties:
-                        drepId:
-                          type: "string"
-                          example: "string"
-                          description: "DRep ID in hexadecimal format."
-                        view:
-                          type: "string"
-                          example: "string"
-                          description: "DRep's view identifier."
-                        url:
-                          type: "string"
-                          format: "uri"
-                          example: "string"
-                          description: "URL to the DRep's metadata."
-                        metadataHash:
-                          type: "string"
-                          example: "string"
-                          description: "Hash of the metadata."
-                        deposit:
-                          type: "integer"
-                          format: "int64"
-                          example: 0
-                          description: "Deposit amount."
-                        votingPower:
-                          type: "integer"
-                          format: "int64"
-                          example: 0
-                          description: "DRep's amount."
-                        active:
-                          type: "boolean"
-                          example: false
-                          description: "Indicates if the DRep is active."
-                        latestTxHash:
-                          type: "string"
-                          example: "string"
-                          description: "Hash of the latest transaction."
-                        latestRegistrationDate:
-                          type: "string"
-                          format: "date-time"
-                          example: "0000-00-00T00:00:00"
-                          description: "Date and time of the latest registration."
-                  page:
-                    type: "integer"
-                    example: 0
-                    description: "Current page number."
-                  size:
-                    type: "integer"
-                    example: 0
-                    description: "Number of items returned per page."
-                  total:
-                    type: "integer"
-                    example: 0
-                    description: "Total number of items"
-        '400':
-          description: Invalid address provided
-        '500':
-          description: Internal server error
-  /api/proposal:
-    get:
-      summary: Fetch Proposal list
-      description: Fetches the Proposal list.
-      parameters:
-        - in: query
-          name: page
-          schema:
-            type: number
-            default: 1
-          required: false
-        - in: query
-          name: size
-          schema:
-            type: number
-            default: 10
-          required: false
-        - in: query
-          name: sort
-          schema:
-            type: string
-            enum: [ CreatedDate, ExpiryDate ]
-        - in: query
-          name: type
-          schema:
-            type: string
-            enum: [ ParameterChange, HardForkInitiation, TreasuryWithdrawals ,NoConfidence ,NewCommittee ,NewConstitution ,InfoAction ]
-        - in: query
-          name: proposal
-          description: Search by proposal id
-          schema:
-            type: string
-            default: ''
-          required: false
-      responses:
-        200:
-          description: "A paginated list of Proposal details."
-          content:
-            application/json:
-              schema:
-                type: "object"
-                properties:
-                  items:
-                    type: "array"
-                    items:
-                      type: "object"
-                      properties:
-                        id:
-                          type: integer
-                          example: 418
-                        txHash:
-                          type: string
-                          example: ""
-                        index:
-                          type: integer
-                          example: 0
-                        type:
-                          type: string
-                          example: ""
-                        details:
-                          type: object
-                          additionalProperties: true
-                          example: { }
-                        expiryDate:
-                          type: string
-                          format: date-time
-                          example: "2024-10-08T07:25:57.226978"
-                        expiryEpochNon:
-                          type: integer
-                          example: 481
-                        createdDate:
-                          type: string
-                          format: date-time
-                          example: "2024-09-23T10:35:09"
-                        createdEpochNo:
-                          type: integer
-                          example: 466
-                        url:
-                          type: string
-                          example: ""
-                        metadataHash:
-                          type: string
-                          example: "1111111111111111111111111111111111111111111111111111111111111111"
-                        protocolParams:
-                          type: object
-                          nullable: true
-                        title:
-                          type: string
-                          nullable: true
-                        abstract:
-                          type: string
-                          nullable: true
-                        motivation:
-                          type: string
-                          nullable: true
-                        rationale:
-                          type: string
-                          nullable: true
-                        dRepYesVotes:
-                          type: integer
-                          example: 0
-                        dRepNoVotes:
-                          type: integer
-                          example: ''
-                        dRepAbstainVotes:
-                          type: integer
-                          example: ''
-                        poolYesVotes:
-                          type: integer
-                          example: 0
-                        poolNoVotes:
-                          type: integer
-                          example: 0
-                        poolAbstainVotes:
-                          type: integer
-                          example: 0
-                        ccYesVotes:
-                          type: integer
-                          example: 0
-                        ccNoVotes:
-                          type: integer
-                          example: 0
-                        ccAbstainVotes:
-                          type: integer
-                          example: 0
-                        prevGovActionIndex:
-                          type: integer
-                          nullable: true
-                        prevGovActionTxHash:
-                          type: string
-                          nullable: true
-                  page:
-                    type: "integer"
-                    example: 0
-                    description: "Current page number."
-                  size:
-                    type: "integer"
-                    example: 0
-                    description: "Number of items returned per page."
-                  total:
-                    type: "integer"
-                    example: 0
-                    description: "Total number of items"
-        '400':
-          description: Invalid address provided
-        '500':
-          description: Internal server error
-  /api/health:
-    get:
-      summary: Health check for DBSync
-      description: Fetches the latest block information from the database and checks its freshness to determine the DBSync service's health.
-      responses:
-        '200':
-          description: Service is healthy, and the latest block is up-to-date.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "Healthy"
-                  details:
-                    type: object
-                    properties:
-                      blockHash:
-                        type: string
-                        example: "abcd1234ef5678..."
-                      blockNo:
-                        type: integer
-                        example: 123456
-                      slotNo:
-                        type: string
-                        example: "789012"
-                      blockTime:
-                        type: string
-                        format: date-time
-                        example: "2024-12-03T13:00:00Z"
-                      currentTime:
-                        type: string
-                        format: date-time
-                        example: "2024-12-03T13:05:00Z"
-                      secondsSinceLastUpdate:
-                        type: number
-                        example: 300
-        '503':
-          description: The latest block has not been updated in over 300 seconds.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: "Service Unavailable"
-                  details:
-                    type: object
-                    properties:
-                      blockHash:
-                        type: string
-                        example: "abcd1234ef5678..."
-                      blockNo:
-                        type: integer
-                        example: 123456
-                      slotNo:
-                        type: string
-                        example: "789012"
-                      blockTime:
-                        type: string
-                        format: date-time
-                        example: "2024-12-03T12:55:00Z"
-                      currentTime:
-                        type: string
-                        format: date-time
-                        example: "2024-12-03T13:05:00Z"
-                      secondsSinceLastUpdate:
-                        type: number
-                        example: 600
-        '500':
-          description: An error occurred while processing the request.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "An error occurred while checking the DbSync status."
+    /api/address/balance:
+        get:
+            summary: Get faucet balance for a given address
+            description: Retrieves the balance for a specified stake address.
+            parameters:
+                - in: query
+                  name: address
+                  schema:
+                      type: string
+                  required: true
+                  description: The stake address in hex format to query the balance.
+            responses:
+                '200':
+                    description: The faucet balance for the given address
+                    content:
+                        application/json:
+                            schema:
+                                type: integer
+                                description: The balance in lovelace (smallest unit of ADA)
+                                example: 1000000000
+                '400':
+                    description: Invalid address provided
+                '500':
+                    description: Internal server error
+    /api/drep:
+        get:
+            summary: Fetch DRep list
+            description: Fetches the drep list.
+            parameters:
+                - in: query
+                  name: page
+                  schema:
+                      type: number
+                      default: 1
+                  required: false
+                - in: query
+                  name: sort
+                  schema:
+                      type: string
+                      enum: [VotingPower, RegistrationDate]
+                - in: query
+                  name: status
+                  schema:
+                      type: string
+                      enum: [Active, Inactive, Retired]
+                - in: query
+                  name: size
+                  schema:
+                      type: number
+                      default: 10
+                  required: false
+                - in: query
+                  name: search
+                  description: Search by dRepId, dRepView or dRep Name
+                  schema:
+                      type: string
+                      default: ''
+                  required: false
+            responses:
+                200:
+                    description: 'A paginated list of DRep details.'
+                    content:
+                        application/json:
+                            schema:
+                                type: 'object'
+                                properties:
+                                    items:
+                                        type: 'array'
+                                        items:
+                                            type: 'object'
+                                            properties:
+                                                drepId:
+                                                    type: 'string'
+                                                    example: 'string'
+                                                    description: 'DRep ID in hexadecimal format.'
+                                                view:
+                                                    type: 'string'
+                                                    example: 'string'
+                                                    description: "DRep's view identifier."
+                                                url:
+                                                    type: 'string'
+                                                    format: 'uri'
+                                                    example: 'string'
+                                                    description: "URL to the DRep's metadata."
+                                                metadataHash:
+                                                    type: 'string'
+                                                    example: 'string'
+                                                    description: 'Hash of the metadata.'
+                                                deposit:
+                                                    type: 'integer'
+                                                    format: 'int64'
+                                                    example: 0
+                                                    description: 'Deposit amount.'
+                                                votingPower:
+                                                    type: 'integer'
+                                                    format: 'int64'
+                                                    example: 0
+                                                    description: "DRep's amount."
+                                                active:
+                                                    type: 'boolean'
+                                                    example: false
+                                                    description: 'Indicates if the DRep is active.'
+                                                latestTxHash:
+                                                    type: 'string'
+                                                    example: 'string'
+                                                    description: 'Hash of the latest transaction.'
+                                                latestRegistrationDate:
+                                                    type: 'string'
+                                                    format: 'date-time'
+                                                    example: '0000-00-00T00:00:00'
+                                                    description: 'Date and time of the latest registration.'
+                                    page:
+                                        type: 'integer'
+                                        example: 0
+                                        description: 'Current page number.'
+                                    size:
+                                        type: 'integer'
+                                        example: 0
+                                        description: 'Number of items returned per page.'
+                                    total:
+                                        type: 'integer'
+                                        example: 0
+                                        description: 'Total number of items'
+                '400':
+                    description: Invalid address provided
+                '500':
+                    description: Internal server error
+    /api/proposal:
+        get:
+            summary: Fetch Proposal list
+            description: Fetches the Proposal list.
+            parameters:
+                - in: query
+                  name: page
+                  schema:
+                      type: number
+                      default: 1
+                  required: false
+                - in: query
+                  name: size
+                  schema:
+                      type: number
+                      default: 10
+                  required: false
+                - in: query
+                  name: sort
+                  schema:
+                      type: string
+                      enum: [CreatedDate, ExpiryDate]
+                - in: query
+                  name: type
+                  schema:
+                      type: string
+                      enum:
+                          [
+                              ParameterChange,
+                              HardForkInitiation,
+                              TreasuryWithdrawals,
+                              NoConfidence,
+                              NewCommittee,
+                              NewConstitution,
+                              InfoAction,
+                          ]
+                - in: query
+                  name: proposal
+                  description: Search by proposal id
+                  schema:
+                      type: string
+                      default: ''
+                  required: false
+            responses:
+                200:
+                    description: 'A paginated list of Proposal details.'
+                    content:
+                        application/json:
+                            schema:
+                                type: 'object'
+                                properties:
+                                    items:
+                                        type: 'array'
+                                        items:
+                                            type: 'object'
+                                            properties:
+                                                id:
+                                                    type: integer
+                                                    example: 418
+                                                txHash:
+                                                    type: string
+                                                    example: ''
+                                                index:
+                                                    type: integer
+                                                    example: 0
+                                                type:
+                                                    type: string
+                                                    example: ''
+                                                details:
+                                                    type: object
+                                                    additionalProperties: true
+                                                    example: {}
+                                                expiryDate:
+                                                    type: string
+                                                    format: date-time
+                                                    example: '2024-10-08T07:25:57.226978'
+                                                expiryEpochNon:
+                                                    type: integer
+                                                    example: 481
+                                                createdDate:
+                                                    type: string
+                                                    format: date-time
+                                                    example: '2024-09-23T10:35:09'
+                                                createdEpochNo:
+                                                    type: integer
+                                                    example: 466
+                                                url:
+                                                    type: string
+                                                    example: ''
+                                                metadataHash:
+                                                    type: string
+                                                    example: '1111111111111111111111111111111111111111111111111111111111111111'
+                                                protocolParams:
+                                                    type: object
+                                                    nullable: true
+                                                title:
+                                                    type: string
+                                                    nullable: true
+                                                abstract:
+                                                    type: string
+                                                    nullable: true
+                                                motivation:
+                                                    type: string
+                                                    nullable: true
+                                                rationale:
+                                                    type: string
+                                                    nullable: true
+                                                dRepYesVotes:
+                                                    type: integer
+                                                    example: 0
+                                                dRepNoVotes:
+                                                    type: integer
+                                                    example: ''
+                                                dRepAbstainVotes:
+                                                    type: integer
+                                                    example: ''
+                                                poolYesVotes:
+                                                    type: integer
+                                                    example: 0
+                                                poolNoVotes:
+                                                    type: integer
+                                                    example: 0
+                                                poolAbstainVotes:
+                                                    type: integer
+                                                    example: 0
+                                                ccYesVotes:
+                                                    type: integer
+                                                    example: 0
+                                                ccNoVotes:
+                                                    type: integer
+                                                    example: 0
+                                                ccAbstainVotes:
+                                                    type: integer
+                                                    example: 0
+                                                prevGovActionIndex:
+                                                    type: integer
+                                                    nullable: true
+                                                prevGovActionTxHash:
+                                                    type: string
+                                                    nullable: true
+                                    page:
+                                        type: 'integer'
+                                        example: 0
+                                        description: 'Current page number.'
+                                    size:
+                                        type: 'integer'
+                                        example: 0
+                                        description: 'Number of items returned per page.'
+                                    total:
+                                        type: 'integer'
+                                        example: 0
+                                        description: 'Total number of items'
+                '400':
+                    description: Invalid address provided
+                '500':
+                    description: Internal server error
+    /api/gov-action:
+        get:
+            summary: Get government actions
+            description: Fetch government actions related to a transaction hash or all actions if no hash is provided.
+            parameters:
+                - name: id
+                  in: query
+                  description: Transaction hash (hex) to filter government actions. Optional.
+                  required: false
+                  schema:
+                      type: string
+                      example: 'fd3cd51b4307d82d58a7843f63b03335e08e5ab2ddbe3dd0464541a3bbcad488'
+            responses:
+                '200':
+                    description: A list of government actions
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: object
+                                    properties:
+                                        govActionId:
+                                            type: string
+                                            description: The unique identifier for the government action, based on the transaction hash and action index.
+                                            example: 'abc123#1'
+                                        govActionType:
+                                            type: string
+                                            description: The type of the government action (e.g., ratified, enacted, dropped, etc.).
+                                            example: 'ratified'
+                                        history:
+                                            type: object
+                                            description: The history of the government action, including timestamps of various states.
+                                            properties:
+                                                ratifiedEpoch:
+                                                    type: integer
+                                                    description: The epoch when the action was ratified.
+                                                    example: 100
+                                                enactedEpoch:
+                                                    type: integer
+                                                    description: The epoch when the action was enacted.
+                                                    example: 105
+                                                droppedEpoch:
+                                                    type: integer
+                                                    description: The epoch when the action was dropped.
+                                                    example: 110
+                                                expiredEpoch:
+                                                    type: integer
+                                                    description: The epoch when the action expired.
+                                                    example: 120
+                                            nullable: true
+                                example:
+                                    - govActionId: 'abc123#1'
+                                      govActionType: 'ratified'
+                                      history:
+                                          ratifiedEpoch: 100
+                                    - govActionId: 'abc123#2'
+                                      govActionType: 'enacted'
+                                      history: {}
+                '400':
+                    description: Bad request, invalid input.
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: string
+                                        example: 'Invalid input'
+                '404':
+                    description: Transaction not found for the given hash.
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: string
+                                        example: 'Transaction not found'
+                '500':
+                    description: Internal server error.
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: string
+                                        example: 'Internal server error'
+    /api/health:
+        get:
+            summary: Health check for DBSync
+            description: Fetches the latest block information from the database and checks its freshness to determine the DBSync service's health.
+            responses:
+                '200':
+                    description: Service is healthy, and the latest block is up-to-date.
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'Healthy'
+                                    details:
+                                        type: object
+                                        properties:
+                                            blockHash:
+                                                type: string
+                                                example: 'abcd1234ef5678...'
+                                            blockNo:
+                                                type: integer
+                                                example: 123456
+                                            slotNo:
+                                                type: string
+                                                example: '789012'
+                                            blockTime:
+                                                type: string
+                                                format: date-time
+                                                example: '2024-12-03T13:00:00Z'
+                                            currentTime:
+                                                type: string
+                                                format: date-time
+                                                example: '2024-12-03T13:05:00Z'
+                                            secondsSinceLastUpdate:
+                                                type: number
+                                                example: 300
+                '503':
+                    description: The latest block has not been updated in over 300 seconds.
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: string
+                                        example: 'Service Unavailable'
+                                    details:
+                                        type: object
+                                        properties:
+                                            blockHash:
+                                                type: string
+                                                example: 'abcd1234ef5678...'
+                                            blockNo:
+                                                type: integer
+                                                example: 123456
+                                            slotNo:
+                                                type: string
+                                                example: '789012'
+                                            blockTime:
+                                                type: string
+                                                format: date-time
+                                                example: '2024-12-03T12:55:00Z'
+                                            currentTime:
+                                                type: string
+                                                format: date-time
+                                                example: '2024-12-03T13:05:00Z'
+                                            secondsSinceLastUpdate:
+                                                type: number
+                                                example: 600
+                '500':
+                    description: An error occurred while processing the request.
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    message:
+                                        type: string
+                                        example: 'An error occurred while checking the DbSync status.'

@@ -4,7 +4,11 @@ import { handlerWrapper } from '../errors/AppError'
 
 const router = Router()
 
-type govAction = { govActionId: string; govActionType: string; status: string }
+type govAction = {
+    govActionId: string
+    govActionType: string
+    history?: { ratifiedEpoch?: number; enactedEpoch?: number; droppedEpoch?: number; expiredEpoch?: number }
+}
 
 const prisma = new PrismaClient()
 
@@ -13,22 +17,21 @@ const getGovActions = async (req: Request, res: Response) => {
 
     try {
         const parseGovActionResponseFormat = async (action: any) => {
-            let status = 'unknown'
-            if (action.ratified_epoch) status = 'ratified'
-            else if (action.enacted_epoch) status = 'enacted'
-            else if (action.dropped_epoch) status = 'dropped'
-            else if (action.expired_epoch) status = 'expired'
-
             // Fetch the tx.hash from the related transaction
             const tx = await prisma.tx.findUnique({
                 where: { id: action.tx_id },
             })
             if (!tx) throw new Error(`Transaction with ID ${action.tx_id} not found`)
+            const history: Record<string, number> = {}
+            if (action.ratified_epoch) history.ratifiedEpoch = action.ratified_epoch
+            if (action.enacted_epoch) history.enactedEpoch = action.enacted_epoch
+            if (action.dropped_epoch) history.dropped_epoch = action.dropped_epoch
+            if (action.expired_epoch) history.expired_epoch = action.expired_epoch
 
             const formattedGovAction: govAction = {
                 govActionId: `${Buffer.from(tx.hash).toString('hex')}#${action.index}`,
                 govActionType: action.type,
-                status,
+                ...(Object.keys(history).length > 0 && { history }),
             }
             return formattedGovAction
         }
