@@ -14,7 +14,7 @@ export function convertToHexIfBech32(address: string): string {
 }
 
 export function isHexValue(value:string):boolean{
-  const hexRegex = /^[0-9a-fA-F]{56}$/;
+  const hexRegex = /^(?:[0-9a-fA-F]{56}|[0-9a-fA-F]{58})$/;
   return hexRegex.test(value);
 }
 

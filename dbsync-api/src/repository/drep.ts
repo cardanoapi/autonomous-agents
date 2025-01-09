@@ -1,12 +1,11 @@
-import { prisma } from "../config/db";
-import { Prisma } from "@prisma/client";
-import { combineArraysWithSameObjectKey, formatResult } from "../helpers/formatter";
-import { DrepSortType, DrepStatusType } from "../types/drep";
-import { isHexValue } from "../helpers/validator";
+import { prisma } from '../config/db'
+import { Prisma } from '@prisma/client'
+import { combineArraysWithSameObjectKey, formatResult } from '../helpers/formatter'
+import { DrepSortType, DrepStatusType } from '../types/drep'
+import { isHexValue } from '../helpers/validator'
 
-export const fetchDrepList = async (page = 1, size = 10, search = "", status?: DrepStatusType, sort?: DrepSortType) => {
-  const result = await prisma.$queryRaw
-    `
+export const fetchDrepList = async (page = 1, size = 10, search = '', status?: DrepStatusType, sort?: DrepSortType) => {
+    const result = (await prisma.$queryRaw`
         WITH DRepDistr AS (SELECT *,
                                   ROW_NUMBER() OVER (PARTITION BY drep_hash.id ORDER BY drep_distr.epoch_no DESC) AS rn
                            FROM drep_distr
@@ -115,11 +114,13 @@ export const fetchDrepList = async (page = 1, size = 10, search = "", status?: D
                                AND dr_first_register.rn = 1
                  LEFT JOIN tx AS tx_first_register ON tx_first_register.id = dr_first_register.tx_id
                  LEFT JOIN block AS block_first_register ON block_first_register.id = tx_first_register.block_id
-            ${search ?
-                    isHexValue(search) ?
-                            Prisma.sql`WHERE dh.raw = decode(${search}, 'hex')` :
-                            Prisma.sql`WHERE off_chain_vote_drep_data.given_name ILIKE ${search + "%"}` :
-                    Prisma.sql``}
+            ${
+                search
+                    ? isHexValue(search)
+                        ? Prisma.sql`WHERE dh.raw = decode(${search}, 'hex')`
+                        : Prisma.sql`WHERE off_chain_vote_drep_data.given_name ILIKE ${search + '%'}`
+                    : Prisma.sql``
+            }
         GROUP BY dh.raw,
                  second_to_newest_drep_registration.voting_anchor_id,
                  dh.view,
@@ -140,22 +141,28 @@ export const fetchDrepList = async (page = 1, size = 10, search = "", status?: D
                  off_chain_vote_drep_data.motivations,
                  off_chain_vote_drep_data.qualifications,
                  off_chain_vote_drep_data.image_url,
-                 off_chain_vote_drep_data.image_hash ${status ?
-                         status === "Active" ?
-                                 Prisma.sql`HAVING dr_deposit.deposit > 0 AND (DRepActivity.epoch_no - Max(coalesce(block.epoch_no, block_first_register.epoch_no))) <= DRepActivity.drep_activity` :
-                                 status === "Inactive" ?
-                                         Prisma.sql`HAVING dr_deposit.deposit > 0 AND (DRepActivity.epoch_no - Max(coalesce(block.epoch_no, block_first_register.epoch_no))) > DRepActivity.drep_activity` :
-                                         Prisma.sql`HAVING dr_deposit.deposit < 0` : Prisma.sql``
+                 off_chain_vote_drep_data.image_hash ${
+                     status
+                         ? status === 'Active'
+                             ? Prisma.sql`HAVING dr_deposit.deposit > 0 AND (DRepActivity.epoch_no - Max(coalesce(block.epoch_no, block_first_register.epoch_no))) <= DRepActivity.drep_activity`
+                             : status === 'Inactive'
+                             ? Prisma.sql`HAVING dr_deposit.deposit > 0 AND (DRepActivity.epoch_no - Max(coalesce(block.epoch_no, block_first_register.epoch_no))) > DRepActivity.drep_activity`
+                             : Prisma.sql`HAVING dr_deposit.deposit < 0`
+                         : Prisma.sql``
                  }
-                     ${sort === "VotingPower" ? Prisma.sql`ORDER BY DRepDistr.amount DESC NULLS LAST` : Prisma.sql`ORDER BY newestRegister.time DESC`}
-        OFFSET ${(page ? (page - 1) : 0) * (size ? size : 10)} FETCH NEXT ${size ? size : 10} ROWS ONLY
-    ` as Record<any, any>[];
-  const totalCount = result.length ? Number(result[0].total_count) : 0;
-  return { items: formatResult(result), totalCount };
-};
+                     ${
+                         sort === 'VotingPower'
+                             ? Prisma.sql`ORDER BY DRepDistr.amount DESC NULLS LAST`
+                             : Prisma.sql`ORDER BY newestRegister.time DESC`
+                     }
+        OFFSET ${(page ? page - 1 : 0) * (size ? size : 10)} FETCH NEXT ${size ? size : 10} ROWS ONLY
+    `) as Record<any, any>[]
+    const totalCount = result.length ? Number(result[0].total_count) : 0
+    return { items: formatResult(result), totalCount }
+}
 
 export const fetchDrepDetails = async (drepId: string) => {
-  const result = await prisma.$queryRaw`
+    const result = (await prisma.$queryRaw`
       WITH DRepId AS (SELECT decode(${drepId}, 'hex') AS raw),
            AllRegistrationEntries AS (SELECT drep_registration.voting_anchor_id AS voting_anchor_id,
                                              drep_registration.deposit          AS deposit,
@@ -291,13 +298,12 @@ export const fetchDrepDetails = async (drepId: string) => {
       SELECT json_build_object(
                      'drep_details', (SELECT row_to_json(DrepDetails) FROM DrepDetails)
              ) as result;
-  ` as Record<string, any>[];
-  return result[0].result.drep_details ? result[0].result.drep_details : result[0].result;
-};
+  `) as Record<string, any>[]
+    return result[0].result.drep_details ? result[0].result.drep_details : result[0].result
+}
 
 export const fetchDrepVoteDetails = async (dRepId: string) => {
-  const result = await prisma.$queryRaw
-    `
+    const result = (await prisma.$queryRaw`
         WITH DrepVoteDetails
                  as (SELECT DISTINCT ON (gp.id, voting_procedure.drep_voter) concat(encode(gov_action_tx.hash, 'hex'), '#', gp.index) as govActionId,
                                                                              gov_action_metadata.title                                as title,
@@ -342,12 +348,12 @@ export const fetchDrepVoteDetails = async (dRepId: string) => {
                        )
                ) AS votes
         from TimeOrderedDrepVoteDetails
-    ` as Record<any, any>[];
-  return result[0].votes;
-};
+    `) as Record<any, any>[]
+    return result[0].votes
+}
 
 export const fetchDrepDelegationDetails = async (dRepId: string) => {
-  const delegateDetails = prisma.$queryRaw`
+    const delegateDetails = prisma.$queryRaw`
       with delegator as (select *, ROW_NUMBER() OVER (PARTITION BY addr_id order by tx_id desc) AS rn
                          from delegation_vote as dv
                                   join drep_hash as dh on dv.drep_hash_id = dh.id
@@ -389,7 +395,7 @@ export const fetchDrepDelegationDetails = async (dRepId: string) => {
       group by uv.stake_address_id, addr.view, b.time
   `
 
-  const prevDrep = prisma.$queryRaw`
+    const prevDrep = prisma.$queryRaw`
       WITH SearchedDrep AS (SELECT id
                             FROM drep_hash
                             WHERE raw = decode(${dRepId}, 'hex')),
@@ -430,13 +436,13 @@ export const fetchDrepDelegationDetails = async (dRepId: string) => {
              )
       from PrevDrep as p
       where p.rn = 2
-  `;
-  const result = await Promise.all([delegateDetails, prevDrep]);
-  return combineArraysWithSameObjectKey(...result).map((r: any) => r.json_build_object);
-};
+  `
+    const result = await Promise.all([delegateDetails, prevDrep])
+    return combineArraysWithSameObjectKey(...result).map((r: any) => r.json_build_object)
+}
 
-export const fetchDrepRegistrationDetails= async(dRepId:string)=>{
-  const result = await prisma.$queryRaw`
+export const fetchDrepRegistrationDetails = async (dRepId: string) => {
+    const result = (await prisma.$queryRaw`
       select json_build_object('url', va.url ,'deposit', dr.deposit , 'drepName', od.given_name ,'time' , b.time )
       from drep_hash dh
                join drep_registration dr on dh.id = dr.drep_hash_id
@@ -447,9 +453,6 @@ export const fetchDrepRegistrationDetails= async(dRepId:string)=>{
                left join off_chain_vote_drep_data od on ov.id = od.off_chain_vote_data_id
       where dh.raw = decode(${dRepId}, 'hex')
       order by b.time desc;
-  ` as Record<string, any>[];
-  return result.map((r)=>r.json_build_object)
+  `) as Record<string, any>[]
+    return result.map((r) => r.json_build_object)
 }
-
-
-

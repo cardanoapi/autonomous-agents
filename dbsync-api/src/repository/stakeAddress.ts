@@ -1,7 +1,7 @@
-import { prisma } from "../config/db";
+import { prisma } from '../config/db'
 
-export const fetchStakeAddressDetails = async(address:string)=>{
-  const result  = await prisma.$queryRaw`
+export const fetchStakeAddressDetails = async (address: string) => {
+    const result = (await prisma.$queryRaw`
       WITH address AS (
           SELECT *
           FROM stake_address
@@ -31,6 +31,39 @@ export const fetchStakeAddressDetails = async(address:string)=>{
                   'registration', (SELECT row_to_json(latest_registration) FROM latest_registration),
                   'deRegistration', (SELECT row_to_json(latest_deregistration) FROM latest_deregistration)
           ) AS result;
-  ` as Record<string,any>[];
-  return result[0].result
+  `) as Record<string, any>[]
+    return result[0].result
+}
+
+export const fetchStakeAddressId = async (hashRawHex: string): Promise<bigint | null> => {
+    try {
+        const hashRawBuffer = Buffer.from(hashRawHex, 'hex')
+        const stakeAddress = await prisma.stake_address.findUnique({
+            where: {
+                hash_raw: hashRawBuffer,
+            },
+            select: {
+                id: true,
+            },
+        })
+        return stakeAddress?.id || null
+    } catch (error) {
+        console.error('Error fetching stake_address ID:', error)
+        throw new Error('Unable to fetch stake_address ID')
+    }
+}
+
+export const fetchStakeAddressUtxoSum = async (stakeAddressId: bigint) => {
+    try {
+        const result = await prisma.$queryRaw<{ sum: string | null }[]>`
+        SELECT SUM(value) AS sum
+        FROM utxo_view
+        WHERE stake_address_id = ${stakeAddressId};
+      `
+
+        return result[0]?.sum ? parseFloat(result[0].sum) : 0
+    } catch (error) {
+        console.error('Error fetching UTXO sum for stake_address_id:', error)
+        throw new Error('Unable to fetch UTXO sum for the specified stake_address_id')
+    }
 }
