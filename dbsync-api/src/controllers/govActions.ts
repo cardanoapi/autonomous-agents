@@ -9,46 +9,57 @@ type govAction = { govActionId: string; govActionType: string; status: string }
 const prisma = new PrismaClient()
 
 const getGovActions = async (req: Request, res: Response) => {
-    const actionId = req.query.id
+    const actionHash = req.query.id as string
 
     try {
-        const parseGovActionResponseFormat = (action: any) => {
+        const parseGovActionResponseFormat = async (action: any) => {
             let status = 'unknown'
             if (action.ratified_epoch) status = 'ratified'
             else if (action.enacted_epoch) status = 'enacted'
             else if (action.dropped_epoch) status = 'dropped'
             else if (action.expired_epoch) status = 'expired'
 
+            // Fetch the tx.hash from the related transaction
+            const tx = await prisma.tx.findUnique({
+                where: { id: action.tx_id },
+            })
+            if (!tx) throw new Error(`Transaction with ID ${action.tx_id} not found`)
+
             const formattedGovAction: govAction = {
-                govActionId: `${action.tx_id}#${action.index}`,
+                govActionId: `${Buffer.from(tx.hash).toString('hex')}#${action.index}`,
                 govActionType: action.type,
                 status,
             }
             return formattedGovAction
         }
-        if (!actionId) {
-            const actions = await prisma.gov_action_proposal.findMany()
-            const formattedActions: govAction[] = actions.map(parseGovActionResponseFormat)
-            return res.json(formattedActions)
+
+        let actions
+        if (!actionHash) {
+            // Fetch all actions
+            actions = await prisma.gov_action_proposal.findMany()
         } else {
-            const actionIdString = actionId as string
-            const splitActionId = actionIdString.split('#')
-            if (splitActionId.length !== 2 || isNaN(Number(splitActionId[1]))) {
-                throw new Error(`Invalid actionId format. Expected format: "tx_id#index" but got: ${actionIdString}`)
+            // Convert actionHash (hex string) to bytes for filtering
+            const txHashBytes = Buffer.from(actionHash, 'hex')
+
+            // Find the related transaction by hash
+            const tx = await prisma.tx.findUnique({
+                where: { hash: txHashBytes },
+            })
+            if (!tx) {
+                return res.status(404).json({ error: 'Transaction not found' })
             }
-            const action = await prisma.gov_action_proposal.findFirst({
+
+            // Fetch actions linked to the transaction
+            actions = await prisma.gov_action_proposal.findMany({
                 where: {
-                    tx_id: BigInt(splitActionId[0]),
-                    index: BigInt(splitActionId[1]),
+                    tx_id: tx.id,
                 },
             })
-
-            if (!action) {
-                return res.status(404).json({ error: 'Gov action not found' })
-            }
-
-            return res.json(parseGovActionResponseFormat(action))
         }
+
+        const formattedActions: govAction[] = await Promise.all(actions.map(parseGovActionResponseFormat))
+
+        return res.json(formattedActions)
     } catch (error) {
         console.error('Error fetching government actions:', error)
         return res.status(500).json({ error: 'Internal server error' })
