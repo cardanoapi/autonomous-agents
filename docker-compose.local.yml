@@ -17,18 +17,6 @@ services:
     networks:
       - cardano-autonomous-backend
 
-#  #Pgadmin
-  pgadmin:
-    image: dpage/pgadmin4:8.2
-    container_name: pg-admin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@pgadmin.com
-      PGADMIN_DEFAULT_PASSWORD: password
-    ports:
-      - "5050:80"
-    networks:
-      - cardano-autonomous-backend
-
 #Zookeper
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
@@ -63,19 +51,6 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_JMX_PORT: 9999
       KAFKA_CREATE_TOPICS: "trigger_config_updates:1:1"
-    networks:
-      - cardano-autonomous-backend
-
-#Kafka UI
-  kafka-ui:
-    image: provectuslabs/kafka-ui
-    container_name: kafka-ui-agent-autonomous
-    ports:
-      - "8080:8080"
-    restart: always
-    environment:
-      - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS=kafka:9093
     networks:
       - cardano-autonomous-backend
 

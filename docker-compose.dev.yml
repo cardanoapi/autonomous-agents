@@ -7,11 +7,16 @@ services:
     build: 
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_MANAGER_BASE_DOMAIN=${NEXT_PUBLIC_MANAGER_BASE_DOMAIN}
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+        - NEXT_PUBLIC_NETWORK_NAME=${NEXT_PUBLIC_NETWORK_NAME}
+        - NEXT_PUBLIC_DOCKER_NETWORK_NAME=${DOCKER_NETWORK_NAME}
+        - NEXT_PUBLIC_AGENT_NODE_DOCKER_IMAGE_NAME=${AGENT_NODE_DOCKER_IMAGE_NAME}
     ports: 
       - "3000:3000"
-    environment:
-      - NEXT_PUBLIC_API_ENDPOINT_HOST=http://api:8000/api
-      - NEXT_PUBLIC_NETWORK_NAME=sanchonet
+    networks:
+      - autonomous-agent
 
 
   # FastAPI application (build the image)
@@ -20,17 +25,20 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql://root:root@postgres:5432/cardano_autonomous_agent_testing_db
-      - KAFKA_BROKERS=kafka:9093
-      - DOCS_URL=/api/docs
-      - AGENT_MNEMONIC='group shadow belt culture garage sport demand target twist tribe milk dumb divide mango bench fantasy okay unfair error twice struggle naive squirrel romance'
-      - KAFKA_ENABLED='True'
-      - METADATA_BASE_URL='https://metadata.drep.id/api'
-      - DB_SYNC_BASE_URL='http://dbsync:9000/api'
+      - DOCS_URL=${DOCS_URL}
+      - KAFKA_ENABLED=${KAFKA_ENABLED}
+      - METADATA_BASE_URL=${METADATA_BASE_URL}
+      - DB_SYNC_BASE_URL=${DB_SYNC_BASE_URL}
+      - KAFKA_PREFIX=${KAFKA_PREFIX}
+      - DATABASE_URL=${DATABASE_URL}
+      - KAFKA_BROKERS=${KAFKA_BROKERS}
+      - AGENT_MNEMONIC=${AGENT_MNEMONIC}
+    restart: on-failure:3
     depends_on:
       - postgres
       - kafka
-      - pgadmin
+    networks:
+      - autonomous-agent
 
   # Agent Manager application (build image)
   agent_manager:
@@ -39,28 +47,29 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3001:3001"
+    restart: on-failure:3
     depends_on:
       - postgres
       - kafka
       - api
     environment:
-      - DATABASE_URL=postgresql://root:root@postgres:5432/cardano_autonomous_agent_testing_db
-      - KAFKA_BROKERS=kafka:9093
-      - CLIENT_ID=my-app
-      - CARDANO_NODE_URL=172.31.0.4:3004
-      - KUBER_BASE_URL='https://sanchonet.kuber.cardanoapi.io'
-      - KUBER_API_KEY=l3HSdpCx86BOZFEvHspmYZ8KiVOnnvJDLKkC7JMVKUu9pZlV0Ld0qbn3pTQ3ER
-      - MANAGER_WALLET_ADDRESS=
-      - MANAGER_WALLET_SIGNING_KEY=
-      - FAUCET_API_KEY=
-      - AGENT_MNEMONIC='group shadow belt culture garage sport demand target twist tribe milk dumb divide mango bench fantasy okay unfair error twice struggle naive squirrel romance'
-      - METADATA_BASE_URL='https://metadata.drep.id'
-      - DB_SYNC_BASE_URL='https://dbsyncapi.agents.cardanoapi.io/api'
-      - CARDANO_NETWORK_MAGIC=4
-      - BLOCKFROST_API_KEY='sanchonetWC2xdJbuASgECPHevRkMkh6QQqJf2nve'
-      - ENABLE_BLOCKFROST_SUBMIT_API='True'
-      - SERVER_PORT=3002
-      - NETWORK_NAME='sanchonet'
+      - CLIENT_ID=${CLIENT_ID}
+      - CARDANO_NODE_URL=${CARDANO_NODE_URL}
+      - KUBER_BASE_URL=${KUBER_BASE_URL}
+      - KUBER_API_KEY=${KUBER_API_KEY}
+      - MANAGER_WALLET_ADDRESS=${MANAGER_WALLET_ADDRESS}
+      - MANAGER_WALLET_SIGNING_KEY=${MANAGER_WALLET_SIGNING_KEY}
+      - FAUCET_API_KEY=${FAUCET_API_KEY}
+      - CARDANO_NETWORK_MAGIC=${CARDANO_NETWORK_MAGIC}
+      - BLOCKFROST_API_KEY=${BLOCKFROST_API_KEY}
+      - ENABLE_BLOCKFROST_SUBMIT_API=${ENABLE_BLOCKFROST_SUBMIT_API}
+      - NETWORK_NAME=${NETWORK_NAME}
+      - KAFKA_PREFIX=${KAFKA_PREFIX}
+      - DATABASE_URL=${DATABASE_URL}
+      - KAFKA_BROKERS=${KAFKA_BROKERS}
+      - AGENT_MNEMONIC=${AGENT_MNEMONIC}
+    networks:
+      - autonomous-agent
 
 # DbSync
   dbsync:
@@ -70,85 +79,76 @@ services:
     ports:
       - "9000:9000"
     environment:
-      - PORT=9000
-      - CORS_ENABLE=true
-      - DATABASE_URL=postgres://dbsync:9PW%fj36ozwm^8u@mVwoh!uE&R@172.31.0.4:8433/dbsync_sanchonet
+      - PORT=${DBSYNC_PORT}
+      - CORS_ENABLE=${DBSYNC_CORS_ENABLE}
+      - DATABASE_URL=${DBSYNC_DATABASE_URL}
 
-  #  #Agent (build image)
-#  agent:
-#    build:
-#      context: ./agent-node
-#      dockerfile: Dockerfile
-#    ports:
-#      - "3002:3002"
-#    depends_on:
-#      - agent_manager
-#    environment:
-#      - WS_URL=  # Use service name as hostname within Docker network
-#      - AGENT_ID= # Provide the agent ID as needed
+    networks:
+      - autonomous-agent
+
+  agent-node:
+    build:
+      context: ./agent-node
+      dockerfile: Dockerfile
+    image: ${AGENT_NODE_DOCKER_IMAGE_NAME}
 
   #Database
   postgres:
     image: postgres:16.2
     environment:
-     POSTGRES_DB: cardano_autonomous_agent_testing_db
-     POSTGRES_USER: root
-     POSTGRES_PASSWORD: root
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - pg-data:/var/lib/postgresql/data
+    networks:
+      - autonomous-agent
 
-  #Pgadmin
-  pgadmin:
-    image: dpage/pgadmin4:8.2
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@pgadmin.com
-      PGADMIN_DEFAULT_PASSWORD: password
-    ports:
-      - "5050:80"
-
-#Zookeper
+  #Zookeper
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
+    container_name: zookeeper_agent_autonomous
     ports:
       - "2181:2181"
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_SYNC_LIMIT: 2
+      - ZOOKEEPER_CLIENT_PORT=${ZOOKEEPER_CLIENT_PORT}
+      - ZOOKEEPER_TICK_TIME=${ZOOKEEPER_TICK_TIME}
+      - ZOOKEEPER_SYNC_LIMIT=${ZOOKEEPER_SYNC_LIMIT}
+    networks:
+      - autonomous-agent
 
- #Kafka
+  #Kafka
   kafka:
     image: confluentinc/cp-kafka:7.0.1
     hostname: kafka
+    container_name: kafka_agent_autonomous
     depends_on:
       - zookeeper
     ports:
       - "9092:9092"
+      - "9093:9093"
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: DOCKER_NET:PLAINTEXT,HOST_NET:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS:  DOCKER_NET://kafka:9093,HOST_NET://localhost:9092
-      KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER_NET
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_JMX_PORT: 9999
-      KAFKA_CREATE_TOPICS: "trigger_config_updates:1:1"
+      - KAFKA_BROKER_ID=${KAFKA_BROKER_ID}
+      - KAFKA_ZOOKEEPER_CONNECT=${KAFKA_ZOOKEEPER_CONNECT}
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP}
+      - KAFKA_ADVERTISED_LISTENERS=${KAFKA_ADVERTISED_LISTENERS}
+      - KAFKA_INTER_BROKER_LISTENER_NAME=${KAFKA_INTER_BROKER_LISTENER_NAME}
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=${KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR}
+      - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=${KAFKA_TRANSACTION_STATE_LOG_MIN_ISR}
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=${KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR}
+      - KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=${KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS}
+      - KAFKA_JMX_PORT=${KAFKA_JMX_PORT}
+      - KAFKA_CREATE_TOPICS=${KAFKA_CREATE_TOPICS}
+    networks:
+      - autonomous-agent
 
-#Kafka UI
-  kafka-ui:
-    image: provectuslabs/kafka-ui
-    ports:
-      - "8080:8080"
-    restart: always
-    environment:
-      - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS=kafka:9093
 
+networks:
+  autonomous-agent:
+    name: ${DOCKER_NETWORK_NAME}
+    driver: bridge
 
 volumes:
   pg-data:

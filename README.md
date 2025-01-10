@@ -20,11 +20,15 @@ and align with the decentralized governance objectives of Cardano's Voltaire era
 
 ### Using Docker
 
-Before running whole service locally using docker you need to add few of the environment variables
-on file `docker-compose.dev.yml`
+Before running whole service locally using docker you need to create a `.env` and `.env.dbsync` file from `.env.example` and `.env.dbsync.example` respectively to add environment variables.
+Below are some of the descriptions of the environment variables.
 
-##### api
-- AGENT_MNEMONIC 
+**Changes to be made in `.env` file**
+
+##### api and manager
+- KAFKA_PREFIX
+  - prefix for kafka topic
+- AGENT_MNEMONIC
   - Add seed phrase to generate wallet
 
 ##### agent_manager
@@ -35,20 +39,27 @@ on file `docker-compose.dev.yml`
   - Add a wallet address having sufficient ADA so that it can be used to transfer ADA to agent when requested
 - FAUCET_API_KEY (OPTIONAL)
   - Add faucet api key to load ADA which will be used to transfer ADA to agents as per request. And it will only be used if the provided `MANAGER_WALLET_ADDRESS` doesnot have sufficient ADA.
-- AGENT_MNEMONIC
-    - Add seed phrase to generate wallet that should be same as added in `api`
 - BLOCKFROST_API_KEY (Required if ENABLE_BLOCKFROST_SUBMIT_API is 'True' or enabled)
   - Visit [Blockfrost](https://blockfrost.io/) and sign up and generate api key
 
-Note: environment variable `ENABLE_BLOCKFROST_SUBMIT_API` is preferred as if it is not enabled then `Kuber` will be used to submit the transaction which might take couple of minutes.
+***Note***: environment variable `ENABLE_BLOCKFROST_SUBMIT_API` is preferred as if it is not enabled then `Kuber` will be used to submit the transaction which might take couple of minutes.
 
 ##### dbsync
-- DATABASE_URL
+- DBSYNC_DATABASE_URL
   - Add database url of dbsync
 
-Furthermore all env are setup to run in `Sanchonet` so if you want to run in `Preprod` or `Preview`
+##### docker network name
+- DOCKER_NETWORK_NAME
+  - Change name for docker network as default value is provided in `.env.example`
+
+##### agent
+- AGENT_NODE_DOCKER_IMAGE_NAME
+  - Change name for docker network as default value is provided in `.env.example`
+
+***Note***: Furthermore all env are setup to run in `Sanchonet` so if you want to run in `Preprod` or `Preview`
 Network then following environment variables are to be updated:
 
+**Changes to be made in `.env` file**
 ##### frontend
 - NEXT_PUBLIC_NETWORK_NAME
   -  preview or preprod
@@ -73,18 +84,32 @@ Network then following environment variables are to be updated:
 - NETWORK_NAME
   - preprod or preview
 
-##### dbsync
-- DATABASE_URL
+##### dbsync 
+- DBSYNC_DATABASE_URL
   - Update the dbsync database url and database name accordingly
 
+
+Finally run the given command below:
 ```shell
 docker compose -f docker-compose.dev.yml up -d
 ```
 
-**Note**: You can also use already existing services in place of this
+**Note** Make sure no application is running on port `3000`, `8000`
 
+**Note**: After running the above command line, you can run the agent by following steps:
+###### For running agent:
+- Visit frontend at `http://localhost:3000` and connect your wallet. 
+- Then click the `My Agent` tab at bottom left. you will be navigated to `Agents Page`
+- In `Overview Tab` click `Run Agent` button at the top right of `Agents Overview Section`
+- Now copy the docker command and run it in terminal. And Finally your agent is ready to run.
+
+
+### Setup Locally
 
 The setup guide for each services are in the respective directories:
+
+For running all services locally some of the dependent services like `Kafka`, `Postgresql` can be run via Docker using following command.
+
 
 1. [Backend](api/README.md)
 2. [Agent Manager](agent-manager/README.md)

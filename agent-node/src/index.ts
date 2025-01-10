@@ -32,11 +32,15 @@ if (token) {
 }
 if (!wsUrl) {
     const network = token.split('_')[0]
-
-    if (network && process.env.MANAGER_BASE_DOMAIN) {
+    const managerBaseDomain = process.env.MANAGER_BASE_DOMAIN
+    if (network && managerBaseDomain) {
         // This is set in docker file
-        wsUrl = `wss://${network.toLowerCase()}.${process.env.MANAGER_BASE_DOMAIN}`
-    } else {
+        wsUrl = `wss://${network.toLowerCase()}.${managerBaseDomain}`
+    }
+    else if (managerBaseDomain){
+        wsUrl = `ws://${managerBaseDomain}`
+    }
+    else {
         wsUrl = 'ws://localhost:3001'
     }
 }
