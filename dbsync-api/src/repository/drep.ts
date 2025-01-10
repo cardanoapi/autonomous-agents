@@ -456,3 +456,115 @@ export const fetchDrepRegistrationDetails = async (dRepId: string) => {
   `) as Record<string, any>[]
     return result.map((r) => r.json_build_object)
 }
+
+export const fetchDrepActiveDelegation = async (drepId: string) => {
+    const result = (await prisma.$queryRaw`
+        WITH latest AS (
+            SELECT 
+                sa.view AS stake_view,
+                dh.view AS dh_view,
+                sa.id AS stake_addr_id,
+                dh.raw,
+                dh.id,
+                ROW_NUMBER() OVER (PARTITION BY sa.id ORDER BY dv.tx_id DESC) AS rn
+            FROM stake_address sa
+            JOIN delegation_vote dv ON sa.id = dv.addr_id
+            JOIN drep_hash dh ON dh.id = dv.drep_hash_id
+            ORDER BY dv.tx_id DESC
+        )
+        SELECT 
+            dh.view, 
+            latest.stake_view, 
+            SUM(uv.value) AS total_value,
+            (SELECT SUM(amount) 
+                FROM reward r
+                WHERE r.addr_id = latest.stake_addr_id
+                AND r.earned_epoch > 
+                    (SELECT blka.epoch_no
+                    FROM withdrawal w
+                    JOIN tx txa ON txa.id = w.tx_id
+                    JOIN block blka ON blka.id = txa.block_id
+                    WHERE w.addr_id = latest.stake_addr_id
+                    ORDER BY w.tx_id DESC
+                    LIMIT 1)) AS rewardBalance,
+            (SELECT SUM(amount) 
+                FROM reward_rest r
+                WHERE r.addr_id = latest.stake_addr_id
+                    AND r.earned_epoch > 
+                        (SELECT blka.epoch_no
+                        FROM withdrawal w
+                        JOIN tx txa ON txa.id = w.tx_id
+                        JOIN block blka ON blka.id = txa.block_id
+                        WHERE w.addr_id = latest.stake_addr_id
+                        ORDER BY w.tx_id DESC
+                        LIMIT 1)) AS rewardRestBalance
+        FROM drep_hash dh
+        JOIN latest ON dh.id = latest.id
+        JOIN utxo_view uv ON uv.stake_address_id = latest.stake_addr_id
+        WHERE latest.rn = 1
+        AND (dh.view != 'drep_always_no_confidence' 
+            OR dh.view != 'drep_always_abstain')
+        AND dh.raw = decode(${drepId}, 'hex')
+        GROUP BY latest.stake_addr_id, dh.view, latest.stake_view;
+    `) as Record<string, any>[]
+
+    const response: Record<string, any> = {}
+
+    for (const row of result) {
+        const { view: drepId, stake_view: stakeView, total_value, rewardbalance, rewardrestbalance } = row
+
+        const totalRewardBalance: BigInt =
+            (rewardbalance != null ? BigInt(rewardbalance) : BigInt(0)) +
+            (rewardrestbalance != null ? BigInt(rewardrestbalance) : BigInt(0))
+
+        if (!response[drepId]) {
+            response[drepId] = {
+                delegators: [],
+            }
+        }
+
+        response[drepId].delegators.push({
+            [stakeView]: {
+                utxoBalance: BigInt(total_value).toString(),
+                rewardBalance: totalRewardBalance.toString(),
+            },
+        })
+    }
+    const latestEpoch = await prisma.epoch.findFirst({
+        orderBy: {
+            start_time: 'desc',
+        },
+        select: {
+            no: true,
+        },
+    })
+    const drepDistr = await prisma.drep_distr.aggregate({
+        _sum: {
+            amount: true,
+        },
+        where: {
+            epoch_no: latestEpoch ? (latestEpoch.no as number) : 0,
+        },
+    })
+
+    const calculateSum = (data: Record<string, any>): string => {
+        let totalSum = BigInt(0)
+        for (const drepId in data) {
+            const delegators = data[drepId].delegators
+            for (const delegator of delegators) {
+                for (const stakeView in delegator) {
+                    const { utxoBalance, rewardBalance } = delegator[stakeView]
+                    totalSum += BigInt(utxoBalance) + BigInt(rewardBalance)
+                }
+            }
+        }
+        return totalSum.toString()
+    }
+
+    const votingPower = calculateSum(response)
+    const totalVotingPower = drepDistr._sum.amount as bigint
+    const decimalInfluence = Number(votingPower) / Number(totalVotingPower)
+    const influence = (decimalInfluence * 100).toFixed(2) + '%'
+    response.influence = influence
+    return response
+}

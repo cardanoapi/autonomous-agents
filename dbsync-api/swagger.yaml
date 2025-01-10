@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-    title: Stake Address API
+    title: DB Sync API
     version: 1.0.0
-    description: API for retrieving stake registration and deregistration information by address.
+    description: APIs for cardano DB Sync
 
 paths:
     /api/stake-address:
@@ -143,43 +143,54 @@ paths:
                     description: Bad request. The `address` query parameter is missing or invalid.
                 '500':
                     description: Internal server error.
-    /api/drep/{id}/live-voting-power:
+    /api/drep/{id}/active-delegation:
         get:
-            summary: Get live voting power for a specific DRep ID
-            description: This endpoint calculates the live voting power for the provided DRep ID and returns the sum of voting power along with a list of active delegators.
-            operationId: getDrepLiveVotingPower
+            summary: Fetch active delegation for a Drep
+            description: Retrieves active delegation details for a given Drep ID.
             parameters:
                 - name: id
                   in: path
-                  description: The DRep ID for which the live voting power is to be fetched
                   required: true
+                  description: The Drep ID (either in hexadecimal or Bech32 format).
                   schema:
-                  type: string
-                  example: 'drep15fy2nszna039pdregpryhzahnwcr2rred4nx2qaec7k07nvcq26'
+                      type: string
+                      example: 'drep15fy2nszna039pdregpryhzahnwcr2rred4nx2qaec7k07nvcq26'
             responses:
                 '200':
-                    description: Successfully fetched the live voting power and active delegators
+                    description: Successfully fetched active delegation data
                     content:
                     application/json:
                         schema:
                         type: object
-                        properties:
-                            votingPower:
-                                type: string
-                                description: Total live voting power in BigInt as string
-                                example: '19105127053507'
-                            activeDelegators:
-                                type: object
-                                additionalProperties:
-                                    type: string
-                                    description: Delegator voting power in BigInt as string
-                                description: A map of active delegators with their respective voting powers
-                                example:
-                                    stake_test1ur34vgj0kk338wlfsdf7fnxs9uukh24047lc2wfmm0mgptgq7849c: '18992131258148'
-                                stake_test1uzgzs48ckhg2j7l8wxuz4rd8zt8sfpmy7nuxt7dn96t6utgyer5a5: '2998147525'
-                                stake_test1urq9sjgt4n92cnvr02450z6fqksux7xc5k4z29j77uew5gqlvr3uc: '109997647834'
+                        additionalProperties:
+                            type: object
+                            properties:
+                            delegators:
+                                type: array
+                                items:
+                                    type: object
+                                    additionalProperties:
+                                        type: object
+                                        properties:
+                                        utxoBalance:
+                                            type: string
+                                            description: The UTxO balance for the delegator.
+                                            example: '18992131258148'
+                                        rewardBalance:
+                                            type: string
+                                            description: The reward balance for the delegator.
+                                            example: '243137806039'
+                        example:
+                            'drep15fy2nszna039pdregpryhzahnwcr2rred4nx2qaec7k07nvcq26':
+                                delegators:
+                                    - stake_test1urq9sjgt4n92cnvr02450z6fqksux7xc5k4z29j77uew5gqlvr3uc:
+                                        utxoBalance: '18992131258148'
+                                        rewardBalance: '243137806039'
+                                    - stake_test1uzgzs48ckhg2j7l8wxuz4rd8zt8sfpmy7nuxt7dn96t6utgyer5a5:
+                                        utxoBalance: '2998147525'
+                                        rewardBalance: '0'
                 '400':
-                    description: Invalid DRep ID provided
+                    description: Bad Request - Invalid Drep ID
                     content:
                     application/json:
                         schema:
@@ -189,7 +200,7 @@ paths:
                             type: string
                             example: 'Provide a valid Drep ID'
                 '500':
-                    description: Internal server error
+                    description: Internal Server Error
                     content:
                     application/json:
                         schema:
@@ -197,7 +208,7 @@ paths:
                         properties:
                             message:
                             type: string
-                            example: 'Internal server error'
+                            example: 'An unexpected error occurred'
     /api/drep/{id}:
         get:
             summary: Get DRep details

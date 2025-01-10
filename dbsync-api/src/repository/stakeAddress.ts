@@ -52,18 +52,3 @@ export const fetchStakeAddressId = async (hashRawHex: string): Promise<bigint | 
         throw new Error('Unable to fetch stake_address ID')
     }
 }
-
-export const fetchStakeAddressUtxoSum = async (stakeAddressId: bigint) => {
-    try {
-        const result = await prisma.$queryRaw<{ sum: string | null }[]>`
-        SELECT SUM(value) AS sum
-        FROM utxo_view
-        WHERE stake_address_id = ${stakeAddressId};
-      `
-
-        return result[0]?.sum ? parseFloat(result[0].sum) : 0
-    } catch (error) {
-        console.error('Error fetching UTXO sum for stake_address_id:', error)
-        throw new Error('Unable to fetch UTXO sum for the specified stake_address_id')
-    }
-}
