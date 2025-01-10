@@ -69,6 +69,16 @@ const getGovActions = async (req: Request, res: Response) => {
     }
 }
 
+const count = async (req: Request, res: Response) => {
+    try {
+        const totalGovActions = await prisma.gov_action_proposal.count()
+        res.json({ totalGovActions })
+    } catch (error) {
+        res.status(500).json({ error: 'An error occurred while counting records.' })
+    }
+}
+
 router.get('/', handlerWrapper(getGovActions))
+router.get('/count', handlerWrapper(count))
 
 export default router

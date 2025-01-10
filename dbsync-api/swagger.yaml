@@ -714,6 +714,31 @@ paths:
                     description: Invalid address provided
                 '500':
                     description: Internal server error
+    /api/gov-action/count:
+        get:
+            summary: Get the total number of government action proposals
+            description: Returns the total number of records in the `gov_action_proposal` table.
+            responses:
+                '200':
+                    description: Total count retrieved successfully
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    totalGovActions:
+                                        type: integer
+                                        example: 42
+                '500':
+                    description: Server error while retrieving the total count
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: string
+                                        example: 'An error occurred while counting records.'
     /api/gov-action:
         get:
             summary: Get government actions
