@@ -5,9 +5,9 @@ class APISettings(BaseSettings):
     APP_ENV: str = "production"
     SECURE: bool = None
     JWT_SECRET_KEY: str = ""
-    DB_SYNC_API: str = "https://dbsyncapi.agents.cardanoapi.io/api"
+    DB_SYNC_BASE_URL: str = "https://dbsyncapi.agents.cardanoapi.io/api"
     SAME_SITE = "None"
-    METADATA_API: str = "https://metadata.drep.id/api"
+    METADATA_BASE_URL: str = "https://metadata.drep.id/api"
     GOV_ACTION_API: str = "https://govtool.cardanoapi.io/api"
     KAFKA_TOPIC_PREFIX: str = ""
     KAFKA_PREFIX: str = ""

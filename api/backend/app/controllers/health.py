@@ -73,7 +73,7 @@ async def readiness_check():
 
 async def dbsync_health_check():
     async with aiohttp.ClientSession() as session:
-        async with session.get(api_settings.DB_SYNC_API + "/health") as response:
+        async with session.get(api_settings.DB_SYNC_BASE_URL + "/health") as response:
             if response.status == 200:
                 return True
             return False

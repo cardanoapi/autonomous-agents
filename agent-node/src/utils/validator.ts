@@ -4,13 +4,12 @@ import { logicalFunctions } from './operatorSupport'
 const NetworkName = ['preview', 'preprod', 'sanchonet']
 
 export function validateToken(token: string) {
-    if (token.split('_').length !== 2) {
+    if (token.split('_').length < 1) {
         return 'Not a valid token. Missing secret key'
     }
     if (token.split('_')[1].includes('undefined')) {
         return 'Not a valid token. Missing secret key'
     }
-    if (!NetworkName.includes(token.split('_')[0])) return 'Not a valid network name'
     return ''
 }
 

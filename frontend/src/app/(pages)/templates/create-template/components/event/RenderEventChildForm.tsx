@@ -32,14 +32,14 @@ const RenderEventChildForm = ({
 }) => {
     const [localOperator, setLocalOperator] = useState<string>(eventFilterParam.operator || 'eq');
     const [value, setValue] = useState(eventFilterParam.value);
-    const [deleteBtnClicked,setDeleteBtnClicked] = useState(false)
+    const [deleteBtnClicked, setDeleteBtnClicked] = useState(false);
 
     useEffect(() => {
         if (deleteBtnClicked) {
             setLocalOperator(eventFilterParam.operator || 'eq');
             setValue(eventFilterParam.value);
         }
-        setDeleteBtnClicked(false)
+        setDeleteBtnClicked(false);
     }, [deleteBtnClicked]);
 
     const paramId = Array.isArray(eventFilterParam.id)
@@ -77,7 +77,7 @@ const RenderEventChildForm = ({
 
     const handleOnDeleteParam = (paramId: string | string[]) => {
         onDeleteParameter && onDeleteParameter(paramId);
-        setDeleteBtnClicked(true)
+        setDeleteBtnClicked(true);
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

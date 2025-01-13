@@ -205,7 +205,7 @@ class AgentService:
                 raise HTTPException(status_code=400, content="Error fetching agent Drep details")
 
     async def fetch_balance(self, stake_address: str, session: ClientSession):
-        async with session.get(f"{api_settings.DB_SYNC_API}/address/balance?address={stake_address}") as response:
+        async with session.get(f"{api_settings.DB_SYNC_BASE_URL}/address/balance?address={stake_address}") as response:
             try:
                 return await response.json()
             except:
@@ -215,7 +215,7 @@ class AgentService:
                 )
 
     async def fetch_drep_details(self, drep_id: str, session: ClientSession) -> Dict[str, float | bool]:
-        async with session.get(f"{api_settings.DB_SYNC_API}/drep/{drep_id}") as response:
+        async with session.get(f"{api_settings.DB_SYNC_BASE_URL}/drep/{drep_id}") as response:
             try:
                 res = await response.json()
                 voting_power = res.get("votingPower") / (10**6) if res.get("votingPower") else 0
@@ -228,7 +228,7 @@ class AgentService:
                 )
 
     async def fetch_stake_address_details(self, stake_address: str, session: ClientSession):
-        async with session.get(f"{api_settings.DB_SYNC_API}/stake-address?address={stake_address}") as response:
+        async with session.get(f"{api_settings.DB_SYNC_BASE_URL}/stake-address?address={stake_address}") as response:
             try:
                 is_stake_registered = False
                 res = await response.json()
@@ -250,7 +250,7 @@ class AgentService:
                 )
 
     async def fetch_delegation_details(self, stake_address: str, session: ClientSession):
-        async with session.get(f"{api_settings.DB_SYNC_API}/delegation?address={stake_address}") as response:
+        async with session.get(f"{api_settings.DB_SYNC_BASE_URL}/delegation?address={stake_address}") as response:
             try:
                 res = await response.json()
                 drep_id = res.get("drep", {}).get("drep_id") if res.get("drep") else None
