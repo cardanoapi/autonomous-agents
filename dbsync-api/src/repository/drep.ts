@@ -564,7 +564,7 @@ export const fetchDrepActiveDelegation = async (drepId: string) => {
     const votingPower = calculateSum(response)
     const totalVotingPower = drepDistr._sum.amount as bigint
     const decimalInfluence = Number(votingPower) / Number(totalVotingPower)
-    const influence = (decimalInfluence * 100).toFixed(2) + '%'
+    const influence = (decimalInfluence * 100).toFixed(4) + '%'
     response.influence = influence
     return response
 }
