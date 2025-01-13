@@ -26,6 +26,7 @@ You can access the deployed service here: [Autonomous Agent Testing](https://age
 3. **`agent-node`**: Agent responsible for executing various functions.
 4. **`frontend`**: User interface for autonomous agent testing.
 5. **`dbsync-api`**: Service for interacting with the dbsync database.
+---
 
 ### Using Docker
 
@@ -51,7 +52,7 @@ Before running the entire service locally using Docker, create `.env` files from
 
 ##### DBSync
 
-- **`DBSYNC_DATABASE_URL`**: URL for the dbsync database.
+- **`DBSYNC_DATABASE_URL`**: URL for the `dbsync-api service`. Default running on `http://localhost:9000` on starting `dbsync-api` service.
 
 ##### Docker Network Name
 
@@ -89,6 +90,7 @@ To run in `Preprod` or `Preview` networks, update the following environment vari
 ##### DBSync
 
 - **`DBSYNC_DATABASE_URL`**: Update the URL and database name accordingly.
+---
 
 #### Starting the Service
 
@@ -100,7 +102,7 @@ docker compose -f docker-compose.dev.yml up -d
 
 > **Note:** Ensure no applications are running on ports `3000` and `8000`. 
 
-#### Running the Agent
+#### Finally Running the Agent
 
 1. Visit the frontend at `http://localhost:3000` and connect your wallet.
 2. Navigate to the `My Agent` tab in the bottom left to access the `Agents Page`.
@@ -111,12 +113,18 @@ docker compose -f docker-compose.dev.yml up -d
 
 ### Local Setup
 
-Each service has its own setup guide within its respective directory. For running all services locally, dependencies like `Kafka` and `PostgreSQL` can be run via Docker using the following command:
+Each service has its own setup guide within its respective directory.
 
 1. [Backend](api/README.md)
 2. [Agent Manager](agent-manager/README.md)
 3. [Agent](agent-node/README.md)
 4. [Frontend](frontend/README.md)
+5. [DbSync-Api](dbsync-api/README.md)
+
+**`Note`**: For running all services locally, dependencies like `Kafka` and `PostgreSQL` can be run via Docker using the following command:
+```bash
+docker compose -f docker-compose.dev.yml up -d
+```
 
 ---
 

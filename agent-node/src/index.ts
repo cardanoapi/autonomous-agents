@@ -36,11 +36,9 @@ if (!wsUrl) {
     if (network && managerBaseDomain) {
         // This is set in docker file
         wsUrl = `wss://${network.toLowerCase()}.${managerBaseDomain}`
-    }
-    else if (managerBaseDomain){
+    } else if (managerBaseDomain) {
         wsUrl = `ws://${managerBaseDomain}`
-    }
-    else {
+    } else {
         wsUrl = 'ws://localhost:3001'
     }
 }

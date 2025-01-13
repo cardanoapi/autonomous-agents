@@ -1,13 +1,15 @@
 import Link from 'next/link';
 
-import {Copy} from 'lucide-react';
+import { Copy } from 'lucide-react';
 
-import {SuccessToast} from '@app/components/molecules/CustomToasts';
+import { SuccessToast } from '@app/components/molecules/CustomToasts';
 import environments from '@app/configs/environments';
-import {convertToBase64} from '@app/utils/base64converter';
+import { convertToBase64 } from '@app/utils/base64converter';
 
-const AgentRunnerTutorial = ({agentSecretKey, showToken}: { agentSecretKey: string; showToken?: boolean }) => {
-    const dockerCommand = environments.NEXT_PUBLIC_MANAGER_BASE_DOMAIN ? `docker run -d --network=${environments.NEXT_PUBLIC_DOCKER_NETWORK_NAME || 'autonomous_agent'} -e TOKEN=${convertToBase64(agentSecretKey)} -e MANAGER_BASE_DOMAIN=${environments.NEXT_PUBLIC_MANAGER_BASE_DOMAIN} ${environments.NEXT_PUBLIC_AGENT_NODE_DOCKER_IMAGE_NAME||'cardanoapi/autonomous-agents:Dev'}` : `docker run -d --pull always -e TOKEN=${convertToBase64(agentSecretKey)} cardanoapi/autonomous-agents:${environments.NEXT_PUBLIC_IMAGE_TAG}`;
+const AgentRunnerTutorial = ({ agentSecretKey, showToken }: { agentSecretKey: string; showToken?: boolean }) => {
+    const dockerCommand = environments.NEXT_PUBLIC_MANAGER_BASE_DOMAIN
+        ? `docker run -d --network=${environments.NEXT_PUBLIC_DOCKER_NETWORK_NAME || 'autonomous_agent'} -e TOKEN=${convertToBase64(agentSecretKey)} -e MANAGER_BASE_DOMAIN=${environments.NEXT_PUBLIC_MANAGER_BASE_DOMAIN} ${environments.NEXT_PUBLIC_AGENT_NODE_DOCKER_IMAGE_NAME || 'cardanoapi/autonomous-agents:Dev'}`
+        : `docker run -d --pull always -e TOKEN=${convertToBase64(agentSecretKey)} cardanoapi/autonomous-agents:${environments.NEXT_PUBLIC_IMAGE_TAG}`;
 
     return (
         <div className={'flex w-full flex-col gap-6 '}>
