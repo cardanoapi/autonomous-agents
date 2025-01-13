@@ -1,125 +1,130 @@
-### Welcome to Autonomous Agent Testing 
-Autonomous Agent Testing primarily focuses on evaluating the features introduced in the Cardano Improvement Proposal (CIP) 1694. 
-This includes testing the creation and voting mechanisms for proposals to ensure the governance model operates seamlessly.
-Additionally, it verifies functionalities like registering and deregistering as a Delegated Representative (DRep), 
-managing stake registrations and deregistrations, and performing ADA transfers. It also provides the feature to trigger these function either 
-Manually or by setting a CRON schedule or by event filtering The testing process ensures these operations are secure, efficient, 
-and align with the decentralized governance objectives of Cardano's Voltaire era.
+# Welcome to Autonomous Agent Testing
 
-## Running the deployed service 
-[Autonomous Agent Testing](https://agents.cardanoapi.io/)
+Autonomous Agent Testing focuses on evaluating features introduced in the Cardano Improvement Proposal (CIP) 1694. This includes testing the creation and voting mechanisms for proposals to ensure the governance model operates seamlessly. Additionally, it verifies functionalities such as:
 
-## Running the stack locally
+- Registering and deregistering as a Delegated Representative (DRep).
+- Managing stake registrations and deregistrations.
+- Performing ADA transfers.
+- Triggering operations manually, via a CRON schedule, or through event filtering.
+
+The testing process ensures these operations are secure, efficient, and aligned with the decentralized governance objectives of Cardano's Voltaire era.
+
+---
+
+## Accessing the Deployed Service
+
+You can access the deployed service here: [Autonomous Agent Testing](https://agents.cardanoapi.io/)
+
+---
+
+## Running the Stack Locally
 
 ### Directory Structure
-1. `api`: the backend service
-2. `manager`: Middleman between agents and backend. Also handles different services for agent
-3. `agent-node`: agent for handling various functions
-4. `frontend`: UI for autonomous agent testing
-5. `dbsync-api`: handling services related to dbsync database
+
+1. **`api`**: Backend service.
+2. **`manager`**: Middleware between agents and the backend; handles various agent-related services.
+3. **`agent-node`**: Agent responsible for executing various functions.
+4. **`frontend`**: User interface for autonomous agent testing.
+5. **`dbsync-api`**: Service for interacting with the dbsync database.
 
 ### Using Docker
 
-Before running whole service locally using docker you need to create a `.env` and `.env.dbsync` file from `.env.example` and `.env.dbsync.example` respectively to add environment variables.
-Below are some of the descriptions of the environment variables.
+Before running the entire service locally using Docker, create `.env` files from `.env.example` and populate them with the necessary environment variables. Below are descriptions of key variables:
+> **Note:** Some variables in `.env.example` are prepopulated. Keep them as it is or change them carefully.
 
-**Changes to be made in `.env` file**
+#### Changes to be made in `.env` file
 
-##### api and manager
-- KAFKA_PREFIX
-  - prefix for kafka topic
-- AGENT_MNEMONIC
-  - Add seed phrase to generate wallet
+##### API and Manager
 
-##### agent_manager
-- KUBER_API_KEY
-  - Visit [KuberIde](https://kuberide.com/kuber/settings/api-keys) and generate api-key
-- MANAGER_WALLET_ADDRESS (OPTIONAL)
-- MANAGER_WALLET_SIGNING_KEY (OPTIONAL)
-  - Add a wallet address having sufficient ADA so that it can be used to transfer ADA to agent when requested
-- FAUCET_API_KEY (OPTIONAL)
-  - Add faucet api key to load ADA which will be used to transfer ADA to agents as per request. And it will only be used if the provided `MANAGER_WALLET_ADDRESS` doesnot have sufficient ADA.
-- BLOCKFROST_API_KEY (Required if ENABLE_BLOCKFROST_SUBMIT_API is 'True' or enabled)
-  - Visit [Blockfrost](https://blockfrost.io/) and sign up and generate api key
+- **`KAFKA_PREFIX`**: Prefix for Kafka topics.
+- **`AGENT_MNEMONIC`**: Seed phrase to generate a wallet.
 
-***Note***: environment variable `ENABLE_BLOCKFROST_SUBMIT_API` is preferred as if it is not enabled then `Kuber` will be used to submit the transaction which might take couple of minutes.
+##### Agent Manager
 
-##### dbsync
-- DBSYNC_DATABASE_URL
-  - Add database url of dbsync
+- **`KUBER_API_KEY`**: Generate an API key from [KuberIde](https://kuberide.com/kuber/settings/api-keys).
+- **`MANAGER_WALLET_ADDRESS`** (Optional): Wallet address with sufficient ADA for transfers.
+- **`MANAGER_WALLET_SIGNING_KEY`** (Optional): Signing key for the manager wallet.
+- **`FAUCET_API_KEY`** (Optional): API key to load ADA for agent transfers if the manager wallet lacks sufficient funds.
+- **`BLOCKFROST_API_KEY`** (Required if `ENABLE_BLOCKFROST_SUBMIT_API` is enabled): Obtain from [Blockfrost](https://blockfrost.io/).
 
-##### docker network name
-- DOCKER_NETWORK_NAME
-  - Change name for docker network as default value is provided in `.env.example`
+> **Note:** If `ENABLE_BLOCKFROST_SUBMIT_API` is not enabled, transactions will be submitted using `Kuber`, which may take a few minutes.
 
-##### agent
-- AGENT_NODE_DOCKER_IMAGE_NAME
-  - Change name for docker network as default value is provided in `.env.example`
+##### DBSync
 
-***Note***: Furthermore all env are setup to run in `Sanchonet` so if you want to run in `Preprod` or `Preview`
-Network then following environment variables are to be updated:
+- **`DBSYNC_DATABASE_URL`**: URL for the dbsync database.
 
-**Changes to be made in `.env` file**
-##### frontend
-- NEXT_PUBLIC_NETWORK_NAME
-  -  preview or preprod
+##### Docker Network Name
 
-##### api and manager
-- DB_SYNC_BASE_URL
-  - https://preprod-dbync.agents.cardanoapi.io/api for `preprod`
-  - https://preview-dbync.agents.cardanoapi.io/api for `preview`
+- **`DOCKER_NETWORK_NAME`**: Customize the Docker network name (default value provided in `.env.example`).
 
-##### manager only
-- KUBER_BASE_URL
-  - https://preview.kuber.cardanoapi.io for `preview`
-  - https://preprod.kuber.cardanoapi.io for `preprod`
+##### Agent
 
-- CARDANO_NETWORK_MAGIC
-  - 3 for `preview`
-  - 2 for `preprod`
+- **`AGENT_NODE_DOCKER_IMAGE_NAME`**: Customize the Docker image name for the agent node.
 
-- BLOCKFROST_API_KEY
-  - Visit [Blockfrost](https://blockfrost.io/) and sign up and generate api key based on desired network type 
+#### Running in `Preprod` or `Preview` Networks
 
-- NETWORK_NAME
-  - preprod or preview
+To run in `Preprod` or `Preview` networks, update the following environment variables:
 
-##### dbsync 
-- DBSYNC_DATABASE_URL
-  - Update the dbsync database url and database name accordingly
+##### Frontend
 
+- **`NEXT_PUBLIC_NETWORK_NAME`**: Set to `preview` or `preprod`.
 
-Finally run the given command below:
-```shell
+##### API and Manager
+
+- **`DB_SYNC_BASE_URL`**:
+  - `https://preprod-dbync.agents.cardanoapi.io/api` for `preprod`
+  - `https://preview-dbync.agents.cardanoapi.io/api` for `preview`
+
+##### Manager Only
+
+- **`KUBER_BASE_URL`**:
+  - `https://preview.kuber.cardanoapi.io` for `preview`
+  - `https://preprod.kuber.cardanoapi.io` for `preprod`
+- **`CARDANO_NETWORK_MAGIC`**:
+  - `3` for `preview`
+  - `2` for `preprod`
+- **`BLOCKFROST_API_KEY`**: Obtain from [Blockfrost](https://blockfrost.io/) for the desired network.
+- **`NETWORK_NAME`**: Set to `preprod` or `preview`.
+
+##### DBSync
+
+- **`DBSYNC_DATABASE_URL`**: Update the URL and database name accordingly.
+
+#### Starting the Service
+
+Run the following command:
+
+```bash
 docker compose -f docker-compose.dev.yml up -d
 ```
 
-**Note** Make sure no application is running on port `3000`, `8000`
+> **Note:** Ensure no applications are running on ports `3000` and `8000`. 
 
-**Note**: After running the above command line, you can run the agent by following steps:
-###### For running agent:
-- Visit frontend at `http://localhost:3000` and connect your wallet. 
-- Then click the `My Agent` tab at bottom left. you will be navigated to `Agents Page`
-- In `Overview Tab` click `Run Agent` button at the top right of `Agents Overview Section`
-- Now copy the docker command and run it in terminal. And Finally your agent is ready to run.
+#### Running the Agent
 
+1. Visit the frontend at `http://localhost:3000` and connect your wallet.
+2. Navigate to the `My Agent` tab in the bottom left to access the `Agents Page`.
+3. In the `Overview Tab`, click the `Run Agent` button in the top-right corner of the `Agents Overview Section`.
+4. Copy the Docker command and run it in the terminal. Your agent is now ready to operate.
 
-### Setup Locally
+---
 
-The setup guide for each services are in the respective directories:
+### Local Setup
 
-For running all services locally some of the dependent services like `Kafka`, `Postgresql` can be run via Docker using following command.
-
+Each service has its own setup guide within its respective directory. For running all services locally, dependencies like `Kafka` and `PostgreSQL` can be run via Docker using the following command:
 
 1. [Backend](api/README.md)
 2. [Agent Manager](agent-manager/README.md)
 3. [Agent](agent-node/README.md)
 4. [Frontend](frontend/README.md)
 
+---
 
-# IMPORTANT
+## Important
 
-Please setup the pre-commit hook before adding any commit for git by running the following command:
-```shell
+Before committing any changes to the repository, set up the pre-commit hook by running the following command:
+
+```bash
 ./install-pre-commit-hook.sh
 ```
+
