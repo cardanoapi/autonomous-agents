@@ -143,6 +143,68 @@ paths:
                     description: Bad request. The `address` query parameter is missing or invalid.
                 '500':
                     description: Internal server error.
+    /api/drep/{id}/active-delegators:
+        get:
+            summary: Get active delegators for a DRep
+            description: Fetch the list of active delegators associated with the specified DRep ID.
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  description: The DRep ID in hex or Bech32 format.
+                  schema:
+                      type: string
+                      example: 'drep15fy2nszna039pdregpryhzahnwcr2rred4nx2qaec7k07nvcq26'
+            responses:
+                '200':
+                    description: A list of active delegators.
+                    content:
+                    application/json:
+                        schema:
+                            type: array
+                            items:
+                                type: object
+                                properties:
+                                    delegatorStake:
+                                        type: string
+                                        description: The stake address of the delegator.
+                                    balance:
+                                        type: object
+                                        properties:
+                                            utxoBalance:
+                                                type: string
+                                                description: The UTXO balance of the delegator.
+                                            rewardBalance:
+                                                type: string
+                                                description: The reward balance of the delegator.
+                                            rewardRestBalance:
+                                                type: string
+                                                description: The reward rest balance of the delegator.
+                                    delegatedAt:
+                                        type: object
+                                        properties:
+                                            txId:
+                                                type: string
+                                                description: The transaction ID of the delegation.
+                                            epochNo:
+                                                type: integer
+                                                description: The epoch number of the delegation.
+                                            time:
+                                                type: string
+                                                format: date-time
+                                                description: The time of the delegation.
+                '400':
+                    description: Invalid DRep ID.
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                message:
+                                    type: string
+                                    example: Provide a valid Drep ID
+                '500':
+                    description: Internal server error.
     /api/drep/{id}/active-delegation:
         get:
             summary: Fetch active delegation for a Drep
@@ -184,11 +246,11 @@ paths:
                             'drep15fy2nszna039pdregpryhzahnwcr2rred4nx2qaec7k07nvcq26':
                                 delegators:
                                     - stake_test1urq9sjgt4n92cnvr02450z6fqksux7xc5k4z29j77uew5gqlvr3uc:
-                                        utxoBalance: '18992131258148'
-                                        rewardBalance: '243137806039'
+                                          utxoBalance: '18992131258148'
+                                          rewardBalance: '243137806039'
                                     - stake_test1uzgzs48ckhg2j7l8wxuz4rd8zt8sfpmy7nuxt7dn96t6utgyer5a5:
-                                        utxoBalance: '2998147525'
-                                        rewardBalance: '0'
+                                          utxoBalance: '2998147525'
+                                          rewardBalance: '0'
                 '400':
                     description: Bad Request - Invalid Drep ID
                     content:
