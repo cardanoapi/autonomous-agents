@@ -68,6 +68,7 @@ async def readiness_check():
     if is_db_healthy and is_kafka_healthy and is_dbsync_healthy:
         return backend_health_stat
     else:
+        print("failed status: ", backend_health_stat)
         raise HTTPException(status_code=502, content=backend_health_stat)
 
 
@@ -86,8 +87,11 @@ async def database_health_check():
 
 async def kafka_health_check():
     last_poll_timestamp = await kafka_service.fetch_latest_poll_timestamp()
-    current_timestamp = int(datetime.timestamp(datetime.now()))
-    print("timestamp :", last_poll_timestamp, current_timestamp)
-    if last_poll_timestamp and (current_timestamp - last_poll_timestamp) < 3000:
+    current_timestamp = int(datetime.timestamp(datetime.now()) * 1000)
+    if (
+        last_poll_timestamp
+        and (current_timestamp - last_poll_timestamp) < 3000
+        and (current_timestamp - last_poll_timestamp) > 0
+    ):
         return True
     return False

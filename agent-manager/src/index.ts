@@ -33,10 +33,6 @@ const server = app.listen(port, async () => {
     const managerWallet = new ManagerWalletService(txListener)
     const manager = new AgentManagerRPC(wss, managerWallet)
 
-    setInterval(() => {
-        console.log('Connection count:', manager.server.clients.size)
-    }, 10000)
-
     blockchain.start()
     blockchain.blockChain.on('extendBlock', (block) => {
         const transaction = startTransaction('extendBlock', 'node')
