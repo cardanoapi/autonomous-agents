@@ -24,7 +24,7 @@ from backend.app.controllers import (
 
 root_api_router = APIRouter(prefix="/api")
 
-# For ready status Api
+# For health status Api
 root_api_router.include_router(health.router, tags=["health"])
 
 # For Demo Ping APi

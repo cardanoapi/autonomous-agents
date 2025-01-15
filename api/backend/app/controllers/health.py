@@ -55,7 +55,6 @@ async def readiness_check():
     is_kafka_healthy = await kafka_health_check()
     is_db_healthy = await database_health_check()
     is_dbsync_healthy = await dbsync_health_check()
-
     backend_health_stat = {
         "isHealthy": is_db_healthy and is_kafka_healthy and is_dbsync_healthy,
         "details": {
@@ -88,10 +87,7 @@ async def database_health_check():
 async def kafka_health_check():
     last_poll_timestamp = await kafka_service.fetch_latest_poll_timestamp()
     current_timestamp = int(datetime.timestamp(datetime.now()) * 1000)
-    if (
-        last_poll_timestamp
-        and (current_timestamp - last_poll_timestamp) < 3000
-        and (current_timestamp - last_poll_timestamp) > 0
-    ):
+    if last_poll_timestamp and 30000 > (current_timestamp - last_poll_timestamp) > 0:
         return True
+    print("time difference : ", current_timestamp - last_poll_timestamp)
     return False
