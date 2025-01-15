@@ -12,7 +12,11 @@ async function blockfrostHealthCheck(req: Request, res: Response) {
             project_id: environments.blockFrostApiKey,
         },
     })
-    return res.status(response.status).send(await response.json())
+    const respJson = await response.json()
+    if (response.status != 200) {
+        console.log('BlockFrostCheckError : ', respJson)
+    }
+    return res.status(response.status).send(respJson)
 }
 
 router.get('/', handlerWrapper(blockfrostHealthCheck))

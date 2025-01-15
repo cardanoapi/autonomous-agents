@@ -37,7 +37,7 @@ async function healthCheck(req: Request, res: Response) {
             isDatabaseHealthy &&
             isMetadataHealthy
 
-        return res.status(isHealthy ? 200 : 503).send({
+        const healthCheckStatus = {
             isHealthy,
             details: {
                 kafka: {
@@ -62,8 +62,13 @@ async function healthCheck(req: Request, res: Response) {
                     isHealthy: isMetadataHealthy,
                 },
             },
-        })
+        }
+        if (!isHealthy) {
+            console.log('HealthCheckError: ', healthCheckStatus)
+        }
+        return res.status(isHealthy ? 200 : 503).send(healthCheckStatus)
     } catch (err: any) {
+        console.log('HealthCheckError : ', err)
         return res.status(500).send(err.message ? err.message : err)
     }
 }
