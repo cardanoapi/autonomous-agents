@@ -352,6 +352,7 @@ export const fetchDrepVoteDetails = async (dRepId: string) => {
     return result[0].votes
 }
 
+// drep delegation historty
 export const fetchDrepDelegationDetails = async (dRepId: string) => {
     const delegateDetails = prisma.$queryRaw`
       with delegator as (select *, ROW_NUMBER() OVER (PARTITION BY addr_id order by tx_id desc) AS rn
@@ -567,4 +568,80 @@ export const fetchDrepActiveDelegation = async (drepId: string) => {
     const influence = (decimalInfluence * 100).toFixed(4) + '%'
     response.influence = influence
     return response
+}
+
+export const fetchDrepActiveDelegators = async (dRepId: string) => {
+    const result = (await prisma.$queryRaw`
+    WITH latest AS (
+        SELECT 
+            sa.view AS stake_view,
+            dh.view AS dh_view,
+            sa.id AS stake_addr_id,
+            dh.raw,
+            dh.id,
+            dv.tx_id,
+            ROW_NUMBER() OVER (PARTITION BY sa.id ORDER BY dv.tx_id DESC) AS rn
+        FROM stake_address sa
+        JOIN delegation_vote dv ON sa.id = dv.addr_id
+        JOIN drep_hash dh ON dh.id = dv.drep_hash_id
+        ORDER BY dv.tx_id DESC
+    )
+    SELECT 
+        dh.view, 
+        latest.stake_view, 
+        SUM(uv.value) AS utxo_balance,
+        encode(tx.hash, 'hex') as tx_id,
+        b.epoch_no as epoch_no,
+        b.time as time,
+        (SELECT SUM(amount) 
+            FROM reward r
+            WHERE r.addr_id = latest.stake_addr_id
+            AND r.earned_epoch > 
+                (SELECT blka.epoch_no
+                FROM withdrawal w
+                JOIN tx txa ON txa.id = w.tx_id
+                JOIN block blka ON blka.id = txa.block_id
+                WHERE w.addr_id = latest.stake_addr_id
+                ORDER BY w.tx_id DESC
+                LIMIT 1)) AS rewardBalance,
+        (SELECT SUM(amount) 
+            FROM reward_rest r
+            WHERE r.addr_id = latest.stake_addr_id
+                AND r.earned_epoch > 
+                    (SELECT blka.epoch_no
+                    FROM withdrawal w
+                    JOIN tx txa ON txa.id = w.tx_id
+                    JOIN block blka ON blka.id = txa.block_id
+                    WHERE w.addr_id = latest.stake_addr_id
+                    ORDER BY w.tx_id DESC
+                    LIMIT 1)) AS rewardRestBalance
+    FROM drep_hash dh
+        JOIN latest ON dh.id = latest.id
+        JOIN utxo_view uv ON uv.stake_address_id = latest.stake_addr_id
+        JOIN tx ON tx.id = latest.tx_id
+        JOIN block b on b.id = tx.block_id
+    WHERE latest.rn = 1
+    AND (dh.view != 'drep_always_no_confidence' 
+        OR dh.view != 'drep_always_abstain')
+    AND dh.raw = decode(${dRepId}, 'hex')
+    GROUP BY latest.stake_addr_id, dh.view, b.epoch_no, b.time, tx.hash, latest.stake_view, latest.tx_id;`) as Record<
+        string,
+        any
+    >[]
+    const parsedResult = () => {
+        return result.map((item) => ({
+            stakeAddress: item.stake_view,
+            balance: {
+                utxo: item.utxo_balance.toString(),
+                reward: item.rewardbalance ? item.rewardbalance.toString() : '0',
+                rewardRest: item.rewardrestbalance ? item.rewardrestbalance.toString() : '0',
+            },
+            delegatedAt: {
+                txId: item.tx_id,
+                epochNo: item.epoch_no,
+                time: item.time.toISOString(),
+            },
+        }))
+    }
+    return(parsedResult())
 }

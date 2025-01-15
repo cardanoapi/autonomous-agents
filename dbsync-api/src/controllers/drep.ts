@@ -8,6 +8,7 @@ import {
     fetchDrepActiveDelegation,
     fetchDrepRegistrationDetails,
     fetchDrepVoteDetails,
+    fetchDrepActiveDelegators,
 } from '../repository/drep'
 import { DrepSortType, DrepStatusType } from '../types/drep'
 
@@ -68,11 +69,21 @@ const getDrepActiveDelegation = async (req: Request, res: Response) => {
     return res.status(200).json(result)
 }
 
+const getDrepActiveDelegators = async (req: Request, res: Response) => {
+    const dRepId = convertToHexIfBech32(req.params.id as string)
+    if (dRepId && !isHexValue(dRepId)) {
+        return res.status(400).json({ message: 'Provide a valid Drep ID' })
+    }
+    const activeDelegators = await fetchDrepActiveDelegators(dRepId)
+    return res.status(200).json(activeDelegators)
+}
+
 router.get('/', handlerWrapper(getDrepList))
 router.get('/:id', handlerWrapper(getDrepDetails))
 router.get('/:id/vote', handlerWrapper(getDrepVoteDetails))
 router.get('/:id/delegation', handlerWrapper(getDrepDelegationDetails))
 router.get('/:id/registration', handlerWrapper(getDrepRegistrationDetails))
 router.get('/:id/active-delegation', handlerWrapper(getDrepActiveDelegation))
+router.get('/:id/active-delegators', handlerWrapper(getDrepActiveDelegators))
 
 export default router
