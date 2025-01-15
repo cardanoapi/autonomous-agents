@@ -1,10 +1,17 @@
-# Adding New Functions to the DTO
+# Custom Function
+
+## Frontend
+
+1. At first navigate to `frontend` folder.
+2. Then goto `src/models/types` folder and search for `functions.ts` file.
+3. Now inside `functions.ts` file add new function in existing dto by following below rules.
 
 This document provides a summary of how to add new functions to the DTO schema.
 
-## Steps to Add a New Function
+### Steps to Add a New Function
 
-### 1. **Determine the Group**
+#### 1. **Determine the Group**
+
 - Locate the relevant `group` (e.g., `Certificates`, `Vote`, `Payment`, `Governance Proposal`).
 - If no group exists, create a new one:
   ```
@@ -14,8 +21,10 @@ This document provides a summary of how to add new functions to the DTO schema.
   }
   ```
 
-### 2. **Define the Function**
+#### 2. **Define the Function**
+
 - Add a new entry to the `items` array with:
+  <a id="function_id"></a>
     - **`id`**: Unique identifier.
     - **`name`**: Human-readable function name.
     - **`description`**: Function purpose.
@@ -25,7 +34,10 @@ This document provides a summary of how to add new functions to the DTO schema.
     - **`eventParameters`** (optional): Event-specific parameters.
     - **`eventDescription`** (optional): Event purpose.
 
-### 3. **Define Parameters**
+<a id="parameters"></a>
+
+#### 3. **Define Parameters**
+
 - Structure parameters as:
   ```
   {
@@ -52,7 +64,8 @@ This document provides a summary of how to add new functions to the DTO schema.
   }
   ```
 
-### 4. **Define Events**
+#### 4. **Define Events** (Optional)
+
 - If applicable, define event metadata:
   ```
   canBeEvent: true,
@@ -63,12 +76,15 @@ This document provides a summary of how to add new functions to the DTO schema.
   eventDescription: 'Brief description of the event'
   ```
 
-### 5. **Add Descriptions**
+**`Note`**: Event type is optional but if it is to be added then all above event related properties should be added.
+
+#### 5. **Add Descriptions**
+
 - Ensure `description` fields for functions and parameters are clear and concise.
 
 ---
 
-## Example: Adding a New Function
+### Example: Adding a New Function
 
 Adding a new function under `Certificates`:
 
@@ -95,9 +111,7 @@ Adding a new function under `Certificates`:
 }
 ```
 
----
-
-## Notes
+#### Notes
 
 1. **Maintain Consistency**: Follow the existing structure and naming conventions.
 2. **Descriptive Names**: Use meaningful names for IDs and parameters.
@@ -105,3 +119,18 @@ Adding a new function under `Certificates`:
 4. **Test**: Verify functionality and integration.
 
 This guide ensures a structured approach to adding functions to the DTO.
+
+---
+
+## Agent-Node
+
+- Now navigate to `agent-node` folder and search for `functions` folder inside `src` folder.
+- Now inside the `functions` folder add the new file with the `function_name` same as `id` as mentioned above
+  in [Define the Function Section](#function_id)
+- Inside that file create a function with name `handler` and add first parameter as `context`. After that you can add
+  the number of parameter as mentioned in [Define the Parameter Section](#parameters)
+
+---
+
+Finally, after adding this rerun `agent` and goto `http://localhost:300` or the url where `frontend` is hosted. Click
+`My-Agent` tab and then click `Manual Trigger` tab and search for the function you just added.
