@@ -9,6 +9,7 @@ import {
     fetchDrepRegistrationDetails,
     fetchDrepVoteDetails,
     fetchDrepActiveDelegators,
+    fetchDrepDelegationHistory,
 } from '../repository/drep'
 import { DrepSortType, DrepStatusType } from '../types/drep'
 
@@ -47,7 +48,7 @@ const getDrepDelegationDetails = async (req: Request, res: Response) => {
     if (dRepId && !isHexValue(dRepId)) {
         return res.status(400).json({ message: 'Provide a valid Drep ID' })
     }
-    const result = await fetchDrepDelegationDetails(dRepId)
+    const result = await fetchDrepDelegationHistory(dRepId)
     return res.status(200).json(result)
 }
 

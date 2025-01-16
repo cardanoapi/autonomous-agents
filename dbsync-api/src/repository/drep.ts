@@ -2,7 +2,7 @@ import { prisma } from '../config/db'
 import { Prisma } from '@prisma/client'
 import { combineArraysWithSameObjectKey, formatResult } from '../helpers/formatter'
 import { DrepSortType, DrepStatusType } from '../types/drep'
-import { isHexValue } from '../helpers/validator'
+import { fromHex, isHexValue } from '../helpers/validator'
 
 export const fetchDrepList = async (page = 1, size = 10, search = '', status?: DrepStatusType, sort?: DrepSortType) => {
     const result = (await prisma.$queryRaw`
@@ -643,5 +643,83 @@ export const fetchDrepActiveDelegators = async (dRepId: string) => {
             },
         }))
     }
-    return(parsedResult())
+    return parsedResult()
+}
+
+export const fetchDrepDelegationHistory = async (dRepId: string) => {
+    const result = (await prisma.$queryRaw`
+        WITH stakes AS (
+            SELECT DISTINCT sa.id AS id, sa.view AS stake
+            FROM delegation_vote dv
+                JOIN drep_hash dh ON dh.id = dv.drep_hash_id
+                JOIN stake_address sa ON sa.id = dv.addr_id
+            WHERE dh.raw = DECODE(${dRepId}, 'hex')
+        )
+        SELECT 
+            stakes.stake,
+            JSON_AGG(
+                JSON_BUILD_OBJECT(
+                    'drep', dh.view,
+                    'tx_id', ENCODE(tx.hash, 'hex'),
+                    'epoch_no', b.epoch_no,
+                    'time', b.time
+                ) ORDER BY dv.tx_id DESC
+            ) AS delegations
+        FROM delegation_vote dv
+        JOIN stakes ON dv.addr_id = stakes.id
+        JOIN drep_hash dh ON dh.id = dv.drep_hash_id
+        JOIN tx ON tx.id = dv.tx_id
+        JOIN block b ON b.id = tx.block_id
+        GROUP BY stakes.stake
+        ORDER BY stakes.stake;    
+    `) as Record<string, any>[]
+
+    const processDelegations = (data: any[], bech32Drep: string) => {
+        type DelegationInfo = { tx_id: string; epoch_no: number; time: string }
+        type DelegationHistory = { joined?: DelegationInfo; left?: DelegationInfo }
+        type Result = {
+            stakeAddress: string
+            delegation: DelegationHistory[]
+        }
+
+        const result = []
+
+        for (const stakeData of data) {
+            const stakeAddress = stakeData.stake
+            const delegations = stakeData.delegations
+
+            let partialResult: Result = {
+                stakeAddress: stakeAddress,
+                delegation: [],
+            }
+
+            let joinedFound = false
+            let delegationHistory: DelegationHistory = { joined: undefined, left: undefined }
+            let stakeDelegationHistory: DelegationHistory[] = []
+
+            for (let i = delegations.length - 1; i >= 0; i--) {
+                const delegation = delegations[i]
+                const { drep, tx_id, epoch_no, time } = delegation
+
+                if (drep === bech32Drep) {
+                    delegationHistory.joined = { tx_id, epoch_no, time }
+                    joinedFound = true
+                } else if (joinedFound) {
+                    delegationHistory.left = { tx_id, epoch_no, time }
+                    stakeDelegationHistory.push(delegationHistory)
+                    delegationHistory = { joined: undefined, left: undefined }
+                    joinedFound = false
+                }
+            }
+            if (delegationHistory.joined || delegationHistory.left) {
+                stakeDelegationHistory.push(delegationHistory)
+            }
+            partialResult.delegation = stakeDelegationHistory
+            result.push(partialResult)
+        }
+
+        return result
+    }
+    const drepbech32 = fromHex('drep', dRepId)
+    return processDelegations(result, drepbech32)
 }

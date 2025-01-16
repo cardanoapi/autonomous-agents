@@ -409,57 +409,54 @@ paths:
                 - name: id
                   in: path
                   required: true
-                  description: Hex-encoded address or Bech32 address of DRep .
+                  description: Hex-encoded address or Bech32 address of DRep.
                   schema:
                       type: string
                       example: ''
             responses:
                 '200':
-                    description: Successfully retrieved voting details of given Drep
+                    description: A list of stake delegations.
                     content:
                         application/json:
                             schema:
+                            type: array
+                            items:
                                 type: object
                                 properties:
-                                    utxoBalance:
-                                        type: integer
-                                        example: 427648
-                                    currentDrepDelegateTime:
-                                        type: string
-                                        format: date-time
-                                        example: '2024-08-12T03:45:09'
-                                    rewardBalance:
-                                        type: integer
-                                        example: 962929301
-                                    rewardRestBalance:
-                                        type: integer
-                                        nullable: true
-                                        example: null
-                                    drepView:
-                                        type: string
-                                        example: 'drep1z5cun68mz0jcemz0yyzqnmcxu4fl5q42dv5qvk'
-                                    prevDrepTxHash:
-                                        type: string
-                                        example: 'd91c7c464025f3331a361344f36add9813819dd2d68'
-                                    prevDrepEpochNo:
-                                        type: integer
-                                        example: 664
-                                    prevDrepDelegateTime:
-                                        type: string
-                                        format: date-time
-                                        example: '2024-08-19T03:18:29'
-                                    stakeAddress:
-                                        type: string
-                                        example: 'stake_tes2rfluhuwyk9saaw8hamx8044manhx9tqang8k5'
-                                    prevDrepName:
-                                        type: string
-                                        example: 'Name'
-                                    prevDrepImage:
-                                        type: string
-                                        example: ''
-                                    hasScript:
-                                        type: boolean
-                                        example: false
+                                stakeAddress:
+                                    type: string
+                                    example: 'stake_test17pmm4fm6aahntj59y7p2xkmhkppp2yc3qlejgln997dcy4scqeut3'
+                                delegation:
+                                    type: array
+                                    items:
+                                        type: object
+                                        properties:
+                                            joined:
+                                                type: object
+                                                properties:
+                                                    tx_id:
+                                                        type: string
+                                                        example: 'b370c17ea97c4e41192a6586df68e257a67804c6af9cd7e4308dfb8e217e67d5'
+                                                    epoch_no:
+                                                        type: integer
+                                                        example: 792
+                                                    time:
+                                                        type: string
+                                                        format: date-time
+                                                        example: '2024-12-25T03:04:28'
+                                            left:
+                                                type: object
+                                                properties:
+                                                    tx_id:
+                                                        type: string
+                                                        example: 'd2e9f50ae69be2ac849a5a12b90b37d226eb882b0a1261cd06b17febc737f88b'
+                                                    epoch_no:
+                                                        type: integer
+                                                        example: 790
+                                                    time:
+                                                        type: string
+                                                        format: date-time
+                                                        example: '2024-12-23T02:52:13'
                 '404':
                     description: DRep ID not found
                 '500':
