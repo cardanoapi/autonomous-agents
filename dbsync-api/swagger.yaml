@@ -143,7 +143,7 @@ paths:
                     description: Bad request. The `address` query parameter is missing or invalid.
                 '500':
                     description: Internal server error.
-    /api/drep/{id}/active-delegators:
+    /api/drep/{id}/live-delegators:
         get:
             summary: Get active delegators for a DRep
             description: Fetch the list of active delegators associated with the specified DRep ID.
@@ -205,10 +205,10 @@ paths:
                                     example: Provide a valid Drep ID
                 '500':
                     description: Internal server error.
-    /api/drep/{id}/active-delegation:
+    /api/drep/{id}/live-delegation:
         get:
             summary: Fetch active delegation for a Drep
-            description: Retrieves active delegation details for a given Drep ID.
+            description: Retrieves live delegation details for a given Drep ID.
             parameters:
                 - name: id
                   in: path
@@ -224,33 +224,16 @@ paths:
                     application/json:
                         schema:
                         type: object
-                        additionalProperties:
-                            type: object
-                            properties:
-                            delegators:
-                                type: array
-                                items:
-                                    type: object
-                                    additionalProperties:
-                                        type: object
-                                        properties:
-                                        utxoBalance:
-                                            type: string
-                                            description: The UTxO balance for the delegator.
-                                            example: '18992131258148'
-                                        rewardBalance:
-                                            type: string
-                                            description: The reward balance for the delegator.
-                                            example: '243137806039'
-                        example:
-                            'drep15fy2nszna039pdregpryhzahnwcr2rred4nx2qaec7k07nvcq26':
-                                delegators:
-                                    - stake_test1urq9sjgt4n92cnvr02450z6fqksux7xc5k4z29j77uew5gqlvr3uc:
-                                          utxoBalance: '18992131258148'
-                                          rewardBalance: '243137806039'
-                                    - stake_test1uzgzs48ckhg2j7l8wxuz4rd8zt8sfpmy7nuxt7dn96t6utgyer5a5:
-                                          utxoBalance: '2998147525'
-                                          rewardBalance: '0'
+                        properties:
+                            liveDelegators:
+                                type: integer
+                                example: 17
+                            liveVotingPower:
+                                type: string
+                                example: "20027234084683"
+                            influence:
+                                type: string
+                                example: "19.9043%"
                 '400':
                     description: Bad Request - Invalid Drep ID
                     content:

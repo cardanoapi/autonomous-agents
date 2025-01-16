@@ -84,7 +84,7 @@ router.get('/:id', handlerWrapper(getDrepDetails))
 router.get('/:id/vote', handlerWrapper(getDrepVoteDetails))
 router.get('/:id/delegation', handlerWrapper(getDrepDelegationDetails))
 router.get('/:id/registration', handlerWrapper(getDrepRegistrationDetails))
-router.get('/:id/active-delegation', handlerWrapper(getDrepActiveDelegation))
-router.get('/:id/active-delegators', handlerWrapper(getDrepActiveDelegators))
+router.get('/:id/live-delegation', handlerWrapper(getDrepActiveDelegation))
+router.get('/:id/live-delegators', handlerWrapper(getDrepActiveDelegators))
 
 export default router
