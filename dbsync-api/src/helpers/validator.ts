@@ -25,6 +25,10 @@ export function validateHash(value:string) {
   }else return regex.test(value)
 }
 
+export function fromHex(prefix: string, hex: string) {
+  return bech32.encode(prefix, bech32.toWords(Buffer.from(hex, "hex")));
+}
+
 export function validateAddress(value: string): boolean {
   if (isHexValue(value)){
     return value.length === 56 || value.length === 58

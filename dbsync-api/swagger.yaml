@@ -143,10 +143,72 @@ paths:
                     description: Bad request. The `address` query parameter is missing or invalid.
                 '500':
                     description: Internal server error.
-    /api/drep/{id}/active-delegation:
+    /api/drep/{id}/live-delegators:
+        get:
+            summary: Get active delegators for a DRep
+            description: Fetch the list of active delegators associated with the specified DRep ID.
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  description: The DRep ID in hex or Bech32 format.
+                  schema:
+                      type: string
+                      example: 'drep15fy2nszna039pdregpryhzahnwcr2rred4nx2qaec7k07nvcq26'
+            responses:
+                '200':
+                    description: A list of active delegators.
+                    content:
+                    application/json:
+                        schema:
+                            type: array
+                            items:
+                                type: object
+                                properties:
+                                    delegatorStake:
+                                        type: string
+                                        description: The stake address of the delegator.
+                                    balance:
+                                        type: object
+                                        properties:
+                                            utxoBalance:
+                                                type: string
+                                                description: The UTXO balance of the delegator.
+                                            rewardBalance:
+                                                type: string
+                                                description: The reward balance of the delegator.
+                                            rewardRestBalance:
+                                                type: string
+                                                description: The reward rest balance of the delegator.
+                                    delegatedAt:
+                                        type: object
+                                        properties:
+                                            txId:
+                                                type: string
+                                                description: The transaction ID of the delegation.
+                                            epochNo:
+                                                type: integer
+                                                description: The epoch number of the delegation.
+                                            time:
+                                                type: string
+                                                format: date-time
+                                                description: The time of the delegation.
+                '400':
+                    description: Invalid DRep ID.
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                message:
+                                    type: string
+                                    example: Provide a valid Drep ID
+                '500':
+                    description: Internal server error.
+    /api/drep/{id}/live-delegation:
         get:
             summary: Fetch active delegation for a Drep
-            description: Retrieves active delegation details for a given Drep ID.
+            description: Retrieves live delegation details for a given Drep ID.
             parameters:
                 - name: id
                   in: path
@@ -162,33 +224,16 @@ paths:
                     application/json:
                         schema:
                         type: object
-                        additionalProperties:
-                            type: object
-                            properties:
-                            delegators:
-                                type: array
-                                items:
-                                    type: object
-                                    additionalProperties:
-                                        type: object
-                                        properties:
-                                        utxoBalance:
-                                            type: string
-                                            description: The UTxO balance for the delegator.
-                                            example: '18992131258148'
-                                        rewardBalance:
-                                            type: string
-                                            description: The reward balance for the delegator.
-                                            example: '243137806039'
-                        example:
-                            'drep15fy2nszna039pdregpryhzahnwcr2rred4nx2qaec7k07nvcq26':
-                                delegators:
-                                    - stake_test1urq9sjgt4n92cnvr02450z6fqksux7xc5k4z29j77uew5gqlvr3uc:
-                                        utxoBalance: '18992131258148'
-                                        rewardBalance: '243137806039'
-                                    - stake_test1uzgzs48ckhg2j7l8wxuz4rd8zt8sfpmy7nuxt7dn96t6utgyer5a5:
-                                        utxoBalance: '2998147525'
-                                        rewardBalance: '0'
+                        properties:
+                            liveDelegators:
+                                type: integer
+                                example: 17
+                            liveVotingPower:
+                                type: string
+                                example: "20027234084683"
+                            influence:
+                                type: string
+                                example: "19.9043%"
                 '400':
                     description: Bad Request - Invalid Drep ID
                     content:
@@ -347,57 +392,54 @@ paths:
                 - name: id
                   in: path
                   required: true
-                  description: Hex-encoded address or Bech32 address of DRep .
+                  description: Hex-encoded address or Bech32 address of DRep.
                   schema:
                       type: string
                       example: ''
             responses:
                 '200':
-                    description: Successfully retrieved voting details of given Drep
+                    description: A list of stake delegations.
                     content:
                         application/json:
                             schema:
+                            type: array
+                            items:
                                 type: object
                                 properties:
-                                    utxoBalance:
-                                        type: integer
-                                        example: 427648
-                                    currentDrepDelegateTime:
-                                        type: string
-                                        format: date-time
-                                        example: '2024-08-12T03:45:09'
-                                    rewardBalance:
-                                        type: integer
-                                        example: 962929301
-                                    rewardRestBalance:
-                                        type: integer
-                                        nullable: true
-                                        example: null
-                                    drepView:
-                                        type: string
-                                        example: 'drep1z5cun68mz0jcemz0yyzqnmcxu4fl5q42dv5qvk'
-                                    prevDrepTxHash:
-                                        type: string
-                                        example: 'd91c7c464025f3331a361344f36add9813819dd2d68'
-                                    prevDrepEpochNo:
-                                        type: integer
-                                        example: 664
-                                    prevDrepDelegateTime:
-                                        type: string
-                                        format: date-time
-                                        example: '2024-08-19T03:18:29'
-                                    stakeAddress:
-                                        type: string
-                                        example: 'stake_tes2rfluhuwyk9saaw8hamx8044manhx9tqang8k5'
-                                    prevDrepName:
-                                        type: string
-                                        example: 'Name'
-                                    prevDrepImage:
-                                        type: string
-                                        example: ''
-                                    hasScript:
-                                        type: boolean
-                                        example: false
+                                stakeAddress:
+                                    type: string
+                                    example: 'stake_test17pmm4fm6aahntj59y7p2xkmhkppp2yc3qlejgln997dcy4scqeut3'
+                                delegation:
+                                    type: array
+                                    items:
+                                        type: object
+                                        properties:
+                                            joined:
+                                                type: object
+                                                properties:
+                                                    tx_id:
+                                                        type: string
+                                                        example: 'b370c17ea97c4e41192a6586df68e257a67804c6af9cd7e4308dfb8e217e67d5'
+                                                    epoch_no:
+                                                        type: integer
+                                                        example: 792
+                                                    time:
+                                                        type: string
+                                                        format: date-time
+                                                        example: '2024-12-25T03:04:28'
+                                            left:
+                                                type: object
+                                                properties:
+                                                    tx_id:
+                                                        type: string
+                                                        example: 'd2e9f50ae69be2ac849a5a12b90b37d226eb882b0a1261cd06b17febc737f88b'
+                                                    epoch_no:
+                                                        type: integer
+                                                        example: 790
+                                                    time:
+                                                        type: string
+                                                        format: date-time
+                                                        example: '2024-12-23T02:52:13'
                 '404':
                     description: DRep ID not found
                 '500':
