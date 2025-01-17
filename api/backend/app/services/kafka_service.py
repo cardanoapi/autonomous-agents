@@ -21,7 +21,7 @@ class KafkaService:
             self.consumer = AIOKafkaConsumer(
                 api_settings.getKafkaTopicPrefix() + "-triggers",
                 bootstrap_servers=settings.KAFKA_BROKERS,
-                group_id="heartbeat-check-group",
+                group_id=f"{api_settings.getKafkaTopicPrefix()}-heartbeat-check-group",
             )
 
     async def start(self):
