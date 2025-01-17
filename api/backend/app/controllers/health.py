@@ -87,7 +87,7 @@ async def database_health_check():
 async def kafka_health_check():
     last_poll_timestamp = await kafka_service.fetch_latest_poll_timestamp()
     current_timestamp = int(datetime.timestamp(datetime.now()) * 1000)
-    if last_poll_timestamp and 30000 > (current_timestamp - last_poll_timestamp) > 0:
+    if last_poll_timestamp and 60000 > (current_timestamp - last_poll_timestamp) > 0:
         return True
     print("time difference : ", current_timestamp - last_poll_timestamp)
     return False
