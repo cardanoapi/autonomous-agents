@@ -85,10 +85,9 @@ async def database_health_check():
 
 
 async def kafka_health_check():
-    last_poll_timestamp = await kafka_service.fetch_latest_poll_timestamp()
-    current_timestamp = int(datetime.timestamp(datetime.now()) * 1000)
-    if last_poll_timestamp and 300000 > (current_timestamp - last_poll_timestamp) > 0:
-        return True
-    print(f"last_poll_timestamp: {last_poll_timestamp}, current_timestamp: {current_timestamp}")
-    print("time difference : ", current_timestamp - last_poll_timestamp if last_poll_timestamp else 0)
-    return False
+    prefix = api_settings.getKafkaTopicPrefix()
+    try:
+        topics = await kafka_service.fetch_topics()
+        return (prefix + "-triggers") in topics
+    except Exception as e:
+        print("KafkaHealthCheckError: ", e)

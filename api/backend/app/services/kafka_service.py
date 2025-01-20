@@ -52,17 +52,14 @@ class KafkaService:
             await self.producer.send_and_wait(topic, message.encode("utf-8"), key=key.encode("utf-8"))
             await self.producer.flush()
 
-    async def fetch_latest_poll_timestamp(self):
+    async def fetch_topics(self):
         """
         Monitor consumer health by checking last poll timestamp
         """
-        prefix = api_settings.getKafkaTopicPrefix()
 
         try:
-            message = self.consumer.last_poll_timestamp(
-                partition=TopicPartition(topic=prefix + "-triggers", partition=0)
-            )
-            return message
+            topics = await self.consumer.topics()
+            return topics
         except asyncio.TimeoutError:
             print("No messages received, but consumer is alive.")
             return None
