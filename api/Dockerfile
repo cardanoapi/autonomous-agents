@@ -56,7 +56,7 @@ RUN prisma generate
 
 # Expose port and set healthcheck
 EXPOSE 8000/tcp
-HEALTHCHECK CMD ["python", "/usr/local/bin/healthcheck.py"]
+HEALTHCHECK --interval=2m --timeout=1m --start-period=30s --retries=3 CMD ["python", "/usr/local/bin/healthcheck.py"]
 
 # Command to run the application
 CMD ["sh", "-c" ,"prisma migrate deploy && exec uvicorn backend.app:get_application --host 0.0.0.0 --port 8000"]
