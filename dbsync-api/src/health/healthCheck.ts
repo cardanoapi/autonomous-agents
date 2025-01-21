@@ -23,6 +23,7 @@ const getBlockInfo = async (req: Request, res: Response) => {
     });
 
     if (!latestBlock) {
+      console.log("Unable to retrieve the latest block information from the database.");
       return res.status(500).json({
         message:
           "Unable to retrieve the latest block information from the database.",
@@ -38,14 +39,16 @@ const getBlockInfo = async (req: Request, res: Response) => {
     const timeDiff = secondsSince(blockInfo.blockTime);
 
     if (timeDiff > 300) {
-      return res.status(503).json({
+      const body = {
         status: "Service Unavailable",
         details: {
           ...blockInfo,
           currentTime: new Date().toISOString(),
           secondsSinceLastUpdate: timeDiff,
         },
-      });
+      }
+      console.log(`DbSync BlockTimeDifferenceError: ${body}`);
+      return res.status(503).json(body);
     }
 
     return res.status(200).json({
