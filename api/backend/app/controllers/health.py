@@ -76,6 +76,7 @@ async def dbsync_health_check():
         async with session.get(api_settings.DB_SYNC_BASE_URL + "/health") as response:
             if response.status == 200:
                 return True
+            print("DbSync Error: ", await response.json(), await response.text())
             return False
 
 

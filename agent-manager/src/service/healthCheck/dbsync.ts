@@ -6,6 +6,9 @@ export async function checkDbSyncStatus() {
 
     try {
         const resp = await fetch(dbSyncBaseUrl)
+        if (resp.status != 200) {
+            console.error('DbSyncHealthCheckError : ', await resp.text())
+        }
         return resp.status === 200
     } catch (err) {
         console.error('DbSyncHealthCheckError : ', err)
