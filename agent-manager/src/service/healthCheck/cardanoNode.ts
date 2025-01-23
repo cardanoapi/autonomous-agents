@@ -20,7 +20,14 @@ class CardanoNodeStatus {
     }
 
     checkStatus() {
-        return { isHealthy: Date.now() - this.lastTimeStamp < 6 * 60 * 1000, block: this.block }
+        const currentTimeStamp = Date.now()
+        const secsSinceLastBlock = currentTimeStamp - this.lastTimeStamp
+        return {
+            isHealthy: secsSinceLastBlock < 6 * 60 * 1000,
+            block: this.block,
+            secsSinceLastBlock: Math.floor(secsSinceLastBlock / 1000),
+            lastBlockTimeStamp: this.lastTimeStamp,
+        }
     }
 }
 

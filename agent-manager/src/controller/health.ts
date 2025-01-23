@@ -26,9 +26,6 @@ async function healthCheck(req: Request, res: Response) {
                 metadataHealthCheck(),
             ])
 
-        const blockLastTimeStamp = cardanoNodeStatus.lastTimeStamp
-        const secsSinceLastBlock = blockLastTimeStamp ? new Date(Date.now() - blockLastTimeStamp).getSeconds() : null
-
         const isHealthy =
             isKafkaHealthy &&
             nodeStatus.isHealthy &&
@@ -45,8 +42,8 @@ async function healthCheck(req: Request, res: Response) {
                 },
                 cardanoNode: {
                     isHealthy: nodeStatus.isHealthy,
-                    secsSinceLastBlock,
-                    lastBlockTime: blockLastTimeStamp ? new Date(blockLastTimeStamp).toLocaleTimeString() : null,
+                    secsSinceLastBlock: nodeStatus.secsSinceLastBlock,
+                    lastBlockTime: new Date(nodeStatus.lastBlockTimeStamp).toLocaleTimeString(),
                     lastBlock: nodeStatus.block,
                 },
                 dbSync: {
