@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express'
 import { handlerWrapper } from '../errors/AppError'
-import { convertToHexIfBech32, isHexValue, validateAddress } from '../helpers/validator'
+import { convertToHexIfBech32, decodeDrep, isHexValue, validateAddress } from '../helpers/validator'
 import {
     fetchDrepDelegationDetails,
     fetchDrepDetails,
@@ -16,11 +16,12 @@ import { DrepSortType, DrepStatusType } from '../types/drep'
 const router = Router()
 
 const getDrepDetails = async (req: Request, res: Response): Promise<any> => {
-    const dRepId = convertToHexIfBech32(req.params.id as string)
-    if (dRepId && !isHexValue(dRepId)) {
+    
+    let drep = decodeDrep(req.params.id as string)
+    if (!drep) {
         return res.status(400).json({ message: 'Provide a valid Drep ID' })
     }
-    const result = await fetchDrepDetails(dRepId)
+    const result = await fetchDrepDetails(drep.credential,drep.isScript)
     return res.status(200).json(result)
 }
 

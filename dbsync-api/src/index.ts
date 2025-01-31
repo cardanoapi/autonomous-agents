@@ -3,7 +3,13 @@ process.env.ELASTIC_APM_ENVIRONMENT=process.env.ELASTIC_APM_ENVIRONMENT || 'loca
 process.env.ELASTIC_APM_LOG_LEVEL='warning'
 import { configDotenv } from 'dotenv'
 configDotenv()
-import * as agent from 'elastic-apm-node/start'; agent;
+if(process.env.ELASTIC_APM_SERVER_URL && process.env.ELASTIC_APM_API_KEY){
+  //@ts-ignore
+  console.log("Enabling Elastic APM")
+  require('elastic-apm-node').start();
+}else{
+  console.log("--- Elastic APM Disabled --- ")
+}
 import express, { Request, Response } from "express";
 import http from "http";
 import stakeAddrRoute from "./controllers/stakeAddress";
