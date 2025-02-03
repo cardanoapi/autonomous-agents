@@ -677,7 +677,13 @@ export const fetchDrepDelegationHistory = async (dRepId: string, isScript?:boole
         GROUP BY stakes.stake
         ORDER BY stakes.stake;
     `) as Record<string, any>[]
-
+    interface Delegation {
+        stakeAddress: string
+        action: 'joined' | 'left'
+        txId: string
+        epochNo: number
+        time: string
+    }
     const processDelegations = (data: any[], bech32Drep: string) => {
         type DelegationInfo = { tx_id: string; epoch_no: number; time: string }
         type DelegationHistory = { joined?: DelegationInfo; left?: DelegationInfo }
@@ -725,5 +731,33 @@ export const fetchDrepDelegationHistory = async (dRepId: string, isScript?:boole
         return result
     }
     const drepbech32 = fromHex('drep', dRepId)
-    return processDelegations(result, drepbech32)
+    const processedDelegations = processDelegations(result, drepbech32)
+    const flattenedDelegations: Delegation[] = []
+    processedDelegations.forEach((del) => {
+        let stakeAddress = del.stakeAddress
+        del.delegation.forEach((delegationAction) => {
+            if (delegationAction.joined) {
+                const delegationObject: Delegation = {
+                    stakeAddress: stakeAddress,
+                    action: 'joined',
+                    txId: delegationAction.joined.tx_id,
+                    epochNo: delegationAction.joined.epoch_no,
+                    time: delegationAction.joined.time,
+                }
+                flattenedDelegations.push(delegationObject)
+            }
+            if (delegationAction.left) {
+                const delegationObject: Delegation = {
+                    stakeAddress: stakeAddress,
+                    action: 'left',
+                    txId: delegationAction.left.tx_id,
+                    epochNo: delegationAction.left.epoch_no,
+                    time: delegationAction.left.time,
+                }
+                flattenedDelegations.push(delegationObject)
+            }
+        })
+    })
+    flattenedDelegations.sort((a: Delegation, b: Delegation) => new Date(b.time).getTime() - new Date(a.time).getTime())
+    return flattenedDelegations
 }
