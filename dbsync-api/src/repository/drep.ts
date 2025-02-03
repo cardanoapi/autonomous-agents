@@ -24,8 +24,10 @@ export const fetchDrepList = async (page = 1, size = 10, drepId?: string, isScri
             LIMIT 1)
         SELECT json_build_object(
                        'drepId', encode(dh.raw, 'hex'),
+                       'credential', encode(dh.raw, 'hex'),
                        'view', dh.view,
                        'url', va.url,
+                       'hasScript', dh.has_script,
                        'metadataHash', encode(va.data_hash, 'hex'),
                        'deposit', dr_deposit.deposit,
                        'votingPower', DRepDistr.amount,
@@ -128,6 +130,7 @@ export const fetchDrepList = async (page = 1, size = 10, drepId?: string, isScri
         GROUP BY dh.raw,
             second_to_newest_drep_registration.voting_anchor_id,
             dh.view,
+            dh.has_script,
             va.url,
             va.data_hash,
             dr_deposit.deposit,
