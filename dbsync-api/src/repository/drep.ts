@@ -566,7 +566,7 @@ export const fetchDrepActiveDelegation = async (drepId: string, isScript?:boolea
     return response
 }
 
-export const fetchDrepActiveDelegators = async (dRepId: string, isScript?:boolean) => {
+export const fetchDrepLiveDelegators = async (dRepId: string, isScript?:boolean) => {
     let scriptPart = [true, false]
     if (isScript === true) {
         scriptPart = [true, true]
