@@ -1,4 +1,5 @@
 import { bech32 } from "bech32";
+import AppError from "../errors/AppError";
 
 export function convertToHexIfBech32(address: string): string {
   if (!address) return ''
@@ -22,7 +23,7 @@ export function decodeDrep(address:string):{credential:string,isScript?:boolean}
     }
   }else{
     if(drep.dataHeader.length >1){
-      throw new Error("Drep credential contains invalid header: "+address)
+      throw new AppError("Drep credential contains invalid header: "+address)
     }
     let isScript
     const header=drep.dataHeader.at(0)
@@ -31,7 +32,7 @@ export function decodeDrep(address:string):{credential:string,isScript?:boolean}
     }else if (header == 0x23){
       isScript = true
     }else if ( header){
-      throw new Error("Drep credential contains invalid header 0x"+ header.toString(16)+ ": "+address)
+      throw new AppError("Drep credential contains invalid header 0x"+ header.toString(16)+ ": "+address)
     }
     return {
       credential: drep.credential.toString('hex'),
@@ -69,7 +70,7 @@ export function decodeAddress(address: string): { bech32Prefix: string, dataHead
       };
 
     } catch (e: any) {
-      throw new Error("Data is not hex or bech32: " + address);
+      throw new AppError("Data is not hex or bech32: " + address);
     }
   }
 }
