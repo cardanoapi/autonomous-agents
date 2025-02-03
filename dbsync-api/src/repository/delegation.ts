@@ -1,7 +1,7 @@
 import { prisma } from '../config/db'
 
-export const fetchDelegationDetail=async (address:string)=>{
-  const result  = await prisma.$queryRaw`
+export const fetchDelegationDetail = async (address: string) => {
+    const result = (await prisma.$queryRaw`
       WITH address AS (
           SELECT *
           FROM stake_address
@@ -31,7 +31,7 @@ export const fetchDelegationDetail=async (address:string)=>{
                           'drep', (SELECT row_to_json(latest_delegation) FROM latest_delegation),
                           'pool',(SELECT row_to_json(latest_pool_delegation) FROM latest_pool_delegation)
           ) AS result;
-  ` as Record<string,any>[];
+  `) as Record<string, any>[]
     return result[0].result
 }
 
