@@ -418,42 +418,21 @@ paths:
                             schema:
                             type: array
                             items:
-                                type: object
-                                properties:
                                 stakeAddress:
                                     type: string
                                     example: 'stake_test17pmm4fm6aahntj59y7p2xkmhkppp2yc3qlejgln997dcy4scqeut3'
-                                delegation:
-                                    type: array
-                                    items:
-                                        type: object
-                                        properties:
-                                            joined:
-                                                type: object
-                                                properties:
-                                                    tx_id:
-                                                        type: string
-                                                        example: 'b370c17ea97c4e41192a6586df68e257a67804c6af9cd7e4308dfb8e217e67d5'
-                                                    epoch_no:
-                                                        type: integer
-                                                        example: 792
-                                                    time:
-                                                        type: string
-                                                        format: date-time
-                                                        example: '2024-12-25T03:04:28'
-                                            left:
-                                                type: object
-                                                properties:
-                                                    tx_id:
-                                                        type: string
-                                                        example: 'd2e9f50ae69be2ac849a5a12b90b37d226eb882b0a1261cd06b17febc737f88b'
-                                                    epoch_no:
-                                                        type: integer
-                                                        example: 790
-                                                    time:
-                                                        type: string
-                                                        format: date-time
-                                                        example: '2024-12-23T02:52:13'
+                                action: 
+                                    type: string
+                                    example: "joined"
+                                txId: 
+                                    type: string
+                                    example: "08e5daeb18137efd8ad3ddbda6347f490a3efa8f839da3e2a18836ba0ff1bba8"
+                                epochNo:
+                                    type: integer
+                                    example: 818
+                                time: 
+                                    type: string
+                                    example: "2025-01-20T08:35:02"
                 '404':
                     description: DRep ID not found
                 '500':
