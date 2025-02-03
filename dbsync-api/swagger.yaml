@@ -9,6 +9,8 @@ paths:
         get:
             summary: Retrieve stake address information
             description: Get the latest stake registration and deregistration for a given stake address.
+            tags:
+                - Stake
             parameters:
                 - name: address
                   in: query
@@ -73,6 +75,8 @@ paths:
         get:
             summary: Get latest delegation information
             description: Fetches the latest delegation and pool delegation details for the given address.
+            tags:
+                - Stake
             operationId: getDelegation
             parameters:
                 - name: address
@@ -147,6 +151,8 @@ paths:
         get:
             summary: Get active delegators for a DRep
             description: Fetch the list of active delegators associated with the specified DRep ID.
+            tags:
+                - DRep Delegation
             parameters:
                 - name: id
                   in: path
@@ -209,6 +215,8 @@ paths:
         get:
             summary: Fetch active delegation for a Drep
             description: Retrieves live delegation details for a given Drep ID.
+            tags:
+                - DRep Delegation
             parameters:
                 - name: id
                   in: path
@@ -258,6 +266,8 @@ paths:
         get:
             summary: Get DRep details
             description: Fetches DRep details including registration status, metadata, voting power, and transaction hashes for the provided address.
+            tags:
+                - DRep Information
             operationId: getDrepDetails
             parameters:
                 - name: id
@@ -324,6 +334,8 @@ paths:
         get:
             summary: Get voting details by DRep ID
             description: Retrieve voting details for a specific DRep ID.
+            tags:
+                - DRep Information
             parameters:
                 - name: id
                   in: path
@@ -388,6 +400,8 @@ paths:
         get:
             summary: Get delegation details by DRep ID
             description: Retrieve delegation details for a specific DRep ID.
+            tags:
+                - DRep Delegation
             parameters:
                 - name: id
                   in: path
@@ -449,6 +463,8 @@ paths:
         get:
             summary: Get registration details by DRep ID
             description: Retrieve registration details for a specific DRep ID.
+            tags:
+                - DRep Information
             parameters:
                 - name: id
                   in: path
@@ -488,6 +504,8 @@ paths:
         get:
             summary: Get faucet balance for a given address
             description: Retrieves the balance for a specified stake address.
+            tags:
+                - Address
             parameters:
                 - in: query
                   name: address
@@ -512,6 +530,8 @@ paths:
         get:
             summary: Fetch DRep list
             description: Fetches the drep list.
+            tags:
+                - DRep Information
             parameters:
                 - in: query
                   name: page
@@ -615,6 +635,8 @@ paths:
         get:
             summary: Fetch Proposal list
             description: Fetches the Proposal list.
+            tags:
+                - Gov Action
             parameters:
                 - in: query
                   name: page
@@ -771,6 +793,8 @@ paths:
         get:
             summary: Get the total number of government action proposals
             description: Returns the total number of records in the `gov_action_proposal` table.
+            tags:
+                - Gov Action
             responses:
                 '200':
                     description: Total count retrieved successfully
@@ -796,6 +820,8 @@ paths:
         get:
             summary: Get government actions
             description: Fetch government actions related to a transaction hash or all actions if no hash is provided.
+            tags:
+                - Gov Action
             parameters:
                 - name: id
                   in: query
@@ -885,6 +911,8 @@ paths:
         get:
             summary: Health check for DBSync
             description: Fetches the latest block information from the database and checks its freshness to determine the DBSync service's health.
+            tags:
+                - Health
             responses:
                 '200':
                     description: Service is healthy, and the latest block is up-to-date.
