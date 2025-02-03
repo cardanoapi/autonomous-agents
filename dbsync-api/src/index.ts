@@ -62,18 +62,18 @@ app.use('/api/health', healthCheckRoute)
 app.use('/api/gov-action', govActionRoute)
 
 setupSwaggerUi(app)
-const indexFile = path.resolve('.','./index.html')
-// Check if index.html exists
-fs.access(indexFile, fs.constants.F_OK, (err) => {
-  if (!err) {
-    // If index.html exists, define the catch-all handler
-    app.get('*', (req: Request, res: Response) => {
-      res.sendFile(indexFile);
-    });
-  } else {
-    console.error('index.html does not exist.');
-  }
-});
+// const indexFile = path.resolve('.','./index.html')
+// // Check if index.html exists
+// fs.access(indexFile, fs.constants.F_OK, (err) => {
+//   if (!err) {
+//     // If index.html exists, define the catch-all handler
+//     app.get('*', (req: Request, res: Response) => {
+//       res.sendFile(indexFile);
+//     });
+//   } else {
+//     console.error('index.html does not exist.');
+//   }
+// });
 app.use(errorHandler); 
 
 

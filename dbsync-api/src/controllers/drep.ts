@@ -1,6 +1,6 @@
-import { Request, Response, Router } from 'express'
-import { handlerWrapper } from '../errors/AppError'
-import { convertToHexIfBech32, decodeDrep, isHexValue, validateAddress } from '../helpers/validator'
+import {Request, Response, Router} from 'express'
+import {handlerWrapper} from '../errors/AppError'
+import {convertToHexIfBech32, decodeDrep, isHexValue, validateAddress} from '../helpers/validator'
 import {
     fetchDrepDelegationDetails,
     fetchDrepDetails,
@@ -11,17 +11,13 @@ import {
     fetchDrepActiveDelegators,
     fetchDrepDelegationHistory,
 } from '../repository/drep'
-import { DrepSortType, DrepStatusType } from '../types/drep'
+import {DrepSortType, DrepStatusType} from '../types/drep'
 
 const router = Router()
 
 const getDrepDetails = async (req: Request, res: Response): Promise<any> => {
-    
-    let drep = decodeDrep(req.params.id as string)
-    if (!drep) {
-        return res.status(400).json({ message: 'Provide a valid Drep ID' })
-    }
-    const result = await fetchDrepDetails(drep.credential,drep.isScript)
+    const drep = decodeDrep(req.params.id as string)
+    const result = await fetchDrepDetails(drep.credential, drep.isScript)
     return res.status(200).json(result)
 }
 
@@ -30,53 +26,41 @@ const getDrepList = async (req: Request, res: Response) => {
     const page = req.query.page ? +req.query.page : 1
     const status = req.query.status ? (req.query.status as DrepStatusType) : undefined
     const sort = req.query.sort ? (req.query.sort as DrepSortType) : undefined
-    const search = convertToHexIfBech32(req.query.search as string)
-    const { items, totalCount } = await fetchDrepList(page, size, search, status, sort)
-    return res.status(200).json({ total: totalCount, page, size, items })
+    const searchDrep = req.query.search ? decodeDrep(req.query.search as string) : {credential: '', isScript: undefined}
+    const {
+        items,
+        totalCount
+    } = await fetchDrepList(page, size, searchDrep.credential, searchDrep.isScript, status, sort)
+    return res.status(200).json({total: totalCount, page, size, items})
 }
 
 const getDrepVoteDetails = async (req: Request, res: Response) => {
-    const dRepId = convertToHexIfBech32(req.params.id as string)
-    if (dRepId && !isHexValue(dRepId)) {
-        return res.status(400).json({ message: 'Provide a valid Drep ID' })
-    }
-    const result = await fetchDrepVoteDetails(dRepId)
+    const dRepId = decodeDrep(req.params.id as string)
+    const result = await fetchDrepVoteDetails(dRepId.credential, dRepId.isScript)
     return res.status(200).json(result)
 }
 
 const getDrepDelegationDetails = async (req: Request, res: Response) => {
-    const dRepId = convertToHexIfBech32(req.params.id as string)
-    if (dRepId && !isHexValue(dRepId)) {
-        return res.status(400).json({ message: 'Provide a valid Drep ID' })
-    }
-    const result = await fetchDrepDelegationHistory(dRepId)
+    const dRepId = decodeDrep(req.params.id as string)
+    const result = await fetchDrepDelegationHistory(dRepId.credential, dRepId.isScript)
     return res.status(200).json(result)
 }
 
 const getDrepRegistrationDetails = async (req: Request, res: Response) => {
-    const dRepId = convertToHexIfBech32(req.params.id as string)
-    if (dRepId && !isHexValue(dRepId)) {
-        return res.status(400).json({ message: 'Provide a valid Drep ID' })
-    }
-    const result = await fetchDrepRegistrationDetails(dRepId)
+    const dRepId = decodeDrep(req.params.id as string)
+    const result = await fetchDrepRegistrationDetails(dRepId.credential, dRepId.isScript)
     return res.status(200).json(result)
 }
 
 const getDrepActiveDelegation = async (req: Request, res: Response) => {
-    const dRepId = convertToHexIfBech32(req.params.id as string)
-    if (dRepId && !isHexValue(dRepId)) {
-        return res.status(400).json({ message: 'Provide a valid Drep ID' })
-    }
-    const result = await fetchDrepActiveDelegation(dRepId)
+    const dRepId = decodeDrep(req.params.id as string)
+    const result = await fetchDrepActiveDelegation(dRepId.credential, dRepId.isScript)
     return res.status(200).json(result)
 }
 
 const getDrepActiveDelegators = async (req: Request, res: Response) => {
-    const dRepId = convertToHexIfBech32(req.params.id as string)
-    if (dRepId && !isHexValue(dRepId)) {
-        return res.status(400).json({ message: 'Provide a valid Drep ID' })
-    }
-    const activeDelegators = await fetchDrepActiveDelegators(dRepId)
+    const dRepId = decodeDrep(req.params.id as string)
+    const activeDelegators = await fetchDrepActiveDelegators(dRepId.credential, dRepId.isScript)
     return res.status(200).json(activeDelegators)
 }
 
