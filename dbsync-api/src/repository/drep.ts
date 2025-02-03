@@ -642,11 +642,6 @@ export const fetchDrepActiveDelegators = async (dRepId: string, isScript?:boolea
         return result.map((item) => ({
             stakeAddress: item.stakeaddress,
             delegatedAt: JSON.parse(item.delegations)[0],
-            balance: {
-                utxo: item.utxo.toString(),
-                reward: item.rewardbalance ? item.rewardbalance.toString() : '0',
-                rewardRest: item.rewardrestbalance ? item.rewardrestbalance.toString() : '0',
-            },
         }))
     }
     return parsedResult()
