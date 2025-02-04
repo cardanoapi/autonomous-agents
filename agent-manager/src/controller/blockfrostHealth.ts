@@ -4,41 +4,54 @@ import environments from '../config/environments'
 
 const router = Router()
 
+function extractSubString(err: string) {
+    return err.substring(0, 500)
+}
+
 async function callBlockFrostHealthCheckEndpoint(url: string) {
-    return fetch(url)
+    return fetch(url, {})
         .catch((e) => {
-            const a = {
+            const error = {
                 statusCode: 500,
-                message: e.message ? e.message : e,
+                message: extractSubString(e.message ? e.message : e),
             }
-            return Promise.reject(a)
+            return Promise.reject(error)
         })
         .then((res) => {
             if (res.status === 200) {
                 return res
             } else {
-                return res.text().then((txt) => {
-                    let json: any
-                    try {
-                        json = JSON.parse(txt)
-                    } catch (e) {
-                        return Promise.reject({
-                            statusCode: res.status,
-                            message: txt,
-                        })
-                    }
-                    if (json) {
-                        return Promise.reject({
-                            statusCode: res.status,
-                            message: json.message ? json.message : txt,
-                        })
-                    } else {
-                        return Promise.reject({
-                            statusCode: res.status,
-                            message: txt,
-                        })
-                    }
-                })
+                return res
+                    .text()
+                    .then((txt) => {
+                        let json: any
+                        try {
+                            json = JSON.parse(txt)
+                        } catch (e) {
+                            return Promise.reject({
+                                statusCode: res.status,
+                                message: extractSubString(txt),
+                            })
+                        }
+                        if (json) {
+                            return Promise.reject({
+                                statusCode: res.status,
+                                message: extractSubString(json.message ? json.message : txt),
+                            })
+                        } else {
+                            return Promise.reject({
+                                statusCode: res.status,
+                                message: extractSubString(txt),
+                            })
+                        }
+                    })
+                    .catch((e) => {
+                        const error = {
+                            statusCode: 500,
+                            message: extractSubString(e.message ? e.message : e),
+                        }
+                        return Promise.reject(error)
+                    })
             }
         })
 }
