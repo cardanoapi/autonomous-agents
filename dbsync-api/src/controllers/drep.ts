@@ -5,11 +5,12 @@ import {
     fetchDrepDelegationDetails,
     fetchDrepDetails,
     fetchDrepList,
-    fetchDrepActiveDelegation,
+    fetchDrepLiveDelegation,
     fetchDrepRegistrationDetails,
     fetchDrepVoteDetails,
     fetchDrepLiveDelegators,
     fetchDrepDelegationHistory,
+    fetchDRepActiveDelegators,
 } from '../repository/drep'
 import {DrepSortType, DrepStatusType} from '../types/drep'
 
@@ -52,9 +53,15 @@ const getDrepRegistrationDetails = async (req: Request, res: Response) => {
     return res.status(200).json(result)
 }
 
-const getDrepActiveDelegation = async (req: Request, res: Response) => {
+const getDrepLiveDelegation = async (req: Request, res: Response) => {
     const dRepId = decodeDrep(req.params.id as string)
-    const result = await fetchDrepActiveDelegation(dRepId.credential, dRepId.isScript)
+    const result = await fetchDrepLiveDelegation(dRepId.credential, dRepId.isScript)
+    return res.status(200).json(result)
+}
+
+const getDrepActiveDelegators = async (req: Request, res: Response) => {
+    const dRepId = decodeDrep(req.params.id as string)
+    const result = await fetchDRepActiveDelegators(dRepId.credential, dRepId.isScript)
     return res.status(200).json(result)
 }
 
@@ -69,7 +76,8 @@ router.get('/:id', handlerWrapper(getDrepDetails))
 router.get('/:id/vote', handlerWrapper(getDrepVoteDetails))
 router.get('/:id/delegation', handlerWrapper(getDrepDelegationDetails))
 router.get('/:id/registration', handlerWrapper(getDrepRegistrationDetails))
-router.get('/:id/live-delegation', handlerWrapper(getDrepActiveDelegation))
+router.get('/:id/live-delegation', handlerWrapper(getDrepLiveDelegation))
 router.get('/:id/live-delegators', handlerWrapper(getDrepLiveDelegators))
+router.get('/:id/active-delegators', handlerWrapper(getDrepActiveDelegators))
 
 export default router
