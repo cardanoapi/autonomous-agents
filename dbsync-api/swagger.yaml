@@ -674,7 +674,7 @@ paths:
                     description: Invalid address provided
                 '500':
                     description: Internal server error
-    /api/governance/live/total-stake:
+    /api/governance/live-stake:
         get:
             summary: Get Total Live Stake
             tags:
@@ -697,7 +697,7 @@ paths:
                                     error:
                                         type: string
                                         example: 'Internal Server Error'
-    /api/governance/active/total-stake:
+    /api/governance/active-stake:
         get:
             summary: Get Total Active Stake
             tags:

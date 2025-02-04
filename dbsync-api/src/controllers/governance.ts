@@ -1,4 +1,3 @@
-import { PrismaClient } from '@prisma/client'
 import { Request, Response, Router } from 'express'
 import { handlerWrapper } from '../errors/AppError'
 import { fetchActiveToalStake, fetchLiveTotalStake } from '../repository/governance'
@@ -35,7 +34,7 @@ const getToalLiveStake = async (req: Request, res: Response) => {
     return res.status(200).json(result)
 }
 
-router.get('/active/total-stake', handlerWrapper(getToalActiveStake))
-router.get('/live/total-stake', handlerWrapper(getToalLiveStake))
+router.get('/active-stake', handlerWrapper(getToalActiveStake))
+router.get('/live-stake', handlerWrapper(getToalLiveStake))
 
 export default router
