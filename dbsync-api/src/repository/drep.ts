@@ -661,13 +661,15 @@ export const fetchDrepLiveDelegators = async (dRepId: string, isScript?: boolean
         ON uv.stake_address_id = latest.id
         GROUP BY latest.stakeAddress, latest.id, latest.delegations::text;
     `) as Record<string, any>[]
-    const parsedResult = () => {
+    const parseResult = () => {
         return result.map((item) => ({
             stakeAddress: item.stakeaddress,
             delegatedAt: JSON.parse(item.delegations)[0],
         }))
     }
-    return parsedResult()
+    const parsedResult = parseResult()
+    parsedResult.sort((a: any, b: any) => new Date(b.delegatedAt.time).getTime() - new Date(a.delegatedAt.time).getTime())
+    return parsedResult
 }
 
 export const fetchDRepActiveDelegators = async (dRepId: string, isScript?: boolean) => {
