@@ -149,6 +149,70 @@ paths:
                     description: Internal server error.
     /api/drep/{id}/live-delegators:
         get:
+            summary: Get live delegators for a DRep
+            description: Fetch the list of live delegators associated with the specified DRep ID.
+            tags:
+                - DRep Delegation
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  description: The DRep ID in hex or Bech32 format.
+                  schema:
+                      type: string
+                      example: 'drep15fy2nszna039pdregpryhzahnwcr2rred4nx2qaec7k07nvcq26'
+            responses:
+                '200':
+                    description: A list of active delegators.
+                    content:
+                    application/json:
+                        schema:
+                            type: array
+                            items:
+                                type: object
+                                properties:
+                                    delegatorStake:
+                                        type: string
+                                        description: The stake address of the delegator.
+                                    balance:
+                                        type: object
+                                        properties:
+                                            utxoBalance:
+                                                type: string
+                                                description: The UTXO balance of the delegator.
+                                            rewardBalance:
+                                                type: string
+                                                description: The reward balance of the delegator.
+                                            rewardRestBalance:
+                                                type: string
+                                                description: The reward rest balance of the delegator.
+                                    delegatedAt:
+                                        type: object
+                                        properties:
+                                            txId:
+                                                type: string
+                                                description: The transaction ID of the delegation.
+                                            epochNo:
+                                                type: integer
+                                                description: The epoch number of the delegation.
+                                            time:
+                                                type: string
+                                                format: date-time
+                                                description: The time of the delegation.
+                '400':
+                    description: Invalid DRep ID.
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                message:
+                                    type: string
+                                    example: Provide a valid Drep ID
+                '500':
+                    description: Internal server error.
+    /api/drep/{id}/active-delegators:
+        get:
             summary: Get active delegators for a DRep
             description: Fetch the list of active delegators associated with the specified DRep ID.
             tags:
