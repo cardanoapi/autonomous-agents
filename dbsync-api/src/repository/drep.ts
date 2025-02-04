@@ -1,10 +1,17 @@
-import {prisma} from '../config/db'
-import {Prisma} from '@prisma/client'
-import {combineArraysWithSameObjectKey, formatResult} from '../helpers/formatter'
-import {DrepSortType, DrepStatusType} from '../types/drep'
-import {fromHex, isHexValue} from '../helpers/validator'
+import { prisma } from '../config/db'
+import { Prisma } from '@prisma/client'
+import { combineArraysWithSameObjectKey, formatResult } from '../helpers/formatter'
+import { DrepSortType, DrepStatusType } from '../types/drep'
+import { fromHex, isHexValue } from '../helpers/validator'
 
-export const fetchDrepList = async (page = 1, size = 10, drepId?: string, isScript?: boolean, status?: DrepStatusType, sort?: DrepSortType) => {
+export const fetchDrepList = async (
+    page = 1,
+    size = 10,
+    drepId?: string,
+    isScript?: boolean,
+    status?: DrepStatusType,
+    sort?: DrepSortType
+) => {
     let scriptPart = [true, false]
     if (isScript === true) {
         scriptPart = [true, true]
@@ -121,11 +128,11 @@ export const fetchDrepList = async (page = 1, size = 10, drepId?: string, isScri
                  LEFT JOIN tx AS tx_first_register ON tx_first_register.id = dr_first_register.tx_id
                  LEFT JOIN block AS block_first_register ON block_first_register.id = tx_first_register.block_id
             ${
-                    drepId
-                            ? isHexValue(drepId)
-                                    ? Prisma.sql`WHERE dh.raw = decode(${drepId}, 'hex') and (dh.has_script = ${scriptPart[0]} OR dh.has_script = ${scriptPart[1]})`
-                                    : Prisma.sql`WHERE off_chain_vote_drep_data.given_name ILIKE ${drepId + '%'}`
-                            : Prisma.sql``
+                drepId
+                    ? isHexValue(drepId)
+                        ? Prisma.sql`WHERE dh.raw = decode(${drepId}, 'hex') and (dh.has_script = ${scriptPart[0]} OR dh.has_script = ${scriptPart[1]})`
+                        : Prisma.sql`WHERE off_chain_vote_drep_data.given_name ILIKE ${drepId + '%'}`
+                    : Prisma.sql``
             }
         GROUP BY dh.raw,
             second_to_newest_drep_registration.voting_anchor_id,
@@ -149,23 +156,23 @@ export const fetchDrepList = async (page = 1, size = 10, drepId?: string, isScri
             off_chain_vote_drep_data.qualifications,
             off_chain_vote_drep_data.image_url,
             off_chain_vote_drep_data.image_hash ${
-                                                        status
-                                                                ? status === 'Active'
-                                                                        ? Prisma.sql`HAVING dr_deposit.deposit > 0 AND (DRepActivity.epoch_no - Max(coalesce(block.epoch_no, block_first_register.epoch_no))) <= DRepActivity.drep_activity`
-                                                                        : status === 'Inactive'
-                                                                                ? Prisma.sql`HAVING dr_deposit.deposit > 0 AND (DRepActivity.epoch_no - Max(coalesce(block.epoch_no, block_first_register.epoch_no))) > DRepActivity.drep_activity`
-                                                                                : Prisma.sql`HAVING dr_deposit.deposit < 0`
-                                                                : Prisma.sql``
-                                                }
+                status
+                    ? status === 'Active'
+                        ? Prisma.sql`HAVING dr_deposit.deposit > 0 AND (DRepActivity.epoch_no - Max(coalesce(block.epoch_no, block_first_register.epoch_no))) <= DRepActivity.drep_activity`
+                        : status === 'Inactive'
+                        ? Prisma.sql`HAVING dr_deposit.deposit > 0 AND (DRepActivity.epoch_no - Max(coalesce(block.epoch_no, block_first_register.epoch_no))) > DRepActivity.drep_activity`
+                        : Prisma.sql`HAVING dr_deposit.deposit < 0`
+                    : Prisma.sql``
+            }
                                                 ${
-                                                        sort === 'VotingPower'
-                                                                ? Prisma.sql`ORDER BY DRepDistr.amount DESC NULLS LAST`
-                                                                : Prisma.sql`ORDER BY newestRegister.time DESC`
+                                                    sort === 'VotingPower'
+                                                        ? Prisma.sql`ORDER BY DRepDistr.amount DESC NULLS LAST`
+                                                        : Prisma.sql`ORDER BY newestRegister.time DESC`
                                                 }
         OFFSET ${(page ? page - 1 : 0) * (size ? size : 10)} FETCH NEXT ${size ? size : 10} ROWS ONLY
     `) as Record<any, any>[]
     const totalCount = result.length ? Number(result[0].total_count) : 0
-    return {items: formatResult(result), totalCount}
+    return { items: formatResult(result), totalCount }
 }
 
 export const fetchDrepDetails = async (drepId: string, isScript?: boolean) => {
@@ -450,7 +457,7 @@ export const fetchDrepDelegationDetails = async (dRepId: string) => {
     return combineArraysWithSameObjectKey(...result).map((r: any) => r.json_build_object)
 }
 
-export const fetchDrepRegistrationDetails = async (dRepId: string, isScript?:boolean) => {
+export const fetchDrepRegistrationDetails = async (dRepId: string, isScript?: boolean) => {
     let scriptPart = [true, false]
     if (isScript === true) {
         scriptPart = [true, true]
@@ -472,7 +479,7 @@ export const fetchDrepRegistrationDetails = async (dRepId: string, isScript?:boo
     return result.map((r) => r.json_build_object)
 }
 
-export const fetchDrepActiveDelegation = async (drepId: string, isScript?:boolean) => {
+export const fetchDrepActiveDelegation = async (drepId: string, isScript?: boolean) => {
     let scriptPart = [true, false]
     if (isScript === true) {
         scriptPart = [true, true]
@@ -480,63 +487,78 @@ export const fetchDrepActiveDelegation = async (drepId: string, isScript?:boolea
         scriptPart = [false, false]
     }
     const result = (await prisma.$queryRaw`
-        WITH liveRecord AS (WITH latest AS (WITH stakes AS (SELECT DISTINCT sa.id AS id, sa.view AS stakeAddress
-                                                            FROM delegation_vote dv
-                                                                     JOIN drep_hash dh ON dh.id = dv.drep_hash_id
-                                                                     JOIN stake_address sa ON sa.id = dv.addr_id
-                                                            WHERE dh.raw = DECODE(${drepId}, 'hex')
-                                                              AND (dh.has_script = ${scriptPart[0]} OR dh.has_script = ${scriptPart[1]}))
-                                            SELECT stakes.stakeAddress,
-                                                   stakes.id
-                                            FROM stakes
-                                                     JOIN LATERAL (
-                                                SELECT ENCODE(tx.hash, 'hex') AS tx_id,
-                                                       b.epoch_no,
-                                                       b.time,
-                                                       dh.raw                 AS raw_check
-                                                FROM delegation_vote dv
-                                                         JOIN drep_hash dh ON dh.id = dv.drep_hash_id
-                                                         JOIN tx ON tx.id = dv.tx_id
-                                                         JOIN block b ON b.id = tx.block_id
-                                                WHERE dv.addr_id = stakes.id
-                                                ORDER BY dv.tx_id DESC
-                                                    LIMIT 1
-            ) AS subquery
-        ON subquery.raw_check = DECODE(${drepId}, 'hex')
-        GROUP BY stakes.stakeAddress, stakes.id
-        ORDER BY stakes.id
+        WITH liveRecord AS (
+            WITH latest AS (
+                WITH stakes AS (
+                    SELECT DISTINCT sa.id AS id, sa.view AS stakeAddress
+                    FROM delegation_vote dv
+                    JOIN drep_hash dh ON dh.id = dv.drep_hash_id
+                    JOIN stake_address sa ON sa.id = dv.addr_id
+                    WHERE dh.raw = DECODE(${drepId}, 'hex')
+                    AND (dh.has_script = ${scriptPart[0]} OR dh.has_script = ${scriptPart[1]})
+                )
+                SELECT stakes.stakeAddress,
+                    stakes.id
+                FROM stakes
+                JOIN LATERAL (
+                    SELECT ENCODE(tx.hash, 'hex') AS tx_id,
+                        b.epoch_no,
+                        b.time,
+                        dh.raw AS raw_check
+                    FROM delegation_vote dv
+                    JOIN drep_hash dh ON dh.id = dv.drep_hash_id
+                    JOIN tx ON tx.id = dv.tx_id
+                    JOIN block b ON b.id = tx.block_id
+                    WHERE dv.addr_id = stakes.id
+                    ORDER BY dv.tx_id DESC
+                    LIMIT 1
+                ) AS subquery ON subquery.raw_check = DECODE(${drepId}, 'hex')
+                GROUP BY stakes.stakeAddress, stakes.id
+                ORDER BY stakes.id
             )
-        SELECT COUNT(DISTINCT (latest.stakeAddress)) AS activeDelegators,
-               COALESCE(SUM(uv.value), 0) +
-               COALESCE((SELECT SUM(amount)
-                         FROM reward r
-                         WHERE r.addr_id = latest.id
-                           AND r.earned_epoch >
-                               (SELECT blka.epoch_no
-                                FROM withdrawal w
-                                         JOIN tx txa ON txa.id = w.tx_id
-                                         JOIN block blka ON blka.id = txa.block_id
-                                WHERE w.addr_id = latest.id
-                                ORDER BY w.tx_id DESC
-                        LIMIT 1)
-            ), 0) +
-               COALESCE((SELECT SUM(amount)
-                         FROM reward_rest r
-                         WHERE r.addr_id = latest.id
-                           AND r.earned_epoch >
-                               (SELECT blka.epoch_no
-                                FROM withdrawal w
-                                         JOIN tx txa ON txa.id = w.tx_id
-                                         JOIN block blka ON blka.id = txa.block_id
-                                WHERE w.addr_id = latest.id
-                                ORDER BY w.tx_id DESC
-                        LIMIT 1)
-            ), 0)     AS liveVotingPower
-        FROM latest
-                 LEFT JOIN utxo_view uv ON uv.stake_address_id = latest.id
-        GROUP BY latest.stakeAddress, latest.id)
-        SELECT SUM(activedelegators) as activeDelegators, SUM(livevotingpower) as liveVotingPower
-        FROM liveRecord
+            SELECT COUNT(DISTINCT latest.stakeAddress) AS activeDelegators,
+                COALESCE(SUM(uv.value), 0) +
+                COALESCE((
+                    SELECT SUM(amount)
+                    FROM reward r
+                    WHERE r.addr_id = latest.id
+                        AND r.earned_epoch >
+                            (SELECT blka.epoch_no
+                            FROM withdrawal w
+                            JOIN tx txa ON txa.id = w.tx_id
+                            JOIN block blka ON blka.id = txa.block_id
+                            WHERE w.addr_id = latest.id
+                            ORDER BY w.tx_id DESC
+                            LIMIT 1)
+                ), 0) +
+                COALESCE((
+                    SELECT SUM(amount)
+                    FROM reward_rest r
+                    WHERE r.addr_id = latest.id
+                        AND r.earned_epoch >
+                            (SELECT blka.epoch_no
+                            FROM withdrawal w
+                            JOIN tx txa ON txa.id = w.tx_id
+                            JOIN block blka ON blka.id = txa.block_id
+                            WHERE w.addr_id = latest.id
+                            ORDER BY w.tx_id DESC
+                            LIMIT 1)
+                ), 0) AS liveVotingPower,
+                (SELECT dr.amount 
+                    FROM drep_distr dr 
+                    JOIN drep_hash dh ON dh.id = dr.hash_id 
+                    WHERE dh.raw = DECODE(${drepId}, 'hex') 
+                    ORDER BY dr.epoch_no DESC 
+                    LIMIT 1) AS activeVotingPower 
+            FROM latest
+            LEFT JOIN utxo_view uv ON uv.stake_address_id = latest.id
+            GROUP BY latest.stakeAddress, latest.id
+        )
+        SELECT 
+            SUM(activeDelegators) AS activeDelegators, 
+            SUM(liveVotingPower) AS liveVotingPower, 
+            MAX(activeVotingPower) AS activeVotingPower
+        FROM liveRecord;
     `) as Record<string, any>[]
 
     const latestEpoch = await prisma.epoch.findFirst({
@@ -556,7 +578,8 @@ export const fetchDrepActiveDelegation = async (drepId: string, isScript?:boolea
         },
     })
     const totalVotingPower = drepDistr._sum.amount as bigint
-    const decimalInfluence = Number(result[0].livevotingpower) / Number(totalVotingPower)
+    const parsedActiveVotingPower = result[0].activevotingpower
+    const decimalInfluence = Number(parsedActiveVotingPower) / Number(totalVotingPower)
     const influence = (decimalInfluence * 100).toFixed(4) + '%'
     const response = {
         liveDelegators: result[0].activedelegators ? parseInt(result[0].activedelegators) : 0,
@@ -566,7 +589,7 @@ export const fetchDrepActiveDelegation = async (drepId: string, isScript?:boolea
     return response
 }
 
-export const fetchDrepLiveDelegators = async (dRepId: string, isScript?:boolean) => {
+export const fetchDrepLiveDelegators = async (dRepId: string, isScript?: boolean) => {
     let scriptPart = [true, false]
     if (isScript === true) {
         scriptPart = [true, true]
@@ -647,7 +670,7 @@ export const fetchDrepLiveDelegators = async (dRepId: string, isScript?:boolean)
     return parsedResult()
 }
 
-export const fetchDrepDelegationHistory = async (dRepId: string, isScript?:boolean) => {
+export const fetchDrepDelegationHistory = async (dRepId: string, isScript?: boolean) => {
     let scriptPart = [true, false]
     if (isScript === true) {
         scriptPart = [true, true]
@@ -704,20 +727,20 @@ export const fetchDrepDelegationHistory = async (dRepId: string, isScript?:boole
             }
 
             let joinedFound = false
-            let delegationHistory: DelegationHistory = {joined: undefined, left: undefined}
+            let delegationHistory: DelegationHistory = { joined: undefined, left: undefined }
             let stakeDelegationHistory: DelegationHistory[] = []
 
             for (let i = delegations.length - 1; i >= 0; i--) {
                 const delegation = delegations[i]
-                const {drep, tx_id, epoch_no, time} = delegation
+                const { drep, tx_id, epoch_no, time } = delegation
 
                 if (drep === bech32Drep) {
-                    delegationHistory.joined = {tx_id, epoch_no, time}
+                    delegationHistory.joined = { tx_id, epoch_no, time }
                     joinedFound = true
                 } else if (joinedFound) {
-                    delegationHistory.left = {tx_id, epoch_no, time}
+                    delegationHistory.left = { tx_id, epoch_no, time }
                     stakeDelegationHistory.push(delegationHistory)
-                    delegationHistory = {joined: undefined, left: undefined}
+                    delegationHistory = { joined: undefined, left: undefined }
                     joinedFound = false
                 }
             }
