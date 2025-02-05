@@ -574,22 +574,24 @@ export const fetchDrepLiveStats = async (drepId: string, isScript?: boolean) => 
             LIMIT 1
         ),
         govActionsAfter AS (
-            SELECT COUNT(DISTINCT gp.id) AS totalGovActionsAfter
+            SELECT COALESCE(COUNT(DISTINCT gp.id), 0) AS totalGovActionsAfter
             FROM gov_action_proposal AS gp
             JOIN tx ON tx.id = gp.tx_id
             JOIN block b ON b.id = tx.block_id
-            CROSS JOIN firstRegistration  
+            LEFT JOIN firstRegistration ON TRUE 
             WHERE b.time > firstRegistration.firstRegistrationTime
+        ),
+        votedGovActions AS (
+            SELECT COUNT(DISTINCT gp.id) AS voted
+            FROM gov_action_proposal gp
+            JOIN voting_procedure vp ON vp.gov_action_proposal_id = gp.id
+            JOIN drep_hash dh ON dh.id = vp.drep_voter
+            WHERE dh.raw = DECODE(${drepId}, 'hex')
+            AND (dh.has_script = ${scriptPart[0]} OR dh.has_script = ${scriptPart[1]})
         )
         SELECT 
-            COUNT(DISTINCT gp.id) AS voted, 
-            (COALESCE(MAX(govActionsAfter.totalGovActionsAfter), 0) - COUNT(DISTINCT gp.id)) AS notvoted
-        FROM gov_action_proposal AS gp
-        LEFT JOIN voting_procedure vp ON vp.gov_action_proposal_id = gp.id
-        LEFT JOIN drep_hash dh ON dh.id = vp.drep_voter
-        CROSS JOIN govActionsAfter  
-        WHERE dh.raw = DECODE(${drepId}, 'hex')
-        AND (dh.has_script = ${scriptPart[0]} OR dh.has_script = ${scriptPart[1]});    
+            (SELECT voted FROM votedGovActions) AS voted,
+            (SELECT totalGovActionsAfter FROM govActionsAfter) - (SELECT voted FROM votedGovActions) AS notvoted;    
     `) as Record<string, any>[]
     const latestEpoch = await prisma.epoch.findFirst({
         orderBy: {
