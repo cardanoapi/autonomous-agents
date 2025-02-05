@@ -60,7 +60,8 @@ const getDrepLiveStats = async (req: Request, res: Response) => {
 
 const getDrepActiveDelegators = async (req: Request, res: Response) => {
     const dRepId = decodeDrep(req.params.id as string)
-    const result = await fetchDRepActiveDelegators(dRepId.credential, dRepId.isScript)
+    const balance = req.query.balance === 'true'
+    const result = await fetchDRepActiveDelegators(dRepId.credential, dRepId.isScript, balance)
     return res.status(200).json(result)
 }
 
