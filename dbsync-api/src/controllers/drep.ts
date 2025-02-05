@@ -1,15 +1,15 @@
 import {Request, Response, Router} from 'express'
 import {handlerWrapper} from '../errors/AppError'
-import {convertToHexIfBech32, decodeDrep, isHexValue, validateAddress} from '../helpers/validator'
+import {decodeDrep} from '../helpers/validator'
 import {
-    fetchDrepDelegationDetails,
     fetchDrepDetails,
     fetchDrepList,
-    fetchDrepActiveDelegation,
     fetchDrepRegistrationDetails,
     fetchDrepVoteDetails,
-    fetchDrepActiveDelegators,
+    fetchDrepLiveDelegators,
     fetchDrepDelegationHistory,
+    fetchDRepActiveDelegators,
+    fetchDrepLiveStats,
 } from '../repository/drep'
 import {DrepSortType, DrepStatusType} from '../types/drep'
 
@@ -52,15 +52,21 @@ const getDrepRegistrationDetails = async (req: Request, res: Response) => {
     return res.status(200).json(result)
 }
 
-const getDrepActiveDelegation = async (req: Request, res: Response) => {
+const getDrepLiveStats = async (req: Request, res: Response) => {
     const dRepId = decodeDrep(req.params.id as string)
-    const result = await fetchDrepActiveDelegation(dRepId.credential, dRepId.isScript)
+    const result = await fetchDrepLiveStats(dRepId.credential, dRepId.isScript)
     return res.status(200).json(result)
 }
 
 const getDrepActiveDelegators = async (req: Request, res: Response) => {
     const dRepId = decodeDrep(req.params.id as string)
-    const activeDelegators = await fetchDrepActiveDelegators(dRepId.credential, dRepId.isScript)
+    const result = await fetchDRepActiveDelegators(dRepId.credential, dRepId.isScript)
+    return res.status(200).json(result)
+}
+
+const getDrepLiveDelegators = async (req: Request, res: Response) => {
+    const dRepId = decodeDrep(req.params.id as string)
+    const activeDelegators = await fetchDrepLiveDelegators(dRepId.credential, dRepId.isScript)
     return res.status(200).json(activeDelegators)
 }
 
@@ -69,7 +75,8 @@ router.get('/:id', handlerWrapper(getDrepDetails))
 router.get('/:id/vote', handlerWrapper(getDrepVoteDetails))
 router.get('/:id/delegation', handlerWrapper(getDrepDelegationDetails))
 router.get('/:id/registration', handlerWrapper(getDrepRegistrationDetails))
-router.get('/:id/live-delegation', handlerWrapper(getDrepActiveDelegation))
-router.get('/:id/live-delegators', handlerWrapper(getDrepActiveDelegators))
+router.get('/:id/stats/live', handlerWrapper(getDrepLiveStats))
+router.get('/:id/live-delegators', handlerWrapper(getDrepLiveDelegators))
+router.get('/:id/active-delegators', handlerWrapper(getDrepActiveDelegators))
 
 export default router

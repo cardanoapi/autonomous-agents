@@ -9,6 +9,8 @@ paths:
         get:
             summary: Retrieve stake address information
             description: Get the latest stake registration and deregistration for a given stake address.
+            tags:
+                - Stake
             parameters:
                 - name: address
                   in: query
@@ -73,6 +75,8 @@ paths:
         get:
             summary: Get latest delegation information
             description: Fetches the latest delegation and pool delegation details for the given address.
+            tags:
+                - Stake
             operationId: getDelegation
             parameters:
                 - name: address
@@ -81,7 +85,7 @@ paths:
                   description: Bech32 or hex-encoded address to query.
                   schema:
                       type: string
-                      example: ''
+                      example: 'stake_test1ur34vgj0kk338wlfsdf7fnxs9uukh24047lc2wfmm0mgptgq7849c'
             responses:
                 '200':
                     description: Successful response with delegation and pool information.
@@ -145,8 +149,10 @@ paths:
                     description: Internal server error.
     /api/drep/{id}/live-delegators:
         get:
-            summary: Get active delegators for a DRep
-            description: Fetch the list of active delegators associated with the specified DRep ID.
+            summary: Get live delegators for a DRep
+            description: Fetch the list of live delegators associated with the specified DRep ID.
+            tags:
+                - DRep Delegation
             parameters:
                 - name: id
                   in: path
@@ -205,10 +211,76 @@ paths:
                                     example: Provide a valid Drep ID
                 '500':
                     description: Internal server error.
-    /api/drep/{id}/live-delegation:
+    /api/drep/{id}/active-delegators:
         get:
-            summary: Fetch active delegation for a Drep
-            description: Retrieves live delegation details for a given Drep ID.
+            summary: Get active delegators for a DRep
+            description: Fetch the list of active delegators associated with the specified DRep ID.
+            tags:
+                - DRep Delegation
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  description: The DRep ID in hex or Bech32 format.
+                  schema:
+                      type: string
+                      example: 'drep15fy2nszna039pdregpryhzahnwcr2rred4nx2qaec7k07nvcq26'
+            responses:
+                '200':
+                    description: A list of active delegators.
+                    content:
+                    application/json:
+                        schema:
+                            type: array
+                            items:
+                                type: object
+                                properties:
+                                    delegatorStake:
+                                        type: string
+                                        description: The stake address of the delegator.
+                                    balance:
+                                        type: object
+                                        properties:
+                                            utxoBalance:
+                                                type: string
+                                                description: The UTXO balance of the delegator.
+                                            rewardBalance:
+                                                type: string
+                                                description: The reward balance of the delegator.
+                                            rewardRestBalance:
+                                                type: string
+                                                description: The reward rest balance of the delegator.
+                                    delegatedAt:
+                                        type: object
+                                        properties:
+                                            txId:
+                                                type: string
+                                                description: The transaction ID of the delegation.
+                                            epochNo:
+                                                type: integer
+                                                description: The epoch number of the delegation.
+                                            time:
+                                                type: string
+                                                format: date-time
+                                                description: The time of the delegation.
+                '400':
+                    description: Invalid DRep ID.
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                message:
+                                    type: string
+                                    example: Provide a valid Drep ID
+                '500':
+                    description: Internal server error.
+    /api/drep/{id}/stats/live:
+        get:
+            summary: Fetch live delegation stats for a Drep
+            description: Retrieves live delegation stats for a given Drep ID.
+            tags:
+                - DRep Delegation
             parameters:
                 - name: id
                   in: path
@@ -230,10 +302,16 @@ paths:
                                 example: 17
                             liveVotingPower:
                                 type: string
-                                example: "20027234084683"
+                                example: '20027234084683'
                             influence:
                                 type: string
-                                example: "19.9043%"
+                                example: '19.9043%'
+                            voted:
+                                type: integer
+                                example: 17
+                            notVoted:
+                                type: integer
+                                example: 300
                 '400':
                     description: Bad Request - Invalid Drep ID
                     content:
@@ -258,6 +336,8 @@ paths:
         get:
             summary: Get DRep details
             description: Fetches DRep details including registration status, metadata, voting power, and transaction hashes for the provided address.
+            tags:
+                - DRep Information
             operationId: getDrepDetails
             parameters:
                 - name: id
@@ -266,7 +346,7 @@ paths:
                   description: Hex-encoded address or Bech32 address of DRep .
                   schema:
                       type: string
-                      example: ''
+                      example: 'drep15fy2nszna039pdregpryhzahnwcr2rred4nx2qaec7k07nvcq26'
             responses:
                 '200':
                     description: Successful response with DRep and SoleVoter details.
@@ -324,6 +404,8 @@ paths:
         get:
             summary: Get voting details by DRep ID
             description: Retrieve voting details for a specific DRep ID.
+            tags:
+                - DRep Information
             parameters:
                 - name: id
                   in: path
@@ -331,7 +413,7 @@ paths:
                   description: Hex-encoded address or Bech32 address of DRep .
                   schema:
                       type: string
-                      example: ''
+                      example: 'drep15fy2nszna039pdregpryhzahnwcr2rred4nx2qaec7k07nvcq26'
             responses:
                 '200':
                     description: Successfully retrieved voting details of given Drep
@@ -388,6 +470,8 @@ paths:
         get:
             summary: Get delegation details by DRep ID
             description: Retrieve delegation details for a specific DRep ID.
+            tags:
+                - DRep Delegation
             parameters:
                 - name: id
                   in: path
@@ -395,7 +479,7 @@ paths:
                   description: Hex-encoded address or Bech32 address of DRep.
                   schema:
                       type: string
-                      example: ''
+                      example: 'drep15fy2nszna039pdregpryhzahnwcr2rred4nx2qaec7k07nvcq26'
             responses:
                 '200':
                     description: A list of stake delegations.
@@ -404,42 +488,21 @@ paths:
                             schema:
                             type: array
                             items:
-                                type: object
-                                properties:
                                 stakeAddress:
                                     type: string
                                     example: 'stake_test17pmm4fm6aahntj59y7p2xkmhkppp2yc3qlejgln997dcy4scqeut3'
-                                delegation:
-                                    type: array
-                                    items:
-                                        type: object
-                                        properties:
-                                            joined:
-                                                type: object
-                                                properties:
-                                                    tx_id:
-                                                        type: string
-                                                        example: 'b370c17ea97c4e41192a6586df68e257a67804c6af9cd7e4308dfb8e217e67d5'
-                                                    epoch_no:
-                                                        type: integer
-                                                        example: 792
-                                                    time:
-                                                        type: string
-                                                        format: date-time
-                                                        example: '2024-12-25T03:04:28'
-                                            left:
-                                                type: object
-                                                properties:
-                                                    tx_id:
-                                                        type: string
-                                                        example: 'd2e9f50ae69be2ac849a5a12b90b37d226eb882b0a1261cd06b17febc737f88b'
-                                                    epoch_no:
-                                                        type: integer
-                                                        example: 790
-                                                    time:
-                                                        type: string
-                                                        format: date-time
-                                                        example: '2024-12-23T02:52:13'
+                                action:
+                                    type: string
+                                    example: 'joined'
+                                txId:
+                                    type: string
+                                    example: '08e5daeb18137efd8ad3ddbda6347f490a3efa8f839da3e2a18836ba0ff1bba8'
+                                epochNo:
+                                    type: integer
+                                    example: 818
+                                time:
+                                    type: string
+                                    example: '2025-01-20T08:35:02'
                 '404':
                     description: DRep ID not found
                 '500':
@@ -449,6 +512,8 @@ paths:
         get:
             summary: Get registration details by DRep ID
             description: Retrieve registration details for a specific DRep ID.
+            tags:
+                - DRep Information
             parameters:
                 - name: id
                   in: path
@@ -456,7 +521,7 @@ paths:
                   description: Hex-encoded address or Bech32 address of DRep .
                   schema:
                       type: string
-                      example: ''
+                      example: 'drep15fy2nszna039pdregpryhzahnwcr2rred4nx2qaec7k07nvcq26'
             responses:
                 '200':
                     description: Successfully retrieved voting details of given Drep
@@ -488,6 +553,8 @@ paths:
         get:
             summary: Get faucet balance for a given address
             description: Retrieves the balance for a specified stake address.
+            tags:
+                - Address
             parameters:
                 - in: query
                   name: address
@@ -512,6 +579,8 @@ paths:
         get:
             summary: Fetch DRep list
             description: Fetches the drep list.
+            tags:
+                - DRep Information
             parameters:
                 - in: query
                   name: page
@@ -611,10 +680,58 @@ paths:
                     description: Invalid address provided
                 '500':
                     description: Internal server error
+    /api/governance/live-stake:
+        get:
+            summary: Get Total Live Stake
+            tags:
+                - Governance
+            responses:
+                200:
+                    description: Successfully retrieved total live stake
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: '1000000000000'
+                500:
+                    description: Internal server error
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: string
+                                        example: 'Internal Server Error'
+    /api/governance/active-stake:
+        get:
+            summary: Get Total Active Stake
+            tags:
+                - Governance
+            responses:
+                200:
+                    description: Successfully retrieved total live stake
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                                example: '1000000000000'
+                500:
+                    description: Internal server error
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: string
+                                        example: 'Internal Server Error'
     /api/proposal:
         get:
             summary: Fetch Proposal list
             description: Fetches the Proposal list.
+            tags:
+                - Gov Action
             parameters:
                 - in: query
                   name: page
@@ -771,6 +888,8 @@ paths:
         get:
             summary: Get the total number of government action proposals
             description: Returns the total number of records in the `gov_action_proposal` table.
+            tags:
+                - Gov Action
             responses:
                 '200':
                     description: Total count retrieved successfully
@@ -796,6 +915,8 @@ paths:
         get:
             summary: Get government actions
             description: Fetch government actions related to a transaction hash or all actions if no hash is provided.
+            tags:
+                - Gov Action
             parameters:
                 - name: id
                   in: query
@@ -885,6 +1006,8 @@ paths:
         get:
             summary: Health check for DBSync
             description: Fetches the latest block information from the database and checks its freshness to determine the DBSync service's health.
+            tags:
+                - Health
             responses:
                 '200':
                     description: Service is healthy, and the latest block is up-to-date.

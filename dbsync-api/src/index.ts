@@ -19,6 +19,7 @@ import addressRoute from "./controllers/address";
 import proposalRoute from "./controllers/proposal";
 import healthCheckRoute from "./health/healthCheck"
 import govActionRoute from './controllers/govActions'
+import governanceRoute from './controllers/governance'
 import { errorHandler } from "./errors/AppError";
 import path from "path";
 import setupSwaggerUi from "./swagger-loader";
@@ -60,7 +61,7 @@ app.use('/api/address',addressRoute)
 app.use('/api/proposal',proposalRoute)
 app.use('/api/health', healthCheckRoute)
 app.use('/api/gov-action', govActionRoute)
-
+app.use('/api/governance', governanceRoute)
 setupSwaggerUi(app)
 // const indexFile = path.resolve('.','./index.html')
 // // Check if index.html exists
