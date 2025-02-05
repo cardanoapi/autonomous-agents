@@ -560,7 +560,7 @@ export const fetchDrepLiveStats = async (drepId: string, isScript?: boolean) => 
             MAX(activeVotingPower) AS activeVotingPower
         FROM liveRecord;
     `) as Record<string, any>[]
-    
+
     const drepVotingHistory = (await prisma.$queryRaw`
         WITH firstRegistration AS (
             SELECT b.time AS firstRegistrationTime
@@ -569,6 +569,7 @@ export const fetchDrepLiveStats = async (drepId: string, isScript?: boolean) => 
             JOIN tx ON tx.id = dr.tx_id
             JOIN block b ON b.id = tx.block_id
             WHERE dh.raw = DECODE(${drepId}, 'hex')
+            AND (dh.has_script = ${scriptPart[0]} OR dh.has_script = ${scriptPart[1]})
             ORDER BY b.time ASC
             LIMIT 1
         ),
@@ -582,12 +583,13 @@ export const fetchDrepLiveStats = async (drepId: string, isScript?: boolean) => 
         )
         SELECT 
             COUNT(DISTINCT gp.id) AS voted, 
-            (MAX(govActionsAfter.totalGovActionsAfter) - COUNT(DISTINCT gp.id)) AS notvoted
+            (COALESCE(MAX(govActionsAfter.totalGovActionsAfter), 0) - COUNT(DISTINCT gp.id)) AS notvoted
         FROM gov_action_proposal AS gp
         LEFT JOIN voting_procedure vp ON vp.gov_action_proposal_id = gp.id
         LEFT JOIN drep_hash dh ON dh.id = vp.drep_voter
         CROSS JOIN govActionsAfter  
-        WHERE dh.raw = DECODE(${drepId}, 'hex');
+        WHERE dh.raw = DECODE(${drepId}, 'hex')
+        AND (dh.has_script = ${scriptPart[0]} OR dh.has_script = ${scriptPart[1]});    
     `) as Record<string, any>[]
     const latestEpoch = await prisma.epoch.findFirst({
         orderBy: {
@@ -698,18 +700,81 @@ export const fetchDrepLiveDelegators = async (dRepId: string, isScript?: boolean
         }))
     }
     const parsedResult = parseResult()
-    parsedResult.sort((a: any, b: any) => new Date(b.delegatedAt.time).getTime() - new Date(a.delegatedAt.time).getTime())
+    parsedResult.sort(
+        (a: any, b: any) => new Date(b.delegatedAt.time).getTime() - new Date(a.delegatedAt.time).getTime()
+    )
     return parsedResult
 }
 
-export const fetchDRepActiveDelegators = async (dRepId: string, isScript?: boolean) => {
+export const fetchDRepActiveDelegators = async (dRepId: string, isScript?: boolean, balance?: boolean) => {
     let scriptPart = [true, false]
     if (isScript === true) {
         scriptPart = [true, true]
     } else if (isScript === false) {
         scriptPart = [false, false]
     }
-    const result = (await prisma.$queryRaw`
+    let result
+    if (balance && balance == true) {
+        result = (await prisma.$queryRaw`
+            WITH stakes AS (
+                SELECT DISTINCT dv.addr_id AS id
+                FROM drep_distr dr
+                JOIN drep_hash dh ON dh.id = dr.hash_id 
+                JOIN delegation_vote dv ON dv.drep_hash_id = dh.id
+                WHERE dh.raw = DECODE(${dRepId}, 'hex') 
+                AND (dh.has_script = ${scriptPart[0]} OR dh.has_script = ${scriptPart[1]})
+            ), 
+            latest_tx AS (
+                SELECT dv.addr_id, 
+                    MAX(dv.tx_id) AS latest_tx_id 
+                FROM delegation_vote dv
+                WHERE dv.addr_id IN (SELECT id FROM stakes)
+                GROUP BY dv.addr_id  
+            )
+            SELECT 
+                sa.view AS stakeAddress, 
+                ENCODE(tx.hash, 'hex') AS txId,
+                e.no AS epoch,
+                b.time AS time,
+                COALESCE(SUM(uv.value), 0) +
+                COALESCE((
+                    SELECT SUM(amount)
+                    FROM reward r
+                    WHERE r.addr_id = lt.addr_id
+                    AND r.earned_epoch > COALESCE((
+                        SELECT MAX(blka.epoch_no)
+                        FROM withdrawal w
+                        JOIN tx txa ON txa.id = w.tx_id
+                        JOIN block blka ON blka.id = txa.block_id
+                        WHERE w.addr_id = lt.addr_id
+                    ), 0)
+                ), 0) +
+                COALESCE((
+                    SELECT SUM(amount)
+                    FROM reward_rest r
+                    WHERE r.addr_id = lt.addr_id
+                    AND r.earned_epoch > COALESCE((
+                        SELECT MAX(blka.epoch_no)
+                        FROM withdrawal w
+                        JOIN tx txa ON txa.id = w.tx_id
+                        JOIN block blka ON blka.id = txa.block_id
+                        WHERE w.addr_id = lt.addr_id
+                    ), 0)
+                ), 0) AS amount
+            FROM latest_tx lt
+            JOIN stake_address sa ON sa.id = lt.addr_id
+            JOIN tx ON tx.id = lt.latest_tx_id
+            JOIN block b ON b.id = tx.block_id
+            JOIN epoch e ON e.no = b.epoch_no
+            JOIN delegation_vote dv ON dv.tx_id = lt.latest_tx_id
+            JOIN drep_hash dh ON dh.id = dv.drep_hash_id
+            LEFT JOIN utxo_view uv ON uv.stake_address_id = sa.id
+            WHERE dh.raw = DECODE(${dRepId}, 'hex')
+            AND (dh.has_script = ${scriptPart[0]} OR dh.has_script = ${scriptPart[1]})
+            AND b.epoch_no < (SELECT MAX(no) FROM epoch)
+            GROUP BY sa.view, tx.hash, e.no, b.time, lt.addr_id;`) as Record<string, any>[]
+    } else {
+        result = (await prisma.$queryRaw`
         WITH stakes AS (
             SELECT DISTINCT dv.addr_id AS id
             FROM drep_distr dr
@@ -738,9 +803,12 @@ export const fetchDRepActiveDelegators = async (dRepId: string, isScript?: boole
         JOIN delegation_vote dv on dv.tx_id = lt.latest_tx_id
         JOIN drep_hash dh on dh.id = dv.drep_hash_id
         WHERE dh.raw = DECODE(${dRepId}, 'hex')
+        AND (dh.has_script = ${scriptPart[0]} OR dh.has_script = ${scriptPart[1]})
         AND b.epoch_no < (SELECT e.no from epoch e ORDER BY e.no desc limit 1);`) as Record<string, any>[]
+    }
     result.sort((a: any, b: any) => new Date(b.time).getTime() - new Date(a.time).getTime())
     return result.map((res: any) => {
+        const amount = balance && balance == true ? { amount: res.amount.toString() } : {}
         return {
             stakeAddress: res.stakeaddress,
             delegatedAt: {
@@ -748,6 +816,7 @@ export const fetchDRepActiveDelegators = async (dRepId: string, isScript?: boole
                 epoch: res.epoch,
                 time: res.time,
             },
+            ...amount,
         }
     })
 }

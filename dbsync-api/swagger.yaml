@@ -225,6 +225,13 @@ paths:
                   schema:
                       type: string
                       example: 'drep15fy2nszna039pdregpryhzahnwcr2rred4nx2qaec7k07nvcq26'
+                - name: balance
+                  in: query
+                  required: false
+                  description: The minimum balance of the delegator.
+                  schema:
+                      type: boolean
+                      example: false
             responses:
                 '200':
                     description: A list of active delegators.
