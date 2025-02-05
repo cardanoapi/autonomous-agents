@@ -1,16 +1,15 @@
 import {Request, Response, Router} from 'express'
 import {handlerWrapper} from '../errors/AppError'
-import {convertToHexIfBech32, decodeDrep, isHexValue, validateAddress} from '../helpers/validator'
+import {decodeDrep} from '../helpers/validator'
 import {
-    fetchDrepDelegationDetails,
     fetchDrepDetails,
     fetchDrepList,
-    fetchDrepLiveDelegation,
     fetchDrepRegistrationDetails,
     fetchDrepVoteDetails,
     fetchDrepLiveDelegators,
     fetchDrepDelegationHistory,
     fetchDRepActiveDelegators,
+    fetchDrepLiveStats,
 } from '../repository/drep'
 import {DrepSortType, DrepStatusType} from '../types/drep'
 
@@ -53,9 +52,9 @@ const getDrepRegistrationDetails = async (req: Request, res: Response) => {
     return res.status(200).json(result)
 }
 
-const getDrepLiveDelegation = async (req: Request, res: Response) => {
+const getDrepLiveStats = async (req: Request, res: Response) => {
     const dRepId = decodeDrep(req.params.id as string)
-    const result = await fetchDrepLiveDelegation(dRepId.credential, dRepId.isScript)
+    const result = await fetchDrepLiveStats(dRepId.credential, dRepId.isScript)
     return res.status(200).json(result)
 }
 
@@ -76,7 +75,7 @@ router.get('/:id', handlerWrapper(getDrepDetails))
 router.get('/:id/vote', handlerWrapper(getDrepVoteDetails))
 router.get('/:id/delegation', handlerWrapper(getDrepDelegationDetails))
 router.get('/:id/registration', handlerWrapper(getDrepRegistrationDetails))
-router.get('/:id/live-delegation', handlerWrapper(getDrepLiveDelegation))
+router.get('/:id/stats/live', handlerWrapper(getDrepLiveStats))
 router.get('/:id/live-delegators', handlerWrapper(getDrepLiveDelegators))
 router.get('/:id/active-delegators', handlerWrapper(getDrepActiveDelegators))
 

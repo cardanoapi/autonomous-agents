@@ -479,7 +479,7 @@ export const fetchDrepRegistrationDetails = async (dRepId: string, isScript?: bo
     return result.map((r) => r.json_build_object)
 }
 
-export const fetchDrepLiveDelegation = async (drepId: string, isScript?: boolean) => {
+export const fetchDrepLiveStats = async (drepId: string, isScript?: boolean) => {
     let scriptPart = [true, false]
     if (isScript === true) {
         scriptPart = [true, true]
@@ -560,7 +560,35 @@ export const fetchDrepLiveDelegation = async (drepId: string, isScript?: boolean
             MAX(activeVotingPower) AS activeVotingPower
         FROM liveRecord;
     `) as Record<string, any>[]
-
+    
+    const drepVotingHistory = (await prisma.$queryRaw`
+        WITH firstRegistration AS (
+            SELECT b.time AS firstRegistrationTime
+            FROM drep_registration dr
+            JOIN drep_hash dh ON dh.id = dr.drep_hash_id
+            JOIN tx ON tx.id = dr.tx_id
+            JOIN block b ON b.id = tx.block_id
+            WHERE dh.raw = DECODE(${drepId}, 'hex')
+            ORDER BY b.time ASC
+            LIMIT 1
+        ),
+        govActionsAfter AS (
+            SELECT COUNT(DISTINCT gp.id) AS totalGovActionsAfter
+            FROM gov_action_proposal AS gp
+            JOIN tx ON tx.id = gp.tx_id
+            JOIN block b ON b.id = tx.block_id
+            CROSS JOIN firstRegistration  
+            WHERE b.time > firstRegistration.firstRegistrationTime
+        )
+        SELECT 
+            COUNT(DISTINCT gp.id) AS voted, 
+            (MAX(govActionsAfter.totalGovActionsAfter) - COUNT(DISTINCT gp.id)) AS notvoted
+        FROM gov_action_proposal AS gp
+        LEFT JOIN voting_procedure vp ON vp.gov_action_proposal_id = gp.id
+        LEFT JOIN drep_hash dh ON dh.id = vp.drep_voter
+        CROSS JOIN govActionsAfter  
+        WHERE dh.raw = DECODE(${drepId}, 'hex');
+    `) as Record<string, any>[]
     const latestEpoch = await prisma.epoch.findFirst({
         orderBy: {
             start_time: 'desc',
@@ -585,6 +613,8 @@ export const fetchDrepLiveDelegation = async (drepId: string, isScript?: boolean
         liveDelegators: result[0].activedelegators ? parseInt(result[0].activedelegators) : 0,
         liveVotingPower: result[0].livevotingpower ? result[0].livevotingpower.toString() : '0',
         influence: influence,
+        voted: parseInt(drepVotingHistory[0].voted),
+        notVoted: parseInt(drepVotingHistory[0].notvoted),
     }
     return response
 }
