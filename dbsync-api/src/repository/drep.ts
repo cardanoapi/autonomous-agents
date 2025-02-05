@@ -560,7 +560,7 @@ export const fetchDrepLiveStats = async (drepId: string, isScript?: boolean) => 
             MAX(activeVotingPower) AS activeVotingPower
         FROM liveRecord;
     `) as Record<string, any>[]
-    
+
     const drepVotingHistory = (await prisma.$queryRaw`
         WITH firstRegistration AS (
             SELECT b.time AS firstRegistrationTime
@@ -569,6 +569,7 @@ export const fetchDrepLiveStats = async (drepId: string, isScript?: boolean) => 
             JOIN tx ON tx.id = dr.tx_id
             JOIN block b ON b.id = tx.block_id
             WHERE dh.raw = DECODE(${drepId}, 'hex')
+            AND (dh.has_script = ${scriptPart[0]} OR dh.has_script = ${scriptPart[1]})
             ORDER BY b.time ASC
             LIMIT 1
         ),
@@ -582,12 +583,13 @@ export const fetchDrepLiveStats = async (drepId: string, isScript?: boolean) => 
         )
         SELECT 
             COUNT(DISTINCT gp.id) AS voted, 
-            (MAX(govActionsAfter.totalGovActionsAfter) - COUNT(DISTINCT gp.id)) AS notvoted
+            (COALESCE(MAX(govActionsAfter.totalGovActionsAfter), 0) - COUNT(DISTINCT gp.id)) AS notvoted
         FROM gov_action_proposal AS gp
         LEFT JOIN voting_procedure vp ON vp.gov_action_proposal_id = gp.id
         LEFT JOIN drep_hash dh ON dh.id = vp.drep_voter
         CROSS JOIN govActionsAfter  
-        WHERE dh.raw = DECODE(${drepId}, 'hex');
+        WHERE dh.raw = DECODE(${drepId}, 'hex')
+        AND (dh.has_script = ${scriptPart[0]} OR dh.has_script = ${scriptPart[1]});    
     `) as Record<string, any>[]
     const latestEpoch = await prisma.epoch.findFirst({
         orderBy: {
@@ -698,7 +700,9 @@ export const fetchDrepLiveDelegators = async (dRepId: string, isScript?: boolean
         }))
     }
     const parsedResult = parseResult()
-    parsedResult.sort((a: any, b: any) => new Date(b.delegatedAt.time).getTime() - new Date(a.delegatedAt.time).getTime())
+    parsedResult.sort(
+        (a: any, b: any) => new Date(b.delegatedAt.time).getTime() - new Date(a.delegatedAt.time).getTime()
+    )
     return parsedResult
 }
 
