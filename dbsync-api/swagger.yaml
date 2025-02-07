@@ -582,6 +582,52 @@ paths:
                     description: Invalid address provided
                 '500':
                     description: Internal server error
+    /api/blockchain/epoch:
+        get:
+            summary: Get epoch number, start time, end time and duration
+            description: Get epoch number, start time, end time and duration
+            tags:
+                - Blockchain
+            parameters:
+                - in: query
+                  name: limit
+                  schema:
+                      type: string
+                      default: 5
+                  required: false
+                  description: The information of the last 'n' epochs.
+            responses:
+                '200':
+                    description: The faucet balance for the given address
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: object
+                                    properties:
+                                        epoch:
+                                            type: integer
+                                            description: Epoch number
+                                            example: 836
+                                        duration:
+                                            type: string
+                                            description: Epoch duration in milliseconds (as a string)
+                                            example: '22170000'
+                                        startTime:
+                                            type: string
+                                            format: date-time
+                                            description: Start time in ISO 8601 format
+                                            example: '2025-02-07T00:00:01.000Z'
+                                        endTime:
+                                            type: string
+                                            format: date-time
+                                            description: End time in ISO 8601 format
+                                            example: '2025-02-07T06:09:31.000Z'
+                '400':
+                    description: Invalid address provided
+                '500':
+                    description: Internal server error
     /api/drep:
         get:
             summary: Fetch DRep list
