@@ -465,7 +465,7 @@ export const fetchDrepRegistrationDetails = async (dRepId: string, isScript?: bo
         scriptPart = [false, false]
     }
     const result = (await prisma.$queryRaw`
-        select json_build_object('url', va.url, 'deposit', dr.deposit, 'drepName', od.given_name, 'time', b.time, 'txId', ENCODE(tx.hash, 'hex'))
+        select json_build_object('url', va.url, 'deposit', dr.deposit, 'drepName', od.given_name, 'time', b.time, 'txHash', ENCODE(tx.hash, 'hex'))
         from drep_hash dh
                  join drep_registration dr on dh.id = dr.drep_hash_id
                  join tx on dr.tx_id = tx.id
