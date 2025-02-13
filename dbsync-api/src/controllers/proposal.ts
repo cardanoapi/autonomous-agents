@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import { handlerWrapper } from "../errors/AppError";
-import { fetchProposalVoteCount, fetchProposals } from "../repository/proposal";
+import { fetchProposalVoteCount, fetchProposalVotes, fetchProposals } from "../repository/proposal";
 import { formatProposal, validateHash } from "../helpers/validator";
 import { ProposalTypes, SortTypes } from "../types/proposal";
 
@@ -34,7 +34,17 @@ const getProposalVoteCount=async(req:Request, res:Response)=>{
   return res.status(200).json(totalVoteCount)
 }
 
+const getProposalVotes=async(req:Request, res:Response)=>{
+  const proposal = formatProposal(req.params.id as string)
+  if (!proposal){
+    return res.status(400).json({message:"Provide valid govAction Id hex or bech32"})
+  }
+  const votes = await fetchProposalVotes(proposal.id, proposal.ix);
+  return res.status(200).json(votes)
+}
+
 router.get('/',handlerWrapper(getProposals))
 router.get('/:id/vote-count', handlerWrapper(getProposalVoteCount))
+router.get('/:id/votes', handlerWrapper(getProposalVotes))
 
 export default router
