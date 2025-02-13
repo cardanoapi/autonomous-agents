@@ -291,7 +291,7 @@ export const fetchProposalVotes = async (
             b.epoch_no AS epoch,
             b.slot_no AS blockSlot,
             ENCODE(tx.hash, 'hex') AS tx,
-            txo.index AS proposalIndex
+            txo.index AS index
         FROM voting_procedure vp
         JOIN govAction 
             ON vp.gov_action_proposal_id = govAction.id
@@ -360,7 +360,7 @@ export const fetchProposalVotes = async (
                 b.epoch_no AS epoch,
                 b.slot_no AS blockSlot,
                 ENCODE(tx.hash, 'hex') AS tx,
-                txo.index AS proposalIndex
+                txo.index AS index
             FROM voting_procedure vp
             JOIN govAction 
                 ON vp.gov_action_proposal_id = govAction.id
@@ -397,12 +397,14 @@ export const fetchProposalVotes = async (
             epoch: number
             slot: number
             tx: string
-            proposalIndex: number
+            index: number
         }
     }
     const parsedResults: VoteRecord[] = []
     results.forEach((result: Record<string, any>) => {
-        const votingPower = includeVotingPower? {votingPower: result.voterinfo.votingPower ? result.voterinfo.votingPower.toString() : '0'} : undefined
+        const votingPower = includeVotingPower
+            ? { votingPower: result.voterinfo.votingPower ? result.voterinfo.votingPower.toString() : '0' }
+            : undefined
         const parsedResult: VoteRecord = {
             vote: result.vote,
             voter: {
@@ -418,7 +420,7 @@ export const fetchProposalVotes = async (
                 epoch: parseInt(result.epoch),
                 slot: parseInt(result.blockslot),
                 tx: result.tx,
-                proposalIndex: result.proposalindex,
+                index: result.index,
             },
         }
         parsedResults.push(parsedResult)
