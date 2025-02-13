@@ -1,10 +1,16 @@
-import { Prisma } from "@prisma/client";
-import { prisma } from "../config/db";
-import { formatResult } from "../helpers/formatter";
-import { ProposalTypes, SortTypes } from "../types/proposal";
+import { Prisma } from '@prisma/client'
+import { prisma } from '../config/db'
+import { formatResult } from '../helpers/formatter'
+import { ProposalTypes, SortTypes } from '../types/proposal'
 
-export const fetchProposals=async(page:number,size:number,proposal?:string,proposalType?:ProposalTypes,sort?:SortTypes)=>{
-  const result = await prisma.$queryRaw `
+export const fetchProposals = async (
+    page: number,
+    size: number,
+    proposal?: string,
+    proposalType?: ProposalTypes,
+    sort?: SortTypes
+) => {
+    const result = (await prisma.$queryRaw`
 WITH LatestDrepDistr AS (
     SELECT
         *,
@@ -150,7 +156,11 @@ FROM
   AND gov_action_proposal.enacted_epoch IS NULL
   AND gov_action_proposal.expired_epoch IS NULL
   AND gov_action_proposal.dropped_epoch IS NULL 
-${proposalType?Prisma.sql`Where gov_action_proposal.type = ${Prisma.raw(`'${proposalType}'::govactiontype`)}`:Prisma.sql``} 
+${
+    proposalType
+        ? Prisma.sql`Where gov_action_proposal.type = ${Prisma.raw(`'${proposalType}'::govactiontype`)}`
+        : Prisma.sql``
+} 
 GROUP BY
     (gov_action_proposal.id,
      stake_address.view,
@@ -179,11 +189,31 @@ GROUP BY
      always_abstain_voting_power.amount,
      prev_gov_action.index,
      prev_gov_action_tx.hash) 
-  ${proposal ? Prisma.sql`HAVING creator_tx.hash = decode(${proposal},'hex')`: Prisma.sql``}
-  ${sort==='ExpiryDate'?Prisma.sql`ORDER BY epoch_utils.last_epoch_end_time + epoch_utils.epoch_duration * (gov_action_proposal.expiration - epoch_utils.last_epoch_no) DESC`:Prisma.sql`ORDER BY creator_block.time DESC`}
-  OFFSET ${(page?(page-1): 0) * (size?size:10)}
-  FETCH NEXT ${size?size:10} ROWS ONLY
-  ` as Record<any,any>[]
-  const totalCount = result.length?Number(result[0].total_count):0
-  return {items:formatResult(result),totalCount}
+  ${proposal ? Prisma.sql`HAVING creator_tx.hash = decode(${proposal},'hex')` : Prisma.sql``}
+  ${
+      sort === 'ExpiryDate'
+          ? Prisma.sql`ORDER BY epoch_utils.last_epoch_end_time + epoch_utils.epoch_duration * (gov_action_proposal.expiration - epoch_utils.last_epoch_no) DESC`
+          : Prisma.sql`ORDER BY creator_block.time DESC`
+  }
+  OFFSET ${(page ? page - 1 : 0) * (size ? size : 10)}
+  FETCH NEXT ${size ? size : 10} ROWS ONLY
+  `) as Record<any, any>[]
+    const totalCount = result.length ? Number(result[0].total_count) : 0
+    return { items: formatResult(result), totalCount }
+}
+
+// /api/propopsals/${id}/vote-count
+export const fetchProposalVoteCount = async (proposalId: string, proposalIndex: number) => {
+    const result = (await prisma.$queryRaw`WITH govAction AS (
+                SELECT g.id
+                FROM gov_action_proposal g
+                JOIN tx ON tx.id = g.tx_id
+                WHERE tx.hash = DECODE(${proposalId}, 'hex')
+                AND g.index = ${proposalIndex}
+            )
+            SELECT COUNT(vp.id) 
+            FROM voting_procedure vp 
+            JOIN govAction ON vp.gov_action_proposal_id = govAction.id;
+        `) as Record<string, any>
+    return parseInt(result[0].count)
 }
