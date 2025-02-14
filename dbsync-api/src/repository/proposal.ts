@@ -270,9 +270,8 @@ export const fetchProposalVotes = async (
     proposalIndex: number,
     includeVotingPower?: boolean | false
 ) => {
-    let results
-    if (includeVotingPower) {
-        results = (await prisma.$queryRaw`
+    
+    const results = (await prisma.$queryRaw`
         WITH govAction AS (
             SELECT 
                 g.id, 
@@ -300,29 +299,36 @@ export const fetchProposalVotes = async (
                 WHEN vp.drep_voter IS NOT NULL THEN 
                     jsonb_build_object(
                         'credential', ENCODE(dh.raw, 'hex'),
-                        'hasScript', dh.has_script,
-                        'votingPower', (
-                            SELECT dr.amount 
-                            FROM drep_distr dr 
-                            WHERE dr.hash_id = vp.drep_voter 
-                            AND epoch_no = (
-                                SELECT LEAST(latest_no, govAction.expiration) 
-                                FROM latestEpoch
-                            )
-                        )
+                        'hasScript', dh.has_script
+                        ${
+                            includeVotingPower? 
+                                Prisma.sql`, 'votingPower', (
+                                    SELECT dr.amount 
+                                    FROM drep_distr dr 
+                                    WHERE dr.hash_id = vp.drep_voter 
+                                    AND epoch_no = (
+                                        SELECT LEAST(latest_no, govAction.expiration) 
+                                        FROM latestEpoch
+                                    )
+                                )` : Prisma.sql ``
+                        }
                     )
                 WHEN vp.pool_voter IS NOT NULL THEN 
                     jsonb_build_object(
-                        'credential', ENCODE(ph.hash_raw, 'hex'),
-                        'votingPower', (
-                            SELECT ps.voting_power 
-                            FROM pool_stat ps 
-                            WHERE ps.pool_hash_id = vp.pool_voter
-                            AND ps.epoch_no = (
-                                SELECT LEAST(latest_no, govAction.expiration)
-                                FROM latestEpoch
-                            )
-                        )
+                        'credential', ENCODE(ph.hash_raw, 'hex')
+                        ${
+                            includeVotingPower? 
+                                Prisma.sql`, 'votingPower', (
+                                    SELECT ps.voting_power 
+                                    FROM pool_stat ps 
+                                    WHERE ps.pool_hash_id = vp.pool_voter
+                                    AND ps.epoch_no = (
+                                        SELECT LEAST(latest_no, govAction.expiration)
+                                        FROM latestEpoch
+                                    )
+                                )` : Prisma.sql ``
+                        }
+                        
                     )
                 WHEN vp.committee_voter IS NOT NULL THEN 
                     jsonb_build_object(
@@ -358,76 +364,6 @@ export const fetchProposalVotes = async (
             ON True
         ORDER BY b.time DESC;
     `) as Record<string, any>
-    } else {
-        results = (await prisma.$queryRaw`
-            WITH govAction AS (
-                SELECT 
-                    g.id, 
-                    g.expiration
-                FROM gov_action_proposal g
-                JOIN tx ON tx.id = g.tx_id
-                WHERE tx.hash = DECODE(
-                    ${proposalId}, 
-                    'hex'
-                )
-                AND g.index = ${proposalIndex}
-            ),
-            latestEpoch AS (
-                SELECT 
-                    e.no AS latest_no 
-                FROM epoch e 
-                ORDER BY e.no DESC 
-                LIMIT 1
-            )
-            SELECT 
-                govAction.expiration AS expirationEpoch,
-                latestEpoch.latest_no AS latestEpoch,
-                vp.voter_role AS voterRole,
-                CASE 
-                    WHEN vp.drep_voter IS NOT NULL THEN 
-                        jsonb_build_object(
-                            'credential', ENCODE(dh.raw, 'hex'),
-                            'hasScript', dh.has_script
-                        )
-                    WHEN vp.pool_voter IS NOT NULL THEN 
-                        jsonb_build_object(
-                            'credential', ENCODE(ph.hash_raw, 'hex')
-                        )
-                    WHEN vp.committee_voter IS NOT NULL THEN 
-                        jsonb_build_object(
-                            'credential', ENCODE(ch.raw, 'hex'),
-                            'hasScript', ch.has_script
-                        )
-                    ELSE NULL
-                END AS voterInfo, 
-                vp.vote AS vote,
-                b.time AS time,
-                ENCODE(b.hash, 'hex') AS block,
-                b.block_no AS blockNo,
-                b.epoch_no AS epoch,
-                b.slot_no AS blockSlot,
-                ENCODE(tx.hash, 'hex') AS tx,
-                txo.index AS index
-            FROM voting_procedure vp
-            JOIN govAction 
-                ON vp.gov_action_proposal_id = govAction.id
-            JOIN tx 
-                ON tx.id = vp.tx_id
-            JOIN block b 
-                ON b.id = tx.block_id
-            JOIN tx_out txo 
-                ON txo.tx_id = tx.id
-            LEFT JOIN drep_hash dh 
-                ON dh.id = vp.drep_voter
-            LEFT JOIN pool_hash ph 
-                ON ph.id = vp.pool_voter
-            LEFT JOIN committee_hash ch 
-                ON ch.id = vp.committee_voter
-            JOIN latestEpoch 
-                ON True
-            ORDER BY b.time DESC;
-        `) as Record<string, any>
-    }
 
     type VoteRecord = {
         voter: {
@@ -476,5 +412,6 @@ export const fetchProposalVotes = async (
 }
 
 // /api/proposals/${id}?include-vote-count=false/true (default false)
+export const fetchProposalById = async (proposalId: string, proposaIndex: boolean, includeVoteCount?: boolean) => {
 
-export const fetchProposalById = async (proposalId: string, proposaIndex: boolean, includeVoteCount?: boolean) => {}
+}
