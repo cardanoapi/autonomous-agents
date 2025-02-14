@@ -204,20 +204,67 @@ GROUP BY
 
 // /api/propopsals/${id}/vote-count
 export const fetchProposalVoteCount = async (proposalId: string, proposalIndex: number) => {
-    const result = (await prisma.$queryRaw`WITH govAction AS (
-                SELECT g.id
-                FROM gov_action_proposal g
-                JOIN tx ON tx.id = g.tx_id
-                WHERE tx.hash = DECODE(${proposalId}, 'hex')
-                AND g.index = ${proposalIndex}
-            )
-            SELECT COUNT(vp.id) 
+    const result = (await prisma.$queryRaw`
+        WITH govAction AS (
+            SELECT g.id
+            FROM gov_action_proposal g
+            JOIN tx ON tx.id = g.tx_id
+            WHERE tx.hash = DECODE(${proposalId}, 'hex')
+            AND g.index = ${proposalIndex}
+        ),
+        rankedVotes AS (
+            SELECT DISTINCT ON (COALESCE(vp.drep_voter, vp.pool_voter, vp.committee_voter)) 
+                vp.id, vp.vote, vp.voter_role, vp.gov_action_proposal_id
             FROM voting_procedure vp 
-            JOIN govAction ON vp.gov_action_proposal_id = govAction.id;
-        `) as Record<string, any>
-    return parseInt(result[0].count)
+            JOIN govAction ON vp.gov_action_proposal_id = govAction.id
+            ORDER BY COALESCE(vp.drep_voter, vp.pool_voter, vp.committee_voter), vp.id DESC
+        )
+        SELECT 
+            govAction.id AS gov_action_id,
+            COALESCE(COUNT(*) FILTER (WHERE voter_role = 'DRep' AND vote = 'Yes'), 0) AS drepYesCount,
+            COALESCE(COUNT(*) FILTER (WHERE voter_role = 'DRep' AND vote = 'No'), 0) AS drepNoCount,
+            COALESCE(COUNT(*) FILTER (WHERE voter_role = 'DRep' AND vote = 'Abstain'), 0) AS drepAbstainCount,
+            COALESCE(COUNT(*) FILTER (WHERE voter_role = 'SPO' AND vote = 'Yes'), 0) AS SPOyesCount,
+            COALESCE(COUNT(*) FILTER (WHERE voter_role = 'SPO' AND vote = 'No'), 0) AS SPONoCount,
+            COALESCE(COUNT(*) FILTER (WHERE voter_role = 'SPO' AND vote = 'Abstain'), 0) AS SPOAbstainCount,
+            COALESCE(COUNT(*) FILTER (WHERE voter_role = 'ConstitutionalCommittee' AND vote = 'Yes'), 0) AS CommitteeYesCount,
+            COALESCE(COUNT(*) FILTER (WHERE voter_role = 'ConstitutionalCommittee' AND vote = 'No'), 0) AS CommitteenoCount,
+            COALESCE(COUNT(*) FILTER (WHERE voter_role = 'ConstitutionalCommittee' AND vote = 'Abstain'), 0) AS CommitteeAbstainCount
+        FROM govAction
+        LEFT JOIN rankedVotes ON rankedVotes.gov_action_proposal_id = govAction.id
+        GROUP BY govAction.id;`) as Record<string, any>
+    type Vote = {
+        yes: number
+        no: number
+        abstain: number
+    }
+    type ParsedVoteCountRecord = {
+        drep: Vote
+        pool: Vote
+        cc: Vote
+    }
+    const resultData = result[0]
+    const parsedResult: ParsedVoteCountRecord = {
+        drep: {
+            yes: parseInt(resultData.drepyescount),
+            no: parseInt(resultData.drepnocount),
+            abstain: parseInt(resultData.drepabstaincount),
+        },
+        pool: {
+            yes: parseInt(resultData.spoyescount),
+            no: parseInt(resultData.sponocount),
+            abstain: parseInt(resultData.spoabstaincount),
+        },
+        cc: {
+            yes: parseInt(resultData.committeeyescount),
+            no: parseInt(resultData.committeenocount),
+            abstain: parseInt(resultData.committeeabstaincount),
+        },
+    }
+    return parsedResult
 }
 
+// /api/proposals/${id}/votes
 export const fetchProposalVotes = async (
     proposalId: string,
     proposalIndex: number,
@@ -427,3 +474,7 @@ export const fetchProposalVotes = async (
     })
     return parsedResults
 }
+
+// /api/proposals/${id}?include-vote-count=false/true (default false)
+
+export const fetchProposalById = async (proposalId: string, proposaIndex: boolean, includeVoteCount?: boolean) => {}
