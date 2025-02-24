@@ -203,65 +203,475 @@ GROUP BY
 }
 
 // /api/propopsals/${id}/vote-count
-export const fetchProposalVoteCount = async (proposalId: string, proposalIndex: number) => {
-    const result = (await prisma.$queryRaw`
-        WITH govAction AS (
-            SELECT g.id
-            FROM gov_action_proposal g
-            JOIN tx ON tx.id = g.tx_id
-            WHERE tx.hash = DECODE(${proposalId}, 'hex')
-            AND g.index = ${proposalIndex}
-        ),
-        rankedVotes AS (
-            SELECT DISTINCT ON (COALESCE(vp.drep_voter, vp.pool_voter, vp.committee_voter)) 
-                vp.id, vp.vote, vp.voter_role, vp.gov_action_proposal_id
-            FROM voting_procedure vp 
-            JOIN govAction ON vp.gov_action_proposal_id = govAction.id
-            ORDER BY COALESCE(vp.drep_voter, vp.pool_voter, vp.committee_voter), vp.id DESC
+export const fetchProposalVoteCount = async (proposalId: string, proposalIndex: number, voter?: string) => {
+    const drepVoteQuery = Prisma.sql`
+        , drepVoteRecord AS (
+            WITH epochDreps AS (
+                -- Get the latest DRep distribution for the selected epoch
+                SELECT * 
+                FROM drep_distr ddr
+                WHERE ddr.epoch_no = (SELECT epoch FROM latestOrGovActionExpiration)
+            ),
+        
+            abstainAndNoConfidenceDreps AS (
+                -- Get voting power for "always abstain" and "always no confidence" Dreps
+                SELECT DISTINCT 
+                    dr.hash_id,
+                    dh.view AS drepType,
+                    COALESCE(
+                        (SELECT dr_inner.amount
+                        FROM drep_distr dr_inner
+                        WHERE dr_inner.hash_id = dr.hash_id
+                        AND dr_inner.epoch_no = (SELECT epoch FROM latestOrGovActionExpiration)
+                        ), 0
+                    ) AS latestVotingPower
+                FROM drep_distr dr
+                JOIN drep_hash dh ON dh.id = dr.hash_id
+                WHERE dr.epoch_no BETWEEN (SELECT submittedEpoch FROM ga)
+                    AND (SELECT expirationEpoch FROM ga)
+                    AND dh.view IN ('drep_always_abstain', 'drep_always_no_confidence')
+            ),
+        
+            inactiveDreps AS (
+                -- Calculate the total voting power of inactive Dreps
+                SELECT 
+                    SUM(amount) AS amnt,
+                    COUNT(DISTINCT epochDreps.hash_id) AS count
+                FROM epochDreps
+                LEFT JOIN govActionVotes ON govActionVotes.drep_voter = epochDreps.hash_id
+                WHERE active_until > (SELECT expirationEpoch FROM ga)
+                AND govActionVotes.voter_role IS NULL
+            ),
+        
+            votePowers AS (
+                -- Calculate the total voting power for each vote option
+                SELECT  
+                    govActionVotes.vote,
+                    SUM(epochDreps.amount) AS power,
+                    COUNT(DISTINCT epochDreps.hash_id) AS count
+                FROM govActionVotes
+                JOIN epochDreps ON epochDreps.hash_id = govActionVotes.drep_voter
+                GROUP BY govActionVotes.vote
+            )
+        
+            -- Final union query to get all voting statistics
+            SELECT 
+                text(votePowers.vote) AS vote_type, 
+                votePowers.power,
+                votePowers.count
+            FROM votePowers
+        
+            UNION
+        
+            SELECT 
+                drep_hash.view, 
+                epochDreps.amount,
+                COUNT(DISTINCT drep_hash.id) AS count
+            FROM drep_hash
+            JOIN epochDreps ON drep_hash.id = epochDreps.hash_id
+            WHERE drep_hash.view IN ('drep_always_abstain', 'drep_always_no_confidence')
+            GROUP BY drep_hash.view, epochDreps.amount
+        
+            UNION  
+        
+            SELECT 
+                'total_distribution', 
+                (SELECT SUM(amount) FROM epochDreps),
+                (SELECT COUNT(DISTINCT hash_id) FROM epochDreps)
+        
+            UNION 
+        
+            SELECT 
+                'inactive_votes', 
+                (SELECT amnt FROM inactiveDreps),
+                (SELECT count FROM inactiveDreps)
+        )    
+    `
+    const drepSelectionQuery = Prisma.sql`SELECT 'drep' AS voterRole, (SELECT jsonb_agg(to_jsonb(drepVoteRecord)) FROM drepVoteRecord) AS voteRecord`
+    const spoVoteQuery = Prisma.sql`
+        , poolVoteRecord AS (
+            WITH epochSPOs AS (
+                -- Get the latest stake pool operator distribution for the selected epoch
+                SELECT * 
+                FROM pool_stat ps
+                WHERE ps.epoch_no = (SELECT epoch FROM latestOrGovActionExpiration)
+            ),
+        
+            votePowers AS (
+                -- Calculate the total voting power for each vote option
+                SELECT  
+                    govActionVotes.vote,
+                    SUM(epochSPOs.voting_power) AS power,
+                    COUNT(DISTINCT epochSPOs.pool_hash_id) AS count
+                FROM govActionVotes
+                JOIN epochSPOs ON epochSPOs.pool_hash_id = govActionVotes.pool_voter
+                GROUP BY govActionVotes.vote
+            )
+        
+            SELECT 
+                text(votePowers.vote) AS vote_type, 
+                votePowers.power,
+                votePowers.count
+            FROM votePowers
+        
+            UNION 
+        
+            SELECT 
+                'total_distribution', 
+                (SELECT SUM(voting_power) FROM epochSPOs),
+                (SELECT COUNT(DISTINCT pool_hash_id) FROM epochSPOs)
         )
+    `
+    const spoSelectionQuery = Prisma.sql`SELECT 'spo' AS voterRole, (SELECT jsonb_agg(to_jsonb(poolVoteRecord)) FROM poolVoteRecord) AS voteRecord`
+    const ccVoteQuery = Prisma.sql`
+        , committeeVoteRecord AS (
+            WITH CommitteeVotes AS (
+                -- Count committee votes for each vote type
+                SELECT 
+                    SUM(CASE WHEN vote = 'Yes' THEN 1 ELSE 0 END) AS cc_Yes_Votes,
+                    SUM(CASE WHEN vote = 'No' THEN 1 ELSE 0 END) AS cc_No_Votes,
+                    SUM(CASE WHEN vote = 'Abstain' THEN 1 ELSE 0 END) AS cc_Abstain_Votes
+                FROM voting_procedure AS vp
+                JOIN ga ON ga.id = vp.gov_action_proposal_id
+                WHERE vp.committee_voter IS NOT NULL
+                AND (vp.tx_id, vp.committee_voter, vp.gov_action_proposal_id) IN (
+                    SELECT MAX(tx_id), committee_voter, gov_action_proposal_id
+                    FROM voting_procedure
+                    WHERE committee_voter IS NOT NULL
+                    GROUP BY committee_voter, gov_action_proposal_id
+                )
+                GROUP BY gov_action_proposal_id
+            ),
+            CommitteeData AS (
+                SELECT DISTINCT ON (ch.raw)
+                    encode(ch.raw, 'hex') AS hash,
+                    cm.expiration_epoch,
+                    ch.has_script
+                FROM committee_member cm
+                JOIN committee_hash ch ON cm.committee_hash_id = ch.id
+                WHERE cm.expiration_epoch > (SELECT epoch FROM latestOrGovActionExpiration)
+                ORDER BY ch.raw, cm.expiration_epoch DESC
+            )
+            SELECT 'total_distribution' as vote_type, COUNT(DISTINCT hash) AS count
+            FROM CommitteeData
+            UNION ALL
+            SELECT 'yes_votes' as vote_type, COALESCE(cc_Yes_Votes, 0) AS count FROM CommitteeVotes
+            UNION ALL
+            SELECT 'no_votes' as vote_type, COALESCE(cc_No_Votes, 0) AS count FROM CommitteeVotes
+            UNION ALL
+            SELECT 'abstain_votes' as vote_type, COALESCE(cc_Abstain_Votes, 0) AS count FROM CommitteeVotes
+        )
+    `
+    const ccSelectionQuery = Prisma.sql`SELECT 'cc' AS voterRole, (SELECT jsonb_agg(to_jsonb(committeeVoteRecord)) FROM committeeVoteRecord) AS voteRecord`
+    const temp = (await prisma.$queryRaw`
+    WITH ga AS (
+        -- Get governance action details including ID, submitted epoch, and expiration epoch
         SELECT 
-            govAction.id AS gov_action_id,
-            COALESCE(COUNT(*) FILTER (WHERE voter_role = 'DRep' AND vote = 'Yes'), 0) AS drepYesCount,
-            COALESCE(COUNT(*) FILTER (WHERE voter_role = 'DRep' AND vote = 'No'), 0) AS drepNoCount,
-            COALESCE(COUNT(*) FILTER (WHERE voter_role = 'DRep' AND vote = 'Abstain'), 0) AS drepAbstainCount,
-            COALESCE(COUNT(*) FILTER (WHERE voter_role = 'SPO' AND vote = 'Yes'), 0) AS SPOyesCount,
-            COALESCE(COUNT(*) FILTER (WHERE voter_role = 'SPO' AND vote = 'No'), 0) AS SPONoCount,
-            COALESCE(COUNT(*) FILTER (WHERE voter_role = 'SPO' AND vote = 'Abstain'), 0) AS SPOAbstainCount,
-            COALESCE(COUNT(*) FILTER (WHERE voter_role = 'ConstitutionalCommittee' AND vote = 'Yes'), 0) AS CommitteeYesCount,
-            COALESCE(COUNT(*) FILTER (WHERE voter_role = 'ConstitutionalCommittee' AND vote = 'No'), 0) AS CommitteenoCount,
-            COALESCE(COUNT(*) FILTER (WHERE voter_role = 'ConstitutionalCommittee' AND vote = 'Abstain'), 0) AS CommitteeAbstainCount
-        FROM govAction
-        LEFT JOIN rankedVotes ON rankedVotes.gov_action_proposal_id = govAction.id
-        GROUP BY govAction.id;`) as Record<string, any>
-    type Vote = {
+            g.id, 
+            b.epoch_no AS submittedEpoch, 
+            g.expiration AS expirationEpoch
+        FROM gov_action_proposal g
+        JOIN tx ON tx.id = g.tx_id
+        JOIN block b ON b.id = tx.block_id
+        WHERE tx.hash = DECODE(
+            ${proposalId}, 'hex'
+        )
+        AND g.index = ${proposalIndex}
+    ),
+    
+    govActionVotes AS (
+        -- Get latest votes for each unique voter (DRep, Pool, or Committee) by role
+        SELECT 
+            rv.voter_role, 
+            rv.vote, 
+            rv.drep_voter, 
+            rv.committee_voter, 
+            rv.pool_voter
+        FROM (
+            SELECT 
+                vp.*, 
+                t.hash AS tx_hash, 
+                b.block_no AS block_no,
+                ROW_NUMBER() OVER (
+                    PARTITION BY vp.voter_role, 
+                    COALESCE(vp.drep_voter, vp.pool_voter, vp.committee_voter) 
+                    ORDER BY t.block_id DESC
+                ) AS rn
+            FROM voting_procedure vp
+            JOIN ga ON vp.gov_action_proposal_id = ga.id
+            JOIN public.tx t ON t.id = vp.tx_id
+            JOIN public.block b ON b.id = t.block_id
+            WHERE vp.invalid IS NULL
+        ) rv 
+        WHERE rn = 1
+    ),
+    
+    latestOrGovActionExpiration AS (
+        -- Determine the latest epoch to consider for voting calculations
+        SELECT LEAST(
+            (SELECT e.no FROM epoch e ORDER BY e.id DESC LIMIT 1),
+            (SELECT g.expirationEpoch FROM ga g)
+        ) AS epoch
+    )
+
+    ${voter === 'drep' || voter === undefined ? Prisma.sql`${drepVoteQuery}` : Prisma.sql``}
+    ${voter === 'spo' || voter === undefined ? Prisma.sql`${spoVoteQuery}` : Prisma.sql``}
+    ${voter === 'cc' || voter === undefined ? Prisma.sql`${ccVoteQuery}` : Prisma.sql``}
+    
+    ${voter === 'drep' ? Prisma.sql`${drepSelectionQuery}` : Prisma.sql``}
+    ${voter === 'spo' ? Prisma.sql`${spoSelectionQuery}` : Prisma.sql``}
+    ${voter === 'cc' ? Prisma.sql`${ccSelectionQuery}` : Prisma.sql``}
+    
+    ${
+        voter == undefined
+            ? Prisma.sql`${drepSelectionQuery} UNION ${spoSelectionQuery} UNION ${ccSelectionQuery}`
+            : Prisma.sql``
+    }
+
+    `) as Record<string, any>
+    const tempResult = temp
+    type PowerAndCount = {
+        power: string | null
+        count?: number
+    }
+    type CCVoteRecord = {
+        totalDistribution: number
         yes: number
         no: number
         abstain: number
+        notVoted: number
     }
-    type ParsedVoteCountRecord = {
-        drep: Vote
-        pool: Vote
-        cc: Vote
+    type Delegators = {
+        abstain: PowerAndCount
+        noConfidence: PowerAndCount
     }
-    const resultData = result[0]
-    const parsedResult: ParsedVoteCountRecord = {
-        drep: {
-            yes: parseInt(resultData.drepyescount),
-            no: parseInt(resultData.drepnocount),
-            abstain: parseInt(resultData.drepabstaincount),
-        },
-        pool: {
-            yes: parseInt(resultData.spoyescount),
-            no: parseInt(resultData.sponocount),
-            abstain: parseInt(resultData.spoabstaincount),
-        },
-        cc: {
-            yes: parseInt(resultData.committeeyescount),
-            no: parseInt(resultData.committeenocount),
-            abstain: parseInt(resultData.committeeabstaincount),
-        },
+    type DRepVoteRecord = {
+        totalDistribution: PowerAndCount
+        yes: PowerAndCount
+        no: PowerAndCount
+        abstain: PowerAndCount
+        inactive: PowerAndCount
+        notVoted: PowerAndCount
+        delegators: Delegators
     }
-    return parsedResult
+    type SPOVoteRecord = {
+        totalDistribution: PowerAndCount
+        yes: PowerAndCount
+        no: PowerAndCount
+        abstain: PowerAndCount
+        notVoted: PowerAndCount
+    }
+    let ccVotes: any[] = [],
+        spoVotes: any[] = [],
+        drepVotes: any[] = []
+    let ccVoteRecord: CCVoteRecord | undefined,
+        drepVoteRecord: DRepVoteRecord | undefined,
+        spoVoteRecord: SPOVoteRecord | undefined
+    tempResult.forEach((res: any) => {
+        if (res.voterrole == 'cc') {
+            ccVotes = res.voterecord ? res.voterecord : []
+        }
+        if (res.voterrole == 'spo') {
+            spoVotes = res.voterecord ? res.voterecord : []
+        }
+        if (res.voterrole == 'drep') {
+            drepVotes = res.voterecord ? res.voterecord : []
+        }
+    })
+    let emptyPowerAndCount: PowerAndCount = { power: null }
+    if (ccVotes) {
+        let total, yes, no, abstain
+        for (const vote of ccVotes) {
+            switch (vote.vote_type) {
+                case 'total_distribution':
+                    total = vote.count
+                    break
+                case 'yes_votes':
+                    yes = vote.count
+                    break
+                case 'no_votes':
+                    no = vote.count
+                    break
+                case 'abstain_votes':
+                    abstain = vote.count
+                    break
+                default:
+                    break
+            }
+        }
+        ccVoteRecord = {
+            totalDistribution: total || 0,
+            yes: yes || 0,
+            no: no || 0,
+            abstain: abstain || 0,
+            notVoted: total || 0 - (yes || 0 + no || 0 + abstain || 0),
+        }
+    }
+    if (spoVotes) {
+        let total, yes, no, abstain
+
+        for (const vote of spoVotes) {
+            switch (vote.vote_type) {
+                case 'total_distribution':
+                    total = {
+                        count: vote.count,
+                        power: vote.power ? vote.power.toString() : null,
+                    }
+                    break
+                case 'Yes':
+                    yes = {
+                        count: vote.count,
+                        power: vote.power ? vote.power.toString() : null,
+                    }
+                    break
+                case 'No':
+                    no = {
+                        count: vote.count,
+                        power: vote.power ? vote.power.toString() : null,
+                    }
+                    break
+                case 'Abstain':
+                    abstain = {
+                        count: vote.count,
+                        power: vote.power ? vote.power.toString() : null,
+                    }
+                    break
+                default:
+                    break
+            }
+        }
+
+        // Ensure count for notVoted is correctly calculated
+        const totalCount = total?.count || 0,
+            totalPower = total?.power || 0
+        const yesCount = yes?.count || 0,
+            yesPower = yes?.power || 0
+        const noCount = no?.count || 0,
+            noPower = no?.power || 0
+        const abstainCount = abstain?.count || 0,
+            abstainPower = abstain?.power || 0
+
+        // Calculate notVoted counts
+        const notVotedCount = totalCount - yesCount - noCount - abstainCount
+
+        // Calculate power for notVoted (using BigInt for calculation)
+        const notVotedPower = (
+            BigInt(totalPower) -
+            BigInt(yesPower) -
+            BigInt(noPower) -
+            BigInt(abstainPower)
+        ).toString()
+
+        spoVoteRecord = {
+            totalDistribution: total || emptyPowerAndCount,
+            yes: yes || emptyPowerAndCount,
+            no: no || emptyPowerAndCount,
+            abstain: abstain || emptyPowerAndCount,
+            notVoted: {
+                count: notVotedCount,
+                power: notVotedPower,
+            },
+        }
+    }
+    if (drepVotes) {
+        let total, yes, no, abstain, inactive, alwaysAbstain, alwaysNoConfidence
+        for (const vote of drepVotes) {
+            switch (vote.vote_type) {
+                case 'total_distribution':
+                    total = {
+                        count: vote.count,
+                        power: vote.power ? vote.power.toString() : null,
+                    }
+                    break
+                case 'Yes':
+                    yes = {
+                        count: vote.count,
+                        power: vote.power ? vote.power.toString() : null,
+                    }
+                    break
+                case 'No':
+                    no = {
+                        count: vote.count,
+                        power: vote.power ? vote.power.toString() : null,
+                    }
+                    break
+                case 'Abstain':
+                    abstain = {
+                        count: vote.count,
+                        power: vote.power ? vote.power.toString() : null,
+                    }
+                    break
+                case 'inactive_votes':
+                    inactive = {
+                        count: vote.count,
+                        power: vote.power ? vote.power.toString() : null,
+                    }
+                    break
+                case 'drep_always_abstain':
+                    alwaysAbstain = {
+                        count: vote.count,
+                        power: vote.power ? vote.power.toString() : null,
+                    }
+                    break
+                case 'drep_always_no_confidence':
+                    alwaysNoConfidence = {
+                        count: vote.count,
+                        power: vote.power ? vote.power.toString() : null,
+                    }
+                    break
+                default:
+                    break
+            }
+        }
+        const totalCount = total?.count || 0,
+            totalPower = total?.power || 0
+        const yesCount = yes?.count || 0,
+            yesPower = yes?.power || 0
+        const noCount = no?.count || 0,
+            noPower = no?.power || 0
+        const abstainCount = abstain?.count || 0,
+            abstainPower = abstain?.power || 0
+        const alwaysAbstainCount = alwaysAbstain?.count || 0,
+            alwaysAbstainPower = alwaysAbstain?.power || 0
+        const alwaysNoConfidenceCount = alwaysNoConfidence?.count || 0,
+            alwaysNoConfidencePower = alwaysNoConfidence?.power || 0
+
+        const notVotedCount =
+            totalCount - (yesCount + noCount + abstainCount + alwaysAbstainCount + alwaysNoConfidenceCount)
+        const notVotedPower = (
+            BigInt(totalPower) -
+            BigInt(yesPower) -
+            BigInt(noPower) -
+            BigInt(abstainPower) -
+            BigInt(alwaysAbstainPower) -
+            BigInt(alwaysNoConfidencePower)
+        ).toString()
+
+        drepVoteRecord = {
+            totalDistribution: total || emptyPowerAndCount,
+            yes: yes || emptyPowerAndCount,
+            no: no || emptyPowerAndCount,
+            abstain: abstain || emptyPowerAndCount,
+            inactive: inactive || emptyPowerAndCount,
+            notVoted: {
+                count: notVotedCount,
+                power: notVotedPower,
+            },
+            delegators: {
+                abstain: { power: alwaysAbstain?.power || 0 },
+                noConfidence: { power: alwaysNoConfidence?.power || 0 },
+            },
+        }
+    }
+    const result = {
+        drep: drepVoteRecord,
+        spo: spoVoteRecord,
+        cc: ccVoteRecord,
+    }
+    if (voter == 'drep') return drepVoteRecord
+    else if (voter == 'spo') return spoVoteRecord
+    else if (voter == 'cc') return ccVoteRecord
+    else return result
 }
 
 // /api/proposals/${id}/votes
@@ -602,8 +1012,6 @@ export const fetchProposalById = async (proposalId: string, proposaIndex: number
         ? { vote: await fetchProposalVoteCount(proposalId, proposaIndex) }
         : undefined
     const resultData = result[0].result
-    console.log(resultData);
-
     type Vote = {
         yes: number
         no: number

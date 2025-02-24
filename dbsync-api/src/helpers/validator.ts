@@ -111,7 +111,7 @@ export function validateAddress(value: string): boolean {
 }
 
 export function formatProposal(proposal: string) {
-    try{
+    try {
         if (proposal.startsWith('gov_action')) {
             const decoded = bech32.decode(proposal)
             const data = bech32.fromWords(decoded.words)
@@ -121,7 +121,21 @@ export function formatProposal(proposal: string) {
             const splitFromHash = proposal.split('#')
             return { id: splitFromHash[0], ix: parseInt(splitFromHash[1]) }
         }
-    }catch(error:any){
+    } catch (error: any) {
         throw new AppError('GovAction is neither hex nor bech32: ' + proposal)
+    }
+}
+
+export function validateVoter(voterType: string) {
+    const lowerCaseVoterType = voterType.toLowerCase()
+    switch (lowerCaseVoterType) {
+        case 'drep':
+            return 'drep'
+        case 'spo':
+            return 'spo'
+        case 'cc':
+            return 'cc'
+        default:
+            throw new AppError('Voter is neither drep or cc or spo: ' + voterType)
     }
 }

@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express'
 import { handlerWrapper } from '../errors/AppError'
 import { fetchProposalById, fetchProposalVoteCount, fetchProposalVotes, fetchProposals } from '../repository/proposal'
-import { formatProposal, validateHash } from '../helpers/validator'
+import { formatProposal, validateHash, validateVoter } from '../helpers/validator'
 import { ProposalTypes, SortTypes } from '../types/proposal'
 
 const router = Router()
@@ -26,10 +26,14 @@ const getProposals = async (req: Request, res: Response) => {
 
 const getProposalVoteCount = async (req: Request, res: Response) => {
     const proposal = formatProposal(req.params.id as string)
+    let voter
+    if (req.params.voter) {
+        voter = validateVoter(req.params.voter as string)
+    }
     if (!proposal) {
         return res.status(400).json({ message: 'Provide valid govAction Id hex or bech32' })
     }
-    const totalVoteCount = await fetchProposalVoteCount(proposal.id, proposal.ix)
+    const totalVoteCount = await fetchProposalVoteCount(proposal.id, proposal.ix, voter)
     return res.status(200).json(totalVoteCount)
 }
 
@@ -49,12 +53,13 @@ const getProposalById = async (req: Request, res: Response) => {
     if (!proposal) {
         return res.status(400).json({ message: 'Provide valid govAction Id hex or bech32' })
     }
-    const proposalDetails = await fetchProposalById(proposal.id, proposal.ix, includeVoteCount )
+    const proposalDetails = await fetchProposalById(proposal.id, proposal.ix, includeVoteCount)
     return res.status(200).json(proposalDetails)
 }
 
 router.get('/', handlerWrapper(getProposals))
 router.get('/:id/vote-count', handlerWrapper(getProposalVoteCount))
+router.get('/:id/vote-count/:voter', handlerWrapper(getProposalVoteCount))
 router.get('/:id/votes', handlerWrapper(getProposalVotes))
 router.get('/:id', handlerWrapper(getProposalById))
 
