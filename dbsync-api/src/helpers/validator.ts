@@ -119,10 +119,14 @@ export function formatProposal(proposal: string) {
             return { id: hex.slice(0, 64), ix: parseInt(hex.slice(64)) }
         } else if (validateHash(proposal)) {
             const splitFromHash = proposal.split('#')
-            return { id: splitFromHash[0], ix: parseInt(splitFromHash[1]) }
+            const indexParsing = parseInt(splitFromHash[1])
+            if (isNaN(indexParsing)) {
+                return undefined
+            }
+            return { id: splitFromHash[0], ix: indexParsing }
         }
     } catch (error: any) {
-        throw new AppError('GovAction is neither hex nor bech32: ' + proposal)
+        return undefined
     }
 }
 

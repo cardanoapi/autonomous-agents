@@ -32,7 +32,7 @@ const getProposalVoteCount = async (req: Request, res: Response) => {
         voter = validateVoter(req.params.voter as string)
     }
     if (!proposal) {
-        return res.status(400).json({ message: 'Provide valid govAction Id hex or bech32' })
+        return res.status(400).json({ message: 'Provide valid govAction Id (hash#index) or bech32' })
     }
     const totalVoteCount = await fetchProposalVoteCount(proposal.id, proposal.ix, voter)
     return res.status(200).json(totalVoteCount)
@@ -42,7 +42,7 @@ const getProposalVotes = async (req: Request, res: Response) => {
     const proposal = formatProposal(req.params.id as string)
     const includeVotingPower = 'true' == (req.query.voting_power as string)
     if (!proposal) {
-        return res.status(400).json({ message: 'Provide valid govAction Id hex or bech32' })
+        return res.status(400).json({ message: 'Provide valid govAction Id (hash#index) or bech32' })
     }
     const votes = await fetchProposalVotes(proposal.id, proposal.ix, includeVotingPower)
     return res.status(200).json(votes)
@@ -52,7 +52,7 @@ const getProposalById = async (req: Request, res: Response) => {
     const proposal = formatProposal(req.params.id as string)
     const includeVoteCount = 'true' == (req.query.vote_count as string)
     if (!proposal) {
-        return res.status(400).json({ message: 'Provide valid govAction Id hex or bech32' })
+        return res.status(400).json({ message: 'Provide valid govAction Id (hash#index) or bech32' })
     }
     const proposalDetails = await fetchProposalById(proposal.id, proposal.ix, includeVoteCount)
     return res.status(200).json(proposalDetails)
