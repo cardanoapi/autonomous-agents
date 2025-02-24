@@ -8,7 +8,8 @@ export const fetchProposals = async (
     size: number,
     proposal?: string,
     proposalType?: ProposalTypes,
-    sort?: SortTypes
+    sort?: SortTypes,
+    includeVoteCount?: boolean
 ) => {
     const result = (await prisma.$queryRaw`
 WITH LatestDrepDistr AS (
@@ -199,7 +200,48 @@ GROUP BY
   FETCH NEXT ${size ? size : 10} ROWS ONLY
   `) as Record<any, any>[]
     const totalCount = result.length ? Number(result[0].total_count) : 0
-    return { items: formatResult(result), totalCount }
+    const parsedResults: any[] = []
+
+    for (const res of result) {
+        const resultData = res.result
+        const proposalVoteCount = includeVoteCount
+            ? { vote: await fetchProposalVoteCount(resultData.txHash, resultData.index) }
+            : undefined
+
+        const parsedResult = {
+            proposal: {
+                type: resultData.type,
+                details: resultData.details,
+                metadataUrl: resultData.url,
+                metadataHash: resultData.metadataHash,
+            },
+            meta: {
+                protocolParams: resultData.protocolParams,
+                title: resultData.title,
+                abstract: resultData.abstract,
+                motivation: resultData.motivation,
+                rationale: resultData.rationale,
+            },
+            createdAt: {
+                time: resultData.createdDate,
+                block: parseInt(resultData.createdBlockNo),
+                blockHash: resultData.createdBlockHash,
+                epoch: parseInt(resultData.createdEpochNo),
+                slot: parseInt(resultData.createdSlotNo),
+                tx: resultData.txHash,
+                index: parseInt(resultData.index),
+            },
+            expireAt: {
+                time: resultData.expiryDate,
+                epoch: parseInt(resultData.expiryEpochNon),
+            },
+            ...proposalVoteCount,
+        }
+
+        parsedResults.push(parsedResult)
+    }
+
+    return { items: parsedResults, totalCount }
 }
 
 // /api/propopsals/${id}/vote-count
@@ -1012,44 +1054,6 @@ export const fetchProposalById = async (proposalId: string, proposaIndex: number
         ? { vote: await fetchProposalVoteCount(proposalId, proposaIndex) }
         : undefined
     const resultData = result[0].result
-    type Vote = {
-        yes: number
-        no: number
-        abstain: number
-    }
-    type ParsedProposalDetails = {
-        proposal: {
-            type: string
-            details: any
-            metadataUrl: string
-            metadataHash: string
-        }
-        meta: {
-            protocolParams: any
-            title: any
-            abstract: any
-            motivation: any
-            rationale: any
-        }
-        createdAt: {
-            time: string
-            block: number
-            blockHash: string
-            epoch: number
-            slot: number
-            tx: string
-            index: number
-        }
-        expireAt: {
-            time: string
-            epoch: number
-        }
-        votes?: {
-            drep: { totalVotingPower: string; voteCount: Vote }
-            pool: { totalVotingPower: string; voteCount: Vote }
-            cc: Vote
-        }
-    }
     const parsedResult = {
         proposal: {
             type: resultData.type,
