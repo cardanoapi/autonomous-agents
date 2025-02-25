@@ -201,7 +201,6 @@ GROUP BY
   `) as Record<any, any>[]
     const totalCount = result.length ? Number(result[0].total_count) : 0
     const parsedResults: any[] = []
-
     for (const res of result) {
         const resultData = res.result
         const proposalVoteCount = includeVoteCount
@@ -921,6 +920,12 @@ export const fetchProposalById = async (proposalId: string, proposaIndex: number
                         ELSE
                             null
                     END,
+        'status', CASE 
+                    when gov_action_proposal.enacted_epoch is not NULL then json_build_object('enactedEpoch', gov_action_proposal.enacted_epoch)
+                    when gov_action_proposal.ratified_epoch is not NULL then json_build_object('ratifiedEpoch', gov_action_proposal.ratified_epoch)
+                    when gov_action_proposal.expired_epoch is not NULL then json_build_object('expiredEpoch', gov_action_proposal.expired_epoch)
+                    else NULL
+                 END,
         'expiryDate', epoch_utils.last_epoch_end_time + epoch_utils.epoch_duration * (gov_action_proposal.expiration - epoch_utils.last_epoch_no),
         'expiryEpochNon', gov_action_proposal.expiration,
         'createdDate', creator_block.time,
@@ -1077,6 +1082,7 @@ export const fetchProposalById = async (proposalId: string, proposaIndex: number
             tx: resultData.txHash,
             index: parseInt(resultData.index),
         },
+        status: resultData.status,
         expireAt: {
             time: resultData.expiryDate,
             epoch: parseInt(resultData.expiryEpochNon),
