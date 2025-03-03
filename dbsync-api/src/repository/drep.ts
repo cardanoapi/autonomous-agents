@@ -2,7 +2,7 @@ import { prisma } from '../config/db'
 import { Prisma } from '@prisma/client'
 import { combineArraysWithSameObjectKey, formatResult } from '../helpers/formatter'
 import { DrepSortType, DrepStatusType } from '../types/drep'
-import { fromHex, isHexValue } from '../helpers/validator'
+import { decodeDrep, fromHex, isHexValue } from '../helpers/validator'
 
 export const fetchDrepList = async (
     page = 1,
@@ -480,6 +480,7 @@ export const fetchDrepRegistrationDetails = async (dRepId: string, isScript?: bo
 }
 
 export const fetchDrepLiveStats = async (drepId: string, isScript?: boolean) => {
+    await drepActivitiesToday()
     let scriptPart = [true, false]
     if (isScript === true) {
         scriptPart = [true, true]
@@ -623,7 +624,7 @@ export const fetchDrepLiveStats = async (drepId: string, isScript?: boolean) => 
     return response
 }
 
-export const fetchDrepLiveDelegators = async (dRepId: string, isScript?: boolean) => {
+export const fetchDrepLiveDelegators = async (dRepId: string, isScript?: boolean, balance?: boolean) => {
     let scriptPart = [true, false]
     if (isScript === true) {
         scriptPart = [true, true]
@@ -696,10 +697,23 @@ export const fetchDrepLiveDelegators = async (dRepId: string, isScript?: boolean
         GROUP BY latest.stakeAddress, latest.id, latest.delegations::text;
     `) as Record<string, any>[]
     const parseResult = () => {
-        return result.map((item) => ({
-            stakeAddress: item.stakeaddress,
-            delegatedAt: JSON.parse(item.delegations)[0],
-        }))
+        return result.map((item) => {
+            const amount =
+                balance && balance == true
+                    ? {
+                          amount: (
+                              BigInt(item.utxo ? item.utxo : 0) +
+                              BigInt(item.rewardbalance ? item.rewardbalance : 0) +
+                              BigInt(item.rewardrestbalance ? item.rewardrestbalance : 0)
+                          ).toString(),
+                      }
+                    : {}
+            return {
+                stakeAddress: item.stakeaddress,
+                delegatedAt: JSON.parse(item.delegations)[0],
+                ...amount,
+            }
+        })
     }
     const parsedResult = parseResult()
     parsedResult.sort(
@@ -936,4 +950,42 @@ export const fetchDrepDelegationHistory = async (dRepId: string, isScript?: bool
     })
     flattenedDelegations.sort((a: Delegation, b: Delegation) => new Date(b.time).getTime() - new Date(a.time).getTime())
     return flattenedDelegations
+}
+
+const drepActivitiesToday = async () => {
+    const drep = decodeDrep('drep15fy2nszna039pdregpryhzahnwcr2rred4nx2qaec7k07nvcq26')
+    const delegationHistory = await fetchDrepDelegationHistory(drep.credential, drep.isScript)
+    const recentActivity: any[] = []
+    const liveDelegators = await fetchDrepLiveDelegators(drep.credential, drep.isScript, true)
+    const activeDelegators = await fetchDRepActiveDelegators(drep.credential, drep.isScript, true)
+    let totalLiveStake: bigint = BigInt(0),
+        totalActiveStake: bigint = BigInt(0)
+    console.log('LiveDelegators: ', liveDelegators.length)
+    liveDelegators.forEach((ld: any) => {
+        console.log(ld.stakeAddress, ld.amount)
+        totalLiveStake += BigInt(ld.amount)
+    })
+    console.log('TotalLiveStake: ', totalLiveStake)
+
+    console.log('ActiveDelegators: ', activeDelegators.length)
+    activeDelegators.forEach((ad: any) => {
+        console.log(ad.stakeAddress, ad.amount)
+        totalActiveStake += BigInt(ad.amount)
+    })
+    console.log('TotalActiveStake: ', totalActiveStake)
+    const drepDetails = await fetchDrepDetails(drep.credential, drep.isScript)
+    console.log(drepDetails);
+    
+    // const today = new Date()
+    // today.setHours(0, 0, 0, 0) // Set to the start of the day (local time)
+
+    // delegationHistory.forEach((dh: any) => {
+    //     const recordDate = new Date(dh.time)
+    //     recordDate.setHours(0, 0, 0, 0) // Normalize to local midnight
+
+    //     if (recordDate.getTime() === today.getTime()) {
+    //         recentActivity.push(dh)
+    //     }
+    // })
+    // console.log(recentActivity)
 }
