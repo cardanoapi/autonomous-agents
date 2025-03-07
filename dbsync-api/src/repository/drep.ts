@@ -2,7 +2,7 @@ import { prisma } from '../config/db'
 import { Prisma } from '@prisma/client'
 import { combineArraysWithSameObjectKey, formatResult } from '../helpers/formatter'
 import { DrepSortType, DrepStatusType } from '../types/drep'
-import { fromHex, isHexValue } from '../helpers/validator'
+import { decodeDrep, fromHex, isHexValue } from '../helpers/validator'
 
 export const fetchDrepList = async (
     page = 1,
@@ -623,7 +623,7 @@ export const fetchDrepLiveStats = async (drepId: string, isScript?: boolean) => 
     return response
 }
 
-export const fetchDrepLiveDelegators = async (dRepId: string, isScript?: boolean) => {
+export const fetchDrepLiveDelegators = async (dRepId: string, isScript?: boolean, balance?: boolean) => {
     let scriptPart = [true, false]
     if (isScript === true) {
         scriptPart = [true, true]
@@ -696,10 +696,23 @@ export const fetchDrepLiveDelegators = async (dRepId: string, isScript?: boolean
         GROUP BY latest.stakeAddress, latest.id, latest.delegations::text;
     `) as Record<string, any>[]
     const parseResult = () => {
-        return result.map((item) => ({
-            stakeAddress: item.stakeaddress,
-            delegatedAt: JSON.parse(item.delegations)[0],
-        }))
+        return result.map((item) => {
+            const amount =
+                balance && balance == true
+                    ? {
+                          amount: (
+                              BigInt(item.utxo ? item.utxo : 0) +
+                              BigInt(item.rewardbalance ? item.rewardbalance : 0) +
+                              BigInt(item.rewardrestbalance ? item.rewardrestbalance : 0)
+                          ).toString(),
+                      }
+                    : {}
+            return {
+                stakeAddress: item.stakeaddress,
+                delegatedAt: JSON.parse(item.delegations)[0],
+                ...amount,
+            }
+        })
     }
     const parsedResult = parseResult()
     parsedResult.sort(

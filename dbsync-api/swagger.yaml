@@ -161,6 +161,13 @@ paths:
                   schema:
                       type: string
                       example: 'drep15fy2nszna039pdregpryhzahnwcr2rred4nx2qaec7k07nvcq26'
+                - name: balance
+                  in: query
+                  required: false
+                  description: The live balance of the delegator.
+                  schema:
+                      type: boolean
+                      example: false
             responses:
                 '200':
                     description: A list of active delegators.
@@ -228,7 +235,7 @@ paths:
                 - name: balance
                   in: query
                   required: false
-                  description: The minimum balance of the delegator.
+                  description: The active balance of the delegator.
                   schema:
                       type: boolean
                       example: false
@@ -787,6 +794,12 @@ paths:
                 - Gov Action
             parameters:
                 - in: query
+                  name: vote_count
+                  schema:
+                      type: boolean
+                      default: false
+                  required: false
+                - in: query
                   name: page
                   schema:
                       type: number
@@ -937,6 +950,113 @@ paths:
                     description: Invalid address provided
                 '500':
                     description: Internal server error
+    /api/proposal/{id}:
+        get:
+            summary: Get the specific proposal details
+            description: Returns Proposal details for a valid proposal id
+            tags:
+                - Gov Action
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  description: Proposal Id in hash#index format or bech32.
+                  schema:
+                      type: string
+                      example: 'f72fb9e4438d7075d3ccd15d6c2ef743016125fef25a46ce63e48ac8bc29172c#0'
+                - in: query
+                  name: vote_count
+                  schema:
+                      type: boolean
+                      default: false
+                  required: false
+            responses:
+                '200':
+                    description: Proposal details
+                '400':
+                    description: Invalid proposal id format
+                '404':
+                    description: Proposal not found
+    /api/proposal/{id}/votes:
+        get:
+            summary: Get vote history for a specific proposal
+            description: Returns history of votes with voter info and vote time. Optional parameter to include voting power.
+            tags:
+                - Gov Action
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  descripton: Proposal Id in hash#index format or bech32.
+                  schema:
+                      type: string
+                      example: 'f72fb9e4438d7075d3ccd15d6c2ef743016125fef25a46ce63e48ac8bc29172c#0'
+                - in: query
+                  name: voting_power
+                  schema:
+                      type: boolean
+                      default: false
+                  required: false
+            responses:
+                '200':
+                    description: Proposal voting history
+                '400':
+                    description: Invalid proposal id format
+                '404':
+                    description: Proposal not found
+    /api/proposal/{id}/vote-count:
+        get:
+            summary: Get detailed vote count of a proposal
+            description: Returns detials of votes (yes, no, abstain, noconfidence) from DReps, SPOs and CCs for a specific proposal Id
+            tags:
+                - Gov Action
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  descripton: Proposal Id in hash#index format or bech32.
+                  schema:
+                      type: string
+                      example: 'f72fb9e4438d7075d3ccd15d6c2ef743016125fef25a46ce63e48ac8bc29172c#0'
+            responses:
+                '200':
+                    description: Proposal vote count and voting power
+                '400':
+                    description: Invalid proposal id format
+                '404':
+                    description: Proposal not found
+    /api/proposal/{id}/vote-count/{voter}:
+        get:
+            summary: Get detailed vote count of a sprcific type of voter on a proposal
+            description: Returns detials of votes (yes, no, abstain, noconfidence) from DReps or SPOs or CCs
+            tags:
+                - Gov Action
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  descripton: Proposal Id in hash#index format or bech32.
+                  schema:
+                      type: string
+                      example: 'f72fb9e4438d7075d3ccd15d6c2ef743016125fef25a46ce63e48ac8bc29172c#0'
+                - name: voter
+                  in: path
+                  requires: false
+                  description: Get count of specific type of voter. drep | spo | cc
+                  schema:
+                      type: string
+                      enum:
+                          - 'drep'
+                          - 'spo'
+                          - 'cc'
+                      example: 'drep'
+            responses:
+                '200':
+                    description: Proposal vote count and voting power
+                '400':
+                    description: Invalid proposal id format
+                '404':
+                    description: Proposal not found
     /api/gov-action/count:
         get:
             summary: Get the total number of government action proposals

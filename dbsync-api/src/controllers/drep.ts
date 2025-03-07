@@ -67,8 +67,9 @@ const getDrepActiveDelegators = async (req: Request, res: Response) => {
 
 const getDrepLiveDelegators = async (req: Request, res: Response) => {
     const dRepId = decodeDrep(req.params.id as string)
-    const activeDelegators = await fetchDrepLiveDelegators(dRepId.credential, dRepId.isScript)
-    return res.status(200).json(activeDelegators)
+    const balance = req.query.balance === 'true'
+    const liveDelegators = await fetchDrepLiveDelegators(dRepId.credential, dRepId.isScript, balance)
+    return res.status(200).json(liveDelegators)
 }
 
 router.get('/', handlerWrapper(getDrepList))

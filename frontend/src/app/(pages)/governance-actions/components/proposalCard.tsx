@@ -28,8 +28,12 @@ const formatProposalType = (type: string) => {
 };
 const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
     const { isOpen, toggleDialog } = useAppDialog();
-    const isDataMissing = proposal.title === null;
-    const proposalId = `${proposal.txHash}#${proposal.index}`;
+    const proposalInfo = proposal.proposal;
+    const proposalMeta = proposal.meta;
+    const proposalCreation = proposal.createdAt;
+    const proposalExpiry = proposal.expireAt;
+    const isDataMissing = proposalMeta.title === null;
+    const proposalId = `${proposalCreation.tx}#${proposalCreation.index}`;
 
     const handleCopyGovernanceActionId = () => {
         navigator.clipboard.writeText(proposalId);
@@ -48,7 +52,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
     };
 
     const handleProposalExternalRedirect = () => {
-        window.open(`https://govtool.cardanoapi.io/connected/governance_actions/${proposal.txHash}`, '_blank');
+        window.open(`https://govtool.cardanoapi.io/connected/governance_actions/${proposalCreation.tx}`, '_blank');
     };
 
     const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
@@ -63,7 +67,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                         <p
                             className={`line-clamp-2 text-[18px]  font-semibold leading-[24px]  ${isDataMissing && 'text-red-600'}`}
                         >
-                            {isDataMissing ? 'Title Missing' : proposal.title}
+                            {isDataMissing ? 'Title Missing' : proposalMeta.title}
                         </p>
                         <div className={'flex w-12 justify-end'}>
                             <ExternalLink
@@ -72,10 +76,10 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                             />
                         </div>
                     </div>
-                    {proposal.abstract !== null && (
+                    {proposalMeta.abstract !== null && (
                         <div className="flex flex-col gap-1">
                             <p className="  text-xs font-medium  text-brand-Gray-50">Abstract</p>
-                            <p className="line-clamp-2 text-sm text-brand-Black-300">{proposal.abstract}</p>
+                            <p className="line-clamp-2 text-sm text-brand-Black-300">{proposalMeta.abstract}</p>
                         </div>
                     )}
                     <div className={cn(proposal.agentName ? 'rounded-lg border border-gray-200 p-4 shadow-sm' : '')}>
@@ -104,7 +108,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
 
                             <div className="mt-1 flex gap-2">
                                 <span className="rounded-full bg-blue-100 px-4 py-1 text-xs text-blue-700">
-                                    {formatProposalType(proposal.type)}
+                                    {formatProposalType(proposalInfo.type)}
                                 </span>
 
                                 {proposal.agentId && proposal.agentName && (
@@ -120,16 +124,16 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                         <div className="space-x-1 bg-brand-lightBlue bg-opacity-50 py-[6px] text-center ">
                             <span>Submitted:</span>
                             <span className="font-medium">
-                                {proposal.createdDate && formatDisplayDate(proposal.createdDate)}
+                                {proposalCreation.time && formatDisplayDate(proposalCreation.time)}
                             </span>
-                            <span>(Epoch {proposal.createdEpochNo})</span>
+                            <span>(Epoch {proposalCreation.epoch})</span>
                         </div>
                         <p className="space-x-1 py-[6px] text-center">
                             <span>Expires:</span>
                             <span className="font-medium">
-                                {proposal.createdDate && formatDisplayDate(proposal?.expiryDate)}
+                                {proposalCreation.time && formatDisplayDate(proposalExpiry.time)}
                             </span>
-                            <span>(Epoch {proposal.expiryEpochNo})</span>
+                            <span>(Epoch {proposalExpiry.epoch})</span>
                         </p>
                     </div>
                     <div className="flex flex-col gap-1">
