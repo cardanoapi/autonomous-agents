@@ -26,12 +26,12 @@ const formatProposalType = (type: string) => {
 
     return title || type;
 };
-const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {    
+const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
     const { isOpen, toggleDialog } = useAppDialog();
-    const proposalInfo = proposal.proposal
-    const proposalMeta = proposal.meta
-    const proposalCreation = proposal.createdAt
-    const proposalExpiry = proposal.expireAt
+    const proposalInfo = proposal.proposal;
+    const proposalMeta = proposal.meta;
+    const proposalCreation = proposal.createdAt;
+    const proposalExpiry = proposal.expireAt;
     const isDataMissing = proposalMeta.title === null;
     const proposalId = `${proposalCreation.tx}#${proposalCreation.index}`;
 

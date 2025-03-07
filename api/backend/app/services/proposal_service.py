@@ -99,7 +99,13 @@ class ProposalService:
             for index, proposal in enumerate(response_json["items"]):
                 tg.create_task(self.add_agent_in_external_proposals(index, proposal, response_json["items"]))
                 if proposal.get("proposal").get("metadataHash") and proposal.get("proposal").get("metadataUrl"):
-                    tg.create_task(self._fetch_metadata(proposal.get("proposal").get("metadataHash"), proposal.get("proposal").get("metadataUrl"), proposal))
+                    tg.create_task(
+                        self._fetch_metadata(
+                            proposal.get("proposal").get("metadataHash"),
+                            proposal.get("proposal").get("metadataUrl"),
+                            proposal,
+                        )
+                    )
         return Page(
             items=response_json["items"],
             total=response_json["totalCount"],
@@ -111,7 +117,9 @@ class ProposalService:
     async def add_agent_in_external_proposals(self, index: int, proposal: Any, proposals: List[Any]):
         if proposal["createdAt"]["tx"]:
             try:
-                internal_proposal = await self.db.prisma.triggerhistory.find_first(where={"txHash": proposal["createdAt"]["tx"]})
+                internal_proposal = await self.db.prisma.triggerhistory.find_first(
+                    where={"txHash": proposal["createdAt"]["tx"]}
+                )
                 if internal_proposal:
                     agent = await self.db.prisma.agent.find_first(where={"id": internal_proposal.agentId})
                     proposal["agentId"] = agent.id
