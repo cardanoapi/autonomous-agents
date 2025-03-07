@@ -15,7 +15,6 @@ const getProposals = async (req: Request, res: Response) => {
     let proposal = req.query.proposal as string
 
     if (proposal) {
-        console.log(proposal, validateHash(proposal))
         if (!validateHash(proposal)) {
             return res.status(400).json({ message: 'Provide valid proposal Id' })
         }

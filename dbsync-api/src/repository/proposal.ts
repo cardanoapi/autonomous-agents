@@ -66,10 +66,19 @@ SELECT
                     ELSE
                         null
                    END,
+    'status', CASE 
+                    when gov_action_proposal.enacted_epoch is not NULL then json_build_object('enactedEpoch', gov_action_proposal.enacted_epoch)
+                    when gov_action_proposal.ratified_epoch is not NULL then json_build_object('ratifiedEpoch', gov_action_proposal.ratified_epoch)
+                    when gov_action_proposal.expired_epoch is not NULL then json_build_object('expiredEpoch', gov_action_proposal.expired_epoch)
+                    else NULL
+                END,
     'expiryDate', epoch_utils.last_epoch_end_time + epoch_utils.epoch_duration * (gov_action_proposal.expiration - epoch_utils.last_epoch_no),
     'expiryEpochNon', gov_action_proposal.expiration,
     'createdDate', creator_block.time,
+    'createdBlockHash', encode(creator_block.hash, 'hex'),
+    'createdBlockNo', creator_block.block_no,
     'createdEpochNo', creator_block.epoch_no,
+    'createdSlotNo', creator_block.slot_no,
     'url', voting_anchor.url,
     'metadataHash', encode(voting_anchor.data_hash, 'hex'),
     'protocolParams', ROW_TO_JSON(proposal_params),
@@ -180,6 +189,9 @@ GROUP BY
      gov_action_proposal.index,
      creator_tx.hash,
      creator_block.time,
+     creator_block.hash,
+     creator_block.block_no,
+     creator_block.slot_no,
      epoch_utils.epoch_duration,
      epoch_utils.last_epoch_no,
      epoch_utils.last_epoch_end_time,
@@ -206,7 +218,6 @@ GROUP BY
         const proposalVoteCount = includeVoteCount
             ? { vote: await fetchProposalVoteCount(resultData.txHash, resultData.index) }
             : undefined
-
         const parsedResult = {
             proposal: {
                 type: resultData.type,
@@ -234,6 +245,7 @@ GROUP BY
                 time: resultData.expiryDate,
                 epoch: parseInt(resultData.expiryEpochNon),
             },
+            status: resultData.status,
             ...proposalVoteCount,
         }
 
