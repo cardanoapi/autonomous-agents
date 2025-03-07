@@ -75,9 +75,9 @@ class ProposalService:
             where={"id": proposal.agentId},
         )
         proposal_dict = proposal_data | {"agentId": proposal.agentId, "agentName": agent.name}
-        if proposal_dict.get("metadataHash") and proposal_dict.get("url"):
-            url = proposal_dict.get("url")
-            metadata_hash = proposal_dict.get("metadataHash")
+        if proposal_dict.get("proposal").get("metadataHash") and proposal_dict.get("proposal").get("metadataUrl"):
+            url = proposal_dict.get("proposal").get("metadataUrl")
+            metadata_hash = proposal_dict.get("proposal").get("metadataHash")
             await self._fetch_metadata(metadata_hash, url, proposal_dict)
         if proposal_dict:
             results[index] = proposal_dict
@@ -95,12 +95,11 @@ class ProposalService:
                         status_code=500, content="Error fetching External Proposals , DB Sync upstream service error"
                     )
                 response_json = await response.json()
-
         async with asyncio.TaskGroup() as tg:
             for index, proposal in enumerate(response_json["items"]):
                 tg.create_task(self.add_agent_in_external_proposals(index, proposal, response_json["items"]))
-                if proposal.get("metadataHash") and proposal.get("url"):
-                    tg.create_task(self._fetch_metadata(proposal.get("metadataHash"), proposal.get("url"), proposal))
+                if proposal.get("proposal").get("metadataHash") and proposal.get("proposal").get("metadataUrl"):
+                    tg.create_task(self._fetch_metadata(proposal.get("proposal").get("metadataHash"), proposal.get("proposal").get("metadataUrl"), proposal))
         return Page(
             items=response_json["items"],
             total=response_json["totalCount"],
@@ -110,9 +109,9 @@ class ProposalService:
         )
 
     async def add_agent_in_external_proposals(self, index: int, proposal: Any, proposals: List[Any]):
-        if proposal["txHash"]:
+        if proposal["createdAt"]["tx"]:
             try:
-                internal_proposal = await self.db.prisma.triggerhistory.find_first(where={"txHash": proposal["txHash"]})
+                internal_proposal = await self.db.prisma.triggerhistory.find_first(where={"txHash": proposal["createdAt"]["tx"]})
                 if internal_proposal:
                     agent = await self.db.prisma.agent.find_first(where={"id": internal_proposal.agentId})
                     proposal["agentId"] = agent.id

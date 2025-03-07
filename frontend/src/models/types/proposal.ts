@@ -1,26 +1,31 @@
 export interface IProposal {
-    id: string;
-    txHash: string;
-    index: number;
-    type: string;
-    details: any;
-    expiryDate: string;
-    expiryEpochNo: number;
-    createdDate: string;
-    createdEpochNo: number;
-    url: string;
-    metadataHash: string;
-    title: string | null;
-    abstract: string | null;
-    motivation: string | null;
-    rationale: string | null;
-    metadata: any;
-    references: string[];
-    yesVotes: number;
-    noVotes: number;
-    abstainVotes: number;
-    metadataStatus: null | string;
-    metadataValid: boolean;
+    proposal: {
+        type: string;
+        details: any;
+        metadataUrl: string;
+        metadataHash: string;
+    };
+    meta: {
+        protocolParams: any | null;
+        title: string | null;
+        abstract: string | null;
+        motivation: string | null;
+        rationale: string | null;
+    };
+    createdAt: {
+        time: string;
+        block: number;
+        blockHash: string;
+        epoch: number;
+        slot: number;
+        tx: string;
+        index: number;
+    };
+    expireAt: {
+        time: string;
+        epoch: number;
+    };
+    status: string | null;
 }
 
 export enum ProposalListSort {
