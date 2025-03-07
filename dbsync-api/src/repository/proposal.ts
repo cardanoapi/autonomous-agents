@@ -12,13 +12,84 @@ export const fetchProposals = async (
     includeVoteCount?: boolean
 ) => {
     const result = (await prisma.$queryRaw`
-WITH LatestDrepDistr AS (
+    WITH LatestDrepDistr AS (
+        SELECT
+            *,
+            ROW_NUMBER() OVER (PARTITION BY hash_id ORDER BY epoch_no DESC) AS rn
+        FROM
+            drep_distr
+    ),
+    CommitteeData AS (
+        SELECT DISTINCT ON (ch.raw)
+            encode(ch.raw, 'hex') AS hash,
+            cm.expiration_epoch,
+            ch.has_script
+        FROM
+            committee_member cm
+        JOIN committee_hash ch ON cm.committee_hash_id = ch.id
+        ORDER BY
+            ch.raw, cm.expiration_epoch DESC
+    ),
+    ParsedDescription AS (
+        SELECT
+            gov_action_proposal.id,
+            description->'tag' AS tag,
+            description->'contents'->1 AS members_to_be_removed,
+            description->'contents'->2 AS members,
+            description->'contents'->3 AS threshold
+        FROM
+            gov_action_proposal
+        WHERE
+            gov_action_proposal.type = 'NewCommittee'
+    ),
+    MembersToBeRemoved AS (
     SELECT
-        *,
-        ROW_NUMBER() OVER (PARTITION BY hash_id ORDER BY epoch_no DESC) AS rn
+        id,
+        json_agg(VALUE->>'keyHash') AS members_to_be_removed
     FROM
-        drep_distr
-),
+        ParsedDescription pd,
+        json_array_elements(members_to_be_removed::json) AS value
+    GROUP BY
+        id
+    ),
+    ProcessedCurrentMembers AS (
+        SELECT
+            pd.id,
+            json_agg(
+                json_build_object(
+                    'hash', regexp_replace(kv.key, '^keyHash-', ''),
+                    'newExpirationEpoch', kv.value::int
+                )
+            ) AS current_members
+        FROM
+            ParsedDescription pd,
+            jsonb_each_text(pd.members) AS kv(key, value)
+        GROUP BY
+            pd.id
+    ),
+    EnrichedCurrentMembers AS (
+        SELECT
+            pcm.id,
+            json_agg(
+                json_build_object(
+                    'hash', cm.hash,
+                    'expirationEpoch', cm.expiration_epoch,
+                    'hasScript', cm.has_script,
+                    'newExpirationEpoch', (member->>'newExpirationEpoch')::int
+                )
+            ) AS enriched_members
+        FROM
+            ProcessedCurrentMembers pcm
+        LEFT JOIN json_array_elements(pcm.current_members) AS member ON true
+        LEFT JOIN CommitteeData cm 
+            ON (CASE 
+                WHEN (member->>'hash') ~ '^[0-9a-fA-F]+$' 
+                THEN encode(decode(member->>'hash', 'hex'), 'hex') 
+                ELSE NULL 
+            END) = cm.hash
+        GROUP BY
+            pcm.id
+        ),
      EpochUtils AS (
          SELECT
              (Max(end_time) - Min(end_time)) /(Max(NO) - Min(NO)) AS epoch_duration,
@@ -54,18 +125,51 @@ SELECT
     'index', gov_action_proposal.index,
     'type', gov_action_proposal.type::text,
     'details', CASE
-                    when gov_action_proposal.type = 'TreasuryWithdrawals' then
-                    json_build_object('Reward Address', stake_address.view, 'Amount', treasury_withdrawal.amount)
-                    when gov_action_proposal.type::text = 'InfoAction' then
-                        json_build_object()
-                    when gov_action_proposal.type::text = 'HardForkInitiation' then
-                        json_build_object(
-                                'major', (gov_action_proposal.description->'contents'->1->>'major')::int,
-                                'minor', (gov_action_proposal.description->'contents'->1->>'minor')::int
-                        )
-                    ELSE
-                        null
-                   END,
+                        when gov_action_proposal.type = 'TreasuryWithdrawals' then
+                        json_build_object('Reward Address', stake_address.view, 'Amount', treasury_withdrawal.amount)
+                        when gov_action_proposal.type::text = 'InfoAction' then
+                            json_build_object('data', gov_action_proposal.description)
+                        when gov_action_proposal.type::text = 'HardForkInitiation' then
+                            json_build_object(
+                                    'major', (gov_action_proposal.description->'contents'->1->>'major')::int,
+                                    'minor', (gov_action_proposal.description->'contents'->1->>'minor')::int
+                            )
+                        WHEN gov_action_proposal.type::text = 'NoConfidence' THEN
+                            json_build_object('data', gov_action_proposal.description->'contents')
+                        WHEN gov_action_proposal.type::text = 'ParameterChange' THEN
+                            json_build_object('data', gov_action_proposal.description->'contents')
+                        WHEN gov_action_proposal.type::text = 'NewConstitution' THEN
+                            json_build_object(
+                                'anchor', gov_action_proposal.description->'contents'->1->'anchor',
+                                'script', gov_action_proposal.description->'contents'->1->'script'
+                            )
+                        WHEN gov_action_proposal.type::text = 'NewCommittee' THEN
+                            (
+                                SELECT
+                                    json_build_object(
+                                        'tag', pd.tag,
+                                        'members', em.enriched_members,
+                                        'membersToBeRemoved', mtr.members_to_be_removed,
+                                        'threshold', 
+                                            CASE 
+                                                WHEN (pd.threshold->>'numerator') IS NOT NULL 
+                                                AND (pd.threshold->>'denominator') IS NOT NULL 
+                                                THEN (pd.threshold->>'numerator')::float / (pd.threshold->>'denominator')::float
+                                                ELSE NULL 
+                                            END
+                                    )
+                                FROM
+                                    ParsedDescription pd
+                                JOIN
+                                    MembersToBeRemoved mtr ON pd.id = mtr.id
+                                JOIN
+                                    EnrichedCurrentMembers em ON pd.id = em.id
+                                WHERE
+                                    pd.id = gov_action_proposal.id
+                            )
+                        ELSE
+                            null
+                    END,
     'status', CASE 
                     when gov_action_proposal.enacted_epoch is not NULL then json_build_object('enactedEpoch', gov_action_proposal.enacted_epoch)
                     when gov_action_proposal.ratified_epoch is not NULL then json_build_object('ratifiedEpoch', gov_action_proposal.ratified_epoch)
@@ -885,6 +989,77 @@ export const fetchProposalById = async (proposalId: string, proposaIndex: number
         FROM
             drep_distr
     ),
+    CommitteeData AS (
+        SELECT DISTINCT ON (ch.raw)
+            encode(ch.raw, 'hex') AS hash,
+            cm.expiration_epoch,
+            ch.has_script
+        FROM
+            committee_member cm
+        JOIN committee_hash ch ON cm.committee_hash_id = ch.id
+        ORDER BY
+            ch.raw, cm.expiration_epoch DESC
+    ),
+    ParsedDescription AS (
+        SELECT
+            gov_action_proposal.id,
+            description->'tag' AS tag,
+            description->'contents'->1 AS members_to_be_removed,
+            description->'contents'->2 AS members,
+            description->'contents'->3 AS threshold
+        FROM
+            gov_action_proposal
+        WHERE
+            gov_action_proposal.type = 'NewCommittee'
+    ),
+    MembersToBeRemoved AS (
+    SELECT
+        id,
+        json_agg(VALUE->>'keyHash') AS members_to_be_removed
+    FROM
+        ParsedDescription pd,
+        json_array_elements(members_to_be_removed::json) AS value
+    GROUP BY
+        id
+    ),
+    ProcessedCurrentMembers AS (
+        SELECT
+            pd.id,
+            json_agg(
+                json_build_object(
+                    'hash', regexp_replace(kv.key, '^keyHash-', ''),
+                    'newExpirationEpoch', kv.value::int
+                )
+            ) AS current_members
+        FROM
+            ParsedDescription pd,
+            jsonb_each_text(pd.members) AS kv(key, value)
+        GROUP BY
+            pd.id
+    ),
+    EnrichedCurrentMembers AS (
+        SELECT
+            pcm.id,
+            json_agg(
+                json_build_object(
+                    'hash', cm.hash,
+                    'expirationEpoch', cm.expiration_epoch,
+                    'hasScript', cm.has_script,
+                    'newExpirationEpoch', (member->>'newExpirationEpoch')::int
+                )
+            ) AS enriched_members
+        FROM
+            ProcessedCurrentMembers pcm
+        LEFT JOIN json_array_elements(pcm.current_members) AS member ON true
+        LEFT JOIN CommitteeData cm 
+            ON (CASE 
+                WHEN (member->>'hash') ~ '^[0-9a-fA-F]+$' 
+                THEN encode(decode(member->>'hash', 'hex'), 'hex') 
+                ELSE NULL 
+            END) = cm.hash
+        GROUP BY
+            pcm.id
+        ),
         EpochUtils AS (
             SELECT
                 (Max(end_time) - Min(end_time)) /(Max(NO) - Min(NO)) AS epoch_duration,
@@ -923,11 +1098,44 @@ export const fetchProposalById = async (proposalId: string, proposaIndex: number
                         when gov_action_proposal.type = 'TreasuryWithdrawals' then
                         json_build_object('Reward Address', stake_address.view, 'Amount', treasury_withdrawal.amount)
                         when gov_action_proposal.type::text = 'InfoAction' then
-                            json_build_object()
+                            json_build_object('data', gov_action_proposal.description)
                         when gov_action_proposal.type::text = 'HardForkInitiation' then
                             json_build_object(
                                     'major', (gov_action_proposal.description->'contents'->1->>'major')::int,
                                     'minor', (gov_action_proposal.description->'contents'->1->>'minor')::int
+                            )
+                        WHEN gov_action_proposal.type::text = 'NoConfidence' THEN
+                            json_build_object('data', gov_action_proposal.description->'contents')
+                        WHEN gov_action_proposal.type::text = 'ParameterChange' THEN
+                            json_build_object('data', gov_action_proposal.description->'contents')
+                        WHEN gov_action_proposal.type::text = 'NewConstitution' THEN
+                            json_build_object(
+                                'anchor', gov_action_proposal.description->'contents'->1->'anchor',
+                                'script', gov_action_proposal.description->'contents'->1->'script'
+                            )
+                        WHEN gov_action_proposal.type::text = 'NewCommittee' THEN
+                            (
+                                SELECT
+                                    json_build_object(
+                                        'tag', pd.tag,
+                                        'members', em.enriched_members,
+                                        'membersToBeRemoved', mtr.members_to_be_removed,
+                                        'threshold', 
+                                            CASE 
+                                                WHEN (pd.threshold->>'numerator') IS NOT NULL 
+                                                AND (pd.threshold->>'denominator') IS NOT NULL 
+                                                THEN (pd.threshold->>'numerator')::float / (pd.threshold->>'denominator')::float
+                                                ELSE NULL 
+                                            END
+                                    )
+                                FROM
+                                    ParsedDescription pd
+                                JOIN
+                                    MembersToBeRemoved mtr ON pd.id = mtr.id
+                                JOIN
+                                    EnrichedCurrentMembers em ON pd.id = em.id
+                                WHERE
+                                    pd.id = gov_action_proposal.id
                             )
                         ELSE
                             null
