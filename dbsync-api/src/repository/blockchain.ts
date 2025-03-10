@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import { prisma } from '../config/db'
 
 export async function fetchEpochDuration(limit: number) {
@@ -22,4 +23,26 @@ export async function fetchEpochDuration(limit: number) {
     }))
 
     return parsedResult
+}
+
+export async function fetchEpochParams(epoch_no?: number) {
+    const result = (await prisma.$queryRaw`
+            SELECT
+                jsonb_set(
+                    ROW_TO_JSON(epoch_param)::jsonb,
+                    '{cost_model}', 
+                    CASE
+                        WHEN cost_model.id IS NOT NULL THEN
+                            ROW_TO_JSON(cost_model)::jsonb
+                        ELSE
+                            'null'::jsonb
+                    END
+                ) AS epoch_param
+            FROM
+                epoch_param
+            LEFT JOIN
+                cost_model ON epoch_param.cost_model_id = cost_model.id
+            WHERE epoch_no = ${epoch_no ? epoch_no : Prisma.sql`(SELECT no from epoch order by no desc limit 1)`}
+            LIMIT 1;`) as Record<string, any>[]
+    return result[0].epoch_param
 }

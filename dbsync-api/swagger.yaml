@@ -605,7 +605,7 @@ paths:
                   description: The information of the last 'n' epochs.
             responses:
                 '200':
-                    description: The faucet balance for the given address
+                    description: epoch details
                     content:
                         application/json:
                             schema:
@@ -631,6 +631,27 @@ paths:
                                             format: date-time
                                             description: End time in ISO 8601 format
                                             example: '2025-02-07T06:09:31.000Z'
+                '400':
+                    description: Invalid address provided
+                '500':
+                    description: Internal server error
+    /api/blockchain/epoch/params:
+        get:
+            summary: Get protocol parameters of specific epoch if specified. Else, get latest protocol parameters
+            description: Get protocol parameters of specific epoch if specified. Else, get latest protocol parameters
+            tags:
+                - Blockchain
+            parameters:
+                - in: query
+                  name: epoch_no
+                  schema:
+                      type: integer
+                      default: 861
+                  required: false
+                  description: get protocol parameters of specified epoch.
+            responses:
+                '200':
+                    description: protocol parameters
                 '400':
                     description: Invalid address provided
                 '500':

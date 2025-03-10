@@ -18,7 +18,7 @@ const getProposals = async (req: Request, res: Response) => {
         if (!validateHash(proposal)) {
             return res.status(400).json({ message: 'Provide valid proposal Id' })
         }
-        proposal = proposal.includes('#') ? proposal.slice(0, -2) : proposal
+        proposal = proposal.includes('#') ? proposal.split('#')[0] : proposal
     }
     const { items, totalCount } = await fetchProposals(page, size, proposal, type, sort, includeVoteCount)
     return res.status(200).json({ totalCount: Math.round(totalCount / size), page, size, items })
