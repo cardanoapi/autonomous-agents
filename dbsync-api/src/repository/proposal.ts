@@ -126,7 +126,18 @@ SELECT
     'type', gov_action_proposal.type::text,
     'details', CASE
                         when gov_action_proposal.type = 'TreasuryWithdrawals' then
-                        json_build_object('Reward Address', stake_address.view, 'Amount', treasury_withdrawal.amount)
+                        (
+                            SELECT json_agg(
+                                jsonb_build_object(
+                                    'receivingAddress', stake_address.view,
+                                    'amount', treasury_withdrawal.amount
+                                )
+                            )
+                            FROM treasury_withdrawal
+                            LEFT JOIN stake_address
+                                ON stake_address.id = treasury_withdrawal.stake_address_id
+                            WHERE treasury_withdrawal.gov_action_proposal_id = gov_action_proposal.id
+                        )
                         when gov_action_proposal.type::text = 'InfoAction' then
                             json_build_object('data', gov_action_proposal.description)
                         when gov_action_proposal.type::text = 'HardForkInitiation' then
