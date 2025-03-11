@@ -126,7 +126,18 @@ SELECT
     'type', gov_action_proposal.type::text,
     'details', CASE
                         when gov_action_proposal.type = 'TreasuryWithdrawals' then
-                        json_build_object('Reward Address', stake_address.view, 'Amount', treasury_withdrawal.amount)
+                        (
+                            SELECT json_agg(
+                                jsonb_build_object(
+                                    'receivingAddress', stake_address.view,
+                                    'amount', treasury_withdrawal.amount
+                                )
+                            )
+                            FROM treasury_withdrawal
+                            LEFT JOIN stake_address
+                                ON stake_address.id = treasury_withdrawal.stake_address_id
+                            WHERE treasury_withdrawal.gov_action_proposal_id = gov_action_proposal.id
+                        )
                         when gov_action_proposal.type::text = 'InfoAction' then
                             json_build_object('data', gov_action_proposal.description)
                         when gov_action_proposal.type::text = 'HardForkInitiation' then
@@ -185,7 +196,16 @@ SELECT
     'createdSlotNo', creator_block.slot_no,
     'url', voting_anchor.url,
     'metadataHash', encode(voting_anchor.data_hash, 'hex'),
-    'protocolParams', ROW_TO_JSON(proposal_params),
+    'protocolParams', jsonb_set(
+            ROW_TO_JSON(proposal_params)::jsonb,
+                            '{cost_model}', 
+                            CASE
+                                WHEN cost_model.id IS NOT NULL THEN
+                                    ROW_TO_JSON(cost_model)::jsonb
+                                ELSE
+                                    'null'::jsonb
+                            END
+                        ),
     'title',  off_chain_vote_gov_action_data.title,
     'abstract', off_chain_vote_gov_action_data.abstract,
     'motivation', off_chain_vote_gov_action_data.motivation,
@@ -226,6 +246,7 @@ FROM
         JOIN block AS creator_block ON creator_block.id = creator_tx.block_id
         LEFT JOIN voting_anchor ON voting_anchor.id = gov_action_proposal.voting_anchor_id
         LEFT JOIN param_proposal as proposal_params ON gov_action_proposal.param_proposal = proposal_params.id
+        LEFT JOIN cost_model AS cost_model ON proposal_params.cost_model_id = cost_model.id
         LEFT JOIN off_chain_vote_data ON off_chain_vote_data.voting_anchor_id = voting_anchor.id
         LEFT JOIN off_chain_vote_gov_action_data ON off_chain_vote_gov_action_data.off_chain_vote_data_id = off_chain_vote_data.id
         LEFT JOIN voting_procedure ON voting_procedure.gov_action_proposal_id = gov_action_proposal.id
@@ -300,6 +321,7 @@ GROUP BY
      epoch_utils.last_epoch_no,
      epoch_utils.last_epoch_end_time,
      proposal_params,
+     cost_model.id,
      voting_anchor.url,
      voting_anchor.data_hash,
      always_no_confidence_voting_power.amount,
@@ -1155,7 +1177,16 @@ export const fetchProposalById = async (proposalId: string, proposaIndex: number
         'createdSlotNo', creator_block.slot_no,
         'url', voting_anchor.url,
         'metadataHash', encode(voting_anchor.data_hash, 'hex'),
-        'protocolParams', ROW_TO_JSON(proposal_params),
+        'protocolParams', jsonb_set(
+            ROW_TO_JSON(proposal_params)::jsonb,
+                            '{cost_model}', 
+                            CASE
+                                WHEN cost_model.id IS NOT NULL THEN
+                                    ROW_TO_JSON(cost_model)::jsonb
+                                ELSE
+                                    'null'::jsonb
+                            END
+                        ),
         'title',  off_chain_vote_gov_action_data.title,
         'abstract', off_chain_vote_gov_action_data.abstract,
         'motivation', off_chain_vote_gov_action_data.motivation,
@@ -1196,6 +1227,7 @@ export const fetchProposalById = async (proposalId: string, proposaIndex: number
             JOIN block AS creator_block ON creator_block.id = creator_tx.block_id
             LEFT JOIN voting_anchor ON voting_anchor.id = gov_action_proposal.voting_anchor_id
             LEFT JOIN param_proposal as proposal_params ON gov_action_proposal.param_proposal = proposal_params.id
+            LEFT JOIN cost_model AS cost_model ON proposal_params.cost_model_id = cost_model.id
             LEFT JOIN off_chain_vote_data ON off_chain_vote_data.voting_anchor_id = voting_anchor.id
             LEFT JOIN off_chain_vote_gov_action_data ON off_chain_vote_gov_action_data.off_chain_vote_data_id = off_chain_vote_data.id
             LEFT JOIN voting_procedure ON voting_procedure.gov_action_proposal_id = gov_action_proposal.id
@@ -1265,6 +1297,7 @@ export const fetchProposalById = async (proposalId: string, proposaIndex: number
         epoch_utils.last_epoch_no,
         epoch_utils.last_epoch_end_time,
         proposal_params,
+        cost_model.id,
         voting_anchor.url,
         voting_anchor.data_hash,
         always_no_confidence_voting_power.amount,
