@@ -646,7 +646,6 @@ paths:
                   name: epoch_no
                   schema:
                       type: integer
-                      default: 861
                   required: false
                   description: get protocol parameters of specified epoch.
             responses:
