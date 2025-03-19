@@ -133,7 +133,7 @@ class ProposalService:
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(
-                    f"{api_settings.METADATA_BASE_URL}/metadata?url={url}&hash={metadata_hash}"
+                    f"{api_settings.METADATA_BASE_URL}/api/metadata?url={url}&hash={metadata_hash}"
                 ) as metadata_resp:
                     metadata_resp_json = await metadata_resp.json()
                     if "hash" in metadata_resp_json:

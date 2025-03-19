@@ -9,12 +9,12 @@ class MetadataService {
 
     async saveMetadata(content: string) {
         const hash = blake.blake2bHex(content, undefined, 32)
-        const res = await fetch(`${this.metadataBaseUrl}/data/${hash}`, {
+        const res = await fetch(`${this.metadataBaseUrl}/api/data/${hash}`, {
             method: 'PUT',
             body: content,
         })
         if (res.ok) {
-            return { dataHash: hash, url: `${this.metadataBaseUrl}/data/${hash}` }
+            return { dataHash: hash, url: `${this.metadataBaseUrl}/api/data/${hash}` }
         } else {
             throw new Error((await res.text()) || (await res.json()))
         }

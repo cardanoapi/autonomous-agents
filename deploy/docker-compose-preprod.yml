@@ -17,7 +17,7 @@ services:
       - ELASTIC_APM_API_KEY=${ELASTIC_APM_API_KEY}
       - ELASTIC_APM_SERVER_URL=${ELASTIC_APM_SERVER_URL}
       - ELASTIC_APM_ENVIRONMENT=preprod
-      - METADATA_BASE_URL=https://metadata.drep.id/api
+      - METADATA_BASE_URL=https://metadata.drep.id
 
       
     networks:
@@ -57,7 +57,7 @@ services:
       - ELASTIC_APM_ENVIRONMENT=preprod
       - ENABLE_BLOCKFROST_SUBMIT_API=true
       - BLOCKFROST_API_KEY=${BLOCKFROST_API_KEY}
-      - METADATA_BASE_URL=https://metadata.drep.id/api
+      - METADATA_BASE_URL=https://metadata.drep.id
       - NETWORK_NAME=preprod
 
     networks:
