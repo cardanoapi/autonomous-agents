@@ -17,12 +17,15 @@ services:
       - ELASTIC_APM_API_KEY=${ELASTIC_APM_API_KEY}
       - ELASTIC_APM_SERVER_URL=${ELASTIC_APM_SERVER_URL}
       - ELASTIC_APM_ENVIRONMENT=preprod
+      - METADATA_BASE_URL=https://metadata.drep.id/api
+
       
     networks:
       - default
       - postgres
       - frontend
       - kafka
+      - dbsync-api
 
     deploy:
       restart_policy:
@@ -62,6 +65,8 @@ services:
       - postgres
       - kafka
       - frontend
+      - dbsync-api
+
     deploy:
       restart_policy:
         delay: 10s
@@ -79,6 +84,6 @@ networks:
     external: true
   postgres:
     external: true
-  dbsync:
+  dbsync-api:
     external: true
 

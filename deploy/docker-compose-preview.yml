@@ -45,7 +45,7 @@ services:
       - postgres
       - frontend
       - kafka
-
+      - dbsync-api
 
     deploy:
       restart_policy:
@@ -78,11 +78,15 @@ services:
       - ENABLE_BLOCKFROST_SUBMIT_API=true
       - BLOCKFROST_API_KEY=${BLOCKFROST_API_KEY}
       - NETWORK_NAME=preview
+      - METADATA_BASE_URL=https://metadata.drep.id/api
+
     networks:
       - default
       - postgres
       - kafka
       - frontend
+      - dbsync-api
+
     deploy:
       restart_policy:
         delay: 10s
@@ -100,5 +104,5 @@ networks:
     external: true
   postgres:
     external: true
-  dbsync:
+  dbsync-api:
     external: true
