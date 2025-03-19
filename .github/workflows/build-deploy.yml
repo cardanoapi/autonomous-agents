@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - dev
+      - cd-chores
 
 jobs:
   build_on_push:
@@ -107,4 +108,5 @@ jobs:
         POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
         POSTGRES_HOST: ${{vars.POSTGRES_HOST}}  
         KUBER_API_KEY: ${{ secrets.KUBER_API_KEY}}
+        DOCKER_HOST: ${{ vars.PROD_DOCKER_HOST}}
         MANAGER_WALLET_SIGNING_KEY: ${{ secrets.MANAGER_WALLET_SIGNING_KEY}}
