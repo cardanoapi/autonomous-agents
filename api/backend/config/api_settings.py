@@ -7,7 +7,7 @@ class APISettings(BaseSettings):
     JWT_SECRET_KEY: str = ""
     DB_SYNC_BASE_URL: str = "https://dbsyncapi.agents.cardanoapi.io/api"
     SAME_SITE = "None"
-    METADATA_BASE_URL: str = "https://metadata.drep.id/api"
+    METADATA_BASE_URL: str = "https://metadata.drep.id"
     GOV_ACTION_API: str = "https://govtool.cardanoapi.io/api"
     KAFKA_TOPIC_PREFIX: str = ""
     KAFKA_PREFIX: str = ""
