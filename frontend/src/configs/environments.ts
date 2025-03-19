@@ -13,23 +13,18 @@ export const networkConfig: Record<
     { name: NetworkName; publicApiUrl: string; govtoolUrl: string }
 > = {
     default: {
-        name: 'sanchonet',
-        publicApiUrl: `https://sanchonet.${networkBase.baseApiHost}/api`,
+        name: 'preview',
+        publicApiUrl: `https://preview.${networkBase.baseApiHost}/api`,
         govtoolUrl: 'https://govtool.cardanoapi.io'
     },
     preview: {
         name: 'preview',
         publicApiUrl: `https://preview.${networkBase.baseApiHost}/api`,
-        govtoolUrl: 'https://govtool.cardanoapi.io'
+        govtoolUrl: 'https://preview.gov.tools'
     },
     preprod: {
         name: 'preprod',
         publicApiUrl: `https://preprod.${networkBase.baseApiHost}/api`,
-        govtoolUrl: 'https://govtool.cardanoapi.io'
-    },
-    sanchonet: {
-        name: 'sanchonet',
-        publicApiUrl: `https://sanchonet.${networkBase.baseApiHost}/api`,
         govtoolUrl: 'https://govtool.cardanoapi.io'
     }
 };
@@ -41,12 +36,10 @@ export const environments = {
         internalUrl: process.env.API_URL,
         managerUrl: process.env.NEXT_PUBLIC_MANAGER_URL
     },
-    network: process.env.NEXT_PUBLIC_NETWORK_NAME || ('sanchonet' as NetworkName),
+    network: process.env.NEXT_PUBLIC_NETWORK_NAME || ('preview' as NetworkName),
 
     // build-time configs
     BASE_DEPLOY_PATH,
-
-    FORM_PRIVACY_POLICY_URL: process.env.FORM_PRIVACY_POLICY_URL ?? 'https://bettercollected.com/privacy-policy',
 
     // run-time configg
     GA_MEASUREMENT_ID: process.env.GA_MEASUREMENT_ID,
@@ -67,7 +60,7 @@ export const environments = {
     ELASTIC_APM_ENVIRONMENT: process.env.ELASTIC_APM_ENVIRONMENT,
     APM_ENABLED: process.env.ELASTIC_APM_SERVER_URL && process.env.ELASTIC_APM_SERVICE_NAME,
     NEXT_PUBLIC_IMAGE_TAG: process.env.NEXT_PUBLIC_IMAGE_TAG ?? 'dev',
-    GOVTOOL_BASE_URL: 'https://govtool.cardanoapi.io',
+    GOVTOOL_BASE_URL: 'https://preview.gov.tools',
     NEXT_PUBLIC_ENABLE_AGENT_INSTANCE: process.env.NEXT_PUBLIC_ENABLE_AGENT_INSTANCE === 'true' || false,
     NEXT_PUBLIC_MANAGER_BASE_DOMAIN: process.env.NEXT_PUBLIC_MANAGER_BASE_DOMAIN || '',
     NEXT_PUBLIC_DOCKER_NETWORK_NAME: process.env.NEXT_PUBLIC_DOCKER_NETWORK_NAME || '',

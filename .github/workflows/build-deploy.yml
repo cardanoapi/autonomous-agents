@@ -5,8 +5,6 @@ on:
     branches:
       - master
       - dev
-    tags:
-      - "*"
 
 jobs:
   build_on_push:
@@ -18,7 +16,6 @@ jobs:
           - api
           - agent-node
           - frontend
-          - dbsync-api
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -71,40 +68,43 @@ jobs:
     needs: build_on_push
     strategy:
       matrix:
-        service:
-          - agent-manager
-          - api
-          - frontend
-          - dbsync-api
+        network:
+          - preview
+          - preprod
       max-parallel: 1
-
-    runs-on: ubuntu-latest
+    runs-on: builder
     env:
-      SERVICE_NAME: ${{ matrix.service }}
       GITHUB_REPOSITORY: ${{ github.repository }}
 
     steps:
-      - name: Deploy built Image
-        id: docker_deploy
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.BASTION_IPV4 }}
-          username: ${{ secrets.BASTION_SSH_USER }}
-          key: ${{ secrets.BASTION_SSH_KEY }}
-          port: ${{ secrets.BASTION_SSH_PORT }}
-          script: |
-            SERVICE_NAME=$(echo ${{ matrix.service }})
-            GITHUB_REPOSITORY="${{ github.repository }}"
-            REPO_NAME="${GITHUB_REPOSITORY##*/}"
-            IMAGE_NAME="${{ vars.DOCKER_REGISTRY_HOST }}/${{ vars.DOCKER_IMAGE_PREFIX }}/${REPO_NAME}-${SERVICE_NAME}"
-            DEPLOY_TAG="${{ github.sha }}"
-            
-            if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
-              DOCKER_HOST="${{ vars.DEV_HOST }}"
-              DOCKER_STACK="${{ vars.DEV_STACK }}"
-            elif [[ "${{ github.ref }}" == "refs/heads/master" ]]; then
-              DOCKER_HOST="${{ vars.PROD_HOST }}"
-              DOCKER_STACK="${{ vars.PROD_STACK }}"
-            fi
-            echo docker --host "$DOCKER_HOST" service update --image $IMAGE_NAME:$DEPLOY_TAG ${DOCKER_STACK}_${SERVICE_NAME}
-            docker --host "$DOCKER_HOST" service update --image $IMAGE_NAME:$DEPLOY_TAG ${DOCKER_STACK}_${SERVICE_NAME}
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install docker-stack
+      run: pip install --upgrade docker-stack
+  
+    - name: Log in to Docker Hub
+      run: echo ${{ secrets.DOCKER_REGISTRY_SECRET }} | docker login -u ${{ secrets.DOCKER_REGISTRY_USERNAME }}  --password-stdin
+
+    - name: Deploy stack
+      run: > 
+        docker-stack deploy --with-registry-auth drep_id_${{ matrix.network}} docker-compose-${{ matrix.network}}.yml
+      working-directory: deploy
+      env:
+        NETWORK_NAME: ${{ matrix.network }}   
+        IMAGE_TAG:  ${{ github.sha}}        about 7 months ago
+        AGENT_MNEMONIC: ${{ secrets.AGENT_MNEMONIC}}
+        BLOCKFROST_API_KEY: ${{ secrets.BLOCKFROST_API_KEY}}
+        ELASTIC_APM_SERVER_URL: ${{vars.ELASTIC_APM_SERVER_URL}}
+        ELASTIC_APM_API_KEY: ${{ secrets.ELASTIC_APM_API_KEY}}
+        MANAGER_WALLET_ADDRESS: ${{vars.MANAGER_WALLET_ADDRESS}}
+        POSTGRES_USER: ${{vars.POSTGRES_USER}}
+        POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
+        POSTGRES_HOST: ${{vars.POSTGRES_HOST}}  
+        KUBER_API_KEY: ${{ secrets.KUBER_API_KEY}}
+        MANAGER_WALLET_SIGNING_KEY: ${{ secrets.MANAGER_WALLET_SIGNING_KEY}}
