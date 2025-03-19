@@ -45,7 +45,7 @@ services:
       - postgres
       - frontend
       - kafka
-
+      - dbsync-api
 
     deploy:
       restart_policy:
@@ -83,6 +83,8 @@ services:
       - postgres
       - kafka
       - frontend
+      - dbsync-api
+
     deploy:
       restart_policy:
         delay: 10s
@@ -100,5 +102,5 @@ networks:
     external: true
   postgres:
     external: true
-  dbsync:
+  dbsync-api:
     external: true
