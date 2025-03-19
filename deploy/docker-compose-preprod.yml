@@ -17,6 +17,8 @@ services:
       - ELASTIC_APM_API_KEY=${ELASTIC_APM_API_KEY}
       - ELASTIC_APM_SERVER_URL=${ELASTIC_APM_SERVER_URL}
       - ELASTIC_APM_ENVIRONMENT=preprod
+      - METADATA_BASE_URL=https://metadata.drep.id/api
+
       
     networks:
       - default

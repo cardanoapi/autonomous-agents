@@ -78,6 +78,8 @@ services:
       - ENABLE_BLOCKFROST_SUBMIT_API=true
       - BLOCKFROST_API_KEY=${BLOCKFROST_API_KEY}
       - NETWORK_NAME=preview
+      - METADATA_BASE_URL=https://metadata.drep.id/api
+
     networks:
       - default
       - postgres
