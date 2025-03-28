@@ -3,7 +3,7 @@ export type ParameterType = 'string' | 'number' | 'object' | 'options' | 'hash' 
 type groupTypes = 'Certificates' | 'Vote' | 'Payment' | 'Governance Proposal';
 
 export interface IFunctionsDto {
-    group: groupTypes;
+    group: groupTypes | string;
     items: IFunctionsItem[];
 }
 
