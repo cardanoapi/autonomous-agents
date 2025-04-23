@@ -77,9 +77,7 @@ function Chart() {
     const timeoutRef = useRef<any>(null);
 
     function validate() {
-        setArr((prevState) =>
-            [...prevState, { X: Math.random() >= 0.5 ? 5 : 0 }].slice(1)
-        );
+        setArr((prevState) => [...prevState, { X: Math.random() >= 0.5 ? 5 : 0 }].slice(1));
     }
 
     useEffect(() => {
@@ -98,12 +96,7 @@ function Chart() {
     return (
         <div>
             <h1>{time}</h1>
-            <LineChart
-                width={730}
-                height={250}
-                data={arr}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
+            <LineChart width={730} height={250} data={arr} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" />
 
                 <YAxis />

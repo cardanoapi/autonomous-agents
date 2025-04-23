@@ -11,14 +11,38 @@ import { RpcTopicHandler } from './service/RpcTopicHandler'
 import { ScheduledTask } from 'node-cron'
 import { globalRootKeyBuffer, globalState } from './constants/global'
 import { AgentRunner } from './executor/AgentRunner'
+import { decodeBase64string } from './utils/base64converter'
+import { validateToken } from './utils/validator'
+import { getHandlers } from './executor/AgentFunctions'
 
 configDotenv()
-const wsUrl = process.env.WS_URL || 'ws://localhost:3001'
-const agentId = process.env.AGENT_ID || ''
-if (!agentId) {
-    console.error('Agent ID is required as an argument')
+let wsUrl: string = process.env.WS_URL as string
+let token: string = process.env.TOKEN as string
+if (token) {
+    token = decodeBase64string(token)
+    console.log('Token:', token)
+    const errMsg = validateToken(token)
+    if (errMsg) {
+        console.error(errMsg)
+        process.exit(1)
+    }
+} else {
+    console.error('Token is required as an argument')
     process.exit(1)
 }
+if (!wsUrl) {
+    const network = token.split('_')[0]
+    const managerBaseDomain = process.env.MANAGER_BASE_DOMAIN
+    if (network && managerBaseDomain) {
+        // This is set in docker file
+        wsUrl = `wss://${network.toLowerCase()}.${managerBaseDomain}`
+    } else if (managerBaseDomain) {
+        wsUrl = `ws://${managerBaseDomain}`
+    } else {
+        wsUrl = 'ws://localhost:3001'
+    }
+}
+const agentSecret = token.split('_')[1]
 
 let ws: WebSocket | null = null
 let reconnectAttempts = 0
@@ -26,14 +50,15 @@ const maxReconnectAttempts = 2
 let isReconnecting = false
 let hasConnectedBefore = false
 
+getHandlers()
+
 function connectToManagerWebSocket() {
+    console.log('Initiating connection to manager at:', wsUrl)
     let interval: NodeJS.Timeout | number
     const scheduledTasks: ScheduledTask[] = []
-    ws = new WebSocket(`${wsUrl}/${agentId}`)
+    ws = new WebSocket(`${wsUrl}/${agentSecret}`)
     const clientPipe = new WsClientPipe(ws)
-    const rpcChannel = new AgentRpc(
-        new CborDuplex(clientPipe, cborxBackend(true))
-    )
+    const rpcChannel = new AgentRpc(new CborDuplex(clientPipe, cborxBackend(true)))
     const managerInterface = new ManagerInterface(rpcChannel)
     const txListener = new TxListener()
 
@@ -76,14 +101,10 @@ function connectToManagerWebSocket() {
             attemptReconnect()
             clearInterval(interval)
         }
-        console.log(
-            `Disconnected from the server (code: ${code}, reason: ${reason}).`
-        )
+        console.log(`Disconnected from the server (code: ${code}, reason: ${reason}).`)
     })
 
-    ws.on('error', (er) => {
-        console.error('WebSocket error', er)
-        attemptReconnect()
+    ws.on('error', (err: any) => {
         clearInterval(interval)
     })
 }
@@ -105,16 +126,13 @@ function attemptReconnect() {
             setTimeout(() => {
                 connectToManagerWebSocket()
                 isReconnecting = false
-                console.log(
-                    `Attempting to reconnect... (${reconnectAttempts}/${maxReconnectAttempts})`
-                )
+                if (reconnectAttempts <= maxReconnectAttempts) {
+                    console.log(`Attempting to reconnect... (${reconnectAttempts}/${maxReconnectAttempts})`)
+                }
             }, 10000)
-            maxReconnectAttempts >= reconnectAttempts &&
-                console.log('Waiting for 10 seconds before reconnecting')
+            maxReconnectAttempts >= reconnectAttempts && console.log('Waiting for 10 seconds before reconnecting')
         } else {
-            console.error(
-                'Max reconnect attempts reached. Exiting application.'
-            )
+            console.error('Max reconnect attempts reached. Exiting application.')
             process.exit(1)
         }
     }

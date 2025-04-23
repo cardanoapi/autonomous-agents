@@ -8,39 +8,14 @@ Python version : 3.12.2
 
 Poetry version : 1.8.2
 
-## Docker
-
-## Setup Guide
-
-Clone the project
-
-```bash
-  git clone https://github.com/sireto/cardano-autonomous-agent
-```
-
-Change directory
-
-```bash
-  cd cardano-autonomous-agent
-```
-
-Run Docker-Compose . This will setup up the **postgres Database**, **pgadmin4** , **kafka** and **backend** via Docker.
-
-```bash
- docker compose -f "docker-compose.deployment.yml" up --build -d
-```
-
-After successfully run ,Go to http://0.0.0.0:8000/ , to see the list of api services
-
-## Locally
-
-## Setup Guide
-
 #### Prerequisites
 
 -   Python version: `3.12` or higher
 -   Poetry version: `1.8.3` or higher
 -   Pip version: `24.0.0` or higher
+-   `kafka service`
+-   `postgres server`
+
 
 #### Steps
 
@@ -48,9 +23,7 @@ After successfully run ,Go to http://0.0.0.0:8000/ , to see the list of api serv
 >
 > -   Postgres (Required)
 >
-> -   Kafka with Zookeeper (Optional)
->
-> -   Redis (Optional)
+> -   Kafka  (Required)
 
 <br/>
 
@@ -65,6 +38,16 @@ After successfully run ,Go to http://0.0.0.0:8000/ , to see the list of api serv
     ```shell
     poetry shell
     ```
+3. Check if your virtual env is created using python of version `3.12` or higher
+> **Note:** Your terminal should have something like this `(backend-py3.12) `
+   - If it is not created using python of version `3.12` or higher then create virtual environment again using command
+      ```shell
+        poetry env use 3.12
+      ```
+   - And finally again use command 
+      ```shell
+       poetry shell
+      ```
 
 3. Install Dependencies
 
@@ -72,7 +55,20 @@ After successfully run ,Go to http://0.0.0.0:8000/ , to see the list of api serv
     poetry install
     ```
 
-4. Update the environment variables copying it form `.env.example` to `.env`
+4. Make new file `.env` using `.env.example` and update the environments before running the below steps:
+
+#### Setup environment variables
+
+- **`KAFKA_PREFIX`**: Prefix for Kafka topics.
+- **`AGENT_MNEMONIC`**: Seed phrase to generate a wallet.
+- **`DOCS_URL`**: Path for swagger docs
+- **`KAFKA_ENABLED`**: To enable kafka (Must be enabled by putting value `true` to run the testing agents)
+- **`METADATA_BASE_URL`**: Metadata url to fetch metadata of the drep and proposals of different network. (Default provided in `.env.example`)
+- **`DB_SYNC_BASE_URL`**: URL for the `dbsync-api service`. Default running on `http://localhost:9000` on starting `dbsync-api` service.
+- **`KAFKA_PREFIX`**: Kafka prefix topic
+- **`DATABASE_URL`**: Postgres database url. Specify either a locally running Postgres database URL (e.g., on Docker) or a deployed Postgres database URL.
+- **`KAFKA_BROKERS`**: Kafka broker URL. Specify either a locally running Kafka URL (e.g., on Docker) or a deployed Kafka service URL.
+
 
 5. Run this command for generating the database client and creating the required table mentioned in schema
 
@@ -81,13 +77,7 @@ After successfully run ,Go to http://0.0.0.0:8000/ , to see the list of api serv
     prisma migrate dev
     ```
 
-## Running the Server
-
-Activate Poetry venv inside autonomous-agents-api folder by running the following command.
-
-```bash
-  poetry shell
-```
+> **Note**: You should always activate virtual environment by using command `poetry shell` before running below command
 
 Start the server with env variables.
 
@@ -95,6 +85,6 @@ Start the server with env variables.
   uvicorn backend.app:get_application --port 8000 --reload --env-file .env
 ```
 
-Go to http://localhost:8000
+Go to http://localhost:8000/api/docs
 
-You would see the list of API available
+You would see the list of available API 

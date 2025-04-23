@@ -12,8 +12,8 @@ class DrepRouter(Routable):
     @get("/dreps", response_model=Page)
     async def get_all_dreps(self, page: int = 1, pageSize: int = 10, drep_type: str = "all", search: str | None = None):
         if drep_type == "internal":
-            [dreps, total_count] = await self.drep_service.fetch_internal_dreps(page, pageSize, search)
-            return Page(items=dreps, total=total_count, page=page, size=pageSize, pages=1)
+            dreps = await self.drep_service.fetch_internal_dreps(page, pageSize, search)
+            return Page(items=dreps, total=len(dreps), page=page, size=pageSize, pages=1)
         else:
             drep_data = await self.drep_service.fetch_external_dreps(page, pageSize, search)
 

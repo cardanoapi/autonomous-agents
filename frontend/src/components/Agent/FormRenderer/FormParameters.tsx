@@ -29,9 +29,7 @@ const FormParameters = ({ parameters }: { parameters: Array<IParameter> }) => {
             {parameters.map((param, index) => {
                 return (
                     <div key={param.id} className={'flex flex-col gap-2'}>
-                        {!param.items && (
-                            <span className={'text-md font-medium'}>{param.name} </span>
-                        )}
+                        {!param.items && <span className={'text-md font-medium'}>{param.name} </span>}
                         <div>{renderParamsComponent(param, index)}</div>
                     </div>
                 );

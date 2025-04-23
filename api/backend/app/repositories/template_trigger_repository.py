@@ -8,15 +8,14 @@ from backend.app.exceptions import HTTPException
 from prisma import Prisma
 
 from backend.app.models import (
-    validate_type_CRON,
     CronTriggerDTO,
     EventTriggerDTO,
     TemplateTriggerResponse,
     TemplateTriggerCreateDto,
     TriggerCreateDTO,
-    validate_type_EVENT,
 )
 from backend.config.database import prisma_connection
+from backend.app.models.trigger.utils import validate_type_EVENT, validate_type_CRON
 
 
 class TemplateTriggerRepository:
@@ -28,9 +27,9 @@ class TemplateTriggerRepository:
         template_data_dict = template_data.dict()
 
         if template_data.type == "CRON":
-            await validate_type_CRON(template_data.data.frequency, template_data.data.probability)
+            validate_type_CRON(template_data.data.frequency, template_data.data.probability)
         elif template_data.type == "EVENT":
-            await validate_type_EVENT(template_data.data.event)
+            validate_type_EVENT(template_data.data.event)
         else:
             raise HTTPException(status_code=400, content=f"Invalid Trigger Type {template_data.type}")
 
@@ -78,7 +77,7 @@ class TemplateTriggerRepository:
     ) -> Optional[TemplateTriggerResponse]:
         template_trigger = await self.db.prisma.template_trigger.find_first(where={"id": template_trigger_id})
         if template_trigger is None or template_trigger.deleted_at is not None:
-            raise HTTPException(status_code=404, content="Template not found")
+            raise HTTPException(status_code=404, content="Template trigger not found")
         updated_data_dict = template_trigger_data.dict()
 
         # validation for CRON nad TOPIC

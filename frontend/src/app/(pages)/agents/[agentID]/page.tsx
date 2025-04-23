@@ -8,25 +8,14 @@ import { IAgent, fetchAgentbyID } from '@api/agents';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
-import AgentTabSection from '@app/components/Agent/AgentTab';
-import AgentTabContent from '@app/components/Agent/AgentTabContent';
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbList,
-    BreadcrumbSeparator
-} from '@app/components/atoms/Breadcrumb';
-import {
-    adminAccessAtom,
-    currentAgentNameAtom,
-    currentConnectedWalletAtom,
-    selectedAgentTabAtom
-} from '@app/store/localStore';
+import AgentTabSection from '@app/components/Agent/AgentTab/AgentTab';
+import AgentTabContent from '@app/components/Agent/AgentTab/AgentTabContent';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from '@app/components/atoms/Breadcrumb';
+import { adminAccessAtom, currentAgentNameAtom, currentConnectedWalletAtom } from '@app/store/localStore';
 
 export default function AgentPageById() {
     const [, setCurrentAgentName] = useAtom(currentAgentNameAtom);
     const [adminAccess] = useAtom(adminAccessAtom);
-    const [selectedTab] = useAtom(selectedAgentTabAtom);
     const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
     const params = useParams();
     const router = useRouter();
@@ -39,6 +28,7 @@ export default function AgentPageById() {
     });
 
     const [agentOwnerIsUser, setAgentOwnerIsUser] = useState(false);
+
     useEffect(() => {
         if (agent) {
             setCurrentAgentName(agent?.name || '');
@@ -49,8 +39,8 @@ export default function AgentPageById() {
     }, [agent]);
 
     return (
-        <div className={'flex flex-col gap-4'}>
-            <Breadcrumb>
+        <>
+            <Breadcrumb className={'hidden md:mb-4 md:flex'}>
                 <BreadcrumbList>
                     <BreadcrumbItem
                         onClick={() => router.push('/agents')}
@@ -60,22 +50,24 @@ export default function AgentPageById() {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>{agent?.name || 'Agent Profile'}</BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>{selectedTab}</BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-            <div className={'flex h-[600px] w-full gap-4 2xl:h-[700px] 4xl:h-[800px] '}>
+            <div
+                className={
+                    'flex h-full w-full flex-col gap-4 overflow-hidden md:h-[600px] md:flex-row 2xl:h-[700px] 4xl:h-[800px]'
+                }
+            >
                 <AgentTabSection
                     showAllTabs={adminAccess || agentOwnerIsUser}
-                    className="min-h-full min-w-[200px]"
+                    className="md:min-h-full md:min-w-[200px]"
                 />
                 <AgentTabContent
                     agent={agent}
                     agentLoading={agentLoading}
                     enableEdit={adminAccess || agentOwnerIsUser}
-                    className="h-full max-w-agentComponentWidth "
+                    className="h-full w-full overflow-hidden"
                 />
             </div>
-        </div>
+        </>
     );
 }

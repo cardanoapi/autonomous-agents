@@ -2,13 +2,7 @@
 
 import { SlidersHorizontal } from 'lucide-react';
 
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-} from '../atoms/Select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../atoms/Select';
 
 export interface ISelectItem {
     label: string;
@@ -25,10 +19,7 @@ export default function FilterSelect({
 }) {
     return (
         <Select>
-            <SelectTrigger
-                className="h4 flex w-full items-center gap-x-2"
-                renderArrow={false}
-            >
+            <SelectTrigger className="h4 flex w-full items-center gap-x-2" renderArrow={false}>
                 <SlidersHorizontal className="max-h-[80%] bg-black" />
                 <SelectValue placeholder="Newest" />
             </SelectTrigger>

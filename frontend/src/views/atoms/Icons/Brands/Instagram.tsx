@@ -2,12 +2,7 @@ import React from 'react';
 
 export function Instagram(props: React.SVGAttributes<SVGElement>) {
     return (
-        <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            {...props}
-        >
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
             <path
                 d="M12 8.74998C10.2051 8.74998 8.75 10.2051 8.75 12C8.75 13.7949 10.2051 15.25 12 15.25C13.7949 15.25 15.25 13.7949 15.25 12C15.25 10.2051 13.7949 8.74998 12 8.74998Z"
                 fill="currentColor"

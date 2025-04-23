@@ -7,16 +7,19 @@ import { useRouter } from 'next/navigation';
 import { useAppDialog } from '@hooks';
 import { DRepStatus, IDRepInternal } from '@models/types';
 import { TypographyH2 } from '@typography';
-import { convertLovelaceToAda } from '@utils';
+import { convertLovelaceToAda, hexToBech32 } from '@utils';
+import { useAtom } from 'jotai';
 import { CopyIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import AppDialog from '@app/app/components/AppDialog';
-import AgentAvatar from '@app/components/Agent/AgentAvatar';
+import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import { Badge } from '@app/components/atoms/Badge';
 import { Button } from '@app/components/atoms/Button';
 import { cn } from '@app/components/lib/utils';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
+import { currentConnectedWalletAtom } from '@app/store/localStore';
+import { Truncate } from '@app/utils/common/extra';
 
 import AgentsDelegationDialogContent from './AgentsDelegationDialogContent';
 import DrepDetailDialogContent from './DrepDetailDialogContent';
@@ -25,10 +28,21 @@ interface DRepCardProps {
     dRep: IDRepInternal;
 }
 
+export const getDrepGivedName = (drep: IDRepInternal): string => {
+    if (!drep.givenName) {
+        return '';
+    } else if (typeof drep.givenName === 'string') {
+        return drep.givenName;
+    } else {
+        return drep.givenName['@value'] || '';
+    }
+};
 const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
     const { isOpen, toggleDialog } = useAppDialog();
 
     const [isDrepDetailsOpen, setIsDrepDetailsOpen] = useState(false);
+
+    const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
 
     const isDataMissing = dRep.givenName === undefined;
 
@@ -37,7 +51,7 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
     }, [dRep.votingPower]);
 
     const handleCopyDRepId = () => {
-        navigator.clipboard.writeText(dRep.drepId);
+        navigator.clipboard.writeText(hexToBech32(dRep.drepId));
         toast.success('Drep ID copied');
     };
 
@@ -67,35 +81,44 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
     return (
         <>
             <div
-                className={`shadow-xs flex w-full items-center justify-between rounded-lg border !border-none bg-white p-4 ${isDataMissing && 'shadow-bg-red-100 bg-red-100/40'}`}
+                className={`shadow-xs flex w-full flex-wrap rounded-lg border !border-none bg-white p-4 md:items-center md:justify-between ${isDataMissing && 'shadow-bg-red-100 bg-red-100/40'} flex-col items-start justify-start gap-y-4 md:flex-row`}
             >
-                <div className="flex space-x-4 sm:space-x-6  xl:space-x-12 2xl:space-x-10 4xl:space-x-20">
-                    <div className="flex flex-col space-y-2">
-                        <div className="flex gap-2">
-                            <TypographyH2 className={`font-semibold ${isDataMissing}`}>
-                                {isDataMissing ? 'Data Missing' : dRep.givenName}
-                            </TypographyH2>
-                            <Badge variant={getBadgeVariant(dRep.status)}>
-                                {dRep.status}
-                            </Badge>
+                <div className="flex flex-col gap-y-4 space-x-0 sm:space-x-6 md:flex-row md:space-x-4 xl:space-x-12 2xl:space-x-10 4xl:space-x-20 ">
+                    <div className="flex flex-col space-y-2 ">
+                        <div className={cn('flex')}>
+                            {getDrepGivedName(dRep) !== '' && (
+                                <TypographyH2 className={`mr-2 font-semibold`}>
+                                    {Truncate(getDrepGivedName(dRep), 25)}
+                                </TypographyH2>
+                            )}
+                            <div className={'hidden md:block'}>
+                                <Badge variant={getBadgeVariant(dRep.status)}>{dRep.status}</Badge>
+                            </div>
                         </div>
                         <div className="flex items-center text-brand-navy">
-                            <p className="w-52 truncate text-sm font-medium 2xl:w-48 4xl:w-80">
-                                DrepID : {dRep.drepId}
+                            <p className="w-60 truncate text-sm font-medium 2xl:w-48 4xl:w-80">
+                                DrepID : {hexToBech32(dRep.drepId)}
                             </p>
-                            <CopyIcon
-                                onClick={handleCopyDRepId}
-                                className="ml-2 cursor-pointer"
-                                size={20}
-                            />
+                            <CopyIcon onClick={handleCopyDRepId} className="ml-2 cursor-pointer" size={20} />
                         </div>
                     </div>
-                    <div>
-                        <div className="flex w-32 flex-col items-center space-y-2">
-                            <p className="text-sm text-gray-800">Voting Power</p>
-                            <p className="font-semibold text-gray-600">
-                                ₳ {formattedVotingPower}
-                            </p>
+                    <div className={'flex gap-2 '}>
+                        <div className={'flex flex-col md:flex-row'}>
+                            <div className="flex w-32 flex-col space-y-2 md:items-center ">
+                                <p className="text-sm text-gray-800">Voting Power</p>
+                                <p className="text-sm font-semibold text-gray-600 md:text-base">
+                                    ₳ {formattedVotingPower}
+                                </p>
+                            </div>
+                        </div>
+                        <hr className="border-b border-gray-200" />
+                        <div className={'flex flex-col md:hidden'}>
+                            <div className="flex w-32 flex-col items-center justify-center  space-y-2 md:items-center">
+                                <p className="inline-flex text-sm text-gray-800">Status</p>
+                                <Badge variant={getBadgeVariant(dRep.status)} className={'w-20'}>
+                                    {dRep.status}
+                                </Badge>
+                            </div>
                         </div>
                     </div>
                     {dRep.agentId && dRep.agentName && (
@@ -107,7 +130,7 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                         />
                     )}
                 </div>
-                <div className="flex gap-2">
+                <div className=" hidden gap-2 md:flex">
                     <Button
                         className="rounded-3xl"
                         variant={'cool'}
@@ -115,7 +138,7 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
                     >
                         View details
                     </Button>
-                    {dRep.status === DRepStatus.Active && (
+                    {dRep.status === DRepStatus.Active && currentConnectedWallet && (
                         <Button
                             onClick={toggleDialog}
                             className="rounded-3xl bg-brand-Blue-200 !px-6"
@@ -129,14 +152,11 @@ const DRepCard: React.FC<DRepCardProps> = ({ dRep }) => {
 
             {/* Dialogs */}
             <AppDialog isOpen={isOpen} toggleDialog={toggleDialog}>
-                <AgentsDelegationDialogContent
-                    dRepId={dRep.drepId}
-                    handleClose={toggleDialog}
-                />
+                <AgentsDelegationDialogContent dRepId={dRep.drepId} handleClose={toggleDialog} />
             </AppDialog>
 
             <AppDialog isOpen={isDrepDetailsOpen} toggleDialog={toggleDrepDetailDialog}>
-                <DrepDetailDialogContent dRep={dRep} />
+                <DrepDetailDialogContent dRep={dRep} onClose={toggleDrepDetailDialog} />
             </AppDialog>
         </>
     );
@@ -156,32 +176,18 @@ const AgentDetails = ({
     return (
         <div className="flex items-center justify-center gap-2">
             <div className="flex cursor-pointer" onClick={handleAgentRedirect}>
-                <AgentAvatar
-                    hash={agentId}
-                    size={42}
-                    activeStatus={false}
-                    isActive={false}
-                />
+                <AgentAvatar hash={agentId} size={42} activeStatus={false} isActive={false} />
             </div>
             <div className="flex cursor-pointer flex-col space-y-2">
                 <p className="text-sm font-medium text-gray-800">
-                    <span
-                        className="hover:text-brand-Blue-200"
-                        onClick={handleAgentRedirect}
-                    >
+                    <span className="hover:text-brand-Blue-200" onClick={handleAgentRedirect}>
                         {' '}
                         {agentName || ''}
                     </span>
                 </p>
                 <div className="-2 flex">
-                    <p className="w-44 truncate text-sm font-medium 2xl:w-48 4xl:w-80">
-                        AgentID : {agentId || ''}
-                    </p>
-                    <CopyIcon
-                        onClick={handleCopyAgentId}
-                        className="ml-2 cursor-pointer "
-                        size={20}
-                    />
+                    <p className="w-44 truncate text-sm font-medium 2xl:w-48 4xl:w-80">AgentID : {agentId || ''}</p>
+                    <CopyIcon onClick={handleCopyAgentId} className="ml-2 cursor-pointer " size={20} />
                 </div>
             </div>
         </div>
@@ -196,52 +202,39 @@ export const DRepCardSkeleton = ({
     className?: string;
 }) => {
     return (
-        <div
-            className={cn(
-                'shadow-xs flex w-full items-center justify-between rounded-lg  bg-white p-4',
-                className
-            )}
-        >
+        <div className={cn('shadow-xs flex w-full items-center justify-between rounded-lg  bg-white p-4', className)}>
             <div className="flex space-x-4 sm:space-x-6  xl:space-x-12 2xl:space-x-10 4xl:space-x-20">
                 <div className="flex flex-col space-y-2">
                     <div className="flex items-center gap-2">
-                        <Skeleton className="h-6 w-36" />{' '}
-                        {/* Placeholder for dRepName */}
+                        <Skeleton className="h-6 w-36" /> {/* Placeholder for dRepName */}
                         <Skeleton className="h-5 w-16" /> {/* Placeholder for Badge */}
                     </div>
                     <div className="flex items-center text-brand-navy">
                         <Skeleton className="h-4 w-52 truncate text-sm font-medium 2xl:w-48 4xl:w-80" />{' '}
                         {/* Placeholder for dRepId */}
-                        <Skeleton className="ml-2 h-5 w-5" />{' '}
-                        {/* Placeholder for CopyIcon */}
+                        <Skeleton className="ml-2 h-5 w-5" /> {/* Placeholder for CopyIcon */}
                     </div>
                 </div>
                 <div>
                     <div className="flex w-32 flex-col items-center space-y-2">
-                        <Skeleton className="h-4 w-24" />{' '}
-                        {/* Placeholder for "Voting Power" label */}
-                        <Skeleton className="h-5 w-20" />{' '}
-                        {/* Placeholder for Voting Power value */}
+                        <Skeleton className="h-4 w-24" /> {/* Placeholder for "Voting Power" label */}
+                        <Skeleton className="h-5 w-20" /> {/* Placeholder for Voting Power value */}
                     </div>
                 </div>
                 {internalDRep && (
                     <div className="flex flex-col space-y-2">
-                        <Skeleton className="h-4 w-36" />{' '}
-                        {/* Placeholder for Agent Name */}
+                        <Skeleton className="h-4 w-36" /> {/* Placeholder for Agent Name */}
                         <div className="flex items-center">
                             <Skeleton className="h-4 w-44 truncate text-sm font-medium 2xl:w-48 4xl:w-80" />{' '}
                             {/* Placeholder for AgentID */}
-                            <Skeleton className="ml-2 h-5 w-5" />{' '}
-                            {/* Placeholder for CopyIcon */}
+                            <Skeleton className="ml-2 h-5 w-5" /> {/* Placeholder for CopyIcon */}
                         </div>
                     </div>
                 )}
             </div>
             <div className="flex gap-2">
-                <Skeleton className="h-8 w-24 rounded-3xl" />{' '}
-                {/* Placeholder for View details button */}
-                <Skeleton className="h-8 w-24 rounded-3xl" />{' '}
-                {/* Placeholder for Delegate button */}
+                <Skeleton className="h-8 w-24 rounded-3xl" /> {/* Placeholder for View details button */}
+                <Skeleton className="h-8 w-24 rounded-3xl" /> {/* Placeholder for Delegate button */}
             </div>
         </div>
     );

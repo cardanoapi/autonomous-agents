@@ -1,10 +1,6 @@
 import { FunctionContext } from '../executor/BaseFunction'
 
-export default async function handler(
-    context: FunctionContext,
-    receiverAddress: string,
-    receivingAda: number
-) {
+export default async function handler(context: FunctionContext, receiverAddress: string, receivingAda: number) {
     const req = {
         outputs: {
             address: receiverAddress,

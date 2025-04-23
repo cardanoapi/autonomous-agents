@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 
+import { manualTriggerForAgent } from '@api/agents';
+import { IFunction, IParameter } from '@api/functions';
 import { useMutation } from '@tanstack/react-query';
 import { validateInputFieldForGroup } from '@utils';
 import { useAtom } from 'jotai';
 
-import { manualTriggerForAgent } from '@app/app/api/agents';
-import { IFunction, IParameter } from '@app/app/api/functions';
-import GroupParams from '@app/components/Agent/GroupParameters';
+import GroupParams from '@app/components/Agent/shared/GroupParameters';
 import { Button } from '@app/components/atoms/Button';
 import { Input } from '@app/components/atoms/Input';
 import { ErrorToast, SuccessToast } from '@app/components/molecules/CustomToasts';
@@ -16,13 +16,7 @@ import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { useModal } from '../context';
 
-const AgentManualTriggerModalView = ({
-    agentId,
-    agentFunction
-}: {
-    agentId: string;
-    agentFunction: IFunction;
-}) => {
+const AgentManualTriggerModalView = ({ agentId, agentFunction }: { agentId: string; agentFunction: IFunction }) => {
     const { closeModal } = useModal();
     const [agents] = useAtom(agentsAtom);
 
@@ -102,9 +96,7 @@ const AgentManualTriggerModalView = ({
             updatedParams[index] = { ...updatedParams[index], value };
         }
         setParams(updatedParams);
-        const newErrorIndex = errorParamIndex.filter(
-            (errIndex: number) => errIndex != index
-        );
+        const newErrorIndex = errorParamIndex.filter((errIndex: number) => errIndex != index);
         setErrorParamIndex(newErrorIndex);
     };
 
@@ -114,64 +106,40 @@ const AgentManualTriggerModalView = ({
             <Separator />
             <div className={'flex flex-col gap-2 px-5 py-4'}>
                 <span className={'text-lg '}>{agentFunction.name} Function</span>
-                <span className={'text-sm text-brand-Black-300/80'}>
-                    {agentFunction.description}
-                </span>
+                <span className={'text-sm text-brand-Black-300/80'}>{agentFunction.description}</span>
                 <div className={'my-3 flex flex-wrap gap-4'}>
-                    {Array.isArray(agentFunction.parameters) &&
-                    agentFunction.parameters.length ? (
-                        agentFunction.parameters.map(
-                            (param: IParameter, index: number) => {
-                                return param.data_type !== 'group' ? (
-                                    <div key={index} className={'flex flex-col gap-1'}>
-                                        <span>
-                                            {param.description}{' '}
-                                            {param.optional ? (
-                                                <></>
-                                            ) : (
-                                                <span
-                                                    className={
-                                                        'mt-2 text-lg text-red-500'
-                                                    }
-                                                >
-                                                    *
-                                                </span>
-                                            )}
-                                        </span>
-                                        <Input
-                                            value={params[index].value}
-                                            onChange={(e) =>
-                                                handleInputChange(e.target.value, index)
-                                            }
-                                        />
-                                        {errorParamIndex.length &&
-                                        errorParamIndex.includes(index) ? (
-                                            <span className={'text-sm text-red-500'}>
-                                                This field is required.
-                                            </span>
-                                        ) : (
+                    {Array.isArray(agentFunction.parameters) && agentFunction.parameters.length ? (
+                        agentFunction.parameters.map((param: IParameter, index: number) => {
+                            return param.data_type !== 'group' ? (
+                                <div key={index} className={'flex flex-col gap-1'}>
+                                    <span>
+                                        {param.description}{' '}
+                                        {param.optional ? (
                                             <></>
+                                        ) : (
+                                            <span className={'mt-2 text-lg text-red-500'}>*</span>
                                         )}
-                                    </div>
-                                ) : (
-                                    <GroupParams
-                                        isError={errorParamIndex.includes(index)}
-                                        param={param}
-                                        handleOnChange={(
-                                            groupParamVal: string,
-                                            groupParamIndex: number
-                                        ) => {
-                                            handleInputChange(
-                                                groupParamVal,
-                                                groupParamIndex,
-                                                true,
-                                                index
-                                            );
-                                        }}
+                                    </span>
+                                    <Input
+                                        value={params[index].value}
+                                        onChange={(e) => handleInputChange(e.target.value, index)}
                                     />
-                                );
-                            }
-                        )
+                                    {errorParamIndex.length && errorParamIndex.includes(index) ? (
+                                        <span className={'text-sm text-red-500'}>This field is required.</span>
+                                    ) : (
+                                        <></>
+                                    )}
+                                </div>
+                            ) : (
+                                <GroupParams
+                                    isError={errorParamIndex.includes(index)}
+                                    param={param}
+                                    handleOnChange={(groupParamVal: string, groupParamIndex: number) => {
+                                        handleInputChange(groupParamVal, groupParamIndex, true, index);
+                                    }}
+                                />
+                            );
+                        })
                     ) : (
                         <></>
                     )}

@@ -4,7 +4,7 @@ import * as React from 'react';
 import { forwardRef, useEffect } from 'react';
 
 import { Command as CommandPrimitive, useCommandState } from 'cmdk';
-import { SearchIcon } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 import { Command, CommandGroup, CommandItem, CommandList } from '../atoms/Command';
 import { cn } from '../lib/utils';
@@ -14,6 +14,7 @@ export interface IOption {
     label: string;
     disable?: boolean;
     extraValues?: any;
+    description?: string;
     /** fixed option that can't be removed. */
     fixed?: boolean;
 
@@ -122,9 +123,7 @@ function removePickedOption(groupOption: GroupOption, picked: IOption[]) {
     const cloneOption = JSON.parse(JSON.stringify(groupOption)) as GroupOption;
 
     for (const [key, value] of Object.entries(cloneOption)) {
-        cloneOption[key] = value.filter(
-            (val) => !picked.find((p) => p.value === val.value)
-        );
+        cloneOption[key] = value.filter((val) => !picked.find((p) => p.value === val.value));
     }
     return cloneOption;
 }
@@ -135,24 +134,23 @@ function removePickedOption(groupOption: GroupOption, picked: IOption[]) {
  *
  * @reference: https://github.com/hsuanyi-chou/shadcn-ui-expansions/issues/34#issuecomment-1949561607
  **/
-const CommandEmpty = forwardRef<
-    HTMLDivElement,
-    React.ComponentProps<typeof CommandPrimitive.Empty>
->(({ className, ...props }, forwardedRef) => {
-    const render = useCommandState((state) => state.filtered.count === 0);
+const CommandEmpty = forwardRef<HTMLDivElement, React.ComponentProps<typeof CommandPrimitive.Empty>>(
+    ({ className, ...props }, forwardedRef) => {
+        const render = useCommandState((state) => state.filtered.count === 0);
 
-    if (!render) return null;
+        if (!render) return null;
 
-    return (
-        <div
-            ref={forwardedRef}
-            className={cn('py-6 text-center text-sm', className)}
-            cmdk-empty=""
-            role="presentation"
-            {...props}
-        />
-    );
-});
+        return (
+            <div
+                ref={forwardedRef}
+                className={cn('py-6 text-center text-sm', className)}
+                cmdk-empty=""
+                role="presentation"
+                {...props}
+            />
+        );
+    }
+);
 
 CommandEmpty.displayName = 'CommandEmpty';
 
@@ -192,9 +190,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
 
         const [selected, setSelected] = React.useState<IOption[]>(value || []);
 
-        const [options, setOptions] = React.useState<GroupOption>(
-            transToGroupOption(arrayDefaultOptions, groupBy)
-        );
+        const [options, setOptions] = React.useState<GroupOption>(transToGroupOption(arrayDefaultOptions, groupBy));
         const [inputValue, setInputValue] = React.useState('');
         const debouncedSearchTerm = useDebounce(inputValue, delay || 500);
         const [disabledValue, setDisabledValue] = React.useState(disabled);
@@ -364,11 +360,7 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                     commandProps?.onKeyDown?.(e);
                 }}
                 className={cn('overflow-visible bg-white', commandProps?.className)}
-                shouldFilter={
-                    commandProps?.shouldFilter !== undefined
-                        ? commandProps.shouldFilter
-                        : !onSearch
-                } // When onSearch is provided, we don't want to filter the options. You can still override it.
+                shouldFilter={commandProps?.shouldFilter !== undefined ? commandProps.shouldFilter : !onSearch} // When onSearch is provided, we don't want to filter the options. You can still override it.
                 filter={commandFilter()}
                 onSelect={(e) => {
                     e.preventDefault();
@@ -402,21 +394,15 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                                 triggerSearchOnFocus && onSearch?.(debouncedSearchTerm);
                                 inputProps?.onFocus?.(event);
                             }}
-                            placeholder={
-                                hidePlaceholderWhenSelected && selected.length !== 0
-                                    ? ''
-                                    : placeholder
-                            }
+                            placeholder={hidePlaceholderWhenSelected && selected.length !== 0 ? '' : placeholder}
                             className={cn(
-                                'placeholder:text-muted-foreground ml-2 w-[90%] flex-1 bg-white outline-none',
+                                'placeholder:text-muted-foreground ml-2 w-[90%] flex-1 bg-white outline-none hover:cursor-pointer',
                                 inputProps?.className,
-                                selected.length >= maxSelected
-                                    ? 'bg-brand-White-200'
-                                    : ''
+                                selected.length >= maxSelected ? 'bg-brand-White-200' : ''
                             )}
                         />
                     </div>
-                    <SearchIcon className="text-gray-400" />
+                    <Plus className="text-gray-400" />
                 </div>
                 <div className="relative mt-2">
                     {open && (
@@ -435,78 +421,49 @@ const MultipleSelector = React.forwardRef<IMultipleSelectorRef, MultipleSelector
                                 <>
                                     {EmptyItem()}
                                     {CreatableItem()}
-                                    {!selectFirstItem && (
-                                        <CommandItem value="-" className="hidden" />
-                                    )}
-                                    {Object.entries(selectables).map(
-                                        ([key, dropdowns]) => (
-                                            <CommandGroup
-                                                key={key}
-                                                heading={key}
-                                                className="h-full overflow-auto"
-                                            >
-                                                {dropdowns.map((option, index) => {
-                                                    return (
-                                                        <>
-                                                            <CommandItem
-                                                                key={index}
-                                                                value={option.value}
-                                                                disabled={
-                                                                    option.disable
+                                    {!selectFirstItem && <CommandItem value="-" className="hidden" />}
+                                    {Object.entries(selectables).map(([key, dropdowns]) => (
+                                        <CommandGroup key={key} heading={key} className="h-full overflow-auto">
+                                            {dropdowns.map((option, index) => {
+                                                return (
+                                                    <>
+                                                        <CommandItem
+                                                            key={index}
+                                                            value={option.value}
+                                                            disabled={option.disable}
+                                                            onMouseDown={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                            }}
+                                                            onSelect={() => {
+                                                                if (selected.length >= maxSelected) {
+                                                                    onMaxSelected?.(selected.length);
+                                                                    return;
                                                                 }
-                                                                onMouseDown={(e) => {
-                                                                    e.preventDefault();
-                                                                    e.stopPropagation();
-                                                                }}
-                                                                onSelect={() => {
-                                                                    if (
-                                                                        selected.length >=
-                                                                        maxSelected
-                                                                    ) {
-                                                                        onMaxSelected?.(
-                                                                            selected.length
-                                                                        );
-                                                                        return;
-                                                                    }
 
-                                                                    const newOptions = [
-                                                                        ...selected,
-                                                                        option
-                                                                    ];
+                                                                const newOptions = [...selected, option];
 
-                                                                    setSelected(
-                                                                        newOptions
-                                                                    );
-                                                                    onChange?.(option);
-                                                                    setOpen(false);
-                                                                    setInputValue('');
-                                                                    if (
-                                                                        selected.length +
-                                                                            1 ===
-                                                                        maxSelected
-                                                                    ) {
-                                                                        setDisabledValue(
-                                                                            true
-                                                                        );
-                                                                    }
-                                                                    openSelectedOption?.(
-                                                                        option
-                                                                    );
-                                                                }}
-                                                                className={cn(
-                                                                    'my-1 cursor-pointer rounded-md py-2 hover:bg-brand-Gray-400',
-                                                                    option.disable &&
-                                                                        'text-muted-foreground cursor-default'
-                                                                )}
-                                                            >
-                                                                {option.label}
-                                                            </CommandItem>
-                                                        </>
-                                                    );
-                                                })}
-                                            </CommandGroup>
-                                        )
-                                    )}
+                                                                setSelected(newOptions);
+                                                                onChange?.(option);
+                                                                setOpen(false);
+                                                                setInputValue('');
+                                                                if (selected.length + 1 === maxSelected) {
+                                                                    setDisabledValue(true);
+                                                                }
+                                                                openSelectedOption?.(option);
+                                                            }}
+                                                            className={cn(
+                                                                'my-1 cursor-pointer rounded-md py-2 hover:bg-brand-Gray-400',
+                                                                option.disable && 'text-muted-foreground cursor-default'
+                                                            )}
+                                                        >
+                                                            {option.label}
+                                                        </CommandItem>
+                                                    </>
+                                                );
+                                            })}
+                                        </CommandGroup>
+                                    ))}
                                 </>
                             )}
                         </CommandList>

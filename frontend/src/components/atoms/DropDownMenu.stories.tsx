@@ -1,11 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from './DropDownMenu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './DropDownMenu';
 
 const meta = {
     title: 'DropdownMenu',

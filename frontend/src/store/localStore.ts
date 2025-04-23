@@ -18,7 +18,7 @@ export const agentDeletedAtom = atom(false);
 
 export const templateDeletedAtom = atom(false);
 
-type AgentTabType = 'Overview' | 'History' | 'Manual Trigger' | 'Agent Runner' | 'Logs';
+type AgentTabType = 'Overview' | 'Functions' | 'Logs' | 'Manual Actions' | 'Settings';
 
 export const selectedAgentTabAtom = atom<AgentTabType>('Overview');
 
@@ -26,8 +26,7 @@ export const currentAgentNameAtom = atom('Agent Profile');
 
 export const adminAccessAtom = atomWithStorage<boolean>('adminAccess', false);
 
-export const currentConnectedWalletAtom =
-    atomWithStorage<ICurrentConnectedWallet | null>('currentWallet', null);
+export const currentConnectedWalletAtom = atomWithStorage<ICurrentConnectedWallet | null>('currentWallet', null);
 
 export const agentWithActiveStatus = atom<Record<string, boolean> | null>(null);
 

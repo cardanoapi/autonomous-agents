@@ -13,8 +13,7 @@ import joyrideSlice from '@app/store/tours/slice';
 const loggerMiddleware = createLogger({ collapsed: true });
 const middlewares: any = [loggerMiddleware];
 
-if (environments.IS_IN_PRODUCTION_MODE || environments.IS_REDUX_LOGGER_DISABLED)
-    middlewares.splice(0, 1);
+if (environments.IS_IN_PRODUCTION_MODE || environments.IS_REDUX_LOGGER_DISABLED) middlewares.splice(0, 1);
 
 const reducers = {
     [mutationStatusSlice.reducerPath]: mutationStatusSlice.reducer,
@@ -43,9 +42,7 @@ export const store = configureStore({
     devTools: !environments.IS_IN_PRODUCTION_MODE,
     enhancers: (getDefaultEnhancers) =>
         getDefaultEnhancers().concat(
-            environments.IS_IN_PRODUCTION_MODE || environments.IS_REDUX_LOGGER_DISABLED
-                ? []
-                : [monitorReducerEnhancer]
+            environments.IS_IN_PRODUCTION_MODE || environments.IS_REDUX_LOGGER_DISABLED ? [] : [monitorReducerEnhancer]
         )
 });
 

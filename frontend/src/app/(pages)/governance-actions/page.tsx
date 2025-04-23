@@ -5,24 +5,15 @@ import { useEffect, useMemo, useState } from 'react';
 import { fetchProposals } from '@api/proposals';
 import { QUERY_KEYS } from '@consts';
 import { useQuery } from '@tanstack/react-query';
-import { useInView } from 'react-intersection-observer';
 
 import DataActionBar from '@app/app/components/DataActionBar';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger
-} from '@app/components/atoms/DropDownMenu';
+import { cn } from '@app/components/lib/utils';
+import EmptyScreen from '@app/components/molecules/EmptyScreen';
 import PaginationBtns from '@app/components/molecules/PaginationBtns';
 import { Tabs, TabsList, TabsTrigger } from '@app/components/molecules/Tabs';
-import { ScrollArea } from '@app/components/shadcn/ui/scroll-area';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
 
-import EmptyGovActionPlaceholder from './components/EmptyGovActionPlaceholder';
-import ProposalCard, {
-    ExternalProposalCardSkeleton,
-    InternalProposalCardSkeleton
-} from './components/proposalCard';
+import ProposalCard from './components/proposalCard';
 
 interface IProposalFilterOption {
     placeholder: string;
@@ -35,8 +26,6 @@ const proposalFilterOptions: IProposalFilterOption[] = [
 ];
 
 export default function GovernanceAction() {
-    const { ref } = useInView();
-
     const [searchParams, setSearchParams] = useState({
         page: 1,
         pageSize: 10,
@@ -45,10 +34,7 @@ export default function GovernanceAction() {
         search: ''
     });
 
-    const queryKey = useMemo(
-        () => [QUERY_KEYS.useGetInfoProposalListKey, searchParams],
-        [searchParams]
-    );
+    const queryKey = useMemo(() => [QUERY_KEYS.useGetInfoProposalListKey, searchParams], [searchParams]);
 
     const { data, isLoading } = useQuery({
         queryKey,
@@ -79,96 +65,92 @@ export default function GovernanceAction() {
     }, [data, searchParams.pageSize]);
 
     return (
-        <div className="flex h-defaultPageHeightwithoutTopNav w-full flex-col gap-4">
-            <div className="flex items-center justify-between">
-                <div className="flex gap-2">
-                    <DataActionBar
-                        onSearch={handleSearch}
-                        placeholder="Search Governance Action"
-                        className="!w-[500px]"
-                    />
-                    <ProposalFilterTab
-                        onClick={handleFilterChange}
-                        taboptions={proposalFilterOptions}
-                        defaultValue={proposalFilterOptions[0].value}
-                    />
+        <>
+            <GovActionTopNav
+                handleSearch={handleSearch}
+                handleFilterChange={handleFilterChange}
+                setSearchParams={setSearchParams}
+                searchParams={searchParams}
+                proposalFilterOptions={proposalFilterOptions}
+            />
+
+            {!isLoading && data?.items && data?.items?.length > 0 && (
+                <div className="grid h-full w-full grid-flow-row grid-cols-1 gap-8 overflow-y-auto py-4 sm:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 4xl:grid-cols-5">
+                    {data?.items?.map((proposal: any) => <ProposalCard key={proposal.id} proposal={proposal} />)}
                 </div>
-                <div>
-                    <DropdownMenu>
-                        <span>Proposals per Page: </span>
-                        <DropdownMenuTrigger className="inline-flex">
-                            {searchParams.pageSize}
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="min-w-0">
-                            {rowOptions.map((row) => (
-                                <DropdownMenuItem
-                                    key={row}
-                                    onClick={() =>
-                                        setSearchParams((prev) => ({
-                                            ...prev,
-                                            pageSize: row,
-                                            page: 1
-                                        }))
-                                    }
-                                >
-                                    {row}
-                                </DropdownMenuItem>
-                            ))}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            </div>
-            <ScrollArea className="h-proposalListHeight pr-4">
-                <div className="grid w-full grid-flow-row grid-cols-1 gap-8 py-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-                    {!isLoading &&
-                        data?.items?.map((proposal: any) => (
-                            <ProposalCard key={proposal.id} proposal={proposal} />
-                        ))}
-                    {isLoading && (
-                        <>
-                            {searchParams.proposal_type === 'internal'
-                                ? Array(10)
-                                      .fill(0)
-                                      .map((_, index) => (
-                                          <InternalProposalCardSkeleton key={index} />
-                                      ))
-                                : Array(10)
-                                      .fill(0)
-                                      .map((_, index) => (
-                                          <ExternalProposalCardSkeleton key={index} />
-                                      ))}
-                        </>
-                    )}
-                </div>
-                {!isLoading && data?.items?.length === 0 && (
-                    <EmptyGovActionPlaceholder className="h-full" />
-                )}
-                <div ref={ref} />
-            </ScrollArea>
-            <div className="pagination-btn-position flex flex-row-reverse">
+            )}
+            {!isLoading && data?.items?.length === 0 && searchParams.proposal_type === 'internal' && (
+                <EmptyScreen
+                    msg="No Internal Proposals Found"
+                    linkMsg="View all proposals"
+                    linkOnCLick={() => handleFilterChange('all')}
+                />
+            )}
+            {!isLoading && data?.items?.length === 0 && searchParams.proposal_type !== 'internal' && (
+                <EmptyScreen msg="No External Proposals Found" />
+            )}
+            {isLoading && <Skeleton className="h-full w-full"></Skeleton>}
+            <div className={cn('flex flex-row-reverse', data?.items?.length === 0 && 'hidden')}>
                 <PaginationBtns
                     upperLimit={totalPage}
                     onPaginate={handlePaginationChange}
                     refCurrentPage={searchParams.page}
+                    rowOptions={rowOptions}
+                    rowsLabel="Proposals per page"
+                    onRowClick={(row: number) =>
+                        setSearchParams((prev) => ({
+                            ...prev,
+                            pageSize: row,
+                            page: 1
+                        }))
+                    }
+                    rowsPerPage={searchParams.pageSize}
+                />
+            </div>
+        </>
+    );
+}
+
+const GovActionTopNav = ({
+    handleSearch,
+    handleFilterChange,
+    searchParams,
+    proposalFilterOptions
+}: {
+    handleSearch: (searchValue: string) => void;
+    handleFilterChange: (filter: string) => void;
+    setSearchParams: (params: any) => void;
+    searchParams: any;
+    proposalFilterOptions: IProposalFilterOption[];
+}) => {
+    return (
+        <div className="flex w-full flex-wrap items-center justify-between gap-y-4">
+            <div className="flex flex-col gap-2 md:flex-row">
+                <DataActionBar onSearch={handleSearch} placeholder="Search Governance Action" />
+                <ProposalFilterTab
+                    onClick={handleFilterChange}
+                    taboptions={proposalFilterOptions}
+                    value={searchParams.proposal_type || proposalFilterOptions[0].value}
                 />
             </div>
         </div>
     );
-}
+};
 
 const ProposalFilterTab = ({
     taboptions,
-    onClick,
-    defaultValue
+    value,
+    onClick
 }: {
     taboptions: IProposalFilterOption[];
     onClick?: (value: string) => void;
-    defaultValue: string;
+    value: string;
 }) => {
-    const triggerClassName = 'text-base border-gray-200 border-[1px] !h-full';
+    const triggerClassName =
+        'md:text-base border-gray-200 border-[1px] !h-full  text-sm rounded-full md:rounded-sm mr-1 md:mr-0';
 
     return (
-        <Tabs defaultValue={defaultValue} className="!m-0 !p-0">
+        <Tabs value={value} className="!m-0 !p-0">
             <TabsList className="!h-full !p-0">
                 {taboptions.map((option) => (
                     <TabsTrigger

@@ -11,11 +11,7 @@ const meta = {
     parameters: {
         layout: 'centered'
     },
-    decorators: [
-        (Story) => (
-            <QueryClientProvider client={queryClient}>{Story()}</QueryClientProvider>
-        )
-    ],
+    decorators: [(Story) => <QueryClientProvider client={queryClient}>{Story()}</QueryClientProvider>],
     tags: ['autodocs'],
     argTypes: {}
 } satisfies Meta<typeof ConfirmationBox>;

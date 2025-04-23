@@ -2,61 +2,36 @@
 
 This project is a TypeScript client application that connects to a server via WebSocket and processes configurations sent by the server. It can schedule and trigger functions based on received configurations.
 
-## Table of Contents
-
--   [Requirements](#requirements)
--   [Installation](#installation)
--   [Usage](#usage)
--   [Development](#development)
-
 ## Requirements
 
 -   [Node.js](https://nodejs.org/) (v18.18.0 or higher)
 -   [yarn](https://yarnpkg.com/) package manager
+-   `Agent-Manager` service
+-   `Fronted` service
+-   `Backend` service
+-   `DbSync-api` service
 
 ## Installation
 
-1. Clone the repository:
-
-    ```shell
-    git clone https://github.com/sireto/cardano-autonomous-agent.git
-    cd  cardano-autonomous-agent/agent-node
-    ```
-
-2. Install dependencies using npm or yarn:
+1. Install dependencies using npm or yarn:
 
     ```shell
     yarn install
     ```
 
-## Usage
+2. Create new file `.env` and copy env variables form `.env.example` to `.env` and update the env variables.
 
 ### Setting up environment variables
 
+-   **`TOKEN`**: Run the frontend and visit `My Agent` tab from left bottom section of the page. Then click `Run Agent` button on top right of the `Agent Overview` section. Copy the token part only and paste it in env.
+-   **`WS_URL`**: `agent-manager` websocket url . Default on `ws://localhost:3001'
+
+**`Note`** - Remember to add `ws` as protocol in `WS_URL` instead of `http`.
+
 Copy environment variables from `.env.example` to `.env` and update them as necessary.
 
-> **Note**: AGENT_ID if the ID of the agent created with API.
-
-### Development Mode
-
-To run the application in dev mode run the following command
+Finally run the agent by running below command.
 
 ```shell
-yarn dev
+  yarn dev
 ```
-
-### Production Mode
-
-1. Build the application using the following command:
-
-    ```shell
-    yarn build
-    ```
-
-    This will compile the TypeScript files into JavaScript and place the output in the `dist` directory.
-
-2. Run the application with an agent ID as a command-line argument:
-
-    ```shell
-    yarn start
-    ```

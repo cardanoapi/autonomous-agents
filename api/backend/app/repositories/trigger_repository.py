@@ -9,10 +9,11 @@ from backend.app.models.trigger.trigger_dto import (
     TriggerCreateDTO,
     CronTriggerDTO,
     EventTriggerDTO,
-    validate_type_CRON,
-    validate_type_EVENT,
 )
 from backend.config.database import prisma_connection
+from backend.app.models.trigger.trigger_dto import EventTriggerDTO
+from backend.config.logger import logger
+from backend.app.models.trigger.utils import validate_type_CRON, validate_type_EVENT
 
 
 class TriggerRepository:
@@ -21,9 +22,9 @@ class TriggerRepository:
 
     async def save_trigger(self, agent_id: str, trigger_data: TriggerCreateDTO):
         if trigger_data.type == "CRON":
-            await validate_type_CRON(trigger_data.data.frequency, trigger_data.data.probability)
+            validate_type_CRON(trigger_data.data.frequency, trigger_data.data.probability)
         elif trigger_data.type == "EVENT":
-            await validate_type_EVENT(trigger_data.data.event)
+            validate_type_EVENT(trigger_data.data)
         else:
             raise HTTPException(status_code=400, content=f"Invalid Trigger Type {trigger_data.type}")
         trigger_data_dict = trigger_data.dict()
@@ -72,7 +73,6 @@ class TriggerRepository:
             return False
         elif trigger.deleted_at is not None:
             return True
-
         await self.db.prisma.trigger.update(
             where={"agent_id": trigger.agent_id, "id": trigger_id},
             data={"deleted_at": datetime.now(timezone.utc)},
@@ -94,10 +94,10 @@ class TriggerRepository:
 
         # validation for CRON nad TOPIC
         if trigger_data.type == "CRON":
-            await validate_type_CRON(trigger_data.data.frequency, trigger_data.data.probability)
+            validate_type_CRON(trigger_data.data.frequency, trigger_data.data.probability)
 
         if trigger_data.type == "EVENT":
-            await validate_type_EVENT(trigger_data.data.event)
+            validate_type_EVENT(trigger_data.data)
 
         # for config data
         data_dict = updated_data_dict.pop("data")

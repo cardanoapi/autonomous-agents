@@ -13,16 +13,9 @@ export function rewardAddressRawBytes(network: number, stakevkh: string) {
     return result
 }
 
-export function rewardAddressBech32(
-    networkId: number,
-    stakevkh: string
-): string {
+export function rewardAddressBech32(networkId: number, stakevkh: string): string {
     const prefix = networkId == 0 ? 'stake_test' : 'stake'
-    return bech32.encode(
-        prefix,
-        bech32.toWords(Buffer.from(rewardAddressRawBytes(networkId, stakevkh))),
-        200
-    )
+    return bech32.encode(prefix, bech32.toWords(Buffer.from(rewardAddressRawBytes(networkId, stakevkh))), 200)
 }
 
 export function loadRootKeyFromBuffer() {
@@ -32,4 +25,10 @@ export function loadRootKeyFromBuffer() {
         process.exit(1)
     }
     return HdKey.fromBytes(rootKeyBuffer)
+}
+
+export function bech32toHex(bechAddress: string) {
+    const decodedId = bech32.decode(bechAddress, 100)
+    const data = bech32.fromWords(decodedId.words)
+    return Buffer.from(data).toString('hex')
 }

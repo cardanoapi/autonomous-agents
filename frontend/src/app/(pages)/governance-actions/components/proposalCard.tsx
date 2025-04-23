@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { useAppDialog } from '@hooks';
 import { GovernanceActionFilter, IProposalInternal } from '@models/types/proposal';
 import { Typography } from '@mui/material';
+import { useAtom } from 'jotai';
 import { CopyIcon, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -10,6 +11,7 @@ import AppDialog from '@app/app/components/AppDialog';
 import { Button } from '@app/components/atoms/Button';
 import { cn } from '@app/components/lib/utils';
 import { Skeleton } from '@app/components/shadcn/ui/skeleton';
+import { currentConnectedWalletAtom } from '@app/store/localStore';
 import { formatDisplayDate } from '@app/utils/dateAndTimeUtils';
 
 import AgentsVoteDialogContent from './AgentsVoteDialogContent';
@@ -26,8 +28,12 @@ const formatProposalType = (type: string) => {
 };
 const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
     const { isOpen, toggleDialog } = useAppDialog();
-    const isDataMissing = proposal.title === null;
-    const proposalId = `${proposal.txHash}#${proposal.index}`;
+    const proposalInfo = proposal.proposal;
+    const proposalMeta = proposal.meta;
+    const proposalCreation = proposal.createdAt;
+    const proposalExpiry = proposal.expireAt;
+    const isDataMissing = proposalMeta.title === null;
+    const proposalId = `${proposalCreation.tx}#${proposalCreation.index}`;
 
     const handleCopyGovernanceActionId = () => {
         navigator.clipboard.writeText(proposalId);
@@ -46,52 +52,42 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
     };
 
     const handleProposalExternalRedirect = () => {
-        window.open(
-            `https://govtool.cardanoapi.io/connected/governance_actions/${proposal.txHash}`,
-            '_blank'
-        );
+        window.open(`https://govtool.cardanoapi.io/connected/governance_actions/${proposalCreation.tx}`, '_blank');
     };
+
+    const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
 
     return (
         <>
             <div className="relative flex w-full flex-col justify-between bg-transparent">
                 <div
-                    className={`flex h-full w-full flex-col gap-5 rounded-t-xl  ${isDataMissing ? 'shadow-bg-red-100 bg-red-100/40' : 'bg-brand-White-200'}  px-6 pb-6 pt-10`}
+                    className={`flex h-full w-full flex-col gap-5 rounded-t-xl  ${isDataMissing ? 'shadow-bg-red-100 bg-red-100/40' : 'bg-brand-White-200'}  px-6 pb-6 pt-8`}
                 >
-                    <ExternalLink
-                        className="absolute right-6 top-6 cursor-pointer text-gray-400 hover:text-brand-Blue-200"
-                        onClick={handleProposalExternalRedirect}
-                    />
-                    <p
-                        className={`line-clamp-2 text-[18px]  font-semibold leading-[24px] ${isDataMissing && 'text-red-600'}`}
-                    >
-                        {isDataMissing ? 'Title Missing' : proposal.title}
-                    </p>
-                    {proposal.abstract !== null && (
+                    <div className={'flex justify-between gap-2'}>
+                        <p
+                            className={`line-clamp-2 text-[18px]  font-semibold leading-[24px]  ${isDataMissing && 'text-red-600'}`}
+                        >
+                            {isDataMissing ? 'Title Missing' : proposalMeta.title}
+                        </p>
+                        <div className={'flex w-12 justify-end'}>
+                            <ExternalLink
+                                className="cursor-pointer text-gray-400 hover:text-brand-Blue-200 "
+                                onClick={handleProposalExternalRedirect}
+                            />
+                        </div>
+                    </div>
+                    {proposalMeta.abstract !== null && (
                         <div className="flex flex-col gap-1">
-                            <p className="  text-xs font-medium  text-brand-Gray-50">
-                                Abstract
-                            </p>
-                            <p className="line-clamp-2 text-sm text-brand-Black-300">
-                                {proposal.abstract}
-                            </p>
+                            <p className="  text-xs font-medium  text-brand-Gray-50">Abstract</p>
+                            <p className="line-clamp-2 text-sm text-brand-Black-300">{proposalMeta.abstract}</p>
                         </div>
                     )}
-                    <div
-                        className={cn(
-                            proposal.agentName
-                                ? 'rounded-lg border border-gray-200 p-4 shadow-sm'
-                                : ''
-                        )}
-                    >
+                    <div className={cn(proposal.agentName ? 'rounded-lg border border-gray-200 p-4 shadow-sm' : '')}>
                         <div className="flex flex-col gap-2">
                             {proposal.agentName && (
                                 <p className="cursor-pointer text-sm font-semibold text-gray-700">
                                     Agent Name :{' '}
-                                    <span
-                                        className="hover:text-brand-Blue-200"
-                                        onClick={handleAgentRedirect}
-                                    >
+                                    <span className="hover:text-brand-Blue-200" onClick={handleAgentRedirect}>
                                         {proposal.agentName}
                                     </span>
                                 </p>
@@ -108,13 +104,11 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                                 </div>
                             )}
 
-                            <p className="mt-2 text-xs font-medium text-gray-500">
-                                Governance Action Type
-                            </p>
+                            <p className="mt-2 text-xs font-medium text-gray-500">Governance Action Type</p>
 
                             <div className="mt-1 flex gap-2">
                                 <span className="rounded-full bg-blue-100 px-4 py-1 text-xs text-blue-700">
-                                    {formatProposalType(proposal.type)}
+                                    {formatProposalType(proposalInfo.type)}
                                 </span>
 
                                 {proposal.agentId && proposal.agentName && (
@@ -130,32 +124,25 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                         <div className="space-x-1 bg-brand-lightBlue bg-opacity-50 py-[6px] text-center ">
                             <span>Submitted:</span>
                             <span className="font-medium">
-                                {proposal.createdDate &&
-                                    formatDisplayDate(proposal.createdDate)}
+                                {proposalCreation.time && formatDisplayDate(proposalCreation.time)}
                             </span>
-                            <span>(Epoch {proposal.createdEpochNo})</span>
+                            <span>(Epoch {proposalCreation.epoch})</span>
                         </div>
                         <p className="space-x-1 py-[6px] text-center">
                             <span>Expires:</span>
                             <span className="font-medium">
-                                {proposal.createdDate &&
-                                    formatDisplayDate(proposal?.expiryDate)}
+                                {proposalCreation.time && formatDisplayDate(proposalExpiry.time)}
                             </span>
-                            <span>(Epoch {proposal.expiryEpochNo})</span>
+                            <span>(Epoch {proposalExpiry.epoch})</span>
                         </p>
                     </div>
                     <div className="flex flex-col gap-1">
-                        <p className="text-xs font-medium text-[#8E908E]">
-                            Governance Action Id
-                        </p>
+                        <p className="text-xs font-medium text-[#8E908E]">Governance Action Id</p>
                         <div className="flex justify-between gap-2 text-brand-primaryBlue">
                             <Typography className="text-sm" noWrap>
                                 {proposalId}
                             </Typography>
-                            <div
-                                onClick={handleCopyGovernanceActionId}
-                                className="cursor-pointer"
-                            >
+                            <div onClick={handleCopyGovernanceActionId} className="cursor-pointer">
                                 <CopyIcon className="h-5 w-5 " />
                             </div>
                         </div>
@@ -166,6 +153,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
                         onClick={toggleDialog}
                         className="w-full rounded-[100px]"
                         variant={'primary'}
+                        disabled={currentConnectedWallet === null}
                     >
                         Vote
                     </Button>
@@ -173,10 +161,7 @@ const ProposalCard: React.FC<ProposalCardProps> = ({ proposal }) => {
             </div>
             {/* Dialogs */}
             <AppDialog isOpen={isOpen} toggleDialog={toggleDialog}>
-                <AgentsVoteDialogContent
-                    handleClose={toggleDialog}
-                    proposalId={proposalId}
-                />
+                <AgentsVoteDialogContent handleClose={toggleDialog} proposalId={proposalId} />
             </AppDialog>
         </>
     );

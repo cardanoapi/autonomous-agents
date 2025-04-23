@@ -10,7 +10,7 @@ from fastapi import APIRouter
 
 from backend.app.controllers.internal import proposal_router, drep_router, metadata_router
 from backend.app.controllers import (
-    ready,
+    health,
     demo,
     agent_router,
     trigger_router,
@@ -24,8 +24,8 @@ from backend.app.controllers import (
 
 root_api_router = APIRouter(prefix="/api")
 
-# For ready status Api
-root_api_router.include_router(ready.router, tags=["ready"])
+# For health status Api
+root_api_router.include_router(health.router, tags=["health"])
 
 # For Demo Ping APi
 root_api_router.include_router(demo.router, tags=["Test"])

@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: cardanoapi/autonomous-agents-frontend:${IMAGE_TAG}
+    environment:
+      - VIRTUAL_HOST=https://preview.agents.cardanoapi.io
+      - VIRTUAL_HOST_3=https://preprod.agents.cardanoapi.io
+      - VIRTUAL_HOST_2=https://agents.cardanoapi.io
+      - ELASTIC_APM_API_KEY=${ELASTIC_APM_API_KEY}
+      - ELASTIC_APM_SERVICE_NAME=automonous-agents-next
+      - ELASTIC_APM_ENVIRONMENT=prod
+    networks:
+      - frontend
+      - default
+    deploy:
+      restart_policy:
+        delay: 10s
+      update_config:
+        order: start-first
+      placement:
+        constraints:
+         -  node.labels.caat==true
+
+  api:
+    image: cardanoapi/autonomous-agents-api:${IMAGE_TAG}
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/autonomous_agents_preview
+      - KAFKA_BROKERS=kafka:9092
+      - KAFKA_PREFIX=aat_preview
+      - DOCS_URL=/api/docs
+      - OPENAPI_URL=/api/openapi.json
+      - VIRTUAL_HOST=https://preview.api.agents.cardanoapi.io
+      - KAFKA_ENABLED=true
+      - AGENT_MNEMONIC=${AGENT_MNEMONIC}
+      - KUBER_URL=https://preview.kuber.cardanoapi.io/api/v3
+      - KUBER_API_KEY=${KUBER_API_KEY}
+      - DB_SYNC_BASE_URL=http://dbsync-preview:8080/api
+      - ELASTIC_APM_API_KEY=${ELASTIC_APM_API_KEY}
+      - ELASTIC_APM_SERVER_URL=${ELASTIC_APM_SERVER_URL}
+      - ELASTIC_APM_ENVIRONMENT=preview
+      - METADATA_BASE_URL=https://metadata.drep.id
+    networks:
+      - default
+      - postgres
+      - frontend
+      - kafka
+      - dbsync-api
+
+    deploy:
+      restart_policy:
+        delay: 10s
+      update_config:
+        order: start-first
+      placement:
+        constraints:
+         -  node.labels.caat==true
+         
+  agent-manager:
+    image: cardanoapi/autonomous-agents-agent-manager:${IMAGE_TAG}
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/autonomous_agents_preview
+      - KAFKA_BROKERS=kafka:9092
+      - KAFKA_PREFIX=aat_preview
+      - CARDANO_NODE_URL=172.31.0.4:3003
+      - CARDANO_NETWORK_MAGIC=2
+      - API_SERVER=http://api:8000
+      - VIRTUAL_HOST=https+wss://preview.manager.agents.cardanoapi.io->:3001
+      - KUBER_BASE_URL=https://preview.kuber.cardanoapi.io
+      - KUBER_API_KEY=${KUBER_API_KEY}
+      - MANAGER_WALLET_ADDRESS=${MANAGER_WALLET_ADDRESS}
+      - MANAGER_WALLET_SIGNING_KEY=${MANAGER_WALLET_SIGNING_KEY}
+      - AGENT_MNEMONIC=${AGENT_MNEMONIC}
+      - DB_SYNC_BASE_URL=http://dbsync-preview:8080/api
+      - ELASTIC_APM_API_KEY=${ELASTIC_APM_API_KEY}
+      - ELASTIC_APM_SERVER_URL=${ELASTIC_APM_SERVER_URL}
+      - ELASTIC_APM_ENVIRONMENT=preview
+      - ENABLE_BLOCKFROST_SUBMIT_API=true
+      - BLOCKFROST_API_KEY=${BLOCKFROST_API_KEY}
+      - NETWORK_NAME=preview
+      - METADATA_BASE_URL=https://metadata.drep.id
+
+    networks:
+      - default
+      - postgres
+      - kafka
+      - frontend
+      - dbsync-api
+
+    deploy:
+      restart_policy:
+        delay: 10s
+      update_config:
+        order: start-first
+      placement:
+        constraints:
+         -  node.labels.caat==true
+
+networks:
+  frontend:
+    external: true
+    name: frontend2
+  kafka:
+    external: true
+  postgres:
+    external: true
+  dbsync-api:
+    external: true

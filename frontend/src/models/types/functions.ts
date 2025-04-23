@@ -1,12 +1,4 @@
-export type ParameterType =
-    | 'string'
-    | 'number'
-    | 'object'
-    | 'options'
-    | 'hash'
-    | 'url'
-    | 'list'
-    | 'function';
+export type ParameterType = 'string' | 'number' | 'object' | 'options' | 'hash' | 'url' | 'list' | 'function';
 
 type groupTypes = 'Certificates' | 'Vote' | 'Payment' | 'Governance Proposal';
 
@@ -20,6 +12,11 @@ export interface IFunctionsItem {
     name: string;
     description: string;
     parameters?: IParameter[];
+    // For functions which have event type available
+    canBeEvent?: boolean;
+    eventParameters?: IParameter[];
+    eventDescription?: string;
+    eventName?: string;
 }
 
 export interface IParameter {
@@ -40,6 +37,7 @@ export interface IParameterOption {
     name: string;
     type: ParameterType;
     parameters?: IParameter[];
+    value?: string;
 }
 
 export interface ItemObject {
@@ -54,8 +52,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
             {
                 id: 'dRepRegistration',
                 name: 'DRep registration',
-                description:
-                    'This will register you as Decentralized Representative (DRep) on the Cardano network.',
+                description: 'This will register you as Decentralized Representative (DRep) on the Cardano network.',
                 parameters: [
                     {
                         id: 'anchor',
@@ -82,14 +79,12 @@ export const AvailableFunctions: IFunctionsDto[] = [
             {
                 id: 'dRepDeRegistration',
                 name: 'DRep de-registration',
-                description:
-                    'This will retire you as Decentralized Representative (DRep) on the Cardano network.'
+                description: 'This will retire you as Decentralized Representative (DRep) on the Cardano network.'
             },
             {
                 id: 'registerStake',
                 name: 'Stake registration',
-                description:
-                    'This will register you as Stake Pool Operator on the Cardano network.'
+                description: 'This will register your stake on the Cardano network.'
             },
             {
                 id: 'stakeDeRegistration',
@@ -177,8 +172,59 @@ export const AvailableFunctions: IFunctionsDto[] = [
                                 type: 'hash'
                             }
                         ]
+                    },
+                    {
+                        id: 'voteType',
+                        name: 'Vote',
+                        type: 'options',
+                        options: [
+                            {
+                                id: 'yes',
+                                name: 'Yes',
+                                type: 'function'
+                            },
+                            {
+                                id: 'no',
+                                name: 'No',
+                                type: 'function'
+                            },
+                            {
+                                id: 'abstain',
+                                name: 'Abstain',
+                                type: 'function'
+                            }
+                        ],
+                        optional: false
                     }
-                ]
+                ],
+                canBeEvent: true,
+                eventName: 'VoteEvent',
+                eventParameters: [
+                    {
+                        id: 'voteType',
+                        name: 'Vote',
+                        type: 'options',
+                        options: [
+                            {
+                                id: 'yes',
+                                name: 'Yes',
+                                type: 'string'
+                            },
+                            {
+                                id: 'no',
+                                name: 'No',
+                                type: 'string'
+                            },
+                            {
+                                id: 'abstain',
+                                name: 'Abstain',
+                                type: 'string'
+                            }
+                        ]
+                    }
+                ],
+                eventDescription:
+                    'This agent will automatically cast a vote on any proposal that is created on the network while it is active. '
             }
         ]
     },
@@ -202,7 +248,8 @@ export const AvailableFunctions: IFunctionsDto[] = [
                         optional: false
                     }
                 ],
-                description: 'Send the Ada to other Ada Holders in the cardano network.'
+                description: 'Send the Ada to other Ada Holders in the cardano network.',
+                canBeEvent: true
             }
         ]
     },
@@ -258,12 +305,13 @@ export const AvailableFunctions: IFunctionsDto[] = [
                         optional: true
                     }
                 ],
+                canBeEvent: true,
                 description:
                     "Submit a new constitution for the Cardano network. Outline fundamental principles and guidelines to shape the ecosystem's future."
             },
             {
                 id: 'createInfoGovAction',
-                name: 'Info',
+                name: 'Info Action Proposal',
                 parameters: [
                     {
                         id: 'anchor',
@@ -285,6 +333,7 @@ export const AvailableFunctions: IFunctionsDto[] = [
                         ]
                     }
                 ],
+                canBeEvent: true,
                 description:
                     'Submit a proposal to share crucial information or updates with the Cardano community to drive informed decision-making.'
             },
@@ -360,8 +409,8 @@ export const AvailableFunctions: IFunctionsDto[] = [
                         ]
                     }
                 ],
-                description:
-                    'Propose no confidence on the current constitutional committee'
+                canBeEvent: true,
+                description: 'Propose no confidence on the current constitutional committee'
             },
             {
                 id: 'updateCommittee',
@@ -447,9 +496,18 @@ export const AvailableFunctions: IFunctionsDto[] = [
                         description: 'RemoveFrom Committee'
                     }
                 ],
+                canBeEvent: true,
                 description:
-                    'Propose no confidence on the current constitutional committee'
+                    'A proposal to modify the membership, signature threshold, or terms of the constitutional committee.'
             }
         ]
     }
+];
+
+export const TemplateFunctions: IFunctionsItem[] = [
+    AvailableFunctions[2].items[0], // Transfer ADA
+    AvailableFunctions[0].items[4], // Delegation (Stake Delegation)
+    AvailableFunctions[1].items[0], // Vote (Vote On Proposal)
+    AvailableFunctions[3].items[0], // Proposal New Constitution
+    AvailableFunctions[3].items[1] // Info Action Proposal
 ];

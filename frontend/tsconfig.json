@@ -24,7 +24,7 @@
             "@consts": ["./src/consts"],
             "@typography": ["./src/app/components/typography"],
             "@models/*": ["./src/models/*"],
-            "@api/*": ["./src/app/api/*"],
+            "@api/*": ["./src/api/*"],
             "@utils": ["./src/utils"],
             "@app/*": ["./src/*"]
         }

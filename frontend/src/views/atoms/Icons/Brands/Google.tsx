@@ -2,13 +2,7 @@ import React from 'react';
 
 export const Google: React.FC<React.SVGAttributes<SVGElement>> = () => {
     return (
-        <svg
-            version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 48 48"
-            height="12"
-            width="12"
-        >
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" height="12" width="12">
             <g>
                 <path
                     fill="#EA4335"

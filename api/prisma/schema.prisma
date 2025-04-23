@@ -24,9 +24,9 @@ model Agent {
   userAddress      String?
   is_drep_registered Boolean           @default(false)
   wallet_details   AgentWalletDetails[]
-
   triggers         Trigger[]           // One-to-many relationship with Trigger
-  template         Template?           @relation(fields: [template_id], references: [id], onDelete: SetNull)
+  template         Template?           @relation(fields: [template_id], references: [id], onDelete: SetNull,  onUpdate: Cascade)
+  secret_key       Bytes               @db.ByteA
 }
 
 model Trigger {
@@ -39,7 +39,7 @@ model Trigger {
   updated_at       DateTime
   deleted_at       DateTime?
 
-  agent            Agent               @relation(fields: [agent_id], references: [id], onDelete: Cascade)
+  agent            Agent               @relation(fields: [agent_id], references: [id], onDelete: Cascade, onUpdate:Cascade)
 }
 
 
@@ -79,6 +79,9 @@ model TriggerHistory {
   txHash        String?
   triggerType   TriggerType
   instanceIndex BigInt      @default(0)
+  parameters    Json?
+  result        Json?
+  internal      Json?
 }
 
 model FunctionDetail {
@@ -111,5 +114,5 @@ model AgentWalletDetails {
   instance_index   Int
   payment_key_hash Bytes  @db.ByteA
   stake_key_hash   Bytes  @db.ByteA
-  agent            Agent  @relation(fields: [agent_id], references: [id])
+  agent            Agent  @relation(fields: [agent_id], references: [id], onDelete:Cascade)
 }

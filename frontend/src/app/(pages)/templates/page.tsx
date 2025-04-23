@@ -1,27 +1,25 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import React from 'react';
 
+import { ITemplate, fetchTemplates } from '@api/templates';
 import { useQuery } from '@tanstack/react-query';
 import { useAtom } from 'jotai';
 
-import { ITemplate, fetchTemplates } from '@app/app/api/templates';
 import { SuccessToast } from '@app/components/molecules/CustomToasts';
-import {
-    adminAccessAtom,
-    currentConnectedWalletAtom,
-    templateCreatedAtom
-} from '@app/store/localStore';
+import EmptyScreen from '@app/components/molecules/EmptyScreen';
+import { Skeleton } from '@app/components/shadcn/ui/skeleton';
+import { adminAccessAtom, currentConnectedWalletAtom, templateCreatedAtom } from '@app/store/localStore';
 import { IQueryParams } from '@app/utils/query';
 
 import TemplateList from './components/TemplateList';
-import TemplatesTopNav, { TemplatesTopNavSkeleton } from './components/TemplatesTopNav';
+import TemplatesTopNav from './components/TemplatesTopNav';
 
 const TemplatesPage = () => {
     const [templateCreated, setTemplateCreated] = useAtom(templateCreatedAtom);
     const [adminAccess] = useAtom(adminAccessAtom);
     const [currentConnectedWallet] = useAtom(currentConnectedWalletAtom);
-    const [isFirstFetch, setIsFirstFetch] = useState<boolean>(true);
     const [queryParams, setQueryParams] = useState<IQueryParams>({
         page: 1,
         size: 50,
@@ -45,33 +43,30 @@ const TemplatesPage = () => {
         setQueryParams((prev) => ({ ...prev, search: value, page: 1 }));
     };
 
-    // Update first fetch flag
-    useEffect(() => {
-        if (isFirstFetch && templates.length > 0) {
-            setIsFirstFetch(false);
-        }
-    }, [templates, isFirstFetch]);
-
     return (
         <>
-            {/* Top Navigation */}
-            {isLoading && isFirstFetch ? (
-                <TemplatesTopNavSkeleton />
-            ) : (
-                <TemplatesTopNav
-                    onSearch={handleSearch}
-                    templatesCount={templates.length}
-                    adminAccess={adminAccess}
-                />
+            <TemplatesTopNav onSearch={handleSearch} adminAccess={adminAccess} />
+            {isLoading && <Skeleton className="h-full w-full" />}
+            {!isLoading &&
+                templates.length === 0 &&
+                (adminAccess ? (
+                    <EmptyScreen
+                        msg="No Templates Found"
+                        linkMsg="Create a Template to get started"
+                        linkHref="/templates/create-template"
+                    />
+                ) : (
+                    <EmptyScreen msg="No Templates Found" />
+                ))}
+            {!isLoading && templates.length > 0 && (
+                <div className={'flex h-full w-full flex-col overflow-y-auto '}>
+                    <TemplateList
+                        templates={templates}
+                        adminAccess={adminAccess}
+                        currentConnectedWallet={currentConnectedWallet}
+                    />
+                </div>
             )}
-
-            {/* Template List */}
-            <TemplateList
-                templates={templates}
-                isLoading={isLoading && isFirstFetch}
-                adminAccess={adminAccess}
-                currentConnectedWallet={currentConnectedWallet}
-            />
         </>
     );
 };

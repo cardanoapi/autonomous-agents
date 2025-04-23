@@ -76,10 +76,7 @@ export function determineCronTabAndSection(cronExpression: string) {
         checkIfDoesNotBelongsToSection(month)
     ) {
         return determineSection(year, 'Year');
-    } else if (
-        checkIfDoesNotBelongsToSection(minute) &&
-        checkIfDoesNotBelongsToSection(hour)
-    ) {
+    } else if (checkIfDoesNotBelongsToSection(minute) && checkIfDoesNotBelongsToSection(hour)) {
         return determineSection(day, 'Day');
     } else if (checkIfDoesNotBelongsToSection(minute)) {
         return determineSection(hour, 'Hour');

@@ -16,10 +16,7 @@ const statusSlice = createSlice({
     name: 'mutationStatus',
     initialState,
     reducers: {
-        updateStatus: (
-            state,
-            action: PayloadAction<{ endpoint: string; status: string }>
-        ) => {
+        updateStatus: (state, action: PayloadAction<{ endpoint: string; status: string }>) => {
             return {
                 ...state,
                 [action.payload.endpoint]: action.payload.status

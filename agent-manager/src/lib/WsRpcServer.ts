@@ -5,8 +5,6 @@ import { RpcV1Server } from 'libcardano/network/WsRpcServer'
 import { Pipe } from 'libcardano/network/event'
 import { CborDuplex } from 'libcardano/network/ouroboros'
 import { cborxBackend } from 'libcardano/lib/cbor'
-import { fetchAgentConfiguration } from '../repository/agent_manager_repository'
-import { generateRootKey } from '../utils/cardano'
 
 export class WsClientPipe extends Pipe<any, any> {
     ws: WebSocket
@@ -47,25 +45,21 @@ export abstract class WsRpcServer extends RpcV1Server {
 
     private setupServer() {
         this.server.on('connection', async (ws: WebSocket, req) => {
-            const conn_id = req.url?.slice(1) || ''
-            if (this.activeConnections[conn_id]) {
-                ws.close(1000, `Connection for id ${conn_id} is already active`)
-                return
-            }
-            this.addConnection(conn_id, new CborDuplex(new WsClientPipe(ws), cborxBackend(true)))
-            const { instanceCount, agentIndex, agentName } = await fetchAgentConfiguration(conn_id)
-            if (!agentIndex || !instanceCount || !agentName) {
-                this.disconnect(conn_id, 'No instance found')
-                return
-            }
-            const rootKeyBuffer = await generateRootKey(agentIndex || 0)
-            this.emit(conn_id, 'instance_count', { instanceCount, rootKeyBuffer, agentName })
+            let validatedConnId
             try {
-                await this.validateConnection(req)
-                this.onReady(this.activeConnections[conn_id])
+                validatedConnId = await this.validateConnection(req)
+                if (this.activeConnections[validatedConnId]) {
+                    ws.close(1000, `Connection for id ${validatedConnId} is already active`)
+                    return
+                }
+                this.addConnection(validatedConnId, new CborDuplex(new WsClientPipe(ws), cborxBackend(true)))
+                this.onReady(this.activeConnections[validatedConnId])
             } catch (err: any) {
-                console.error(err)
-                this.disconnect(conn_id, err.message)
+                console.error('New Agent connection error', err)
+                if (validatedConnId) this.disconnect(validatedConnId, err.message)
+                else {
+                    ws.close(1000, err.message)
+                }
             }
         })
     }

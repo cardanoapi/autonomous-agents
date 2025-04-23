@@ -31,12 +31,7 @@ function createTask(
                     instanceIndex: instanceIndex,
                 })
             } else {
-                agentRunner.invokeFunction(
-                    'CRON',
-                    instanceIndex,
-                    action.function_name,
-                    ...(action.parameters as any)
-                )
+                agentRunner.invokeFunction('CRON', instanceIndex, action.function_name, ...(action.parameters as any))
             }
         },
         {
@@ -56,14 +51,7 @@ export function scheduleFunctions(
         const { data, action, type } = config
         if (action && type === 'CRON') {
             const { frequency, probability } = data
-            const task = createTask(
-                runner,
-                manager,
-                action,
-                frequency,
-                probability,
-                instanceIndex
-            )
+            const task = createTask(runner, manager, action as Action, frequency, probability, instanceIndex)
             scheduledTasks.push(task)
         }
         scheduledTasks.forEach((task) => task.start())

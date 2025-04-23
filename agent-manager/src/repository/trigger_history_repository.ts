@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client'
 import { DateTime } from 'luxon'
 import { v4 as uuidv4 } from 'uuid'
-
-const prisma = new PrismaClient()
+import { prisma } from './dbClient'
 
 export type TriggerType = 'CRON' | 'MANUAL' | 'EVENT' | 'INTERNAL'
 
@@ -14,7 +12,10 @@ export async function saveTriggerHistory(
     message: string,
     triggerType: TriggerType,
     txHash?: string,
-    instanceIndex: number = 0
+    instanceIndex: number = 0,
+    parameters?: string,
+    internal?: string,
+    result?: string
 ): Promise<void> {
     try {
         const triggerHistory: any = {}
@@ -27,6 +28,9 @@ export async function saveTriggerHistory(
         triggerHistory['timestamp'] = DateTime.utc().toISO()
         triggerHistory['triggerType'] = triggerType
         triggerHistory['instanceIndex'] = instanceIndex
+        triggerHistory['parameters'] = parameters
+        triggerHistory['internal'] = internal
+        triggerHistory['result'] = result
         if (txHash) {
             triggerHistory['txHash'] = txHash
         }

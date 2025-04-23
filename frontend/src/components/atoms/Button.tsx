@@ -6,7 +6,7 @@ import { type VariantProps, cva } from 'class-variance-authority';
 import { cn } from '@app/components/lib/utils';
 
 const buttonVariants = cva(
-    'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:!border-[1px] disabled:cursor-not-allowed disabled:opacity-50 dark:ring-offset-slate-950 dark:focus-visible:ring-slate-300',
+    'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none disabled:!border-[1px] disabled:cursor-not-allowed disabled:opacity-50 dark:ring-offset-slate-950 dark:focus-visible:ring-slate-300 active:border-0 focus:outline-none active:border-none',
     {
         variants: {
             variant: {
@@ -55,13 +55,7 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ({ className, border, variant, size, asChild = false, ...props }, ref) => {
         const Comp = asChild ? Slot : 'button';
-        return (
-            <Comp
-                className={cn(buttonVariants({ variant, size, border, className }))}
-                ref={ref}
-                {...props}
-            />
-        );
+        return <Comp className={cn(buttonVariants({ variant, size, border, className }))} ref={ref} {...props} />;
     }
 );
 Button.displayName = 'Button';

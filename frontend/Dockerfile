@@ -1,26 +1,39 @@
-FROM node:18-alpine AS builder
+FROM node:18-alpine AS base
 
 WORKDIR /app
-
-ARG NEXT_PUBLIC_API_ENDPOINT_HOST
-ARG NEXT_PUBLIC_WS_URL
-ENV NEXT_PUBLIC_API_ENDPOINT_HOST=${NEXT_PUBLIC_API_ENDPOINT_HOST}
-ENV NEXT_PUBLIC_WS_URL=${NEXT_PUBLIC_WS_URL}
 
 COPY package.json yarn.lock ./
 
+RUN yarn install --frozen-lockfile --production
+
+FROM  base AS prod
+RUN find ./node_modules/@next/ -maxdepth 1 -name 'swc*' | xargs rm -rf
+
+FROM base AS builder
+
 RUN yarn install --frozen-lockfile
 
-COPY . .
+COPY ./src ./src
+COPY ./public ./public
+COPY next.config.mjs .eslintignore .eslintrc.json postcss.config.js ./next-i18next.config.js ./entrypoint.sh prettier.config.js tsconfig.json tailwind.config.ts ./
 
-RUN yarn build
+ARG NEXT_PUBLIC_MANAGER_BASE_DOMAIN
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_NETWORK_NAME
+ARG NEXT_PUBLIC_DOCKER_NETWORK_NAME
+ARG NEXT_PUBLIC_AGENT_NODE_DOCKER_IMAGE_NAME
 
+RUN NEXT_PUBLIC_UMAMI_ENABLED=true NEXT_PUBLIC_NODE_ENV=production NEXT_PUBLIC_APM_ENABLED=true NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL NEXT_PUBLIC_MANAGER_BASE_DOMAIN=$NEXT_PUBLIC_MANAGER_BASE_DOMAIN NEXT_PUBLIC_NETWORK_NAME=$NEXT_PUBLIC_NETWORK_NAME NEXT_PUBLIC_DOCKER_NETWORK_NAME=$NEXT_PUBLIC_DOCKER_NETWORK_NAME NEXT_PUBLIC_AGENT_NODE_DOCKER_IMAGE_NAME=$NEXT_PUBLIC_AGENT_NODE_DOCKER_IMAGE_NAME yarn build && rm -rf ./.next/cache
+ 
 FROM node:18-alpine
 
 WORKDIR /app
+COPY --from=prod /app/node_modules ./node_modules
 
-COPY --from=builder /app ./
+COPY --from=builder  /app/entrypoint.sh /app/next-i18next.config.js /app/next.config.mjs ./
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/ ./.next
 
 EXPOSE 3000
 
-CMD ["yarn" ,"start", "-p", "3000"]
+CMD ["sh", "-e", "entrypoint.sh"]

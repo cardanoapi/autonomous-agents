@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Any
 
 from pydantic import BaseModel
 
@@ -18,10 +18,12 @@ class AgentResponse(BaseModel):
     is_active: Optional[bool]
     template_name: Optional[str]
     is_drep_registered: Optional[bool]
+    no_of_successfull_triggers: Optional[int]
+    secret_key: Optional[str]
 
 
 class AgentResponseWithAgentConfigurations(AgentResponse):
-    agent_configurations: Optional[List[TriggerResponse]]
+    agent_configurations: Optional[List[TriggerResponse] | Any]
 
 
 class Delegation(BaseModel):

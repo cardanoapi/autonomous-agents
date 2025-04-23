@@ -16,40 +16,22 @@ export default function JoyrideTooltip({
     size
 }: TooltipRenderProps) {
     return (
-        <div
-            {...tooltipProps}
-            className="flex w-80 flex-col gap-4 rounded bg-white p-6"
-        >
+        <div {...tooltipProps} className="flex w-80 flex-col gap-4 rounded bg-white p-6">
             {step.title && <div className="h-full w-full">{step.title}</div>}
             <div className="h-full w-full">{step.content}</div>
             <div className="flex h-full w-full justify-end gap-4">
                 {index > 0 && (
-                    <Button
-                        className="capitalize"
-                        variant="text"
-                        color="inherit"
-                        {...backProps}
-                    >
+                    <Button className="capitalize" variant="text" color="inherit" {...backProps}>
                         Back
                     </Button>
                 )}
                 {(!continuous || index === 0) && (
-                    <Button
-                        className="capitalize"
-                        variant="text"
-                        color="error"
-                        {...closeProps}
-                    >
+                    <Button className="capitalize" variant="text" color="error" {...closeProps}>
                         Close
                     </Button>
                 )}
                 {continuous && (
-                    <Button
-                        className="capitalize"
-                        variant="text"
-                        color="primary"
-                        {...primaryProps}
-                    >
+                    <Button className="capitalize" variant="text" color="primary" {...primaryProps}>
                         {isLastStep ? 'Last Step' : `Next (${index + 1} / ${size})`}
                     </Button>
                 )}

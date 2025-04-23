@@ -3,5 +3,6 @@ app.log
 .idea/
 .vscode/
 */**/.vscode/
+.env
 
 

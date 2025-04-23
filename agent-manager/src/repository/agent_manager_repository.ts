@@ -1,18 +1,16 @@
 import { JsonValue } from '@prisma/client/runtime/library'
-import { PrismaClient } from '@prisma/client'
+import { prisma } from './dbClient'
 
-const prisma = new PrismaClient()
-
-export async function checkIfAgentExistsInDB(agentId: string): Promise<boolean> {
+export async function getAgentIdBySecret(agentSecret: Buffer): Promise<string | null> {
     return prisma.agent
         .findFirst({
             where: {
-                id: agentId,
+                secret_key: agentSecret,
                 deleted_at: null,
             },
         })
         .then((agents: any) => {
-            return !!agents
+            return agents ? agents.id : null
         })
         .catch((error: any) => {
             console.error('checkIfAgentExistsInDB: Unknown error', error)
@@ -20,12 +18,15 @@ export async function checkIfAgentExistsInDB(agentId: string): Promise<boolean> 
         })
 }
 
-export async function fetchAgentConfiguration(agentId: string): Promise<{
-    instanceCount: number | null
-    configurations: any[]
-    agentIndex: number | null
-    agentName: string | null
-}> {
+export async function fetchAgentConfiguration(agentId: string): Promise<
+    | {
+          instanceCount: number
+          configurations: any[]
+          agentIndex: number
+          agentName: string
+      }
+    | undefined
+> {
     try {
         const [agentInstance, agentConfigurations] = await Promise.all([
             prisma.agent.findFirst({
@@ -55,8 +56,6 @@ export async function fetchAgentConfiguration(agentId: string): Promise<{
             )
 
             return { instanceCount, configurations: configurationsData, agentIndex, agentName }
-        } else {
-            return { instanceCount: null, configurations: [], agentIndex: null, agentName: null }
         }
     } catch (error: any) {
         console.log(`Error fetching agent configuration: ${error}`)

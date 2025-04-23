@@ -1,19 +1,12 @@
 'use client';
 
-import {
-    Area,
-    AreaChart,
-    CartesianGrid,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis
-} from 'recharts';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { useMediaQuery } from 'usehooks-ts';
 import { v4 as uuidv4 } from 'uuid';
 
-import CustomTooltip from './CustomTooltip';
+import { cn } from '@app/components/lib/utils';
 
-// Import the UUID library
+import CustomTooltip from './CustomTooltip';
 
 export interface ILineChartData {
     name: string;
@@ -59,36 +52,29 @@ export default function CustomLineChart({
 }) {
     const uniqueId = uuidv4(); // Generate a unique ID for this chart instance
 
+    const isMobile = useMediaQuery('(max-width: 600px)');
+
+    const getInterval = (x: number) => {
+        if (x < 10) {
+            return 1;
+        }
+        if (x < 30) {
+            return 5;
+        }
+        return 10;
+    };
+
     return (
         <ResponsiveContainer>
-            <AreaChart data={chartData} className={className}>
+            <AreaChart data={chartData} className={cn(className, 'm-l-[-16] m-0 ml-[-16px] md:ml-0')}>
                 <defs>
-                    <linearGradient
-                        id={`colorUv-${uniqueId}`}
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                    >
-                        <stop
-                            offset="5%"
-                            stopColor={strokeCoverColor}
-                            stopOpacity={1}
-                        />
-                        <stop
-                            offset="100%"
-                            stopColor={strokeCoverColor}
-                            stopOpacity={0}
-                        />
+                    <linearGradient id={`colorUv-${uniqueId}`} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={strokeCoverColor} stopOpacity={1} />
+                        <stop offset="100%" stopColor={strokeCoverColor} stopOpacity={0} />
                     </linearGradient>
                 </defs>
                 {renderLines && (
-                    <CartesianGrid
-                        strokeDasharray="0"
-                        vertical={false}
-                        stroke="#A2A3A5"
-                        strokeOpacity={0.4}
-                    />
+                    <CartesianGrid strokeDasharray="0" vertical={false} stroke="#A2A3A5" strokeOpacity={0.4} />
                 )}
                 {renderYaxis && (
                     <YAxis
@@ -98,13 +84,12 @@ export default function CustomLineChart({
                         tickLine={false}
                         stroke="#A2A3A5"
                         allowDecimals={false}
+                        className={'text-[10px] md:text-lg'}
                     />
                 )}
                 {renderToolTip && (
                     <Tooltip
-                        content={
-                            <CustomTooltip showOnlyTransaction={showOnlyTransaction} />
-                        }
+                        content={<CustomTooltip showOnlyTransaction={showOnlyTransaction} />}
                         cursor={{ strokeDasharray: 5, stroke: '#1C63E7' }}
                         position={{ y: positionYToolTip, x: positionXToolTip }}
                     />
@@ -129,8 +114,9 @@ export default function CustomLineChart({
                         dx={-25}
                         fill="#2196F3"
                         stroke="#A2A3A5"
-                        interval={xaxisInterval}
+                        interval={isMobile ? getInterval(chartData?.length || 1) : xaxisInterval}
                         reversed={true}
+                        className={'text-[10px] xl:text-lg'}
                     ></XAxis>
                 )}
             </AreaChart>

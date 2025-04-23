@@ -1,9 +1,4 @@
-import {
-    BaseProps,
-    CallBackProps,
-    Props as JoyRideState,
-    StoreHelpers
-} from 'react-joyride';
+import { BaseProps, CallBackProps, Props as JoyRideState, StoreHelpers } from 'react-joyride';
 
 export interface JoyrideState extends JoyRideState {
     id: string;

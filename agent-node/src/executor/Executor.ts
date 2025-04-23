@@ -14,17 +14,15 @@ export interface CallLog {
     return?: any
     error?: Error | string
 }
+
 export class Executor {
     wallet: any
     readonly rpcInterface: ManagerInterface
     readonly functions: FunctionGroup
     readonly functionContext: FunctionContext
     txListener: TxListener
-    constructor(
-        wallet: any,
-        rpcInterface: ManagerInterface,
-        txListener: TxListener
-    ) {
+
+    constructor(wallet: any, rpcInterface: ManagerInterface, txListener: TxListener) {
         this.wallet = wallet
         this.functions = getHandlers()
         this.rpcInterface = rpcInterface
@@ -46,15 +44,9 @@ export class Executor {
     }
 
     getHelpers(wallet: any, agentName: string) {
-        const context = this.functionContext
         return {
-            generateProposalMetadataContent: () =>
-                generateProposalMetadataContent(agentName),
-            generateDrepMetadataContent: () =>
-                generateRegisterDrepMetadataContent(
-                    agentName,
-                    wallet.paymentKey.private
-                ),
+            generateProposalMetadataContent: () => generateProposalMetadataContent(agentName),
+            generateDrepMetadataContent: () => generateRegisterDrepMetadataContent(agentName, wallet.address),
             generateVoteMetadataContent: () => generateVoteMetadataContent(),
         }
     }
@@ -84,10 +76,7 @@ export class Executor {
                 throw new Error('Key.signRaw is not implemented')
             },
         }
-        const rewardAddress = rewardAddressBech32(
-            0,
-            walletDetails.stake_verification_key_hash
-        )
+        const rewardAddress = rewardAddressBech32(0, walletDetails.stake_verification_key_hash)
         console.log(
             'Account keys received :',
             '\n\tAddress: ' + walletDetails.agent_address,
@@ -99,11 +88,7 @@ export class Executor {
             stakeKey: stakeKey,
             drepId: walletDetails.drep_id,
             rewardAddress: rewardAddress,
-            buildAndSubmit: (
-                spec: any,
-                stakeSigning?: boolean,
-                saveDrepStatus?: boolean
-            ) => {
+            buildAndSubmit: (spec: any, stakeSigning?: boolean, saveDrepStatus?: boolean) => {
                 spec.selections = [
                     walletDetails.agent_address,
                     {
@@ -126,39 +111,30 @@ export class Executor {
                         processQueue(this.rpcInterface, this.txListener)
                     }
                 })
-                async function processQueue(
-                    rpcInterface: ManagerInterface,
-                    txListener: TxListener
-                ) {
+
+                async function processQueue(rpcInterface: ManagerInterface, txListener: TxListener) {
                     isProcessing = true
                     while (txSubmissionHold.length > 0) {
-                        const { request, resolve, reject } =
-                            txSubmissionHold.shift()
+                        const { request, resolve, reject } = txSubmissionHold.shift()
                         try {
-                            const res = await rpcInterface.buildTx(
-                                request,
-                                true
-                            )
+                            const res = await rpcInterface.buildTx(request, true)
                             resolve(res)
                             await txListener
                                 .addListener(res.hash, 0, 300000)
                                 .then(() => {
                                     if (saveDrepStatus) {
-                                        rpcInterface.checkAndSaveDrepRegistration(
-                                            walletDetails.drep_id
-                                        )
+                                        rpcInterface.checkAndSaveDrepRegistration(walletDetails.drep_id)
                                     }
-                                    console.log(
-                                        'Tx matched :',
-                                        res.hash,
-                                        txSubmissionHold
-                                    )
+                                    console.log('Tx matched :', res.hash, txSubmissionHold)
                                 })
                                 .catch((e) => {
                                     console.error('TXListener Error: ', e)
                                     return
                                 })
                         } catch (error) {
+                            if (saveDrepStatus) {
+                                rpcInterface.checkAndSaveDrepRegistration(walletDetails.drep_id)
+                            }
                             reject(error)
                         }
                     }
@@ -172,20 +148,11 @@ export class Executor {
         }
     }
 
-    remakeContext(
-        agent_wallet: AgentWalletDetails,
-        managerInterface: ManagerInterface,
-        agentName: string
-    ) {
+    remakeContext(agent_wallet: AgentWalletDetails, managerInterface: ManagerInterface, agentName: string) {
         this.functionContext.wallet = this.makeWallet(agent_wallet)
-        this.functionContext.builtins = this.getBuiltins(
-            this.functionContext.wallet
-        )
+        this.functionContext.builtins = this.getBuiltins(this.functionContext.wallet)
         this.functionContext.agentName = agentName
-        this.functionContext.helpers = this.getHelpers(
-            this.functionContext.wallet,
-            agentName
-        )
+        this.functionContext.helpers = this.getHelpers(this.functionContext.wallet, agentName)
         managerInterface
             .getFaucetBalance(this.functionContext.wallet.address)
             .then((balance) => {
@@ -199,9 +166,7 @@ export class Executor {
             .catch((err) => {
                 console.error('GetBalance : ', err)
             })
-        managerInterface.checkAndSaveDrepRegistration(
-            this.functionContext.wallet.drepId
-        )
+        managerInterface.checkAndSaveDrepRegistration(this.functionContext.wallet.drepId)
     }
 
     makeProxy<T>(context: T): { proxy: T; callLog: CallLog[] } {
@@ -263,16 +228,8 @@ export class Executor {
             updatedBuiltins[key] = (...args: any) => f(context, ...args)
         })
         return {
-            waitTxConfirmation: async (
-                txId: string,
-                confirmation: number,
-                timeout: number
-            ): Promise<unknown> => {
-                return await this.txListener.addListener(
-                    txId,
-                    confirmation,
-                    timeout
-                )
+            waitTxConfirmation: async (txId: string, confirmation: number, timeout: number): Promise<unknown> => {
+                return await this.txListener.addListener(txId, confirmation, timeout)
             },
             loadFunds: async (amount: number): Promise<any> => {
                 return await this.rpcInterface.loadFunds(wallet.address, amount)
@@ -280,11 +237,32 @@ export class Executor {
             saveMetadata: async (content) => {
                 return await this.rpcInterface.saveMetadata(content)
             },
+            fetchMetadata: async (url: string, hash: string) => {
+                return await this.rpcInterface.fetchMetadata(url, hash)
+            },
             ...updatedBuiltins,
         } as Builtins
     }
 
-    invokeFunction(name: string, ...args: any): Promise<CallLog[]> {
+    async invokeFunction(name: string, ...args: any): Promise<CallLog[]> {
+        return await this.invokeFunctionWithContext({}, name, ...args)
+    }
+
+    filterFunctionParams(name: string, context: any): Promise<any> {
+        const f: any | undefined = this.functions.filters[name]
+        if (f === undefined) {
+            return Promise.reject(new Error('Filter not defined'))
+        }
+        const newContext = { ...this.functionContext, ...context }
+        try {
+            const result: any = f(newContext)
+            return Promise.resolve(result)
+        } catch (err) {
+            return Promise.reject(err)
+        }
+    }
+
+    invokeFunctionWithContext(context: any, name: string, ...args: any): Promise<CallLog[]> {
         const f: any | undefined = this.functions.functions[name]
         const log: CallLog = {
             function: name,
@@ -295,16 +273,13 @@ export class Executor {
             return Promise.resolve([log])
         }
 
-        const newContext = { ...this.functionContext }
+        const newContext = { ...this.functionContext, ...context }
         const builtinsProxy = this.makeProxy(newContext.builtins)
         newContext.builtins = builtinsProxy.proxy
         builtinsProxy.callLog.push(log)
 
         try {
-            const result: any = f(
-                newContext,
-                ...args.map((arg: any) => arg.value)
-            )
+            const result: any = f(newContext, ...args.map((arg: any) => arg.value))
             if (result instanceof Promise) {
                 return result
                     .then((v) => {
@@ -326,5 +301,6 @@ export class Executor {
         }
         return Promise.resolve(builtinsProxy.callLog)
     }
+
     // newBlock(block) {}
 }

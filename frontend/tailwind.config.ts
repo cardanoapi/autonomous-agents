@@ -21,8 +21,10 @@ const config = {
             }
         },
         extend: {
+            backgroundImage: {
+                brandDefault: 'linear-gradient(to right, #F8F9FC, #F5F5FC, #E9EAF8)'
+            },
             screens: {
-                xl: '1300px',
                 '3xl': '1620px',
                 '4xl': '1800px',
                 '5xl': '2000px'
@@ -88,7 +90,8 @@ const config = {
                     Orange: {
                         100: '#FFECD4',
                         200: '#FF660F'
-                    }
+                    },
+                    vscode: '#1E1E1E'
                 }
             },
             height: {

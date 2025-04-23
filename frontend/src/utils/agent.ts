@@ -6,15 +6,11 @@ import { AgentTriggerFunctionType, IAgentTrigger } from '@models/types';
 export function isAgentActive({ last_active }: IAgent): boolean {
     if (!last_active) return false;
 
-    const diffInSeconds =
-        (new Date().getTime() - new Date(last_active).getTime()) / 1000;
+    const diffInSeconds = (new Date().getTime() - new Date(last_active).getTime()) / 1000;
     return diffInSeconds <= 33;
 }
 
-export function getConfiguredAgentTrigger(
-    func: AgentTriggerFunctionType,
-    value: string
-): IAgentTrigger {
+export function getConfiguredAgentTrigger(func: AgentTriggerFunctionType, value: string, name?: string): IAgentTrigger {
     const trigger = AGENT_TRIGGER[func];
 
     if (!trigger) {
@@ -29,6 +25,12 @@ export function getConfiguredAgentTrigger(
             };
 
         case 'voteOnProposal':
+            if (name) {
+                return {
+                    ...trigger,
+                    parameters: [{ ...trigger.parameters[0], name, value }]
+                };
+            }
             return { ...trigger, parameters: [{ ...trigger.parameters[0], value }] };
 
         default:
@@ -67,19 +69,12 @@ export function validateInputFieldForGroup(param: IParameter) {
     if (param.optional) {
         const isAnyFieldFilled =
             param.parameters?.some(
-                (param) =>
-                    param.value !== '' &&
-                    param.value !== undefined &&
-                    param.value !== null
+                (param) => param.value !== '' && param.value !== undefined && param.value !== null
             ) || false;
         if (isAnyFieldFilled) {
             return param.parameters.every((param: IParameter) => {
                 if (!param.optional) {
-                    return (
-                        param.value !== '' &&
-                        param.value !== undefined &&
-                        param.value !== null
-                    );
+                    return param.value !== '' && param.value !== undefined && param.value !== null;
                 }
                 return true;
             });
@@ -88,11 +83,7 @@ export function validateInputFieldForGroup(param: IParameter) {
     } else {
         return param.parameters.every((param: IParameter) => {
             if (!param.optional) {
-                return (
-                    param.value !== '' &&
-                    param.value !== undefined &&
-                    param.value !== null
-                );
+                return param.value !== '' && param.value !== undefined && param.value !== null;
             }
             return true;
         });
@@ -106,9 +97,7 @@ export function formatDatetoHumanReadable(inputDate: string | number): string {
         const lastActiveDate = new Date(inputDate);
         const currentDate = new Date();
 
-        const diffInSeconds = Math.floor(
-            (Number(currentDate) - Number(lastActiveDate)) / 1000
-        );
+        const diffInSeconds = Math.floor((Number(currentDate) - Number(lastActiveDate)) / 1000);
         const diffInMinutes = Math.floor(diffInSeconds / 60);
         const diffInHours = Math.floor(diffInMinutes / 60);
         const diffInDays = Math.floor(diffInHours / 24);
@@ -121,4 +110,14 @@ export function formatDatetoHumanReadable(inputDate: string | number): string {
             return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
         } else return `${diffInSeconds} second${diffInSeconds > 1 ? 's' : ''} ago`;
     }
+}
+
+export function formatParameterName(name: string) {
+    const transformedName = name?.replace('_', ' ');
+    return transformedName
+        ?.split(' ')
+        .map((word) => {
+            return word[0].toUpperCase() + word.substring(1);
+        })
+        .join(' ');
 }

@@ -54,7 +54,7 @@
 }
 
 .title-1 {
-    @apply text-lg font-bold leading-7;
+    @apply text-base font-bold leading-7 md:text-lg;
 }
 
 .text-active {
@@ -110,5 +110,9 @@
 }
 
 .pagination-btn-position {
-    @apply absolute bottom-8 right-10;
+    @apply absolute bottom-4 right-5 md:bottom-8 md:right-10;
+}
+
+.no-wrap-truncate {
+    @apply overflow-hidden text-ellipsis whitespace-nowrap;
 }

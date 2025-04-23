@@ -1,19 +1,15 @@
 import { useState } from 'react';
+import React from 'react';
 
 import { useRouter } from 'next/navigation';
 
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { deleteAgentbyID } from '@api/agents';
+import { useMutation } from '@tanstack/react-query';
 import { formatDatetoHumanReadable } from '@utils';
 import { PlayIcon, Trash2 } from 'lucide-react';
 
-import { deleteAgentbyID } from '@app/app/api/agents';
-import {
-    ITransactionsCount,
-    fetchTransactionsCountByAgentID
-} from '@app/app/api/trigger';
-import AgentAvatar from '@app/components/Agent/AgentAvatar';
+import AgentAvatar from '@app/components/Agent/shared/AgentAvatar';
 import { cn } from '@app/components/lib/utils';
-import { Truncate } from '@app/utils/common/extra';
 import { queryClient } from '@app/utils/providers/ReactQueryProvider';
 
 import { useModal } from '../Modals/context';
@@ -32,7 +28,10 @@ export interface IAgentCard {
     totalTrigger: number;
     enableEdit?: boolean;
     enableDelete?: boolean;
+    no_of_successful_triggers?: number;
     isActive?: boolean;
+    agentSecretKey?: string;
+    className?: string;
 }
 
 export default function AgentCard({
@@ -40,19 +39,17 @@ export default function AgentCard({
     agentID,
     templateName,
     functionCount,
+    no_of_successful_triggers,
     enableEdit = false,
     enableDelete = false,
     lastActive = '',
-    isActive = false
+    isActive = false,
+    agentSecretKey = '',
+    className
 }: IAgentCard) {
     const router = useRouter();
     const { openModal } = useModal();
     const [dialogOpen, setDialogOpen] = useState(false);
-
-    const { data: transactions_count } = useQuery<ITransactionsCount>({
-        queryKey: [`Transactions-${agentID}`],
-        queryFn: () => fetchTransactionsCountByAgentID(agentID || '')
-    });
 
     const deleteAgentMutation = useMutation({
         mutationFn: (agentID: string) => deleteAgentbyID(agentID),
@@ -70,7 +67,7 @@ export default function AgentCard({
     function handleAgentRun(e: any) {
         e.stopPropagation();
         openModal('AgentRunnerView', {
-            agentId: agentID
+            agentSecretKey: agentSecretKey
         });
     }
 
@@ -97,8 +94,8 @@ export default function AgentCard({
 
     const agentTriggerDetails: IAgentDetail[] = [
         {
-            placeholder: 'Successfull Triggers',
-            value: transactions_count?.successfulTransactions || 0
+            placeholder: 'Successful Triggers',
+            value: no_of_successful_triggers || 0
         }
     ];
 
@@ -107,8 +104,7 @@ export default function AgentCard({
             <div className="flex flex-col gap-y-2">
                 {agentDetails.map(({ placeholder, value }, index) => (
                     <span key={index} className="!text-xs">
-                        {placeholder} :{' '}
-                        <span className="text-active text-xs">{value}</span>
+                        {placeholder} : <span className="text-active text-xs">{value}</span>
                     </span>
                 ))}
             </div>
@@ -121,7 +117,10 @@ export default function AgentCard({
                 onClick={() => {
                     router.push(`/agents/${agentID}`);
                 }}
-                className="hover-transition-primary group relative flex  min-h-[247px] min-w-[261px] cursor-pointer flex-col !gap-y-6 rounded-xl pl-5 pt-4 transition-all "
+                className={cn(
+                    'hover-transition-primary group relative flex h-full w-full cursor-pointer flex-col !gap-y-6 rounded-xl p-4 transition-all sm:min-h-[247px] xl:max-w-[261px] ',
+                    className
+                )}
             >
                 <AgentCardControls
                     enableRun={enableEdit}
@@ -130,25 +129,21 @@ export default function AgentCard({
                     onDelete={handleAgentDelete}
                 />
 
-                <AgentCardTitle
-                    agentName={agentName}
-                    agentID={agentID || ''}
-                    isActive={isActive}
-                />
+                <AgentCardTitle agentName={agentName} agentID={agentID || ''} isActive={isActive} />
 
-                <CardContent className="flex flex-col gap-y-2">
-                    <span className="flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-center">
-                        Template:{' '}
-                        <div className="gray-background ml-1 overflow-hidden text-ellipsis whitespace-nowrap text-xs">
-                            {templateName ? templateName : 'Template missing'}
-                        </div>
-                    </span>
+                <CardContent className="flex flex-col gap-y-2 ">
+                    {templateName && (
+                        <span className="flex items-center overflow-hidden text-ellipsis whitespace-nowrap text-center">
+                            Template:{' '}
+                            <div className="gray-background ml-1 overflow-hidden text-ellipsis whitespace-nowrap text-xs">
+                                {templateName}
+                            </div>
+                        </span>
+                    )}
 
                     {renderAgentDetails(agentDetails)}
 
-                    <div className="pb-0">
-                        {renderAgentDetails(agentTriggerDetails)}
-                    </div>
+                    <div className="pb-0">{renderAgentDetails(agentTriggerDetails)}</div>
                 </CardContent>
             </Card>
             <DeleteAgentDialog
@@ -176,24 +171,12 @@ const AgentCardControls = ({
     onDelete: any;
 }) => {
     return (
-        <div
-            className={cn(
-                'absolute right-3 justify-end gap-1 bg-white',
-                enableRun ? 'flex' : 'hidden'
-            )}
-        >
-            <PlayIcon
-                color="#A1A1A1"
-                className="hidden hover:cursor-pointer group-hover:flex"
-                onClick={onRun}
-            />
+        <div className={cn('absolute right-3 justify-end gap-1 bg-white', enableRun ? 'flex' : 'hidden')}>
+            <PlayIcon color="#A1A1A1" className="hidden hover:cursor-pointer group-hover:flex" onClick={onRun} />
             <Trash2
                 color="#A1A1A1"
                 onClick={onDelete}
-                className={cn(
-                    'hidden  hover:cursor-pointer group-hover:flex',
-                    !enableDelete ? '!hidden' : ''
-                )}
+                className={cn('hidden  hover:cursor-pointer group-hover:flex', !enableDelete ? '!hidden' : '')}
             />
         </div>
     );
@@ -209,37 +192,22 @@ const AgentCardTitle = ({
     isActive?: boolean;
 }) => {
     return (
-        <div className={'flex items-center gap-3'}>
+        <div className={'flex w-full items-center gap-3'}>
             <AgentAvatar hash={agentID || ''} size={40} isActive={isActive || false} />
-            <div className="card-h2 flex flex-col">
+            <div className="card-h2 flex w-full flex-col">
                 <span
                     className={
-                        'w-36 !overflow-hidden text-ellipsis !whitespace-nowrap !text-sm leading-normal'
+                        'no-wrap-truncate w-full !overflow-hidden text-ellipsis !whitespace-nowrap !text-sm leading-normal'
                     }
                 >
                     {agentName}
-                </span>
-                <span
-                    className={
-                        'overflow-hidden !whitespace-nowrap text-[8px] leading-normal text-brand-Black-300/80'
-                    }
-                >
-                    {Truncate(agentID || '', 25)}
                 </span>
             </div>
         </div>
     );
 };
 
-const DeleteAgentDialog = ({
-    dialogOpen,
-    onAccept,
-    onClose
-}: {
-    dialogOpen: boolean;
-    onAccept: any;
-    onClose: any;
-}) => {
+const DeleteAgentDialog = ({ dialogOpen, onAccept, onClose }: { dialogOpen: boolean; onAccept: any; onClose: any }) => {
     return (
         <Dialog open={dialogOpen}>
             <DialogContent defaultCross={true} disableBG={false}>
