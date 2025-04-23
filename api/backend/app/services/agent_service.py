@@ -280,11 +280,9 @@ class AgentService:
             async with aiohttp.ClientSession() as session:
                 async with asyncio.TaskGroup() as group:
                     agent_configurations = group.create_task(self.trigger_service.list_triggers_by_agent_id(agent.id))
-                    wallet_balance = group.create_task(self.fetch_balance(wallet.stake_key_hash, session))
-                    drep_details = group.create_task(self.fetch_drep_details(wallet.stake_key_hash, session))
-                    delegation_details = group.create_task(
-                        self.fetch_delegation_details(wallet.stake_key_hash, session)
-                    )
+                    wallet_balance = group.create_task(self.fetch_balance(convert_stake_key_hash_to_address(wallet.stake_key_hash), session))
+                    drep_details = group.create_task(self.fetch_drep_details(convert_stake_key_hash_to_address(wallet.stake_key_hash), session))
+                    delegation_details = group.create_task(self.fetch_delegation_details(convert_stake_key_hash_to_address(wallet.stake_key_hash), session))
                     stake_address_details = group.create_task(
                         self.fetch_stake_address_details(wallet.stake_key_hash, session)
                     )
@@ -303,3 +301,13 @@ class AgentService:
             is_stake_registered=stake_address_details.result().get("is_stake_registered"),
             stake_last_registered=stake_address_details.result().get("last_registered"),
         )
+
+    
+def convert_stake_key_hash_to_address(stake_key_hash):
+    if stake_key_hash.startswith('e0') or stake_key_hash.startswith('e1'):
+        return stake_key_hash
+    else:
+        if api_settings.APP_ENV == "mainnet":
+            return 'e1' + stake_key_hash
+        else:
+            return 'e0' + stake_key_hash

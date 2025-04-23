@@ -36,6 +36,7 @@ class Application(BaseSettings):
     KAFKA_BROKERS: str = "localhost:9092"
     KAFKA_ENABLED: bool = False
     KUBER_URL: str = ""
+    NETWORK: str = "mainnet"
     # All your additional application configuration should go either here or in
     # separate file in this submodule.
 
