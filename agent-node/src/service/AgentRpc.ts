@@ -1,19 +1,5 @@
 import { RpcV1 } from 'libcardano/network/Rpc'
 
-// const TransactionType = [
-//     'voteOnProposal',
-//     'transferADA',
-//     'stakeDelegation',
-//     'createInfoGovAction',
-//     'proposalNewConstitution',
-//     'dRepRegistration',
-//     'dRepDeRegistration',
-//     'registerStake',
-//     'abstainDelegation',
-//     'noConfidence',
-//     'stakeDeRegistration',
-// ]
-
 const agentId = process.env.AGENT_ID || ''
 
 const getAgentId = () => agentId
