@@ -20,6 +20,7 @@ class AgentResponse(BaseModel):
     is_drep_registered: Optional[bool]
     no_of_successfull_triggers: Optional[int]
     secret_key: Optional[str]
+    config: Optional[dict] = None
 
 
 class AgentResponseWithAgentConfigurations(AgentResponse):

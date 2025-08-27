@@ -56,7 +56,21 @@ export function saveTxLog(
             }
             if (mainLog.return) {
                 txLog.result = mainLog.return
-                txLog.txHash = mainLog.return.hash
+                  if (mainLog.return.blocked_by_llm === true) {
+        txLog.success = false
+        txLog.message =
+            mainLog.return.llm_reasoning ||
+            mainLog.return.message ||
+            'LLM blocked execution'
+    } else if (mainLog.return.hash) {
+        txLog.txHash = mainLog.return.hash
+        txLog.message =
+            mainLog.return.message || 'Function executed successfully'
+    } else {
+        txLog.message =
+            mainLog.return.message || 'Function executed successfully'
+    }
+
             } else if (mainLog.error) {
                 txLog.result = mainLog.error
                 txLog.message = mainLog.error && ((mainLog.error as Error).message ?? mainLog.error)

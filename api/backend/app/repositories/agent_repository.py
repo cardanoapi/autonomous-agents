@@ -7,6 +7,7 @@ import uuid
 from datetime import datetime, timezone, timedelta, UTC
 from typing import List, Optional
 
+from prisma import Json
 import pycardano
 from pycardano import (
     HDWallet,
@@ -85,6 +86,7 @@ class AgentRepository:
                 is_drep_registered=agent.is_drep_registered,
                 no_of_successfull_triggers=successful_triggers,
                 secret_key=str(agent.secret_key) if display_secret_key else None,
+                config=agent.config,
             )
             return agent_response
 
@@ -97,8 +99,27 @@ class AgentRepository:
             "instance": agent_data.instance,
             "updated_at": datetime.now(timezone.utc),
         }
+        if hasattr(agent_data, "agent_config"):
+            if agent_data.agent_config is None:
+
+                pass
+            else:
+                # Ensuring JSON-safe Python dict
+
+                safe_config = json.loads(json.dumps(agent_data.agent_config))
+                updated_data["config"] = Json(safe_config)
+
         updated_agent = await self.db.prisma.agent.update(where={"id": agent_id}, data=updated_data)
-        updated_agent.secret_key = str(updated_agent.secret_key)
+        return updated_agent
+
+    async def update_agent_drep_status(self, agent_id: str, drep_registered: bool) -> Optional[AgentResponse]:
+        agent = await self.db.prisma.agent.find_first(where={"id": agent_id})
+        if agent is None or agent.deleted_at is not None:
+            return None
+        updated_data = {
+            "is_drep_registered": drep_registered,
+        }
+        updated_agent = await self.db.prisma.agent.update(where={"id": agent_id}, data=updated_data)
         return updated_agent
 
     async def get_online_agents_count(self):

@@ -29,11 +29,15 @@ const server = app.listen(port, async () => {
 
     const blockchain = createBlockchainInstance()
     const wss = new WebSocket.Server({ server })
+
     const txListener = new TxListener()
+
     const managerWallet = new ManagerWalletService(txListener)
+
     const manager = new AgentManagerRPC(wss, managerWallet)
 
     blockchain.start()
+
     blockchain.blockChain.on('extendBlock', (block) => {
         const transaction = startTransaction('extendBlock', 'node')
         cardanoNodeStatus.onBlockTimeStamp(Date.now(), block)
@@ -42,10 +46,13 @@ const server = app.listen(port, async () => {
             `[Blockchain] RollForward blockNo=${block.blockNo} hash=${block.headerHash.toString('hex')} slot=${block.slotNo}`
         )
         const transactions = parseRawBlockBody(block.body)
+
         txListener.onBlock({ ...block, body: transactions })
+
         manager.broadcast('extend_block', block)
         transaction.end('success')
     })
+
     await initKafkaConsumers(manager)
 })
 server.on('error', (e) => {

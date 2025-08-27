@@ -21,6 +21,48 @@ class SubParameter(BaseModel):
 class Action(BaseModel):
     function_name: str
     parameters: list[SubParameter]
+    llm_enabled: Optional[bool] = None
+    llm_user_preferences_text: Optional[str] = None
+
+    class Config:
+        extra = "allow"
+
+
+# For Event Based Trigger
+
+BooleanOperator = Literal["AND", "OR"]
+ComparisonOperator = Literal[
+    "equals", "greaterthan", "lessthan", "in", "gt", "gte", "lt", "lte", "ne", "eq", "contains", "exists"
+]
+
+
+class Field(BaseModel):
+    id: Union[str, list[str]]
+    value: Any
+    negate: bool
+    operator: ComparisonOperator
+    operators: list[ComparisonOperator]
+
+
+class ChildrenFields(BaseModel):
+    id: Optional[Union[str, list[str]]]
+    children: list["FilterNode"]
+    negate: bool
+    operator: BooleanOperator
+
+
+# FilterNode - recursive model
+FilterNode = Union[Field, ChildrenFields]
+
+
+class EventTriggerDTO(BaseModel):
+    id: Optional[Union[str, list[str]]]
+    children: Optional[list[FilterNode]]
+    negate: Optional[bool]
+    operator: Optional[BooleanOperator]
+
+
+ChildrenFields.update_forward_refs()  # To allow model to reference another model that has not been defined yet
 
 
 # For Event Based Trigger

@@ -8,6 +8,7 @@ import { HdWallet } from 'libcardano'
 import { AgentWalletDetails } from '../types/types'
 import { globalState } from '../constants/global'
 import { EventContext } from './BaseFunction'
+import { LLMService } from '../service/LLMService'
 
 export class AgentRunner {
     executor: Executor
@@ -18,7 +19,69 @@ export class AgentRunner {
         this.executor = new Executor(null, managerInterface, txListener)
     }
 
-    invokeFunction(triggerType: TriggerType, instanceIndex: number, method: string, ...args: any) {
+    async invokeFunction(
+        triggerType: TriggerType,
+        instanceIndex: number,
+        method: string,
+        ...args: any
+    ) {
+        const extractedArgs = this.extractArgumentValues(args)
+        const shouldUseLLM = this.shouldUseLLMForFunction(method)
+        if (shouldUseLLM) {
+            console.log('[AgentRunner] LLM gating enabled for', method)
+            console.log(
+                '[AgentRunner] GEMINI_API_KEY present:',
+                !!process.env.GEMINI_API_KEY || !!process.env.GOOGLE_API_KEY
+            )
+            try {
+                const llm = new LLMService()
+                console.log(
+                    '[AgentRunner] functionLLMSettings:',
+                    JSON.stringify(globalState.functionLLMSettings, null, 2)
+                )
+                const userPrefText = this.getUserPreferenceText(method)
+                console.log(
+                    '[AgentRunner] user policy for',
+                    method,
+                    ':',
+                    userPrefText || '(empty)'
+                )
+                const structuredPrefs = {}
+                const decision = await llm.shouldExecuteFunction(
+                    method,
+                    extractedArgs,
+                    structuredPrefs,
+                    userPrefText,
+                    globalState.systemPrompt
+                )
+                if (!decision.should_execute) {
+                    const blocked = [
+                        {
+                            function: method,
+                            arguments: args,
+                            return: {
+                                operation: method,
+                                executed: false,
+                                blocked_by_llm: true,
+                                llm_reasoning: decision.reasoning,
+                                llm_confidence: decision.confidence,
+                                message: `LLM blocked: ${decision.reasoning}`,
+                                timestamp: new Date().toISOString(),
+                            },
+                        },
+                    ]
+                    saveTxLog(
+                        blocked,
+                        this.managerInterface,
+                        triggerType,
+                        instanceIndex
+                    )
+                    return
+                }
+            } catch (e) {
+                console.error(`LLM gating Failed, we are continuing : ${e}`)
+            }
+        }
         this.executor.invokeFunction(method, ...args).then((result) => {
             saveTxLog(result, this.managerInterface, triggerType, instanceIndex)
         })
@@ -46,6 +109,28 @@ export class AgentRunner {
                 saveTxLog(result, this.managerInterface, triggerType, instanceIndex)
             })
         }
+    }
+
+    private shouldUseLLMForFunction(method: string): boolean {
+        const fnCfg = globalState.functionLLMSettings?.[method]
+        if (fnCfg && fnCfg.enabled) {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    private getUserPreferenceText(method: string): string {
+        console.log(
+            `globalState function llm settins bhitra -> ${globalState.functionLLMSettings}`
+        )
+        return globalState.functionLLMSettings?.[method]?.userPrefText || ''
+    }
+
+    private extractArgumentValues(args: any[]) {
+        return args.map((a) =>
+            a && typeof a === 'object' && 'value' in a ? a.value : a
+        )
     }
 
     async remakeContext(index: number) {

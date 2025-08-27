@@ -3,11 +3,14 @@ import WebSocket from 'ws'
 import { configDotenv } from 'dotenv'
 import { CborDuplex } from 'libcardano/network/ouroboros'
 import { cborxBackend } from 'libcardano/lib/cbor'
+
 import { WsClientPipe } from './service/WsClientPipe'
 import { AgentRpc } from './service/AgentRpc'
 import { ManagerInterface } from './service/ManagerInterfaceService'
+
 import { TxListener } from './executor/TxListener'
 import { RpcTopicHandler } from './service/RpcTopicHandler'
+
 import { ScheduledTask } from 'node-cron'
 import { globalRootKeyBuffer, globalState } from './constants/global'
 import { AgentRunner } from './executor/AgentRunner'
@@ -71,10 +74,47 @@ function connectToManagerWebSocket() {
     })
 
     const topicHandler = new RpcTopicHandler(managerInterface, txListener)
+
+    // To extract the config and set globalState.functionLLMSettings
+    function applyFnSettingsFromConfigurations(message: any) {
+        if (!message?.configurations) return
+        globalState.functionLLMSettings = {}
+        message.configurations.forEach((cfg: any) => {
+            const act = cfg?.action || {}
+            if (act.function_name) {
+                globalState.functionLLMSettings[act.function_name] = {
+                    enabled: !!act.llm_enabled,
+                    userPrefText: act.llm_user_preferences_text || '',
+                    // optional place for future structured prefs
+                    prefs: act.llm_preferences || undefined,
+                }
+            }
+        })
+    }
+
     rpcChannel.on('event', (topic, message) => {
+        if (topic === 'initial_config') {
+            if (message.agentConfig?.system_prompt) {
+                globalState.systemPrompt = message.agentConfig.system_prompt
+            }
+            applyFnSettingsFromConfigurations(message)
+            return
+        }
+        if (topic === 'config_updated') {
+            applyFnSettingsFromConfigurations(message)
+        }
         if (topic == 'instance_count') {
+            if (message.agentConfig?.system_prompt) {
+                globalState.systemPrompt = message.agentConfig.system_prompt
+            }
+
             globalRootKeyBuffer.value = message.rootKeyBuffer
             globalState.agentName = message.agentName
+            if (message.config?.system_prompt) {
+                globalState.systemPrompt = message.config.system_prompt
+            }
+            // fallback
+            applyFnSettingsFromConfigurations(message)
             Array(message.instanceCount)
                 .fill('')
                 .forEach(async (item, index) => {
@@ -91,7 +131,7 @@ function connectToManagerWebSocket() {
         interval = setInterval(() => {
             rpcChannel.emit('active_connection', 'Ping')
         }, 5000)
-        rpcChannel.emit('hello', 'I am connected')
+        rpcChannel.emit('hello', 'I am connected') // announce presence.
     })
 
     ws.on('close', (code, reason) => {
@@ -108,7 +148,6 @@ function connectToManagerWebSocket() {
         clearInterval(interval)
     })
 }
-
 function attemptReconnect() {
     if (hasConnectedBefore) {
         console.log('Waiting for 10 seconds before reconnecting again')
