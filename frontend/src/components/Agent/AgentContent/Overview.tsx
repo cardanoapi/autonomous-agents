@@ -55,8 +55,23 @@ const AgentOverViewComponent: React.FC<AgentOverViewProps> = ({ agent, enableCon
 
     return (
         <>
-            <HeaderContent className="flex justify-between">
-                <TextDisplayField title="Agent Name" content={agent?.name} textClassName="text-xl font-semibold" />
+            <HeaderContent className="flex items-start justify-between">
+                <div className="flex flex-col gap-1">
+                    <TextDisplayField
+                        title="Agent Name"
+                        content={agent?.name}
+                        textClassName="text-xl font-semibold"
+                    />
+                    <div className="mt-4">
+                        <label className="text-xs text-gray-500">System Prompt</label>
+                        
+                        <textarea
+                            readOnly
+                            value={agent?.config?.system_prompt ?? '-'}
+                            className="mt-1 h-24 w-full min-w-96 rounded-md border border-gray-300 bg-gray-50 p-2 text-sm text-gray-700 focus:outline-none"
+                        />
+                    </div>
+                </div>
                 {!agent?.is_active && enableControl && (
                     <Button variant="primary" onClick={handleAgentRun} size="sm" className="min-w-32 px-4">
                         Run Agent

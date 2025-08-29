@@ -43,6 +43,12 @@ export interface IFormFunctionInstance extends IFunctionsItem {
     configuredCronSettings?: any;
     //To be compatible with IAgentConfiuration
     agent_id?: string;
+    action?: {
+        function_name?: string;
+        parameters?: { name: string; value: string }[];
+        llm_enabled?: boolean;
+        llm_user_preferences_text?: string;
+    };
 }
 
 interface IFormData {

@@ -21,6 +21,8 @@ class SubParameter(BaseModel):
 class Action(BaseModel):
     function_name: str
     parameters: list[SubParameter]
+    llm_enabled: Optional[bool] = None
+    llm_user_preferences_text: Optional[str] = None
 
 
 # For Event Based Trigger

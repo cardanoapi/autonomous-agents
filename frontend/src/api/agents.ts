@@ -47,6 +47,9 @@ export interface ISubParameter {
 export interface IAgentAction {
     function_name: string;
     parameters: Array<ISubParameter>;
+    llm_enabled?: boolean
+    llm_user_preferences_text?: string
+
 }
 
 export interface ICronTrigger {
@@ -68,6 +71,7 @@ export interface IAgentUpdateReqDto {
     templateId?: string;
     agentConfigurations?: Array<IAgentConfiguration>;
     instance?: number;
+    agentConfig?: { system_prompt?: string };
 }
 
 export interface IDelegation {
@@ -98,6 +102,7 @@ export interface IAgent {
     stake_last_registered?: string;
     no_of_successfull_triggers?: number;
     secret_key?: string;
+    config?: {system_prompt?: string}
 }
 
 export const fetchAgents = async (params: { page: number; size: number; search: string }): Promise<IAgent[]> => {
@@ -153,7 +158,8 @@ export const updateAgentData = async (formData: IAgentUpdateReqDto) => {
                 name: formData.agentName,
                 template_id: formData.templateId,
                 instance: formData.instance,
-                agent_configurations: formData.agentConfigurations
+                agent_configurations: formData.agentConfigurations,
+                config: formData.agentConfig
             },
             {
                 headers: {
