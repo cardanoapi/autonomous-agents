@@ -71,8 +71,61 @@ function connectToManagerWebSocket() {
     })
 
     const topicHandler = new RpcTopicHandler(managerInterface, txListener)
+
+      // LLM settings extractor from configurations
+    function applyFnSettingsFromConfigurations(message: any) {
+        try {
+            console.log('[INIT] Raw configurations:', JSON.stringify(message?.configurations, null, 2))
+        } catch {}
+        if (!message?.configurations) return
+        globalState.functionLLMSettings = {}
+        message.configurations.forEach((cfg: any) => {
+            const act = cfg?.action || {}
+            if (act.function_name) {
+                globalState.functionLLMSettings[act.function_name] = {
+                    enabled: !!act.llm_enabled,
+                    userPrefText: act.llm_user_preferences_text || '',
+                    prefs: act.llm_preferences || undefined,
+                }
+            }
+        })
+        console.log('[INIT] LLM settings for:', Object.keys(globalState.functionLLMSettings))
+    }
+
     rpcChannel.on('event', (topic, message) => {
+        // initial payload containing configs
+        if (topic === 'initial_config') {
+            if (message.agentConfig?.system_prompt) {
+                globalState.systemPrompt = message.agentConfig.system_prompt
+                console.log('[INIT] System prompt loaded')
+            }
+            applyFnSettingsFromConfigurations(message)
+            return
+        }
+
+         // config updates from manager
+        if (topic === 'config_updated') {
+            applyFnSettingsFromConfigurations(message)
+             if (message.agentConfig?.system_prompt) {
+                globalState.systemPrompt = message.agentConfig.system_prompt
+                console.log('[INIT] System prompt loaded')
+            }
+        }
+
         if (topic == 'instance_count') {
+            // load system prompt if present
+            if (message.agentConfig?.system_prompt) {
+                globalState.systemPrompt = message.agentConfig.system_prompt
+                console.log('[INIT] System prompt loaded')
+            }
+            if (message.config?.system_prompt) {
+                globalState.systemPrompt = message.config.system_prompt
+                console.log('Loaded system prompt:', globalState.systemPrompt.slice(0, 80) + '...')
+            }
+
+            // ensure LLM prefs set
+            applyFnSettingsFromConfigurations(message)
+            
             globalRootKeyBuffer.value = message.rootKeyBuffer
             globalState.agentName = message.agentName
             Array(message.instanceCount)

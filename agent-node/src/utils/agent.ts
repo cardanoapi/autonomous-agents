@@ -56,7 +56,20 @@ export function saveTxLog(
             }
             if (mainLog.return) {
                 txLog.result = mainLog.return
-                txLog.txHash = mainLog.return.hash
+                if((mainLog.return as any).blocked_by_llm  === true){
+                    txLog.success = false
+                    txLog.message = 
+                        (mainLog.return as any).llm_reasoning ||
+                        (mainLog.return as any).message ||
+                        'LLM blocked execution'
+                } else if ((mainLog.return as any).hash){
+                    txLog.txHash = (mainLog.return as any).hash
+                    txLog.message = (mainLog.return as any).message || 'Function executed successfully'
+ 
+                } else {
+                    txLog.message = (mainLog.return as any).message || 'Function executed successfully'
+                }
+                
             } else if (mainLog.error) {
                 txLog.result = mainLog.error
                 txLog.message = mainLog.error && ((mainLog.error as Error).message ?? mainLog.error)
@@ -72,7 +85,20 @@ export function saveTxLog(
                     }
                     if (log.return) {
                         internalLog.result = log.return
-                        internalLog.txHash = log.return.hash
+                        if ((log.return as any).blocked_by_llm === true) {
+                            internalLog.success = false
+                            internalLog.message =
+                                (log.return as any).llm_reasoning ||
+                                (log.return as any).message ||
+                                'LLM blocked execution'
+                        } else if ((log.return as any).hash) {
+                            internalLog.txHash = (log.return as any).hash
+                            internalLog.message = (log.return as any).message || 'Function executed successfully'
+                        } else {
+                            internalLog.message = (log.return as any).message || 'Function executed successfully'
+                        }
+
+                        
                     } else if (log.error) {
                         internalLog.result = log.error
                         internalLog.message = log.error && (log.error.message ?? log.error)

@@ -6,6 +6,7 @@ import os
 import uuid
 from datetime import datetime, timezone, timedelta, UTC
 from typing import List, Optional
+from prisma import Json
 
 import pycardano
 from pycardano import (
@@ -85,6 +86,7 @@ class AgentRepository:
                 is_drep_registered=agent.is_drep_registered,
                 no_of_successfull_triggers=successful_triggers,
                 secret_key=str(agent.secret_key) if display_secret_key else None,
+                config=(json.loads(json.dumps(agent.config)) if agent.config is not None else None),
             )
             return agent_response
 
@@ -97,6 +99,13 @@ class AgentRepository:
             "instance": agent_data.instance,
             "updated_at": datetime.now(timezone.utc),
         }
+
+        if hasattr(agent_data, "config"):
+            safe_config = json.loads(json.dumps(agent_data.config))
+            updated_data["config"] = Json(safe_config)
+        else:
+            print("no config in the agent_data")
+
         updated_agent = await self.db.prisma.agent.update(where={"id": agent_id}, data=updated_data)
         updated_agent.secret_key = str(updated_agent.secret_key)
         return updated_agent

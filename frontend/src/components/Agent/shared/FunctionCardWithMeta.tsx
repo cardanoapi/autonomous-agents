@@ -34,6 +34,11 @@ const FunctionCardWithMeta = ({
                     <span className="w-fit rounded-xl bg-blue-100 px-2 py-[1px] text-[10px] font-semibold">
                         {config.type}
                     </span>
+                    {config.action.llm_enabled && (
+                            <span className="rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-800">
+                                LLM
+                            </span>
+                        )}
                 </span>
                 <span className="text-[10px] text-gray-700">{functionMetaData?.description || 'No description'}</span>
             </>
