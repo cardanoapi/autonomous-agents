@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Dict
 
 from backend.app.models import TriggerResponse
+from backend.app.models.agent.agent_config import AgentConfig
 
 
 class AgentCreateDTO(BaseModel):
@@ -19,4 +20,4 @@ class AgentUpdateDTO(BaseModel):
     template_id: Optional[str]
     agent_configurations: Optional[List[TriggerResponse]]
     instance: int = Field()
-    config: Optional[Dict] = None
+    config: Optional[AgentConfig] = None

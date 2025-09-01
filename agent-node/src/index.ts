@@ -14,6 +14,7 @@ import { AgentRunner } from './executor/AgentRunner'
 import { decodeBase64string } from './utils/base64converter'
 import { validateToken } from './utils/validator'
 import { getHandlers } from './executor/AgentFunctions'
+import { LLMGatedRunner } from './executor/LlmGatedRunner'
 
 configDotenv()
 let wsUrl: string = process.env.WS_URL as string
@@ -62,7 +63,7 @@ function connectToManagerWebSocket() {
     const managerInterface = new ManagerInterface(rpcChannel)
     const txListener = new TxListener()
 
-    const agentRunners: Array<AgentRunner> = []
+    const agentRunners: Array<any> = []
 
     rpcChannel.on('methodCall', (method, args) => {
         agentRunners.forEach((runner, index) => {
@@ -72,11 +73,8 @@ function connectToManagerWebSocket() {
 
     const topicHandler = new RpcTopicHandler(managerInterface, txListener)
 
-      // LLM settings extractor from configurations
+    // LLM settings extractor from configurations
     function applyFnSettingsFromConfigurations(message: any) {
-        try {
-            console.log('[INIT] Raw configurations:', JSON.stringify(message?.configurations, null, 2))
-        } catch {}
         if (!message?.configurations) return
         globalState.functionLLMSettings = {}
         message.configurations.forEach((cfg: any) => {
@@ -92,46 +90,40 @@ function connectToManagerWebSocket() {
         console.log('[INIT] LLM settings for:', Object.keys(globalState.functionLLMSettings))
     }
 
+    // loads the system prompt
+    function applySystemPromptFromMessage(message: any, logCtx: string) {
+        const prompt = message?.agentConfig?.system_prompt ?? message?.config?.system_prompt
+
+        if (typeof prompt === 'string' && prompt.length && prompt !== globalState.systemPrompt) {
+            globalState.systemPrompt = prompt
+        }
+    }
+
     rpcChannel.on('event', (topic, message) => {
         // initial payload containing configs
         if (topic === 'initial_config') {
-            if (message.agentConfig?.system_prompt) {
-                globalState.systemPrompt = message.agentConfig.system_prompt
-                console.log('[INIT] System prompt loaded')
-            }
+            applySystemPromptFromMessage(message, 'initial_config')
             applyFnSettingsFromConfigurations(message)
             return
         }
 
-         // config updates from manager
+        // config updates from manager
         if (topic === 'config_updated') {
             applyFnSettingsFromConfigurations(message)
-             if (message.agentConfig?.system_prompt) {
-                globalState.systemPrompt = message.agentConfig.system_prompt
-                console.log('[INIT] System prompt loaded')
-            }
+            applySystemPromptFromMessage(message, 'initial_config')
         }
 
         if (topic == 'instance_count') {
-            // load system prompt if present
-            if (message.agentConfig?.system_prompt) {
-                globalState.systemPrompt = message.agentConfig.system_prompt
-                console.log('[INIT] System prompt loaded')
-            }
-            if (message.config?.system_prompt) {
-                globalState.systemPrompt = message.config.system_prompt
-                console.log('Loaded system prompt:', globalState.systemPrompt.slice(0, 80) + '...')
-            }
-
-            // ensure LLM prefs set
+            applySystemPromptFromMessage(message, 'initial_config')
             applyFnSettingsFromConfigurations(message)
-            
+
             globalRootKeyBuffer.value = message.rootKeyBuffer
             globalState.agentName = message.agentName
             Array(message.instanceCount)
                 .fill('')
                 .forEach(async (item, index) => {
-                    const runner = new AgentRunner(managerInterface, txListener)
+                    const coreRunner = new AgentRunner(managerInterface, txListener)
+                    const runner = new LLMGatedRunner(coreRunner)
                     await runner.remakeContext(index)
                     agentRunners.push(runner)
                 })
