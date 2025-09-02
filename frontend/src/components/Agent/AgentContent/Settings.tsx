@@ -32,7 +32,8 @@ export default function AgentSettingsComponent({
         agentName: agent?.name,
         instance: agent?.instance,
         templateId: agent?.template_id,
-        agentConfigurations: agent?.agent_configurations
+        agentConfigurations: agent?.agent_configurations,
+        agentConfig: { system_prompt: agent?.config?.system_prompt ?? '' }
     });
 
     const { mutate: postAgentData } = useMutation({
@@ -81,16 +82,23 @@ export default function AgentSettingsComponent({
                 agentName: agent?.name,
                 instance: agent?.instance,
                 templateId: agent?.template_id,
-                agentConfigurations: agent?.agent_configurations
+                agentConfigurations: agent?.agent_configurations,
+                agentConfig: { system_prompt: agent?.config?.system_prompt ?? '' }
             });
         }
         setIsEditing(false);
     };
 
-    const AgnetDataCanBeChanged = () => {
-        return agent && agentData.agentName === agent?.name && agentData.instance === agent?.instance;
-    };
+     const isDataUnchanged = () => {
+        if (!agent) return true; 
+        
+        const isNameSame = agentData.agentName === agent.name;
+        const isInstanceSame = agentData.instance === agent.instance;
+       
+        const isPromptSame = (agentData.agentConfig?.system_prompt ?? '') === (agent.config?.system_prompt ?? '');
 
+        return isNameSame && isInstanceSame && isPromptSame;
+    };
     return (
         <>
             <div className="flex w-full flex-col md:w-[60%] ">
@@ -117,6 +125,25 @@ export default function AgentSettingsComponent({
                         viewOnly={!isEditing}
                         onChange={(e: any) => setAgentData({ ...agentData, instance: e.target.value })}
                         min={1}
+                    />
+                </div>
+                   <div className="mt-4 flex flex-col gap-2">
+                    <Label>System Prompt</Label>
+                    <textarea
+                        value={agentData.agentConfig?.system_prompt}
+                        readOnly={!isEditing}
+                        onChange={(e) =>
+                            setAgentData({
+                                ...agentData,
+                                agentConfig: { system_prompt: e.target.value }
+                            })
+                        }
+                        className={`mx-[2px] h-40 min-h-24 rounded-md border p-2 text-sm font-mono ${
+                            !isEditing
+                                ? 'border-transparent bg-gray-100 text-gray-500'
+                                : 'border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500'
+                        }`}
+                        placeholder={isEditing ? 'Enter system prompt...' : 'Not set'}
                     />
                 </div>
                 <div className="mt-4 flex flex-col gap-2">
@@ -150,7 +177,7 @@ export default function AgentSettingsComponent({
                                 size={'sm'}
                                 className="min-w-32"
                                 onClick={handleAgentUpdate}
-                                disabled={AgnetDataCanBeChanged()}
+                                disabled={isDataUnchanged()}
                             >
                                 Save
                             </Button>

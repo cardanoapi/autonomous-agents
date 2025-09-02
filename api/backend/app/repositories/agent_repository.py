@@ -6,6 +6,8 @@ import os
 import uuid
 from datetime import datetime, timezone, timedelta, UTC
 from typing import List, Optional
+from prisma import Json
+from pydantic import BaseModel
 
 import pycardano
 from pycardano import (
@@ -22,6 +24,17 @@ from backend.app.models import AgentResponse, AgentCreateDTO, AgentKeyResponse, 
 from backend.app.models.user.user_dto import User
 from backend.app.utils.generator import generate_random_base64
 from backend.config.database import prisma_connection
+
+
+# Convert to a JSON-serializable dict
+def _to_db_json(value):
+    if value is None:
+        return None
+    if isinstance(value, BaseModel):
+        return value.model_dump(exclude_none=True) if hasattr(value, "model_dump") else value.dict(exclude_none=True)
+    if isinstance(value, dict):
+        return value
+    return json.loads(json.dumps(value))
 
 
 class AgentRepository:
@@ -85,6 +98,7 @@ class AgentRepository:
                 is_drep_registered=agent.is_drep_registered,
                 no_of_successfull_triggers=successful_triggers,
                 secret_key=str(agent.secret_key) if display_secret_key else None,
+                config=(json.loads(json.dumps(agent.config)) if agent.config is not None else None),
             )
             return agent_response
 
@@ -97,6 +111,13 @@ class AgentRepository:
             "instance": agent_data.instance,
             "updated_at": datetime.now(timezone.utc),
         }
+
+        if hasattr(agent_data, "config"):
+            safe_config = _to_db_json(agent_data.config)
+            updated_data["config"] = Json(safe_config)
+        else:
+            print("no config in the agent_data")
+
         updated_agent = await self.db.prisma.agent.update(where={"id": agent_id}, data=updated_data)
         updated_agent.secret_key = str(updated_agent.secret_key)
         return updated_agent

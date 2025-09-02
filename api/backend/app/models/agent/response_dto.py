@@ -4,6 +4,7 @@ from typing import List, Optional, Any
 from pydantic import BaseModel
 
 from backend.app.models import TriggerResponse
+from backend.app.models.agent.agent_config import AgentConfig
 
 
 class AgentResponse(BaseModel):
@@ -20,6 +21,7 @@ class AgentResponse(BaseModel):
     is_drep_registered: Optional[bool]
     no_of_successfull_triggers: Optional[int]
     secret_key: Optional[str]
+    config: Optional[AgentConfig] = None
 
 
 class AgentResponseWithAgentConfigurations(AgentResponse):

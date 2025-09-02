@@ -31,6 +31,7 @@ export interface ITemplate {
     name: string;
     description: string;
     template_configurations?: Array<ITemplateConfiguration>;
+    config?: {system_prompt?:string};
 }
 
 export interface ICreateTemplateRequestDTO {

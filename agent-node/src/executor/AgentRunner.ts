@@ -18,7 +18,7 @@ export class AgentRunner {
         this.executor = new Executor(null, managerInterface, txListener)
     }
 
-    invokeFunction(triggerType: TriggerType, instanceIndex: number, method: string, ...args: any) {
+    async invokeFunction(triggerType: TriggerType, instanceIndex: number, method: string, ...args: any) {
         this.executor.invokeFunction(method, ...args).then((result) => {
             saveTxLog(result, this.managerInterface, triggerType, instanceIndex)
         })

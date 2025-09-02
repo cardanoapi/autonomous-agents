@@ -27,6 +27,7 @@ model Agent {
   triggers         Trigger[]           // One-to-many relationship with Trigger
   template         Template?           @relation(fields: [template_id], references: [id], onDelete: SetNull,  onUpdate: Cascade)
   secret_key       Bytes               @db.ByteA
+  config           Json?
 }
 
 model Trigger {

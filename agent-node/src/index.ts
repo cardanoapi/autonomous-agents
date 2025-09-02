@@ -14,6 +14,7 @@ import { AgentRunner } from './executor/AgentRunner'
 import { decodeBase64string } from './utils/base64converter'
 import { validateToken } from './utils/validator'
 import { getHandlers } from './executor/AgentFunctions'
+import { LLMGatedRunner } from './executor/LlmGatedRunner'
 
 configDotenv()
 let wsUrl: string = process.env.WS_URL as string
@@ -62,7 +63,7 @@ function connectToManagerWebSocket() {
     const managerInterface = new ManagerInterface(rpcChannel)
     const txListener = new TxListener()
 
-    const agentRunners: Array<AgentRunner> = []
+    const agentRunners: Array<any> = []
 
     rpcChannel.on('methodCall', (method, args) => {
         agentRunners.forEach((runner, index) => {
@@ -71,14 +72,58 @@ function connectToManagerWebSocket() {
     })
 
     const topicHandler = new RpcTopicHandler(managerInterface, txListener)
+
+    // LLM settings extractor from configurations
+    function applyFnSettingsFromConfigurations(message: any) {
+        if (!message?.configurations) return
+        globalState.functionLLMSettings = {}
+        message.configurations.forEach((cfg: any) => {
+            const act = cfg?.action || {}
+            if (act.function_name) {
+                globalState.functionLLMSettings[act.function_name] = {
+                    enabled: !!act.llm_enabled,
+                    userPrefText: act.llm_user_preferences_text || '',
+                    prefs: act.llm_preferences || undefined,
+                }
+            }
+        })
+        console.log('[INIT] LLM settings for:', Object.keys(globalState.functionLLMSettings))
+    }
+
+    // loads the system prompt
+    function applySystemPromptFromMessage(message: any, logCtx: string) {
+        const prompt = message?.agentConfig?.system_prompt ?? message?.config?.system_prompt
+
+        if (typeof prompt === 'string' && prompt.length && prompt !== globalState.systemPrompt) {
+            globalState.systemPrompt = prompt
+        }
+    }
+
     rpcChannel.on('event', (topic, message) => {
+        // initial payload containing configs
+        if (topic === 'initial_config') {
+            applySystemPromptFromMessage(message, 'initial_config')
+            applyFnSettingsFromConfigurations(message)
+            return
+        }
+
+        // config updates from manager
+        if (topic === 'config_updated') {
+            applyFnSettingsFromConfigurations(message)
+            applySystemPromptFromMessage(message, 'initial_config')
+        }
+
         if (topic == 'instance_count') {
+            applySystemPromptFromMessage(message, 'initial_config')
+            applyFnSettingsFromConfigurations(message)
+
             globalRootKeyBuffer.value = message.rootKeyBuffer
             globalState.agentName = message.agentName
             Array(message.instanceCount)
                 .fill('')
                 .forEach(async (item, index) => {
-                    const runner = new AgentRunner(managerInterface, txListener)
+                    const coreRunner = new AgentRunner(managerInterface, txListener)
+                    const runner = new LLMGatedRunner(coreRunner)
                     await runner.remakeContext(index)
                     agentRunners.push(runner)
                 })

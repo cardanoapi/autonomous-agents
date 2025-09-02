@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from '@app/component
 import { cn } from '@app/components/lib/utils';
 import { CustomCombobox } from '@app/components/molecules/CustomCombobox';
 import { ErrorToast } from '@app/components/molecules/CustomToasts';
+import { Switch } from '@app/components/shadcn/ui/switch';
 
 import { IFormFunctionInstance } from '../page';
 import { renderParameters } from './ParameterRenderers';
@@ -41,7 +42,8 @@ export const FunctionForm = ({
         currentFunction || {
             ...TemplateFunctions[0],
             index: '0',
-            type: 'CRON' as TriggerType
+            type: 'CRON' as TriggerType,
+            action: { llm_enabled: false, llm_user_preferences_text: '' }
         }
     );
     const [cronExpression] = useState(currentFunction?.cronValue?.frequency || '* * * * *');
@@ -104,6 +106,18 @@ export const FunctionForm = ({
     const handleOptionChange = (optionValue: any) => {
         const updatedFunctionState = { ...functionState, optionValue: optionValue };
         updateFunctionState(updatedFunctionState);
+    };
+
+    const handleLlmEnabledChange = (enabled: boolean) => {
+        updateFunctionState({
+            action: { ...(functionState.action || {}), llm_enabled: enabled }
+        });
+    };
+
+    const handleLlmPreferencesChange = (text: string) => {
+        updateFunctionState({
+            action: { ...(functionState.action || {}), llm_user_preferences_text: text }
+        });
     };
 
     const handleOnSave = () => {
@@ -243,6 +257,30 @@ export const FunctionForm = ({
                                 }
                             />
                         </div>
+
+                        <div className="px-4">
+                    <div className="mb-2 flex items-center justify-between">
+                        <span className="h4">Enable LLM</span>
+                        <Switch
+                            checked={!!functionState.action?.llm_enabled}
+                            onCheckedChange={handleLlmEnabledChange}
+                        />
+                    </div>
+                    {functionState.action?.llm_enabled && (
+                        <div className="flex flex-col gap-2">
+                            <span className="text-sm text-gray-600">LLM Preferences</span>
+                            <textarea
+                                rows={4}
+                                placeholder="Describe user preferences for the LLM..."
+                                value={functionState.action?.llm_user_preferences_text || ''}
+                                onChange={(e:any) => handleLlmPreferencesChange(e.target.value)}
+                                className="bg-white focus:outline-none"
+                            />
+                        </div>
+                    )}
+                </div>
+
+
                     </>
                 )}
                 {functionState.type === 'EVENT' && (

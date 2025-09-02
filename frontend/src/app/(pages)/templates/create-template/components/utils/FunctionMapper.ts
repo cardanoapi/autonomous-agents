@@ -63,7 +63,10 @@ export const mapFormFunctionToTriggerConfiguration = (item: IFormFunctionInstanc
         type: item.type,
         action: {
             function_name: item.id,
-            parameters: mapParamValueToKeyValuePair(item.parameters || [])
+            parameters: mapParamValueToKeyValuePair(item.parameters || []),
+            llm_enabled: item.action?.llm_enabled,
+            llm_user_preferences_text: item.action?.llm_user_preferences_text
+
         },
         data: commonData
     };
@@ -178,7 +181,11 @@ export const mapTriggerConfigurationToFormFunction = (
         congifuredCronSettings: undefined,
         agent_id: (trigger as IAgentConfiguration).agent_id || undefined,
         eventDescription: baseFunction.eventDescription,
-        eventParameters: baseFunction.eventParameters
+        eventParameters: baseFunction.eventParameters,
+        action: {
+            llm_enabled: trigger.action.llm_enabled,
+            llm_user_preferences_text: trigger.action.llm_user_preferences_text
+        }
     };
 
     return final_obj;
