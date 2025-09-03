@@ -181,7 +181,9 @@ export const AgentLogCard = ({
                     {history.result ? (
                         <div className={'flex w-full flex-col gap-0.5'}>
                             <span className={'text-sm font-medium'}>Result</span>
-                            {history.txHash || !history.message ? (
+                            {!checkIfValueIsObject(history.result) ? (
+                                <span>{history.result}</span>
+                            ) : history.txHash || !history.message ? (
                                 <LogObjectParameter longTruncate params={history.result} />
                             ) : (
                                 <span className={'w-full break-all pr-4 text-xs'}>{history.message}</span>
@@ -326,3 +328,7 @@ export const AgentLogCardSkeleton = ({ className }: { className?: string }) => {
         </div>
     );
 };
+
+function checkIfValueIsObject(val: any) {
+    return typeof val === 'object';
+}
