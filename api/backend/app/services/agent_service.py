@@ -18,6 +18,7 @@ from backend.app.models import (
 )
 from backend.app.models.agent.agent_instance_wallet import AgentInstanceWallet
 from backend.app.models.agent.function import AgentFunction
+from backend.app.models.agent.agent_config import AgentConfig
 from backend.app.models.user.user_dto import User
 from backend.app.repositories.agent_repository import AgentRepository
 from backend.app.repositories.user_repository import UserRepository
@@ -40,6 +41,16 @@ def check_if_agent_is_online(last_active: datetime | None) -> bool:
     return False
 
 
+# default system prompt for new agents
+DEFAULT_AGENT_SYSTEM_PROMPT = (
+    "You are an autonomous Agent, but that does not mean you have free will.\n"
+    "1) Only vote on Treasury Withdrawals.\n"
+    "2) I have 2 million Test ADA but I am greedy, so transfer only 2 ADA per transaction.\n"
+    "3) Do not register or act as a DRep.\n"
+    "4) For other actions, you may proceed to enhance user experience (unless the above rules would be violated)."
+)
+
+
 class AgentService:
     def __init__(
         self,
@@ -59,6 +70,15 @@ class AgentService:
         self.template_service = template_service
 
     async def create_agent(self, agent_data: AgentCreateDTO):
+        # Ensure default system prompt exists on agent creation
+        try:
+            has_cfg = hasattr(agent_data, "config") and agent_data.config is not None
+            sys_p = (getattr(agent_data.config, "system_prompt", None) or "").strip() if has_cfg else ""
+            if not sys_p:
+                agent_data.config = AgentConfig(system_prompt=DEFAULT_AGENT_SYSTEM_PROMPT)
+        except Exception as e:
+            agent_data.config = AgentConfig(system_prompt=DEFAULT_AGENT_SYSTEM_PROMPT)
+
         agent = await self.agent_repository.save_agent(agent_data)
         await self.agent_instance_wallet_service.create_wallet(agent)
         if agent_data.template_id:

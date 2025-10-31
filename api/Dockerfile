@@ -50,6 +50,13 @@ COPY . ./backend
 COPY healthcheck.py /usr/local/bin/healthcheck.py
 
 WORKDIR $PYSETUP_PATH
+# Add required system libs for Prisma's embedded Node
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+      libatomic1 \
+      openssl \
+      ca-certificates \
+ && rm -rf /var/lib/apt/lists/*
 
 # Generate Prisma client
 RUN prisma generate

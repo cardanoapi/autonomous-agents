@@ -8,6 +8,7 @@ import { ScheduledTask } from 'node-cron'
 import { AgentRunner } from '../executor/AgentRunner'
 import { EventTriggerHandler } from './EventTriggerHandler'
 import { formatEventFilter } from '../utils/event/eventFilterFormatter'
+import { LLMGatedRunner } from '../executor/LLMGatedRunner'
 
 export class RpcTopicHandler {
     managerInterface: ManagerInterface
@@ -51,10 +52,13 @@ export class RpcTopicHandler {
         const { configurations } = message
         const eventBasedActions = formatEventFilter(checkIfAgentWithEventTriggerTypeExists(configurations))
         if (eventBasedActions) {
+            console.log('[EVENT] loaded actions count:', eventBasedActions.length)
             this.eventTriggerHandlers.addEventActions(eventBasedActions)
         }
+        // Use LLMGatedRunner Only For CRON scheduling; keep event/manaul on core AgentRunner
         agentRunners.forEach((runner, index) => {
-            scheduleFunctions(this.managerInterface, runner, configurations, index, scheduledTasks)
+            const cronRunner = new LLMGatedRunner(runner)
+            scheduleFunctions(this.managerInterface, cronRunner as any, configurations, index, scheduledTasks)
         })
     }
 
@@ -76,11 +80,13 @@ export class RpcTopicHandler {
         }
         const eventBasedActions = formatEventFilter(checkIfAgentWithEventTriggerTypeExists(configurations))
         if (eventBasedActions) {
+            console.log('[EVENT] reloaded actions count:', eventBasedActions.length)
             this.eventTriggerHandlers.addEventActions(eventBasedActions)
         }
         clearScheduledTasks(scheduledTasks)
         agentRunners.forEach((runner, index) => {
-            scheduleFunctions(this.managerInterface, runner, configurations, index, scheduledTasks)
+            const cronRunner = new LLMGatedRunner(runner)
+            scheduleFunctions(this.managerInterface, cronRunner as any, configurations, index, scheduledTasks)
         })
     }
 

@@ -5,6 +5,9 @@ import { compareValue } from '../utils/validator'
 import { IBooleanNode, IEventBasedAction, IFieldNode, IFilterNode } from '../types/eventTriger'
 import { DecodedBlock } from '../executor/TxListener'
 import { reconstructTxFromPaths } from '../utils/event/eventFilterFormatter'
+import { saveTxLog } from '../utils/agent'
+import { customReplacer } from '../utils/validator'
+import { callEventGate } from '../mcp/client'
 
 export class EventTriggerHandler {
     eventBasedActions: IEventBasedAction[] = []
@@ -26,8 +29,7 @@ export class EventTriggerHandler {
             })
         }
     }
-
-    transactionHandler(
+    async transactionHandler(
         tx: Transaction,
         eventBasedAction: IEventBasedAction,
         block: DecodedBlock,
@@ -48,26 +50,79 @@ export class EventTriggerHandler {
             return
         }
 
+        if (!result || !agentRunners?.length) return
+
         const matchedEventContext = reconstructTxFromPaths({ tx: tx.body }, matchedTxPath)
 
         const { function_name, parameters } = eventBasedAction.triggeringFunction
-        if (result && agentRunners) {
-            const eventContext = {
-                tx,
-                block,
-                confirmation: 1,
-            }
-            agentRunners.forEach((runner, index) => {
-                runner.invokeFunctionWithEventContext(
-                    matchedEventContext,
-                    eventContext,
-                    'EVENT',
-                    index,
-                    function_name,
-                    parameters
-                )
-            })
+        const eventContext = { tx, block, confirmation: 1 }
+
+        console.log('[EVENT] match:', {
+            txHash: tx?.hash?.toString('hex'),
+            fn: function_name,
+        })
+
+        //  MCP SAMPLING for event path (autonomous
+        // 1. compact preview
+        const preview = {
+            txHash: tx.hash.toString('hex'),
+            matched: matchedEventContext,
         }
+
+        let previewJson = '{}'
+        try {
+            previewJson = JSON.stringify(preview, customReplacer).slice(0, 4000)
+        } catch {
+            // intentionally ignored
+        }
+        console.log('[EVENT][sampling] calling gate for', function_name)
+
+        // 2. invoking sampling
+        let decision = { execute: true, reason: 'sampling not configured' }
+
+        try {
+            decision = await callEventGate(function_name, parameters as any[], previewJson)
+        } catch (e) {
+            console.warn('[EVENT][sampling] error; default allow', e)
+            decision = { execute: true, reason: 'sampling-error' }
+        }
+
+        console.log('[EVENT][sampling] decision=', decision)
+
+        if (!decision.execute) {
+            const blocked = [
+                {
+                    function: function_name,
+                    arguments: parameters,
+                    return: {
+                        operation: function_name,
+                        executed: false,
+                        blocked_by_sampling: true,
+                        sampling_reason: decision.reason,
+                        message: `MCP sampling blocked (event): ${decision.reason}`,
+                        timestamp: new Date().toISOString(),
+                    },
+                },
+            ]
+
+            try {
+                saveTxLog(blocked, this.managerInterface, 'EVENT' as any, 0)
+            } catch (e) {
+                console.error('SaveTxLog (blocked) error:', e)
+            }
+            return
+        }
+        // 4. allowed -> invoke as usual
+        agentRunners.forEach((runner, index) => {
+            runner.invokeFunctionWithEventContext(
+                matchedEventContext,
+                eventContext,
+                'EVENT',
+                index,
+                function_name,
+                parameters
+            )
+        })
     }
 
     solveNode(targetObject: any, filterNode: IFilterNode, parentNodes: string[], matchedTxPath: any) {

@@ -1,4 +1,30 @@
 import { FunctionContext } from '../executor/BaseFunction'
+import { FunctionSchemaSpec } from '../utils/functionSchema'
+
+// ...existing code...
+export const schema: FunctionSchemaSpec = {
+    id: 'proposalNewConstitution',
+    name: 'Constitution',
+    description: 'Submit a new constitution',
+    params: [
+        { name: 'anchor', schema: { type: 'object', description: 'Anchor { url, dataHash }' } },
+        { name: 'newConstitution', schema: { type: 'object', description: 'New constitution { url, dataHash }' } },
+        {
+            name: 'guardrailScript',
+            schema: { type: 'string', description: 'Optional guardrail script CBOR', optional: true },
+        },
+    ],
+    response: {
+        type: 'object',
+        properties: {
+            hash: { type: 'string' },
+            cborHex: { type: 'string' },
+            description: { type: 'string' },
+            type: { type: 'string' },
+        },
+        response_text: 'Constitution submitted: hash: ${result.hash}',
+    },
+}
 
 export default async function handler(
     context: FunctionContext,

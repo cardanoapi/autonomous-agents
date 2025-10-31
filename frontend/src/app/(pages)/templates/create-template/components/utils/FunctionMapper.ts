@@ -25,7 +25,9 @@ export const mapFormFunctionToTriggerConfiguration = (item: IFormFunctionInstanc
                 type: item.type,
                 action: {
                     function_name: item.id,
-                    parameters: item.optionValue ? [mapOptionToKeyValuePair(item.optionValue, 'voteType')] : []
+                    parameters: item.optionValue ? [mapOptionToKeyValuePair(item.optionValue, 'voteType')] : [],
+                    llm_enabled: item.action?.llm_enabled,
+                    llm_user_preferences_text: item.action?.llm_user_preferences_text
                 },
                 data: item.eventValue
             };
@@ -66,7 +68,6 @@ export const mapFormFunctionToTriggerConfiguration = (item: IFormFunctionInstanc
             parameters: mapParamValueToKeyValuePair(item.parameters || []),
             llm_enabled: item.action?.llm_enabled,
             llm_user_preferences_text: item.action?.llm_user_preferences_text
-
         },
         data: commonData
     };

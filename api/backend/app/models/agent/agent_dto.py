@@ -12,6 +12,7 @@ class AgentCreateDTO(BaseModel):
     name: str = Field(..., description="Name of Agent", min_length=1)
     template_id: Optional[str]
     instance: int = Field()
+    config: Optional[AgentConfig] = None
 
 
 class AgentUpdateDTO(BaseModel):

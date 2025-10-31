@@ -1,5 +1,26 @@
 import { FunctionContext } from '../executor/BaseFunction'
 import { bech32toHex } from '../utils/cardano'
+import { FunctionSchemaSpec } from '../utils/functionSchema'
+
+export const schema: FunctionSchemaSpec = {
+    id: 'treasuryWithdrawal',
+    name: 'Treasury Withdrawal',
+    description: 'Withdraw from treasury to given rewards accounts',
+    params: [
+        { name: 'anchor', schema: { type: 'object', description: 'Anchor { url, dataHash }' } },
+        { name: 'withdrawal', schema: { type: 'object', description: 'Record { stakeAddress: amountLovelace, ... }' } },
+    ],
+    response: {
+        type: 'object',
+        properties: {
+            hash: { type: 'string' },
+            cborHex: { type: 'string' },
+            description: { type: 'string' },
+            type: { type: 'string' },
+        },
+        response_text: 'Treasury withdrawal submitted: hash: ${result.hash}',
+    },
+}
 
 export default async function handler(
     context: FunctionContext,
