@@ -14,7 +14,7 @@ import { AgentRunner } from './executor/AgentRunner'
 import { decodeBase64string } from './utils/base64converter'
 import { validateToken } from './utils/validator'
 import { getHandlers } from './executor/AgentFunctions'
-import { LLMGatedRunner } from './executor/LlmGatedRunner'
+import { startMcpServer } from './mcp/mcpServer'
 
 configDotenv()
 let wsUrl: string = process.env.WS_URL as string
@@ -76,18 +76,26 @@ function connectToManagerWebSocket() {
     // LLM settings extractor from configurations
     function applyFnSettingsFromConfigurations(message: any) {
         if (!message?.configurations) return
-        globalState.functionLLMSettings = {}
+        // globalState.functionLLMSettings = {}
+        // Rebuild a fresh map so disabled/removed items don’t linger
+        const next: Record<string, { enabled: boolean; userPrefText: string; prefs?: any }> = {}
         message.configurations.forEach((cfg: any) => {
             const act = cfg?.action || {}
-            if (act.function_name) {
-                globalState.functionLLMSettings[act.function_name] = {
-                    enabled: !!act.llm_enabled,
+            if (act.function_name && act.llm_enabled === true) {
+                next[act.function_name] = {
+                    enabled: true,
                     userPrefText: act.llm_user_preferences_text || '',
                     prefs: act.llm_preferences || undefined,
                 }
             }
         })
-        console.log('[INIT] LLM settings for:', Object.keys(globalState.functionLLMSettings))
+        globalState.functionLLMSettings = next
+        const enabledFns = Object.keys(next)
+        console.log(
+            enabledFns.length
+                ? '[INIT] LLM settings enabled for: ' + enabledFns.join(', ')
+                : '[INIT] LLM disabled for all functions'
+        )
     }
 
     // loads the system prompt
@@ -100,6 +108,10 @@ function connectToManagerWebSocket() {
     }
 
     rpcChannel.on('event', (topic, message) => {
+        // debug breadcrumb
+        if (topic !== 'active_connection') {
+            console.log('[WS->Agent] event:', topic)
+        }
         // initial payload containing configs
         if (topic === 'initial_config') {
             applySystemPromptFromMessage(message, 'initial_config')
@@ -119,11 +131,11 @@ function connectToManagerWebSocket() {
 
             globalRootKeyBuffer.value = message.rootKeyBuffer
             globalState.agentName = message.agentName
+            startMcpServer(managerInterface, agentRunners, Number(process.env.MCP_HTTP_PORT || 7071))
             Array(message.instanceCount)
                 .fill('')
                 .forEach(async (item, index) => {
-                    const coreRunner = new AgentRunner(managerInterface, txListener)
-                    const runner = new LLMGatedRunner(coreRunner)
+                    const runner = new AgentRunner(managerInterface, txListener)
                     await runner.remakeContext(index)
                     agentRunners.push(runner)
                 })

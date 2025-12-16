@@ -49,6 +49,12 @@ class AgentRepository:
         agent_data_dict["created_at"] = datetime.now(timezone.utc)
         agent_data_dict["updated_at"] = datetime.now(timezone.utc)
         agent_data_dict["secret_key"] = generate_random_base64(32)
+
+        # Ensure config is proper JSON for Prisma
+        if "config" in agent_data_dict and agent_data_dict["config"] is not None:
+            safe_config = _to_db_json(agent_data_dict["config"])
+            agent_data_dict["config"] = Json(safe_config)
+
         agent = await self.db.prisma.agent.create(data=agent_data_dict)
         agent_response = AgentResponse(
             id=agent_id,
@@ -56,7 +62,7 @@ class AgentRepository:
             template_id=agent_data.template_id,
             instance=agent.instance,
             index=agent.index,
-            user_address=agent.userAddress,
+            userAddress=agent.userAddress,
         )
 
         return agent_response

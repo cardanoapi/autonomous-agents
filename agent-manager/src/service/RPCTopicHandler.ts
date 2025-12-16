@@ -5,6 +5,7 @@ import { saveTriggerHistory, updateAgentDrepRegistration } from '../repository/t
 import { ILog } from './Manager/AgentManagerRPC'
 import { metaDataService } from './MetadataService'
 import { dbSync } from './DbSyncService'
+import { ProposalService } from './ProposalService'
 
 export class RPCTopicHandler {
     managerWallet
@@ -19,6 +20,7 @@ export class RPCTopicHandler {
             console.error('Unknown event type', eventName, 'received')
             return Promise.resolve()
         } else {
+            console.log('[Manager] Dispatching to handler', { eventName, connection_id })
             return handler.bind(this)(connection_id, args)
         }
     }
@@ -85,5 +87,11 @@ export class RPCTopicHandler {
     fetchMetadata(connection_id: string, args: any[]) {
         const [url, hash] = args
         return metaDataService.fetchMetadata(url, hash)
+    }
+
+    fetchProposals(connection_id: string, args: any[]) {
+        const [page = 1, pageSize = 10, search = '', sort = 'CreatedDate'] = args || []
+        console.log('[Manager] fetchProposals handler', { connection_id, page, pageSize, search, sort })
+        return ProposalService.fetchProposals(page, pageSize, sort, search)
     }
 }

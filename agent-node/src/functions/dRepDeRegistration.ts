@@ -1,4 +1,22 @@
 import { FunctionContext } from '../executor/BaseFunction'
+import { FunctionSchemaSpec } from '../utils/functionSchema'
+
+export const schema: FunctionSchemaSpec = {
+    id: 'dRepDeRegistration',
+    name: 'DRep De‑registration',
+    description: 'Deregister the DRep associated with this agent (submit deregistration certificate).',
+    params: [],
+    response: {
+        type: 'object',
+        properties: {
+            cborHex: { type: 'string' },
+            description: { type: 'string' },
+            hash: { type: 'string' },
+            type: { type: 'string' },
+        },
+        response_text: 'DRep de‑registration submitted: hash: ${result.hash}',
+    },
+}
 
 export default async function handler(context: FunctionContext) {
     const req = {

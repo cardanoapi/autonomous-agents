@@ -8,6 +8,8 @@ from backend.app.repositories.template_repository import TemplateRepository
 from backend.app.services.agent_instance_wallet_service import AgentInstanceWalletService
 from backend.app.utils.generator import generate_random_base64
 from backend.config.database import prisma_connection
+from backend.app.models.agent.agent_config import AgentConfig
+from backend.app.utils.constants import DEFAULT_AGENT_SYSTEM_PROMPT
 
 
 class UserRepository:
@@ -51,6 +53,7 @@ class UserRepository:
             template_id=None,
             instance=1,
             secret_key=generate_random_base64(16),
+            config=AgentConfig(system_prompt=DEFAULT_AGENT_SYSTEM_PROMPT),
         )
         agent = await self.agent_repository.save_agent(empty_agent_data)
         await self.agent_instance_wallet_service.create_wallet(agent)

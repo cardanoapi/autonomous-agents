@@ -19,18 +19,24 @@
     "dependencies": {
         "@emurgo/cardano-serialization-lib-asmjs": "^11.5.0",
         "@google/genai": "^1.13.0",
+        "@modelcontextprotocol/sdk": "^1.17.4",
         "@types/ws": "^8.5.10",
         "axios": "^1.6.8",
         "bech32": "^2.0.0",
+        "cors": "^2.8.5",
         "dotenv": "^16.4.5",
+        "express": "^5.1.0",
         "kuber-client": "^2.0.0",
         "libcardano": "1.4.19",
         "luxon": "^3.4.4",
         "node-cron": "^3.0.3",
-        "ws": "^8.18.0"
+        "ws": "^8.18.0",
+        "zod": "3.25.76"
     },
     "devDependencies": {
         "@eslint/js": "^9.4.0",
+        "@types/cors": "^2.8.19",
+        "@types/express": "^5.0.3",
         "@types/luxon": "^3.4.2",
         "@types/node-cron": "^3.0.11",
         "@types/websocket": "^1.0.10",

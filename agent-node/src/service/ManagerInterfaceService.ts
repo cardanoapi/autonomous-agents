@@ -39,4 +39,9 @@ export class ManagerInterface {
     fetchMetadata(url: string, hash: string): Promise<any> {
         return this.rpc.callMethod('fetchMetadata', url, hash)
     }
+
+    fetchProposals(page = 1, pageSize = 10, search = '', sort = 'createdDate'): Promise<any> {
+        console.log('[Agent->RPC] call fetchProposals', { page, pageSize, search, sort })
+        return this.rpc.callMethod('fetchProposals', page, pageSize, search, sort)
+    }
 }

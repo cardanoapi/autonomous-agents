@@ -42,7 +42,7 @@ function createTask(
 
 export function scheduleFunctions(
     manager: ManagerInterface,
-    runner: AgentRunner,
+    runner: any,
     configurations: Configuration[],
     instanceIndex: number,
     scheduledTasks: ScheduledTask[]

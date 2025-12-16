@@ -257,8 +257,9 @@ export const FunctionForm = ({
                                 }
                             />
                         </div>
-
-                        <div className="px-4">
+                    </>
+                )}
+                <div className="px-4">
                     <div className="mb-2 flex items-center justify-between">
                         <span className="h4">Enable LLM</span>
                         <Switch
@@ -273,16 +274,12 @@ export const FunctionForm = ({
                                 rows={4}
                                 placeholder="Describe user preferences for the LLM..."
                                 value={functionState.action?.llm_user_preferences_text || ''}
-                                onChange={(e:any) => handleLlmPreferencesChange(e.target.value)}
+                                onChange={(e: any) => handleLlmPreferencesChange(e.target.value)}
                                 className="bg-white focus:outline-none"
                             />
                         </div>
                     )}
                 </div>
-
-
-                    </>
-                )}
                 {functionState.type === 'EVENT' && (
                     <EventTab
                         className="mt-4 w-full bg-white"

@@ -1,4 +1,30 @@
 import { FunctionContext } from '../executor/BaseFunction'
+import { FunctionSchemaSpec } from '../utils/functionSchema'
+
+export const schema: FunctionSchemaSpec = {
+    id: 'delegation',
+    name: 'Delegation',
+    description: 'Delegate voting power: abstain | no-confidence | Drep/Pool',
+    params: [
+        {
+            name: 'delegation_params',
+            schema: {
+                type: 'string',
+                description: "One of: 'Abstain', 'No Confidence', 'Drep/Pool'",
+            },
+        },
+    ],
+    response: {
+        type: 'object',
+        properties: {
+            cborHex: { type: 'string' },
+            description: { type: 'string' },
+            hash: { type: 'string' },
+            type: { type: 'string' },
+        },
+        response_text: 'Delegation submitted: hash: ${result.hash}',
+    },
+}
 
 export default async function handler(context: FunctionContext, delegation: any) {
     let drep = ''

@@ -8,6 +8,7 @@ import { HdWallet } from 'libcardano'
 import { AgentWalletDetails } from '../types/types'
 import { globalState } from '../constants/global'
 import { EventContext } from './BaseFunction'
+import { CallLog } from './Executor'
 
 export class AgentRunner {
     executor: Executor
@@ -18,10 +19,18 @@ export class AgentRunner {
         this.executor = new Executor(null, managerInterface, txListener)
     }
 
-    async invokeFunction(triggerType: TriggerType, instanceIndex: number, method: string, ...args: any) {
-        this.executor.invokeFunction(method, ...args).then((result) => {
-            saveTxLog(result, this.managerInterface, triggerType, instanceIndex)
-        })
+    async invokeFunction(triggerType: TriggerType, instanceIndex: number, method: string, ...args: any): Promise<any> {
+        const callLogs: CallLog[] = await this.executor.invokeFunction(method, ...args)
+        // to prevent mutation on array
+        const main = callLogs.find((l) => l?.function === method) ?? callLogs[0]
+        try {
+            // shallow
+            saveTxLog([...callLogs], this.managerInterface, triggerType, instanceIndex)
+        } catch (e) {
+            console.error('saveTxLog Error:', e)
+        }
+        // return result to mcp
+        return main && (main as any).return !== undefined ? (main as any).return : undefined
     }
 
     async invokeFunctionWithEventContext(

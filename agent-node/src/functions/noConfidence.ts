@@ -1,4 +1,27 @@
 import { FunctionContext } from '../executor/BaseFunction'
+import { FunctionSchemaSpec } from '../utils/functionSchema'
+
+export const schema: FunctionSchemaSpec = {
+    id: 'noConfidence',
+    name: 'No Confidence',
+    description: 'Submit a No‑Confidence governance action. Optionally provide an anchor {url,dataHash}.',
+    params: [
+        {
+            name: 'anchor',
+            schema: { type: 'object', description: 'Optional anchor object { url, dataHash }', optional: true },
+        },
+    ],
+    response: {
+        type: 'object',
+        properties: {
+            cborHex: { type: 'string' },
+            description: { type: 'string' },
+            hash: { type: 'string' },
+            type: { type: 'string' },
+        },
+        response_text: 'No‑confidence submitted: hash: ${result.hash}',
+    },
+}
 
 export default async function handler(context: FunctionContext, anchor: any) {
     const { dataHash, url } = await context.builtins.saveMetadata(context.helpers.generateProposalMetadataContent())
