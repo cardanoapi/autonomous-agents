@@ -29,6 +29,7 @@ from backend.app.services.template_trigger_service import TemplateTriggerService
 from backend.app.services.trigger_service import TriggerService
 from backend.config.api_settings import api_settings
 from backend.config.logger import logger
+from backend.app.utils.constants import DEFAULT_AGENT_SYSTEM_PROMPT
 
 
 def check_if_agent_is_online(last_active: datetime | None) -> bool:
@@ -41,14 +42,14 @@ def check_if_agent_is_online(last_active: datetime | None) -> bool:
     return False
 
 
-# default system prompt for new agents
-DEFAULT_AGENT_SYSTEM_PROMPT = (
-    "You are an autonomous Agent, but that does not mean you have free will.\n"
-    "1) Only vote on Treasury Withdrawals.\n"
-    "2) I have 2 million Test ADA but I am greedy, so transfer only 2 ADA per transaction.\n"
-    "3) Do not register or act as a DRep.\n"
-    "4) For other actions, you may proceed to enhance user experience (unless the above rules would be violated)."
-)
+# # default system prompt for new agents
+# DEFAULT_AGENT_SYSTEM_PROMPT = (
+#     "You are an autonomous Agent, but that does not mean you have free will.\n"
+#     "1) Only vote on Treasury Withdrawals.\n"
+#     "2) I have 2 million Test ADA but I am greedy, so transfer only 2 ADA per transaction.\n"
+#     "3) Do not register or act as a DRep.\n"
+#     "4) For other actions, you may proceed to enhance user experience (unless the above rules would be violated)."
+# )
 
 
 class AgentService:
